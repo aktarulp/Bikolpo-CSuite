@@ -97,15 +97,35 @@ class QuestionController extends Controller
 
     public function edit(Question $question)
     {
-        $courses = Course::where('status', 'active')->get();
-        $subjects = Subject::where('course_id', $question->topic->subject->course_id)->get();
-        $topics = Topic::where('subject_id', $question->topic->subject_id)->get();
-
-        return view('partner.questions.edit', compact('question', 'courses', 'subjects', 'topics'));
+        // Redirect to the appropriate type-specific edit route
+        switch ($question->question_type) {
+            case 'mcq':
+                return redirect()->route('partner.questions.mcq.edit', $question);
+            case 'descriptive':
+                return redirect()->route('partner.questions.descriptive.edit', $question);
+            case 'comprehensive':
+                return redirect()->route('partner.questions.comprehensive.edit', $question);
+            default:
+                abort(404, 'Unknown question type');
+        }
     }
 
     public function update(Request $request, Question $question)
     {
+        // Redirect to the appropriate type-specific update route
+        switch ($question->question_type) {
+            case 'mcq':
+                return redirect()->route('partner.questions.mcq.edit', $question);
+            case 'descriptive':
+                return redirect()->route('partner.questions.descriptive.edit', $question);
+            case 'comprehensive':
+                return redirect()->route('partner.questions.comprehensive.edit', $question);
+            default:
+                abort(404, 'Unknown question type');
+        }
+        
+        // Commented out - redirecting to type-specific routes instead
+        /*
         $request->validate([
             'topic_id' => 'required|exists:topics,id',
             'question_text' => 'required|string|max:1000',
@@ -134,6 +154,7 @@ class QuestionController extends Controller
 
         return redirect()->route('partner.questions.index')
             ->with('success', 'Question updated successfully.');
+        */
     }
 
     public function destroy(Question $question)
@@ -144,22 +165,61 @@ class QuestionController extends Controller
 
         $question->delete();
 
-        return redirect()->route('partner.questions.index')
-            ->with('success', 'Question deleted successfully.');
+        // Redirect to appropriate index based on question type
+        switch ($question->question_type) {
+            case 'mcq':
+                return redirect()->route('partner.questions.mcq.index')
+                    ->with('success', 'Question deleted successfully.');
+            case 'descriptive':
+                return redirect()->route('partner.questions.descriptive.index')
+                    ->with('success', 'Question deleted successfully.');
+            case 'comprehensive':
+                return redirect()->route('partner.questions.comprehensive.index')
+                    ->with('success', 'Question deleted successfully.');
+            default:
+                return redirect()->route('partner.questions.index')
+                    ->with('success', 'Question deleted successfully.');
+        }
     }
 
     // Publish draft question
     public function publish(Question $question)
     {
         if ($question->draft_status !== 'draft') {
-            return redirect()->route('partner.questions.index')
-                ->with('error', 'This question is not a draft.');
+            // Redirect to appropriate index based on question type
+            switch ($question->question_type) {
+                case 'mcq':
+                    return redirect()->route('partner.questions.mcq.index')
+                        ->with('error', 'This question is not a draft.');
+                case 'descriptive':
+                    return redirect()->route('partner.questions.descriptive.index')
+                        ->with('error', 'This question is not a draft.');
+                case 'comprehensive':
+                    return redirect()->route('partner.questions.comprehensive.index')
+                        ->with('error', 'This question is not a draft.');
+                default:
+                    return redirect()->route('partner.questions.index')
+                        ->with('error', 'This question is not a draft.');
+            }
         }
 
         $question->update(['draft_status' => 'published']);
 
-        return redirect()->route('partner.questions.index')
-            ->with('success', 'Question published successfully.');
+        // Redirect to appropriate index based on question type
+        switch ($question->question_type) {
+            case 'mcq':
+                return redirect()->route('partner.questions.mcq.index')
+                    ->with('success', 'Question published successfully.');
+            case 'descriptive':
+                return redirect()->route('partner.questions.descriptive.index')
+                    ->with('success', 'Question published successfully.');
+            case 'comprehensive':
+                return redirect()->route('partner.questions.comprehensive.index')
+                    ->with('success', 'Question published successfully.');
+            default:
+                return redirect()->route('partner.questions.index')
+                    ->with('success', 'Question published successfully.');
+        }
     }
 
     public function checkDuplicate(Request $request)
@@ -216,10 +276,7 @@ class QuestionController extends Controller
             $query->where('topic_id', $request->topic_filter);
         }
 
-        // Apply draft status filter
-        if ($request->filled('draft_status')) {
-            $query->where('draft_status', $request->draft_status);
-        }
+
 
         $questions = $query->latest()->paginate(15);
         $courses = Course::where('status', 'active')->get();
@@ -261,8 +318,8 @@ class QuestionController extends Controller
         $data['question_type'] = 'mcq';
         $data['partner_id'] = 1; // Default partner ID
         
-        // Set draft status based on action
-        $data['draft_status'] = $request->input('action') === 'draft' ? 'draft' : 'published';
+        // All questions are published by default
+        $data['draft_status'] = 'published';
 
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('questions', 'public');
@@ -270,11 +327,9 @@ class QuestionController extends Controller
 
         Question::create($data);
 
-        $message = $request->input('action') === 'draft' 
-            ? 'MCQ question saved as draft successfully.' 
-            : 'MCQ question created successfully.';
+        $message = 'MCQ question created successfully.';
 
-        return redirect()->route('partner.questions.index')
+        return redirect()->route('partner.questions.mcq.index')
             ->with('success', $message);
     }
 

@@ -77,6 +77,7 @@ Route::prefix('partner')->name('partner.')->group(function () {
         Route::get('/{question}/edit', [QuestionController::class, 'mcqEdit'])->name('edit');
         Route::put('/{question}', [QuestionController::class, 'mcqUpdate'])->name('update');
         Route::delete('/{question}', [QuestionController::class, 'mcqDestroy'])->name('destroy');
+        Route::post('/{question}/publish', [QuestionController::class, 'publish'])->name('publish');
     });
     
     Route::prefix('questions/descriptive')->name('questions.descriptive.')->group(function () {

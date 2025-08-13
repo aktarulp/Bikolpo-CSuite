@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Create Descriptive Question')
+@section('title', 'Create MCQ Question')
 
 @section('content')
 <style>
@@ -48,22 +48,22 @@
     <!-- Page Header -->
     <div class="flex justify-between items-center">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Create Descriptive Question</h1>
-            <p class="text-gray-600 dark:text-gray-400">Add a new descriptive question</p>
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Create MCQ Question</h1>
+            <p class="text-gray-600 dark:text-gray-400">Add a new multiple choice question</p>
         </div>
-        <a href="{{ route('partner.questions.index') }}" 
-           class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors duration-200">
-            Back to Questions
-        </a>
+                 <a href="{{ route('partner.questions.mcq.index') }}" 
+            class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors duration-200">
+             Back to MCQ Questions
+         </a>
     </div>
 
-    <!-- Descriptive Question Form -->
+    <!-- MCQ Question Form -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
         <div class="p-6 border-b border-gray-200 dark:border-gray-700">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Question Details</h2>
         </div>
 
-        <form action="{{ route('partner.questions.descriptive.store') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-6">
+        <form action="{{ route('partner.questions.mcq.store') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-6">
             @csrf
             
             <!-- Course, Subject, Topic Selection -->
@@ -114,89 +114,176 @@
                 </div>
             </div>
 
-            <!-- Question Text -->
-            <div>
-                <label for="question_text" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Question Text *</label>
-                <div class="border border-gray-300 dark:border-gray-600 rounded-md overflow-hidden">
-                    <!-- Rich Text Toolbar -->
-                    <div class="rich-text-toolbar border-b border-gray-300 dark:border-gray-600 p-2 flex flex-wrap gap-1">
-                        <button type="button" class="rich-text-btn" data-command="bold" title="Bold">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M15.6 11.79c.97-.67 1.65-1.77 1.65-2.79 0-2.26-1.75-4-4-4H7v14h7.04c2.09 0 3.71-1.7 3.71-3.79 0-1.52-.86-2.82-2.15-3.42zM10 7.5h3c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-3v-3zm3.5 9H10v-3h3.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5z"/>
-                            </svg>
-                        </button>
-                        <button type="button" class="rich-text-btn" data-command="italic" title="Italic">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M10 4v3h2.21l-3.42 8H6v3h8v-3h-2.21l3.42-8H18V4z"/>
-                            </svg>
-                        </button>
-                        <button type="button" class="rich-text-btn" data-command="underline" title="Underline">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 17c3.31 0 6-2.69 6-6V3h-2.5v8c0 1.93-1.57 3.5-3.5 3.5S8.5 12.93 8.5 11V3H6v8c0 3.31 2.69 6 6 6zm-7 2v2h14v-2H5z"/>
-                            </svg>
-                        </button>
-                        <div class="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1"></div>
-                        <button type="button" class="rich-text-btn" data-command="insertUnorderedList" title="Bullet List">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/>
-                            </svg>
-                        </button>
-                        <button type="button" class="rich-text-btn" data-command="insertOrderedList" title="Numbered List">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M2 17h2v.5H2v-1zm0-6h2v.5H2v-1zm0 3h2v.5H2v-1zm4-3h14v-2H6v2zm0 4h14v-2H6v2zM6 7v2h14V7H6z"/>
-                            </svg>
-                        </button>
-                        <div class="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1"></div>
-                        <button type="button" class="rich-text-btn" data-command="justifyLeft" title="Align Left">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M15 15H3v2h12v-2zm0-8H3v2h12V7zm0 4H3v2h12v-2z"/>
-                            </svg>
-                        </button>
-                        <button type="button" class="rich-text-btn" data-command="justifyCenter" title="Align Center">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M7 15h10v-2H7v2zm0-8h10V5H7v2zm0 4h10v-2H7v2z"/>
-                            </svg>
-                        </button>
-                        <button type="button" class="rich-text-btn" data-command="justifyRight" title="Align Right">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M9 15h10v-2H9v2zm0-8h10V5H9v2zm0 4h10v-2H9v2z"/>
-                            </svg>
-                        </button>
-                        <div class="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1"></div>
-                        <button type="button" class="rich-text-btn" id="mathBtn" title="Insert Math Equation">
-                            <span class="text-lg font-bold">∑</span>
-                        </button>
+            <!-- Question Text and MCQ Options Side by Side -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Question Text - Takes 2/3 of the width -->
+                <div class="lg:col-span-2">
+                    <label for="question_text" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Question Text *</label>
+                    <div class="border border-gray-300 dark:border-gray-600 rounded-md overflow-hidden">
+                        <!-- Rich Text Toolbar -->
+                        <div class="rich-text-toolbar border-b border-gray-300 dark:border-gray-600 p-2 flex flex-wrap gap-1">
+                            <button type="button" class="rich-text-btn" data-command="bold" title="Bold">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M15.6 11.79c.97-.67 1.65-1.77 1.65-2.79 0-2.26-1.75-4-4-4H7v14h7.04c2.09 0 3.71-1.7 3.71-3.79 0-1.52-.86-2.82-2.15-3.42zM10 7.5h3c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5h-3v-3zm3.5 9H10v-3h3.5c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5z"/>
+                                </svg>
+                            </button>
+                            <button type="button" class="rich-text-btn" data-command="italic" title="Italic">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M10 4v3h2.21l-3.42 8H6v3h8v-3h-2.21l3.42-8H18V4z"/>
+                                </svg>
+                            </button>
+                            <button type="button" class="rich-text-btn" data-command="underline" title="Underline">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 17c3.31 0 6-2.69 6-6V3h-2.5v8c0 1.93-1.57 3.5-3.5 3.5S8.5 12.93 8.5 11V3H6v8c0 3.31 2.69 6 6 6zm-7 2v2h14v-2H5z"/>
+                                </svg>
+                            </button>
+                            <div class="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1"></div>
+                            <button type="button" class="rich-text-btn" data-command="insertUnorderedList" title="Bullet List">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/>
+                                </svg>
+                            </button>
+                            <button type="button" class="rich-text-btn" data-command="insertOrderedList" title="Numbered List">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M2 17h2v.5H2v-1zm0-6h2v.5H2v-1zm0 3h2v.5H2v-1zm4-3h14v-2H6v2zm0 4h14v-2H6v2zM6 7v2h14V7H6z"/>
+                                </svg>
+                            </button>
+                            <div class="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1"></div>
+                            <button type="button" class="rich-text-btn" data-command="justifyLeft" title="Align Left">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M15 15H3v2h12v-2zm0-8H3v2h12V7zm0 4H3v2h12v-2z"/>
+                                </svg>
+                            </button>
+                            <button type="button" class="rich-text-btn" data-command="justifyCenter" title="Align Center">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M7 15h10v-2H7v2zm0-8h10V5H7v2zm0 4h10v-2H7v2z"/>
+                                </svg>
+                            </button>
+                            <button type="button" class="rich-text-btn" data-command="justifyRight" title="Align Right">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M9 15h10v-2H9v2zm0-8h10V5H9v2zm0 4h10v-2H9v2z"/>
+                                </svg>
+                            </button>
+                            <div class="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1"></div>
+                            <button type="button" class="rich-text-btn" id="mathBtn" title="Insert Math Equation">
+                                <span class="text-lg font-bold">∑</span>
+                            </button>
+                        </div>
+                        <!-- Rich Text Editor - Smaller height -->
+                        <div id="question_text_editor" class="min-h-[80px] p-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primaryGreen focus:ring-opacity-50" contenteditable="true" data-placeholder="Enter your question here..."></div>
+                        <input type="hidden" name="question_text" id="question_text" required>
                     </div>
-                    <!-- Rich Text Editor -->
-                    <div id="question_text_editor" class="min-h-[120px] p-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primaryGreen focus:ring-opacity-50" contenteditable="true" data-placeholder="Enter your descriptive question here..."></div>
-                    <input type="hidden" name="question_text" id="question_text" required>
+                    @error('question_text')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+
+                    <!-- Question Image - Moved below question text -->
+                    <div class="mt-4">
+                        <label for="image" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Question Image (Optional)</label>
+                        <input type="file" name="image" id="image" accept="image/*" 
+                               class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primaryGreen focus:ring-primaryGreen">
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Supported formats: JPEG, PNG, JPG, GIF (Max: 2MB)</p>
+                        @error('image')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
-                @error('question_text')
+
+                <!-- MCQ Options - Takes 1/3 of the width, arranged in 2 lines -->
+                <div class="space-y-4">
+                    <!-- First line: Option A & B -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label for="option_a" class="inline-block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Option A *</label>
+                            <input type="text" name="option_a" id="option_a" required 
+                                   class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primaryGreen focus:ring-primaryGreen"
+                                   value="{{ old('option_a') }}" placeholder="Enter option A">
+                            @error('option_a')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="option_b" class="inline-block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Option B *</label>
+                            <input type="text" name="option_b" id="option_b" required 
+                                   class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primaryGreen focus:ring-primaryGreen"
+                                   value="{{ old('option_b') }}" placeholder="Enter option B">
+                            @error('option_b')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Second line: Option C & D with Correct Answer and Status below -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="space-y-2">
+                            <label for="option_c" class="inline-block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Option C *</label>
+                            <input type="text" name="option_c" id="option_c" required 
+                                   class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primaryGreen focus:ring-primaryGreen"
+                                   value="{{ old('option_c') }}" placeholder="Enter option C">
+                            @error('option_c')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                            
+                            <!-- Correct Answer - Below Option C -->
+                            <div>
+                                <label for="correct_answer" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Correct Answer *</label>
+                                <select name="correct_answer" id="correct_answer" required class="w-full text-xs rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primaryGreen focus:ring-primaryGreen h-10">
+                                    <option value="">Select</option>
+                                    <option value="a" {{ old('correct_answer') == 'a' ? 'selected' : '' }}>A</option>
+                                    <option value="b" {{ old('correct_answer') == 'b' ? 'selected' : '' }}>B</option>
+                                    <option value="c" {{ old('correct_answer') == 'c' ? 'selected' : '' }}>C</option>
+                                    <option value="d" {{ old('correct_answer') == 'd' ? 'selected' : '' }}>D</option>
+                                </select>
+                                @error('correct_answer')
+                                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label for="option_d" class="inline-block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Option D *</label>
+                            <input type="text" name="option_d" id="option_d" required 
+                                   class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primaryGreen focus:ring-primaryGreen"
+                                   value="{{ old('option_d') }}" placeholder="Enter option D">
+                            @error('option_d')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                            
+                            <!-- Status - Below Option D -->
+                            <div>
+                                <label for="status" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Status</label>
+                                <select name="status" id="status" class="w-full text-xs rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primaryGreen focus:ring-primaryGreen h-10">
+                                    <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
+                                    <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                                </select>
+                                @error('status')
+                                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Explanation -->
+            <div>
+                <label for="explanation" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Explanation</label>
+                <textarea name="explanation" id="explanation" rows="3" 
+                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primaryGreen focus:ring-primaryGreen"
+                           placeholder="Explain why this answer is correct...">{{ old('explanation') }}</textarea>
+                @error('explanation')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
 
-
-
-            <!-- Additional Settings -->
+            <!-- Marks -->
             <div>
-                <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
-                <select name="status" id="status" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primaryGreen focus:ring-primaryGreen">
-                    <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
-                    <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
-                </select>
-                @error('status')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <!-- Image Upload -->
-            <div>
-                <label for="image" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Question Image (Optional)</label>
-                <input type="file" name="image" id="image" accept="image/*" 
-                       class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primaryGreen focus:ring-primaryGreen">
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Supported formats: JPEG, PNG, JPG, GIF (Max: 2MB)</p>
-                @error('image')
+                <label for="marks" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Marks *</label>
+                <input type="number" name="marks" id="marks" required min="1" max="100"
+                       class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primaryGreen focus:ring-primaryGreen"
+                       value="{{ old('marks', 1) }}" placeholder="Enter marks">
+                @error('marks')
                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
@@ -246,19 +333,16 @@
                 </div>
             </div>
 
+
             <!-- Submit Buttons -->
             <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-gray-700">
-                <a href="{{ route('partner.questions.index') }}" 
-                   class="px-6 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
-                    Cancel
-                </a>
-                <button type="submit" name="action" value="draft" 
-                        class="px-6 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors duration-200">
-                    Save Draft
-                </button>
-                <button type="submit" name="action" value="publish" 
-                        class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md transition-colors duration-200">
-                    Publish
+                                 <a href="{{ route('partner.questions.mcq.index') }}" 
+                    class="px-6 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-700 dark:hover:bg-gray-700 transition-colors duration-200">
+                     Cancel
+                 </a>
+                <button type="submit" 
+                        class="px-6 py-2 bg-primaryGreen hover:bg-green-600 text-white rounded-md transition-colors duration-200">
+                    Create Question
                 </button>
             </div>
         </form>
@@ -487,7 +571,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="flex-1">
                         <input type="number" name="history_year[${historyId}]" placeholder="Year (e.g., 2024)" 
                                value="${item.year || ''}"
-                               min="1900" max="2100" step="1"
                                class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primaryGreen focus:ring-primaryGreen text-sm">
                     </div>
                     <button type="button" onclick="removeHistory('${historyId}')" 
@@ -527,35 +610,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Form submission handling for draft vs publish
-    document.querySelector('form').addEventListener('submit', function(e) {
-        const submitButton = e.submitter;
-        if (submitButton && submitButton.value === 'draft') {
-            // Validate required fields for draft
-            const requiredFields = this.querySelectorAll('[required]');
-            let isValid = true;
-            
-            requiredFields.forEach(field => {
-                if (!field.value.trim()) {
-                    field.classList.add('border-red-500');
-                    isValid = false;
-                } else {
-                    field.classList.remove('border-red-500');
-                }
-            });
-            
-            if (!isValid) {
-                e.preventDefault();
-                alert('Please fill in all required fields before saving as draft.');
-                return;
-            }
-            
-            if (!confirm('Save this question as a draft? You can edit and publish it later.')) {
-                e.preventDefault();
-                return;
-            }
-        }
-    });
+
 
     const courseSelect = document.getElementById('course_id');
     const subjectSelect = document.getElementById('subject_id');
