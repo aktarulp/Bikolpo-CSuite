@@ -10,6 +10,10 @@ class Question extends Model
     use HasFactory;
 
     protected $fillable = [
+        'question_type',
+        'q_type_id',
+        'course_id',
+        'subject_id',
         'topic_id',
         'partner_id',
         'question_text',
@@ -19,19 +23,44 @@ class Question extends Model
         'option_d',
         'correct_answer',
         'explanation',
+        'expected_answer_points',
+        'sample_answer',
+        'min_words',
+        'max_words',
+        'sub_questions',
+        'expected_answer_structure',
+        'key_concepts',
+        'time_allocation',
         'difficulty_level',
         'marks',
         'image',
         'status',
+        'tags',
+        'appearance_history',
+        'draft_status',
     ];
 
     protected $casts = [
+        'question_type' => 'string',
         'difficulty_level' => 'integer',
         'marks' => 'integer',
         'status' => 'string',
+        'tags' => 'array',
+        'appearance_history' => 'array',
+        'draft_status' => 'string',
     ];
 
     // Relationships
+    public function course()
+    {
+        return $this->belongsTo(Course::class);
+    }
+
+    public function subject()
+    {
+        return $this->belongsTo(Subject::class);
+    }
+
     public function topic()
     {
         return $this->belongsTo(Topic::class);
@@ -42,6 +71,11 @@ class Question extends Model
         return $this->belongsTo(Partner::class);
     }
 
+    public function questionType()
+    {
+        return $this->belongsTo(QuestionType::class, 'q_type_id', 'q_type_id');
+    }
+
     public function questionSets()
     {
         return $this->belongsToMany(QuestionSet::class, 'question_set_question')
@@ -49,15 +83,7 @@ class Question extends Model
                     ->withTimestamps();
     }
 
-    public function subject()
-    {
-        return $this->belongsToThrough(Subject::class, Topic::class);
-    }
 
-    public function course()
-    {
-        return $this->belongsToThrough(Course::class, [Subject::class, Topic::class]);
-    }
 
     // Accessors
     public function getCorrectOptionTextAttribute()
@@ -73,5 +99,47 @@ class Question extends Model
             3 => 'Hard',
             default => 'Unknown'
         };
+    }
+
+    // Question Type Helpers
+    public function isMcq()
+    {
+        return $this->question_type === 'mcq';
+    }
+
+    public function isDescriptive()
+    {
+        return $this->question_type === 'descriptive';
+    }
+
+    public function isComprehensive()
+    {
+        return $this->question_type === 'comprehensive';
+    }
+
+    public function getQuestionTypeTextAttribute()
+    {
+        return match($this->question_type) {
+            'mcq' => 'MCQ',
+            'descriptive' => 'Descriptive',
+            'comprehensive' => 'Comprehensive',
+            default => 'Unknown'
+        };
+    }
+
+    // Scopes for filtering by question type
+    public function scopeMcq($query)
+    {
+        return $query->where('question_type', 'mcq');
+    }
+
+    public function scopeDescriptive($query)
+    {
+        return $query->where('question_type', 'descriptive');
+    }
+
+    public function scopeComprehensive($query)
+    {
+        return $query->where('question_type', 'comprehensive');
     }
 }

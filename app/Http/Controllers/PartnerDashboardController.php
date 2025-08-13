@@ -21,9 +21,9 @@ class PartnerDashboardController extends Controller
             'total_questions' => Question::where('partner_id', $partnerId)->count(),
             'total_question_sets' => QuestionSet::where('partner_id', $partnerId)->count(),
             'total_exams' => Exam::where('partner_id', $partnerId)->count(),
-            'total_students' => StudentExamResult::whereHas('exam', function($query) use ($partnerId) {
+            'total_students' => \App\Models\Student::whereHas('examResults.exam', function($query) use ($partnerId) {
                 $query->where('partner_id', $partnerId);
-            })->distinct('student_id')->count(),
+            })->distinct()->count(),
         ];
 
         $recent_exams = Exam::where('partner_id', $partnerId)

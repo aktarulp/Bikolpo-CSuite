@@ -14,6 +14,23 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- MathJax for mathematical equations -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                ignoreHtmlClass: '.*',
+                processHtmlClass: 'math-equation'
+            }
+        };
+    </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -48,6 +65,20 @@
         }
         .body-no-scroll {
             overflow: hidden;
+        }
+        
+        /* Math equation styling */
+        .math-equation {
+            font-family: 'Computer Modern', serif;
+            background-color: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .dark .math-equation {
+            background-color: #374151;
+            border-color: #4b5563;
         }
     </style>
 
@@ -120,6 +151,14 @@
                     <span>Dashboard</span>
                 </a>
 
+                <a href="{{ route('partner.batches.index') }}" 
+                   class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-primaryGreen hover:text-white transition-colors duration-200 {{ request()->routeIs('partner.batches.*') ? 'bg-primaryGreen text-white' : '' }}">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    <span>Batch</span>
+                </a>
+
                 <a href="{{ route('partner.courses.index') }}" 
                    class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-primaryGreen hover:text-white transition-colors duration-200 {{ request()->routeIs('partner.courses.*') ? 'bg-primaryGreen text-white' : '' }}">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -144,6 +183,7 @@
                     <span>Topics</span>
                 </a>
 
+                <!-- Questions Menu - Direct Link -->
                 <a href="{{ route('partner.questions.index') }}" 
                    class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-primaryGreen hover:text-white transition-colors duration-200 {{ request()->routeIs('partner.questions.*') ? 'bg-primaryGreen text-white' : '' }}">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

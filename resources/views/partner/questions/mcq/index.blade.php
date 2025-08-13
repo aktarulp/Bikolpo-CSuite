@@ -1,16 +1,16 @@
 @extends('layouts.app')
 
-@section('title', 'Questions')
+@section('title', 'MCQ Questions')
 
 @section('content')
 <div class="space-y-6">
     <!-- Page Header -->
     <div class="flex justify-between items-center">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Questions</h1>
-            <p class="text-gray-600 dark:text-gray-400">Manage your MCQ questions</p>
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">MCQ Questions</h1>
+            <p class="text-gray-600 dark:text-gray-400">Manage your multiple choice questions</p>
             @php
-                $draftCount = \App\Models\Question::where('draft_status', 'draft')->count();
+                $draftCount = \App\Models\Question::where('question_type', 'mcq')->where('draft_status', 'draft')->count();
             @endphp
             @if($draftCount > 0)
                 <p class="text-sm text-orange-600 dark:text-orange-400 mt-1">
@@ -22,37 +22,26 @@
             <a href="{{ route('partner.questions.mcq.create') }}" 
                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                 </svg>
                 + MCQ
             </a>
-            <a href="{{ route('partner.questions.descriptive.create') }}" 
-               class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                </svg>
-                + Descriptive
-            </a>
-            <a href="{{ route('partner.questions.comprehensive.create') }}" 
-               class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                </svg>
-                + Comprehensive
+            <a href="{{ route('partner.questions.index') }}" 
+               class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors duration-200">
+                All Questions
             </a>
         </div>
     </div>
 
-
     <!-- Filters -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-        <form method="GET" class="grid grid-cols-1 md:grid-cols-6 gap-4">
+        <form method="GET" class="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div>
                 <label class="block text-sm font-medium mb-2">Course</label>
-                <select name="course" class="w-full rounded-md border p-2">
+                <select name="course_filter" class="w-full rounded-md border p-2">
                     <option value="">All Courses</option>
                     @foreach($courses ?? [] as $course)
-                        <option value="{{ $course->id }}" {{ request('course') == $course->id ? 'selected' : '' }}>
+                        <option value="{{ $course->id }}" {{ request('course_filter') == $course->id ? 'selected' : '' }}>
                             {{ $course->name }}
                         </option>
                     @endforeach
@@ -60,10 +49,10 @@
             </div>
             <div>
                 <label class="block text-sm font-medium mb-2">Subject</label>
-                <select name="subject" class="w-full rounded-md border p-2">
+                <select name="subject_filter" class="w-full rounded-md border p-2">
                     <option value="">All Subjects</option>
                     @foreach($subjects ?? [] as $subject)
-                        <option value="{{ $subject->id }}" {{ request('subject') == $subject->id ? 'selected' : '' }}>
+                        <option value="{{ $subject->id }}" {{ request('subject_filter') == $subject->id ? 'selected' : '' }}>
                             {{ $subject->name }}
                         </option>
                     @endforeach
@@ -71,22 +60,11 @@
             </div>
             <div>
                 <label class="block text-sm font-medium mb-2">Topic</label>
-                <select name="topic" class="w-full rounded-md border p-2">
+                <select name="topic_filter" class="w-full rounded-md border p-2">
                     <option value="">All Topics</option>
                     @foreach($topics ?? [] as $topic)
-                        <option value="{{ $topic->id }}" {{ request('topic') == $topic->id ? 'selected' : '' }}>
+                        <option value="{{ $topic->id }}" {{ request('topic_filter') == $topic->id ? 'selected' : '' }}>
                             {{ $topic->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <div>
-                <label class="block text-sm font-medium mb-2">Question Type</label>
-                <select name="question_type" class="w-full rounded-md border p-2">
-                    <option value="">All Types</option>
-                    @foreach($questionTypes ?? [] as $questionType)
-                        <option value="{{ $questionType->q_type_id }}" {{ request('question_type') == $questionType->q_type_id ? 'selected' : '' }}>
-                            {{ $questionType->q_type_name }}
                         </option>
                     @endforeach
                 </select>
@@ -99,18 +77,16 @@
                     <option value="draft" {{ request('draft_status') == 'draft' ? 'selected' : '' }}>Drafts</option>
                 </select>
             </div>
-            <div class="flex items-end">
-                <a href="{{ route('partner.questions.index') }}" class="w-full px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors duration-200 text-center">
-                    Clear Filters
+            <div class="flex items-end gap-2">
+                <a href="{{ route('partner.questions.mcq.index') }}" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors duration-200 text-center">
+                    Clear
                 </a>
-            </div>
-            @if($draftCount > 0)
-                <div class="flex items-end">
-                    <a href="{{ route('partner.questions.index', ['draft_status' => 'draft']) }}" class="w-full px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-md transition-colors duration-200 text-center">
-                        View Drafts ({{ $draftCount }})
+                @if($draftCount > 0)
+                    <a href="{{ route('partner.questions.mcq.index', ['draft_status' => 'draft']) }}" class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-md transition-colors duration-200 text-center">
+                        Drafts ({{ $draftCount }})
                     </a>
-                </div>
-            @endif
+                @endif
+            </div>
         </form>
     </div>
 
@@ -118,7 +94,7 @@
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
         <div class="p-6 border-b border-gray-200 dark:border-gray-700">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
-                Questions ({{ $questions->total() }})
+                MCQ Questions ({{ $questions->total() }})
             </h2>
         </div>
 
@@ -129,29 +105,18 @@
                         <div class="flex justify-between items-start">
                             <div class="flex-1">
                                 <div class="flex items-center gap-2 mb-2">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                        @if($question->difficulty_level == 1) bg-green-100 text-green-800
-                                        @elseif($question->difficulty_level == 2) bg-yellow-100 text-yellow-800
-                                        @else bg-red-100 text-red-800 @endif">
-                                        {{ $question->difficulty_text }}
-                                    </span>
-                                    @if($question->questionType)
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                            {{ $question->questionType->q_type_code }}
-                                        </span>
-                                    @endif
                                     @if($question->draft_status === 'draft')
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
                                             Draft
                                         </span>
                                     @endif
                                     <span class="text-sm text-gray-500 dark:text-gray-400">
-                                        {{ $question->topic->subject->course->name }} > {{ $question->topic->subject->name }} > {{ $question->topic->name }}
+                                        {{ $question->course->name ?? 'N/A' }} > {{ $question->subject->name ?? 'N/A' }} > {{ $question->topic->name ?? 'N/A' }}
                                     </span>
                                 </div>
                                 
                                 <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                                    {{ Str::limit($question->question_text, 150) }}
+                                    {{ Str::limit(strip_tags($question->question_text), 150) }}
                                 </h3>
                                 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-gray-600 dark:text-gray-400">
@@ -170,7 +135,7 @@
                             
                             <div class="flex items-center gap-2 ml-4">
                                 @if($question->draft_status === 'draft')
-                                    <a href="{{ route('partner.questions.edit', $question) }}" 
+                                    <a href="{{ route('partner.questions.mcq.edit', $question) }}" 
                                        class="text-orange-600 hover:text-orange-800 dark:text-orange-400 dark:hover:text-orange-300">
                                         Edit & Publish
                                     </a>
@@ -192,11 +157,11 @@
                                         </button>
                                     </form>
                                 @else
-                                    <a href="{{ route('partner.questions.show', $question) }}" 
+                                    <a href="{{ route('partner.questions.mcq.show', $question) }}" 
                                        class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
                                         View
                                     </a>
-                                    <a href="{{ route('partner.questions.edit', $question) }}" 
+                                    <a href="{{ route('partner.questions.mcq.edit', $question) }}" 
                                        class="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300">
                                         Edit
                                     </a>
@@ -225,20 +190,12 @@
                 <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">No questions</h3>
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Get started by creating a new question.</p>
-                <div class="mt-6 flex gap-3 justify-center">
+                <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">No MCQ questions</h3>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Get started by creating a new MCQ question.</p>
+                <div class="mt-6">
                     <a href="{{ route('partner.questions.mcq.create') }}" 
                        class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
                         + MCQ
-                    </a>
-                    <a href="{{ route('partner.questions.descriptive.create') }}" 
-                       class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
-                        + Descriptive
-                    </a>
-                    <a href="{{ route('partner.questions.comprehensive.create') }}" 
-                       class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700">
-                        + Comprehensive
                     </a>
                 </div>
             </div>
@@ -249,7 +206,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Get all filter select elements
-    const filterSelects = document.querySelectorAll('select[name="course"], select[name="subject"], select[name="topic"], select[name="question_type"], select[name="draft_status"]');
+    const filterSelects = document.querySelectorAll('select[name="course_filter"], select[name="subject_filter"], select[name="topic_filter"], select[name="draft_status"]');
     
     // Add change event listener to each filter
     filterSelects.forEach(select => {
@@ -261,4 +218,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-@endsection 
+@endsection

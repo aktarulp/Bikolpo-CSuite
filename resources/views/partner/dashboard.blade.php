@@ -84,6 +84,7 @@
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Students</p>
                     <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ $stats['total_students'] }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">From Database</p>
                 </div>
             </div>
         </div>

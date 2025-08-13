@@ -6,6 +6,7 @@ use App\Models\Question;
 use App\Models\Course;
 use App\Models\Subject;
 use App\Models\Topic;
+use App\Models\QuestionType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -13,7 +14,7 @@ class QuestionController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Question::with(['topic.subject.course', 'partner'])
+        $query = Question::with(['topic.subject.course', 'partner', 'questionType'])
             ->where('partner_id', 1); // Default partner ID
 
         // Apply filters
@@ -29,15 +30,25 @@ class QuestionController extends Controller
             });
         }
 
-        if ($request->filled('difficulty')) {
-            $query->where('difficulty_level', $request->difficulty);
+        if ($request->filled('topic')) {
+            $query->where('topic_id', $request->topic);
+        }
+
+        if ($request->filled('question_type')) {
+            $query->where('q_type_id', $request->question_type);
+        }
+
+        if ($request->filled('draft_status')) {
+            $query->where('draft_status', $request->draft_status);
         }
 
         $questions = $query->latest()->paginate(15);
         $courses = Course::where('status', 'active')->get();
         $subjects = Subject::where('status', 'active')->get();
+        $topics = Topic::where('status', 'active')->get();
+        $questionTypes = QuestionType::where('status', 'active')->orderBy('sort_order')->get();
 
-        return view('partner.questions.index', compact('questions', 'courses', 'subjects'));
+        return view('partner.questions.index', compact('questions', 'courses', 'subjects', 'topics', 'questionTypes'));
     }
 
     public function create()
@@ -137,6 +148,20 @@ class QuestionController extends Controller
             ->with('success', 'Question deleted successfully.');
     }
 
+    // Publish draft question
+    public function publish(Question $question)
+    {
+        if ($question->draft_status !== 'draft') {
+            return redirect()->route('partner.questions.index')
+                ->with('error', 'This question is not a draft.');
+        }
+
+        $question->update(['draft_status' => 'published']);
+
+        return redirect()->route('partner.questions.index')
+            ->with('success', 'Question published successfully.');
+    }
+
     public function checkDuplicate(Request $request)
     {
         $request->validate([
@@ -169,5 +194,266 @@ class QuestionController extends Controller
             ->get();
 
         return response()->json($topics);
+    }
+
+    // MCQ Question Methods
+    public function mcqIndex(Request $request)
+    {
+        $query = Question::with(['course', 'subject', 'topic', 'partner'])
+            ->where('question_type', 'mcq')
+            ->where('partner_id', 1); // Default partner ID
+
+        // Apply filters
+        if ($request->filled('course_filter')) {
+            $query->where('course_id', $request->course_filter);
+        }
+
+        if ($request->filled('subject_filter')) {
+            $query->where('subject_id', $request->subject_filter);
+        }
+
+        if ($request->filled('topic_filter')) {
+            $query->where('topic_id', $request->topic_filter);
+        }
+
+        // Apply draft status filter
+        if ($request->filled('draft_status')) {
+            $query->where('draft_status', $request->draft_status);
+        }
+
+        $questions = $query->latest()->paginate(15);
+        $courses = Course::where('status', 'active')->get();
+        $subjects = Subject::where('status', 'active')->get();
+        $topics = Topic::where('status', 'active')->get();
+
+        return view('partner.questions.mcq.index', compact('questions', 'courses', 'subjects', 'topics'));
+    }
+
+    public function mcqCreate()
+    {
+        $courses = Course::where('status', 'active')->get();
+        $subjects = Subject::where('status', 'active')->get();
+        $topics = Topic::where('status', 'active')->get();
+
+        return view('partner.questions.create-mcq', compact('courses', 'subjects', 'topics'));
+    }
+
+    public function mcqStore(Request $request)
+    {
+        $request->validate([
+            'course_id' => 'required|exists:courses,id',
+            'subject_id' => 'required|exists:subjects,id',
+            'topic_id' => 'required|exists:topics,id',
+            'question_text' => 'required|string|max:1000',
+            'option_a' => 'required|string|max:255',
+            'option_b' => 'required|string|max:255',
+            'option_c' => 'required|string|max:255',
+            'option_d' => 'required|string|max:255',
+            'correct_answer' => 'required|in:a,b,c,d',
+            'explanation' => 'nullable|string',
+            'marks' => 'required|integer|min:1',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'tags' => 'nullable|json',
+            'appearance_history' => 'nullable|json',
+        ]);
+
+        $data = $request->all();
+        $data['question_type'] = 'mcq';
+        $data['partner_id'] = 1; // Default partner ID
+        
+        // Set draft status based on action
+        $data['draft_status'] = $request->input('action') === 'draft' ? 'draft' : 'published';
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('questions', 'public');
+        }
+
+        Question::create($data);
+
+        $message = $request->input('action') === 'draft' 
+            ? 'MCQ question saved as draft successfully.' 
+            : 'MCQ question created successfully.';
+
+        return redirect()->route('partner.questions.index')
+            ->with('success', $message);
+    }
+
+    public function mcqShow(Question $question)
+    {
+        if ($question->question_type !== 'mcq') {
+            abort(404);
+        }
+        
+        $question->load(['course', 'subject', 'topic', 'partner']);
+        return view('partner.questions.mcq.show', compact('question'));
+    }
+
+    public function mcqEdit(Question $question)
+    {
+        if ($question->question_type !== 'mcq') {
+            abort(404);
+        }
+
+        $courses = Course::where('status', 'active')->get();
+        $subjects = Subject::where('status', 'active')->get();
+        $topics = Topic::where('status', 'active')->get();
+
+        return view('partner.questions.mcq.edit', compact('question', 'courses', 'subjects', 'topics'));
+    }
+
+    public function mcqUpdate(Request $request, Question $question)
+    {
+        if ($question->question_type !== 'mcq') {
+            abort(404);
+        }
+
+        $request->validate([
+            'course_id' => 'required|exists:courses,id',
+            'subject_id' => 'required|exists:subjects,id',
+            'topic_id' => 'required|exists:topics,id',
+            'question_text' => 'required|string|max:1000',
+            'option_a' => 'required|string|max:255',
+            'option_b' => 'required|string|max:255',
+            'option_c' => 'required|string|max:255',
+            'option_d' => 'required|string|max:255',
+            'correct_answer' => 'required|in:a,b,c,d',
+            'explanation' => 'nullable|string',
+            'marks' => 'required|integer|min:1',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'tags' => 'nullable|json',
+            'appearance_history' => 'nullable|json',
+        ]);
+
+        $data = $request->all();
+
+        if ($request->hasFile('image')) {
+            // Delete old image
+            if ($question->image) {
+                Storage::disk('public')->delete($question->image);
+            }
+            $data['image'] = $request->file('image')->store('questions', 'public');
+        }
+
+        $question->update($data);
+
+        return redirect()->route('partner.questions.index')
+            ->with('success', 'MCQ question updated successfully.');
+    }
+
+    public function mcqDestroy(Question $question)
+    {
+        if ($question->question_type !== 'mcq') {
+            abort(404);
+        }
+
+        if ($question->image) {
+            Storage::disk('public')->delete($question->image);
+        }
+
+        $question->delete();
+
+        return redirect()->route('partner.questions.index')
+            ->with('success', 'MCQ question deleted successfully.');
+    }
+
+    // Descriptive Question Methods
+    public function descriptiveCreate()
+    {
+        $courses = Course::where('status', 'active')->get();
+        $subjects = Subject::where('status', 'active')->get();
+        $topics = Topic::where('status', 'active')->get();
+
+        return view('partner.questions.create-desc', compact('courses', 'subjects', 'topics'));
+    }
+
+    public function descriptiveStore(Request $request)
+    {
+        $request->validate([
+            'course_id' => 'required|exists:courses,id',
+            'subject_id' => 'required|exists:subjects,id',
+            'topic_id' => 'required|exists:topics,id',
+            'question_text' => 'required|string|max:1000',
+            'expected_answer_points' => 'nullable|string',
+            'sample_answer' => 'nullable|string',
+            'min_words' => 'nullable|integer|min:10|max:1000',
+            'max_words' => 'nullable|integer|min:50|max:2000',
+            'difficulty_level' => 'required|in:1,2,3',
+            'marks' => 'required|integer|min:1|max:20',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'tags' => 'nullable|json',
+            'appearance_history' => 'nullable|json',
+        ]);
+
+        $data = $request->all();
+        $data['question_type'] = 'descriptive';
+        $data['partner_id'] = 1; // Default partner ID
+        
+        // Set draft status based on action
+        $data['draft_status'] = $request->input('action') === 'draft' ? 'draft' : 'published';
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('questions', 'public');
+        }
+
+        Question::create($data);
+
+        $message = $request->input('action') === 'draft' 
+            ? 'Descriptive question saved as draft successfully.' 
+            : 'Descriptive question created successfully.';
+
+        return redirect()->route('partner.questions.index')
+            ->with('success', $message);
+    }
+
+    // Comprehensive Question Methods
+    public function comprehensiveCreate()
+    {
+        $courses = Course::where('status', 'active')->get();
+        $subjects = Subject::where('status', 'active')->get();
+        $topics = Topic::where('status', 'active')->get();
+
+        return view('partner.questions.create-comp', compact('courses', 'subjects', 'topics'));
+    }
+
+    public function comprehensiveStore(Request $request)
+    {
+        $request->validate([
+            'course_id' => 'required|exists:courses,id',
+            'subject_id' => 'required|exists:subjects,id',
+            'topic_id' => 'required|exists:topics,id',
+            'question_text' => 'required|string|max:1000',
+            'sub_questions' => 'nullable|string',
+            'expected_answer_structure' => 'nullable|string',
+            'key_concepts' => 'nullable|string',
+            'sample_answer' => 'nullable|string',
+            'min_words' => 'nullable|integer|min:100|max:2000',
+            'max_words' => 'nullable|integer|min:200|max:5000',
+            'time_allocation' => 'nullable|integer|min:15|max:120',
+            'difficulty_level' => 'required|in:1,2,3',
+            'marks' => 'required|integer|min:5|max:50',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'tags' => 'nullable|json',
+            'appearance_history' => 'nullable|json',
+        ]);
+
+        $data = $request->all();
+        $data['question_type'] = 'comprehensive';
+        $data['partner_id'] = 1; // Default partner ID
+        
+        // Set draft status based on action
+        $data['draft_status'] = $request->input('action') === 'draft' ? 'draft' : 'published';
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('questions', 'public');
+        }
+
+        Question::create($data);
+
+        $message = $request->input('action') === 'draft' 
+            ? 'Comprehensive question saved as draft successfully.' 
+            : 'Comprehensive question created successfully.';
+
+        return redirect()->route('partner.questions.index')
+            ->with('success', $message);
     }
 }

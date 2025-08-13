@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Speed Test</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar for text area */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none; /* Firefox */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 flex items-center justify-center min-h-screen p-4">
+    
+    <!-- Main Container -->
+    <div class="w-full max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 space-y-4">
+        <!-- Header -->
+        <header class="text-center flex justify-between items-center mb-4">
+            <!-- Left-aligned icon/placeholder -->
+            <div class="w-8"></div>
+            <div class="flex-grow">
+                <h1 class="text-3xl font-extrabold text-blue-600 dark:text-blue-400">Typing Test</h1>
+                <p class="mt-1 text-md text-gray-500 dark:text-gray-400">Improve your typing speed and accuracy.</p>
+            </div>
+            <!-- Right-aligned settings icon -->
+            <button id="settings-button" class="w-8 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
+                <i class="fa-solid fa-gear text-2xl"></i>
+            </button>
+        </header>
+
+        <!-- Stats Display -->
+        <main class="space-y-4">
+            <!-- Primary Metrics -->
+            <div id="stats-container" class="grid grid-cols-2 lg:grid-cols-3 gap-2 bg-gray-50 dark:bg-gray-700 rounded-xl p-3 shadow-inner">
+                <!-- Net WPM -->
+                <div class="flex items-center space-x-1 p-1 justify-center">
+                    <i class="fa-solid fa-gauge-high text-green-500"></i>
+                    <div class="text-center">
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Net WPM</p>
+                        <p id="net-wpm" class="text-2xl font-bold text-gray-900 dark:text-white">0</p>
+                    </div>
+                </div>
+                <!-- Accuracy -->
+                <div class="flex items-center space-x-1 p-1 justify-center">
+                    <i class="fa-solid fa-bullseye text-red-500"></i>
+                    <div class="text-center">
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Accuracy</p>
+                        <p id="accuracy" class="text-2xl font-bold text-gray-900 dark:text-white">100%</p>
+                    </div>
+                </div>
+                <!-- Errors -->
+                <div class="flex items-center space-x-1 p-1 justify-center">
+                    <i class="fa-solid fa-circle-xmark text-orange-500"></i>
+                    <div class="text-center">
+                        <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Errors</p>
+                        <p id="errors-count" class="text-2xl font-bold text-gray-900 dark:text-white">0</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Secondary Metrics -->
+            <div id="extra-stats-container" class="grid grid-cols-2 lg:grid-cols-5 gap-2 bg-gray-50 dark:bg-gray-700 rounded-xl p-2 shadow-inner text-xs">
+                 <!-- Time -->
+                 <div class="flex items-center space-x-1 p-1 justify-center">
+                    <i class="fa-solid fa-stopwatch text-yellow-500"></i>
+                    <div class="text-center">
+                        <p class="font-medium text-gray-600 dark:text-gray-400">Time</p>
+                        <p id="timer" class="text-lg font-bold text-gray-900 dark:text-white">0s</p>
+                    </div>
+                </div>
+                 <!-- Gross WPM -->
+                 <div class="flex items-center space-x-1 p-1 justify-center">
+                    <i class="fa-solid fa-chart-line text-blue-500"></i>
+                    <div class="text-center">
+                        <p class="font-medium text-gray-600 dark:text-gray-400">Gross WPM</p>
+                        <p id="gross-wpm" class="text-lg font-bold text-gray-900 dark:text-white">0</p>
+                    </div>
+                </div>
+                 <!-- Backspace Presses -->
+                <div class="flex items-center space-x-1 p-1 justify-center">
+                    <i class="fa-solid fa-arrow-left text-red-500"></i>
+                    <div class="text-center">
+                        <p class="font-medium text-gray-600 dark:text-gray-400">Backspaces</p>
+                        <p id="backspace-count" class="text-lg font-bold text-gray-900 dark:text-white">0</p>
+                    </div>
+                </div>
+                <!-- Characters with spaces -->
+                <div class="flex items-center space-x-1 p-1 justify-center">
+                    <i class="fa-solid fa-keyboard text-purple-500"></i>
+                    <div class="text-center">
+                        <p class="font-medium text-gray-600 dark:text-gray-400">Chars (with spaces)</p>
+                        <p id="chars-with-spaces" class="text-lg font-bold text-gray-900 dark:text-white">0</p>
+                    </div>
+                </div>
+                <!-- Characters without spaces -->
+                <div class="flex items-center space-x-1 p-1 justify-center">
+                    <i class="fa-solid fa-font text-green-500"></i>
+                    <div class="text-center">
+                        <p class="font-medium text-gray-600 dark:text-gray-400">Chars (without spaces)</p>
+                        <p id="chars-without-spaces" class="text-lg font-bold text-gray-900 dark:text-white">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Text to Type -->
+            <div id="text-to-type" class="text-lg leading-relaxed text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 rounded-xl p-4 h-36 overflow-y-auto scrollbar-hide select-none transition-all duration-300 focus-within:ring-2 focus-within:ring-blue-500 shadow-md">
+                <!-- Text will be loaded here by JavaScript -->
+            </div>
+
+            <!-- User Input -->
+            <div class="relative">
+                <input type="text" id="user-input" placeholder="Start typing here..." 
+                       class="w-full text-lg p-3 border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:bg-gray-700 dark:text-white placeholder-gray-400">
+                <div id="overlay-message" class="absolute inset-0 bg-white dark:bg-gray-800 bg-opacity-80 rounded-xl flex items-center justify-center p-4" style="display: none;">
+                    <p id="message-text" class="text-xl font-semibold text-gray-900 dark:text-white text-center">Press any key to start...</p>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="flex justify-center space-x-4">
+                <button id="restart-button" class="flex items-center space-x-2 px-5 py-2 rounded-full font-bold text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" style="display: none;">
+                    <i class="fa-solid fa-arrows-rotate"></i>
+                    <span>Restart Test</span>
+                </button>
+                <button id="pause-button" class="flex items-center space-x-2 px-5 py-2 rounded-full font-bold text-white bg-yellow-600 hover:bg-yellow-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2" style="display: none;">
+                    <i class="fa-solid fa-pause"></i>
+                    <span>Pause Test</span>
+                </button>
+            </div>
+            
+            <!-- Keyboard Shortcuts Info -->
+            <div class="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
+                <p>Keyboard Shortcuts: <kbd class="px-1 py-0.5 border rounded-md">F9</kbd> to Pause/Resume, <kbd class="px-1 py-0.5 border rounded-md">Esc</kbd> to Stop, <kbd class="px-1 py-0.5 border rounded-md">Enter</kbd> to Restart (after test ends).</p>
+            </div>
+
+            <!-- Results Modal -->
+            <div id="results-modal" class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden">
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-2xl w-full max-w-md text-center space-y-6">
+                    <h2 class="text-3xl font-bold text-green-600 dark:text-green-400">Test Complete!</h2>
+                    <div class="grid grid-cols-3 gap-4">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Final WPM</p>
+                            <p id="final-wpm" class="text-4xl font-extrabold text-gray-900 dark:text-white">0</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Final Accuracy</p>
+                            <p id="final-accuracy" class="text-4xl font-extrabold text-gray-900 dark:text-white">0%</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Errors</p>
+                            <p id="final-errors" class="text-4xl font-extrabold text-gray-900 dark:text-white">0</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 border-t pt-4 border-gray-200 dark:border-gray-700 grid grid-cols-2 gap-4 text-sm font-medium">
+                        <div>
+                            <p class="text-gray-600 dark:text-gray-400">Characters (with spaces)</p>
+                            <p id="final-chars-with-spaces" class="text-xl font-extrabold text-gray-900 dark:text-white">0</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600 dark:text-gray-400">Characters (without spaces)</p>
+                            <p id="final-chars-without-spaces" class="text-xl font-extrabold text-gray-900 dark:text-white">0</p>
+                        </div>
+                    </div>
+                    <button id="close-modal-button" class="px-6 py-3 rounded-full font-bold text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200">
+                        Close
+                    </button>
+                </div>
+            </div>
+
+            <!-- Custom Paragraph Modal -->
+            <div id="custom-paragraph-modal" class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden">
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-2xl w-full max-w-lg text-center space-y-6">
+                    <h2 class="text-2xl font-bold text-blue-600 dark:text-blue-400">Use a Custom Paragraph</h2>
+                    <textarea id="custom-paragraph-input" class="w-full h-40 p-4 text-lg border-2 border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:border-blue-500 dark:bg-gray-700 dark:text-white placeholder-gray-400" placeholder="Type or paste your custom text here..."></textarea>
+                    <div class="flex justify-center space-x-4">
+                        <button id="save-custom-paragraph" class="px-6 py-3 rounded-full font-bold text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200">
+                            Save and Start Test
+                        </button>
+                        <button id="close-custom-paragraph-modal" class="px-6 py-3 rounded-full font-bold text-gray-800 dark:text-white bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600 transition-colors duration-200">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- JavaScript for Typing Logic -->
+    <script>
+        const textToTypeElement = document.getElementById('text-to-type');
+        const userInputElement = document.getElementById('user-input');
+        const netWpmElement = document.getElementById('net-wpm');
+        const grossWpmElement = document.getElementById('gross-wpm');
+        const accuracyElement = document.getElementById('accuracy');
+        const errorsCountElement = document.getElementById('errors-count');
+        const backspaceCountElement = document.getElementById('backspace-count');
+        const timerElement = document.getElementById('timer');
+        const overlayMessageElement = document.getElementById('overlay-message');
+        const messageTextElement = document.getElementById('message-text');
+        const restartButton = document.getElementById('restart-button');
+        const pauseButton = document.getElementById('pause-button');
+        const resultsModal = document.getElementById('results-modal');
+        const closeModalButton = document.getElementById('close-modal-button');
+        const settingsButton = document.getElementById('settings-button');
+        const customParagraphModal = document.getElementById('custom-paragraph-modal');
+        const customParagraphInput = document.getElementById('custom-paragraph-input');
+        const saveCustomParagraphButton = document.getElementById('save-custom-paragraph');
+        const closeCustomParagraphModalButton = document.getElementById('close-custom-paragraph-modal');
+        const charsWithSpacesElement = document.getElementById('chars-with-spaces');
+        const charsWithoutSpacesElement = document.getElementById('chars-without-spaces');
+        
+        // Modal result elements
+        const finalWpm = document.getElementById('final-wpm');
+        const finalAccuracy = document.getElementById('final-accuracy');
+        const finalErrors = document.getElementById('final-errors');
+        const finalCharsWithSpaces = document.getElementById('final-chars-with-spaces');
+        const finalCharsWithoutSpaces = document.getElementById('final-chars-without-spaces');
+        
+        let textArray;
+        let timer = 0;
+        let intervalId;
+        let testStarted = false;
+        let isPaused = false;
+        let correctChars = 0;
+        let errors = 0;
+        let typedCharsWithSpaces = 0;
+        let typedCharsWithoutSpaces = 0;
+        let backspacePresses = 0;
+        let currentText = `The sun dipped below the horizon, painting the sky in fiery hues of orange and purple. A gentle breeze rustled through the tall grass, carrying the sweet scent of wildflowers. A lone owl hooted in the distance, its call a soft melody in the quiet of the evening. The world seemed to hold its breath, waiting for the first stars to appear in the twilight sky.`;
+
+        // Initialize the test
+        function initializeTest() {
+            // Reset all stats
+            timer = 0;
+            correctChars = 0;
+            errors = 0;
+            typedCharsWithSpaces = 0;
+            typedCharsWithoutSpaces = 0;
+            backspacePresses = 0;
+            testStarted = false;
+            isPaused = false;
+            
+            netWpmElement.textContent = '0';
+            grossWpmElement.textContent = '0';
+            accuracyElement.textContent = '100%';
+            errorsCountElement.textContent = '0';
+            backspaceCountElement.textContent = '0';
+            timerElement.textContent = '0s';
+            charsWithSpacesElement.textContent = '0';
+            charsWithoutSpacesElement.textContent = '0';
+            userInputElement.value = '';
+            
+            // Clear any previous timers
+            clearInterval(intervalId);
+            
+            // Process the text
+            textArray = currentText.split('');
+            textToTypeElement.innerHTML = '';
+            textArray.forEach(char => {
+                const charSpan = document.createElement('span');
+                charSpan.textContent = char;
+                textToTypeElement.appendChild(charSpan);
+            });
+            
+            // Highlight the first letter
+            if (textToTypeElement.children.length > 0) {
+                 textToTypeElement.children[0].classList.add('text-blue-500', 'font-bold');
+            }
+            
+            // Show overlay and hide buttons
+            messageTextElement.textContent = 'Press any key to start...';
+            overlayMessageElement.style.display = 'flex';
+            restartButton.style.display = 'none';
+            pauseButton.style.display = 'none';
+            userInputElement.disabled = true;
+            userInputElement.focus();
+        }
+
+        // Start the timer
+        function startTimer() {
+            testStarted = true;
+            isPaused = false;
+            userInputElement.disabled = false;
+            userInputElement.focus();
+            overlayMessageElement.style.display = 'none';
+            pauseButton.style.display = 'inline-flex';
+
+            intervalId = setInterval(() => {
+                timer++;
+                timerElement.textContent = `${timer}s`;
+                updateStats();
+            }, 1000);
+        }
+
+        // Pause/Resume the test
+        function togglePause() {
+            if (testStarted) {
+                isPaused = !isPaused;
+                if (isPaused) {
+                    clearInterval(intervalId);
+                    userInputElement.disabled = true;
+                    overlayMessageElement.style.display = 'flex';
+                    messageTextElement.textContent = 'Paused. Press F9 to resume...';
+                    pauseButton.innerHTML = '<i class="fa-solid fa-play"></i><span>Resume Test</span>';
+                    pauseButton.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
+                    pauseButton.classList.add('bg-green-600', 'hover:bg-green-700');
+                } else {
+                    startTimer();
+                    userInputElement.disabled = false;
+                    userInputElement.focus();
+                    overlayMessageElement.style.display = 'none';
+                    pauseButton.innerHTML = '<i class="fa-solid fa-pause"></i><span>Pause Test</span>';
+                    pauseButton.classList.remove('bg-green-600', 'hover:bg-green-700');
+                    pauseButton.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
+                }
+            }
+        }
+
+        // Update WPM and accuracy in real-time
+        function updateStats() {
+            const minutes = timer / 60;
+            
+            // Gross WPM (Total typed characters / 5)
+            const grossWpm = minutes > 0 ? Math.round((typedCharsWithSpaces / 5) / minutes) : 0;
+            
+            // Net WPM (Gross WPM - Errors / Time)
+            const netWpm = minutes > 0 ? Math.round(grossWpm - (errors / minutes)) : 0;
+            
+            // Accuracy
+            const accuracy = typedCharsWithSpaces > 0 ? ((correctChars / typedCharsWithSpaces) * 100).toFixed(1) : 100;
+            
+            grossWpmElement.textContent = grossWpm;
+            netWpmElement.textContent = netWpm;
+            accuracyElement.textContent = `${accuracy}%`;
+            errorsCountElement.textContent = errors;
+            backspaceCountElement.textContent = backspacePresses;
+            charsWithSpacesElement.textContent = typedCharsWithSpaces;
+            charsWithoutSpacesElement.textContent = typedCharsWithoutSpaces;
+        }
+
+        // Handle user input
+        userInputElement.addEventListener('input', (e) => {
+            if (!testStarted) {
+                startTimer();
+            }
+            if (isPaused) {
+                // Ignore input while paused
+                return;
+            }
+
+            const typedText = userInputElement.value;
+            typedCharsWithSpaces = typedText.length;
+            typedCharsWithoutSpaces = typedText.replace(/\s/g, '').length;
+            correctChars = 0;
+            errors = 0;
+            
+            const textSpans = textToTypeElement.children;
+
+            // Loop through the typed characters and provide feedback
+            for (let i = 0; i < typedText.length; i++) {
+                const charSpan = textSpans[i];
+                if (typedText[i] === currentText[i]) {
+                    charSpan.classList.remove('text-red-500', 'bg-red-200');
+                    charSpan.classList.add('text-green-500');
+                    correctChars++;
+                } else {
+                    charSpan.classList.remove('text-green-500');
+                    charSpan.classList.add('text-red-500', 'bg-red-200');
+                    errors++;
+                }
+            }
+            // Reset color for untyped characters
+            for (let i = typedText.length; i < textSpans.length; i++) {
+                textSpans[i].classList.remove('text-green-500', 'text-red-500', 'bg-red-200');
+            }
+            
+            // Check for test completion
+            if (typedText.length === currentText.length) {
+                endTest();
+            }
+
+            // Update stats after each key press
+            updateStats();
+        });
+
+        // Handle keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Start test on first key press
+            if (!testStarted && !isPaused && (e.key.length === 1 || e.key === ' ')) {
+                startTimer();
+                return;
+            }
+
+            // Pause/Resume with F9
+            if (e.key === 'F9' && testStarted) {
+                togglePause();
+            }
+
+            // Stop with Escape
+            if (e.key === 'Escape' && testStarted) {
+                endTest();
+            }
+
+            // Restart with Enter after the test has ended
+            if (e.key === 'Enter' && !testStarted) {
+                initializeTest();
+            }
+
+            // Track backspace presses
+            if (testStarted && e.key === 'Backspace' && !isPaused) {
+                backspacePresses++;
+                backspaceCountElement.textContent = backspacePresses;
+            }
+        });
+
+        // Function to end the test
+        function endTest() {
+            clearInterval(intervalId);
+            testStarted = false;
+            userInputElement.disabled = true;
+            restartButton.style.display = 'inline-flex';
+            pauseButton.style.display = 'none';
+
+            // Final calculations
+            const minutes = timer / 60;
+            const grossWPM = minutes > 0 ? Math.round((typedCharsWithSpaces / 5) / minutes) : 0;
+            const netWPM = minutes > 0 ? Math.round(grossWPM - (errors / minutes)) : 0;
+            const finalAccuracyVal = typedCharsWithSpaces > 0 ? ((correctChars / typedCharsWithSpaces) * 100).toFixed(1) : 100;
+            
+            // Show results in the modal
+            finalWpm.textContent = netWPM;
+            finalAccuracy.textContent = `${finalAccuracyVal}%`;
+            finalErrors.textContent = errors;
+            finalCharsWithSpaces.textContent = typedCharsWithSpaces;
+            finalCharsWithoutSpaces.textContent = typedCharsWithoutSpaces;
+            resultsModal.classList.remove('hidden');
+        }
+
+        // Event listener for restart button
+        restartButton.addEventListener('click', initializeTest);
+
+        // Event listener for pause button
+        pauseButton.addEventListener('click', togglePause);
+        
+        // Event listener for modal close button
+        closeModalButton.addEventListener('click', () => {
+            resultsModal.classList.add('hidden');
+        });
+
+        // Event listener for settings button (to open custom paragraph modal)
+        settingsButton.addEventListener('click', () => {
+            customParagraphModal.classList.remove('hidden');
+        });
+
+        // Event listener to close custom paragraph modal
+        closeCustomParagraphModalButton.addEventListener('click', () => {
+            customParagraphModal.classList.add('hidden');
+        });
+
+        // Event listener to save custom paragraph and start test
+        saveCustomParagraphButton.addEventListener('click', () => {
+            const newText = customParagraphInput.value.trim();
+            if (newText) {
+                currentText = newText;
+            } else {
+                // If input is empty, revert to default text
+                currentText = `The sun dipped below the horizon, painting the sky in fiery hues of orange and purple. A gentle breeze rustled through the tall grass, carrying the sweet scent of wildflowers. A lone owl hooted in the distance, its call a soft melody in the quiet of the evening. The world seemed to hold its breath, waiting for the first stars to appear in the twilight sky.`;
+            }
+            customParagraphModal.classList.add('hidden');
+            initializeTest();
+        });
+
+        // Initial setup
+        initializeTest();
+    </script>
+</body>
+</html>
