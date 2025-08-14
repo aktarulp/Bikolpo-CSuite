@@ -100,7 +100,7 @@ class QuestionController extends Controller
         $questionsByTopic = $questionsByTopic ?: collect();
 
         // Pass all the data to the Blade view
-        return view('partner.questions.question-index', compact(
+        return view('partner.questions.question-dashboard', compact(
             'totalQuestions',
             'totalMcq',
             'totalCourses',
@@ -109,6 +109,38 @@ class QuestionController extends Controller
             'questionsBySubject',
             'questionsByTopic'
         ));
+    }
+
+    /**
+     * Display all questions in a list view.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function allQuestions(Request $request)
+    {
+        $query = Question::with(['course', 'subject', 'topic', 'partner'])
+            ->where('question_type', 'mcq')
+            ->where('partner_id', 1); // Default partner ID
+
+        // Apply filters
+        if ($request->filled('course_filter')) {
+            $query->where('course_id', $request->course_filter);
+        }
+
+        if ($request->filled('subject_filter')) {
+            $query->where('subject_id', $request->subject_filter);
+        }
+
+        if ($request->filled('topic_filter')) {
+            $query->where('topic_id', $request->topic_filter);
+        }
+
+        $questions = $query->latest()->paginate(15);
+        $courses = Course::where('status', 'active')->get();
+        $subjects = Subject::where('status', 'active')->get();
+        $topics = Topic::where('status', 'active')->get();
+
+        return view('partner.questions.all-question-view', compact('questions', 'courses', 'subjects', 'topics'));
     }
 
     public function create()
@@ -228,7 +260,7 @@ class QuestionController extends Controller
         // Redirect to appropriate index based on question type
         switch ($question->question_type) {
             case 'mcq':
-                return redirect()->route('partner.questions.mcq.all-question-view')
+                return redirect()->route('partner.questions.all')
                     ->with('success', 'Question deleted successfully.');
             case 'descriptive':
                 return redirect()->route('partner.questions.descriptive.index')
@@ -303,7 +335,7 @@ class QuestionController extends Controller
         $subjects = Subject::where('status', 'active')->get();
         $topics = Topic::where('status', 'active')->get();
 
-        return view('partner.questions.mcq.all-question-view', compact('questions', 'courses', 'subjects', 'topics'));
+        return view('partner.questions.all-question-view', compact('questions', 'courses', 'subjects', 'topics'));
     }
 
     public function mcqCreate()
@@ -328,8 +360,6 @@ class QuestionController extends Controller
             'option_d' => 'required|string|max:255',
             'correct_answer' => 'required|in:a,b,c,d',
             'explanation' => 'nullable|string',
-            'marks' => 'required|integer|min:1',
-            'difficulty_level' => 'required|in:1,2,3',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'tags' => 'nullable|json',
             'appearance_history' => 'nullable|json',
@@ -342,6 +372,8 @@ class QuestionController extends Controller
             $data['question_type'] = 'mcq';
             $data['partner_id'] = 1; // Default partner ID
             $data['status'] = 'active';
+            $data['marks'] = $data['marks'] ?? 1; // Default marks to 1
+            $data['difficulty_level'] = $data['difficulty_level'] ?? 2; // Default difficulty to Medium (2)
 
             if ($request->hasFile('image')) {
                 $data['image'] = $request->file('image')->store('questions', 'public');
@@ -413,7 +445,7 @@ class QuestionController extends Controller
         $subjects = Subject::where('status', 'active')->with('course')->get();
         $topics = Topic::where('status', 'active')->with('subject')->get();
 
-        return view('partner.questions.mcq.edit', compact('question', 'courses', 'subjects', 'topics'));
+        return view('partner.questions.mcq.mcq-modify', compact('question', 'courses', 'subjects', 'topics'));
     }
 
     public function mcqUpdate(Request $request, Question $question)
@@ -433,13 +465,14 @@ class QuestionController extends Controller
             'option_d' => 'required|string|max:255',
             'correct_answer' => 'required|in:a,b,c,d',
             'explanation' => 'nullable|string',
-            'marks' => 'required|integer|min:1',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'tags' => 'nullable|json',
             'appearance_history' => 'nullable|json',
         ]);
 
         $data = $request->all();
+        $data['marks'] = $data['marks'] ?? 1; // Default marks to 1
+        $data['difficulty_level'] = $data['difficulty_level'] ?? 2; // Default difficulty to Medium (2)
 
         if ($request->hasFile('image')) {
             // Delete old image

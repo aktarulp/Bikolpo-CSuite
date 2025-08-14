@@ -395,6 +395,8 @@
                         
                         <!-- Right Side: Tags Section -->
                         <div class="w-72">
+                            <!-- Tags Section -->
+                            <div class="space-y-2">
                             <div class="space-y-2">
                                 <label for="tags" class="block text-sm font-medium text-gray-700">
                                     Tags
@@ -2105,7 +2107,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Update the hidden textarea with explanation rich text editor content before submission
         const explanationContent = document.getElementById('explanationRichTextEditor').innerHTML;
-        document.getElementById('explanation').value = questionContent;
+        document.getElementById('explanation').value = explanationContent;
         
         // Validate form
         if (!validateForm()) {
@@ -2172,7 +2174,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const requiredFields = [
             'course_id', 'subject_id', 'question_text', 
             'option_a', 'option_b', 'option_c', 'option_d', 
-                            'correct_answer'
+            'correct_answer'
         ];
         
         for (const fieldName of requiredFields) {
@@ -2243,6 +2245,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Reset course/subject/topic dropdowns
         document.getElementById('subject_id').innerHTML = '<option value="">Select a subject</option>';
         document.getElementById('topic_id').innerHTML = '<option value="">Select a topic</option>';
+        
+
         
         showNotification('Form reset successfully!', 'success');
     }

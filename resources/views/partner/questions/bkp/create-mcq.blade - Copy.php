@@ -51,7 +51,7 @@
             <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Create MCQ Question</h1>
             <p class="text-gray-600 dark:text-gray-400">Add a new multiple choice question</p>
         </div>
-                 <a href="{{ route('partner.questions.mcq.all-question-view') }}" 
+                 <a href="{{ route('partner.questions.all') }}" 
             class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors duration-200">
              Back to MCQ Questions
          </a>
@@ -336,7 +336,7 @@
 
             <!-- Submit Buttons -->
             <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-gray-700">
-                                 <a href="{{ route('partner.questions.mcq.all-question-view') }}" 
+                                 <a href="{{ route('partner.questions.all') }}" 
                     class="px-6 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-700 dark:hover:bg-gray-700 transition-colors duration-200">
                      Cancel
                  </a>

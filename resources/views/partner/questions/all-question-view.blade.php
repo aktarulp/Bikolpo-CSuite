@@ -61,9 +61,9 @@
             </div>
             
             <div class="flex items-end gap-2">
-                                        <a href="{{ route('partner.questions.mcq.all-question-view') }}" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors duration-200 text-center">
-                    Clear
-                </a>
+                                                                <a href="{{ route('partner.questions.all') }}" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors duration-200 text-center">
+                            Clear
+                        </a>
                 
             </div>
         </form>

@@ -53,6 +53,7 @@ Route::prefix('partner')->name('partner.')->group(function () {
     
     // Question Management - Main Questions Dashboard (must come first)
     Route::get('questions', [QuestionController::class, 'dashboard'])->name('questions.index');
+    Route::get('questions/all', [QuestionController::class, 'allQuestions'])->name('questions.all');
     Route::get('questions/list', [QuestionController::class, 'index'])->name('questions.list');
     Route::get('questions/create', [QuestionController::class, 'create'])->name('questions.create');
     Route::post('questions', [QuestionController::class, 'store'])->name('questions.store');

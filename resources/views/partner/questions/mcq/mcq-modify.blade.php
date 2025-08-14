@@ -13,7 +13,7 @@
                     <p class="mt-2 text-gray-600">Update and modify your existing question</p>
                 </div>
                 <div class="flex items-center space-x-3">
-                    <a href="{{ route('partner.questions.mcq.all-question-view') }}" 
+                                        <a href="{{ route('partner.questions.all') }}"
                        class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
@@ -497,7 +497,7 @@
                     </div>
 
                     <div class="flex items-center space-x-4">
-                        <a href="{{ route('partner.questions.mcq.all-question-view') }}" 
+                        <a href="{{ route('partner.questions.all') }}" 
                            class="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
