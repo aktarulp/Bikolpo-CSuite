@@ -37,7 +37,6 @@ class Question extends Model
         'status',
         'tags',
         'appearance_history',
-        'draft_status',
     ];
 
     protected $casts = [
@@ -47,7 +46,6 @@ class Question extends Model
         'status' => 'string',
         'tags' => 'array',
         'appearance_history' => 'array',
-        'draft_status' => 'string',
     ];
 
     // Relationships
@@ -81,6 +79,11 @@ class Question extends Model
         return $this->belongsToMany(QuestionSet::class, 'question_set_question')
                     ->withPivot('order')
                     ->withTimestamps();
+    }
+
+    public function questionHistory()
+    {
+        return $this->hasMany(QuestionHistory::class);
     }
 
 

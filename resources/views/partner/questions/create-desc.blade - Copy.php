@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Create Comprehensive Question')
+@section('title', 'Create Descriptive Question')
 
 @section('content')
 <style>
@@ -48,8 +48,8 @@
     <!-- Page Header -->
     <div class="flex justify-between items-center">
         <div>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Create Comprehensive Question</h1>
-            <p class="text-gray-600 dark:text-gray-400">Add a new comprehensive question</p>
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Create Descriptive Question</h1>
+            <p class="text-gray-600 dark:text-gray-400">Add a new descriptive question</p>
         </div>
         <a href="{{ route('partner.questions.index') }}" 
            class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors duration-200">
@@ -57,13 +57,13 @@
         </a>
     </div>
 
-    <!-- Comprehensive Question Form -->
+    <!-- Descriptive Question Form -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
         <div class="p-6 border-b border-gray-200 dark:border-gray-700">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Question Details</h2>
         </div>
 
-        <form action="{{ route('partner.questions.comprehensive.store') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-6">
+        <form action="{{ route('partner.questions.descriptive.store') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-6">
             @csrf
             
             <!-- Course, Subject, Topic Selection -->
@@ -168,7 +168,7 @@
                         </button>
                     </div>
                     <!-- Rich Text Editor -->
-                    <div id="question_text_editor" class="min-h-[120px] p-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primaryGreen focus:ring-opacity-50" contenteditable="true" data-placeholder="Enter your comprehensive question here..."></div>
+                    <div id="question_text_editor" class="min-h-[120px] p-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primaryGreen focus:ring-opacity-50" contenteditable="true" data-placeholder="Enter your descriptive question here..."></div>
                     <input type="hidden" name="question_text" id="question_text" required>
                 </div>
                 @error('question_text')
@@ -176,110 +176,18 @@
                 @enderror
             </div>
 
-            <!-- Sub-questions or Parts -->
-            <div>
-                <label for="sub_questions" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Sub-questions or Parts (Optional)</label>
-                <textarea name="sub_questions" id="sub_questions" rows="6" 
-                          class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primaryGreen focus:ring-primaryGreen"
-                          placeholder="Break down the question into parts or sub-questions...">{{ old('sub_questions') }}</textarea>
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Break down complex questions into manageable parts for better organization</p>
-                @error('sub_questions')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
 
-            <!-- Expected Answer Structure -->
-            <div>
-                <label for="expected_answer_structure" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Expected Answer Structure</label>
-                <textarea name="expected_answer_structure" id="expected_answer_structure" rows="6" 
-                          class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primaryGreen focus:ring-primaryGreen"
-                          placeholder="Describe the expected structure and format of the answer...">{{ old('expected_answer_structure') }}</textarea>
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Guide students on how to structure their comprehensive answer</p>
-                @error('expected_answer_structure')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <!-- Key Concepts to Cover -->
-            <div>
-                <label for="key_concepts" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Key Concepts to Cover</label>
-                <textarea name="key_concepts" id="key_concepts" rows="4" 
-                          class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primaryGreen focus:ring-primaryGreen"
-                          placeholder="List the main concepts, theories, or principles that should be addressed...">{{ old('key_concepts') }}</textarea>
-                @error('key_concepts')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <!-- Sample Answer -->
-            <div>
-                <label for="sample_answer" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Sample Answer (Optional)</label>
-                <textarea name="sample_answer" id="sample_answer" rows="10" 
-                          class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primaryGreen focus:ring-primaryGreen"
-                          placeholder="Provide a comprehensive model answer...">{{ old('sample_answer') }}</textarea>
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">A detailed answer that demonstrates the expected depth and breadth of understanding</p>
-                @error('sample_answer')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <!-- Word Limit -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label for="min_words" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Minimum Words</label>
-                    <input type="number" name="min_words" id="min_words" min="100" max="2000" 
-                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primaryGreen focus:ring-primaryGreen"
-                           value="{{ old('min_words', 200) }}" placeholder="200">
-                    @error('min_words')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div>
-                    <label for="max_words" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Maximum Words</label>
-                    <input type="number" name="max_words" id="max_words" min="200" max="5000" 
-                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primaryGreen focus:ring-primaryGreen"
-                           value="{{ old('max_words', 800) }}" placeholder="800">
-                    @error('max_words')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-            </div>
-
-            <!-- Time Allocation -->
-            <div>
-                <label for="time_allocation" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Recommended Time (Minutes)</label>
-                <input type="number" name="time_allocation" id="time_allocation" min="15" max="120" 
-                       class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primaryGreen focus:ring-primaryGreen"
-                       value="{{ old('time_allocation', 45) }}" placeholder="45">
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Suggested time for students to complete this comprehensive question</p>
-                @error('time_allocation')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
 
             <!-- Additional Settings -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label for="marks" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Marks *</label>
-                    <input type="number" name="marks" id="marks" min="5" max="50" required 
-                           class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primaryGreen focus:ring-primaryGreen"
-                           value="{{ old('marks', 15) }}">
-                    @error('marks')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div>
-                    <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
-                    <select name="status" id="status" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primaryGreen focus:ring-primaryGreen">
-                        <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
-                        <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
-                    </select>
-                    @error('status')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
+            <div>
+                <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
+                <select name="status" id="status" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primaryGreen focus:ring-primaryGreen">
+                    <option value="active" {{ old('status') == 'active' ? 'selected' : '' }}>Active</option>
+                    <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                </select>
+                @error('status')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
             </div>
 
             <!-- Image Upload -->
@@ -345,7 +253,7 @@
                     Cancel
                 </a>
                 <button type="submit" 
-                        class="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md transition-colors duration-200">
+                        class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md transition-colors duration-200">
                     Create Question
                 </button>
             </div>

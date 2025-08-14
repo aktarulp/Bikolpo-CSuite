@@ -10,6 +10,7 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TopicController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuestionSetController;
+use App\Http\Controllers\QuestionHistoryController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\StudentExamController;
 
@@ -58,7 +59,6 @@ Route::prefix('partner')->name('partner.')->group(function () {
     Route::get('questions/{question}/edit', [QuestionController::class, 'edit'])->name('questions.edit');
     Route::put('questions/{question}', [QuestionController::class, 'update'])->name('questions.update');
     Route::delete('questions/{question}', [QuestionController::class, 'destroy'])->name('questions.destroy');
-    Route::post('questions/{question}/publish', [QuestionController::class, 'publish'])->name('questions.publish');
     
     Route::post('questions/check-duplicate', [QuestionController::class, 'checkDuplicate'])->name('questions.check-duplicate');
     // Dependent dropdowns for Question create
@@ -77,7 +77,6 @@ Route::prefix('partner')->name('partner.')->group(function () {
         Route::get('/{question}/edit', [QuestionController::class, 'mcqEdit'])->name('edit');
         Route::put('/{question}', [QuestionController::class, 'mcqUpdate'])->name('update');
         Route::delete('/{question}', [QuestionController::class, 'mcqDestroy'])->name('destroy');
-        Route::post('/{question}/publish', [QuestionController::class, 'publish'])->name('publish');
     });
     
     Route::prefix('questions/descriptive')->name('questions.descriptive.')->group(function () {
@@ -102,6 +101,11 @@ Route::prefix('partner')->name('partner.')->group(function () {
     Route::resource('question-sets', QuestionSetController::class);
     Route::post('question-sets/{questionSet}/add-questions', [QuestionSetController::class, 'addQuestions'])->name('question-sets.add-questions');
     Route::delete('question-sets/{questionSet}/remove-question/{question}', [QuestionSetController::class, 'removeQuestion'])->name('question-sets.remove-question');
+    
+    // Question History Management
+    Route::resource('question-history', \App\Http\Controllers\QuestionHistoryController::class);
+    Route::get('question-history/statistics', [\App\Http\Controllers\QuestionHistoryController::class, 'statistics'])->name('question-history.statistics');
+    Route::post('question-history/bulk-verify', [\App\Http\Controllers\QuestionHistoryController::class, 'bulkVerify'])->name('question-history.bulk-verify');
     
     // Exam Management
     Route::resource('exams', ExamController::class);

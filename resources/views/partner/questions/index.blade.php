@@ -3,45 +3,27 @@
 @section('title', 'Questions')
 
 @section('content')
-<div class="space-y-4">
-    <!-- Page Header -->
-    <div class="flex justify-between items-center">
-        <div>
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Questions</h1>
-            <p class="text-sm text-gray-600 dark:text-gray-400">Manage your MCQ questions</p>
-            @php
-                $draftCount = \App\Models\Question::where('draft_status', 'draft')->count();
-            @endphp
-            @if($draftCount > 0)
-                <p class="text-xs text-orange-600 dark:text-orange-400 mt-1">
-                    {{ $draftCount }} draft question{{ $draftCount > 1 ? 's' : '' }} available
-                </p>
-            @endif
-        </div>
-        <div class="flex gap-2">
-            <a href="{{ route('partner.questions.mcq.create') }}" 
-               class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-md transition-colors duration-200 flex items-center gap-1 text-sm">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                + MCQ
-            </a>
-            <a href="{{ route('partner.questions.descriptive.create') }}" 
-               class="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-md transition-colors duration-200 flex items-center gap-1 text-sm">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                </svg>
-                + Descriptive
-            </a>
-            <a href="{{ route('partner.questions.comprehensive.create') }}" 
-               class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-md transition-colors duration-200 flex items-center gap-1 text-sm">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                </svg>
-                + Comprehensive
-            </a>
-        </div>
-    </div>
+<div class="py-12">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="p-6 text-gray-900 dark:text-gray-100">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Questions Management</h2>
+                    <div class="flex space-x-3">
+                        <a href="{{ route('partner.questions.mcq.create') }}" 
+                           class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors duration-200">
+                            Create MCQ
+                        </a>
+                        <a href="{{ route('partner.questions.descriptive.create') }}" 
+                           class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md transition-colors duration-200">
+                            Create Descriptive
+                        </a>
+                        <a href="{{ route('partner.questions.comprehensive.create') }}" 
+                           class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md transition-colors duration-200">
+                            Create Comprehensive
+                        </a>
+                    </div>
+                </div>
 
     <!-- Filters -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
@@ -90,26 +72,11 @@
                     @endforeach
                 </select>
             </div>
-            <div>
-                <label class="block text-xs font-medium mb-1">Status</label>
-                <select name="draft_status" class="w-full rounded-md border p-1.5 text-sm">
-                    <option value="">All Questions</option>
-                    <option value="published" {{ request('draft_status') == 'published' ? 'selected' : '' }}>Published</option>
-                    <option value="draft" {{ request('draft_status') == 'draft' ? 'selected' : '' }}>Drafts</option>
-                </select>
-            </div>
             <div class="flex items-end">
                 <a href="{{ route('partner.questions.index') }}" class="w-full px-3 py-1.5 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors duration-200 text-center text-sm">
                     Clear Filters
                 </a>
             </div>
-            @if($draftCount > 0)
-                <div class="flex items-end">
-                    <a href="{{ route('partner.questions.index', ['draft_status' => 'draft']) }}" class="w-full px-3 py-1.5 bg-orange-500 hover:bg-orange-600 text-white rounded-md transition-colors duration-200 text-center text-sm">
-                        View Drafts ({{ $draftCount }})
-                    </a>
-                </div>
-            @endif
         </form>
     </div>
 
@@ -127,66 +94,25 @@
                     <div class="px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 border-l-4 border-transparent hover:border-primaryGreen {{ $index % 2 == 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-750' }}">
                         <div class="flex items-start gap-3">
                             <div class="flex flex-col items-start gap-1.5 min-w-[100px]">
-                                @if($question->draft_status === 'draft')
-                                    <a href="{{ route('partner.questions.edit', $question) }}" 
-                                       class="inline-flex items-center gap-1.5 px-2 py-1 text-xs text-orange-600 hover:text-orange-800 dark:text-orange-400 dark:hover:text-orange-300 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded-md transition-colors duration-200">
+                                <a href="{{ route('partner.questions.edit', $question) }}" 
+                                   class="inline-flex items-center gap-1.5 px-2 py-1 text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition-colors duration-200">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                    </svg>
+                                    Edit
+                                </a>
+                                <form action="{{ route('partner.questions.destroy', $question) }}" method="POST" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" 
+                                            class="inline-flex items-center gap-1.5 px-2 py-1 text-xs text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors duration-200"
+                                            onclick="return confirm('Are you sure you want to delete this question?')">
                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                         </svg>
-                                        Edit & Publish
-                                    </a>
-                                    <form action="{{ route('partner.questions.publish', $question) }}" method="POST" class="inline">
-                                        @csrf
-                                        <button type="submit" 
-                                                class="w-full inline-flex items-center justify-center gap-1.5 px-2 py-1 text-xs text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-md transition-colors duration-200"
-                                                onclick="return confirm('Are you sure you want to publish this draft?')">
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                            </svg>
-                                            Publish
-                                        </button>
-                                    </form>
-                                    <form action="{{ route('partner.questions.destroy', $question) }}" method="POST" class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" 
-                                                class="w-full inline-flex items-center justify-center gap-1.5 px-2 py-1 text-xs text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors duration-200"
-                                                onclick="return confirm('Are you sure you want to delete this draft?')">
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                            </svg>
-                                            Delete
-                                        </button>
-                                    </form>
-                                @else
-                                    <a href="{{ route('partner.questions.show', $question) }}" 
-                                       class="inline-flex items-center gap-1.5 px-2 py-1 text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition-colors duration-200">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                        </svg>
-                                        View
-                                    </a>
-                                    <a href="{{ route('partner.questions.edit', $question) }}" 
-                                       class="inline-flex items-center gap-1.5 px-2 py-1 text-xs text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-md transition-colors duration-200">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                        </svg>
-                                        Edit
-                                    </a>
-                                    <form action="{{ route('partner.questions.destroy', $question) }}" method="POST" class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" 
-                                                class="w-full inline-flex items-center justify-center gap-1.5 px-2 py-1 text-xs text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors duration-200"
-                                                onclick="return confirm('Are you sure you want to delete this question?')">
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                            </svg>
-                                            Delete
-                                        </button>
-                                    </form>
-                                @endif
+                                        Delete
+                                    </button>
+                                </form>
                             </div>
                             <div class="flex-1">
                                 <div class="flex items-center gap-2 mb-2 flex-wrap">
@@ -217,11 +143,6 @@
                                     @if($question->questionType)
                                         <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
                                             {{ $question->questionType->q_type_code }}
-                                        </span>
-                                    @endif
-                                    @if($question->draft_status === 'draft')
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800">
-                                            Draft
                                         </span>
                                     @endif
                                 </div>
@@ -343,7 +264,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Get all filter select elements
-    const filterSelects = document.querySelectorAll('select[name="course"], select[name="subject"], select[name="topic"], select[name="question_type"], select[name="draft_status"]');
+    const filterSelects = document.querySelectorAll('select[name="course"], select[name="subject"], select[name="topic"], select[name="question_type"]');
     
     // Add change event listener to each filter
     filterSelects.forEach(select => {
