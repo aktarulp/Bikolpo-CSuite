@@ -47,6 +47,70 @@ class QuestionController extends Controller
         return view('partner.questions.index', compact('questions', 'courses', 'subjects', 'topics', 'questionTypes'));
     }
 
+    /**
+     * Display the questions dashboard with statistics.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function dashboard()
+    {
+        // Get the authenticated user (coaching partner)
+        $user = auth()->user();
+        $partnerId = $user ? $user->id : 1; // Default partner ID if no user
+
+        // 1. Fetching simple counts
+        $totalQuestions = Question::where('partner_id', $partnerId)->count();
+        $totalMcq = Question::where('partner_id', $partnerId)
+                            ->whereHas('questionType', function($q) {
+                                $q->where('q_type_code', 'MCQ');
+                            })
+                            ->count();
+        $totalCourses = Course::where('status', 'active')->count();
+        $totalSubjects = Subject::where('status', 'active')->count();
+
+        // 2. Fetching grouped data (Course, Subject, Topic-wise status)
+        // Questions by Course
+        $questionsByCourse = Course::where('status', 'active')
+                                    ->withCount(['questions as total_questions' => function($query) use ($partnerId) {
+                                        $query->where('partner_id', $partnerId);
+                                    }])
+                                    ->get();
+
+        // Questions by Subject
+        $questionsBySubject = Subject::where('status', 'active')
+                                    ->withCount(['questions as total_questions' => function($query) use ($partnerId) {
+                                        $query->where('partner_id', $partnerId);
+                                    }])
+                                    ->get();
+
+        // Questions by Topic
+        $questionsByTopic = Topic::where('status', 'active')
+                                ->withCount(['questions as total_questions' => function($query) use ($partnerId) {
+                                    $query->where('partner_id', $partnerId);
+                                }])
+                                ->get();
+
+        // Ensure we have valid data even if queries fail
+        $totalQuestions = $totalQuestions ?: 0;
+        $totalMcq = $totalMcq ?: 0;
+        $totalCourses = $totalCourses ?: 0;
+        $totalSubjects = $totalSubjects ?: 0;
+        $questionsByCourse = $questionsByCourse ?: collect();
+        $questionsBySubject = $questionsBySubject ?: collect();
+        $questionsByTopic = $questionsByTopic ?: collect();
+
+        // Pass all the data to the Blade view
+        return view('partner.questions.question-index', compact(
+            'totalQuestions',
+            'totalMcq',
+            'totalCourses',
+            'totalSubjects',
+            'questionsByCourse',
+            'questionsBySubject',
+            'questionsByTopic'
+        ));
+    }
+
     public function create()
     {
         $courses = Course::where('status', 'active')->get();
@@ -164,7 +228,7 @@ class QuestionController extends Controller
         // Redirect to appropriate index based on question type
         switch ($question->question_type) {
             case 'mcq':
-                return redirect()->route('partner.questions.mcq.index')
+                return redirect()->route('partner.questions.mcq.all-question-view')
                     ->with('success', 'Question deleted successfully.');
             case 'descriptive':
                 return redirect()->route('partner.questions.descriptive.index')
@@ -213,7 +277,7 @@ class QuestionController extends Controller
     }
 
     // MCQ Question Methods
-    public function mcqIndex(Request $request)
+    public function mcqAllQuestionView(Request $request)
     {
         $query = Question::with(['course', 'subject', 'topic', 'partner'])
             ->where('question_type', 'mcq')
@@ -239,7 +303,7 @@ class QuestionController extends Controller
         $subjects = Subject::where('status', 'active')->get();
         $topics = Topic::where('status', 'active')->get();
 
-        return view('partner.questions.mcq.index', compact('questions', 'courses', 'subjects', 'topics'));
+        return view('partner.questions.mcq.all-question-view', compact('questions', 'courses', 'subjects', 'topics'));
     }
 
     public function mcqCreate()
@@ -248,7 +312,7 @@ class QuestionController extends Controller
         $subjects = Subject::where('status', 'active')->with('course')->get();
         $topics = Topic::where('status', 'active')->with('subject')->get();
 
-        return view('partner.questions.create-mcq', compact('courses', 'subjects', 'topics'));
+        return view('partner.questions.mcq.create-mcq', compact('courses', 'subjects', 'topics'));
     }
 
     public function mcqStore(Request $request)
@@ -256,7 +320,7 @@ class QuestionController extends Controller
         $request->validate([
             'course_id' => 'required|exists:courses,id',
             'subject_id' => 'required|exists:subjects,id',
-            'topic_id' => 'required|exists:topics,id',
+            'topic_id' => 'nullable|exists:topics,id',
             'question_text' => 'required|string|max:1000',
             'option_a' => 'required|string|max:255',
             'option_b' => 'required|string|max:255',
@@ -342,6 +406,9 @@ class QuestionController extends Controller
             abort(404);
         }
 
+        // Load the question with its relationships
+        $question->load(['course', 'subject', 'topic']);
+
         $courses = Course::where('status', 'active')->get();
         $subjects = Subject::where('status', 'active')->with('course')->get();
         $topics = Topic::where('status', 'active')->with('subject')->get();
@@ -358,7 +425,7 @@ class QuestionController extends Controller
         $request->validate([
             'course_id' => 'required|exists:courses,id',
             'subject_id' => 'required|exists:subjects,id',
-            'topic_id' => 'required|exists:topics,id',
+            'topic_id' => 'nullable|exists:topics,id',
             'question_text' => 'required|string|max:1000',
             'option_a' => 'required|string|max:255',
             'option_b' => 'required|string|max:255',

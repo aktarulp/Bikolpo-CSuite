@@ -13,7 +13,7 @@
                     <p class="mt-2 text-gray-600">Update and modify your existing question</p>
                 </div>
                 <div class="flex items-center space-x-3">
-                    <a href="{{ route('partner.questions.mcq.index') }}" 
+                    <a href="{{ route('partner.questions.mcq.all-question-view') }}" 
                        class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
@@ -57,7 +57,7 @@
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white">
                                 <option value="">Select a course</option>
                                 @foreach($courses ?? [] as $course)
-                                    <option value="{{ $course->id }}" {{ old('course_id', $question->course_id) == $course->id ? 'selected' : '' }}>
+                                    <option value="{{ $course->id }}" {{ old('course_id', $question->course_id ?? $question->course->id ?? '') == $course->id ? 'selected' : '' }}>
                                         {{ $course->name }}
                                     </option>
                                 @endforeach
@@ -76,7 +76,7 @@
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white">
                                 <option value="">Select a subject</option>
                                 @foreach($subjects ?? [] as $subject)
-                                    <option value="{{ $subject->id }}" {{ old('subject_id', $question->subject_id) == $subject->id ? 'selected' : '' }}>
+                                    <option value="{{ $subject->id }}" {{ old('subject_id', $question->subject_id ?? $question->subject->id ?? '') == $subject->id ? 'selected' : '' }}>
                                         {{ $subject->name }}
                                     </option>
                                 @endforeach
@@ -89,13 +89,13 @@
                         <!-- Topic Selection -->
                         <div class="space-y-2">
                             <label for="topic_id" class="block text-sm font-medium text-gray-700">
-                                Topic <span class="text-red-500">*</span>
+                                Topic <span class="text-gray-400">(Optional)</span>
                             </label>
-                            <select name="topic_id" id="topic_id" required
+                            <select name="topic_id" id="topic_id"
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white">
-                                <option value="">Select a topic</option>
+                                <option value="">Select a topic (optional)</option>
                                 @foreach($topics ?? [] as $topic)
-                                    <option value="{{ $topic->id }}" {{ old('topic_id', $question->topic_id) == $topic->id ? 'selected' : '' }}>
+                                    <option value="{{ $topic->id }}" {{ old('topic_id', $question->topic_id ?? $question->topic->id ?? '') == $topic->id ? 'selected' : '' }}>
                                         {{ $topic->name }}
                                     </option>
                                 @endforeach
@@ -302,23 +302,7 @@
                          </div>
                      </div>
                      
-                     <!-- Marks Field -->
-                     <div class="mt-4 flex items-center space-x-4">
-                         <div class="flex items-center space-x-2">
-                             <label for="marks" class="text-sm font-medium text-gray-700">Marks:</label>
-                             <input type="number" name="marks" id="marks" min="1" max="100" value="{{ old('marks', $question->marks) }}" required
-                                    class="w-20 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
-                         </div>
-                         <div class="flex items-center space-x-2">
-                             <label for="difficulty_level" class="text-sm font-medium text-gray-700">Difficulty:</label>
-                             <select name="difficulty_level" id="difficulty_level" required
-                                     class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
-                                 <option value="1" {{ old('difficulty_level', $question->difficulty_level ?? 2) == 1 ? 'selected' : '' }}>Easy</option>
-                                 <option value="2" {{ old('difficulty_level', $question->difficulty_level ?? 2) == 2 ? 'selected' : '' }}>Medium</option>
-                                 <option value="3" {{ old('difficulty_level', $question->difficulty_level ?? 2) == 3 ? 'selected' : '' }}>Hard</option>
-                             </select>
-                         </div>
-                     </div>
+
                 </div>
 
 
@@ -513,8 +497,8 @@
                     </div>
 
                     <div class="flex items-center space-x-4">
-                        <a href="{{ route('partner.questions.mcq.index') }}" 
-                           class="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
+                        <a href="{{ route('partner.questions.mcq.all-question-view') }}" 
+                           class="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
@@ -1741,10 +1725,47 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Initialize dependent dropdowns on page load
-    if (courseSelect.value) {
-        courseSelect.dispatchEvent(new Event('change'));
+    // Function to initialize dependent dropdowns with current values
+    function initializeDependentDropdowns() {
+        if (courseSelect.value) {
+            // Populate subjects based on current course
+            const courseId = courseSelect.value;
+            const filteredSubjects = allSubjects.filter(subject => subject.course_id == courseId);
+            
+            // Clear and populate subjects
+            subjectSelect.innerHTML = '<option value="">Select a subject</option>';
+            filteredSubjects.forEach(subject => {
+                const option = document.createElement('option');
+                option.value = subject.id;
+                option.textContent = subject.name;
+                if (subject.id == subjectSelect.value) {
+                    option.selected = true;
+                }
+                subjectSelect.appendChild(option);
+            });
+            
+            // If subject is selected, populate topics
+            if (subjectSelect.value) {
+                const subjectId = subjectSelect.value;
+                const filteredTopics = allTopics.filter(topic => topic.subject_id == subjectId);
+                
+                // Clear and populate topics
+                topicSelect.innerHTML = '<option value="">Select a topic</option>';
+                filteredTopics.forEach(topic => {
+                    const option = document.createElement('option');
+                    option.value = topic.id;
+                    option.textContent = topic.name;
+                    if (topic.id == topicSelect.value) {
+                        option.selected = true;
+                    }
+                    topicSelect.appendChild(option);
+                });
+            }
+        }
     }
+    
+    // Initialize dependent dropdowns on page load
+    initializeDependentDropdowns();
     
     // Preview button functionality
     document.getElementById('previewBtn')?.addEventListener('click', function() {
@@ -1792,8 +1813,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <p><strong>Course:</strong> ${courseSelect.options[courseSelect.selectedIndex]?.text || 'Not selected'}</p>
                     <p><strong>Subject:</strong> ${subjectSelect.options[subjectSelect.selectedIndex]?.text || 'Not selected'}</p>
                     <p><strong>Topic:</strong> ${topicSelect.options[topicSelect.selectedIndex]?.text || 'Not selected'}</p>
-                    <p><strong>Marks:</strong> ${formData.get('marks')}</p>
-                    <p><strong>Difficulty:</strong> ${formData.get('difficulty_level') === '1' ? 'Easy' : formData.get('difficulty_level') === '2' ? 'Medium' : 'Hard'}</p>
+
                 </div>
             </div>
         `;

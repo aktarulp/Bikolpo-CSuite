@@ -51,8 +51,9 @@ Route::prefix('partner')->name('partner.')->group(function () {
     Route::get('batches/trashed', [\App\Http\Controllers\BatchController::class, 'trashed'])->name('batches.trashed');
     Route::post('batches/{id}/restore', [\App\Http\Controllers\BatchController::class, 'restore'])->name('batches.restore');
     
-    // Question Management - Main Questions Index (must come first)
-    Route::get('questions', [QuestionController::class, 'index'])->name('questions.index');
+    // Question Management - Main Questions Dashboard (must come first)
+    Route::get('questions', [QuestionController::class, 'dashboard'])->name('questions.index');
+    Route::get('questions/list', [QuestionController::class, 'index'])->name('questions.list');
     Route::get('questions/create', [QuestionController::class, 'create'])->name('questions.create');
     Route::post('questions', [QuestionController::class, 'store'])->name('questions.store');
     Route::get('questions/{question}', [QuestionController::class, 'show'])->name('questions.show');
@@ -67,7 +68,7 @@ Route::prefix('partner')->name('partner.')->group(function () {
     
     // Question Types - MCQ, Descriptive, Comprehensive
     Route::prefix('questions/mcq')->name('questions.mcq.')->group(function () {
-        Route::get('/', [QuestionController::class, 'mcqIndex'])->name('index');
+        Route::get('/', [QuestionController::class, 'mcqAllQuestionView'])->name('all-question-view');
         Route::get('/create', [QuestionController::class, 'mcqCreate'])->name('create');
         Route::post('/', [QuestionController::class, 'mcqStore'])->name('store');
         Route::get('/view', function() {

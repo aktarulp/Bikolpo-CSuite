@@ -80,6 +80,15 @@
             background-color: #374151;
             border-color: #4b5563;
         }
+
+        /* Dropdown styling */
+        .dropdown-menu {
+            z-index: 1000;
+        }
+        
+        .dropdown-menu[x-cloak] {
+            display: none !important;
+        }
     </style>
 
     @stack('styles')
@@ -183,14 +192,71 @@
                     <span>Topics</span>
                 </a>
 
-                <!-- Questions Menu - Direct Link -->
-                <a href="{{ route('partner.questions.index') }}" 
-                   class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-primaryGreen hover:text-white transition-colors duration-200 {{ request()->routeIs('partner.questions.*') ? 'bg-primaryGreen text-white' : '' }}">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span>Questions</span>
-                </a>
+                                <!-- Questions Menu - Expandable -->
+                <div x-data="{ open: false }" 
+                     x-init="if (window.location.pathname.includes('/questions')) { open = true }"
+                     class="space-y-1">
+                    <button @click="open = true; window.location.href = '{{ route('partner.questions.index') }}'"
+                            class="flex items-center justify-between w-full px-4 py-3 rounded-lg hover:bg-primaryGreen hover:text-white transition-colors duration-200 {{ request()->routeIs('partner.questions.*') ? 'bg-primaryGreen text-white' : '' }}">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>Questions</span>
+                        </div>
+                        <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    
+                    <!-- Expandable Submenu -->
+                    <div x-show="open" 
+                         x-cloak
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 transform -translate-y-2"
+                         x-transition:enter-end="opacity-100 transform translate-y-0"
+                         x-transition:leave="transition ease-in duration-150"
+                         x-transition:leave-start="opacity-100 transform translate-y-0"
+                         x-transition:leave-end="opacity-0 transform -translate-y-2"
+                         class="space-y-1 pl-8">
+                        
+                        <a href="{{ route('partner.questions.list') }}" 
+                           @click.stop
+                           class="flex items-center gap-3 px-4 py-2 text-sm rounded-lg hover:bg-primaryGreen hover:text-white transition-colors duration-200 {{ request()->routeIs('partner.questions.list') ? 'bg-primaryGreen text-white' : 'text-gray-600 dark:text-gray-300' }}">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                            </svg>
+                            <span>View All Questions</span>
+                        </a>
+                        
+                        <a href="{{ route('partner.questions.mcq.create') }}" 
+                           @click.stop
+                           class="flex items-center gap-3 px-4 py-2 text-sm rounded-lg hover:bg-primaryGreen hover:text-white transition-colors duration-200 {{ request()->routeIs('partner.questions.mcq.create') ? 'bg-primaryGreen text-white' : 'text-gray-600 dark:text-gray-300' }}">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                            <span>+MCQ</span>
+                        </a>
+                        
+                        <a href="{{ route('partner.questions.descriptive.create') }}" 
+                           @click.stop
+                           class="flex items-center gap-3 px-4 py-2 text-sm rounded-lg hover:bg-primaryGreen hover:text-white transition-colors duration-200 {{ request()->routeIs('partner.questions.descriptive.create') ? 'bg-primaryGreen text-white' : 'text-gray-600 dark:text-gray-300' }}">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                            <span>+Descriptive</span>
+                        </a>
+                        
+                        <a href="{{ route('partner.questions.comprehensive.create') }}" 
+                           @click.stop
+                           class="flex items-center gap-3 px-4 py-2 text-sm rounded-lg hover:bg-primaryGreen hover:text-white transition-colors duration-200 {{ request()->routeIs('partner.questions.comprehensive.create') ? 'bg-primaryGreen text-white' : 'text-gray-600 dark:text-gray-300' }}">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                            <span>+Comprehensive</span>
+                        </a>
+                    </div>
+                </div>
 
                 <a href="{{ route('partner.question-sets.index') }}" 
                    class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-primaryGreen hover:text-white transition-colors duration-200 {{ request()->routeIs('partner.question-sets.*') ? 'bg-primaryGreen text-white' : '' }}">
@@ -275,6 +341,28 @@
                 hamburgerIcon.classList.remove('hidden');
                 closeIcon.classList.add('hidden');
                 document.body.classList.remove('body-no-scroll');
+            }
+        });
+
+        // Close dropdowns when clicking outside (but not on navigation links)
+        document.addEventListener('click', (e) => {
+            // Don't close if clicking on navigation links or within the sidebar
+            if (e.target.closest('a[href]') || e.target.closest('#sidebar')) {
+                return;
+            }
+            
+            // Don't close if clicking on the Questions submenu items
+            if (e.target.closest('[x-data*="open"]') && e.target.closest('a[href]')) {
+                return;
+            }
+            
+            if (!e.target.closest('[x-data*="open"]')) {
+                const dropdowns = document.querySelectorAll('[x-data*="open"]');
+                dropdowns.forEach(dropdown => {
+                    if (Alpine.$data(dropdown)) {
+                        Alpine.$data(dropdown).open = false;
+                    }
+                });
             }
         });
     </script>

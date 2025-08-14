@@ -8,13 +8,7 @@
         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900 dark:text-gray-100">
                 <div class="flex justify-between items-center mb-6">
-                    <div class="flex items-center space-x-4">
-                        <h2 class="text-2xl font-bold">Questions Management</h2>
-                        <a href="{{ route('partner.questions.index') }}" 
-                           class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md transition-colors duration-200 text-sm">
-                            ← Back to Dashboard
-                        </a>
-                    </div>
+                    <h2 class="text-2xl font-bold">Questions Management</h2>
                     <div class="flex space-x-3">
                         <a href="{{ route('partner.questions.mcq.create') }}" 
                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors duration-200">

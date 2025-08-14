@@ -78,11 +78,11 @@
                         <!-- Topic Selection -->
                         <div class="space-y-2">
                             <label for="topic_id" class="block text-sm font-medium text-gray-700">
-                                Topic <span class="text-red-500">*</span>
+                                Topic <span class="text-gray-400">(Optional)</span>
                             </label>
-                            <select name="topic_id" id="topic_id" required
+                            <select name="topic_id" id="topic_id"
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white">
-                                <option value="">Select a topic</option>
+                                <option value="">Select a topic (optional)</option>
                                 @foreach($topics ?? [] as $topic)
                                     <option value="{{ $topic->id }}">{{ $topic->name }}</option>
                                 @endforeach
@@ -278,23 +278,7 @@
                          </div>
                      </div>
                      
-                     <!-- Marks Field -->
-                     <div class="mt-4 flex items-center space-x-4">
-                         <div class="flex items-center space-x-2">
-                             <label for="marks" class="text-sm font-medium text-gray-700">Marks:</label>
-                             <input type="number" name="marks" id="marks" min="1" max="100" value="1" required
-                                    class="w-20 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
-                         </div>
-                         <div class="flex items-center space-x-2">
-                             <label for="difficulty_level" class="text-sm font-medium text-gray-700">Difficulty:</label>
-                             <select name="difficulty_level" id="difficulty_level" required
-                                     class="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
-                                 <option value="1">Easy</option>
-                                 <option value="2" selected>Medium</option>
-                                 <option value="3">Hard</option>
-                             </select>
-                         </div>
-                     </div>
+
                 </div>
 
 
@@ -2186,9 +2170,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Form validation function
     function validateForm() {
         const requiredFields = [
-            'course_id', 'subject_id', 'topic_id', 'question_text', 
+            'course_id', 'subject_id', 'question_text', 
             'option_a', 'option_b', 'option_c', 'option_d', 
-            'correct_answer', 'marks', 'difficulty_level'
+                            'correct_answer'
         ];
         
         for (const fieldName of requiredFields) {

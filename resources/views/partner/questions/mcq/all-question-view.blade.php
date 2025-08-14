@@ -61,7 +61,7 @@
             </div>
             
             <div class="flex items-end gap-2">
-                <a href="{{ route('partner.questions.mcq.index') }}" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors duration-200 text-center">
+                                        <a href="{{ route('partner.questions.mcq.all-question-view') }}" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors duration-200 text-center">
                     Clear
                 </a>
                 
@@ -127,7 +127,7 @@
                                 </div>
                                 
                                 <h3 class="text-base font-medium text-gray-900 dark:text-white mb-3 leading-relaxed flex items-center gap-2">
-                                    {{ Str::limit(strip_tags($question->question_text), 150) }}
+                                    {!! Str::limit($question->question_text, 150) !!}
                                     @if($question->image)
                                         <div class="relative group">
                                             <svg class="w-4 h-4 text-blue-500 hover:text-blue-700 cursor-pointer transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="View Image">
@@ -152,7 +152,7 @@
                                 <div class="flex flex-wrap gap-2 text-sm">
                                     <span class="inline-flex items-center px-3 py-2 rounded-lg shadow-sm {{ $question->correct_answer === 'a' ? 'bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/40 dark:to-emerald-900/40 border-2 border-green-300 dark:border-green-600 text-green-800 dark:text-green-200 font-medium shadow-green-100 dark:shadow-green-900/20' : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-500 transition-colors duration-200' }}">
                                         <span class="font-bold mr-2 text-sm {{ $question->correct_answer === 'a' ? 'text-green-700 dark:text-green-300' : 'text-gray-500 dark:text-gray-400' }}">A</span> 
-                                        {{ Str::limit($question->option_a, 40) }}
+                                        {!! Str::limit($question->option_a, 40) !!}
                                         @if($question->correct_answer === 'a')
                                             <svg class="w-4 h-4 ml-2 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
@@ -161,7 +161,7 @@
                                     </span>
                                     <span class="inline-flex items-center px-3 py-2 rounded-lg shadow-sm {{ $question->correct_answer === 'b' ? 'bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/40 dark:to-emerald-900/40 border-2 border-green-300 dark:border-green-600 text-green-800 dark:text-green-200 font-medium shadow-green-100 dark:shadow-green-900/20' : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-500 transition-colors duration-200' }}">
                                         <span class="font-bold mr-2 text-sm {{ $question->correct_answer === 'b' ? 'text-green-700 dark:text-green-300' : 'text-gray-500 dark:text-gray-400' }}">B</span> 
-                                        {{ Str::limit($question->option_b, 40) }}
+                                        {!! Str::limit($question->option_b, 40) !!}
                                         @if($question->correct_answer === 'b')
                                             <svg class="w-4 h-4 ml-2 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
@@ -170,7 +170,7 @@
                                     </span>
                                     <span class="inline-flex items-center px-3 py-2 rounded-lg shadow-sm {{ $question->correct_answer === 'c' ? 'bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/40 dark:to-emerald-900/40 border-2 border-green-300 dark:border-green-600 text-green-800 dark:text-green-200 font-medium shadow-green-100 dark:shadow-green-900/20' : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-500 transition-colors duration-200' }}">
                                         <span class="font-bold mr-2 text-sm {{ $question->correct_answer === 'c' ? 'text-green-700 dark:text-green-300' : 'text-gray-500 dark:text-gray-400' }}">C</span> 
-                                        {{ Str::limit($question->option_c, 40) }}
+                                        {!! Str::limit($question->option_c, 40) !!}
                                         @if($question->correct_answer === 'c')
                                             <svg class="w-4 h-4 ml-2 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
@@ -179,7 +179,7 @@
                                     </span>
                                     <span class="inline-flex items-center px-3 py-2 rounded-lg shadow-sm {{ $question->correct_answer === 'd' ? 'bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/40 dark:to-emerald-900/40 border-2 border-green-300 dark:border-green-600 text-green-800 dark:text-green-200 font-medium shadow-green-100 dark:shadow-green-900/20' : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-500 transition-colors duration-200' }}">
                                         <span class="font-bold mr-2 text-sm {{ $question->correct_answer === 'd' ? 'text-green-700 dark:text-green-300' : 'text-gray-500 dark:text-gray-400' }}">D</span> 
-                                        {{ Str::limit($question->option_d, 40) }}
+                                        {!! Str::limit($question->option_d, 40) !!}
                                         @if($question->correct_answer === 'd')
                                             <svg class="w-4 h-4 ml-2 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
