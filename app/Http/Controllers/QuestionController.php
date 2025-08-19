@@ -49,66 +49,14 @@ class QuestionController extends Controller
 
     /**
      * Display the questions dashboard with statistics.
+     * Now redirects to all questions view.
      *
-     * @return \Illuminate\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function dashboard()
     {
-        // Get the authenticated user (coaching partner)
-        $user = auth()->user();
-        $partnerId = $user ? $user->id : 1; // Default partner ID if no user
-
-        // 1. Fetching simple counts
-        $totalQuestions = Question::where('partner_id', $partnerId)->count();
-        $totalMcq = Question::where('partner_id', $partnerId)
-                            ->whereHas('questionType', function($q) {
-                                $q->where('q_type_code', 'MCQ');
-                            })
-                            ->count();
-        $totalCourses = Course::where('status', 'active')->count();
-        $totalSubjects = Subject::where('status', 'active')->count();
-
-        // 2. Fetching grouped data (Course, Subject, Topic-wise status)
-        // Questions by Course
-        $questionsByCourse = Course::where('status', 'active')
-                                    ->withCount(['questions as total_questions' => function($query) use ($partnerId) {
-                                        $query->where('partner_id', $partnerId);
-                                    }])
-                                    ->get();
-
-        // Questions by Subject
-        $questionsBySubject = Subject::where('status', 'active')
-                                    ->withCount(['questions as total_questions' => function($query) use ($partnerId) {
-                                        $query->where('partner_id', $partnerId);
-                                    }])
-                                    ->get();
-
-        // Questions by Topic
-        $questionsByTopic = Topic::where('status', 'active')
-                                ->withCount(['questions as total_questions' => function($query) use ($partnerId) {
-                                    $query->where('partner_id', $partnerId);
-                                }])
-                                ->get();
-
-        // Ensure we have valid data even if queries fail
-        $totalQuestions = $totalQuestions ?: 0;
-        $totalMcq = $totalMcq ?: 0;
-        $totalCourses = $totalCourses ?: 0;
-        $totalSubjects = $totalSubjects ?: 0;
-        $questionsByCourse = $questionsByCourse ?: collect();
-        $questionsBySubject = $questionsBySubject ?: collect();
-        $questionsByTopic = $questionsByTopic ?: collect();
-
-        // Pass all the data to the Blade view
-        return view('partner.questions.question-dashboard', compact(
-            'totalQuestions',
-            'totalMcq',
-            'totalCourses',
-            'totalSubjects',
-            'questionsByCourse',
-            'questionsBySubject',
-            'questionsByTopic'
-        ));
+        // Redirect to all questions view instead of showing dashboard
+        return redirect()->route('partner.questions.all');
     }
 
     /**
@@ -118,9 +66,33 @@ class QuestionController extends Controller
      */
     public function allQuestions(Request $request)
     {
-        $query = Question::with(['course', 'subject', 'topic', 'partner'])
-            ->where('question_type', 'mcq')
+        $query = Question::with(['course', 'subject', 'topic', 'partner', 'questionType'])
             ->where('partner_id', 1); // Default partner ID
+
+        // Apply search filter
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('question_text', 'like', "%{$search}%")
+                  ->orWhere('option_a', 'like', "%{$search}%")
+                  ->orWhere('option_b', 'like', "%{$search}%")
+                  ->orWhere('option_c', 'like', "%{$search}%")
+                  ->orWhere('option_d', 'like', "%{$search}%")
+                  ->orWhere('explanation', 'like', "%{$search}%")
+                  ->orWhereHas('topic.subject.course', function($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('topic.subject', function($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('topic', function($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('questionType', function($q) use ($search) {
+                      $q->where('q_type_name', 'like', "%{$search}%");
+                  });
+            });
+        }
 
         // Apply filters
         if ($request->filled('course_filter')) {
@@ -135,12 +107,37 @@ class QuestionController extends Controller
             $query->where('topic_id', $request->topic_filter);
         }
 
+        if ($request->filled('question_type_filter')) {
+            $query->whereHas('questionType', function($q) use ($request) {
+                $q->where('q_type_code', $request->question_type_filter);
+            });
+        }
+
         $questions = $query->latest()->paginate(15);
+        
+        // Append search parameter to pagination links
+        if ($request->filled('search')) {
+            $questions->appends(['search' => $request->search]);
+        }
+        if ($request->filled('course_filter')) {
+            $questions->appends(['course_filter' => $request->course_filter]);
+        }
+        if ($request->filled('subject_filter')) {
+            $questions->appends(['subject_filter' => $request->subject_filter]);
+        }
+        if ($request->filled('topic_filter')) {
+            $questions->appends(['topic_filter' => $request->topic_filter]);
+        }
+        if ($request->filled('question_type_filter')) {
+            $questions->appends(['question_type_filter' => $request->question_type_filter]);
+        }
+        
         $courses = Course::where('status', 'active')->get();
         $subjects = Subject::where('status', 'active')->get();
         $topics = Topic::where('status', 'active')->get();
+        $questionTypes = QuestionType::where('status', 'active')->orderBy('sort_order')->get();
 
-        return view('partner.questions.all-question-view', compact('questions', 'courses', 'subjects', 'topics'));
+        return view('partner.questions.all-question-view', compact('questions', 'courses', 'subjects', 'topics', 'questionTypes'));
     }
 
     public function create()
@@ -195,8 +192,6 @@ class QuestionController extends Controller
                 return redirect()->route('partner.questions.mcq.edit', $question);
             case 'descriptive':
                 return redirect()->route('partner.questions.descriptive.edit', $question);
-            case 'comprehensive':
-                return redirect()->route('partner.questions.comprehensive.edit', $question);
             default:
                 abort(404, 'Unknown question type');
         }
@@ -210,8 +205,6 @@ class QuestionController extends Controller
                 return redirect()->route('partner.questions.mcq.edit', $question);
             case 'descriptive':
                 return redirect()->route('partner.questions.descriptive.edit', $question);
-            case 'comprehensive':
-                return redirect()->route('partner.questions.comprehensive.edit', $question);
             default:
                 abort(404, 'Unknown question type');
         }
@@ -264,9 +257,6 @@ class QuestionController extends Controller
                     ->with('success', 'Question deleted successfully.');
             case 'descriptive':
                 return redirect()->route('partner.questions.descriptive.index')
-                    ->with('success', 'Question deleted successfully.');
-            case 'comprehensive':
-                return redirect()->route('partner.questions.comprehensive.index')
                     ->with('success', 'Question deleted successfully.');
             default:
                 return redirect()->route('partner.questions.index')
@@ -519,14 +509,8 @@ class QuestionController extends Controller
         $request->validate([
             'course_id' => 'required|exists:courses,id',
             'subject_id' => 'required|exists:subjects,id',
-            'topic_id' => 'required|exists:topics,id',
-            'question_text' => 'required|string|max:1000',
-            'expected_answer_points' => 'nullable|string',
-            'sample_answer' => 'nullable|string',
-            'min_words' => 'nullable|integer|min:10|max:1000',
-            'max_words' => 'nullable|integer|min:50|max:2000',
-            'difficulty_level' => 'required|in:1,2,3',
-            'marks' => 'required|integer|min:1|max:20',
+            'topic_id' => 'nullable|exists:topics,id',
+            'question_text' => 'required|string|max:5000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'tags' => 'nullable|json',
             'appearance_history' => 'nullable|json',
@@ -535,12 +519,63 @@ class QuestionController extends Controller
         $data = $request->all();
         $data['question_type'] = 'descriptive';
         $data['partner_id'] = 1; // Default partner ID
+        
+        // Handle empty topic_id
+        if (empty($data['topic_id'])) {
+            $data['topic_id'] = null;
+        }
+        
+        // Set default values for required fields
+        $data['status'] = 'active';
+        $data['difficulty_level'] = 2; // Default to medium
+        $data['marks'] = 5; // Default to 5 marks
+        
+        // Set MCQ fields to null for descriptive questions
+        $data['option_a'] = null;
+        $data['option_b'] = null;
+        $data['option_c'] = null;
+        $data['option_d'] = null;
+        $data['correct_answer'] = null;
 
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('questions', 'public');
         }
 
-        Question::create($data);
+        try {
+            \DB::beginTransaction();
+
+            // Create the question
+            $question = Question::create($data);
+
+            // Handle question history if available
+            if ($request->filled('appearance_history')) {
+                $appearanceHistory = json_decode($request->appearance_history, true);
+                
+                if (is_array($appearanceHistory) && !empty($appearanceHistory)) {
+                    foreach ($appearanceHistory as $history) {
+                        \App\Models\QuestionHistory::create([
+                            'question_id' => $question->id,
+                            'partner_id' => $data['partner_id'],
+                            'public_exam_name' => $history['exam_name'] ?? null,
+                            'private_exam_name' => $history['exam_name'] ?? null,
+                            'exam_month' => $history['exam_month'] ?? null,
+                            'exam_year' => $history['exam_year'] ?? null,
+                            'exam_board' => $history['exam_board'] ?? null,
+                            'subject_name' => $data['subject_id'] ? \App\Models\Subject::find($data['subject_id'])->name : null,
+                            'topic_name' => $data['topic_id'] ? \App\Models\Topic::find($data['topic_id'])->name : null,
+                            'is_verified' => false,
+                        ]);
+                    }
+                }
+            }
+
+            \DB::commit();
+        } catch (\Exception $e) {
+            \DB::rollback();
+            
+            return redirect()->route('partner.questions.index')
+                ->with('error', 'Error creating descriptive question: ' . $e->getMessage());
+        }
 
         $message = 'Descriptive question created successfully.';
 
@@ -548,50 +583,5 @@ class QuestionController extends Controller
             ->with('success', $message);
     }
 
-    // Comprehensive Question Methods
-    public function comprehensiveCreate()
-    {
-        $courses = Course::where('status', 'active')->get();
-        $subjects = Subject::where('status', 'active')->get();
-        $topics = Topic::where('status', 'active')->get();
 
-        return view('partner.questions.create-comp', compact('courses', 'subjects', 'topics'));
-    }
-
-    public function comprehensiveStore(Request $request)
-    {
-        $request->validate([
-            'course_id' => 'required|exists:courses,id',
-            'subject_id' => 'required|exists:subjects,id',
-            'topic_id' => 'required|exists:topics,id',
-            'question_text' => 'required|string|max:1000',
-            'sub_questions' => 'nullable|string',
-            'expected_answer_structure' => 'nullable|string',
-            'key_concepts' => 'nullable|string',
-            'sample_answer' => 'nullable|string',
-            'min_words' => 'nullable|integer|min:100|max:2000',
-            'max_words' => 'nullable|integer|min:200|max:5000',
-            'time_allocation' => 'nullable|integer|min:15|max:120',
-            'difficulty_level' => 'required|in:1,2,3',
-            'marks' => 'required|integer|min:5|max:50',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'tags' => 'nullable|json',
-            'appearance_history' => 'nullable|json',
-        ]);
-
-        $data = $request->all();
-        $data['question_type'] = 'comprehensive';
-        $data['partner_id'] = 1; // Default partner ID
-
-        if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('questions', 'public');
-        }
-
-        Question::create($data);
-
-        $message = 'Comprehensive question created successfully.';
-
-        return redirect()->route('partner.questions.index')
-            ->with('success', $message);
-    }
 }

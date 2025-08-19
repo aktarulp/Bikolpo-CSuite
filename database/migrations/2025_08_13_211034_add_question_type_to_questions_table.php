@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('questions', function (Blueprint $table) {
             if (!Schema::hasColumn('questions', 'question_type')) {
-                $table->enum('question_type', ['mcq', 'descriptive', 'comprehensive'])->default('mcq')->after('partner_id');
+                $table->enum('question_type', ['mcq', 'descriptive'])->default('mcq')->after('partner_id');
             }
         });
     }

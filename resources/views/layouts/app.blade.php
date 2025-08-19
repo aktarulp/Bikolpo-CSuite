@@ -196,8 +196,8 @@
                 <div x-data="{ open: false }" 
                      x-init="if (window.location.pathname.includes('/questions')) { open = true }"
                      class="space-y-1">
-                    <button @click="open = true; window.location.href = '{{ route('partner.questions.index') }}'"
-                            class="flex items-center justify-between w-full px-4 py-3 rounded-lg hover:bg-primaryGreen hover:text-white transition-colors duration-200 {{ request()->routeIs('partner.questions.*') ? 'bg-primaryGreen text-white' : '' }}">
+                    <a href="{{ route('partner.questions.all') }}" 
+                       class="flex items-center justify-between w-full px-4 py-3 rounded-lg hover:bg-primaryGreen hover:text-white transition-colors duration-200 {{ request()->routeIs('partner.questions.*') ? 'bg-primaryGreen text-white' : '' }}">
                         <div class="flex items-center gap-3">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -207,7 +207,7 @@
                         <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                         </svg>
-                    </button>
+                    </a>
                     
                     <!-- Expandable Submenu -->
                     <div x-show="open" 
@@ -220,15 +220,7 @@
                          x-transition:leave-end="opacity-0 transform -translate-y-2"
                          class="space-y-1 pl-8">
                         
-                        <a href="{{ route('partner.questions.all') }}" 
-                           @click.stop
-                           class="flex items-center gap-3 px-4 py-2 text-sm rounded-lg hover:bg-primaryGreen hover:text-white transition-colors duration-200 {{ request()->routeIs('partner.questions.all') ? 'bg-primaryGreen text-white' : 'text-gray-600 dark:text-gray-300' }}">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                            </svg>
-                            <span>View All Questions</span>
-                        </a>
-                        
+
                         <a href="{{ route('partner.questions.mcq.create') }}" 
                            @click.stop
                            class="flex items-center gap-3 px-4 py-2 text-sm rounded-lg hover:bg-primaryGreen hover:text-white transition-colors duration-200 {{ request()->routeIs('partner.questions.mcq.create') ? 'bg-primaryGreen text-white' : 'text-gray-600 dark:text-gray-300' }}">
@@ -246,15 +238,7 @@
                             </svg>
                             <span>Descriptive</span>
                         </a>
-                        
-                        <a href="{{ route('partner.questions.comprehensive.create') }}" 
-                           @click.stop
-                           class="flex items-center gap-3 px-4 py-2 text-sm rounded-lg hover:bg-primaryGreen hover:text-white transition-colors duration-200 {{ request()->routeIs('partner.questions.comprehensive.create') ? 'bg-primaryGreen text-white' : 'text-gray-600 dark:text-gray-300' }}">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                            <span>Comprehensive</span>
-                        </a>
+
                     </div>
                 </div>
 

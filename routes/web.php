@@ -52,7 +52,7 @@ Route::prefix('partner')->name('partner.')->group(function () {
     Route::post('batches/{id}/restore', [\App\Http\Controllers\BatchController::class, 'restore'])->name('batches.restore');
     
     // Question Management - Main Questions Dashboard (must come first)
-    Route::get('questions', [QuestionController::class, 'dashboard'])->name('questions.index');
+    Route::get('questions', [QuestionController::class, 'allQuestions'])->name('questions.index');
     Route::get('questions/all', [QuestionController::class, 'allQuestions'])->name('questions.all');
     Route::get('questions/list', [QuestionController::class, 'index'])->name('questions.list');
     Route::get('questions/create', [QuestionController::class, 'create'])->name('questions.create');
@@ -67,7 +67,7 @@ Route::prefix('partner')->name('partner.')->group(function () {
     Route::get('questions/subjects', [QuestionController::class, 'getSubjects'])->name('questions.subjects');
     Route::get('questions/topics', [QuestionController::class, 'getTopics'])->name('questions.topics');
     
-    // Question Types - MCQ, Descriptive, Comprehensive
+    // Question Types - MCQ, Descriptive
     Route::prefix('questions/mcq')->name('questions.mcq.')->group(function () {
         Route::get('/', [QuestionController::class, 'mcqAllQuestionView'])->name('all-question-view');
         Route::get('/create', [QuestionController::class, 'mcqCreate'])->name('create');
@@ -90,14 +90,7 @@ Route::prefix('partner')->name('partner.')->group(function () {
         Route::delete('/{question}', [QuestionController::class, 'descriptiveDestroy'])->name('destroy');
     });
     
-    Route::prefix('questions/comprehensive')->name('questions.comprehensive.')->group(function () {
-        Route::get('/', [QuestionController::class, 'comprehensiveIndex'])->name('index');
-        Route::get('/create', [QuestionController::class, 'comprehensiveCreate'])->name('create');
-        Route::post('/', [QuestionController::class, 'comprehensiveStore'])->name('store');
-        Route::get('/{question}/edit', [QuestionController::class, 'comprehensiveEdit'])->name('edit');
-        Route::put('/{question}', [QuestionController::class, 'comprehensiveUpdate'])->name('update');
-        Route::delete('/{question}', [QuestionController::class, 'comprehensiveDestroy'])->name('destroy');
-    });
+
     
     // Question Set Management
     Route::resource('question-sets', QuestionSetController::class);

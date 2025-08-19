@@ -16,8 +16,9 @@ class DatabaseSeeder extends Seeder
             PartnerSeeder::class,
             CourseSeeder::class,
             StudentSeeder::class,
-            QuestionSeeder::class,
             QuestionTypeSeeder::class,
+            QuestionSeeder::class,
+            McqQuestionSeeder::class,
             QuestionHistorySeeder::class,
         ]);
     }

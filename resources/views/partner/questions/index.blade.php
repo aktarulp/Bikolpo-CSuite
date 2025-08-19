@@ -24,10 +24,7 @@
                            class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md transition-colors duration-200">
                             Create Descriptive
                         </a>
-                        <a href="{{ route('partner.questions.comprehensive.create') }}" 
-                           class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md transition-colors duration-200">
-                            Create Comprehensive
-                        </a>
+                        
                     </div>
                 </div>
 
@@ -240,10 +237,7 @@
                        class="inline-flex items-center px-3 py-1.5 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700">
                         + Descriptive
                     </a>
-                    <a href="{{ route('partner.questions.comprehensive.create') }}" 
-                       class="inline-flex items-center px-3 py-1.5 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700">
-                        + Comprehensive
-                    </a>
+                    
                 </div>
             </div>
         @endif

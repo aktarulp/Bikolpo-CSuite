@@ -115,17 +115,13 @@ class Question extends Model
         return $this->question_type === 'descriptive';
     }
 
-    public function isComprehensive()
-    {
-        return $this->question_type === 'comprehensive';
-    }
+
 
     public function getQuestionTypeTextAttribute()
     {
         return match($this->question_type) {
             'mcq' => 'MCQ',
             'descriptive' => 'Descriptive',
-            'comprehensive' => 'Comprehensive',
             default => 'Unknown'
         };
     }
@@ -141,8 +137,5 @@ class Question extends Model
         return $query->where('question_type', 'descriptive');
     }
 
-    public function scopeComprehensive($query)
-    {
-        return $query->where('question_type', 'comprehensive');
-    }
+
 }

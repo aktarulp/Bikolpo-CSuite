@@ -19,7 +19,7 @@ return new class extends Migration
                 $table->unsignedBigInteger('subject_id')->nullable()->after('course_id');
             }
             if (!Schema::hasColumn('questions', 'question_type')) {
-                $table->enum('question_type', ['mcq', 'descriptive', 'comprehensive'])->default('mcq')->after('subject_id');
+                $table->enum('question_type', ['mcq', 'descriptive'])->default('mcq')->after('subject_id');
             }
         });
     }
