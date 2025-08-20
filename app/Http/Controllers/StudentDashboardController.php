@@ -11,9 +11,8 @@ class StudentDashboardController extends Controller
 {
     public function index()
     {
-        // For now, we'll use a default student ID (1)
-        // In a real application, this would come from authentication
-        $studentId = 1;
+        // Get the authenticated user's ID
+        $studentId = auth()->id();
         
         $student = Student::find($studentId);
         

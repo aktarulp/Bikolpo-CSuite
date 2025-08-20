@@ -14,6 +14,9 @@ use App\Http\Controllers\QuestionHistoryController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\StudentExamController;
 
+// Include Auth Routes
+require __DIR__.'/auth.php';
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -25,14 +28,45 @@ use App\Http\Controllers\StudentExamController;
 |
 */
 
-// Redirect root URL to the partner dashboard
+// Landing page route - show the welcome page first
 Route::get('/', function () {
+    return view('welcome');
+})->name('landing');
+
+// Contact page route
+Route::get('/contact', function () {
+    return view('contact');
+})->name('contact');
+
+// Partner Features page route
+Route::get('/partner-features', function () {
+    return view('partner-features');
+})->name('partner.features');
+
+// Student Features page route
+Route::get('/student-features', function () {
+    return view('student-features');
+})->name('student.features');
+
+// Partner Area Access Route
+Route::get('/partner-area', function () {
     return redirect()->route('partner.dashboard');
-});
+})->name('partner.area');
+
+// Student Area Access Route
+Route::get('/student-area', function () {
+    return redirect()->route('student.dashboard');
+})->name('student.area');
+
+// Redirect root URL to the partner dashboard
+// Route::get('/', function () {
+//     return redirect()->route('partner.dashboard');
+// });
 
 // Partner Routes (Coaching Center)
-Route::prefix('partner')->name('partner.')->group(function () {
+Route::prefix('partner')->name('partner.')->middleware(['auth', 'role:partner'])->group(function () {
     Route::get('/', [PartnerDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [PartnerDashboardController::class, 'index'])->name('dashboard');
     
     // Partner Management
     Route::resource('partners', PartnerController::class);
@@ -114,8 +148,9 @@ Route::prefix('partner')->name('partner.')->group(function () {
 });
 
 // Student Routes
-Route::prefix('student')->name('student.')->group(function () {
+Route::prefix('student')->name('student.')->middleware(['auth', 'role:student'])->group(function () {
     Route::get('/', [StudentDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
     
     // Student Profile
     Route::resource('profile', StudentController::class)->only(['show', 'edit', 'update']);
@@ -133,21 +168,21 @@ Route::prefix('student')->name('student.')->group(function () {
     Route::get('history', [StudentExamController::class, 'history'])->name('exams.history');
 });
 
-        // Typing Test Routes
-        Route::get('/typing-test', function () {
-            return view('TypingTest.index');
-        })->name('typing.test');
+// Typing Test Routes
+Route::get('/typing-test', function () {
+    return view('TypingTest.index');
+})->name('typing.test');
         
-        Route::get('/typing-tutorial', function () {
-            return view('TypingTest.tutorial');
-        })->name('typing.tutorial');
-        
-        Route::get('/typing-speed-test', function () {
-            return view('TypingTest.typing-test');
-        })->name('typing.speed-test');
-        
-        // Typing Passage Management Routes
-        Route::resource('typing-passages', \App\Http\Controllers\TypingPassageController::class);
-        Route::get('/typing-passages/get/{language?}/{difficulty?}', [\App\Http\Controllers\TypingPassageController::class, 'getPassages'])->name('typing-passages.get');
-        Route::post('/typing-passages/{typingPassage}/stats', [\App\Http\Controllers\TypingPassageController::class, 'updateStats'])->name('typing-passages.stats');
-        Route::patch('/typing-passages/{typingPassage}/toggle', [\App\Http\Controllers\TypingPassageController::class, 'toggleStatus'])->name('typing-passages.toggle');
+Route::get('/typing-tutorial', function () {
+    return view('TypingTest.tutorial');
+})->name('typing.tutorial');
+
+Route::get('/typing-speed-test', function () {
+    return view('TypingTest.typing-test');
+})->name('typing.speed-test');
+
+// Typing Passage Management Routes
+Route::resource('typing-passages', \App\Http\Controllers\TypingPassageController::class);
+Route::get('/typing-passages/get/{language?}/{difficulty?}', [\App\Http\Controllers\TypingPassageController::class, 'getPassages'])->name('typing-passages.get');
+Route::post('/typing-passages/{typingPassage}/stats', [\App\Http\Controllers\TypingPassageController::class, 'updateStats'])->name('typing-passages.stats');
+Route::patch('/typing-passages/{typingPassage}/toggle', [\App\Http\Controllers\TypingPassageController::class, 'toggleStatus'])->name('typing-passages.toggle');

@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
@@ -16,6 +17,12 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
+        Log::info('Login page accessed', [
+            'user_authenticated' => Auth::check(),
+            'user_id' => Auth::id(),
+            'user_role' => Auth::user()?->role ?? 'none'
+        ]);
+        
         return view('auth.login');
     }
 
@@ -28,7 +35,28 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // Get the user and their role from the database
+        $user = Auth::user();
+        $loginType = $request->input('login_type', 'partner');
+        
+        // Check if the user's role matches the login type
+        if ($user->role !== $loginType) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            
+            return back()->withErrors([
+                'email' => 'Invalid credentials for ' . ucfirst($loginType) . ' account.',
+            ]);
+        }
+        
+        // Redirect based on user's actual role in database
+        if ($user->role === 'student') {
+            return redirect()->intended(route('student.dashboard', absolute: false));
+        } else {
+            // Default to partner dashboard
+            return redirect()->intended(route('partner.dashboard', absolute: false));
+        }
     }
 
     /**

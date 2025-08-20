@@ -13,9 +13,8 @@ class PartnerDashboardController extends Controller
 {
     public function index()
     {
-        // For now, we'll use a default partner ID (1)
-        // In a real application, this would come from authentication
-        $partnerId = 1;
+        // Get the authenticated user's ID
+        $partnerId = auth()->id();
         
         $stats = [
             'total_questions' => Question::where('partner_id', $partnerId)->count(),
