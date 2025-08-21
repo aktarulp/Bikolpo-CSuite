@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <!-- Enhanced Forgot Password Form -->
+    <!-- Enhanced Forgot Password OTP Form -->
     <div class="w-full max-w-md">
         <!-- Header Section -->
         <div class="text-center mb-8">

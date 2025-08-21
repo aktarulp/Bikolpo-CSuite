@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
+            RoleSeeder::class, // Must be first as other seeders depend on roles
             PartnerSeeder::class,
             CourseSeeder::class,
             StudentSeeder::class,

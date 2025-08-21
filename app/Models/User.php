@@ -21,7 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role',
+        'role_id',
         'phone',
     ];
 
@@ -50,11 +50,34 @@ class User extends Authenticatable
     ];
 
     /**
+     * Boot method to ensure role relationship is loaded when needed
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::retrieved(function ($user) {
+            // Always load the role relationship when user is retrieved
+            if (!$user->relationLoaded('role')) {
+                $user->load('role');
+            }
+        });
+    }
+
+    /**
+     * Get the role associated with the user.
+     */
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    /**
      * Get the student record associated with the user.
      */
     public function student()
     {
-        return $this->hasOne(Student::class, 'email', 'email');
+        return $this->hasOne(Student::class, 'user_id', 'id');
     }
 
     /**
@@ -63,6 +86,22 @@ class User extends Authenticatable
     public function partner()
     {
         return $this->hasOne(Partner::class, 'user_id', 'id');
+    }
+
+    // Helper methods
+    public function isPartner()
+    {
+        return $this->role && $this->role->name === 'partner';
+    }
+
+    public function isStudent()
+    {
+        return $this->role && $this->role->name === 'student';
+    }
+
+    public function hasRole($roleName)
+    {
+        return $this->role && $this->role->name === $roleName;
     }
 
 }

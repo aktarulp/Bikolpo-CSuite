@@ -10,9 +10,7 @@ class Partner extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name',
-        'email',
-        'phone',
+        'user_id',
         'address',
         'city',
         'logo',
@@ -25,6 +23,11 @@ class Partner extends Model
     ];
 
     // Relationships
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function questions()
     {
         return $this->hasMany(Question::class);

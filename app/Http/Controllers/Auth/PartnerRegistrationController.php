@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Partner;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -25,17 +26,9 @@ class PartnerRegistrationController extends Controller
         Log::info('Partner registration attempt', ['request_data' => $request->except(['password', 'password_confirmation'])]);
         
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'phone' => 'required|string|max:20|unique:users',
-            'organization_name' => 'required|string|max:255',
-            'organization_type' => 'required|string|in:coaching_center,school,college,university,training_institute,other',
-            'address' => 'required|string|max:500',
-            'city' => 'required|string|max:100',
-            'state' => 'required|string|max:100',
-            'postal_code' => 'required|string|max:20',
-            'country' => 'required|string|max:100',
             'password' => 'required|string|min:8|confirmed',
+            'role_type' => 'required|string|in:partner',
         ]);
 
         if ($validator->fails()) {
@@ -49,17 +42,9 @@ class PartnerRegistrationController extends Controller
         
         // Store registration data in session for OTP verification
         $sessionData = [
-            'name' => $request->name,
             'email' => $request->email,
-            'phone' => $request->phone,
-            'organization_name' => $request->organization_name,
-            'organization_type' => $request->organization_type,
-            'address' => $request->address,
-            'city' => $request->city,
-            'state' => $request->state,
-            'postal_code' => $request->postal_code,
-            'country' => $request->country,
             'password' => $request->password,
+            'role_type' => $request->role_type,
             'otp' => $otp,
             'otp_expires_at' => now()->addMinutes(10), // OTP expires in 10 minutes
         ];
@@ -96,7 +81,7 @@ class PartnerRegistrationController extends Controller
         try {
             Log::info('Attempting to send OTP email', ['email' => $request->email, 'otp' => $otp]);
             
-            Mail::send('emails.partner-otp', ['otp' => $otp, 'name' => $request->name], function ($message) use ($request) {
+            Mail::send('emails.partner-otp', ['otp' => $otp, 'name' => 'Partner'], function ($message) use ($request) {
                 $message->to($request->email)
                     ->subject('Partner Registration OTP - বিকল্প কম্পিউটার')
                     ->from('bikolpo247@gmail.com', 'বিকল্প কম্পিউটার');
@@ -194,21 +179,25 @@ class PartnerRegistrationController extends Controller
 
             // Debug: Log the data being used to create user
             Log::info('Creating user with data', [
-                'name' => $registrationData['name'],
                 'email' => $registrationData['email'],
-                'phone' => $registrationData['phone'],
-                'role' => 'partner',
+                'role_type' => $registrationData['role_type'],
                 'has_password' => !empty($registrationData['password'])
             ]);
 
+            // Get partner role
+            $partnerRole = Role::where('name', 'partner')->first();
+            if (!$partnerRole) {
+                throw new \Exception('Partner role not found');
+            }
+
             // Create user with email verified since OTP was sent to email
             $user = User::create([
-                'name' => $registrationData['name'],
                 'email' => $registrationData['email'],
-                'phone' => $registrationData['phone'],
                 'password' => Hash::make($registrationData['password']),
-                'role' => 'partner',
+                'role_id' => $partnerRole->id,
                 'email_verified_at' => now(), // Mark as verified since OTP was sent to email
+                'name' => null, // Will be filled later in profile
+                'phone' => null, // Will be filled later in profile
             ]);
             
             Log::info('User created successfully', [
@@ -218,23 +207,16 @@ class PartnerRegistrationController extends Controller
                 'user_exists_in_db' => User::find($user->id) ? 'yes' : 'no'
             ]);
 
-            // Create partner
+            // Create basic partner record (can be completed later)
             $partner = Partner::create([
                 'user_id' => $user->id,
-                'organization_name' => $registrationData['organization_name'],
-                'organization_type' => $registrationData['organization_type'],
-                'address' => $registrationData['address'],
-                'city' => $registrationData['city'],
-                'state' => $registrationData['state'],
-                'postal_code' => $registrationData['postal_code'],
-                'country' => $registrationData['country'],
                 'status' => 'active',
+                // Other fields will be null and can be filled later in profile
             ]);
             
             Log::info('Partner created successfully', [
                 'partner_id' => $partner->id,
                 'user_id' => $partner->user_id,
-                'organization_name' => $partner->organization_name,
                 'partner_exists_in_db' => Partner::find($partner->id) ? 'yes' : 'no'
             ]);
 
@@ -289,16 +271,19 @@ class PartnerRegistrationController extends Controller
             Session::forget('partner_registration');
             
             // Log before redirect
-            Log::info('About to redirect to success page', [
-                'route_name' => 'partner.registration.success',
-                'route_url' => route('partner.registration.success'),
+            Log::info('About to redirect to login page', [
+                'route_name' => 'partner.login',
+                'route_url' => route('partner.login'),
                 'user_authenticated' => auth()->check(),
                 'session_id' => $request->session()->getId()
             ]);
             
-            // Redirect to success page first, then user can navigate to dashboard
-            return redirect()->route('partner.registration.success')
-                ->with('success', 'Registration completed successfully! Welcome to বিকল্প কম্পিউটার.');
+            // Logout the user and redirect to login page with success message
+            auth()->logout();
+            
+            // Redirect to login page with success message
+            return redirect()->route('partner.login')
+                ->with('success', 'Registration completed successfully! You can now login with your email and password.');
 
         } catch (\Exception $e) {
             \DB::rollBack();
@@ -308,11 +293,6 @@ class PartnerRegistrationController extends Controller
                 ->withErrors(['otp' => 'Registration failed. Please try again.'])
                 ->withInput();
         }
-    }
-
-    public function showRegistrationSuccess()
-    {
-        return view('auth.partner.registration-success');
     }
 
     public function resendOtp()
@@ -334,7 +314,7 @@ class PartnerRegistrationController extends Controller
 
         // Send new OTP email
         try {
-            Mail::send('emails.partner-otp', ['otp' => $otp, 'name' => $registrationData['name']], function ($message) use ($registrationData) {
+            Mail::send('emails.partner-otp', ['otp' => $otp, 'name' => 'Partner'], function ($message) use ($registrationData) {
                 $message->to($registrationData['email'])
                     ->subject('New Partner Registration OTP - বিকল্প কম্পিউটার')
                     ->from('bikolpo247@gmail.com', 'বিকল্প কম্পিউটার');

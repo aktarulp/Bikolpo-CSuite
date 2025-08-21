@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\PasswordResetOtpController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
@@ -15,9 +16,9 @@ Route::middleware('guest')->group(function () {
 
 
     // Partner Authentication
-    Route::get('partner/login', [AuthenticatedSessionController::class, 'create'])
+    Route::get('partner/login', [\App\Http\Controllers\Auth\PartnerLoginController::class, 'create'])
         ->name('partner.login');
-    Route::post('partner/login', [AuthenticatedSessionController::class, 'store']);
+    Route::post('partner/login', [\App\Http\Controllers\Auth\PartnerLoginController::class, 'store']);
     
     Route::get('partner/register', [\App\Http\Controllers\Auth\PartnerRegistrationController::class, 'showRegistrationForm'])
         ->name('partner.register');
@@ -30,14 +31,10 @@ Route::middleware('guest')->group(function () {
     Route::post('partner/resend-otp', [\App\Http\Controllers\Auth\PartnerRegistrationController::class, 'resendOtp'])
         ->name('partner.resend-otp');
     
-    // Partner registration success page (no middleware required)
-    Route::get('partner/registration-success', [\App\Http\Controllers\Auth\PartnerRegistrationController::class, 'showRegistrationSuccess'])
-        ->name('partner.registration.success');
-
     // Student Authentication
-    Route::get('student/login', [AuthenticatedSessionController::class, 'create'])
+    Route::get('student/login', [\App\Http\Controllers\Auth\StudentLoginController::class, 'create'])
         ->name('student.login');
-    Route::post('student/login', [AuthenticatedSessionController::class, 'store']);
+    Route::post('student/login', [\App\Http\Controllers\Auth\StudentLoginController::class, 'store']);
     
     Route::get('student/register', [\App\Http\Controllers\Auth\StudentRegistrationController::class, 'showRegistrationForm'])
         ->name('student.register');
@@ -54,40 +51,55 @@ Route::middleware('guest')->group(function () {
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
-    Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
+    // OTP-based Password Reset Routes
+    Route::get('forgot-password', [PasswordResetOtpController::class, 'create'])
         ->name('password.request');
 
-    Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
-        ->name('password.email');
+    Route::post('forgot-password', [PasswordResetOtpController::class, 'store'])
+        ->name('password.email.otp');
 
-    Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
-        ->name('password.reset');
+    Route::get('verify-password-reset-otp', [PasswordResetOtpController::class, 'showOtpVerificationForm'])
+        ->name('password.verify-otp');
 
-    Route::post('reset-password', [NewPasswordController::class, 'store'])
-        ->name('password.store');
+    Route::post('verify-password-reset-otp', [PasswordResetOtpController::class, 'verifyOtp'])
+        ->name('password.verify-otp.store');
+
+    Route::post('resend-password-reset-otp', [PasswordResetOtpController::class, 'resendOtp'])
+        ->name('password.resend-otp');
+
+    Route::get('reset-password-form', [PasswordResetOtpController::class, 'showResetForm'])
+        ->name('password.reset-form');
+
+    Route::post('reset-password', [PasswordResetOtpController::class, 'resetPassword'])
+        ->name('password.reset.otp');
+
+    // Legacy Password Reset Routes (kept for backward compatibility but not used)
+    // Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
+    //     ->name('password.reset');
+
+    // Route::post('reset-password', [NewPasswordController::class, 'store'])
+    //     ->name('password.store');
 });
 
 Route::middleware('auth')->group(function () {
     Route::get('verify-email', EmailVerificationPromptController::class)
-        ->name('verification.notice');
+                ->name('verification.notice');
 
     Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
-        ->middleware(['signed', 'throttle:6,1'])
-        ->name('verification.verify');
+                ->middleware(['signed', 'throttle:6,1'])
+                ->name('verification.verify');
 
     Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
-        ->middleware('throttle:6,1')
-        ->name('verification.send');
-
-
+                ->middleware('throttle:6,1')
+                ->name('verification.send');
 
     Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])
-        ->name('password.confirm');
+                ->name('password.confirm');
 
     Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
 
     Route::put('password', [PasswordController::class, 'update'])->name('password.update');
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
-        ->name('logout');
+                ->name('logout');
 });

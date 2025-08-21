@@ -39,44 +39,47 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center py-4">
                                  <!-- Logo -->
-                 <div class="flex items-center space-x-3">
-                     <a href="{{ route('landing') }}" class="flex items-center space-x-3 hover:scale-105 transition-transform duration-200">
+                 <div class="flex items-center space-x-4">
+                     <a href="{{ route('landing') }}" class="flex items-center space-x-4 group">
                          <div class="relative">
-                             <div class="w-12 h-12 bg-gradient-to-br from-primaryGreen to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
-                                 <i class="fas fa-graduation-cap text-white text-xl"></i>
+                             <div class="w-14 h-14 bg-gradient-to-br from-primaryGreen via-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 transform group-hover:scale-105">
+                                 <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-10 h-10 object-contain" />
                              </div>
-                             <div class="absolute -top-1 -right-1 w-4 h-4 bg-primaryOrange rounded-full animate-pulse"></div>
+                             <div class="absolute -inset-1 bg-gradient-to-r from-primaryGreen to-green-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition-opacity duration-300"></div>
                          </div>
-                         <div>
-                             <h1 class="text-2xl font-bold bg-gradient-to-r from-primaryGreen to-primaryBlue bg-clip-text bg-clip-text text-transparent">
+                         <div class="transform group-hover:translate-x-1 transition-transform duration-300">
+                             <h1 class="text-3xl font-bold bg-gradient-to-r from-primaryGreen to-green-600 bg-clip-text text-transparent">
                                  বিকল্প কম্পিউটার
                              </h1>
-                             <p class="text-xs text-gray-500 dark:text-gray-400">Your Smart Exam Partner</p>
+                             <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Your Smart Exam Partner</p>
                          </div>
                      </a>
                  </div>
 
-                                 <!-- Desktop Navigation -->
-                 <nav class="hidden md:flex items-center space-x-8">
-                     <a href="#features" class="text-gray-700 dark:text-white hover:text-primaryGreen dark:hover:text-primaryGreen transition-colors duration-200 font-medium">
-                         Features
-                     </a>
-                     <a href="#about" class="text-gray-700 dark:text-white hover:text-primaryGreen dark:hover:text-primaryGreen transition-colors duration-200 font-medium">
-                         About
-                     </a>
-                                          <a href="{{ route('contact') }}" class="text-gray-700 dark:text-white hover:text-primaryGreen dark:hover:text-primaryGreen transition-colors duration-200 font-medium">
-                          Contact
+                                                  <!-- Desktop Navigation -->
+                  <nav class="hidden md:flex items-center space-x-8">
+                      <a href="#features" class="text-gray-700 dark:text-white hover:text-primaryGreen dark:hover:text-primaryGreen transition-colors duration-200 font-medium">
+                          Features
                       </a>
-                     <a href="{{ route('partner.features') }}" class="bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-primaryGreen dark:text-primaryGreen font-bold px-4 py-2 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 border-2 border-primaryGreen">
-                         For Partner
-                     </a>
-                     <a href="{{ route('student.features') }}" class="bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-primaryBlue dark:text-primaryBlue font-bold px-4 py-2 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 border-2 border-primaryBlue">
-                         For Student
-                     </a>
-                                           <a href="{{ route('login') }}" class="bg-gradient-to-r from-primaryGreen to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
-                         Sign In
-                     </a>
-                 </nav>
+                      <a href="#about" class="text-gray-700 dark:text-white hover:text-primaryGreen dark:hover:text-primaryGreen transition-colors duration-200 font-medium">
+                          About
+                      </a>
+                      <a href="#blogs" class="text-gray-700 dark:text-white hover:text-primaryGreen dark:hover:text-primaryGreen transition-colors duration-200 font-medium">
+                          Learning Blogs
+                      </a>
+                                           <a href="{{ route('contact') }}" class="text-gray-700 dark:text-white hover:text-primaryGreen dark:hover:text-primaryGreen transition-colors duration-200 font-medium">
+                           Contact
+                       </a>
+                      <a href="{{ route('partner.features') }}" class="bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-primaryGreen dark:text-primaryGreen font-bold px-4 py-2 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 border-2 border-primaryGreen">
+                          For Partner
+                      </a>
+                      <a href="{{ route('student.features') }}" class="bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-primaryBlue dark:text-primaryBlue font-bold px-4 py-2 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 border-2 border-primaryBlue">
+                          For Student
+                      </a>
+                                            <a href="{{ route('login') }}" class="bg-gradient-to-r from-primaryGreen to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
+                          Sign In
+                      </a>
+                  </nav>
 
                 <!-- Dark Mode Toggle & Mobile Menu -->
                 <div class="flex items-center space-x-4">
@@ -91,29 +94,32 @@
                 </div>
             </div>
 
-                                                 <!-- Mobile Menu -->
-             <div id="mobileMenu" class="hidden md:hidden pb-4">
-                 <div class="flex flex-col space-y-3">
-                     <a href="#features" class="text-gray-700 dark:text-white hover:text-primaryGreen dark:hover:text-primaryGreen transition-colors duration-200 font-medium py-2">
-                         Features
-                     </a>
-                     <a href="#about" class="text-gray-700 dark:text-white hover:text-primaryGreen dark:hover:text-primaryGreen transition-colors duration-200 font-medium py-2">
-                         About
-                     </a>
-                                          <a href="{{ route('contact') }}" class="text-gray-700 dark:text-white hover:text-primaryGreen dark:hover:text-primaryGreen transition-colors duration-200 font-medium py-2">
-                           Contact
+                                                                                                   <!-- Mobile Menu -->
+              <div id="mobileMenu" class="hidden md:hidden pb-4">
+                  <div class="flex flex-col space-y-3">
+                      <a href="#features" class="text-gray-700 dark:text-white hover:text-primaryGreen dark:hover:text-primaryGreen transition-colors duration-200 font-medium py-2">
+                          Features
                       </a>
-                     <a href="{{ route('partner.features') }}" class="bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-primaryGreen dark:text-primaryGreen font-bold px-4 py-3 rounded-full shadow-lg transition-all duration-300 text-center border-2 border-primaryGreen">
-                         For Partner
-                     </a>
-                     <a href="{{ route('student.features') }}" class="bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-primaryBlue dark:text-primaryBlue font-bold px-4 py-3 rounded-full shadow-lg transition-all duration-300 text-center border-2 border-primaryBlue">
-                         For Student
-                     </a>
-                                           <a href="{{ route('login') }}" class="bg-gradient-to-r from-primaryGreen to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 text-center">
-                         Sign In
-                     </a>
-                 </div>
-             </div>
+                      <a href="#about" class="text-gray-700 dark:text-white hover:text-primaryGreen dark:hover:text-primaryGreen transition-colors duration-200 font-medium py-2">
+                          About
+                      </a>
+                      <a href="#blogs" class="text-gray-700 dark:text-white hover:text-primaryGreen dark:hover:text-primaryGreen transition-colors duration-200 font-medium py-2">
+                          Learning Blogs
+                      </a>
+                                           <a href="{{ route('contact') }}" class="text-gray-700 dark:text-white hover:text-primaryGreen dark:hover:text-primaryGreen transition-colors duration-200 font-medium py-2">
+                            Contact
+                       </a>
+                      <a href="{{ route('partner.features') }}" class="bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-primaryGreen dark:text-primaryGreen font-bold px-4 py-3 rounded-full shadow-lg transition-all duration-300 text-center border-2 border-primaryGreen">
+                          For Partner
+                      </a>
+                      <a href="{{ route('student.features') }}" class="bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-primaryBlue dark:text-primaryBlue font-bold px-4 py-3 rounded-full shadow-lg transition-all duration-300 text-center border-2 border-primaryBlue">
+                          For Student
+                      </a>
+                                            <a href="{{ route('login') }}" class="bg-gradient-to-r from-primaryGreen to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 text-center">
+                          Sign In
+                      </a>
+                  </div>
+              </div>
         </div>
     </header>
 

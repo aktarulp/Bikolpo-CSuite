@@ -19,12 +19,14 @@ class CheckRole
             return redirect()->route('login');
         }
 
-        if (auth()->user()->role !== $role) {
+        if (!auth()->user()->hasRole($role)) {
             // Redirect based on user's actual role
-            if (auth()->user()->role === 'student') {
+            if (auth()->user()->isStudent()) {
                 return redirect()->route('student.dashboard');
-            } else {
+            } elseif (auth()->user()->isPartner()) {
                 return redirect()->route('partner.dashboard');
+            } else {
+                return redirect()->route('login');
             }
         }
 

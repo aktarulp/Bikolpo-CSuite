@@ -88,7 +88,7 @@
 
     <!-- Main Content -->
     <main class="relative z-10 py-20">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Hero Section -->
             <div class="text-center mb-16 animate-fade-in-down">
                 <div class="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-primaryGreen to-green-600 rounded-full shadow-2xl mb-8 animate-bounce-gentle">
@@ -96,11 +96,11 @@
                 </div>
                 <h1 class="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
                     <span class="bg-gradient-to-r from-primaryGreen via-green-600 to-green-700 bg-clip-text text-transparent">
-                        Partner Registration
+                        Quick Partner Registration
                     </span>
                 </h1>
                 <p class="text-xl md:text-2xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
-                    Join <span class="font-semibold text-primaryGreen">বিকল্প কম্পিউটার</span> as an educational partner and revolutionize the way students learn
+                    Join <span class="font-semibold text-primaryGreen">বিকল্প কম্পিউটার</span> as an educational partner in just 2 minutes
                 </p>
                 <div class="flex items-center justify-center space-x-8 mt-8 text-sm text-gray-500 dark:text-gray-400">
                     <div class="flex items-center space-x-2">
@@ -109,11 +109,11 @@
                     </div>
                     <div class="flex items-center space-x-2">
                         <i class="fas fa-check-circle text-primaryGreen"></i>
-                        <span>Instant access</span>
+                        <span>2-minute setup</span>
                     </div>
                     <div class="flex items-center space-x-2">
                         <i class="fas fa-check-circle text-primaryGreen"></i>
-                        <span>24/7 support</span>
+                        <span>Complete profile later</span>
                     </div>
                 </div>
             </div>
@@ -126,40 +126,24 @@
                         <i class="fas fa-user-plus text-2xl"></i>
                         <span>Create Your Partner Account</span>
                     </h2>
-                    <p class="text-green-100 mt-2">Fill in the details below to get started</p>
+                    <p class="text-green-100 mt-2">Just email and password to get started. Complete your profile later!</p>
                 </div>
 
                 <form action="{{ route('partner.register.store') }}" method="POST" class="p-8 space-y-8" id="partnerRegistrationForm">
                     @csrf
+                    <input type="hidden" name="role_type" value="partner">
                     
-                    <!-- Personal Information -->
+                    <!-- Quick Registration Section -->
                     <div class="space-y-6">
                         <div class="flex items-center space-x-3 mb-6">
                             <div class="w-10 h-10 bg-gradient-to-br from-primaryGreen to-green-600 rounded-full flex items-center justify-center">
-                                <i class="fas fa-user text-white"></i>
+                                <i class="fas fa-rocket text-white"></i>
                             </div>
-                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Personal Information</h3>
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Quick Start</h3>
                         </div>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="group">
-                                <label for="name" class="block mb-3 font-semibold text-gray-700 dark:text-gray-300 group-hover:text-primaryGreen transition-colors duration-200">
-                                    <i class="fas fa-user mr-2 text-primaryGreen"></i>Full Name *
-                                </label>
-                                <div class="relative">
-                                    <input type="text" id="name" name="name" value="{{ old('name') }}" required
-                                        class="w-full rounded-xl border-2 border-gray-200 dark:border-gray-600 px-4 py-4 focus:outline-none focus:ring-2 focus:ring-primaryGreen focus:border-primaryGreen dark:bg-gray-700 dark:text-white transition-all duration-200 group-hover:border-gray-300" 
-                                        placeholder="Enter your full name" />
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                                        <i class="fas fa-user text-gray-400 group-hover:text-primaryGreen transition-colors duration-200"></i>
-                                    </div>
-                                </div>
-                                @error('name')
-                                    <p class="text-red-500 text-sm mt-2 flex items-center"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</p>
-                                @enderror
-                            </div>
-                            
-                            <div class="group">
+                            <div class="md:col-span-2 group">
                                 <label for="email" class="block mb-3 font-semibold text-gray-700 dark:text-gray-300 group-hover:text-primaryGreen transition-colors duration-200">
                                     <i class="fas fa-envelope mr-2 text-primaryGreen"></i>Email Address *
                                 </label>
@@ -172,23 +156,6 @@
                                     </div>
                                 </div>
                                 @error('email')
-                                    <p class="text-red-500 text-sm mt-2 flex items-center"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</p>
-                                @enderror
-                            </div>
-                            
-                            <div class="group">
-                                <label for="phone" class="block mb-3 font-semibold text-gray-700 dark:text-gray-300 group-hover:text-primaryGreen transition-colors duration-200">
-                                    <i class="fas fa-phone mr-2 text-primaryGreen"></i>Phone Number *
-                                </label>
-                                <div class="relative">
-                                    <input type="tel" id="phone" name="phone" value="{{ old('phone') }}" required
-                                        class="w-full rounded-xl border-2 border-gray-200 dark:border-gray-600 px-4 py-4 focus:outline-none focus:ring-2 focus:ring-primaryGreen focus:border-primaryGreen dark:bg-gray-700 dark:text-white transition-all duration-200 group-hover:border-gray-300" 
-                                        placeholder="Enter your phone number" />
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                                        <i class="fas fa-phone text-gray-400 group-hover:text-primaryGreen transition-colors duration-200"></i>
-                                    </div>
-                                </div>
-                                @error('phone')
                                     <p class="text-red-500 text-sm mt-2 flex items-center"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</p>
                                 @enderror
                             </div>
@@ -226,152 +193,26 @@
                         </div>
                     </div>
 
-                    <!-- Organization Information -->
-                    <div class="space-y-6 pt-8 border-t border-gray-200 dark:border-gray-600">
-                        <div class="flex items-center space-x-3 mb-6">
-                            <div class="w-10 h-10 bg-gradient-to-br from-primaryBlue to-blue-600 rounded-full flex items-center justify-center">
-                                <i class="fas fa-building text-white"></i>
+                    <!-- What Happens Next Section -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl p-6 border border-blue-200 dark:border-blue-700">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-8 h-8 bg-gradient-to-br from-primaryBlue to-blue-600 rounded-full flex items-center justify-center">
+                                <i class="fas fa-info text-white text-sm"></i>
                             </div>
-                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Organization Information</h3>
+                            <h4 class="text-lg font-semibold text-gray-900 dark:text-white">What Happens Next?</h4>
                         </div>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="group">
-                                <label for="organization_name" class="block mb-3 font-semibold text-gray-700 dark:text-gray-300 group-hover:text-primaryBlue transition-colors duration-200">
-                                    <i class="fas fa-building mr-2 text-primaryBlue"></i>Organization Name *
-                                </label>
-                                <div class="relative">
-                                    <input type="text" id="organization_name" name="organization_name" value="{{ old('organization_name') }}" required
-                                        class="w-full rounded-xl border-2 border-gray-200 dark:border-gray-600 px-4 py-4 focus:outline-none focus:ring-2 focus:ring-primaryBlue focus:border-primaryBlue dark:bg-gray-700 dark:text-white transition-all duration-200 group-hover:border-gray-300" 
-                                        placeholder="Enter organization name" />
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                                        <i class="fas fa-building text-gray-400 group-hover:text-primaryBlue transition-colors duration-200"></i>
-                                    </div>
-                                </div>
-                                @error('organization_name')
-                                    <p class="text-red-500 text-sm mt-2 flex items-center"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</p>
-                                @enderror
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 dark:text-gray-400">
+                            <div class="flex items-start space-x-2">
+                                <i class="fas fa-check-circle text-primaryGreen mt-1"></i>
+                                <span>1. Verify your email address</span>
                             </div>
-                            
-                            <div class="group">
-                                <label for="organization_type" class="block mb-3 font-semibold text-gray-700 dark:text-gray-300 group-hover:text-primaryBlue transition-colors duration-200">
-                                    <i class="fas fa-graduation-cap mr-2 text-primaryBlue"></i>Organization Type *
-                                </label>
-                                <div class="relative">
-                                    <select id="organization_type" name="organization_type" required
-                                        class="w-full rounded-xl border-2 border-gray-200 dark:border-gray-600 px-4 py-4 focus:outline-none focus:ring-2 focus:ring-primaryBlue focus:border-primaryBlue dark:bg-gray-700 dark:text-white transition-all duration-200 group-hover:border-gray-300 appearance-none">
-                                        <option value="">Select organization type</option>
-                                        <option value="coaching_center" {{ old('organization_type') == 'coaching_center' ? 'selected' : '' }}>Coaching Center</option>
-                                        <option value="school" {{ old('organization_type') == 'school' ? 'selected' : '' }}>School</option>
-                                        <option value="college" {{ old('organization_type') == 'college' ? 'selected' : '' }}>College</option>
-                                        <option value="university" {{ old('organization_type') == 'university' ? 'selected' : '' }}>University</option>
-                                        <option value="training_institute" {{ old('organization_type') == 'training_institute' ? 'selected' : '' }}>Training Institute</option>
-                                        <option value="other" {{ old('organization_type') == 'other' ? 'selected' : '' }}>Other</option>
-                                    </select>
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                        <i class="fas fa-chevron-down text-gray-400 group-hover:text-primaryBlue transition-colors duration-200"></i>
-                                    </div>
-                                </div>
-                                @error('organization_type')
-                                    <p class="text-red-500 text-sm mt-2 flex items-center"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</p>
-                                @enderror
+                            <div class="flex items-start space-x-2">
+                                <i class="fas fa-check-circle text-primaryGreen mt-1"></i>
+                                <span>2. Access your dashboard</span>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Address Information -->
-                    <div class="space-y-6 pt-8 border-t border-gray-200 dark:border-gray-600">
-                        <div class="flex items-center space-x-3 mb-6">
-                            <div class="w-10 h-10 bg-gradient-to-br from-primaryOrange to-orange-600 rounded-full flex items-center justify-center">
-                                <i class="fas fa-map-marker-alt text-white"></i>
-                            </div>
-                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Address Information</h3>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="md:col-span-2 group">
-                                <label for="address" class="block mb-3 font-semibold text-gray-700 dark:text-gray-300 group-hover:text-primaryOrange transition-colors duration-200">
-                                    <i class="fas fa-map-marker-alt mr-2 text-primaryOrange"></i>Full Address *
-                                </label>
-                                <div class="relative">
-                                    <textarea id="address" name="address" rows="3" required
-                                        class="w-full rounded-xl border-2 border-gray-200 dark:border-gray-600 px-4 py-4 focus:outline-none focus:ring-2 focus:ring-primaryOrange focus:border-primaryOrange dark:bg-gray-700 dark:text-white resize-none transition-all duration-200 group-hover:border-gray-300" 
-                                        placeholder="Enter your complete address">{{ old('address') }}</textarea>
-                                    <div class="absolute top-4 right-3">
-                                        <i class="fas fa-map-marker-alt text-gray-400 group-hover:text-primaryOrange transition-colors duration-200"></i>
-                                    </div>
-                                </div>
-                                @error('address')
-                                    <p class="text-red-500 text-sm mt-2 flex items-center"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</p>
-                                @enderror
-                            </div>
-                            
-                            <div class="group">
-                                <label for="city" class="block mb-3 font-semibold text-gray-700 dark:text-gray-300 group-hover:text-primaryOrange transition-colors duration-200">
-                                    <i class="fas fa-city mr-2 text-primaryOrange"></i>City *
-                                </label>
-                                <div class="relative">
-                                    <input type="text" id="city" name="city" value="{{ old('city') }}" required
-                                        class="w-full rounded-xl border-2 border-gray-200 dark:border-gray-600 px-4 py-4 focus:outline-none focus:ring-2 focus:ring-primaryOrange focus:border-primaryOrange dark:bg-gray-700 dark:text-white transition-all duration-200 group-hover:border-gray-300" 
-                                        placeholder="Enter city name" />
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                                        <i class="fas fa-city text-gray-400 group-hover:text-primaryOrange transition-colors duration-200"></i>
-                                    </div>
-                                </div>
-                                @error('city')
-                                    <p class="text-red-500 text-sm mt-2 flex items-center"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</p>
-                                @enderror
-                            </div>
-                            
-                            <div class="group">
-                                <label for="state" class="block mb-3 font-semibold text-gray-700 dark:text-gray-300 group-hover:text-primaryOrange transition-colors duration-200">
-                                    <i class="fas fa-map mr-2 text-primaryOrange"></i>State/Province *
-                                </label>
-                                <div class="relative">
-                                    <input type="text" id="state" name="state" value="{{ old('state') }}" required
-                                        class="w-full rounded-xl border-2 border-gray-200 dark:border-gray-600 px-4 py-4 focus:outline-none focus:ring-2 focus:ring-primaryOrange focus:border-primaryOrange dark:bg-gray-700 dark:text-white transition-all duration-200 group-hover:border-gray-300" 
-                                        placeholder="Enter state/province" />
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                                        <i class="fas fa-map text-gray-400 group-hover:text-primaryOrange transition-colors duration-200"></i>
-                                    </div>
-                                </div>
-                                @error('state')
-                                    <p class="text-red-500 text-sm mt-2 flex items-center"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</p>
-                                @enderror
-                            </div>
-                            
-                            <div class="group">
-                                <label for="postal_code" class="block mb-3 font-semibold text-gray-700 dark:text-gray-300 group-hover:text-primaryOrange transition-colors duration-200">
-                                    <i class="fas fa-mail-bulk mr-2 text-primaryOrange"></i>Postal Code *
-                                </label>
-                                <div class="relative">
-                                    <input type="text" id="postal_code" name="postal_code" value="{{ old('postal_code') }}" required
-                                        class="w-full rounded-xl border-2 border-gray-200 dark:border-gray-600 px-4 py-4 focus:outline-none focus:ring-2 focus:ring-primaryOrange focus:border-primaryOrange dark:bg-gray-700 dark:text-white transition-all duration-200 group-hover:border-gray-300" 
-                                        placeholder="Enter postal code" />
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                                        <i class="fas fa-mail-bulk text-gray-400 group-hover:text-primaryOrange transition-colors duration-200"></i>
-                                    </div>
-                                </div>
-                                @error('postal_code')
-                                    <p class="text-red-500 text-sm mt-2 flex items-center"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</p>
-                                @enderror
-                            </div>
-                            
-                            <div class="group">
-                                <label for="country" class="block mb-3 font-semibold text-gray-700 dark:text-gray-300 group-hover:text-primaryOrange transition-colors duration-200">
-                                    <i class="fas fa-globe mr-2 text-primaryOrange"></i>Country *
-                                </label>
-                                <div class="relative">
-                                    <input type="text" id="country" name="country" value="{{ old('country') }}" required
-                                        class="w-full rounded-xl border-2 border-gray-200 dark:border-gray-600 px-4 py-4 focus:outline-none focus:ring-2 focus:ring-primaryOrange focus:border-primaryOrange dark:bg-gray-700 dark:text-white transition-all duration-200 group-hover:border-gray-300" 
-                                        placeholder="Enter country name" />
-                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                                        <i class="fas fa-globe text-gray-400 group-hover:text-primaryOrange transition-colors duration-200"></i>
-                                    </div>
-                                </div>
-                                @error('country')
-                                    <p class="text-red-500 text-sm mt-2 flex items-center"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</p>
-                                @enderror
+                            <div class="flex items-start space-x-2">
+                                <i class="fas fa-check-circle text-primaryGreen mt-1"></i>
+                                <span>3. Complete your profile later</span>
                             </div>
                         </div>
                     </div>
@@ -382,7 +223,7 @@
                             class="group relative overflow-hidden bg-gradient-to-r from-primaryGreen via-green-600 to-green-700 text-white font-bold px-16 py-5 rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 hover:from-green-600 hover:via-green-700 hover:to-green-800">
                             <span class="relative z-10 flex items-center space-x-3">
                                 <i class="fas fa-rocket text-xl group-hover:animate-bounce"></i>
-                                <span class="text-lg">Register as Partner</span>
+                                <span class="text-lg">Start Partner Journey</span>
                             </span>
                             <div class="absolute inset-0 bg-gradient-to-r from-green-700 to-green-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                         </button>

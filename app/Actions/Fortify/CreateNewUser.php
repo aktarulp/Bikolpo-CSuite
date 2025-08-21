@@ -3,6 +3,7 @@
 namespace App\Actions\Fortify;
 
 use App\Models\User;
+use App\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -20,7 +21,6 @@ class CreateNewUser implements CreatesNewUsers
     public function create(array $input): User
     {
         Validator::make($input, [
-            'name' => ['nullable', 'string', 'max:255'],
             'email' => [
                 'required',
                 'string',
@@ -29,16 +29,25 @@ class CreateNewUser implements CreatesNewUsers
                 Rule::unique(User::class),
             ],
             'password' => $this->passwordRules(),
-            'role' => ['nullable', 'string', 'in:student,partner'],
-            'phone' => ['nullable', 'string', 'max:20'],
+            'role_type' => ['nullable', 'string', 'in:student,partner'],
         ])->validate();
 
+        // Determine role based on registration context
+        $roleType = $input['role_type'] ?? 'student';
+        
+        // Get the appropriate role
+        $role = Role::where('name', $roleType)->first();
+        if (!$role) {
+            // Fallback to student role if specified role not found
+            $role = Role::where('name', 'student')->first();
+        }
+
         return User::create([
-            'name' => $input['name'] ?? null,
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
-            'role' => $input['role'] ?? 'student',
-            'phone' => $input['phone'] ?? null,
+            'role_id' => $role->id,
+            'name' => null, // Will be filled later in profile
+            'phone' => null, // Will be filled later in profile
         ]);
     }
 }
