@@ -34,7 +34,7 @@
                         id="email" 
                         type="email" 
                         name="email" 
-                        :value="old('email')" 
+                        value="{{ old('email') }}" 
                         required 
                         autofocus 
                         autocomplete="username"

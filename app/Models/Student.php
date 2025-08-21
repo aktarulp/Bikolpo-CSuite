@@ -41,4 +41,12 @@ class Student extends Model
     {
         return $this->belongsToMany(Exam::class, 'student_exam_results');
     }
+
+    /**
+     * Get the user account associated with the student.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'email', 'email');
+    }
 }

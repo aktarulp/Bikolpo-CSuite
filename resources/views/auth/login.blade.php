@@ -202,11 +202,11 @@
         <!-- Register Link -->
         <div class="text-center">
             <a 
-                href="{{ route('register') }}" 
+                href="{{ route('partner.register') }}" 
                 class="inline-flex items-center justify-center w-full bg-white dark:bg-gray-800 border-2 border-primaryGreen text-primaryGreen hover:bg-primaryGreen hover:text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-200 transform hover:scale-[1.02]"
             >
                 <i class="fas fa-user-plus mr-2"></i>
-                Create Account
+                Create Partner Account
             </a>
         </div>
 

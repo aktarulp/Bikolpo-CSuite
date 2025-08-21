@@ -19,24 +19,35 @@ Route::middleware('guest')->group(function () {
         ->name('partner.login');
     Route::post('partner/login', [AuthenticatedSessionController::class, 'store']);
     
-    Route::get('partner/register', [RegisteredUserController::class, 'create'])
+    Route::get('partner/register', [\App\Http\Controllers\Auth\PartnerRegistrationController::class, 'showRegistrationForm'])
         ->name('partner.register');
-    Route::post('partner/register', [RegisteredUserController::class, 'store']);
+    Route::post('partner/register', [\App\Http\Controllers\Auth\PartnerRegistrationController::class, 'register'])
+        ->name('partner.register.store');
+    Route::get('partner/verify-otp', [\App\Http\Controllers\Auth\PartnerRegistrationController::class, 'showOtpVerificationForm'])
+        ->name('partner.verify-otp');
+    Route::post('partner/verify-otp', [\App\Http\Controllers\Auth\PartnerRegistrationController::class, 'verifyOtp'])
+        ->name('partner.verify-otp.store');
+    Route::post('partner/resend-otp', [\App\Http\Controllers\Auth\PartnerRegistrationController::class, 'resendOtp'])
+        ->name('partner.resend-otp');
+    
+    // Partner registration success page (no middleware required)
+    Route::get('partner/registration-success', [\App\Http\Controllers\Auth\PartnerRegistrationController::class, 'showRegistrationSuccess'])
+        ->name('partner.registration.success');
 
     // Student Authentication
     Route::get('student/login', [AuthenticatedSessionController::class, 'create'])
         ->name('student.login');
     Route::post('student/login', [AuthenticatedSessionController::class, 'store']);
     
-    Route::get('student/register', [RegisteredUserController::class, 'create'])
+    Route::get('student/register', [\App\Http\Controllers\Auth\StudentRegistrationController::class, 'showRegistrationForm'])
         ->name('student.register');
-    Route::post('student/register', [RegisteredUserController::class, 'store']);
+    Route::post('student/register', [\App\Http\Controllers\Auth\StudentRegistrationController::class, 'register'])
+        ->name('student.register.store');
 
-    // Standard Authentication Routes
-    Route::get('register', [RegisteredUserController::class, 'create'])
-        ->name('register');
-
-    Route::post('register', [RegisteredUserController::class, 'store']);
+    // Standard Authentication Routes - Removed general registration to prevent bypassing OTP
+    // Route::get('register', [RegisteredUserController::class, 'create'])
+    //     ->name('register');
+    // Route::post('register', [RegisteredUserController::class, 'store']);
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
@@ -67,6 +78,8 @@ Route::middleware('auth')->group(function () {
     Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
         ->middleware('throttle:6,1')
         ->name('verification.send');
+
+
 
     Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])
         ->name('password.confirm');

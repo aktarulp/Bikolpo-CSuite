@@ -136,7 +136,7 @@
                     Practice, improve, and excel with বিকল্প কম্পিউটার.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                    <a href="{{ route('register') }}" class="group bg-gradient-to-r from-primaryGreen to-green-600 hover:from-green-600 hover:to-green-700 text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl">
+                    <a href="{{ route('partner.register') }}" class="group bg-gradient-to-r from-primaryGreen to-green-600 hover:from-green-600 hover:to-green-700 text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl">
                         Get Started Free
                         <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-200"></i>
                     </a>
@@ -316,7 +316,7 @@
                             <i class="fas fa-rocket text-6xl mb-6"></i>
                             <h3 class="text-2xl font-bold mb-4">Ready to Get Started?</h3>
                             <p class="text-green-100 mb-6">Join thousands of users who trust Bikolpo C-Suitee for their online testing needs.</p>
-                                                <a href="{{ route('register') }}" class="bg-white text-primaryGreen px-8 py-3 rounded-full font-bold hover:bg-gray-100 transition-colors duration-200 inline-block">
+                                                <a href="{{ route('partner.register') }}" class="bg-white text-primaryGreen px-8 py-3 rounded-full font-bold hover:bg-gray-100 transition-colors duration-200 inline-block">
                         Start Free Trial
                     </a>
                         </div>
@@ -336,11 +336,11 @@
                 Join বিকল্প কম্পিউটার today and discover a smarter way to learn, test, and grow.
             </p>
                             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="{{ route('register') }}" class="bg-white text-primaryBlue px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors duration-200 transform hover:scale-105 shadow-lg">
-                        Get Started Free
+                    <a href="{{ route('partner.register') }}" class="bg-white text-primaryBlue px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors duration-200 transform hover:scale-105 shadow-lg">
+                        Become a Partner
                     </a>
-                    <a href="{{ route('register') }}" class="border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-primaryBlue transition-all duration-200">
-                        Get Started
+                    <a href="{{ route('partner.register') }}" class="border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-primaryBlue transition-all duration-200">
+                        Get Started Free
                     </a>
                 </div>
                 <div class="mt-4 text-center">

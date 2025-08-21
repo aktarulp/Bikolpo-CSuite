@@ -153,7 +153,9 @@ Route::prefix('student')->name('student.')->middleware(['auth', 'role:student'])
     Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
     
     // Student Profile
-    Route::resource('profile', StudentController::class)->only(['show', 'edit', 'update']);
+    Route::get('profile', [StudentController::class, 'showOwnProfile'])->name('profile.show');
+    Route::get('profile/edit', [StudentController::class, 'editOwnProfile'])->name('profile.edit');
+    Route::put('profile', [StudentController::class, 'updateOwnProfile'])->name('profile.update');
     
     // Available Exams
     Route::get('exams', [StudentExamController::class, 'availableExams'])->name('exams.available');
@@ -186,3 +188,33 @@ Route::resource('typing-passages', \App\Http\Controllers\TypingPassageController
 Route::get('/typing-passages/get/{language?}/{difficulty?}', [\App\Http\Controllers\TypingPassageController::class, 'getPassages'])->name('typing-passages.get');
 Route::post('/typing-passages/{typingPassage}/stats', [\App\Http\Controllers\TypingPassageController::class, 'updateStats'])->name('typing-passages.stats');
 Route::patch('/typing-passages/{typingPassage}/toggle', [\App\Http\Controllers\TypingPassageController::class, 'toggleStatus'])->name('typing-passages.toggle');
+
+// Test Email Route (Remove in production)
+Route::get('/test-email', function () {
+    try {
+        Mail::send('emails.partner-otp', ['otp' => '123456', 'name' => 'Test User'], function ($message) {
+            $message->to('test@example.com')
+                ->subject('Test Email - বিকল্প কম্পিউটার')
+                ->from('bikolpo247@gmail.com', 'বিকল্প কম্পিউটার');
+        });
+        return 'Test email sent successfully!';
+    } catch (\Exception $e) {
+        return 'Email failed: ' . $e->getMessage();
+    }
+})->name('test.email');
+
+// Test Session Route (Remove in production)
+Route::get('/test-session', function (Request $request) {
+    $request->session()->put('test_data', 'Test session data');
+    $sessionData = $request->session()->get('test_data');
+    $sessionId = $request->session()->getId();
+    $sessionDriver = config('session.driver');
+    
+    return response()->json([
+        'session_id' => $sessionId,
+        'session_driver' => $sessionDriver,
+        'test_data' => $sessionData,
+        'has_test_data' => $request->session()->has('test_data'),
+        'all_session_data' => $request->session()->all()
+    ]);
+})->name('test.session');
