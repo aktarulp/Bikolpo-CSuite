@@ -28,11 +28,11 @@ class RedirectIfAuthenticated
                     'route' => $request->route()->getName(),
                     'user_id' => $user->id,
                     'user_role' => $user->role,
-                    'is_login_route' => $request->routeIs('login') || $request->routeIs('partner.login') || $request->routeIs('student.login')
+                    'is_login_route' => $request->routeIs('login') || $request->routeIs('partner.onboarding') || $request->routeIs('student.login')
                 ]);
                 
                 // Allow authenticated users to access login page if they want to switch accounts
-                if ($request->routeIs('login') || $request->routeIs('partner.login') || $request->routeIs('student.login')) {
+                if ($request->routeIs('login') || $request->routeIs('partner.onboarding') || $request->routeIs('student.login')) {
                     Log::info('Allowing authenticated user to access login page');
                     return $next($request);
                 }

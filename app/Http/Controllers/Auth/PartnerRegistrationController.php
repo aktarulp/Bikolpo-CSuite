@@ -271,9 +271,9 @@ class PartnerRegistrationController extends Controller
             Session::forget('partner_registration');
             
             // Log before redirect
-            Log::info('About to redirect to login page', [
-                'route_name' => 'partner.login',
-                'route_url' => route('partner.login'),
+            Log::info('About to redirect to onboarding page', [
+                'route_name' => 'partner.onboarding',
+                'route_url' => route('partner.onboarding'),
                 'user_authenticated' => auth()->check(),
                 'session_id' => $request->session()->getId()
             ]);
@@ -281,8 +281,8 @@ class PartnerRegistrationController extends Controller
             // Logout the user and redirect to login page with success message
             auth()->logout();
             
-            // Redirect to login page with success message
-            return redirect()->route('partner.login')
+            // Redirect to onboarding page with success message
+            return redirect()->route('partner.onboarding')
                 ->with('success', 'Registration completed successfully! You can now login with your email and password.');
 
         } catch (\Exception $e) {

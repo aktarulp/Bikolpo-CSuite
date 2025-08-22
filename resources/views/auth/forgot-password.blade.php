@@ -17,17 +17,8 @@
         <!-- Session Status -->
         <x-auth-session-status class="mb-6" :status="session('status')" />
 
-        <!-- Debug Information (Remove in production) -->
-        @if(config('app.debug'))
-        <div class="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg">
-            <p class="text-xs text-blue-600 dark:text-blue-400">
-                <strong>Debug:</strong> Form will submit to: {{ route('password.email.otp') }}
-            </p>
-        </div>
-        @endif
-
         <!-- Forgot Password Form -->
-        <form method="POST" action="{{ route('password.email.otp') }}" class="space-y-6" id="forgotPasswordForm">
+        <form method="POST" action="{{ route('password.email.otp') }}" class="space-y-6">
             @csrf
 
             <!-- Email Address -->
@@ -57,7 +48,6 @@
             <button 
                 type="submit"
                 class="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-                id="submitBtn"
             >
                 <i class="fas fa-paper-plane mr-2"></i>
                 Send OTP
@@ -98,25 +88,4 @@
             </a>
         </div>
     </div>
-
-    <!-- Form Debugging Script (Remove in production) -->
-    @if(config('app.debug'))
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('forgotPasswordForm');
-            const submitBtn = document.getElementById('submitBtn');
-            
-            form.addEventListener('submit', function(e) {
-                console.log('Form submitted to:', this.action);
-                console.log('Form method:', this.method);
-                console.log('CSRF token:', this.querySelector('input[name="_token"]').value);
-                console.log('Email value:', this.querySelector('input[name="email"]').value);
-                
-                // Disable submit button to prevent double submission
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sending...';
-            });
-        });
-    </script>
-    @endif
 </x-guest-layout>

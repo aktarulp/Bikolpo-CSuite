@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>বিকল্প কম্পিউটার - Login</title>
+    <title>বিকল্প কম্পিউটার - Partner Onboarding</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -137,41 +137,32 @@
             </div>
             
             <!-- Success Message with Enhanced Styling -->
-    @if (session('success'))
+            @if (session('success'))
                 <div class="mb-8 p-6 bg-gradient-to-r from-green-50 via-emerald-50 to-green-100 dark:from-green-900/30 dark:via-emerald-900/30 dark:to-green-900/30 border-2 border-green-200 dark:border-green-600 rounded-3xl shadow-lg relative overflow-hidden">
                     <div class="absolute inset-0 bg-gradient-to-r from-green-400/5 to-emerald-400/5"></div>
                     <div class="relative flex items-start space-x-4">
-                <div class="flex-shrink-0">
+                        <div class="flex-shrink-0">
                             <div class="w-14 h-14 bg-gradient-to-br from-green-500 via-emerald-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg animate-bounce">
                                 <i class="fas fa-check text-white text-2xl"></i>
-                    </div>
-                </div>
-                <div class="flex-1">
+                            </div>
+                        </div>
+                        <div class="flex-1">
                             <h3 class="text-xl font-bold text-green-800 dark:text-green-200 mb-2 flex items-center">
                                 🎉 Registration Successful! 🚀
-                    </h3>
+                            </h3>
                             <p class="text-green-700 dark:text-green-300 leading-relaxed text-lg">
-                        {{ session('success') }}
-                    </p>
-                    <div class="mt-4 p-3 bg-white/50 dark:bg-gray-800/50 rounded-xl border border-green-200 dark:border-green-600">
-                        <p class="text-sm text-green-600 dark:text-green-400 font-medium">
-                            <i class="fas fa-info-circle mr-2"></i>
-                            You can now login with your credentials to access your dashboard.
-                        </p>
+                                {{ session('success') }}
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    @endif
-
-            <!-- Session Status -->
-            <x-auth-session-status class="mb-4" :status="session('status')" />
+            @endif
 
                          <!-- Main Content Area with Enhanced 3 Columns -->
-             <div class="flex-grow grid grid-cols-1 md:grid-cols-3 gap-8 items-start relative z-10">
+             <div class="flex-grow grid grid-cols-1 md:grid-cols-3 gap-8 items-center relative z-10">
                 
-                                 <!-- Left Column: Enhanced Illustration -->
-                 <div class="flex items-center justify-center p-4">
+                <!-- Left Column: Enhanced Illustration -->
+                <div class="flex items-center justify-center p-4">
                     <div class="text-center space-y-6">
                         <!-- Enhanced Logo with Floating Animation -->
                         <div class="flex items-center justify-center mb-8">
@@ -189,275 +180,108 @@
                         <!-- Enhanced Welcome Text -->
                         <div class="space-y-4">
                             <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-4 animate-fade-in">
-                                Welcome Back to <br/>
+                                Welcome to <br/>
                             </h2>
                             <h1 class="text-4xl font-bold bg-gradient-to-r from-primaryGreen via-green-600 to-emerald-600 bg-clip-text text-transparent animate-gradient-x">
                                 বিকল্প কম্পিউটার
-            </h1>
+                            </h1>
                             <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed animate-fade-in-up">
-                                Sign in to your account to continue your learning journey! 🎓✨
+                                Your partner dashboard is ready to help you create amazing learning experiences. 🎓✨
                             </p>
                         </div>
                     </div>
-                                 </div>
- 
-                 <!-- Right Column: Enhanced Login Form -->
-                 <div class="flex flex-col justify-start text-center md:text-left p-4 space-y-6">
+                </div>
+
+                <!-- Right Column: Enhanced Welcome Message -->
+                <div class="flex flex-col justify-center text-center md:text-left p-4 space-y-6">
                     <div class="space-y-4">
-                        <h1 class="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-gray-900 via-primaryGreen to-green-600 dark:from-white dark:via-primaryGreen dark:to-green-400 bg-clip-text text-transparent animate-fade-in-up">
-                            Sign In
+                        <h1 class="text-6xl md:text-7xl font-extrabold bg-gradient-to-r from-gray-900 via-primaryGreen to-green-600 dark:from-white dark:via-primaryGreen dark:to-green-400 bg-clip-text text-transparent animate-fade-in-up">
+                            Welcome!
                         </h1>
-                        
-        </div>
-
-                    <!-- Enhanced Login Form -->
+                        <p class="text-2xl text-gray-600 dark:text-gray-400 mb-8 animate-fade-in-up" style="animation-delay: 0.2s;">
+                            You have successfully registered as a partner. 🎊
+                        </p>
+                    </div>
+                    
+                    <!-- Enhanced CTA Button -->
                     <div class="animate-fade-in-up" style="animation-delay: 0.4s;">
-                        <div class="w-full max-w-md mx-auto" id="loginFormContainer">
-        <!-- Logout Section for Authenticated Users -->
-        @auth
-                            <div class="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-xl">
-            <div class="text-center">
-                <p class="text-sm text-blue-700 dark:text-blue-300 mb-3">
-                    <i class="fas fa-info-circle mr-2"></i>
-                    You are currently logged in as <strong>{{ Auth::user()->name ?? 'User' }}</strong>
-                </p>
-                <div class="flex flex-col sm:flex-row gap-2 justify-center">
-                    <a 
-                        href="{{ route('logout') }}" 
-                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                        class="inline-flex items-center justify-center bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
-                    >
-                        <i class="fas fa-sign-out-alt mr-2"></i>
-                        Logout Current Account
-                    </a>
-                    <a 
-                        href="{{ Auth::user()->role === 'student' ? route('student.dashboard') : route('partner.dashboard') }}" 
-                        class="inline-flex items-center justify-center bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
-                    >
-                        <i class="fas fa-tachometer-alt mr-2"></i>
-                        Go to Dashboard
-                    </a>
-                </div>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
-                    @csrf
-                </form>
-            </div>
-        </div>
-        @endauth
-
-        <!-- Login Type Switch -->
-        <div class="mb-6">
-            <div class="flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-xl p-1">
-                <button 
-                    type="button" 
-                    id="partnerLoginBtn" 
-                    class="flex-1 py-2 px-4 rounded-lg font-medium transition-all duration-200 bg-primaryGreen text-white shadow-md text-sm flex items-center justify-center"
-                    onclick="switchLoginType('partner')"
-                >
-                    <i class="fas fa-handshake mr-2"></i>
-                    Partner
-                </button>
-                <button 
-                    type="button" 
-                    id="studentLoginBtn" 
-                    class="flex-1 py-2 px-4 rounded-lg font-medium transition-all duration-200 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm flex items-center justify-center"
-                    onclick="switchLoginType('student')"
-                >
-                    <i class="fas fa-graduation-cap mr-2"></i>
-                    Student
-                </button>
-            </div>
-        </div>
-
-        <!-- Login Type Indicator -->
-        <div class="mb-6 text-center" id="loginTypeIndicator">
-            <div class="inline-flex items-center px-4 py-2 bg-primaryGreen/10 dark:bg-primaryGreen/20 border border-primaryGreen/30 dark:border-primaryGreen/40 rounded-full">
-                <div class="w-3 h-3 bg-primaryGreen rounded-full mr-2"></div>
-                <span class="text-sm font-medium text-primaryGreen dark:text-primaryGreen-400" id="indicatorText">
-                    Partner Login
-                </span>
-            </div>
-        </div>
-
-        <!-- Login Form -->
-        <form method="POST" action="{{ route('login') }}" id="loginForm" class="space-y-4">
-            @csrf
-            <input type="hidden" name="login_type" id="loginType" value="partner">
-
-            <!-- Email Address (Partner) / Phone Number (Student) -->
-            <div class="space-y-1" id="emailField">
-                <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Email Address
-                </label>
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-envelope text-gray-400"></i>
+                        <a href="{{ route('login') }}" class="group inline-block self-center md:self-start bg-gradient-to-r from-primaryGreen via-green-500 to-emerald-600 hover:from-emerald-600 hover:via-green-600 hover:to-primaryGreen text-white font-bold py-5 px-10 rounded-3xl shadow-2xl transition-all duration-500 transform hover:scale-110 hover:shadow-3xl hover:-translate-y-1 relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                            <span class="relative flex items-center justify-center">
+                                <i class="fas fa-rocket mr-3 text-xl animate-bounce"></i>
+                                Log In to Explore Now
+                                <i class="fas fa-arrow-right ml-3 group-hover:translate-x-2 transition-transform duration-300"></i>
+                            </span>
+                        </a>
                     </div>
-                    <input 
-                        id="email" 
-                        type="email" 
-                        name="email" 
-                        value="{{ old('email') }}" 
-                        autofocus 
-                        autocomplete="username"
-                        class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primaryGreen focus:border-transparent transition-all duration-200"
-                        placeholder="Enter your email"
-                    />
-                </div>
-                <x-input-error :messages="$errors->get('email')" class="mt-1" />
-            </div>
-
-            <!-- Phone Number Field (Student) - Hidden by default -->
-            <div class="space-y-1 hidden" id="phoneField">
-                <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Phone Number
-                </label>
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-phone text-gray-400"></i>
-                    </div>
-                    <input 
-                        id="phone" 
-                        type="tel" 
-                        name="phone" 
-                        value="{{ old('phone') }}" 
-                        autocomplete="tel"
-                        class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primaryGreen focus:border-transparent transition-all duration-200"
-                        placeholder="01XXXXXXXXX (11 digits)"
-                        pattern="01[3-9][0-9]{8}"
-                        maxlength="11"
-                    />
-                </div>
-                <p class="text-xs text-gray-500 dark:text-gray-400">
-                    Format: 01XXXXXXXXX (11 digits, starting with 01)
-                </p>
-                <x-input-error :messages="$errors->get('phone')" class="mt-1" />
-            </div>
-
-            <!-- Password -->
-            <div class="space-y-1">
-                <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Password
-                </label>
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-lock text-gray-400"></i>
-                    </div>
-                    <input 
-                        id="password" 
-                        type="password" 
-                        name="password" 
-                        required 
-                        autocomplete="current-password"
-                        class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primaryGreen focus:border-transparent transition-all duration-200"
-                        placeholder="Enter your password"
-                    />
-                </div>
-                <x-input-error :messages="$errors->get('password')" class="mt-1" />
-            </div>
-
-            <!-- Remember Me & Forgot Password -->
-            <div class="flex items-center justify-between">
-                <label for="remember_me" class="flex items-center">
-                    <input 
-                        id="remember_me" 
-                        type="checkbox" 
-                        name="remember"
-                        class="w-4 h-4 text-primaryGreen bg-gray-100 border-gray-300 rounded focus:ring-primaryGreen focus:ring-2"
-                    >
-                    <span class="ml-2 text-xs text-gray-600 dark:text-gray-400">
-                        Remember me
-                    </span>
-                </label>
-
-                @if (Route::has('password.request'))
-                    <a 
-                        href="{{ route('password.request') }}" 
-                        class="text-xs text-primaryGreen hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 transition-colors duration-200"
-                    >
-                        Forgot password?
-                    </a>
-                @endif
-            </div>
-
-            <!-- Submit Button -->
-            <button 
-                type="submit"
-                class="w-full bg-gradient-to-r from-primaryGreen to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-2.5 px-4 rounded-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primaryGreen"
-            >
-                <i class="fas fa-sign-in-alt mr-2"></i>
-                <span id="submitText">Sign In as Partner</span>
-            </button>
-        </form>
-
-        <!-- Back to Home -->
-        <div class="text-center mt-4">
-            <a 
-                href="{{ route('landing') }}" 
-                class="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-200"
-            >
-                <i class="fas fa-arrow-left mr-1"></i>
-                Back to Home
-            </a>
-        </div>
-    </div>
+                    
+                    <!-- Additional Joyful Elements -->
+                    <div class="flex justify-center md:justify-start space-x-4 mt-8 animate-fade-in-up" style="animation-delay: 0.6s;">
+                        <div class="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+                            <i class="fas fa-star text-yellow-400 animate-pulse"></i>
+                            <span>Premium Features</span>
+                        </div>
+                        <div class="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+                            <i class="fas fa-shield-alt text-blue-400 animate-pulse"></i>
+                            <span>Secure Access</span>
+                        </div>
                                          </div>
                  </div>
  
                  <!-- Third Column: Additional Content -->
-                 <div class="flex flex-col justify-start text-center md:text-left p-4 space-y-6">
+                 <div class="flex flex-col justify-center text-center md:text-left p-4 space-y-6">
                      <div class="space-y-4">
                          <h1 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-900 via-primaryGreen to-green-600 dark:from-white dark:via-primaryGreen dark:to-green-400 bg-clip-text text-transparent animate-fade-in-up">
-                             New to বিকল্প কম্পিউটার!
+                             Ready to Get Started?
                          </h1>
                          <p class="text-lg text-gray-600 dark:text-gray-400 mb-6 animate-fade-in-up" style="animation-delay: 0.2s;">
-                             Join our learning community today! 🎓✨
+                             Explore our platform features! 🚀✨
                          </p>
                      </div>
                      
-                     <!-- Become a Partner Button -->
+                     <!-- Explore Features Button -->
                      <div class="animate-fade-in-up" style="animation-delay: 0.4s;">
-                         <a href="{{ route('partner.register') }}" class="group inline-block w-full bg-gradient-to-r from-primaryGreen via-green-500 to-emerald-600 hover:from-emerald-600 hover:via-green-600 hover:to-primaryGreen text-white font-bold py-4 px-6 rounded-2xl shadow-xl transition-all duration-500 transform hover:scale-105 hover:shadow-2xl hover:-translate-y-1 relative overflow-hidden">
+                         <a href="{{ route('partner.features') }}" class="group inline-block w-full bg-gradient-to-r from-primaryGreen via-green-500 to-emerald-600 hover:from-emerald-600 hover:via-green-600 hover:to-primaryGreen text-white font-bold py-4 px-6 rounded-2xl shadow-xl transition-all duration-500 transform hover:scale-105 hover:shadow-2xl hover:-translate-y-1 relative overflow-hidden">
                              <div class="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                              <span class="relative flex items-center justify-center">
-                                 <i class="fas fa-handshake mr-3 text-lg"></i>
-                                 Become a Partner
+                                 <i class="fas fa-rocket mr-3 text-lg"></i>
+                                 Explore Features
                                  <i class="fas fa-arrow-right ml-3 group-hover:translate-x-2 transition-transform duration-300"></i>
                              </span>
                          </a>
                      </div>
                      
-                     <!-- Enroll as a Student Button -->
+                     <!-- Learn More Button -->
                      <div class="animate-fade-in-up" style="animation-delay: 0.6s;">
-                         <a href="{{ route('student.register') }}" class="group inline-block w-full bg-gradient-to-r from-primaryBlue via-blue-500 to-indigo-600 hover:from-indigo-600 hover:via-blue-600 hover:to-primaryBlue text-white font-bold py-4 px-6 rounded-2xl shadow-xl transition-all duration-500 transform hover:scale-105 hover:shadow-2xl hover:-translate-y-1 relative overflow-hidden">
+                         <a href="{{ route('landing') }}" class="group inline-block w-full bg-gradient-to-r from-primaryBlue via-blue-500 to-indigo-600 hover:from-indigo-600 hover:via-blue-600 hover:to-primaryBlue text-white font-bold py-4 px-6 rounded-2xl shadow-xl transition-all duration-500 transform hover:scale-105 hover:shadow-2xl hover:-translate-y-1 relative overflow-hidden">
                              <div class="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                              <span class="relative flex items-center justify-center">
-                                 <i class="fas fa-graduation-cap mr-3 text-lg"></i>
-                                 Enroll as a Student
+                                 <i class="fas fa-info-circle mr-3 text-lg"></i>
+                                 Learn More
                                  <i class="fas fa-arrow-right ml-3 group-hover:translate-x-2 transition-transform duration-300"></i>
                              </span>
                          </a>
                      </div>
                      
-                     <!-- Additional Info -->
+                     <!-- Platform Benefits -->
                      <div class="mt-8 space-y-4 animate-fade-in-up" style="animation-delay: 0.8s;">
-                         <div class="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl border border-blue-200 dark:border-blue-700">
+                         <div class="p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-2xl border border-green-200 dark:border-green-700">
                              <div class="flex items-center space-x-3 mb-2">
-                                 <i class="fas fa-lightbulb text-yellow-500 text-xl"></i>
-                                 <h3 class="font-semibold text-blue-800 dark:text-blue-200">Why Choose Us?</h3>
+                                 <i class="fas fa-star text-yellow-500 text-xl"></i>
+                                 <h3 class="font-semibold text-green-800 dark:text-green-200">Platform Benefits</h3>
                              </div>
-                             <ul class="text-sm text-blue-700 dark:text-blue-300 space-y-1">
+                             <ul class="text-sm text-green-700 dark:text-green-300 space-y-1">
                                  <li class="flex items-center space-x-2">
                                      <i class="fas fa-check text-green-500 text-xs"></i>
-                                     <span>Interactive Learning Experience</span>
+                                     <span>Easy Content Management</span>
                                  </li>
                                  <li class="flex items-center space-x-2">
                                      <i class="fas fa-check text-green-500 text-xs"></i>
-                                     <span>Expert-Led Content</span>
+                                     <span>Student Progress Tracking</span>
                                  </li>
                                  <li class="flex items-center space-x-2">
                                      <i class="fas fa-check text-green-500 text-xs"></i>
-                                     <span>Flexible Study Schedule</span>
+                                     <span>Comprehensive Analytics</span>
                                  </li>
                              </ul>
                          </div>
@@ -530,86 +354,6 @@
         
         mobileMenuBtn.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');
-        });
-
-        function switchLoginType(type) {
-            const partnerBtn = document.getElementById('partnerLoginBtn');
-            const studentBtn = document.getElementById('studentLoginBtn');
-            const loginType = document.getElementById('loginType');
-            const submitText = document.getElementById('submitText');
-            const form = document.getElementById('loginForm');
-            const emailField = document.getElementById('emailField');
-            const phoneField = document.getElementById('phoneField');
-            const emailInput = document.getElementById('email');
-            const phoneInput = document.getElementById('phone');
-            const registerLink = document.getElementById('registerLink');
-            const registerText = document.getElementById('registerText');
-            const indicatorText = document.getElementById('indicatorText');
-            const loginFormContainer = document.getElementById('loginFormContainer');
-
-
-            if (type === 'partner') {
-                // Partner login
-                partnerBtn.className = 'flex-1 py-2 px-4 rounded-lg font-medium transition-all duration-200 bg-primaryGreen text-white shadow-md text-sm flex items-center justify-center';
-                studentBtn.className = 'flex-1 py-2 px-4 rounded-lg font-medium transition-all duration-200 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm flex items-center justify-center';
-                loginType.value = 'partner';
-                submitText.textContent = 'Sign In as Partner';
-                form.action = '{{ route("login") }}';
-                
-                // Update register link for partner
-                registerLink.href = '{{ route("partner.register") }}';
-                registerText.textContent = 'Create Partner Account';
-                
-                // Show email field, hide phone field
-                emailField.classList.remove('hidden');
-                phoneField.classList.add('hidden');
-                
-                // Set required attributes and field names
-                emailInput.required = true;
-                phoneInput.required = false;
-                emailInput.name = 'email';
-                phoneInput.name = 'phone_disabled';
-                
-                // Clear phone input when switching to partner
-                phoneInput.value = '';
-                indicatorText.textContent = 'Partner Login';
-                loginFormContainer.classList.remove('bg-gray-100', 'dark:bg-gray-700');
-                 
-
-            } else {
-                // Student login
-                studentBtn.className = 'flex-1 py-2 px-4 rounded-lg font-medium transition-all duration-200 bg-primaryGreen text-white shadow-md text-sm flex items-center justify-center';
-                partnerBtn.className = 'flex-1 py-2 px-4 rounded-lg font-medium transition-all duration-200 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm flex items-center justify-center';
-                loginType.value = 'student';
-                submitText.textContent = 'Sign In as Student';
-                form.action = '{{ route("login") }}';
-                
-                // Update register link for student
-                registerLink.href = '{{ route("student.register") }}';
-                registerText.textContent = 'Create Student Account';
-                
-                // Show phone field, hide email field
-                emailField.classList.add('hidden');
-                phoneField.classList.remove('hidden');
-                
-                // Set required attributes and field names
-                emailInput.required = false;
-                phoneInput.required = true;
-                emailInput.name = 'email_disabled';
-                phoneInput.name = 'phone';
-                
-                // Clear email input when switching to student
-                emailInput.value = '';
-                indicatorText.textContent = 'Student Login';
-                loginFormContainer.classList.add('bg-gray-100', 'dark:bg-gray-700');
-                 
-
-            }
-        }
-
-        // Initialize with partner login selected
-        document.addEventListener('DOMContentLoaded', function() {
-            switchLoginType('partner');
         });
     </script>
 

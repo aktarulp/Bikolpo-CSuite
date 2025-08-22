@@ -23,7 +23,7 @@ class PartnerLoginController extends Controller
             'user_role' => Auth::user()?->role ?? 'none'
         ]);
         
-        return view('auth.partner.login');
+        return view('auth.partner.onboarding');
     }
 
     /**

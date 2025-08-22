@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Partner Registration Verification - CSuite</title>
+    <title>Partner Registration Verification - বিকল্প কম্পিউটার</title>
     <style>
         /* Reset and base styles */
         * {
@@ -49,14 +49,32 @@
             opacity: 0.3;
         }
         
-        .logo {
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .logo-text {
             font-size: 28px;
             font-weight: 800;
             color: #ffffff;
-            margin-bottom: 8px;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            position: relative;
-            z-index: 1;
         }
         
         .tagline {
@@ -346,7 +364,12 @@
     <div class="email-container">
         <!-- Header Section -->
         <div class="header">
-            <div class="logo">CSuite</div>
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <span style="font-size: 24px; color: white;">💻</span>
+                </div>
+                <div class="logo-text">বিকল্প কম্পিউটার</div>
+            </div>
             <div class="tagline">Your Smart Exam Partner</div>
         </div>
 
@@ -355,7 +378,7 @@
             <div class="greeting">Hello {{ $name }},</div>
             
             <div class="intro-text">
-                Welcome to <strong>CSuite</strong>! We're excited to have you join our partner network. 
+                Welcome to <strong>বিকল্প কম্পিউটার</strong>! We're excited to have you join our partner network. 
                 To complete your registration and unlock access to our comprehensive exam management platform, 
                 please use the verification code below:
             </div>
@@ -408,7 +431,7 @@
         <!-- Footer -->
         <div class="footer">
             <div class="company-info">
-                <div class="company-name">CSuite</div>
+                <div class="company-name">বিকল্প কম্পিউটার</div>
                 <div class="company-tagline">Empowering Education Through Technology</div>
             </div>
             
@@ -418,9 +441,9 @@
             </div>
             
             <div class="disclaimer">
-                This email was sent to you as part of the CSuite partner registration process. 
+                This email was sent to you as part of the বিকল্প কম্পিউটার partner registration process. 
                 If you have any concerns about this email or your account, please contact our support team immediately. 
-                © 2024 CSuite. All rights reserved.
+                © 2024 বিকল্প কম্পিউটার. All rights reserved.
             </div>
         </div>
     </div>

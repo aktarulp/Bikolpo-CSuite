@@ -78,7 +78,7 @@
                         <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Your Smart Exam Partner</p>
                     </div>
                 </a>
-                <a href="{{ route('partner.login') }}" class="group relative overflow-hidden bg-gradient-to-r from-primaryGreen to-green-600 text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                <a href="{{ route('partner.onboarding') }}" class="group relative overflow-hidden bg-gradient-to-r from-primaryGreen to-green-600 text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                     <span class="relative z-10">Sign In</span>
                     <div class="absolute inset-0 bg-gradient-to-r from-green-600 to-primaryGreen opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </a>
@@ -233,7 +233,7 @@
                     <div class="text-center pt-6">
                         <p class="text-gray-600 dark:text-gray-400 text-lg">
                             Already have an account? 
-                            <a href="{{ route('partner.login') }}" class="text-primaryGreen hover:text-green-600 font-semibold hover:underline transition-all duration-200">
+                            <a href="{{ route('partner.onboarding') }}" class="text-primaryGreen hover:text-green-600 font-semibold hover:underline transition-all duration-200">
                                 Sign In here
                             </a>
                         </p>

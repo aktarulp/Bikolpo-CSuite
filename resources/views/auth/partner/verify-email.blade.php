@@ -32,7 +32,7 @@
                 </form>
 
                 <div class="text-center">
-                    <a href="{{ route('partner.login') }}" class="text-sm text-blue-600 hover:text-blue-500">
+                    <a href="{{ route('partner.onboarding') }}" class="text-sm text-blue-600 hover:text-blue-500">
                         Back to Login
                     </a>
                 </div>

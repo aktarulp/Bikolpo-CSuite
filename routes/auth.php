@@ -20,6 +20,10 @@ Route::middleware('guest')->group(function () {
         ->name('partner.login');
     Route::post('partner/login', [\App\Http\Controllers\Auth\PartnerLoginController::class, 'store']);
     
+    Route::get('partner/onboarding', function () {
+        return view('auth.partner.onboarding');
+    })->name('partner.onboarding');
+    
     Route::get('partner/register', [\App\Http\Controllers\Auth\PartnerRegistrationController::class, 'showRegistrationForm'])
         ->name('partner.register');
     Route::post('partner/register', [\App\Http\Controllers\Auth\PartnerRegistrationController::class, 'register'])

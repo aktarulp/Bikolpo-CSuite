@@ -41,7 +41,7 @@
                         <p class="text-xs text-gray-500">Your Smart Exam Partner</p>
                     </div>
                 </a>
-                <a href="{{ route('partner.login') }}" class="bg-primaryGreen text-white px-6 py-2 rounded-full font-semibold">
+                <a href="{{ route('partner.onboarding') }}" class="bg-primaryGreen text-white px-6 py-2 rounded-full font-semibold">
                     Sign In
                 </a>
             </div>

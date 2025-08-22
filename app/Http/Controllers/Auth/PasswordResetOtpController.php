@@ -28,33 +28,17 @@ class PasswordResetOtpController extends Controller
      */
     public function store(Request $request)
     {
-        Log::info('Password reset OTP request received', [
-            'method' => $request->method(),
-            'url' => $request->url(),
-            'email' => $request->email,
-            'has_csrf_token' => $request->has('_token'),
-            'csrf_token' => $request->input('_token'),
-            'session_id' => Session::getId(),
-            'all_input' => $request->all(),
-            'headers' => $request->headers->all(),
-        ]);
-
         $request->validate([
             'email' => ['required', 'email'],
         ]);
-
-        Log::info('Validation passed for email', ['email' => $request->email]);
 
         // Check if user exists
         $user = User::where('email', $request->email)->first();
         
         if (!$user) {
-            Log::info('User not found for password reset', ['email' => $request->email]);
             // Don't reveal if user exists or not for security
             return back()->with('status', 'If your email address exists in our database, you will receive a password recovery OTP at your email address in a few minutes.');
         }
-
-        Log::info('User found for password reset', ['user_id' => $user->id, 'email' => $user->email]);
 
         // Generate OTP
         $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
@@ -68,12 +52,6 @@ class PasswordResetOtpController extends Controller
         ];
         
         Session::put('password_reset_otp', $resetData);
-        
-        Log::info('Reset data stored in session', [
-            'session_id' => Session::getId(),
-            'reset_data' => $resetData,
-            'session_has_data' => Session::has('password_reset_otp'),
-        ]);
         
         // Send OTP email
         try {
@@ -91,16 +69,8 @@ class PasswordResetOtpController extends Controller
                 'session_id' => Session::getId(),
             ]);
             
-            Log::info('About to redirect to OTP verification page');
-            
             // Force session save before redirect
             Session::save();
-            
-            // Check if session was saved
-            Log::info('Session saved, checking if data persists', [
-                'session_has_data' => Session::has('password_reset_otp'),
-                'session_data_after_save' => Session::get('password_reset_otp'),
-            ]);
             
             return redirect()->route('password.verify-otp')
                 ->with('status', 'OTP has been sent to your email address. Please check your inbox and enter the OTP to reset your password.');
@@ -116,28 +86,11 @@ class PasswordResetOtpController extends Controller
      */
     public function showOtpVerificationForm()
     {
-        Log::info('OTP verification form accessed', [
-            'has_session' => Session::has('password_reset_otp'),
-            'session_data' => Session::get('password_reset_otp'),
-            'url' => request()->url(),
-            'route_name' => request()->route()->getName(),
-            'session_id' => Session::getId(),
-            'all_session_keys' => array_keys(Session::all()),
-            'request_headers' => request()->headers->all(),
-        ]);
-
         if (!Session::has('password_reset_otp')) {
-            Log::warning('No password reset session found, redirecting to password request', [
-                'session_id' => Session::getId(),
-                'all_session_data' => Session::all(),
-            ]);
+            Log::warning('No password reset session found, redirecting to password request');
             return redirect()->route('password.request');
         }
 
-        Log::info('Showing OTP verification form', [
-            'session_data' => Session::get('password_reset_otp'),
-            'session_id' => Session::getId(),
-        ]);
         return view('auth.verify-password-reset-otp');
     }
 
