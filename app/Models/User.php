@@ -104,4 +104,20 @@ class User extends Authenticatable
         return $this->role && $this->role->name === $roleName;
     }
 
+    /**
+     * Scope to find user by email or phone
+     */
+    public function scopeFindByEmailOrPhone($query, $identifier)
+    {
+        if (filter_var($identifier, FILTER_VALIDATE_EMAIL)) {
+            return $query->where('email', $identifier);
+        }
+        
+        if (preg_match('/^01[3-9][0-9]{8}$/', $identifier)) {
+            return $query->where('phone', $identifier);
+        }
+        
+        return $query->where('email', $identifier); // fallback
+    }
+
 }

@@ -34,7 +34,7 @@
                         id="email" 
                         type="email" 
                         name="email" 
-                        :value="old('email')" 
+                        value="{{ old('email') }}" 
                         required 
                         autofocus
                         class="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"

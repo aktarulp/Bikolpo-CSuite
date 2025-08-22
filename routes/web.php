@@ -218,3 +218,27 @@ Route::get('/test-session', function (Request $request) {
         'all_session_data' => $request->session()->all()
     ]);
 })->name('test.session');
+
+// Test Password Reset OTP Route (Remove in production)
+Route::get('/test-password-reset-otp', function (Request $request) {
+    $email = 'test@example.com';
+    $otp = '123456';
+    
+    // Store reset data in session for OTP verification
+    $resetData = [
+        'email' => $email,
+        'otp' => $otp,
+        'otp_expires_at' => now()->addMinutes(10),
+        'reset_token' => Str::random(64),
+    ];
+    
+    $request->session()->put('password_reset_otp', $resetData);
+    
+    return response()->json([
+        'message' => 'Test OTP data stored in session',
+        'session_id' => $request->session()->getId(),
+        'has_reset_data' => $request->session()->has('password_reset_otp'),
+        'reset_data' => $request->session()->get('password_reset_otp'),
+        'redirect_url' => route('password.verify-otp'),
+    ]);
+})->name('test.password.reset.otp');

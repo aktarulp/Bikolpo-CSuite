@@ -2,8 +2,35 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
+    <!-- Success Message -->
+    @if (session('success'))
+        <div class="mb-8 p-6 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-green-200 dark:border-green-700 rounded-2xl shadow-lg">
+            <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0">
+                    <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
+                        <i class="fas fa-check text-white text-xl"></i>
+                    </div>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-bold text-green-800 dark:text-green-200 mb-2">
+                        🎉 Registration Successful!
+                    </h3>
+                    <p class="text-green-700 dark:text-green-300 leading-relaxed">
+                        {{ session('success') }}
+                    </p>
+                    <div class="mt-4 p-3 bg-white/50 dark:bg-gray-800/50 rounded-xl border border-green-200 dark:border-green-600">
+                        <p class="text-sm text-green-600 dark:text-green-400 font-medium">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            You can now login with your credentials to access your dashboard.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <!-- Enhanced Login Form -->
-    <div class="w-full max-w-md">
+    <div class="w-full max-w-md" id="loginFormContainer">
         <!-- Header Section -->
         <div class="text-center mb-6">
             <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
@@ -58,7 +85,7 @@
                 <button 
                     type="button" 
                     id="partnerLoginBtn" 
-                    class="flex-1 py-2 px-4 rounded-lg font-medium transition-all duration-200 bg-primaryGreen text-white shadow-md text-sm"
+                    class="flex-1 py-2 px-4 rounded-lg font-medium transition-all duration-200 bg-primaryGreen text-white shadow-md text-sm flex items-center justify-center"
                     onclick="switchLoginType('partner')"
                 >
                     <i class="fas fa-handshake mr-2"></i>
@@ -67,12 +94,22 @@
                 <button 
                     type="button" 
                     id="studentLoginBtn" 
-                    class="flex-1 py-2 px-4 rounded-lg font-medium transition-all duration-200 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm"
+                    class="flex-1 py-2 px-4 rounded-lg font-medium transition-all duration-200 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm flex items-center justify-center"
                     onclick="switchLoginType('student')"
                 >
                     <i class="fas fa-graduation-cap mr-2"></i>
                     Student
                 </button>
+            </div>
+        </div>
+
+        <!-- Login Type Indicator -->
+        <div class="mb-6 text-center" id="loginTypeIndicator">
+            <div class="inline-flex items-center px-4 py-2 bg-primaryGreen/10 dark:bg-primaryGreen/20 border border-primaryGreen/30 dark:border-primaryGreen/40 rounded-full">
+                <div class="w-3 h-3 bg-primaryGreen rounded-full mr-2"></div>
+                <span class="text-sm font-medium text-primaryGreen dark:text-primaryGreen-400" id="indicatorText">
+                    Partner Login
+                </span>
             </div>
         </div>
 
@@ -94,7 +131,7 @@
                         id="email" 
                         type="email" 
                         name="email" 
-                        :value="old('email')" 
+                        value="{{ old('email') }}" 
                         autofocus 
                         autocomplete="username"
                         class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primaryGreen focus:border-transparent transition-all duration-200"
@@ -117,7 +154,7 @@
                         id="phone" 
                         type="tel" 
                         name="phone" 
-                        :value="old('phone')" 
+                        value="{{ old('phone') }}" 
                         autocomplete="tel"
                         class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primaryGreen focus:border-transparent transition-all duration-200"
                         placeholder="01XXXXXXXXX (11 digits)"
@@ -199,14 +236,15 @@
             </div>
         </div>
 
-        <!-- Register Link -->
-        <div class="text-center">
+        <!-- Register Link - Dynamic based on selected tab -->
+        <div class="text-center" id="registerSection">
             <a 
                 href="{{ route('partner.register') }}" 
+                id="registerLink"
                 class="inline-flex items-center justify-center w-full bg-white dark:bg-gray-800 border-2 border-primaryGreen text-primaryGreen hover:bg-primaryGreen hover:text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-200 transform hover:scale-[1.02]"
             >
                 <i class="fas fa-user-plus mr-2"></i>
-                Create Partner Account
+                <span id="registerText">Create Partner Account</span>
             </a>
         </div>
 
@@ -233,43 +271,63 @@
             const phoneField = document.getElementById('phoneField');
             const emailInput = document.getElementById('email');
             const phoneInput = document.getElementById('phone');
+            const registerLink = document.getElementById('registerLink');
+            const registerText = document.getElementById('registerText');
+            const indicatorText = document.getElementById('indicatorText');
+            const loginFormContainer = document.getElementById('loginFormContainer');
 
             if (type === 'partner') {
                 // Partner login
-                partnerBtn.className = 'flex-1 py-2 px-4 rounded-lg font-medium transition-all duration-200 bg-primaryGreen text-white shadow-md text-sm';
-                studentBtn.className = 'flex-1 py-2 px-4 rounded-lg font-medium transition-all duration-200 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm';
+                partnerBtn.className = 'flex-1 py-2 px-4 rounded-lg font-medium transition-all duration-200 bg-primaryGreen text-white shadow-md text-sm flex items-center justify-center';
+                studentBtn.className = 'flex-1 py-2 px-4 rounded-lg font-medium transition-all duration-200 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm flex items-center justify-center';
                 loginType.value = 'partner';
                 submitText.textContent = 'Sign In as Partner';
                 form.action = '{{ route("login") }}';
+                
+                // Update register link for partner
+                registerLink.href = '{{ route("partner.register") }}';
+                registerText.textContent = 'Create Partner Account';
                 
                 // Show email field, hide phone field
                 emailField.classList.remove('hidden');
                 phoneField.classList.add('hidden');
                 
-                // Set required attributes
+                // Set required attributes and field names
                 emailInput.required = true;
                 phoneInput.required = false;
+                emailInput.name = 'email';
+                phoneInput.name = 'phone_disabled';
                 
                 // Clear phone input when switching to partner
                 phoneInput.value = '';
+                indicatorText.textContent = 'Partner Login';
+                loginFormContainer.classList.remove('bg-gray-100', 'dark:bg-gray-700');
             } else {
                 // Student login
-                studentBtn.className = 'flex-1 py-2 px-4 rounded-lg font-medium transition-all duration-200 bg-primaryGreen text-white shadow-md text-sm';
-                partnerBtn.className = 'flex-1 py-2 px-4 rounded-lg font-medium transition-all duration-200 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm';
+                studentBtn.className = 'flex-1 py-2 px-4 rounded-lg font-medium transition-all duration-200 bg-primaryGreen text-white shadow-md text-sm flex items-center justify-center';
+                partnerBtn.className = 'flex-1 py-2 px-4 rounded-lg font-medium transition-all duration-200 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm flex items-center justify-center';
                 loginType.value = 'student';
                 submitText.textContent = 'Sign In as Student';
                 form.action = '{{ route("login") }}';
+                
+                // Update register link for student
+                registerLink.href = '{{ route("student.register") }}';
+                registerText.textContent = 'Create Student Account';
                 
                 // Show phone field, hide email field
                 emailField.classList.add('hidden');
                 phoneField.classList.remove('hidden');
                 
-                // Set required attributes
+                // Set required attributes and field names
                 emailInput.required = false;
                 phoneInput.required = true;
+                emailInput.name = 'email_disabled';
+                phoneInput.name = 'phone';
                 
                 // Clear email input when switching to student
                 emailInput.value = '';
+                indicatorText.textContent = 'Student Login';
+                loginFormContainer.classList.add('bg-gray-100', 'dark:bg-gray-700');
             }
         }
 

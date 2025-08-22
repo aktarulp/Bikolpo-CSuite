@@ -23,6 +23,18 @@
                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200">
                 Typing Test
             </a>
+            <!-- Logout Button -->
+            <form method="POST" action="{{ route('logout') }}" class="inline">
+                @csrf
+                <button type="submit" 
+                        onclick="return confirm('Are you sure you want to logout?')"
+                        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                    <span>Logout</span>
+                </button>
+            </form>
         </div>
     </div>
 
@@ -213,6 +225,22 @@
                         <p class="text-sm text-gray-600 dark:text-gray-400">Create typing assessment</p>
                     </div>
                 </a>
+
+                <!-- Logout Action -->
+                <form method="POST" action="{{ route('logout') }}" class="block">
+                    @csrf
+                    <button type="submit" 
+                            onclick="return confirm('Are you sure you want to logout?')"
+                            class="w-full flex items-center p-4 bg-red-50 dark:bg-red-900/20 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors duration-200 text-left">
+                        <svg class="w-8 h-8 text-red-600 dark:text-red-400 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                        <div>
+                            <h4 class="font-medium text-gray-900 dark:text-white">Logout</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Sign out of your account</p>
+                        </div>
+                    </button>
+                </form>
             </div>
         </div>
     </div>

@@ -38,7 +38,7 @@ class RedirectIfAuthenticated
                 }
                 
                 // Redirect based on user role for other guest-only pages
-                if ($user->role === 'student') {
+                if ($user->isStudent()) {
                     Log::info('Redirecting student to student dashboard');
                     return redirect()->route('student.dashboard');
                 } else {

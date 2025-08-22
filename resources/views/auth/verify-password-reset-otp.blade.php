@@ -34,7 +34,7 @@
                         id="otp" 
                         type="text" 
                         name="otp" 
-                        :value="old('otp')" 
+                        value="{{ old('otp') }}" 
                         required 
                         autofocus
                         maxlength="6"

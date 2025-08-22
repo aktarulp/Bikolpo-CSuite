@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Hash;
 
 class LoginRequest extends FormRequest
 {
@@ -26,9 +27,32 @@ class LoginRequest extends FormRequest
      */
     public function rules(): array
     {
+        $loginType = $this->input('login_type', 'partner');
+        
+        if ($loginType === 'student') {
+            return [
+                'phone' => ['required', 'string', 'regex:/^01[3-9][0-9]{8}$/'],
+                'password' => ['required', 'string'],
+                'login_type' => ['required', 'string', 'in:partner,student'],
+            ];
+        }
+        
+        // Default to partner login (email-based)
         return [
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
+            'login_type' => ['required', 'string', 'in:partner,student'],
+        ];
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     */
+    public function messages(): array
+    {
+        return [
+            'phone.regex' => 'Phone number must be in format 01XXXXXXXXX (11 digits, starting with 01)',
+            'email.email' => 'Please enter a valid email address',
         ];
     }
 
@@ -41,14 +65,30 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        $loginType = $this->input('login_type', 'partner');
+        $credentials = $this->only('password');
+        
+        if ($loginType === 'student') {
+            // Student login with phone
+            $identifier = $this->input('phone');
+        } else {
+            // Partner login with email
+            $identifier = $this->input('email');
+        }
+
+        // Use custom authentication logic
+        $user = \App\Models\User::findByEmailOrPhone($identifier)->first();
+        
+        if (!$user || !Hash::check($this->input('password'), $user->password)) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                $loginType === 'student' ? 'phone' : 'email' => trans('auth.failed'),
             ]);
         }
 
+        // Manually login the user
+        Auth::login($user, $this->boolean('remember'));
         RateLimiter::clear($this->throttleKey());
     }
 
@@ -59,7 +99,7 @@ class LoginRequest extends FormRequest
      */
     public function ensureIsNotRateLimited(): void
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+        if (!RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
             return;
         }
 
@@ -80,6 +120,10 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        $identifier = $this->input('login_type') === 'student' 
+            ? $this->string('phone') 
+            : $this->string('email');
+            
+        return Str::transliterate(Str::lower($identifier).'|'.$this->ip());
     }
 }
