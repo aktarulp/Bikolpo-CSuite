@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleSeeder::class, // Must be first as other seeders depend on roles
             PartnerSeeder::class,
+            PartnerComprehensiveSeeder::class, // Add comprehensive partner data
             CourseSeeder::class,
             StudentSeeder::class,
             QuestionTypeSeeder::class,

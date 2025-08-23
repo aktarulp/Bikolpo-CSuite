@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
-@section('title', 'MCQ Questions')
+@section('title', 'All Questions')
 
 @section('content')
 <div class="space-y-6">
