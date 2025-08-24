@@ -1,9 +1,11 @@
-@extends('layouts.dashboard')
+@extends('layouts.partner-layout')
 
 @section('title', 'Partner Dashboard')
 
 @section('content')
 <div class="space-y-6">
+
+{{--
 
                                                            <!-- Professional Welcome Banner with Navigation Tabs -->
        <div class="sticky top-0 z-50 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm">
@@ -165,6 +167,7 @@
          </div>
      </div>
 
+--}}
     <!-- Statistics Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Total Questions -->
@@ -359,29 +362,4 @@
     </div>
 </div>
 
-<!-- JavaScript for Dark Mode Toggle -->
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const themeToggle = document.getElementById('theme-toggle');
-        const htmlTag = document.documentElement;
-        
-        // Check for saved theme preference in local storage
-        const currentTheme = localStorage.getItem('theme');
-        if (currentTheme) {
-            htmlTag.classList.add(currentTheme);
-        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            htmlTag.classList.add('dark');
-        }
-
-        themeToggle.addEventListener('click', () => {
-            if (htmlTag.classList.contains('dark')) {
-                htmlTag.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-            } else {
-                htmlTag.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-            }
-        });
-    });
-</script>
-@endsection 
+@endsection
