@@ -14,8 +14,19 @@ class QuestionController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Question::with(['topic.subject.course', 'partner', 'questionType'])
-            ->where('partner_id', 1); // Default partner ID
+        // Get the currently authenticated partner
+        $user = auth()->user();
+        if (!$user || !$user->isPartner()) {
+            abort(403, 'Unauthorized access. Partner login required.');
+        }
+
+        $partner = $user->partner;
+        if (!$partner) {
+            abort(404, 'Partner profile not found.');
+        }
+
+        $query = Question::with(['topic.subject.course', 'partner', 'questionType', 'createdBy'])
+            ->where('partner_id', $partner->id); // Use authenticated partner's ID
 
         // Apply filters
         if ($request->filled('course')) {
@@ -66,8 +77,19 @@ class QuestionController extends Controller
      */
     public function allQuestions(Request $request)
     {
-        $query = Question::with(['course', 'subject', 'topic', 'partner', 'questionType'])
-            ->where('partner_id', 1); // Default partner ID
+        // Get the currently authenticated partner
+        $user = auth()->user();
+        if (!$user || !$user->isPartner()) {
+            abort(403, 'Unauthorized access. Partner login required.');
+        }
+
+        $partner = $user->partner;
+        if (!$partner) {
+            abort(404, 'Partner profile not found.');
+        }
+
+        $query = Question::with(['course', 'subject', 'topic', 'partner', 'questionType', 'createdBy'])
+            ->where('partner_id', $partner->id); // Use authenticated partner's ID
 
         // Apply search filter
         if ($request->filled('search')) {
@@ -114,6 +136,33 @@ class QuestionController extends Controller
         }
 
         $questions = $query->latest()->paginate(15);
+        
+        // Debug: Log the query and results
+        \Log::info('Questions Query:', [
+            'sql' => $query->toSql(),
+            'bindings' => $query->getBindings(),
+            'count' => $questions->total(),
+            'partner_id' => $partner->id
+        ]);
+        
+        // Debug: Check what questions exist in the database
+        $allQuestions = Question::where('partner_id', $partner->id)->get();
+        \Log::info('All Questions for Partner:', [
+            'partner_id' => $partner->id,
+            'total_questions' => $allQuestions->count(),
+            'questions' => $allQuestions->map(function($q) {
+                return [
+                    'id' => $q->id,
+                    'question_text' => substr($q->question_text, 0, 50) . (strlen($q->question_text) > 50 ? '...' : ''),
+                    'course_id' => $q->course_id,
+                    'subject_id' => $q->subject_id,
+                    'topic_id' => $q->topic_id,
+                    'partner_id' => $q->partner_id,
+                    'question_type' => $q->question_type,
+                    'q_type_id' => $q->q_type_id
+                ];
+            })
+        ]);
         
         // Append search parameter to pagination links
         if ($request->filled('search')) {
@@ -165,8 +214,20 @@ class QuestionController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
+        // Get the currently authenticated partner
+        $user = auth()->user();
+        if (!$user || !$user->isPartner()) {
+            abort(403, 'Unauthorized access. Partner login required.');
+        }
+
+        $partner = $user->partner;
+        if (!$partner) {
+            abort(404, 'Partner profile not found.');
+        }
+
         $data = $request->all();
-        $data['partner_id'] = 1; // Default partner ID
+        $data['partner_id'] = $partner->id; // Use authenticated partner's ID
+        $data['created_by'] = $user->id; // Set the user who created the question
 
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('questions', 'public');
@@ -343,27 +404,51 @@ class QuestionController extends Controller
             'course_id' => 'required|exists:courses,id',
             'subject_id' => 'required|exists:subjects,id',
             'topic_id' => 'nullable|exists:topics,id',
-            'question_text' => 'required|string|max:1000',
+            'question_text' => 'required|string|max:5000', // Increased limit for HTML content
             'option_a' => 'required|string|max:255',
             'option_b' => 'required|string|max:255',
             'option_c' => 'required|string|max:255',
             'option_d' => 'required|string|max:255',
             'correct_answer' => 'required|in:a,b,c,d',
-            'explanation' => 'nullable|string',
+            'explanation' => 'nullable|string|max:5000', // Increased limit for HTML content
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'tags' => 'nullable|json',
-            'appearance_history' => 'nullable|json',
+            'tags' => 'nullable|string', // Changed from json to string to handle the form data properly
+            'appearance_history' => 'nullable|string', // Changed from json to string to handle the form data properly
         ]);
 
         try {
             \DB::beginTransaction();
 
+            // Get the currently authenticated partner
+            $user = auth()->user();
+            if (!$user || !$user->isPartner()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized access. Partner login required.'
+                ], 403);
+            }
+
+            $partner = $user->partner;
+            if (!$partner) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Partner profile not found.'
+                ], 404);
+            }
+
             $data = $request->all();
             $data['question_type'] = 'mcq';
-            $data['partner_id'] = 1; // Default partner ID
+            $data['partner_id'] = $partner->id; // Use authenticated partner's ID
+            $data['created_by'] = $user->id; // Set the user who created the question
             $data['status'] = 'active';
             $data['marks'] = $data['marks'] ?? 1; // Default marks to 1
             $data['difficulty_level'] = $data['difficulty_level'] ?? 2; // Default difficulty to Medium (2)
+            
+            // Set the MCQ question type ID
+            $mcqType = \App\Models\QuestionType::where('q_type_code', 'MCQ')->first();
+            if ($mcqType) {
+                $data['q_type_id'] = $mcqType->q_type_id;
+            }
 
             if ($request->hasFile('image')) {
                 $data['image'] = $request->file('image')->store('questions', 'public');
@@ -372,24 +457,38 @@ class QuestionController extends Controller
             // Create the question
             $question = Question::create($data);
 
+            // Handle tags if available
+            if ($request->filled('tags')) {
+                $tags = $request->tags;
+                if (is_string($tags)) {
+                    $tagsArray = json_decode($tags, true);
+                    if (is_array($tagsArray)) {
+                        $data['tags'] = $tagsArray;
+                    }
+                }
+            }
+
             // Handle question history if available
             if ($request->filled('appearance_history')) {
-                $appearanceHistory = json_decode($request->appearance_history, true);
-                
-                if (is_array($appearanceHistory) && !empty($appearanceHistory)) {
-                    foreach ($appearanceHistory as $history) {
-                        \App\Models\QuestionHistory::create([
-                            'question_id' => $question->id,
-                            'partner_id' => $data['partner_id'],
-                            'public_exam_name' => $history['exam_name'] ?? null,
-                            'private_exam_name' => $history['exam_name'] ?? null,
-                            'exam_month' => $history['exam_month'] ?? null,
-                            'exam_year' => $history['exam_year'] ?? null,
-                            'exam_board' => $history['exam_board'] ?? null,
-                            'subject_name' => $data['subject_id'] ? \App\Models\Subject::find($data['subject_id'])->name : null,
-                            'topic_name' => $data['topic_id'] ? \App\Models\Topic::find($data['topic_id'])->name : null,
-                            'is_verified' => false,
-                        ]);
+                $appearanceHistory = $request->appearance_history;
+                if (is_string($appearanceHistory)) {
+                    $appearanceHistoryArray = json_decode($appearanceHistory, true);
+                    
+                    if (is_array($appearanceHistoryArray) && !empty($appearanceHistoryArray)) {
+                        foreach ($appearanceHistoryArray as $history) {
+                            \App\Models\QuestionHistory::create([
+                                'question_id' => $question->id,
+                                'partner_id' => $partner->id,
+                                'public_exam_name' => $history['exam_name'] ?? null,
+                                'private_exam_name' => $history['exam_name'] ?? null,
+                                'exam_month' => $history['exam_month'] ?? null,
+                                'exam_year' => $history['exam_year'] ?? null,
+                                'exam_board' => $history['exam_board'] ?? null,
+                                'subject_name' => $data['subject_id'] ? \App\Models\Subject::find($data['subject_id'])->name : null,
+                                'topic_name' => $data['topic_id'] ? \App\Models\Topic::find($data['topic_id'])->name : null,
+                                'is_verified' => false,
+                            ]);
+                        }
                     }
                 }
             }
@@ -516,9 +615,21 @@ class QuestionController extends Controller
             'appearance_history' => 'nullable|json',
         ]);
 
+        // Get the currently authenticated partner
+        $user = auth()->user();
+        if (!$user || !$user->isPartner()) {
+            abort(403, 'Unauthorized access. Partner login required.');
+        }
+
+        $partner = $user->partner;
+        if (!$partner) {
+            abort(404, 'Partner profile not found.');
+        }
+
         $data = $request->all();
         $data['question_type'] = 'descriptive';
-        $data['partner_id'] = 1; // Default partner ID
+        $data['partner_id'] = $partner->id; // Use authenticated partner's ID
+        $data['created_by'] = $user->id; // Set the user who created the question
         
         // Handle empty topic_id
         if (empty($data['topic_id'])) {
@@ -555,9 +666,9 @@ class QuestionController extends Controller
                     foreach ($appearanceHistory as $history) {
                         \App\Models\QuestionHistory::create([
                             'question_id' => $question->id,
-                            'partner_id' => $data['partner_id'],
+                            'partner_id' => $partner->id,
                             'public_exam_name' => $history['exam_name'] ?? null,
-                            'private_exam_name' => $history['exam_name'] ?? null,
+                            'private_exam_name' => $history['exam_year'] ?? null,
                             'exam_month' => $history['exam_month'] ?? null,
                             'exam_year' => $history['exam_year'] ?? null,
                             'exam_board' => $history['exam_board'] ?? null,
@@ -583,5 +694,195 @@ class QuestionController extends Controller
             ->with('success', $message);
     }
 
+    public function descriptiveIndex()
+    {
+        $user = auth()->user();
+        if (!$user || !$user->isPartner()) {
+            abort(403, 'Unauthorized access. Partner login required.');
+        }
+
+        $partner = $user->partner;
+        if (!$partner) {
+            abort(404, 'Partner profile not found.');
+        }
+
+        $descriptiveQuestions = Question::where('partner_id', $partner->id)
+            ->where('question_type', 'descriptive')
+            ->with(['course', 'subject', 'topic', 'questionType'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+
+        return view('partner.questions.descriptive.index', compact('descriptiveQuestions'));
+    }
+
+    public function descriptiveEdit(Question $question)
+    {
+        $user = auth()->user();
+        if (!$user || !$user->isPartner()) {
+            abort(403, 'Unauthorized access. Partner login required.');
+        }
+
+        $partner = $user->partner;
+        if (!$partner) {
+            abort(404, 'Partner profile not found.');
+        }
+
+        // Check if the question belongs to the authenticated partner
+        if ($question->partner_id !== $partner->id) {
+            abort(403, 'Unauthorized access to this question.');
+        }
+
+        // Check if it's a descriptive question
+        if ($question->question_type !== 'descriptive') {
+            abort(400, 'This is not a descriptive question.');
+        }
+
+        $courses = Course::where('status', 'active')->get();
+        $subjects = Subject::where('status', 'active')->get();
+        $topics = Topic::where('status', 'active')->get();
+
+        // Load question history
+        $questionHistory = $question->questionHistory;
+
+        return view('partner.questions.descriptive.edit', compact('question', 'courses', 'subjects', 'topics', 'questionHistory'));
+    }
+
+    public function descriptiveUpdate(Request $request, Question $question)
+    {
+        $user = auth()->user();
+        if (!$user || !$user->isPartner()) {
+            abort(403, 'Unauthorized access. Partner login required.');
+        }
+
+        $partner = $user->partner;
+        if (!$partner) {
+            abort(404, 'Partner profile not found.');
+        }
+
+        // Check if the question belongs to the authenticated partner
+        if ($question->partner_id !== $partner->id) {
+            abort(403, 'Unauthorized access to this question.');
+        }
+
+        // Check if it's a descriptive question
+        if ($question->question_type !== 'descriptive') {
+            abort(400, 'This is not a descriptive question.');
+        }
+
+        $request->validate([
+            'course_id' => 'required|exists:courses,id',
+            'subject_id' => 'required|exists:subjects,id',
+            'topic_id' => 'nullable|exists:topics,id',
+            'question_text' => 'required|string|max:5000',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'tags' => 'nullable|json',
+            'appearance_history' => 'nullable|json',
+        ]);
+
+        $data = $request->all();
+        
+        // Handle empty topic_id
+        if (empty($data['topic_id'])) {
+            $data['topic_id'] = null;
+        }
+
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($question->image) {
+                \Storage::disk('public')->delete($question->image);
+            }
+            $data['image'] = $request->file('image')->store('questions', 'public');
+        }
+
+        try {
+            \DB::beginTransaction();
+
+            // Update the question
+            $question->update($data);
+
+            // Handle question history if available
+            if ($request->filled('appearance_history')) {
+                // Delete existing history
+                $question->questionHistory()->delete();
+                
+                $appearanceHistory = json_decode($request->appearance_history, true);
+                
+                if (is_array($appearanceHistory) && !empty($appearanceHistory)) {
+                    foreach ($appearanceHistory as $history) {
+                        \App\Models\QuestionHistory::create([
+                            'question_id' => $question->id,
+                            'partner_id' => $partner->id,
+                            'public_exam_name' => $history['exam_name'] ?? null,
+                            'private_exam_name' => $history['exam_year'] ?? null,
+                            'exam_month' => $history['exam_month'] ?? null,
+                            'exam_year' => $history['exam_year'] ?? null,
+                            'exam_board' => $history['exam_board'] ?? null,
+                            'subject_name' => $data['subject_id'] ? \App\Models\Subject::find($data['subject_id'])->name : null,
+                            'topic_name' => $data['topic_id'] ? \App\Models\Topic::find($data['topic_id'])->name : null,
+                            'is_verified' => false,
+                        ]);
+                    }
+                }
+            }
+
+            \DB::commit();
+        } catch (\Exception $e) {
+            \DB::rollback();
+            
+            return redirect()->route('partner.questions.descriptive.edit', $question)
+                ->with('error', 'Error updating descriptive question: ' . $e->getMessage());
+        }
+
+        return redirect()->route('partner.questions.descriptive.index')
+            ->with('success', 'Descriptive question updated successfully.');
+    }
+
+    public function descriptiveDestroy(Question $question)
+    {
+        $user = auth()->user();
+        if (!$user || !$user->isPartner()) {
+            abort(403, 'Unauthorized access. Partner login required.');
+        }
+
+        $partner = $user->partner;
+        if (!$partner) {
+            abort(404, 'Partner profile not found.');
+        }
+
+        // Check if the question belongs to the authenticated partner
+        if ($question->partner_id !== $partner->id) {
+            abort(403, 'Unauthorized access to this question.');
+        }
+
+        // Check if it's a descriptive question
+        if ($question->question_type !== 'descriptive') {
+            abort(400, 'This is not a descriptive question.');
+        }
+
+        try {
+            \DB::beginTransaction();
+
+            // Delete question history
+            $question->questionHistory()->delete();
+            
+            // Delete question image if exists
+            if ($question->image) {
+                \Storage::disk('public')->delete($question->image);
+            }
+            
+            // Delete the question
+            $question->delete();
+
+            \DB::commit();
+        } catch (\Exception $e) {
+            \DB::rollback();
+            
+            return redirect()->route('partner.questions.descriptive.index')
+                ->with('error', 'Error deleting descriptive question: ' . $e->getMessage());
+        }
+
+        return redirect()->route('partner.questions.descriptive.index')
+            ->with('success', 'Descriptive question deleted successfully.');
+    }
 
 }

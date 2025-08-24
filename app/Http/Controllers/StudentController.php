@@ -104,4 +104,77 @@ class StudentController extends Controller
         return redirect()->route('partner.students.index')
             ->with('success', 'Student deleted successfully.');
     }
+
+    /**
+     * Show the student's own profile.
+     */
+    public function showOwnProfile()
+    {
+        $user = auth()->user();
+        $student = $user->student;
+        
+        if (!$student) {
+            return redirect()->route('student.profile.edit')
+                ->with('error', 'Please complete your student profile first.');
+        }
+        
+        return view('student.profile.show', compact('student'));
+    }
+
+    /**
+     * Show the form for editing the student's own profile.
+     */
+    public function editOwnProfile()
+    {
+        $user = auth()->user();
+        $student = $user->student;
+        
+        if (!$student) {
+            return redirect()->route('student.profile.edit')
+                ->with('error', 'Please complete your student profile first.');
+        }
+        
+        return view('student.profile.edit', compact('student'));
+    }
+
+    /**
+     * Update the student's own profile.
+     */
+    public function updateOwnProfile(Request $request)
+    {
+        $user = auth()->user();
+        $student = $user->student;
+        
+        if (!$student) {
+            return redirect()->route('student.profile.edit')
+                ->with('error', 'Please complete your student profile first.');
+        }
+        
+        $request->validate([
+            'full_name' => 'required|string|max:255',
+            'date_of_birth' => 'required|date',
+            'gender' => 'required|in:male,female,other',
+            'address' => 'nullable|string|max:500',
+            'city' => 'nullable|string|max:100',
+            'school_college' => 'nullable|string|max:255',
+            'class_grade' => 'nullable|string|max:50',
+            'parent_name' => 'nullable|string|max:255',
+            'parent_phone' => 'nullable|string|max:20',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $data = $request->all();
+
+        if ($request->hasFile('photo')) {
+            if ($student->photo) {
+                Storage::disk('public')->delete($student->photo);
+            }
+            $data['photo'] = $request->file('photo')->store('students', 'public');
+        }
+
+        $student->update($data);
+
+        return redirect()->route('student.profile.show')
+            ->with('success', 'Profile updated successfully.');
+    }
 }

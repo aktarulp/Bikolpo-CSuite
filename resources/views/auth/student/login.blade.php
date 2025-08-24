@@ -2,148 +2,110 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-6" :status="session('status')" />
 
-    <!-- Enhanced Student Login Form -->
-    <div class="w-full max-w-md">
-        <!-- Header Section -->
-        <div class="text-center mb-8">
-            <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                <i class="fas fa-user-graduate text-white text-3xl"></i>
+    <!-- Success Message -->
+    @if (session('success'))
+        <div class="mb-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-2 border-blue-200 dark:border-blue-700 rounded-2xl shadow-lg">
+            <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+                        <i class="fas fa-check text-white text-xl"></i>
+                    </div>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-bold text-blue-800 dark:text-blue-200 mb-2">
+                        🎉 Registration Successful!
+                    </h3>
+                    <p class="text-blue-700 dark:text-blue-300 leading-relaxed">
+                        {{ session('success') }}
+                    </p>
+                    <div class="mt-4 p-3 bg-white/50 dark:bg-gray-800/50 rounded-xl border border-blue-200 dark:border-blue-600">
+                        <p class="text-sm text-blue-600 dark:text-blue-400 font-medium">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            You can now login with your email and password to access your learning dashboard.
+                        </p>
+                    </div>
+                </div>
             </div>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                Student Login
-            </h1>
-            <p class="text-gray-600 dark:text-gray-400">
-                Access your learning dashboard
-            </p>
         </div>
+    @endif
 
-        <!-- Login Form -->
-        <form method="POST" action="{{ route('student.login') }}" class="space-y-6">
-            @csrf
-
-            <!-- Email Address -->
-            <div class="space-y-2">
-                <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Email Address
-                </label>
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-envelope text-gray-400"></i>
-                    </div>
-                    <input 
-                        id="email" 
-                        type="email" 
-                        name="email" 
-                        :value="old('email')" 
-                        required 
-                        autofocus 
-                        autocomplete="username"
-                        class="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                        placeholder="Enter your email"
-                    />
+    <!-- Simple Login Container -->
+    <div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8">
+            <div>
+                <div class="mx-auto h-12 w-12 bg-blue-600 rounded-full flex items-center justify-center">
+                    <i class="fas fa-graduation-cap text-white text-xl"></i>
                 </div>
-                <x-input-error :messages="$errors->get('email')" class="mt-1" />
+                <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
+                    Student Login
+                </h2>
+                <p class="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+                    Sign in to your student account
+                </p>
             </div>
 
-            <!-- Password -->
-            <div class="space-y-2">
-                <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Password
-                </label>
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-lock text-gray-400"></i>
+            <form class="mt-8 space-y-6" method="POST" action="{{ route('student.login') }}">
+                @csrf
+
+                <div class="rounded-md shadow-sm -space-y-px">
+                    <div>
+                        <label for="email" class="sr-only">Email address</label>
+                        <input id="email" name="email" type="email" autocomplete="email" required 
+                               class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" 
+                               placeholder="Email address" 
+                               value="{{ old('email') }}">
                     </div>
-                    <input 
-                        id="password" 
-                        type="password" 
-                        name="password" 
-                        required 
-                        autocomplete="current-password"
-                        class="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                        placeholder="Enter your password"
-                    />
+                    <div>
+                        <label for="password" class="sr-only">Password</label>
+                        <input id="password" name="password" type="password" autocomplete="current-password" required 
+                               class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white dark:bg-gray-700 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" 
+                               placeholder="Password">
+                    </div>
                 </div>
-                <x-input-error :messages="$errors->get('password')" class="mt-1" />
-            </div>
 
-            <!-- Remember Me & Forgot Password -->
-            <div class="flex items-center justify-between">
-                <label for="remember_me" class="flex items-center">
-                    <input 
-                        id="remember_me" 
-                        type="checkbox" 
-                        name="remember"
-                        class="w-4 h-4 text-blue-500 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                    >
-                    <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">
-                        Remember me
-                    </span>
-                </label>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input id="remember_me" name="remember" type="checkbox" 
+                               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                        <label for="remember_me" class="ml-2 block text-sm text-gray-900 dark:text-gray-300">
+                            Remember me
+                        </label>
+                    </div>
 
-                @if (Route::has('password.request'))
-                    <a 
-                        href="{{ route('password.request') }}" 
-                        class="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200"
-                    >
-                        Forgot password?
+                    @if (Route::has('password.request'))
+                        <div class="text-sm">
+                            <a href="{{ route('password.request') }}" class="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
+                                Forgot your password?
+                            </a>
+                        </div>
+                    @endif
+                </div>
+
+                <div>
+                    <button type="submit" 
+                            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                            <i class="fas fa-sign-in-alt text-blue-500 group-hover:text-blue-400"></i>
+                        </span>
+                        Sign in
+                    </button>
+                </div>
+
+                <div class="text-center">
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        Don't have an account? 
+                        <a href="{{ route('student.register') }}" class="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
+                            Register here
+                        </a>
+                    </p>
+                </div>
+
+                <div class="text-center">
+                    <a href="{{ route('landing') }}" class="text-sm text-gray-500 hover:text-gray-400 dark:text-gray-400 dark:hover:text-gray-300">
+                        ← Back to Home
                     </a>
-                @endif
-            </div>
-
-            <!-- Submit Button -->
-            <button 
-                type="submit"
-                class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-                <i class="fas fa-sign-in-alt mr-2"></i>
-                Student Login
-            </button>
-        </form>
-
-        <!-- Divider -->
-        <div class="relative my-8">
-            <div class="absolute inset-0 flex items-center">
-                <div class="w-full border-t border-gray-300 dark:border-gray-600"></div>
-            </div>
-            <div class="relative flex justify-center text-sm">
-                <span class="px-2 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400">
-                    New Student?
-                </span>
-            </div>
-        </div>
-
-        <!-- Register Link -->
-        <div class="text-center">
-            <a 
-                href="{{ route('student.register') }}" 
-                class="inline-flex items-center justify-center w-full bg-white dark:bg-gray-800 border-2 border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-[1.02]"
-            >
-                <i class="fas fa-user-plus mr-2"></i>
-                Student Registration
-            </a>
-        </div>
-
-        <!-- Account Type Selection -->
-        <div class="text-center mt-6">
-            <a 
-                href="{{ route('landing') }}" 
-                class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-200"
-            >
-                <i class="fas fa-exchange-alt mr-1"></i>
-                Different Account Type?
-            </a>
-        </div>
-
-        <!-- Back to Home -->
-        <div class="text-center mt-4">
-            <a 
-                href="{{ route('landing') }}" 
-                class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-200"
-            >
-                <i class="fas fa-arrow-left mr-1"></i>
-                Back to Home
-            </a>
+                </div>
+            </form>
         </div>
     </div>
 </x-guest-layout>

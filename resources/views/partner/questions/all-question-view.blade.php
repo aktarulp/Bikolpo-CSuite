@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
-@section('title', 'MCQ Questions')
+@section('title', 'All Questions')
 
 @section('content')
 <div class="space-y-6">
@@ -206,6 +206,10 @@
                                     <span class="text-gray-400 dark:text-gray-500">→</span>
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800">
                                         {{ $question->topic->name ?? 'N/A' }}
+                                    </span>
+                                    <span class="text-gray-400 dark:text-gray-500">→</span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-50 dark:bg-gray-900/30 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800" title="Created by">
+                                        👤 {{ $question->createdBy->name ?? 'Unknown' }}
                                     </span>
                                 </div>
                                 

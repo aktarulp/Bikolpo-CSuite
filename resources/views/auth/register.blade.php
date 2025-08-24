@@ -36,7 +36,7 @@
         </div>
 
         <!-- Register Form -->
-        <form method="POST" action="{{ route('register') }}" id="registerForm" class="space-y-4">
+        <form method="POST" action="{{ route('partner.register.store') }}" id="registerForm" class="space-y-4">
             @csrf
             <input type="hidden" name="register_type" id="registerType" value="partner">
 
@@ -250,6 +250,9 @@
                 registerType.value = 'partner';
                 submitText.textContent = 'Create Partner Account';
                 
+                // Update form action for partner registration
+                document.getElementById('registerForm').action = '{{ route("partner.register.store") }}';
+                
                 // Show email field and name field, hide phone field
                 emailField.classList.remove('hidden');
                 phoneField.classList.add('hidden');
@@ -268,6 +271,9 @@
                 partnerBtn.className = 'flex-1 py-2 px-4 rounded-lg font-medium transition-all duration-200 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm';
                 registerType.value = 'student';
                 submitText.textContent = 'Create Student Account';
+                
+                // Update form action for student registration
+                document.getElementById('registerForm').action = '{{ route("student.register") }}';
                 
                 // Show phone field, hide email field and name field
                 emailField.classList.add('hidden');

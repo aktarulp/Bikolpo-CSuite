@@ -65,7 +65,6 @@ Route::get('/student-area', function () {
 
 // Partner Routes (Coaching Center)
 Route::prefix('partner')->name('partner.')->middleware(['auth', 'role:partner'])->group(function () {
-    Route::get('/', [PartnerDashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard', [PartnerDashboardController::class, 'index'])->name('dashboard');
     
     // Partner Management
@@ -145,15 +144,21 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'role:partner'])
     
     // Student Management
     Route::resource('students', StudentController::class);
+    
+    // Partner Profile
+    Route::get('profile', [PartnerController::class, 'showProfile'])->name('profile.show');
+    Route::get('profile/edit', [PartnerController::class, 'editProfile'])->name('profile.edit');
+    Route::put('profile', [PartnerController::class, 'updateProfile'])->name('profile.update');
 });
 
 // Student Routes
 Route::prefix('student')->name('student.')->middleware(['auth', 'role:student'])->group(function () {
     Route::get('/', [StudentDashboardController::class, 'index'])->name('dashboard');
-    Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
     
     // Student Profile
-    Route::resource('profile', StudentController::class)->only(['show', 'edit', 'update']);
+    Route::get('profile', [StudentController::class, 'showOwnProfile'])->name('profile.show');
+    Route::get('profile/edit', [StudentController::class, 'editOwnProfile'])->name('profile.edit');
+    Route::put('profile', [StudentController::class, 'updateOwnProfile'])->name('profile.update');
     
     // Available Exams
     Route::get('exams', [StudentExamController::class, 'availableExams'])->name('exams.available');

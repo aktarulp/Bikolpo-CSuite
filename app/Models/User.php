@@ -2,15 +2,15 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Fortify\TwoFactorAuthenticatable;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, TwoFactorAuthenticatable;
 
     /**
      * The attributes that are mass assignable.
@@ -21,7 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role',
+        'role_id',
         'phone',
     ];
 
@@ -33,6 +33,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'two_factor_recovery_codes',
+        'two_factor_secret',
     ];
 
     /**
@@ -44,5 +46,78 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'name' => 'string',
+        'two_factor_confirmed_at' => 'datetime',
     ];
+
+    /**
+     * Boot method to ensure role relationship is loaded when needed
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::retrieved(function ($user) {
+            // Always load the role relationship when user is retrieved
+            if (!$user->relationLoaded('role')) {
+                $user->load('role');
+            }
+        });
+    }
+
+    /**
+     * Get the role associated with the user.
+     */
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    /**
+     * Get the student record associated with the user.
+     */
+    public function student()
+    {
+        return $this->hasOne(Student::class, 'user_id', 'id');
+    }
+
+    /**
+     * Get the partner record associated with the user.
+     */
+    public function partner()
+    {
+        return $this->hasOne(Partner::class, 'user_id', 'id');
+    }
+
+    // Helper methods
+    public function isPartner()
+    {
+        return $this->role && $this->role->name === 'partner';
+    }
+
+    public function isStudent()
+    {
+        return $this->role && $this->role->name === 'student';
+    }
+
+    public function hasRole($roleName)
+    {
+        return $this->role && $this->role->name === $roleName;
+    }
+
+    /**
+     * Scope to find user by email or phone
+     */
+    public function scopeFindByEmailOrPhone($query, $identifier)
+    {
+        if (filter_var($identifier, FILTER_VALIDATE_EMAIL)) {
+            return $query->where('email', $identifier);
+        }
+        
+        if (preg_match('/^01[3-9][0-9]{8}$/', $identifier)) {
+            return $query->where('phone', $identifier);
+        }
+        
+        return $query->where('email', $identifier); // fallback
+    }
+
 }

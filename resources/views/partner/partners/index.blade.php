@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
 @section('title', 'Partners')
 
@@ -32,19 +32,18 @@
                             <div class="flex items-center space-x-4">
                                 <div class="flex-shrink-0">
                                     @if($partner->logo)
-                                        <img class="h-12 w-12 rounded-full" src="{{ Storage::url($partner->logo) }}" alt="{{ $partner->name }}">
+                                        <img class="h-12 w-12 rounded-full" src="{{ Storage::url($partner->logo) }}" alt="{{ $partner->user->name }}">
                                     @else
                                         <div class="h-12 w-12 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center">
                                             <span class="text-gray-600 dark:text-gray-400 font-medium">
-                                                {{ substr($partner->name, 0, 1) }}
+                                                {{ substr($partner->user->name, 0, 1) }}
                                             </span>
                                         </div>
                                     @endif
                                 </div>
                                 <div>
-                                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">{{ $partner->name }}</h3>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ $partner->email }}</p>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ $partner->city }}</p>
+                                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">{{ $partner->user->name }}</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ $partner->user->email }}</p>
                                 </div>
                             </div>
                             <div class="flex items-center space-x-2">

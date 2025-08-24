@@ -45,7 +45,7 @@
                                 <option value="">Choose a partner...</option>
                                 @foreach($partners as $partner)
                                     <option value="{{ $partner->id }}">
-                                        {{ $partner->name ?? $partner->email }}
+                                        {{ $partner->user->name ?? $partner->user->email }}
                                     </option>
                                 @endforeach
                             </select>

@@ -10,7 +10,7 @@
                 Forgot Password?
             </h1>
             <p class="text-gray-600 dark:text-gray-400">
-                No problem! Enter your email address and we'll send you a password reset link.
+                No problem! Enter your email address and we'll send you a verification OTP to reset your password.
             </p>
         </div>
 
@@ -18,7 +18,7 @@
         <x-auth-session-status class="mb-6" :status="session('status')" />
 
         <!-- Forgot Password Form -->
-        <form method="POST" action="{{ route('password.email') }}" class="space-y-6">
+        <form method="POST" action="{{ route('password.email.otp') }}" class="space-y-6">
             @csrf
 
             <!-- Email Address -->
@@ -34,7 +34,7 @@
                         id="email" 
                         type="email" 
                         name="email" 
-                        :value="old('email')" 
+                        value="{{ old('email') }}" 
                         required 
                         autofocus
                         class="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
@@ -50,7 +50,7 @@
                 class="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
             >
                 <i class="fas fa-paper-plane mr-2"></i>
-                Send Reset Link
+                Send OTP
             </button>
         </form>
 

@@ -1,264 +1,300 @@
-<x-guest-layout>
-    <!-- Enhanced Partner Registration Form -->
-    <div class="w-full max-w-md">
-        <!-- Header Section -->
-        <div class="text-center mb-8">
-            <div class="w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                <i class="fas fa-building text-white text-3xl"></i>
-            </div>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                Partner Registration
-            </h1>
-            <p class="text-gray-600 dark:text-gray-400">
-                Join বিকল্প কম্পিউটার as a partner institution
-            </p>
-        </div>
+<!DOCTYPE html>
+<html lang="bn" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Partner Registration - বিকল্প কম্পিউটার</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        bangla: ['"Hind Siliguri"', 'sans-serif']
+                    },
+                    colors: {
+                        primaryGreen: '#16a34a',
+                        primaryOrange: '#f97316',
+                        primaryBlue: '#3b82f6',
+                        primaryPurple: '#8b5cf6',
+                        accent: '#f59e0b'
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.6s ease-out',
+                        'fade-in-down': 'fadeInDown 0.6s ease-out',
+                        'slide-in-right': 'slideInRight 0.6s ease-out',
+                        'bounce-gentle': 'bounceGentle 2s infinite'
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        fadeInDown: {
+                            '0%': { opacity: '0', transform: 'translateY(-30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        slideInRight: {
+                            '0%': { opacity: '0', transform: 'translateX(30px)' },
+                            '100%': { opacity: '1', transform: 'translateX(0)' }
+                        },
+                        bounceGentle: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
 
-        <!-- Register Form -->
-        <form method="POST" action="{{ route('partner.register') }}" class="space-y-6">
-            @csrf
-
-            <!-- Institution Name -->
-            <div class="space-y-2">
-                <label for="institution_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Institution Name
-                </label>
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-university text-gray-400"></i>
-                    </div>
-                    <input 
-                        id="institution_name" 
-                        type="text" 
-                        name="institution_name" 
-                        :value="old('institution_name')" 
-                        required 
-                        autofocus 
-                        autocomplete="organization"
-                        class="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                        placeholder="Enter your institution name"
-                    />
-                </div>
-                <x-input-error :messages="$errors->get('institution_name')" class="mt-1" />
-            </div>
-
-            <!-- Contact Person Name -->
-            <div class="space-y-2">
-                <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Contact Person Name
-                </label>
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-user text-gray-400"></i>
-                    </div>
-                    <input 
-                        id="name" 
-                        type="text" 
-                        name="name" 
-                        :value="old('name')" 
-                        required 
-                        autocomplete="name"
-                        class="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                        placeholder="Enter contact person name"
-                    />
-                </div>
-                <x-input-error :messages="$errors->get('name')" class="mt-1" />
-            </div>
-
-            <!-- Email Address -->
-            <div class="space-y-2">
-                <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Email Address
-                </label>
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-envelope text-gray-400"></i>
-                    </div>
-                    <input 
-                        id="email" 
-                        type="email" 
-                        name="email" 
-                        :value="old('email')" 
-                        required 
-                        autocomplete="username"
-                        class="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                        placeholder="Enter your email address"
-                    />
-                </div>
-                <x-input-error :messages="$errors->get('email')" class="mt-1" />
-            </div>
-
-            <!-- Phone Number -->
-            <div class="space-y-2">
-                <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Phone Number
-                </label>
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-phone text-gray-400"></i>
-                    </div>
-                    <input 
-                        id="phone" 
-                        type="tel" 
-                        name="phone" 
-                        :value="old('phone')" 
-                        required 
-                        autocomplete="tel"
-                        class="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                        placeholder="Enter your phone number"
-                    />
-                </div>
-                <x-input-error :messages="$errors->get('phone')" class="mt-1" />
-            </div>
-
-            <!-- Institution Type -->
-            <div class="space-y-2">
-                <label for="institution_type" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Institution Type
-                </label>
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-graduation-cap text-gray-400"></i>
-                    </div>
-                    <select 
-                        id="institution_type" 
-                        name="institution_type" 
-                        required
-                        class="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                    >
-                        <option value="">Select institution type</option>
-                        <option value="coaching_center" {{ old('institution_type') == 'coaching_center' ? 'selected' : '' }}>Coaching Center</option>
-                        <option value="school" {{ old('institution_type') == 'school' ? 'selected' : '' }}>School</option>
-                        <option value="college" {{ old('institution_type') == 'college' ? 'selected' : '' }}>College</option>
-                        <option value="university" {{ old('institution_type') == 'university' ? 'selected' : '' }}>University</option>
-                        <option value="training_institute" {{ old('institution_type') == 'training_institute' ? 'selected' : '' }}>Training Institute</option>
-                        <option value="other" {{ old('institution_type') == 'other' ? 'selected' : '' }}>Other</option>
-                    </select>
-                </div>
-                <x-input-error :messages="$errors->get('institution_type')" class="mt-1" />
-            </div>
-
-            <!-- Password -->
-            <div class="space-y-2">
-                <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Password
-                </label>
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-lock text-gray-400"></i>
-                    </div>
-                    <input 
-                        id="password" 
-                        type="password" 
-                        name="password" 
-                        required 
-                        autocomplete="new-password"
-                        class="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                        placeholder="Create a strong password"
-                    />
-                </div>
-                <x-input-error :messages="$errors->get('password')" class="mt-1" />
-            </div>
-
-            <!-- Confirm Password -->
-            <div class="space-y-2">
-                <label for="password_confirmation" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Confirm Password
-                </label>
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-shield-alt text-gray-400"></i>
-                    </div>
-                    <input 
-                        id="password_confirmation" 
-                        type="password" 
-                        name="password_confirmation" 
-                        required 
-                        autocomplete="new-password"
-                        class="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200"
-                        placeholder="Confirm your password"
-                    />
-                </div>
-                <x-input-error :messages="$errors->get('password_confirmation')" class="mt-1" />
-            </div>
-
-            <!-- Terms and Conditions -->
-            <div class="flex items-start">
-                <div class="flex items-center h-5">
-                    <input 
-                        id="terms" 
-                        type="checkbox" 
-                        required
-                        class="w-4 h-4 text-green-500 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
-                    >
-                </div>
-                <div class="ml-3 text-sm">
-                    <label for="terms" class="text-gray-600 dark:text-gray-400">
-                        I agree to the 
-                        <a href="#" class="text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 underline">
-                            Terms and Conditions
-                        </a>
-                        and
-                        <a href="#" class="text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 underline">
-                            Privacy Policy
-                        </a>
-                    </label>
-                </div>
-            </div>
-
-            <!-- Submit Button -->
-            <button 
-                type="submit"
-                class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-            >
-                <i class="fas fa-building mr-2"></i>
-                Create Partner Account
-            </button>
-        </form>
-
-        <!-- Divider -->
-        <div class="relative my-8">
-            <div class="absolute inset-0 flex items-center">
-                <div class="w-full border-t border-gray-300 dark:border-gray-600"></div>
-            </div>
-            <div class="relative flex justify-center text-sm">
-                <span class="px-2 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400">
-                    Already a partner?
-                </span>
-            </div>
-        </div>
-
-        <!-- Login Link -->
-        <div class="text-center">
-            <a 
-                href="{{ route('partner.login') }}" 
-                class="inline-flex items-center justify-center w-full bg-white dark:bg-gray-800 border-2 border-green-500 text-green-500 hover:bg-green-500 hover:text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-[1.02]"
-            >
-                <i class="fas fa-sign-in-alt mr-2"></i>
-                Partner Login
-            </a>
-        </div>
-
-        <!-- Account Type Selection -->
-        <div class="text-center mt-6">
-            <a 
-                href="{{ route('landing') }}" 
-                class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-200"
-            >
-                <i class="fas fa-exchange-alt mr-1"></i>
-                Different Account Type?
-            </a>
-        </div>
-
-        <!-- Back to Home -->
-        <div class="text-center mt-4">
-            <a 
-                href="{{ route('landing') }}" 
-                class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-200"
-            >
-                <i class="fas fa-arrow-left mr-1"></i>
-                Back to Home
-            </a>
-        </div>
+<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-blue-900 dark:to-indigo-900 text-gray-800 dark:text-gray-100 font-bangla min-h-screen">
+    <!-- Background Pattern -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-primaryGreen/10 to-transparent rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-primaryBlue/10 to-transparent rounded-full blur-3xl"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-accent/5 to-primaryPurple/5 rounded-full blur-3xl"></div>
     </div>
-</x-guest-layout>
+
+    <!-- Header -->
+    <header class="relative bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-white/20 dark:border-gray-700/50 sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-6">
+                <a href="{{ route('landing') }}" class="flex items-center space-x-4 group">
+                    <div class="relative">
+                        <div class="w-14 h-14 bg-gradient-to-br from-primaryGreen via-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 transform group-hover:scale-105">
+                            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-10 h-10 object-contain" />
+                        </div>
+                        <div class="absolute -inset-1 bg-gradient-to-r from-primaryGreen to-green-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition-opacity duration-300"></div>
+                    </div>
+                    <div class="transform group-hover:translate-x-1 transition-transform duration-300">
+                        <h1 class="text-3xl font-bold bg-gradient-to-r from-primaryGreen to-green-600 bg-clip-text text-transparent">
+                            বিকল্প কম্পিউটার
+                        </h1>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 font-medium">Your Smart Exam Partner</p>
+                    </div>
+                </a>
+                <a href="{{ route('partner.onboarding') }}" class="group relative overflow-hidden bg-gradient-to-r from-primaryGreen to-green-600 text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                    <span class="relative z-10">Sign In</span>
+                    <div class="absolute inset-0 bg-gradient-to-r from-green-600 to-primaryGreen opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="relative z-10 py-20">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Hero Section -->
+            <div class="text-center mb-16 animate-fade-in-down">
+                <div class="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-primaryGreen to-green-600 rounded-full shadow-2xl mb-8 animate-bounce-gentle">
+                    <i class="fas fa-handshake text-white text-3xl"></i>
+                </div>
+                <h1 class="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
+                    <span class="bg-gradient-to-r from-primaryGreen via-green-600 to-green-700 bg-clip-text text-transparent">
+                        Quick Partner Registration
+                    </span>
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                    Join <span class="font-semibold text-primaryGreen">বিকল্প কম্পিউটার</span> as an educational partner in just 2 minutes
+                </p>
+                <div class="flex items-center justify-center space-x-8 mt-8 text-sm text-gray-500 dark:text-gray-400">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-check-circle text-primaryGreen"></i>
+                        <span>Free to join</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-check-circle text-primaryGreen"></i>
+                        <span>2-minute setup</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-check-circle text-primaryGreen"></i>
+                        <span>Complete profile later</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Registration Form -->
+            <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 overflow-hidden animate-fade-in-up">
+                <!-- Form Header -->
+                <div class="bg-gradient-to-r from-primaryGreen to-green-600 px-8 py-6 text-white">
+                    <h2 class="text-2xl font-bold flex items-center space-x-3">
+                        <i class="fas fa-user-plus text-2xl"></i>
+                        <span>Create Your Partner Account</span>
+                    </h2>
+                    <p class="text-green-100 mt-2">Just email and password to get started. Complete your profile later!</p>
+                </div>
+
+                <form action="{{ route('partner.register.store') }}" method="POST" class="p-8 space-y-8" id="partnerRegistrationForm">
+                    @csrf
+                    <input type="hidden" name="role_type" value="partner">
+                    
+                    <!-- Quick Registration Section -->
+                    <div class="space-y-6">
+                        <div class="flex items-center space-x-3 mb-6">
+                            <div class="w-10 h-10 bg-gradient-to-br from-primaryGreen to-green-600 rounded-full flex items-center justify-center">
+                                <i class="fas fa-rocket text-white"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Quick Start</h3>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="md:col-span-2 group">
+                                <label for="email" class="block mb-3 font-semibold text-gray-700 dark:text-gray-300 group-hover:text-primaryGreen transition-colors duration-200">
+                                    <i class="fas fa-envelope mr-2 text-primaryGreen"></i>Email Address *
+                                </label>
+                                <div class="relative">
+                                    <input type="email" id="email" name="email" value="{{ old('email') }}" required
+                                        class="w-full rounded-xl border-2 border-gray-200 dark:border-gray-600 px-4 py-4 focus:outline-none focus:ring-2 focus:ring-primaryGreen focus:border-primaryGreen dark:bg-gray-700 dark:text-white transition-all duration-200 group-hover:border-gray-300" 
+                                        placeholder="Enter your email address" />
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                        <i class="fas fa-envelope text-gray-400 group-hover:text-primaryGreen transition-colors duration-200"></i>
+                                    </div>
+                                </div>
+                                @error('email')
+                                    <p class="text-red-500 text-sm mt-2 flex items-center"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</p>
+                                @enderror
+                            </div>
+                            
+                            <div class="group">
+                                <label for="password" class="block mb-3 font-semibold text-gray-700 dark:text-gray-300 group-hover:text-primaryGreen transition-colors duration-200">
+                                    <i class="fas fa-lock mr-2 text-primaryGreen"></i>Password *
+                                </label>
+                                <div class="relative">
+                                    <input type="password" id="password" name="password" required
+                                        class="w-full rounded-xl border-2 border-gray-200 dark:border-gray-600 px-4 py-4 focus:outline-none focus:ring-2 focus:ring-primaryGreen focus:border-primaryGreen dark:bg-gray-700 dark:text-white transition-all duration-200 group-hover:border-gray-300" 
+                                        placeholder="Create a strong password" />
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                        <i class="fas fa-lock text-gray-400 group-hover:text-primaryGreen transition-colors duration-200"></i>
+                                    </div>
+                                </div>
+                                @error('password')
+                                    <p class="text-red-500 text-sm mt-2 flex items-center"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</p>
+                                @enderror
+                            </div>
+                            
+                            <div class="group">
+                                <label for="password_confirmation" class="block mb-3 font-semibold text-gray-700 dark:text-gray-300 group-hover:text-primaryGreen transition-colors duration-200">
+                                    <i class="fas fa-shield-alt mr-2 text-primaryGreen"></i>Confirm Password *
+                                </label>
+                                <div class="relative">
+                                    <input type="password" id="password_confirmation" name="password_confirmation" required
+                                        class="w-full rounded-xl border-2 border-gray-200 dark:border-gray-600 px-4 py-4 focus:outline-none focus:ring-2 focus:ring-primaryGreen focus:border-primaryGreen dark:bg-gray-700 dark:text-white transition-all duration-200 group-hover:border-gray-300" 
+                                        placeholder="Confirm your password" />
+                                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                        <i class="fas fa-shield-alt text-gray-400 group-hover:text-primaryGreen transition-colors duration-200"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- What Happens Next Section -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl p-6 border border-blue-200 dark:border-blue-700">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-8 h-8 bg-gradient-to-br from-primaryBlue to-blue-600 rounded-full flex items-center justify-center">
+                                <i class="fas fa-info text-white text-sm"></i>
+                            </div>
+                            <h4 class="text-lg font-semibold text-gray-900 dark:text-white">What Happens Next?</h4>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 dark:text-gray-400">
+                            <div class="flex items-start space-x-2">
+                                <i class="fas fa-check-circle text-primaryGreen mt-1"></i>
+                                <span>1. Verify your email address</span>
+                            </div>
+                            <div class="flex items-start space-x-2">
+                                <i class="fas fa-check-circle text-primaryGreen mt-1"></i>
+                                <span>2. Access your dashboard</span>
+                            </div>
+                            <div class="flex items-start space-x-2">
+                                <i class="fas fa-check-circle text-primaryGreen mt-1"></i>
+                                <span>3. Complete your profile later</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="text-center pt-8">
+                        <button type="submit" 
+                            class="group relative overflow-hidden bg-gradient-to-r from-primaryGreen via-green-600 to-green-700 text-white font-bold px-16 py-5 rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 hover:from-green-600 hover:via-green-700 hover:to-green-800">
+                            <span class="relative z-10 flex items-center space-x-3">
+                                <i class="fas fa-rocket text-xl group-hover:animate-bounce"></i>
+                                <span class="text-lg">Start Partner Journey</span>
+                            </span>
+                            <div class="absolute inset-0 bg-gradient-to-r from-green-700 to-green-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        </button>
+                    </div>
+
+                    <!-- Login Link -->
+                    <div class="text-center pt-6">
+                        <p class="text-gray-600 dark:text-gray-400 text-lg">
+                            Already have an account? 
+                            <a href="{{ route('partner.onboarding') }}" class="text-primaryGreen hover:text-green-600 font-semibold hover:underline transition-all duration-200">
+                                Sign In here
+                            </a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Features Section -->
+            <div class="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 animate-fade-in-up">
+                <div class="text-center group">
+                    <div class="w-20 h-20 bg-gradient-to-br from-primaryGreen to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                        <i class="fas fa-chart-line text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Track Progress</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Monitor student performance and track learning outcomes with detailed analytics</p>
+                </div>
+                
+                <div class="text-center group">
+                    <div class="w-20 h-20 bg-gradient-to-br from-primaryBlue to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                        <i class="fas fa-users text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Manage Students</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Easily manage your student database and organize them into batches</p>
+                </div>
+                
+                <div class="text-center group">
+                    <div class="w-20 h-20 bg-gradient-to-br from-primaryPurple to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                        <i class="fas fa-file-alt text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Create Content</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Build custom question sets and exams tailored to your curriculum</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Form debugging
+        document.getElementById('partnerRegistrationForm').addEventListener('submit', function(e) {
+            console.log('Form submitted');
+            console.log('Form action:', this.action);
+            console.log('Form method:', this.method);
+            
+            // Log form data
+            const formData = new FormData(this);
+            for (let [key, value] of formData.entries()) {
+                if (key !== '_token') { // Don't log CSRF token
+                    console.log(key + ':', value);
+                }
+            }
+        });
+
+        // Add smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

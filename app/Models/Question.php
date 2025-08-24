@@ -16,6 +16,7 @@ class Question extends Model
         'subject_id',
         'topic_id',
         'partner_id',
+        'created_by',
         'question_text',
         'option_a',
         'option_b',
@@ -84,6 +85,14 @@ class Question extends Model
     public function questionHistory()
     {
         return $this->hasMany(QuestionHistory::class);
+    }
+
+    /**
+     * Get the user who created the question.
+     */
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
 

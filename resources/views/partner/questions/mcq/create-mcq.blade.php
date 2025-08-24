@@ -1,4 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
+
+@section('title', 'Create MCQ Question')
 
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8">
@@ -2123,88 +2125,136 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Form submission
     const form = document.getElementById('mcqForm');
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Update the hidden textarea with rich text editor content before submission
-        const questionContent = document.getElementById('richTextEditor').innerHTML;
-        document.getElementById('question_text').value = questionContent;
-        
-        // Update the hidden textarea with explanation rich text editor content before submission
-        const explanationContent = document.getElementById('explanationRichTextEditor').innerHTML;
-        document.getElementById('explanation').value = explanationContent;
-        
-        // Validate form
-        if (!validateForm()) {
-            return;
-        }
-        
-        // Show loading state
-        const submitBtn = document.getElementById('submitBtn');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = `
-            <svg class="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            Publishing...
-        `;
-        submitBtn.disabled = true;
-        
-        // Submit form via AJAX
-        const formData = new FormData(form);
-        
-        // Debug: Log form data
-        console.log('Form action:', form.action);
-        console.log('Form data entries:');
-        for (let [key, value] of formData.entries()) {
-            console.log(key, ':', value);
-        }
-        
-        fetch(form.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+    console.log('Form element found:', form); // Debug log
+    
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            console.log('Form submit event triggered'); // Debug log
+            e.preventDefault();
+            
+            // Update the hidden textarea with rich text editor content before submission
+            const questionContent = document.getElementById('richTextEditor').innerHTML;
+            document.getElementById('question_text').value = questionContent;
+            
+            // Update the hidden textarea with explanation rich text editor content before submission
+            const explanationContent = document.getElementById('explanationRichTextEditor').innerHTML;
+            document.getElementById('explanation').value = explanationContent;
+            
+            // Validate form
+            if (!validateForm()) {
+                console.log('Form validation failed'); // Debug log
+                return;
             }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Show success message
-                showNotification(data.message, 'success');
-                
-                // Show success alert
-                if (confirm(data.message + '\n\nClick OK to create a new question.')) {
-                    // Reset form
-                    resetForm();
+            
+            console.log('Form validation passed, proceeding with submission'); // Debug log
+            
+            // Show loading state
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = `
+                <svg class="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Publishing...
+            `;
+            submitBtn.disabled = true;
+            
+            // Submit form via AJAX
+            const formData = new FormData(form);
+            
+            // Debug: Log form data
+            console.log('Form action:', form.action);
+            console.log('Form data entries:');
+            for (let [key, value] of formData.entries()) {
+                console.log(key, ':', value);
+            }
+            
+            // Check CSRF token
+            const csrfToken = document.querySelector('meta[name="csrf-token"]');
+            if (!csrfToken) {
+                console.error('CSRF token not found');
+                showNotification('CSRF token not found. Please refresh the page.', 'error');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                return;
+            }
+            
+            console.log('Submitting form to:', form.action); // Debug log
+            
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken.getAttribute('content')
                 }
-            } else {
-                showNotification(data.message || 'Error creating question', 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showNotification('Error creating question. Please try again.', 'error');
-        })
-        .finally(() => {
-            // Reset button state
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
+            })
+            .then(response => {
+                console.log('Response status:', response.status); // Debug log
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data); // Debug log
+                if (data.success) {
+                    // Show success message
+                    showNotification(data.message, 'success');
+                    
+                    // Show success alert
+                    if (confirm(data.message + '\n\nClick OK to create a new question.')) {
+                        // Reset form
+                        resetForm();
+                    }
+                } else {
+                    showNotification(data.message || 'Error creating question', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                showNotification('Error creating question. Please try again.', 'error');
+            })
+            .finally(() => {
+                // Reset button state
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
         });
-    });
+        
+        console.log('Form submit event listener attached successfully'); // Debug log
+        
+        // Also add click event listener to submit button as backup
+        const submitBtn = document.getElementById('submitBtn');
+        if (submitBtn) {
+            submitBtn.addEventListener('click', function(e) {
+                console.log('Submit button clicked'); // Debug log
+                // Trigger form submission
+                form.dispatchEvent(new Event('submit'));
+            });
+            console.log('Submit button click event listener attached'); // Debug log
+        } else {
+            console.error('Submit button not found!'); // Debug log
+        }
+    } else {
+        console.error('Form element not found!'); // Debug log
+    }
     
     // Form validation function
     function validateForm() {
+        console.log('Starting form validation...'); // Debug log
+        
         const requiredFields = [
             'course_id', 'subject_id', 'question_text', 
             'option_a', 'option_b', 'option_c', 'option_d', 
             'correct_answer'
         ];
         
+        console.log('Checking required fields:', requiredFields); // Debug log
+        
         for (const fieldName of requiredFields) {
             const field = document.querySelector(`[name="${fieldName}"]`);
+            console.log(`Checking field ${fieldName}:`, field, field?.value); // Debug log
+            
             if (!field || !field.value.trim()) {
+                console.log(`Field ${fieldName} is missing or empty`); // Debug log
                 showNotification(`Please fill in all required fields. Missing: ${fieldName.replace('_', ' ')}`, 'error');
                 field?.focus();
                 return false;
@@ -2213,12 +2263,16 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Check if question text has content
         const questionText = document.getElementById('richTextEditor').innerHTML.trim();
+        console.log('Question text content:', questionText); // Debug log
+        
         if (!questionText || questionText === '<br>') {
+            console.log('Question text is empty'); // Debug log
             showNotification('Please enter question text', 'error');
             document.getElementById('richTextEditor').focus();
             return false;
         }
         
+        console.log('Form validation passed successfully'); // Debug log
         return true;
     }
     
