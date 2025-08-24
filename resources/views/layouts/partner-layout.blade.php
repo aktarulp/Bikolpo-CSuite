@@ -19,8 +19,8 @@
         <div id="sidebar" class="flex flex-col transition-all duration-300 ease-in-out w-64">
             <div class="flex flex-col flex-grow pt-5 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700">
                 <!-- Logo Section -->
-                <div class="flex items-center flex-shrink-0 px-6 mb-8">
-                    <div class="w-10 h-10 bg-gradient-to-br from-primaryGreen to-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
+                <div id="sidebar-header" class="flex items-center flex-shrink-0 px-6 mb-8">
+                    <div id="logo-icon" class="w-10 h-10 bg-gradient-to-br from-primaryGreen to-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                         </svg>
@@ -29,112 +29,141 @@
                         <h1 class="text-xl font-bold text-gray-900 dark:text-white">CSuite</h1>
                         <p class="text-xs text-gray-500 dark:text-gray-400">Partner Portal</p>
                     </div>
+                    <button id="sidebar-toggle" aria-label="Toggle sidebar" class="group ml-auto p-2 rounded-full bg-primaryGreen/10 text-primaryGreen ring-1 ring-primaryGreen/20 hover:bg-primaryGreen/20 hover:ring-primaryGreen/30 dark:bg-emerald-900/20 dark:text-emerald-300 dark:ring-emerald-800/30 dark:hover:bg-emerald-900/30 shadow-sm transition-colors duration-200">
+                        <!-- Icon when expanded (action: push left / collapse) -->
+                        <svg id="icon-push-left" class="h-5 w-5 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                        <!-- Icon when collapsed (action: push right / expand) -->
+                        <svg id="icon-push-right" class="h-5 w-5 hidden transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </button>
                 </div>
 
                 <!-- Navigation Menu -->
                 <nav class="flex-1 px-4 space-y-1">
                     <a href="{{ route('partner.dashboard') }}" 
-                       class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.dashboard') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                        <svg class="h-5 w-5 {{ request()->routeIs('partner.dashboard') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 01-2-2z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
-                        </svg>
+                       class="group nav-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.dashboard') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
+                        <span class="nav-icon w-8 h-8 rounded-md bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
+                            <svg class="h-5 w-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 01-2-2z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
+                            </svg>
+                        </span>
                         <span id="nav-dashboard" class="ml-3 transition-all duration-300">Dashboard</span>
                     </a>
 
                     <!-- Questions Menu -->
                     <a href="{{ route('partner.questions.all') }}" 
-                       class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.questions.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                        <svg class="h-5 w-5 {{ request()->routeIs('partner.questions.*') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
+                       class="group nav-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.questions.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
+                        <span class="nav-icon w-8 h-8 rounded-md bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center">
+                            <svg class="h-5 w-5 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </span>
                         <span id="nav-questions" class="ml-3 transition-all duration-300">Questions</span>
                     </a>
 
                     <a href="{{ route('partner.question-sets.index') }}" 
-                       class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.question-sets.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                        <svg class="h-5 w-5 {{ request()->routeIs('partner.question-sets.*') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
+                       class="group nav-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.question-sets.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
+                        <span class="nav-icon w-8 h-8 rounded-md bg-green-50 dark:bg-green-900/20 flex items-center justify-center">
+                            <svg class="h-5 w-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </span>
                         <span id="nav-question-sets" class="ml-3 transition-all duration-300">Question Sets</span>
                     </a>
 
                     <a href="{{ route('partner.exams.index') }}" 
-                       class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.exams.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                        <svg class="h-5 w-5 {{ request()->routeIs('partner.exams.*') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                        </svg>
+                       class="group nav-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.exams.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
+                        <span class="nav-icon w-8 h-8 rounded-md bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center">
+                            <svg class="h-5 w-5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                            </svg>
+                        </span>
                         <span id="nav-exams" class="ml-3 transition-all duration-300">Exams</span>
                     </a>
 
                     <a href="{{ route('partner.students.index') }}" 
-                       class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.students.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                        <svg class="h-5 w-5 {{ request()->routeIs('partner.students.*') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                        </svg>
+                       class="group nav-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.students.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
+                        <span class="nav-icon w-8 h-8 rounded-md bg-purple-50 dark:bg-purple-900/20 flex items-center justify-center">
+                            <svg class="h-5 w-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422A12.083 12.083 0 0112 21.5 12.083 12.083 0 015.84 10.578L12 14z"></path>
+                            </svg>
+                        </span>
                         <span id="nav-students" class="ml-3 transition-all duration-300">Students</span>
                     </a>
 
                     <a href="{{ route('partner.batches.index') }}" 
-                       class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.batches.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                        <svg class="h-5 w-5 {{ request()->routeIs('partner.batches.*') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                        </svg>
+                       class="group nav-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.batches.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
+                        <span class="nav-icon w-8 h-8 rounded-md bg-rose-50 dark:bg-rose-900/20 flex items-center justify-center">
+                            <svg class="h-5 w-5 text-rose-600 dark:text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                            </svg>
+                        </span>
                         <span id="nav-batches" class="ml-3 transition-all duration-300">Batches</span>
                     </a>
 
                     <a href="{{ route('partner.courses.index') }}" 
-                       class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.courses.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                        <svg class="h-5 w-5 {{ request()->routeIs('partner.courses.*') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                        </svg>
+                       class="group nav-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.courses.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
+                        <span class="nav-icon w-8 h-8 rounded-md bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center">
+                            <svg class="h-5 w-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422A12.083 12.083 0 0112 21.5 12.083 12.083 0 015.84 10.578L12 14z"></path>
+                            </svg>
+                        </span>
                         <span id="nav-courses" class="ml-3 transition-all duration-300">Courses</span>
                     </a>
 
                     <a href="{{ route('partner.subjects.index') }}" 
-                       class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.subjects.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                        <svg class="h-5 w-5 {{ request()->routeIs('partner.subjects.*') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
-                        </svg>
+                       class="group nav-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.subjects.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
+                        <span class="nav-icon w-8 h-8 rounded-md bg-teal-50 dark:bg-teal-900/20 flex items-center justify-center">
+                            <svg class="h-5 w-5 text-teal-600 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6l-2-2H6a2 2 0 00-2 2v13a2 2 0 002 2h4l2-2" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6l2-2h4a2 2 0 012 2v13a2 2 0 01-2 2h-4l-2-2" />
+                            </svg>
+                        </span>
                         <span id="nav-subjects" class="ml-3 transition-all duration-300">Subjects</span>
                     </a>
 
                     <a href="{{ route('partner.topics.index') }}" 
-                       class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.topics.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                        <svg class="h-5 w-5 {{ request()->routeIs('partner.topics.*') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                        </svg>
+                       class="group nav-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.topics.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
+                        <span class="nav-icon w-8 h-8 rounded-md bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center">
+                            <svg class="h-5 w-5 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                            </svg>
+                        </span>
                         <span id="nav-topics" class="ml-3 transition-all duration-300">Topics</span>
                     </a>
 
                     <a href="{{ route('partner.question-history.index') }}" 
-                       class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.question-history.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                        <svg class="h-5 w-5 {{ request()->routeIs('partner.question-history.*') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
+                       class="group nav-link flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.question-history.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
+                        <span class="nav-icon w-8 h-8 rounded-md bg-cyan-50 dark:bg-cyan-900/20 flex items-center justify-center">
+                            <svg class="h-5 w-5 text-cyan-600 dark:text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </span>
                         <span id="nav-question-history" class="ml-3 transition-all duration-300">Question History</span>
                     </a>
-
-                    <a href="{{ route('partner.partners.index') }}" 
-                       class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.partners.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                        <svg class="h-5 w-5 {{ request()->routeIs('partner.partners.*') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                        </svg>
-                        <span id="nav-partners" class="ml-3 transition-all duration-300">Partners</span>
-                    </a>
-
-                    
+                  
 
                 <!-- Bottom Section -->
                 <div class="flex-shrink-0 p-4 border-t border-gray-200 dark:border-gray-700">
-                    <div class="flex items-center">
+                    <div id="bottom-row" class="flex items-center">
                         <div class="flex-shrink-0">
-                            <div class="w-8 h-8 bg-gradient-to-br from-primaryGreen to-emerald-500 rounded-full flex items-center justify-center">
-                                <span class="text-sm font-bold text-white">{{ substr(Auth::user()->name ?? 'P', 0, 1) }}</span>
+                            <div class="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-br from-primaryGreen to-emerald-500 flex items-center justify-center">
+                                @php $partner = $partner ?? \App\Models\Partner::where('user_id', auth()->id())->first(); @endphp
+                                @if(!empty($partner?->logo))
+                                    <img src="{{ asset('storage/' . $partner->logo) }}" alt="Partner Logo" class="w-full h-full object-cover">
+                                @else
+                                    <span class="text-sm font-bold text-white">{{ strtoupper(substr($partner?->slug ?? $partner?->name ?? (Auth::user()->name ?? 'P'), 0, 1)) }}</span>
+                                @endif
                             </div>
                         </div>
                         <div id="user-info" class="ml-3 min-w-0 flex-1 transition-all duration-300">
-                            <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ Auth::user()->name ?? 'Partner' }}</p>
+                            <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ $partner?->slug ?? $partner?->name ?? Auth::user()->name ?? 'Partner' }}</p>
                             <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ Auth::user()->email ?? 'partner@example.com' }}</p>
                         </div>
                         <div id="logout-button" class="ml-auto flex-shrink-0 transition-all duration-300">
@@ -169,7 +198,7 @@
                 @endphp
                 <!-- Professional Welcome Banner with Navigation Tabs -->
                 <div class="sticky top-0 z-50 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm">
-                    <div class="px-8 py-6">
+                    <div class="px-8 py-2">
                         <div class="flex items-center justify-between">
                             <!-- Left Side: Welcome & Stats -->
                             <div class="flex items-center space-x-8">
@@ -307,19 +336,19 @@
                         <div class="border-t border-gray-200 dark:border-gray-700">
                             <nav class="flex items-center space-x-1">
                                 <a href="{{ route('partner.dashboard') }}" 
-                                   class="px-4 py-2 text-sm font-medium text-primaryGreen bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                                   class="px-4 py-1 text-sm font-medium text-primaryGreen bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
                                     Overview
                                 </a>
                                 <a href="{{ route('partner.questions.all') }}" 
-                                   class="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
+                                   class="px-4 py-1 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
                                     Questions
                                 </a>
                                 <a href="{{ route('partner.exams.index') }}" 
-                                   class="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
+                                   class="px-4 py-1 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
                                     Exams
                                 </a>
                                 <a href="{{ route('partner.students.index') }}" 
-                                   class="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
+                                   class="px-4 py-1 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
                                     Students
                                 </a>
                             </nav>
@@ -386,6 +415,13 @@
                             element.style.display = 'block';
                         }
                     });
+                    // Centering reset for nav links when expanded
+                    const navLinksExpanded = sidebar.querySelectorAll('nav a.nav-link');
+                    navLinksExpanded.forEach(link => {
+                        link.classList.remove('justify-center');
+                        link.classList.remove('px-0');
+                        if (!link.classList.contains('px-3')) link.classList.add('px-3');
+                    });
                 } else {
                     sidebar.classList.remove('w-64');
                     sidebar.classList.add('w-16');
@@ -412,11 +448,101 @@
                             element.style.display = 'none';
                         }
                     });
+                    // Center nav items horizontally in collapsed state
+                    const navLinksCollapsed = sidebar.querySelectorAll('nav a.nav-link');
+                    navLinksCollapsed.forEach(link => {
+                        link.classList.add('justify-center');
+                        link.classList.add('px-0');
+                        link.classList.remove('px-3');
+                    });
                 }
                 localStorage.setItem('sidebarOpen', sidebarOpen);
+                if (sidebarToggle) {
+                    sidebarToggle.setAttribute('aria-expanded', sidebarOpen ? 'true' : 'false');
+                    sidebarToggle.title = sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar';
+                }
+                // When collapsed, also hide the big logo icon for a cleaner look
+                const logoIcon = document.getElementById('logo-icon');
+                const sidebarHeader = document.getElementById('sidebar-header');
+                const bottomRow = document.getElementById('bottom-row');
+                if (logoIcon) {
+                    if (sidebarOpen) {
+                        logoIcon.classList.remove('hidden');
+                        if (sidebarHeader) {
+                            sidebarHeader.classList.remove('justify-center');
+                            sidebarHeader.classList.add('px-6');
+                            sidebarHeader.classList.remove('px-2');
+                        }
+                        if (sidebarToggle) {
+                            sidebarToggle.classList.add('ml-auto');
+                            sidebarToggle.classList.remove('mx-auto');
+                        }
+                        if (bottomRow) {
+                            bottomRow.classList.remove('justify-center');
+                            bottomRow.classList.add('justify-start');
+                        }
+                    } else {
+                        logoIcon.classList.add('hidden');
+                        if (sidebarHeader) {
+                            sidebarHeader.classList.add('justify-center');
+                            sidebarHeader.classList.remove('px-6');
+                            sidebarHeader.classList.add('px-2');
+                        }
+                        if (sidebarToggle) {
+                            sidebarToggle.classList.remove('ml-auto');
+                            sidebarToggle.classList.add('mx-auto');
+                        }
+                        if (bottomRow) {
+                            bottomRow.classList.add('justify-center');
+                            bottomRow.classList.remove('justify-start');
+                        }
+                    }
+                }
             }
 
             updateSidebar();
+
+            // Sidebar toggle button handler
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', () => {
+                    sidebarOpen = !sidebarOpen;
+                    updateSidebar();
+                });
+            }
+
+            // Update toggle icons to reflect current state
+            function updateToggleIcons() {
+                const iconLeft = document.getElementById('icon-push-left');
+                const iconRight = document.getElementById('icon-push-right');
+                if (iconLeft && iconRight) {
+                    if (sidebarOpen) {
+                        iconLeft.classList.remove('hidden');
+                        iconRight.classList.add('hidden');
+                    } else {
+                        iconLeft.classList.add('hidden');
+                        iconRight.classList.remove('hidden');
+                    }
+                }
+            }
+
+            // Sync icons on init and whenever state changes
+            updateToggleIcons();
+            const originalUpdateSidebar = updateSidebar;
+            updateSidebar = function() {
+                originalUpdateSidebar();
+                updateToggleIcons();
+                // Enlarge icons when collapsed
+                const icons = document.querySelectorAll('.nav-icon svg');
+                icons.forEach(svg => {
+                    if (sidebarOpen) {
+                        svg.classList.remove('h-10', 'w-10');
+                        svg.classList.add('h-5', 'w-5');
+                    } else {
+                        svg.classList.remove('h-5', 'w-5');
+                        svg.classList.add('h-10', 'w-10');
+                    }
+                });
+            }
 
             if (themeToggle) {
                 const currentTheme = localStorage.getItem('theme');
@@ -437,28 +563,28 @@
                 });
             }
 
-            if (!sidebarOpen) {
-                const navItems = sidebar.querySelectorAll('nav a');
+            function attachTooltips() {
+                const navItems = sidebar.querySelectorAll('nav a.nav-link');
                 navItems.forEach(item => {
                     item.addEventListener('mouseenter', () => {
-                        const text = item.querySelector('span')?.textContent || '';
+                        if (sidebarOpen) return;
+                        const text = item.querySelector('span[id^="nav-"]')?.textContent || '';
                         if (text) {
                             const tooltip = document.createElement('div');
-                            tooltip.className = 'absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded shadow-lg z-50 whitespace-nowrap';
+                            tooltip.className = 'absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded shadow-lg z-50 whitespace-nowrap';
                             tooltip.textContent = text;
                             item.style.position = 'relative';
                             item.appendChild(tooltip);
                         }
                     });
-                    
                     item.addEventListener('mouseleave', () => {
                         const tooltip = item.querySelector('div');
-                        if (tooltip) {
-                            tooltip.remove();
-                        }
+                        if (tooltip) tooltip.remove();
                     });
                 });
             }
+
+            attachTooltips();
 
             // Profile submenu toggle
             const profileMenuToggle = document.getElementById('profile-menu-toggle');
