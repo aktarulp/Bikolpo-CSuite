@@ -42,33 +42,14 @@
                         <span id="nav-dashboard" class="ml-3 transition-all duration-300">Dashboard</span>
                     </a>
 
-                    <!-- Questions Menu with Submenu -->
-                    <div class="space-y-1">
-                        <button id="questions-menu-toggle" 
-                                class="group w-full flex items-center justify-between px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.questions.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                            <div class="flex items-center">
-                                <svg class="h-5 w-5 {{ request()->routeIs('partner.questions.*') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                <span id="nav-questions" class="ml-3 transition-all duration-300">Questions</span>
-                            </div>
-                            <svg id="questions-arrow" class="h-4 w-4 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </button>
-                        
-                        <!-- Questions Submenu -->
-                        <div id="questions-submenu" class="ml-8 space-y-1 hidden">
-                            <a href="{{ route('partner.questions.all') }}" 
-                               class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.questions.all') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                                <svg class="h-4 w-4 {{ request()->routeIs('partner.questions.all') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                </svg>
-                                <span id="nav-questions-view" class="ml-3 transition-all duration-300">View Questions</span>
-                            </a>
-                        </div>
-                    </div>
+                    <!-- Questions Menu -->
+                    <a href="{{ route('partner.questions.all') }}" 
+                       class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.questions.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
+                        <svg class="h-5 w-5 {{ request()->routeIs('partner.questions.*') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span id="nav-questions" class="ml-3 transition-all duration-300">Questions</span>
+                    </a>
 
                     <a href="{{ route('partner.question-sets.index') }}" 
                        class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.question-sets.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
@@ -350,30 +331,7 @@
                 });
             }
 
-            // Questions submenu toggle
-            const questionsMenuToggle = document.getElementById('questions-menu-toggle');
-            const questionsSubmenu = document.getElementById('questions-submenu');
-            const questionsArrow = document.getElementById('questions-arrow');
-            
-            if (questionsMenuToggle && questionsSubmenu && questionsArrow) {
-                questionsMenuToggle.addEventListener('click', () => {
-                    const isOpen = questionsSubmenu.classList.contains('hidden');
-                    
-                    if (isOpen) {
-                        questionsSubmenu.classList.remove('hidden');
-                        questionsArrow.style.transform = 'rotate(90deg)';
-                    } else {
-                        questionsSubmenu.classList.add('hidden');
-                        questionsArrow.style.transform = 'rotate(0deg)';
-                    }
-                });
-                
-                // Auto-expand submenu if on questions page
-                if (window.location.pathname.includes('/questions/')) {
-                    questionsSubmenu.classList.remove('hidden');
-                    questionsArrow.style.transform = 'rotate(90deg)';
-                }
-            }
+
 
             // Profile submenu toggle
             const profileMenuToggle = document.getElementById('profile-menu-toggle');
@@ -401,5 +359,7 @@
             }
         });
     </script>
+    
+    @stack('scripts')
 </body>
 </html>

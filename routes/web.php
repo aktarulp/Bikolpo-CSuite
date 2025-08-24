@@ -65,7 +65,6 @@ Route::get('/student-area', function () {
 
 // Partner Routes (Coaching Center)
 Route::prefix('partner')->name('partner.')->middleware(['auth', 'role:partner'])->group(function () {
-    Route::get('/', [PartnerDashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard', [PartnerDashboardController::class, 'index'])->name('dashboard');
     
     // Partner Management
@@ -155,7 +154,6 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'role:partner'])
 // Student Routes
 Route::prefix('student')->name('student.')->middleware(['auth', 'role:student'])->group(function () {
     Route::get('/', [StudentDashboardController::class, 'index'])->name('dashboard');
-    Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
     
     // Student Profile
     Route::get('profile', [StudentController::class, 'showOwnProfile'])->name('profile.show');
