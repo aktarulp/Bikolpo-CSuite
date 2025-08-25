@@ -127,6 +127,7 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'role:partner'])
     
     // Question Set Management
     Route::resource('question-sets', QuestionSetController::class);
+    Route::get('question-sets/create-step2', [QuestionSetController::class, 'createStep2'])->name('question-sets.create-step2');
     Route::post('question-sets/{questionSet}/add-questions', [QuestionSetController::class, 'addQuestions'])->name('question-sets.add-questions');
     Route::delete('question-sets/{questionSet}/remove-question/{question}', [QuestionSetController::class, 'removeQuestion'])->name('question-sets.remove-question');
     

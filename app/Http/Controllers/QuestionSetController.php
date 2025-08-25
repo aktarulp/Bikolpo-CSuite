@@ -22,6 +22,11 @@ class QuestionSetController extends Controller
         return view('partner.question-sets.create');
     }
 
+    public function createStep2(Request $request)
+    {
+        return view('partner.question-sets.create-step2');
+    }
+
     public function store(Request $request)
     {
         $request->validate([
