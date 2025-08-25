@@ -126,9 +126,9 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'role:partner'])
 
     
     // Question Set Management
-    // Explicit route for alternate create URL to avoid 404 and {question_set} catch-all
-    Route::get('question-sets/create-step2', [QuestionSetController::class, 'create'])->name('question-sets.create-step2');
-    Route::resource('question-sets', QuestionSetController::class);
+    // Explicit route for alternate create URL and dedicated controller method
+    Route::get('question-sets/create-step2', [QuestionSetController::class, 'createStep2'])->name('question-sets.create-step2');
+    Route::resource('question-sets', QuestionSetController::class)->where(['question_set' => '[0-9]+']);
     Route::post('question-sets/{questionSet}/add-questions', [QuestionSetController::class, 'addQuestions'])->name('question-sets.add-questions');
     Route::delete('question-sets/{questionSet}/remove-question/{question}', [QuestionSetController::class, 'removeQuestion'])->name('question-sets.remove-question');
     
