@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Student;
+use App\Models\User;
+use App\Models\Partner;
 
 class StudentSeeder extends Seeder
 {
@@ -13,6 +15,21 @@ class StudentSeeder extends Seeder
      */
     public function run(): void
     {
+        // Check if students already exist to avoid duplicates
+        if (Student::count() > 0) {
+            $this->command->info('Students already exist, skipping StudentSeeder.');
+            return;
+        }
+
+        // Get the first partner and user to associate students with
+        $partner = Partner::first();
+        $user = User::first();
+        
+        if (!$partner || !$user) {
+            $this->command->error('No partners or users found. Please run PartnerSeeder and create a user first.');
+            return;
+        }
+
         Student::create([
             'full_name' => 'আহমেদ রহমান',
             'student_id' => 'STU001',
@@ -27,6 +44,8 @@ class StudentSeeder extends Seeder
             'parent_name' => 'মোঃ আব্দুল রহমান',
             'parent_phone' => '+880 1812345678',
             'status' => 'active',
+            'partner_id' => $partner->id,
+            'user_id' => $user->id,
         ]);
 
         Student::create([
@@ -43,6 +62,8 @@ class StudentSeeder extends Seeder
             'parent_name' => 'মোঃ আব্দুল খালেক',
             'parent_phone' => '+880 1823456789',
             'status' => 'active',
+            'partner_id' => $partner->id,
+            'user_id' => $user->id,
         ]);
 
         Student::create([
@@ -59,6 +80,10 @@ class StudentSeeder extends Seeder
             'parent_name' => 'মোঃ আব্দুল মালেক',
             'parent_phone' => '+880 1834567890',
             'status' => 'active',
+            'partner_id' => $partner->id,
+            'user_id' => $user->id,
         ]);
+
+        $this->command->info('Students have been created successfully!');
     }
 }

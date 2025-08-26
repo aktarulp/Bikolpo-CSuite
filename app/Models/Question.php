@@ -31,7 +31,6 @@ class Question extends Model
         'expected_answer_structure',
         'key_concepts',
         'time_allocation',
-        'difficulty_level',
         'marks',
         'image',
         'status',
@@ -41,7 +40,6 @@ class Question extends Model
 
     protected $casts = [
         'question_type' => 'string',
-        'difficulty_level' => 'integer',
         'marks' => 'integer',
         'status' => 'string',
         'tags' => 'array',
@@ -92,16 +90,6 @@ class Question extends Model
     public function getCorrectOptionTextAttribute()
     {
         return $this->{'option_' . $this->correct_answer};
-    }
-
-    public function getDifficultyTextAttribute()
-    {
-        return match($this->difficulty_level) {
-            1 => 'Easy',
-            2 => 'Medium',
-            3 => 'Hard',
-            default => 'Unknown'
-        };
     }
 
     // Question Type Helpers

@@ -14,6 +14,7 @@ class Course extends Model
         'code',
         'description',
         'status',
+        'partner_id',
     ];
 
     protected $casts = [
@@ -21,6 +22,11 @@ class Course extends Model
     ];
 
     // Relationships
+    public function partner()
+    {
+        return $this->belongsTo(Partner::class);
+    }
+
     public function subjects()
     {
         return $this->hasMany(Subject::class);

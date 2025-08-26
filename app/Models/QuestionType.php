@@ -18,7 +18,7 @@ class QuestionType extends Model
         'has_explanation',
         'has_image',
         'has_marks',
-        'has_difficulty',
+        'partner_id',
     ];
 
     protected $casts = [
@@ -26,14 +26,19 @@ class QuestionType extends Model
         'has_explanation' => 'boolean',
         'has_image' => 'boolean',
         'has_marks' => 'boolean',
-        'has_difficulty' => 'boolean',
         'sort_order' => 'integer',
+        'partner_id' => 'integer',
     ];
 
     // Relationships
     public function questions()
     {
         return $this->hasMany(Question::class, 'question_type_id', 'q_type_id');
+    }
+
+    public function partner()
+    {
+        return $this->belongsTo(Partner::class);
     }
 
     // Scopes
@@ -45,6 +50,16 @@ class QuestionType extends Model
     public function scopeOrdered($query)
     {
         return $query->orderBy('sort_order');
+    }
+
+    public function scopeByPartner($query, $partnerId)
+    {
+        return $query->where('partner_id', $partnerId);
+    }
+
+    public function scopeGlobal($query)
+    {
+        return $query->whereNull('partner_id');
     }
 
     // Accessors

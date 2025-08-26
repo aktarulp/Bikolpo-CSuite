@@ -48,6 +48,91 @@ class QuestionController extends Controller
     }
 
     /**
+     * API endpoint for questions (used in step 2 of question set creation)
+     */
+    public function apiIndex(Request $request)
+    {
+        // Get the currently authenticated partner
+        $user = auth()->user();
+        if (!$user || !$user->isPartner()) {
+            abort(403, 'Unauthorized access. Partner login required.');
+        }
+
+        // For question set creation, show all available questions (not just partner's own)
+        $query = Question::with(['topic.subject.course', 'questionType'])
+            ->where('status', 'active');
+
+        // Apply filters
+        if ($request->filled('course')) {
+            $query->whereHas('topic.subject', function($q) use ($request) {
+                $q->where('course_id', $request->course);
+            });
+        }
+
+        if ($request->filled('subject')) {
+            $query->whereHas('topic', function($q) use ($request) {
+                $q->where('subject_id', $request->subject);
+            });
+        }
+
+        if ($request->filled('topic')) {
+            $query->where('topic_id', $request->topic);
+        }
+
+        if ($request->filled('question_type')) {
+            $query->where('q_type_id', $request->question_type);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('question_text', 'like', "%{$search}%")
+                  ->orWhere('option_a', 'like', "%{$search}%")
+                  ->orWhere('option_b', 'like', "%{$search}%")
+                  ->orWhere('option_c', 'like', "%{$search}%")
+                  ->orWhere('option_d', 'like', "%{$search}%")
+                  ->orWhere('explanation', 'like', "%{$search}%")
+                  ->orWhereHas('topic.subject.course', function($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('topic.subject', function($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('topic', function($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('questionType', function($q) use ($search) {
+                      $q->where('q_type_name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $limit = $request->get('limit', 50);
+        
+        // Log the query for debugging
+        \Log::info('Questions API Query', [
+            'sql' => $query->toSql(),
+            'bindings' => $query->getBindings(),
+            'limit' => $limit,
+            'user_id' => $user->id,
+            'user_role' => $user->role
+        ]);
+        
+        $questions = $query->latest()->limit($limit)->get();
+        
+        // Log the results
+        \Log::info('Questions API Results', [
+            'count' => $questions->count(),
+            'sample_ids' => $questions->take(5)->pluck('id')->toArray()
+        ]);
+
+        return response()->json([
+            'data' => $questions,
+            'total' => $questions->count()
+        ]);
+    }
+
+    /**
      * Display the questions dashboard with statistics.
      * Now redirects to all questions view.
      *
@@ -160,7 +245,6 @@ class QuestionController extends Controller
             'option_d' => 'required|string|max:255',
             'correct_answer' => 'required|in:a,b,c,d',
             'explanation' => 'nullable|string',
-            'difficulty_level' => 'required|in:1,2,3',
             'marks' => 'required|integer|min:1',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -363,7 +447,17 @@ class QuestionController extends Controller
             $data['partner_id'] = 1; // Default partner ID
             $data['status'] = 'active';
             $data['marks'] = $data['marks'] ?? 1; // Default marks to 1
+<<<<<<< Updated upstream
             $data['difficulty_level'] = $data['difficulty_level'] ?? 2; // Default difficulty to Medium (2)
+=======
+
+            
+            // Set the MCQ question type ID
+            $mcqType = \App\Models\QuestionType::where('q_type_code', 'MCQ')->first();
+            if ($mcqType) {
+                $data['q_type_id'] = $mcqType->q_type_id;
+            }
+>>>>>>> Stashed changes
 
             if ($request->hasFile('image')) {
                 $data['image'] = $request->file('image')->store('questions', 'public');
@@ -462,7 +556,7 @@ class QuestionController extends Controller
 
         $data = $request->all();
         $data['marks'] = $data['marks'] ?? 1; // Default marks to 1
-        $data['difficulty_level'] = $data['difficulty_level'] ?? 2; // Default difficulty to Medium (2)
+
 
         if ($request->hasFile('image')) {
             // Delete old image
@@ -527,7 +621,6 @@ class QuestionController extends Controller
         
         // Set default values for required fields
         $data['status'] = 'active';
-        $data['difficulty_level'] = 2; // Default to medium
         $data['marks'] = 5; // Default to 5 marks
         
         // Set MCQ fields to null for descriptive questions
@@ -584,4 +677,87 @@ class QuestionController extends Controller
     }
 
 
+    /**
+     * Generate sample MCQ questions for the authenticated partner and user.
+     */
+    public function generateSampleMcqs(Request $request)
+    {
+        // Auth partner context
+        $user = auth()->user();
+        if (!$user || !$user->isPartner()) {
+            abort(403, 'Unauthorized access. Partner login required.');
+        }
+        $partner = $user->partner;
+        if (!$partner) {
+            abort(404, 'Partner profile not found.');
+        }
+
+        $count = (int)($request->input('count', 50));
+        $count = max(1, min($count, 200)); // Safety cap
+
+        $mcqType = \App\Models\QuestionType::where('q_type_code', 'MCQ')->first();
+        $courses = \App\Models\Course::where('status', 'active')->get();
+        $subjectsByCourse = \App\Models\Subject::where('status', 'active')->get()->groupBy('course_id');
+        $topicsBySubject = \App\Models\Topic::where('status', 'active')->get()->groupBy('subject_id');
+
+        if ($courses->isEmpty()) {
+            return redirect()->back()->with('error', 'No active courses found to attach sample questions.');
+        }
+
+        $samples = [
+            ['What is the capital of France?', 'Paris', 'Berlin', 'Madrid', 'Rome', 'a'],
+            ['Which planet is known as the Red Planet?', 'Earth', 'Mars', 'Jupiter', 'Venus', 'b'],
+            ['What is the largest ocean on Earth?', 'Indian', 'Atlantic', 'Pacific', 'Arctic', 'c'],
+            ['Who wrote Hamlet?', 'Shakespeare', 'Hemingway', 'Tolstoy', 'Dickens', 'a'],
+            ['The chemical symbol for water is?', 'H2O', 'CO2', 'O2', 'NaCl', 'a'],
+            ['What gas do plants absorb?', 'Oxygen', 'Nitrogen', 'Carbon Dioxide', 'Hydrogen', 'c'],
+            ['What is 9 × 8?', '72', '64', '81', '56', 'a'],
+            ['Which is a prime number?', '21', '29', '35', '39', 'b'],
+            ['Speed unit is?', 'Pascal', 'Newton', 'm/s', 'Watt', 'c'],
+            ['Energy unit is?', 'Joule', 'Volt', 'Ohm', 'Ampere', 'a'],
+        ];
+
+        $created = 0;
+
+        for ($i = 1; $i <= $count; $i++) {
+            $course = $courses->random();
+            $subjects = $subjectsByCourse->get($course->id) ?? collect();
+            $subject = $subjects->isNotEmpty() ? $subjects->random() : \App\Models\Subject::where('status', 'active')->inRandomOrder()->first();
+            $topics = $subject ? ($topicsBySubject->get($subject->id) ?? collect()) : collect();
+            $topic = $topics->isNotEmpty() ? $topics->random() : (\App\Models\Topic::where('status', 'active')->inRandomOrder()->first());
+
+            // Fallback safety: skip if no subject/topic context exists at all
+            if (!$subject || !$topic) {
+                continue;
+            }
+
+            $tpl = $samples[array_rand($samples)];
+            [$qt, $a, $b, $c, $d, $correct] = $tpl;
+            $questionText = "[Sample MCQ #{$i}] {$qt}";
+
+            \App\Models\Question::create([
+                'question_type' => 'mcq',
+                'q_type_id' => $mcqType?->q_type_id,
+                'course_id' => $course->id,
+                'subject_id' => $subject->id,
+                'topic_id' => $topic->id,
+                'partner_id' => $partner->id,
+                'created_by' => $user->id,
+                'question_text' => $questionText,
+                'option_a' => $a,
+                'option_b' => $b,
+                'option_c' => $c,
+                'option_d' => $d,
+                'correct_answer' => $correct,
+                'explanation' => null,
+
+                'marks' => 1,
+                'status' => 'active',
+            ]);
+
+            $created++;
+        }
+
+        return redirect()->back()->with('success', "{$created} sample MCQ questions created for your partner.");
+    }
 }

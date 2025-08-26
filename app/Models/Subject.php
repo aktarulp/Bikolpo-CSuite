@@ -15,6 +15,7 @@ class Subject extends Model
         'code',
         'description',
         'status',
+        'partner_id',
     ];
 
     protected $casts = [
@@ -22,6 +23,11 @@ class Subject extends Model
     ];
 
     // Relationships
+    public function partner()
+    {
+        return $this->belongsTo(Partner::class);
+    }
+
     public function course()
     {
         return $this->belongsTo(Course::class);

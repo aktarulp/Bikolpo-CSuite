@@ -26,7 +26,7 @@
 
         <!-- Main Form Container -->
         <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-            <form action="{{ route('partner.questions.descriptive.store') }}" method="POST" id="descriptiveForm" class="p-8" enctype="multipart/form-data">
+            <form action="{{ route('partner.questions.descriptive.store') }}" method="POST" id="descriptiveForm" class="p-8" enctype="multipart/form-data" novalidate>
                 @csrf
                 <input type="hidden" name="question_type" value="descriptive">
                 <input type="hidden" name="q_type_id" value="2">
@@ -160,7 +160,7 @@
                                  <div id="richTextEditor" class="border border-t-0 border-gray-300 rounded-b-lg min-h-[150px] p-4 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all duration-200" contenteditable="true" data-placeholder="Enter your question here... You can use formatting, images, and equations."></div>
                                  
                                  <!-- Hidden textarea for form submission -->
-                                 <textarea name="question_text" id="question_text" class="hidden" required></textarea>
+                                 <textarea name="question_text" id="question_text" class="hidden"></textarea>
                                  
                                  <div class="flex justify-between items-center text-sm text-gray-500 mt-2">
                                      <span>Use the toolbar above for formatting, equations, and images.</span>
@@ -339,10 +339,13 @@ document.addEventListener('DOMContentLoaded', function() {
     italicBtn.addEventListener('click', () => document.execCommand('italic', false, null));
     underlineBtn.addEventListener('click', () => document.execCommand('underline', false, null));
     
-    // Character counter
+    // Character counter + keep hidden textarea in sync
     richTextEditor.addEventListener('input', function() {
         const text = this.innerText || this.textContent || '';
         charCount.textContent = text.length + ' characters';
+        // sync hidden textarea on every input
+        const htmlContent = this.innerHTML;
+        document.getElementById('question_text').value = htmlContent && htmlContent.trim() !== '' && htmlContent.trim() !== '<br>' ? htmlContent : text;
     });
 
     // Image upload
@@ -367,8 +370,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('descriptiveForm');
     form.addEventListener('submit', function(e) {
         // Update the hidden textarea with rich text editor content before submission
-        const questionContent = document.getElementById('richTextEditor').innerHTML;
-        document.getElementById('question_text').value = questionContent;
+        const editor = document.getElementById('richTextEditor');
+        const html = editor.innerHTML;
+        const plain = editor.innerText || editor.textContent || '';
+        document.getElementById('question_text').value = (html && html.trim() !== '' && html.trim() !== '<br>') ? html : plain;
         
         // Ensure tags and appearance history are properly set
         const tagsInput = document.getElementById('tagsInput');
@@ -382,7 +387,7 @@ document.addEventListener('DOMContentLoaded', function() {
             historyInput.value = '[]';
         }
         
-        // Validate form
+        // Validate form (soft-check: do not block native submit silently)
         if (!validateForm()) {
             e.preventDefault();
             return false;

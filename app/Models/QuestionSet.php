@@ -13,7 +13,10 @@ class QuestionSet extends Model
         'partner_id',
         'name',
         'description',
+        'question_head',
+        'language',
         'total_questions',
+        'question_limit',
         'total_marks',
         'time_limit',
         'status',
@@ -21,6 +24,7 @@ class QuestionSet extends Model
 
     protected $casts = [
         'total_questions' => 'integer',
+        'question_limit' => 'integer',
         'total_marks' => 'integer',
         'time_limit' => 'integer',
         'status' => 'string',
@@ -35,9 +39,9 @@ class QuestionSet extends Model
     public function questions()
     {
         return $this->belongsToMany(Question::class, 'question_set_question')
-                    ->withPivot('order')
+                    ->withPivot('order', 'marks')
                     ->withTimestamps()
-                    ->orderBy('pivot_order');
+                    ->orderBy('question_set_question.order');
     }
 
     public function exams()
@@ -49,7 +53,7 @@ class QuestionSet extends Model
     public function updateTotals()
     {
         $this->total_questions = $this->questions()->count();
-        $this->total_marks = $this->questions()->sum('marks');
+        $this->total_marks = $this->questions()->sum('question_set_question.marks');
         $this->save();
     }
 }

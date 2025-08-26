@@ -152,18 +152,7 @@
                         </div>
                     </div>
 
-                    <div>
-                        <label for="difficulty_level" class="block text-sm font-medium text-gray-700 mb-2">
-                            Difficulty Level
-                        </label>
-                        <select id="difficulty_level" name="difficulty_level"
-                                class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                            <option value="">Select Difficulty</option>
-                            <option value="Easy">Easy</option>
-                            <option value="Medium">Medium</option>
-                            <option value="Hard">Hard</option>
-                        </select>
-                    </div>
+
 
                     <!-- Auto-populated fields -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">

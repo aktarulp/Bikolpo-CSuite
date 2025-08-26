@@ -72,7 +72,7 @@ class QuestionSeeder extends Seeder
             'option_d' => 'Rajshahi',
             'correct_answer' => 'a',
             'explanation' => 'Dhaka is the capital and largest city of Bangladesh.',
-            'difficulty_level' => 1,
+
             'marks' => 1,
             'status' => 'active'
         ]);

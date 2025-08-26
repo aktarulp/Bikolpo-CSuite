@@ -43,7 +43,7 @@ class QuestionHistory extends Model
         'topic_name',
         'question_number',
         'marks_allocated',
-        'difficulty_level',
+
         'source_reference',
         'is_verified',
         'verified_by',

@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Course;
 use App\Models\Subject;
 use App\Models\Topic;
+use App\Models\Partner;
 
 class CourseSeeder extends Seeder
 {
@@ -15,6 +16,19 @@ class CourseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Get the first partner to associate courses with
+        $partner = Partner::first();
+        if (!$partner) {
+            $this->command->error('No partners found. Please run PartnerSeeder first.');
+            return;
+        }
+
+        // Check if courses already exist to avoid duplicates
+        if (Course::count() > 0) {
+            $this->command->info('Courses already exist, skipping CourseSeeder.');
+            return;
+        }
+
         // Create courses
         $courses = [
             [
@@ -115,6 +129,7 @@ class CourseSeeder extends Seeder
                 'code' => $courseData['code'],
                 'description' => $courseData['description'],
                 'status' => 'active',
+                'partner_id' => $partner->id, // Add required partner_id
             ]);
 
             foreach ($courseData['subjects'] as $subjectData) {
@@ -124,6 +139,7 @@ class CourseSeeder extends Seeder
                     'code' => $subjectData['code'],
                     'description' => $subjectData['description'],
                     'status' => 'active',
+                    'partner_id' => $partner->id, // Add required partner_id
                 ]);
 
                 foreach ($subjectData['topics'] as $topicData) {
@@ -133,9 +149,12 @@ class CourseSeeder extends Seeder
                         'code' => $topicData['code'],
                         'chapter_number' => $topicData['chapter_number'],
                         'status' => 'active',
+                        'partner_id' => $partner->id, // Add required partner_id
                     ]);
                 }
             }
         }
+
+        $this->command->info('Courses, subjects, and topics have been created successfully!');
     }
 }

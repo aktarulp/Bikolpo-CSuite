@@ -96,6 +96,18 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'role:partner'])
     Route::put('questions/{question}', [QuestionController::class, 'update'])->name('questions.update');
     Route::delete('questions/{question}', [QuestionController::class, 'destroy'])->name('questions.destroy');
     
+    // Questions API for step 2
+    Route::get('questions/api', [QuestionController::class, 'apiIndex'])->name('questions.api');
+    
+    // Test route for debugging
+    Route::get('questions/test', function() {
+        return response()->json([
+            'message' => 'API test route working',
+            'timestamp' => now(),
+            'questions_count' => \App\Models\Question::where('status', 'active')->count()
+        ]);
+    })->name('questions.test');
+    
     Route::post('questions/check-duplicate', [QuestionController::class, 'checkDuplicate'])->name('questions.check-duplicate');
     // Dependent dropdowns for Question create
     Route::get('questions/subjects', [QuestionController::class, 'getSubjects'])->name('questions.subjects');
@@ -106,6 +118,7 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'role:partner'])
         Route::get('/', [QuestionController::class, 'mcqAllQuestionView'])->name('all-question-view');
         Route::get('/create', [QuestionController::class, 'mcqCreate'])->name('create');
         Route::post('/', [QuestionController::class, 'mcqStore'])->name('store');
+        Route::post('/generate-samples', [QuestionController::class, 'generateSampleMcqs'])->name('generate-samples');
         Route::get('/view', function() {
             return view('partner.questions.mcq.mcqview');
         })->name('view');
@@ -128,6 +141,8 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'role:partner'])
     
     // Question Set Management
     Route::resource('question-sets', QuestionSetController::class);
+    Route::get('question-sets/create', [QuestionSetController::class, 'create'])->name('question-sets.create');
+    Route::post('question-sets', [QuestionSetController::class, 'store'])->name('question-sets.store');
     Route::post('question-sets/{questionSet}/add-questions', [QuestionSetController::class, 'addQuestions'])->name('question-sets.add-questions');
     Route::delete('question-sets/{questionSet}/remove-question/{question}', [QuestionSetController::class, 'removeQuestion'])->name('question-sets.remove-question');
     
@@ -186,3 +201,4 @@ Route::resource('typing-passages', \App\Http\Controllers\TypingPassageController
 Route::get('/typing-passages/get/{language?}/{difficulty?}', [\App\Http\Controllers\TypingPassageController::class, 'getPassages'])->name('typing-passages.get');
 Route::post('/typing-passages/{typingPassage}/stats', [\App\Http\Controllers\TypingPassageController::class, 'updateStats'])->name('typing-passages.stats');
 Route::patch('/typing-passages/{typingPassage}/toggle', [\App\Http\Controllers\TypingPassageController::class, 'toggleStatus'])->name('typing-passages.toggle');
+

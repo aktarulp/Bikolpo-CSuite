@@ -90,7 +90,7 @@ class QuestionHistorySeeder extends Seeder
                     'topic_name' => $question->topic?->name ?? 'Algebra',
                     'question_number' => rand(1, 50),
                     'marks_allocated' => rand(1, 5),
-                    'difficulty_level' => $difficulty,
+
                     'source_reference' => $this->getRandomSource(),
                     'is_verified' => rand(0, 1),
                     'verified_by' => rand(0, 1) ? 'Admin User' : null,

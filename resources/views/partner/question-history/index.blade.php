@@ -174,9 +174,7 @@
                                         <div class="text-sm text-gray-900">
                                             Q{{ $history->question_number ?? 'N/A' }} • {{ $history->marks_allocated ?? 'N/A' }} marks
                                         </div>
-                                        <div class="text-sm text-gray-500">
-                                            {{ $history->difficulty_level ?? 'N/A' }}
-                                        </div>
+
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         @if($history->is_verified)

@@ -50,7 +50,6 @@ class McqQuestionSeeder extends Seeder
                 'option_d' => 'Pascal',
                 'correct_answer' => 'a',
                 'explanation' => 'The SI unit of force is Newton (N), named after Sir Isaac Newton.',
-                'difficulty_level' => 1,
                 'marks' => 1,
                 'tags' => ['mechanics', 'units', 'basic']
             ],
@@ -62,7 +61,6 @@ class McqQuestionSeeder extends Seeder
                 'option_d' => 'Time',
                 'correct_answer' => 'c',
                 'explanation' => 'Velocity has both magnitude and direction, making it a vector quantity.',
-                'difficulty_level' => 1,
                 'marks' => 1,
                 'tags' => ['mechanics', 'vectors', 'basic']
             ],
@@ -74,7 +72,6 @@ class McqQuestionSeeder extends Seeder
                 'option_d' => 'KE = Pt',
                 'correct_answer' => 'b',
                 'explanation' => 'Kinetic energy is calculated using the formula KE = ½mv² where m is mass and v is velocity.',
-                'difficulty_level' => 2,
                 'marks' => 2,
                 'tags' => ['mechanics', 'energy', 'formula']
             ],
@@ -86,7 +83,6 @@ class McqQuestionSeeder extends Seeder
                 'option_d' => 'Law of Gravitation',
                 'correct_answer' => 'c',
                 'explanation' => 'Newton\'s Third Law states that for every action, there is an equal and opposite reaction.',
-                'difficulty_level' => 1,
                 'marks' => 1,
                 'tags' => ['mechanics', 'newton-laws', 'basic']
             ],
@@ -98,7 +94,6 @@ class McqQuestionSeeder extends Seeder
                 'option_d' => 'Watt',
                 'correct_answer' => 'b',
                 'explanation' => 'The SI unit of electric current is Ampere (A), named after André-Marie Ampère.',
-                'difficulty_level' => 1,
                 'marks' => 1,
                 'tags' => ['electricity', 'units', 'basic']
             ]
@@ -114,7 +109,6 @@ class McqQuestionSeeder extends Seeder
                 'option_d' => 'Cu',
                 'correct_answer' => 'b',
                 'explanation' => 'Au is the chemical symbol for gold, derived from the Latin word "aurum".',
-                'difficulty_level' => 1,
                 'marks' => 1,
                 'tags' => ['inorganic', 'elements', 'symbols']
             ],
@@ -126,7 +120,6 @@ class McqQuestionSeeder extends Seeder
                 'option_d' => 'Hydrogen',
                 'correct_answer' => 'c',
                 'explanation' => 'Carbon dioxide (CO₂) is a major greenhouse gas that contributes to global warming.',
-                'difficulty_level' => 1,
                 'marks' => 1,
                 'tags' => ['environmental', 'gases', 'climate']
             ],
@@ -138,7 +131,6 @@ class McqQuestionSeeder extends Seeder
                 'option_d' => '10',
                 'correct_answer' => 'b',
                 'explanation' => 'A neutral solution has a pH of 7. Values below 7 are acidic, above 7 are basic.',
-                'difficulty_level' => 1,
                 'marks' => 1,
                 'tags' => ['acids-bases', 'ph-scale', 'basic']
             ],
@@ -150,7 +142,6 @@ class McqQuestionSeeder extends Seeder
                 'option_d' => 'Carbon',
                 'correct_answer' => 'b',
                 'explanation' => 'Hydrogen has atomic number 1, making it the first element in the periodic table.',
-                'difficulty_level' => 1,
                 'marks' => 1,
                 'tags' => ['periodic-table', 'atomic-numbers', 'basic']
             ],
@@ -162,7 +153,6 @@ class McqQuestionSeeder extends Seeder
                 'option_d' => 'Hydrogen',
                 'correct_answer' => 'b',
                 'explanation' => 'NaCl forms an ionic bond where sodium donates an electron to chlorine.',
-                'difficulty_level' => 2,
                 'marks' => 2,
                 'tags' => ['bonding', 'ionic-compounds', 'intermediate']
             ]
@@ -178,7 +168,6 @@ class McqQuestionSeeder extends Seeder
                 'option_d' => 'Golgi Apparatus',
                 'correct_answer' => 'b',
                 'explanation' => 'Mitochondria are called the powerhouse of the cell because they produce energy through cellular respiration.',
-                'difficulty_level' => 1,
                 'marks' => 1,
                 'tags' => ['cell-biology', 'organelles', 'energy']
             ],
@@ -190,7 +179,6 @@ class McqQuestionSeeder extends Seeder
                 'option_d' => 'Budding',
                 'correct_answer' => 'b',
                 'explanation' => 'Meiosis is the process that produces gametes (sperm and egg cells) with half the chromosome number.',
-                'difficulty_level' => 2,
                 'marks' => 2,
                 'tags' => ['genetics', 'cell-division', 'reproduction']
             ],
@@ -202,7 +190,6 @@ class McqQuestionSeeder extends Seeder
                 'option_d' => 'Provide structure',
                 'correct_answer' => 'b',
                 'explanation' => 'Chlorophyll absorbs sunlight and converts it into chemical energy during photosynthesis.',
-                'difficulty_level' => 1,
                 'marks' => 1,
                 'tags' => ['photosynthesis', 'plant-biology', 'pigments']
             ],
@@ -214,7 +201,6 @@ class McqQuestionSeeder extends Seeder
                 'option_d' => 'Circulatory System',
                 'correct_answer' => 'b',
                 'explanation' => 'The immune system protects the body from diseases and infections.',
-                'difficulty_level' => 1,
                 'marks' => 1,
                 'tags' => ['human-biology', 'immune-system', 'health']
             ],
@@ -226,7 +212,6 @@ class McqQuestionSeeder extends Seeder
                 'option_d' => 'Geology',
                 'correct_answer' => 'a',
                 'explanation' => 'Paleontology is the scientific study of fossils and ancient life forms.',
-                'difficulty_level' => 1,
                 'marks' => 1,
                 'tags' => ['evolution', 'fossils', 'earth-history']
             ]
@@ -242,7 +227,6 @@ class McqQuestionSeeder extends Seeder
                 'option_d' => '3.18',
                 'correct_answer' => 'b',
                 'explanation' => 'The value of π (pi) is approximately 3.14159, which rounds to 3.14 to two decimal places.',
-                'difficulty_level' => 1,
                 'marks' => 1,
                 'tags' => ['geometry', 'constants', 'basic']
             ],
@@ -254,7 +238,6 @@ class McqQuestionSeeder extends Seeder
                 'option_d' => '13',
                 'correct_answer' => 'c',
                 'explanation' => '12 × 12 = 144, so the square root of 144 is 12.',
-                'difficulty_level' => 1,
                 'marks' => 1,
                 'tags' => ['arithmetic', 'square-roots', 'basic']
             ],
@@ -266,7 +249,6 @@ class McqQuestionSeeder extends Seeder
                 'option_d' => 'A = πd',
                 'correct_answer' => 'b',
                 'explanation' => 'The area of a circle is calculated using the formula A = πr² where r is the radius.',
-                'difficulty_level' => 1,
                 'marks' => 1,
                 'tags' => ['geometry', 'area', 'circles']
             ],
@@ -278,7 +260,6 @@ class McqQuestionSeeder extends Seeder
                 'option_d' => '108',
                 'correct_answer' => 'c',
                 'explanation' => '2³ = 8 and 3² = 9, so 8 × 9 = 72.',
-                'difficulty_level' => 2,
                 'marks' => 2,
                 'tags' => ['exponents', 'arithmetic', 'intermediate']
             ],
@@ -290,7 +271,6 @@ class McqQuestionSeeder extends Seeder
                 'option_d' => '∞',
                 'correct_answer' => 'a',
                 'explanation' => 'A horizontal line has a slope of 0 because there is no vertical change.',
-                'difficulty_level' => 2,
                 'marks' => 2,
                 'tags' => ['algebra', 'slope', 'lines']
             ]
@@ -306,7 +286,6 @@ class McqQuestionSeeder extends Seeder
                 'option_d' => '1946',
                 'correct_answer' => 'c',
                 'explanation' => 'World War II ended in 1945 with the surrender of Germany in May and Japan in September.',
-                'difficulty_level' => 1,
                 'marks' => 1,
                 'tags' => ['world-war-ii', 'modern-history', 'dates']
             ],
@@ -318,7 +297,6 @@ class McqQuestionSeeder extends Seeder
                 'option_d' => 'Benjamin Franklin',
                 'correct_answer' => 'c',
                 'explanation' => 'George Washington was the first President of the United States, serving from 1789 to 1797.',
-                'difficulty_level' => 1,
                 'marks' => 1,
                 'tags' => ['us-history', 'presidents', 'founding-fathers']
             ]
@@ -334,7 +312,6 @@ class McqQuestionSeeder extends Seeder
                 'option_d' => 'Yokohama',
                 'correct_answer' => 'c',
                 'explanation' => 'Tokyo is the capital and largest city of Japan.',
-                'difficulty_level' => 1,
                 'marks' => 1,
                 'tags' => ['world-geography', 'capitals', 'asia']
             ],
@@ -346,7 +323,6 @@ class McqQuestionSeeder extends Seeder
                 'option_d' => 'Pacific Ocean',
                 'correct_answer' => 'd',
                 'explanation' => 'The Pacific Ocean is the largest and deepest ocean on Earth.',
-                'difficulty_level' => 1,
                 'marks' => 1,
                 'tags' => ['physical-geography', 'oceans', 'earth-science']
             ]
@@ -387,8 +363,11 @@ class McqQuestionSeeder extends Seeder
             $template = $questionTemplates[array_rand($questionTemplates)];
             $option = $template['options'][array_rand($template['options'])];
             
-            $questionText = str_replace('{unit}', $option['{unit}'], $template['question_text']);
-            $questionText = str_replace('{type}', $option['{type}'], $questionText);
+            // Get the placeholder key (either 'unit' or 'type')
+            $placeholderKey = array_key_exists('{unit}', $option) ? '{unit}' : '{type}';
+            $placeholderValue = $option[$placeholderKey];
+            
+            $questionText = str_replace($placeholderKey, $placeholderValue, $template['question_text']);
             
             $additionalQuestions[] = [
                 'question_text' => $questionText,
@@ -398,7 +377,6 @@ class McqQuestionSeeder extends Seeder
                 'option_d' => $option['d'],
                 'correct_answer' => $option['correct'],
                 'explanation' => 'This is a fundamental concept in physics.',
-                'difficulty_level' => rand(1, 3),
                 'marks' => rand(1, 3),
                 'tags' => ['physics', 'units', 'basic']
             ];
@@ -431,7 +409,6 @@ class McqQuestionSeeder extends Seeder
                 'option_d' => $questionData['option_d'],
                 'correct_answer' => $questionData['correct_answer'],
                 'explanation' => $questionData['explanation'],
-                'difficulty_level' => $questionData['difficulty_level'],
                 'marks' => $questionData['marks'],
                 'tags' => $questionData['tags'],
                 'status' => 'active',

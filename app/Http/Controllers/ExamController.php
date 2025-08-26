@@ -9,13 +9,34 @@ use Illuminate\Http\Request;
 
 class ExamController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $exams = Exam::with(['questionSet', 'partner'])
-            ->where('partner_id', 1) // Default partner ID
-            ->latest()
-            ->paginate(15);
-        return view('partner.exams.index', compact('exams'));
+        $query = Exam::with(['questionSet', 'partner'])
+            ->where('partner_id', 1); // Default partner ID
+
+        // Filters
+        if ($status = $request->get('status')) {
+            $query->where('status', $status);
+        }
+        if ($q = $request->get('q')) {
+            $query->where(function ($sub) use ($q) {
+                $sub->where('title', 'like', "%{$q}%")
+                    ->orWhere('description', 'like', "%{$q}%");
+            });
+        }
+
+        $exams = $query->latest()->paginate(15)->withQueryString();
+
+        // Simple counts for header chips
+        $counts = [
+            'all' => Exam::where('partner_id', 1)->count(),
+            'draft' => Exam::where('partner_id', 1)->where('status', 'draft')->count(),
+            'published' => Exam::where('partner_id', 1)->where('status', 'published')->count(),
+            'ongoing' => Exam::where('partner_id', 1)->where('status', 'ongoing')->count(),
+            'completed' => Exam::where('partner_id', 1)->where('status', 'completed')->count(),
+        ];
+
+        return view('partner.exams.index', compact('exams', 'counts'));
     }
 
     public function create()
