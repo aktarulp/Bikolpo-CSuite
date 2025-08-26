@@ -160,6 +160,11 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'role:partner'])
     
     // Student Management
     Route::resource('students', StudentController::class);
+    
+    // Partner Profile Management
+    Route::get('profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
+    Route::get('profile/edit', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
 });
 
 // Student Routes

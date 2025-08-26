@@ -12,17 +12,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-<<<<<<< Updated upstream
-            PartnerSeeder::class,
-            CourseSeeder::class,
-            StudentSeeder::class,
-            QuestionTypeSeeder::class,
-            QuestionSeeder::class,
-            McqQuestionSeeder::class,
-            QuestionHistorySeeder::class,
-=======
             ConsolidatedSeeder::class,
->>>>>>> Stashed changes
         ]);
     }
 }

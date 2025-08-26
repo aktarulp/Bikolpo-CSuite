@@ -447,17 +447,13 @@ class QuestionController extends Controller
             $data['partner_id'] = 1; // Default partner ID
             $data['status'] = 'active';
             $data['marks'] = $data['marks'] ?? 1; // Default marks to 1
-<<<<<<< Updated upstream
             $data['difficulty_level'] = $data['difficulty_level'] ?? 2; // Default difficulty to Medium (2)
-=======
-
             
             // Set the MCQ question type ID
             $mcqType = \App\Models\QuestionType::where('q_type_code', 'MCQ')->first();
             if ($mcqType) {
                 $data['q_type_id'] = $mcqType->q_type_id;
             }
->>>>>>> Stashed changes
 
             if ($request->hasFile('image')) {
                 $data['image'] = $request->file('image')->store('questions', 'public');

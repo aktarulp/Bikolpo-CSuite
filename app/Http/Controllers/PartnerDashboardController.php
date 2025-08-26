@@ -17,21 +17,12 @@ class PartnerDashboardController extends Controller
         $partnerId = auth()->id();
         
         $stats = [
-<<<<<<< Updated upstream
             'total_questions' => Question::where('partner_id', $partnerId)->count(),
             'total_question_sets' => QuestionSet::where('partner_id', $partnerId)->count(),
             'total_exams' => Exam::where('partner_id', $partnerId)->count(),
             'total_students' => \App\Models\Student::whereHas('examResults.exam', function($query) use ($partnerId) {
                 $query->where('partner_id', $partnerId);
             })->distinct()->count(),
-=======
-            'total_questions' => Question::where('partner_id', $partner->id)->count(),
-            'total_question_sets' => QuestionSet::where('partner_id', $partner->id)->count(),
-            'total_exams' => Exam::where('partner_id', $partner->id)->count(),
-            'total_students' => \App\Models\Student::whereHas('examResults.exam', function($query) use ($partner) {
-                $query->where('partner_id', $partner->id);
-            })->distinct()->count('students.id'),
->>>>>>> Stashed changes
         ];
 
         $recent_exams = Exam::where('partner_id', $partnerId)

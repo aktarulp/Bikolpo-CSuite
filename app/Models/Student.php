@@ -10,11 +10,8 @@ class Student extends Model
     use HasFactory;
 
     protected $fillable = [
-<<<<<<< Updated upstream
-=======
         'user_id',
         'partner_id',
->>>>>>> Stashed changes
         'full_name',
         'student_id',
         'date_of_birth',
@@ -46,8 +43,6 @@ class Student extends Model
     {
         return $this->belongsToMany(Exam::class, 'student_exam_results');
     }
-<<<<<<< Updated upstream
-=======
 
     /**
      * Get the user account associated with the student.
@@ -64,5 +59,4 @@ class Student extends Model
     {
         return $this->belongsTo(Partner::class);
     }
->>>>>>> Stashed changes
 }

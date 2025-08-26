@@ -44,8 +44,6 @@ class Partner extends Model
     {
         return $this->hasManyThrough(StudentExamResult::class, Exam::class);
     }
-<<<<<<< Updated upstream
-=======
 
     public function courses()
     {
@@ -110,5 +108,4 @@ class Partner extends Model
     {
         return $query->where('district', $district);
     }
->>>>>>> Stashed changes
 }
