@@ -12,7 +12,7 @@ class ExamController extends Controller
     public function index(Request $request)
     {
         $partnerId = $this->getPartnerId();
-        $query = Exam::with(['partner', 'questionSet'])
+        $query = Exam::with(['partner', 'examQuestion'])
             ->where('partner_id', $partnerId);
 
         // Filters
@@ -61,14 +61,7 @@ class ExamController extends Controller
             'show_results_immediately' => 'boolean',
             'has_negative_marking' => 'boolean',
             'negative_marks_per_question' => 'required_if:has_negative_marking,1|nullable|numeric|min:0|max:5',
-            'status' => 'nullable|in:draft,published,ongoing,completed,cancelled',
-            'flag' => 'nullable|in:active,deleted',
-            'language' => 'nullable|string',
             'question_head' => 'nullable|string',
-            'question_limit' => 'nullable|integer|min:1|max:1000',
-            'is_verified' => 'boolean',
-            'is_public' => 'boolean',
-            'question_set_id' => 'nullable|exists:question_sets,id',
         ]);
 
         // Whitelist fields to avoid mass-assigning unexpected input
@@ -81,15 +74,15 @@ class ExamController extends Controller
             'duration',
             'total_questions',
             'passing_marks',
-            'language',
             'question_head',
-            'question_limit',
-            'status',
-            'flag',
-            'question_set_id',
         ]);
 
         $data['partner_id'] = $this->getPartnerId();
+        
+        // Set default values for hidden fields
+        $data['status'] = 'draft';
+        $data['flag'] = 'active';
+        $data['exam_question_id'] = null;
         
         // Ensure end time is after start time
         $startTime = \Carbon\Carbon::parse($data['start_time']);
@@ -104,16 +97,6 @@ class ExamController extends Controller
         $data['allow_retake'] = $request->boolean('allow_retake');
         $data['show_results_immediately'] = $request->boolean('show_results_immediately', true);
         $data['has_negative_marking'] = $request->boolean('has_negative_marking');
-        $data['is_verified'] = $request->boolean('is_verified');
-        $data['is_public'] = $request->boolean('is_public');
-        
-        // Set default values if not provided
-        if (!isset($data['status'])) {
-            $data['status'] = 'draft';
-        }
-        if (!isset($data['flag'])) {
-            $data['flag'] = 'active';
-        }
         
         // Handle negative marking
         if ($data['has_negative_marking']) {
@@ -130,7 +113,7 @@ class ExamController extends Controller
 
     public function show(Exam $exam)
     {
-        $exam->load(['studentResults.student', 'questionSet']);
+        $exam->load(['studentResults.student', 'examQuestion']);
         return view('partner.exams.show', compact('exam'));
     }
 
@@ -155,17 +138,10 @@ class ExamController extends Controller
             'show_results_immediately' => 'boolean',
             'has_negative_marking' => 'boolean',
             'negative_marks_per_question' => 'required_if:has_negative_marking,1|nullable|numeric|min:0|max:5',
-            'status' => 'nullable|in:draft,published,ongoing,completed,cancelled',
-            'flag' => 'nullable|in:active,deleted',
-            'language' => 'nullable|string',
             'question_head' => 'nullable|string',
-            'question_limit' => 'nullable|integer|min:1|max:1000',
-            'is_verified' => 'boolean',
-            'is_public' => 'boolean',
-            'question_set_id' => 'nullable|exists:question_sets,id',
+            'exam_question_id' => 'nullable|exists:exam_questions,id',
         ]);
 
-        // Whitelist fields
         $data = $request->only([
             'title',
             'description',
@@ -175,12 +151,8 @@ class ExamController extends Controller
             'duration',
             'total_questions',
             'passing_marks',
-            'language',
             'question_head',
-            'question_limit',
-            'status',
-            'flag',
-            'question_set_id',
+            'exam_question_id',
         ]);
         
         // Ensure end time is after start time
@@ -195,8 +167,6 @@ class ExamController extends Controller
         $data['allow_retake'] = $request->boolean('allow_retake');
         $data['show_results_immediately'] = $request->boolean('show_results_immediately', true);
         $data['has_negative_marking'] = $request->boolean('has_negative_marking');
-        $data['is_verified'] = $request->boolean('is_verified');
-        $data['is_public'] = $request->boolean('is_public');
         
         // Handle negative marking
         if ($data['has_negative_marking']) {
@@ -253,6 +223,42 @@ class ExamController extends Controller
 
         // For now, return a simple view. In a real app, you'd generate CSV/PDF
         return view('partner.exams.export', compact('exam', 'results'));
+    }
+
+    public function assignQuestions(Exam $exam)
+    {
+        $partnerId = $this->getPartnerId();
+        
+        // Get available questions for this partner
+        $questions = \App\Models\Question::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->with(['topic', 'subject'])
+            ->get();
+            
+        $assignedQuestions = collect();
+        
+        return view('partner.exams.assign-questions', compact('exam', 'questions', 'assignedQuestions'));
+    }
+
+    public function storeAssignedQuestions(Request $request, Exam $exam)
+    {
+        $request->validate([
+            'question_ids' => 'required|array',
+            'question_ids.*' => 'exists:questions,id'
+        ]);
+
+        $partnerId = $this->getPartnerId();
+        
+        // Verify the exam belongs to this partner
+        if ($exam->partner_id !== $partnerId) {
+            abort(403, 'Unauthorized access to this exam.');
+        }
+
+        // For now, just update the total questions count
+        $exam->update(['total_questions' => count($request->question_ids)]);
+
+        return redirect()->route('partner.exams.index')
+            ->with('success', 'Questions assigned successfully to the exam.');
     }
 
     private function getPartnerId(): int

@@ -152,6 +152,8 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'role:partner'])
     Route::post('exams/{exam}/unpublish', [ExamController::class, 'unpublish'])->name('exams.unpublish');
     Route::get('exams/{exam}/results', [ExamController::class, 'results'])->name('exams.results');
     Route::get('exams/{exam}/export', [ExamController::class, 'export'])->name('exams.export');
+    Route::get('exams/{exam}/assign-questions', [ExamController::class, 'assignQuestions'])->name('exams.assign-questions');
+    Route::post('exams/{exam}/assign-questions', [ExamController::class, 'storeAssignedQuestions'])->name('exams.store-assigned-questions');
     
     // Public Quiz Management
     Route::get('exams/{exam}/assign', [\App\Http\Controllers\ExamAssignmentController::class, 'index'])->name('exams.assign');

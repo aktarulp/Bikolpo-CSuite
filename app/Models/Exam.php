@@ -20,18 +20,12 @@ class Exam extends Model
         'total_questions',
         'exam_type',
         'passing_marks',
-        'status',
         'allow_retake',
         'show_results_immediately',
         'has_negative_marking',
         'negative_marks_per_question',
-        'language',
         'question_head',
-        'question_limit',
-        'flag',
-        'is_verified',
-        'is_public',
-        'question_set_id',
+        'exam_question_id',
     ];
 
     protected $casts = [
@@ -41,17 +35,11 @@ class Exam extends Model
         'total_questions' => 'integer',
         'exam_type' => 'string',
         'passing_marks' => 'integer',
-        'status' => 'string',
-        'flag' => 'string',
         'allow_retake' => 'boolean',
         'show_results_immediately' => 'boolean',
         'has_negative_marking' => 'boolean',
         'negative_marks_per_question' => 'decimal:2',
-        'language' => 'string',
         'question_head' => 'string',
-        'question_limit' => 'integer',
-        'is_verified' => 'boolean',
-        'is_public' => 'boolean',
     ];
 
     // Relationships
@@ -80,9 +68,16 @@ class Exam extends Model
         return $this->belongsToMany(Student::class, 'exam_access_codes');
     }
 
-    public function questionSet()
+    public function examQuestion()
     {
-        return $this->belongsTo(QuestionSet::class);
+        return $this->belongsTo(\App\Models\ExamQuestion::class, 'exam_question_id');
+    }
+
+    public function questions()
+    {
+        return $this->belongsToMany(Question::class, 'exam_questions')
+                    ->withPivot('order', 'marks')
+                    ->withTimestamps();
     }
 
     // Accessors
