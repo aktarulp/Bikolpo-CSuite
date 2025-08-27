@@ -31,6 +31,7 @@ class Exam extends Model
         'flag',
         'is_verified',
         'is_public',
+        'question_set_id',
     ];
 
     protected $casts = [
@@ -77,6 +78,11 @@ class Exam extends Model
     public function assignedStudents()
     {
         return $this->belongsToMany(Student::class, 'exam_access_codes');
+    }
+
+    public function questionSet()
+    {
+        return $this->belongsTo(QuestionSet::class);
     }
 
     // Accessors

@@ -12,7 +12,7 @@ class ExamController extends Controller
     public function index(Request $request)
     {
         $partnerId = $this->getPartnerId();
-        $query = Exam::with(['partner'])
+        $query = Exam::with(['partner', 'questionSet'])
             ->where('partner_id', $partnerId);
 
         // Filters
@@ -68,6 +68,7 @@ class ExamController extends Controller
             'question_limit' => 'nullable|integer|min:1|max:1000',
             'is_verified' => 'boolean',
             'is_public' => 'boolean',
+            'question_set_id' => 'nullable|exists:question_sets,id',
         ]);
 
         // Whitelist fields to avoid mass-assigning unexpected input
@@ -85,6 +86,7 @@ class ExamController extends Controller
             'question_limit',
             'status',
             'flag',
+            'question_set_id',
         ]);
 
         $data['partner_id'] = $this->getPartnerId();
@@ -128,7 +130,7 @@ class ExamController extends Controller
 
     public function show(Exam $exam)
     {
-        $exam->load(['studentResults.student']);
+        $exam->load(['studentResults.student', 'questionSet']);
         return view('partner.exams.show', compact('exam'));
     }
 
@@ -160,6 +162,7 @@ class ExamController extends Controller
             'question_limit' => 'nullable|integer|min:1|max:1000',
             'is_verified' => 'boolean',
             'is_public' => 'boolean',
+            'question_set_id' => 'nullable|exists:question_sets,id',
         ]);
 
         // Whitelist fields
@@ -177,6 +180,7 @@ class ExamController extends Controller
             'question_limit',
             'status',
             'flag',
+            'question_set_id',
         ]);
         
         // Ensure end time is after start time

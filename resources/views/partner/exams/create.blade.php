@@ -243,17 +243,38 @@
                         </div>
                     </div>
 
-                    <div class="mt-6">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Question Limit
-                        </label>
-                        <input type="number" name="question_limit" value="{{ old('question_limit') }}" min="1" max="1000"
-                               class="w-full max-w-[10rem] px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-purple-400 dark:focus:border-purple-400 transition-colors duration-200"
-                               placeholder="Optional question limit">
-                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Maximum number of questions to display (optional)</p>
-                        @error('question_limit')
-                            <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                        @enderror
+                    <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Question Set (Optional)
+                            </label>
+                            <select name="question_set_id" 
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-purple-400 dark:focus:border-purple-400 transition-colors duration-200">
+                                <option value="">Select a question set (optional)</option>
+                                @foreach(\App\Models\QuestionSet::where('partner_id', auth()->user()->partner->id ?? 0)->where('status', 'published')->get() as $questionSet)
+                                    <option value="{{ $questionSet->id }}" {{ old('question_set_id') == $questionSet->id ? 'selected' : '' }}>
+                                        {{ $questionSet->name }} ({{ $questionSet->total_questions }} questions)
+                                    </option>
+                                @endforeach
+                            </select>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Choose a predefined set of questions for this exam</p>
+                            @error('question_set_id')
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Question Limit
+                            </label>
+                            <input type="number" name="question_limit" value="{{ old('question_limit') }}" min="1" max="1000"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-purple-400 dark:focus:border-purple-400 transition-colors duration-200"
+                                   placeholder="Optional question limit">
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Maximum number of questions to display (optional)</p>
+                            @error('question_limit')
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
                 </div>
 
