@@ -88,6 +88,7 @@
                                         @elseif($exam->status === 'published')
                                             <form action="{{ route('partner.exams.unpublish', $exam) }}" method="POST" class="inline">@csrf<button type="submit" class="text-yellow-600 hover:text-yellow-800 dark:text-yellow-400 dark:hover:text-yellow-300">Unpublish</button></form>
                                         @endif
+                                        <a href="{{ route('partner.exams.assignments.index', $exam) }}" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">Assignments</a>
                                         <a href="{{ route('partner.exams.results', $exam) }}" class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300">Results</a>
                                         <a href="{{ route('partner.exams.export', $exam) }}" class="text-teal-600 hover:text-teal-800 dark:text-teal-400 dark:hover:text-teal-300">Export</a>
                                         <form action="{{ route('partner.exams.destroy', $exam) }}" method="POST" class="inline">@csrf @method('DELETE')<button type="submit" class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300" onclick="return confirm('Are you sure you want to delete this exam?')">Delete</button></form>

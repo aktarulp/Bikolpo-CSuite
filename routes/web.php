@@ -13,6 +13,8 @@ use App\Http\Controllers\QuestionSetController;
 use App\Http\Controllers\QuestionHistoryController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\StudentExamController;
+use App\Http\Controllers\ExamAssignmentController;
+use App\Http\Controllers\PublicQuizController;
 
 // Include Auth Routes
 require __DIR__.'/auth.php';
@@ -157,6 +159,12 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'role:partner'])
     Route::post('exams/{exam}/unpublish', [ExamController::class, 'unpublish'])->name('exams.unpublish');
     Route::get('exams/{exam}/results', [ExamController::class, 'results'])->name('exams.results');
     Route::get('exams/{exam}/export', [ExamController::class, 'export'])->name('exams.export');
+
+    // Exam Assignments (Phone + Code)
+    Route::get('exams/{exam}/assignments', [ExamAssignmentController::class, 'index'])->name('exams.assignments.index');
+    Route::post('exams/{exam}/assignments', [ExamAssignmentController::class, 'store'])->name('exams.assignments.store');
+    Route::post('exams/{exam}/assignments/{assignment}/regenerate', [ExamAssignmentController::class, 'regenerate'])->name('exams.assignments.regenerate');
+    Route::delete('exams/{exam}/assignments/{assignment}', [ExamAssignmentController::class, 'destroy'])->name('exams.assignments.destroy');
     
     // Student Management
     Route::resource('students', StudentController::class);
@@ -206,4 +214,10 @@ Route::resource('typing-passages', \App\Http\Controllers\TypingPassageController
 Route::get('/typing-passages/get/{language?}/{difficulty?}', [\App\Http\Controllers\TypingPassageController::class, 'getPassages'])->name('typing-passages.get');
 Route::post('/typing-passages/{typingPassage}/stats', [\App\Http\Controllers\TypingPassageController::class, 'updateStats'])->name('typing-passages.stats');
 Route::patch('/typing-passages/{typingPassage}/toggle', [\App\Http\Controllers\TypingPassageController::class, 'toggleStatus'])->name('typing-passages.toggle');
+
+// Public Quiz Join Flow (no auth)
+Route::get('/join', [PublicQuizController::class, 'showJoin'])->name('public.join');
+Route::post('/join', [PublicQuizController::class, 'join'])->name('public.join.submit');
+Route::post('/quiz/{exam}/submit', [PublicQuizController::class, 'submit'])->name('public.submit');
+Route::get('/quiz/{exam}/result', [PublicQuizController::class, 'result'])->name('public.result');
 
