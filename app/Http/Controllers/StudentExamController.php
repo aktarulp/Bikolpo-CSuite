@@ -70,7 +70,7 @@ class StudentExamController extends Controller
             'status' => 'in_progress',
         ]);
 
-        $questions = $exam->questionSet->questions()->orderBy('pivot_order')->get();
+        $questions = $exam->questionSet->questions()->get();
 
         return view('student.exams.take', compact('exam', 'questions', 'result'));
     }
