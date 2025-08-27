@@ -40,14 +40,14 @@
                                     </span>
                                 </div>
                                 
-                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">{{ $result->exam->questionSet->name }}</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Exam ID: {{ $result->exam->id }}</p>
                                 
                                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-500 dark:text-gray-400">
                                     <div>
                                         <span class="font-medium">Score:</span> {{ number_format($result->percentage, 1) }}%
                                     </div>
                                     <div>
-                                        <span class="font-medium">Marks:</span> {{ $result->score }}/{{ $result->exam->questionSet->total_marks }}
+                                        <span class="font-medium">Marks:</span> {{ $result->score }}/{{ $result->exam->total_questions ?? 'N/A' }}
                                     </div>
                                     <div>
                                         <span class="font-medium">Correct:</span> {{ $result->correct_answers }}/{{ $result->total_questions }}

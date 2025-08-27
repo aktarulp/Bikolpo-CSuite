@@ -85,10 +85,10 @@
                     @foreach($available_exams as $exam)
                         <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow">
                             <h4 class="font-medium text-gray-900 dark:text-white mb-2">{{ $exam->title }}</h4>
-                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">{{ $exam->questionSet->name }}</p>
+                                                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">Exam ID: {{ $exam->id }}</p>
                             <div class="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400 mb-3">
                                 <span>Duration: {{ $exam->duration }} min</span>
-                                <span>Questions: {{ $exam->questionSet->total_questions }}</span>
+                                <span>Questions: {{ $exam->total_questions ?? 'N/A' }}</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-xs text-gray-500 dark:text-gray-400">

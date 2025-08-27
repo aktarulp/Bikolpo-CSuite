@@ -72,12 +72,12 @@ class Question extends Model
         return $this->belongsTo(QuestionType::class, 'q_type_id', 'q_type_id');
     }
 
-    public function questionSets()
-    {
-        return $this->belongsToMany(QuestionSet::class, 'question_set_question')
-                    ->withPivot('order')
-                    ->withTimestamps();
-    }
+    // public function questionSets()
+    // {
+    //     return $this->belongsToMany(QuestionSet::class, 'question_set_question')
+    //                 ->withPivot('order')
+    //                 ->withTimestamps();
+    // }
 
     public function questionHistory()
     {

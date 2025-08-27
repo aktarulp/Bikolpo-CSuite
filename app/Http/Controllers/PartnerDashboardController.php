@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Partner;
 use App\Models\Question;
-use App\Models\QuestionSet;
+
 use App\Models\Exam;
 use App\Models\StudentExamResult;
 use Illuminate\Http\Request;
@@ -18,7 +18,7 @@ class PartnerDashboardController extends Controller
         
         $stats = [
             'total_questions' => Question::where('partner_id', $partnerId)->count(),
-            'total_question_sets' => QuestionSet::where('partner_id', $partnerId)->count(),
+
             'total_exams' => Exam::where('partner_id', $partnerId)->count(),
             'total_students' => \App\Models\Student::whereHas('examResults.exam', function($query) use ($partnerId) {
                 $query->where('partner_id', $partnerId);
@@ -26,7 +26,7 @@ class PartnerDashboardController extends Controller
         ];
 
         $recent_exams = Exam::where('partner_id', $partnerId)
-            ->with('questionSet')
+            // ->with('questionSet')
             ->latest()
             ->take(5)
             ->get();

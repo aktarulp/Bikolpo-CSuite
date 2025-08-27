@@ -9,7 +9,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TopicController;
 use App\Http\Controllers\QuestionController;
-use App\Http\Controllers\QuestionSetController;
+
 use App\Http\Controllers\QuestionHistoryController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\StudentExamController;
@@ -139,12 +139,7 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'role:partner'])
     
 
     
-    // Question Set Management
-    Route::resource('question-sets', QuestionSetController::class);
-    Route::get('question-sets/create', [QuestionSetController::class, 'create'])->name('question-sets.create');
-    Route::post('question-sets', [QuestionSetController::class, 'store'])->name('question-sets.store');
-    Route::post('question-sets/{questionSet}/add-questions', [QuestionSetController::class, 'addQuestions'])->name('question-sets.add-questions');
-    Route::delete('question-sets/{questionSet}/remove-question/{question}', [QuestionSetController::class, 'removeQuestion'])->name('question-sets.remove-question');
+
     
     // Question History Management
     Route::resource('question-history', \App\Http\Controllers\QuestionHistoryController::class);
@@ -157,6 +152,14 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'role:partner'])
     Route::post('exams/{exam}/unpublish', [ExamController::class, 'unpublish'])->name('exams.unpublish');
     Route::get('exams/{exam}/results', [ExamController::class, 'results'])->name('exams.results');
     Route::get('exams/{exam}/export', [ExamController::class, 'export'])->name('exams.export');
+    
+    // Public Quiz Management
+    Route::get('exams/{exam}/assign', [\App\Http\Controllers\ExamAssignmentController::class, 'index'])->name('exams.assign');
+    Route::post('exams/{exam}/assign', [\App\Http\Controllers\ExamAssignmentController::class, 'assignStudents'])->name('exams.assign-students');
+    Route::delete('exams/{exam}/assign', [\App\Http\Controllers\ExamAssignmentController::class, 'removeAssignment'])->name('exams.remove-assignment');
+    Route::post('exams/{exam}/regenerate-code', [\App\Http\Controllers\ExamAssignmentController::class, 'regenerateCode'])->name('exams.regenerate-code');
+    Route::post('exams/{exam}/bulk-operations', [\App\Http\Controllers\ExamAssignmentController::class, 'bulkOperations'])->name('exams.bulk-operations');
+    Route::get('exams/{exam}/export-assignments', [\App\Http\Controllers\ExamAssignmentController::class, 'exportAssignments'])->name('exams.export-assignments');
     
     // Student Management
     Route::resource('students', StudentController::class);
@@ -207,3 +210,13 @@ Route::get('/typing-passages/get/{language?}/{difficulty?}', [\App\Http\Controll
 Route::post('/typing-passages/{typingPassage}/stats', [\App\Http\Controllers\TypingPassageController::class, 'updateStats'])->name('typing-passages.stats');
 Route::patch('/typing-passages/{typingPassage}/toggle', [\App\Http\Controllers\TypingPassageController::class, 'toggleStatus'])->name('typing-passages.toggle');
 
+// Public Quiz Routes (No Authentication Required)
+Route::prefix('quiz')->name('public.quiz.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\PublicQuizController::class, 'showAccessPage'])->name('access');
+    Route::post('/access', [\App\Http\Controllers\PublicQuizController::class, 'processAccess'])->name('process-access');
+    Route::get('/{exam}/start', [\App\Http\Controllers\PublicQuizController::class, 'showQuiz'])->name('start');
+    Route::post('/{exam}/start', [\App\Http\Controllers\PublicQuizController::class, 'startQuiz'])->name('start-quiz');
+    Route::get('/{exam}/take', [\App\Http\Controllers\PublicQuizController::class, 'takeQuiz'])->name('take');
+    Route::post('/{exam}/submit', [\App\Http\Controllers\PublicQuizController::class, 'submitQuiz'])->name('submit');
+    Route::get('/{exam}/result', [\App\Http\Controllers\PublicQuizController::class, 'showResult'])->name('result');
+});

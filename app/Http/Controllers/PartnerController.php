@@ -45,7 +45,7 @@ class PartnerController extends Controller
 
     public function show(Partner $partner)
     {
-        $partner->load(['questions', 'questionSets', 'exams']);
+        $partner->load(['questions', 'exams']);
         return view('partner.partners.show', compact('partner'));
     }
 

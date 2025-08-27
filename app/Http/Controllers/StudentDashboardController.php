@@ -19,7 +19,7 @@ class StudentDashboardController extends Controller
         $available_exams = Exam::where('status', 'published')
             ->where('start_time', '<=', now())
             ->where('end_time', '>=', now())
-            ->with('questionSet')
+            // ->with('questionSet')
             ->get();
 
         $recent_results = StudentExamResult::where('student_id', $studentId)

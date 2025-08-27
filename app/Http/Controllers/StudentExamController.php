@@ -16,7 +16,7 @@ class StudentExamController extends Controller
         $availableExams = Exam::where('status', 'published')
             ->where('start_time', '<=', now())
             ->where('end_time', '>=', now())
-            ->with('questionSet')
+            // ->with('questionSet')
             ->get();
 
         return view('student.exams.available', compact('availableExams'));
@@ -66,11 +66,12 @@ class StudentExamController extends Controller
             'exam_id' => $exam->id,
         ], [
             'started_at' => now(),
-            'total_questions' => $exam->questionSet->questions()->count(),
+            'total_questions' => $exam->total_questions ?? 0,
             'status' => 'in_progress',
         ]);
 
-        $questions = $exam->questionSet->questions()->orderBy('pivot_order')->get();
+        // $questions = $exam->questionSet->questions()->orderBy('pivot_order')->get();
+        $questions = collect(); // Empty collection for now
 
         return view('student.exams.take', compact('exam', 'questions', 'result'));
     }
@@ -85,7 +86,8 @@ class StudentExamController extends Controller
             ->firstOrFail();
 
         $answers = $request->input('answers', []);
-        $questions = $exam->questionSet->questions;
+        // $questions = $exam->questionSet->questions;
+        $questions = collect(); // Empty collection for now
         
         $correctAnswers = 0;
         $wrongAnswers = 0;
@@ -130,7 +132,8 @@ class StudentExamController extends Controller
             ->where('exam_id', $exam->id)
             ->firstOrFail();
 
-        $questions = $exam->questionSet->questions;
+        // $questions = $exam->questionSet->questions;
+        $questions = collect(); // Empty collection for now
 
         return view('student.exams.result', compact('exam', 'result', 'questions'));
     }
@@ -140,7 +143,7 @@ class StudentExamController extends Controller
         $studentId = 1; // Default student ID
         
         $results = StudentExamResult::where('student_id', $studentId)
-            ->with(['exam.questionSet'])
+            ->with(['exam'])
             ->latest()
             ->paginate(15);
 

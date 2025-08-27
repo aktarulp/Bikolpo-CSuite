@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -45,4 +46,40 @@ class User extends Authenticatable
         'password' => 'hashed',
         'name' => 'string',
     ];
+
+    /**
+     * Check if the user is a partner
+     *
+     * @return bool
+     */
+    public function isPartner()
+    {
+        return $this->role === 'partner';
+    }
+
+    /**
+     * Check if the user is a student
+     *
+     * @return bool
+     */
+    public function isStudent()
+    {
+        return $this->role === 'student';
+    }
+
+    /**
+     * Get the partner profile associated with the user
+     */
+    public function partner()
+    {
+        return $this->belongsTo(Partner::class);
+    }
+
+    /**
+     * Get the student profile associated with the user
+     */
+    public function student()
+    {
+        return $this->hasOne(Student::class);
+    }
 }

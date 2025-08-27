@@ -27,7 +27,7 @@
     </div>
 
     <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- Total Questions -->
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
             <div class="flex items-center">
@@ -43,20 +43,7 @@
             </div>
         </div>
 
-        <!-- Question Sets -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-green-100 dark:bg-green-900">
-                    <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Question Sets</p>
-                    <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ $stats['total_question_sets'] }}</p>
-                </div>
-            </div>
-        </div>
+
 
         <!-- Total Exams -->
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
@@ -105,7 +92,7 @@
                                 <div>
                                     <h4 class="font-medium text-gray-900 dark:text-white">{{ $exam->title }}</h4>
                                     <p class="text-sm text-gray-600 dark:text-gray-400">
-                                        {{ $exam->questionSet->name }} • {{ $exam->status }}
+                                        Exam ID: {{ $exam->id }} • {{ $exam->status }}
                                     </p>
                                 </div>
                                 <div class="text-right">
@@ -169,7 +156,7 @@
             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Quick Actions</h3>
         </div>
         <div class="p-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <a href="{{ route('partner.questions.mcq.create') }}" 
                    class="flex items-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors duration-200">
                     <svg class="w-8 h-8 text-blue-600 dark:text-blue-400 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -181,16 +168,7 @@
                     </div>
                 </a>
 
-                <a href="{{ route('partner.question-sets.create') }}" 
-                   class="flex items-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors duration-200">
-                    <svg class="w-8 h-8 text-green-600 dark:text-green-400 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                    <div>
-                        <h4 class="font-medium text-gray-900 dark:text-white">Create Question Set</h4>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Group questions together</p>
-                    </div>
-                </a>
+
 
                 <a href="{{ route('partner.exams.create') }}" 
                    class="flex items-center p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-colors duration-200">

@@ -40,11 +40,11 @@
                         <div class="space-y-2 mb-4">
                             <div class="flex justify-between text-sm">
                                 <span class="text-gray-500 dark:text-gray-400">Question Set:</span>
-                                <span class="font-medium">{{ $exam->questionSet->name }}</span>
+                                <span class="font-medium">Exam ID: {{ $exam->id }}</span>
                             </div>
                             <div class="flex justify-between text-sm">
                                 <span class="text-gray-500 dark:text-gray-400">Questions:</span>
-                                <span class="font-medium">{{ $exam->questionSet->total_questions }}</span>
+                                <span class="font-medium">{{ $exam->total_questions ?? 'N/A' }}</span>
                             </div>
                             <div class="flex justify-between text-sm">
                                 <span class="text-gray-500 dark:text-gray-400">Duration:</span>
@@ -52,7 +52,7 @@
                             </div>
                             <div class="flex justify-between text-sm">
                                 <span class="text-gray-500 dark:text-gray-400">Total Marks:</span>
-                                <span class="font-medium">{{ $exam->questionSet->total_marks }}</span>
+                                <span class="font-medium">{{ $exam->total_questions ?? 'N/A' }}</span>
                             </div>
                             <div class="flex justify-between text-sm">
                                 <span class="text-gray-500 dark:text-gray-400">Passing Marks:</span>
