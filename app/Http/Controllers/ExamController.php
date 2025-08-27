@@ -5,14 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Exam;
 use App\Models\QuestionSet;
 use App\Models\StudentExamResult;
+use App\Models\Partner;
 use Illuminate\Http\Request;
 
 class ExamController extends Controller
 {
     public function index(Request $request)
     {
+        $partnerId = $this->getPartnerId();
         $query = Exam::with(['questionSet', 'partner'])
-            ->where('partner_id', 1); // Default partner ID
+            ->where('partner_id', $partnerId);
 
         // Filters
         if ($status = $request->get('status')) {
@@ -29,11 +31,11 @@ class ExamController extends Controller
 
         // Simple counts for header chips
         $counts = [
-            'all' => Exam::where('partner_id', 1)->count(),
-            'draft' => Exam::where('partner_id', 1)->where('status', 'draft')->count(),
-            'published' => Exam::where('partner_id', 1)->where('status', 'published')->count(),
-            'ongoing' => Exam::where('partner_id', 1)->where('status', 'ongoing')->count(),
-            'completed' => Exam::where('partner_id', 1)->where('status', 'completed')->count(),
+            'all' => Exam::where('partner_id', $partnerId)->count(),
+            'draft' => Exam::where('partner_id', $partnerId)->where('status', 'draft')->count(),
+            'published' => Exam::where('partner_id', $partnerId)->where('status', 'published')->count(),
+            'ongoing' => Exam::where('partner_id', $partnerId)->where('status', 'ongoing')->count(),
+            'completed' => Exam::where('partner_id', $partnerId)->where('status', 'completed')->count(),
         ];
 
         return view('partner.exams.index', compact('exams', 'counts'));
@@ -41,7 +43,8 @@ class ExamController extends Controller
 
     public function create()
     {
-        $questionSets = QuestionSet::where('partner_id', 1)
+        $partnerId = $this->getPartnerId();
+        $questionSets = QuestionSet::where('partner_id', $partnerId)
             ->where('status', 'published')
             ->get();
         return view('partner.exams.create', compact('questionSets'));
@@ -53,18 +56,29 @@ class ExamController extends Controller
             'question_set_id' => 'required|exists:question_sets,id',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'start_time' => 'required|date|after:now',
-            'end_time' => 'required|date|after:start_time',
+            'start_time' => 'required|date_format:Y-m-d\\TH:i|after:now',
+            'end_time' => 'required|date_format:Y-m-d\\TH:i|after:start_time',
             'duration' => 'required|integer|min:1',
             'passing_marks' => 'required|integer|min:0',
             'allow_retake' => 'boolean',
             'show_results_immediately' => 'boolean',
         ]);
 
-        $data = $request->all();
-        $data['partner_id'] = 1; // Default partner ID
-        $data['allow_retake'] = $request->has('allow_retake');
-        $data['show_results_immediately'] = $request->has('show_results_immediately');
+        // Whitelist fields to avoid mass-assigning unexpected input
+        $data = $request->only([
+            'question_set_id',
+            'title',
+            'description',
+            'start_time',
+            'end_time',
+            'duration',
+            'passing_marks',
+        ]);
+
+        $data['partner_id'] = $this->getPartnerId();
+        $data['allow_retake'] = $request->boolean('allow_retake');
+        $data['show_results_immediately'] = $request->boolean('show_results_immediately', true);
+        $data['status'] = 'draft';
 
         Exam::create($data);
 
@@ -80,7 +94,8 @@ class ExamController extends Controller
 
     public function edit(Exam $exam)
     {
-        $questionSets = QuestionSet::where('partner_id', 1)
+        $partnerId = $this->getPartnerId();
+        $questionSets = QuestionSet::where('partner_id', $partnerId)
             ->where('status', 'published')
             ->get();
         return view('partner.exams.edit', compact('exam', 'questionSets'));
@@ -92,17 +107,26 @@ class ExamController extends Controller
             'question_set_id' => 'required|exists:question_sets,id',
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'start_time' => 'required|date',
-            'end_time' => 'required|date|after:start_time',
+            'start_time' => 'required|date_format:Y-m-d\\TH:i',
+            'end_time' => 'required|date_format:Y-m-d\\TH:i|after:start_time',
             'duration' => 'required|integer|min:1',
             'passing_marks' => 'required|integer|min:0',
             'allow_retake' => 'boolean',
             'show_results_immediately' => 'boolean',
         ]);
 
-        $data = $request->all();
-        $data['allow_retake'] = $request->has('allow_retake');
-        $data['show_results_immediately'] = $request->has('show_results_immediately');
+        // Whitelist fields
+        $data = $request->only([
+            'question_set_id',
+            'title',
+            'description',
+            'start_time',
+            'end_time',
+            'duration',
+            'passing_marks',
+        ]);
+        $data['allow_retake'] = $request->boolean('allow_retake');
+        $data['show_results_immediately'] = $request->boolean('show_results_immediately', true);
 
         $exam->update($data);
 
@@ -152,5 +176,18 @@ class ExamController extends Controller
 
         // For now, return a simple view. In a real app, you'd generate CSV/PDF
         return view('partner.exams.export', compact('exam', 'results'));
+    }
+
+    private function getPartnerId(): int
+    {
+        // Prefer authenticated partner, fallback to 1 for legacy/demo
+        $userId = auth()->id();
+        if ($userId) {
+            $pid = Partner::where('user_id', $userId)->value('id');
+            if ($pid) {
+                return (int) $pid;
+            }
+        }
+        return 1;
     }
 }
