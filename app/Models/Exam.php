@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Exam extends Model
 {
@@ -71,5 +72,46 @@ class Exam extends Model
     public function getIsCompletedAttribute()
     {
         return $this->status === 'completed' || now()->gt($this->end_time);
+    }
+
+    // Mutators to handle HTML datetime-local inputs (e.g., 2025-01-30T14:30)
+    public function setStartTimeAttribute($value)
+    {
+        $this->attributes['start_time'] = $this->normalizeDateTimeValue($value);
+    }
+
+    public function setEndTimeAttribute($value)
+    {
+        $this->attributes['end_time'] = $this->normalizeDateTimeValue($value);
+    }
+
+    private function normalizeDateTimeValue($value): ?string
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        if ($value instanceof Carbon) {
+            return $value->format('Y-m-d H:i:s');
+        }
+
+        // Accept strings like "YYYY-MM-DDTHH:MM" from datetime-local inputs
+        if (is_string($value)) {
+            // Replace the "T" separator if present
+            $normalized = str_replace('T', ' ', $value);
+            try {
+                return Carbon::parse($normalized)->format('Y-m-d H:i:s');
+            } catch (\Throwable $e) {
+                // Fallback: let database fail loudly rather than silently corrupt
+                return $normalized;
+            }
+        }
+
+        // As a last resort, attempt to parse
+        try {
+            return Carbon::parse($value)->format('Y-m-d H:i:s');
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
 }
