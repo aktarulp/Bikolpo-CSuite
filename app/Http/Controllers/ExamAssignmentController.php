@@ -17,10 +17,45 @@ class ExamAssignmentController extends Controller
     {
         $exam->load(['assignedStudents', 'accessCodes.student']);
         
-        $availableStudents = Student::where('partner_id', auth()->user()->role_id)
+        // Get the authenticated user's partner ID
+        $user = auth()->user();
+        $partnerId = $user->partner->id ?? null;
+        
+        if (!$partnerId) {
+            // If no partner record exists, create one
+            $partner = new \App\Models\Partner();
+            $partner->user_id = $user->id;
+            $partner->name = $user->name;
+            $partner->email = $user->email;
+            $partner->status = 'active';
+            $partner->partner_category = 'Institution';
+            $partner->save();
+            
+            $partnerId = $partner->id;
+        }
+        
+        // Check if the user has access to this exam
+        if ($exam->partner_id && $exam->partner_id !== $partnerId) {
+            // If the exam belongs to a different partner, redirect with error
+            return redirect()->route('partner.exams.index')
+                ->withErrors(['error' => 'You do not have access to this exam.']);
+        }
+        
+        $availableStudents = Student::where('partner_id', $partnerId)
             ->where('status', 'active')
             ->whereNotIn('id', $exam->assignedStudents->pluck('id'))
             ->get();
+
+        // Debug information
+        \Log::info('Exam Assignment Debug', [
+            'user_id' => $user->id,
+            'partner_id' => $partnerId,
+            'exam_partner_id' => $exam->partner_id,
+            'total_students' => Student::where('partner_id', $partnerId)->count(),
+            'active_students' => Student::where('partner_id', $partnerId)->where('status', 'active')->count(),
+            'assigned_students_count' => $exam->assignedStudents->count(),
+            'available_students_count' => $availableStudents->count(),
+        ]);
 
         return view('partner.exams.assign', compact('exam', 'availableStudents'));
     }

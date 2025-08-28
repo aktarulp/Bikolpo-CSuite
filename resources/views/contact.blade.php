@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>যোগাযোগ করুন - বিকল্প কম্পিউটার</title>
+  <title>যোগাযোগ করুন - বিকল্প পাঠশালা</title>
   <script src="https://cdn.tailwindcss.com"></script>
      <script>
          tailwind.config = {
@@ -50,7 +50,7 @@
                          </div>
                          <div>
                              <h1 class="text-2xl font-bold bg-gradient-to-r from-primaryGreen to-primaryBlue bg-clip-text bg-clip-text text-transparent">
-                                 বিকল্প কম্পিউটার
+                                 বিকল্প পাঠশালা
                              </h1>
                              <p class="text-xs text-gray-500 dark:text-gray-400">Your Smart Exam Partner</p>
                          </div>
@@ -149,7 +149,7 @@
           </div>
           <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">WhatsApp</h3>
           <p class="text-gray-600 dark:text-gray-300 mb-6">দ্রুত যোগাযোগের জন্য WhatsApp ব্যবহার করুন</p>
-          <a href="https://wa.me/8801610800060?text=Hello! I would like to know more about বিকল্প কম্পিউটার services." 
+                          <a href="https://wa.me/8801610800060?text=Hello! I would like to know more about বিকল্প পাঠশালা services." 
              target="_blank" 
              class="inline-flex items-center justify-center w-full bg-green-500 hover:bg-green-600 text-white font-bold px-6 py-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105">
             <i class="fab fa-whatsapp mr-2"></i>

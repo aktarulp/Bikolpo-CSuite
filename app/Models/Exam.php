@@ -25,7 +25,6 @@ class Exam extends Model
         'has_negative_marking',
         'negative_marks_per_question',
         'question_head',
-        'exam_question_id',
         'status',
         'flag',
         'created_by',

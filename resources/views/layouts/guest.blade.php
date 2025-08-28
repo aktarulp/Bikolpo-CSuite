@@ -43,7 +43,7 @@
                         </div>
                         <div>
                             <h1 class="text-3xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-                                বিকল্প কম্পিউটার
+                                বিকল্প পাঠশালা
                             </h1>
                             <p class="text-sm text-gray-600 dark:text-gray-400">Your Smart Exam Partner</p>
                         </div>

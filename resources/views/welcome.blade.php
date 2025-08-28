@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>বিকল্প কম্পিউটার - Online Test Platform</title>
+    <title>বিকল্প পাঠশালা - Online Test Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -49,7 +49,7 @@
                          </div>
                          <div>
                              <h1 class="text-2xl font-bold bg-gradient-to-r from-primaryGreen to-primaryBlue bg-clip-text bg-clip-text text-transparent">
-                                 বিকল্প কম্পিউটার
+                                 বিকল্প পাঠশালা
                              </h1>
                              <p class="text-xs text-gray-500 dark:text-gray-400">Your Smart Exam Partner</p>
                          </div>
@@ -124,7 +124,7 @@
             <div class="animate-fade-in">
                 <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
                     <span class="bg-gradient-to-r from-primaryGreen via-primaryBlue to-primaryPurple bg-clip-text text-transparent">
-                        বিকল্প কম্পিউটার
+                        বিকল্প পাঠশালা
                     </span>
                     <br />
                     <span class="text-3xl md:text-4xl lg:text-5xl text-gray-700 dark:text-gray-300">
@@ -133,7 +133,7 @@
                 </h1>
                 <p class="text-xl md:text-2xl text-gray-600 dark:text-gray-400 mb-8 max-w-3xl mx-auto leading-relaxed">
                     Transform your learning experience with our comprehensive online testing platform. 
-                    Practice, improve, and excel with বিকল্প কম্পিউটার.
+                    Practice, improve, and excel with বিকল্প পাঠশালা.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
                     <a href="{{ route('register') }}" class="group bg-gradient-to-r from-primaryGreen to-green-600 hover:from-green-600 hover:to-green-700 text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl">
@@ -278,10 +278,10 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div class="animate-slide-up">
                     <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6">
-                        Why Choose বিকল্প কম্পিউটার?
+                        Why Choose বিকল্প পাঠশালা?
                     </h2>
                     <p class="text-lg text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
-                        বিকল্প কম্পিউটার is designed to revolutionize online education and testing. Our platform combines cutting-edge technology with user-friendly design to provide the best learning experience.
+                        বিকল্প পাঠশালা is designed to revolutionize online education and testing. Our platform combines cutting-edge technology with user-friendly design to provide the best learning experience.
                     </p>
                     <div class="space-y-4">
                         <div class="flex items-start space-x-3">
@@ -333,7 +333,7 @@
                 Ready to Transform Your Learning Experience?
             </h2>
             <p class="text-xl text-blue-100 mb-8 leading-relaxed">
-                Join বিকল্প কম্পিউটার today and discover a smarter way to learn, test, and grow.
+                Join বিকল্প পাঠশালা today and discover a smarter way to learn, test, and grow.
             </p>
                             <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <a href="{{ route('register') }}" class="bg-white text-primaryBlue px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors duration-200 transform hover:scale-105 shadow-lg">

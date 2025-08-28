@@ -288,7 +288,7 @@ return new class extends Migration
         Schema::create('exams', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('partner_id');
-            $table->unsignedBigInteger('question_set_id');
+            $table->unsignedBigInteger('question_set_id')->nullable();
             $table->string('title');
             $table->text('description')->nullable();
             $table->dateTime('start_time');

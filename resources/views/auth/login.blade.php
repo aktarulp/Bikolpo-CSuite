@@ -34,27 +34,7 @@
 </head>
 <body class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 font-bangla">
 
-  <!-- Header -->
-  <header class="bg-white/90 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50 transition-all duration-300">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center py-4">
-        <!-- Logo -->
-        <div class="flex items-center space-x-3">
-          <a href="{{ route('landing') }}" class="flex items-center space-x-3 hover:scale-105 transition-transform duration-200">
-            <div class="relative">
-              <div class="w-12 h-12 bg-gradient-to-br from-primaryGreen to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
-                <i class="fas fa-graduation-cap text-white text-xl"></i>
-              </div>
-              <div class="absolute -top-1 -right-1 w-4 h-4 bg-primaryOrange rounded-full animate-pulse"></div>
-            </div>
-            <div>
-              <h1 class="text-2xl font-bold bg-gradient-to-r from-primaryGreen to-primaryBlue bg-clip-text text-transparent">
-                বিকল্প কম্পিউটার
-              </h1>
-              <p class="text-xs text-gray-500 dark:text-gray-400">Your Smart Exam Partner</p>
-            </div>
-          </a>
-        </div>
+  
 
         <!-- Desktop Navigation -->
         <nav class="hidden md:flex items-center space-x-8">
@@ -154,7 +134,7 @@
         <div class="space-y-4">
           
           <h1 class="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-primaryGreen via-primaryBlue to-primaryPurple bg-clip-text text-transparent leading-tight">
-            Welcome Back to বিকল্প কম্পিউটার
+            Welcome Back to বিকল্প পাঠশালা
           </h1>
           
           <p class="text-lg text-gray-600 max-w-lg mx-auto lg:mx-0 leading-relaxed">

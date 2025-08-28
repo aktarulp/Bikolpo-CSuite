@@ -137,40 +137,23 @@
                         <span id="nav-partners" class="ml-3 transition-all duration-300">Partners</span>
                     </a>
 
-                    <!-- Profile Menu with Submenu -->
-                    <div class="space-y-1">
-                        <button id="profile-menu-toggle" 
-                                class="group w-full flex items-center justify-between px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.profile.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                            <div class="flex items-center">
-                                <svg class="h-5 w-5 {{ request()->routeIs('partner.profile.*') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                </svg>
-                                <span id="nav-profile" class="ml-3 transition-all duration-300">Profile</span>
-                            </div>
-                            <svg id="profile-arrow" class="h-4 w-4 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </button>
-                        
-                        <!-- Profile Submenu -->
-                        <div id="profile-submenu" class="ml-8 space-y-1 hidden">
-                            <a href="{{ route('partner.profile.show') }}" 
-                               class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.profile.show') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                                <svg class="h-4 w-4 {{ request()->routeIs('partner.profile.show') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                </svg>
-                                <span id="nav-profile-view" class="ml-3 transition-all duration-300">View Profile</span>
-                            </a>
-                            <a href="{{ route('partner.profile.edit') }}" 
-                               class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.profile.edit') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                                <svg class="h-4 w-4 {{ request()->routeIs('partner.profile.edit') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                </svg>
-                                <span id="nav-profile-edit" class="ml-3 transition-all duration-300">Edit Profile</span>
-                            </a>
-                        </div>
-                    </div>
+                    <!-- Institution Profile Menu -->
+                    <a href="{{ route('partner.profile.show-partnar') }}" 
+                       class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.profile.show-partnar') || request()->routeIs('partner.profile.edit-partnar') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
+                        <svg class="h-5 w-5 {{ request()->routeIs('partner.profile.show-partnar') || request()->routeIs('partner.profile.edit-partnar') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                        <span id="nav-partner-profile" class="ml-3 transition-all duration-300">Institution Profile</span>
+                    </a>
+
+                    <!-- User Profile Menu -->
+                    <a href="{{ route('partner.profile.show-user-profile') }}" 
+                       class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.profile.show-user-profile') || request()->routeIs('partner.profile.edit-user-profile') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
+                        <svg class="h-5 w-5 {{ request()->routeIs('partner.profile.show-user-profile') || request()->routeIs('partner.profile.edit-user-profile') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                        <span id="nav-user-profile" class="ml-3 transition-all duration-300">User Profile</span>
+                    </a>
                 </nav>
 
                 <!-- Bottom Section -->
@@ -310,18 +293,30 @@
                                     <!-- Profile Dropdown Menu -->
                                     <div class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                                         <div class="py-1">
-                                            <a href="{{ route('partner.profile.show') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                                            <a href="{{ route('partner.profile.show-partnar') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
                                                 <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                                                 </svg>
-                                                View Profile
+                                                Institution Profile
                                             </a>
-                                            <a href="{{ route('partner.profile.edit') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                                            <a href="{{ route('partner.profile.edit-partnar') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
                                                 <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                                 </svg>
-                                                Edit Profile
+                                                Edit Institution
+                                            </a>
+                                            <hr class="my-1 border-gray-200 dark:border-gray-700">
+                                            <a href="{{ route('partner.profile.show-user-profile') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                                                <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                                </svg>
+                                                User Profile
+                                            </a>
+                                            <a href="{{ route('partner.profile.edit-user-profile') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                                                <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                                </svg>
+                                                Edit User Profile
                                             </a>
                                             <hr class="my-1 border-gray-200 dark:border-gray-700">
                                             <form method="POST" action="{{ route('logout') }}" class="block">
@@ -455,13 +450,7 @@
             const navTexts = [
                 'nav-dashboard', 'nav-questions', 'nav-exams',
                 'nav-students', 'nav-batches', 'nav-courses', 'nav-subjects',
-                'nav-topics', 'nav-question-history', 'nav-partners'
-            ];
-            
-            // Submenu elements
-            const submenuTexts = [
-                'nav-questions-view', 'nav-questions-create', 'nav-questions-mcq', 'nav-questions-descriptive',
-                'nav-profile-view', 'nav-profile-edit'
+                'nav-topics', 'nav-question-history', 'nav-partners', 'nav-partner-profile'
             ];
 
             function updateSidebar() {
@@ -484,13 +473,7 @@
                         }
                     });
                     
-                    submenuTexts.forEach(id => {
-                        const element = document.getElementById(id);
-                        if (element) {
-                            element.style.opacity = '1';
-                            element.style.display = 'block';
-                        }
-                    });
+
                 } else {
                     sidebar.classList.remove('w-64');
                     sidebar.classList.add('w-16');
@@ -510,13 +493,7 @@
                         }
                     });
                     
-                    submenuTexts.forEach(id => {
-                        const element = document.getElementById(id);
-                        if (element) {
-                            element.style.opacity = '0';
-                            element.style.display = 'none';
-                        }
-                    });
+
                 }
                 localStorage.setItem('sidebarOpen', sidebarOpen);
             }
@@ -565,29 +542,7 @@
                 });
             }
 
-            // Profile submenu toggle
-            const profileMenuToggle = document.getElementById('profile-menu-toggle');
-            const profileSubmenu = document.getElementById('profile-submenu');
-            const profileArrow = document.getElementById('profile-arrow');
-            
-            if (profileMenuToggle && profileSubmenu && profileArrow) {
-                profileMenuToggle.addEventListener('click', () => {
-                    const isOpen = profileSubmenu.classList.contains('hidden');
-                    
-                    if (isOpen) {
-                        profileSubmenu.classList.remove('hidden');
-                        profileArrow.style.transform = 'rotate(90deg)';
-                    } else {
-                        profileSubmenu.classList.add('hidden');
-                        profileArrow.style.transform = 'rotate(0deg)';
-                    }
-                });
-                
-                if (window.location.pathname.includes('/profile/')) {
-                    profileSubmenu.classList.remove('hidden');
-                    profileArrow.style.transform = 'rotate(90deg)';
-                }
-            }
+            // Profile submenu functionality removed - simplified to direct links
         });
     </script>
     

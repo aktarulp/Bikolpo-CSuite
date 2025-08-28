@@ -18,6 +18,8 @@ class Partner extends Model
         'logo',
         'description',
         'status',
+        'user_id',
+        'partner_category',
     ];
 
     protected $casts = [

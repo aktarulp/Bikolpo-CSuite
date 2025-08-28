@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
+use App\Traits\HasPartnerContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class StudentController extends Controller
 {
+    use HasPartnerContext;
+
     public function index()
     {
         $students = Student::latest()->paginate(15);
@@ -41,6 +44,9 @@ class StudentController extends Controller
         ]);
 
         $data = $request->all();
+
+        // Get the authenticated user's partner ID using the trait
+        $data['partner_id'] = $this->getPartnerId();
 
         if ($request->hasFile('photo')) {
             $data['photo'] = $request->file('photo')->store('students', 'public');

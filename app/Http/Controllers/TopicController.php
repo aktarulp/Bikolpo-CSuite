@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Topic;
 use App\Models\Subject;
+use App\Traits\HasPartnerContext;
 use Illuminate\Http\Request;
 
 class TopicController extends Controller
 {
+    use HasPartnerContext;
+
     public function index()
     {
         $topics = Topic::with(['subject.course'])->latest()->paginate(15);
@@ -30,7 +33,19 @@ class TopicController extends Controller
             'chapter_number' => 'nullable|integer|min:1',
         ]);
 
-        Topic::create($request->all());
+        // Get the authenticated user's partner ID using the trait
+        $partnerId = $this->getPartnerId();
+
+        // Create topic with partner_id
+        Topic::create([
+            'subject_id' => $request->subject_id,
+            'name' => $request->name,
+            'code' => $request->code,
+            'description' => $request->description,
+            'chapter_number' => $request->chapter_number,
+            'partner_id' => $partnerId,
+            'status' => 'active',
+        ]);
 
         return redirect()->route('partner.topics.index')
             ->with('success', 'Topic created successfully.');

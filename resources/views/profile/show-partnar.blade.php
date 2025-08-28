@@ -10,7 +10,7 @@
             <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Profile</h1>
             <p class="text-gray-600 dark:text-gray-400">View your profile information</p>
         </div>
-        <a href="{{ route('partner.profile.edit') }}" 
+        <a href="{{ route('partner.profile.edit-partnar') }}" 
            class="bg-primaryGreen hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors duration-200">
             Edit Profile
         </a>
@@ -71,7 +71,7 @@
         </div>
         <div class="p-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <a href="{{ route('partner.profile.edit') }}" 
+                <a href="{{ route('partner.profile.edit-partnar') }}" 
                    class="flex items-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors duration-200">
                     <svg class="w-8 h-8 text-blue-600 dark:text-blue-400 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>

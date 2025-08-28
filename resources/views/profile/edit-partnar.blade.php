@@ -10,7 +10,7 @@
             <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Edit Profile</h1>
             <p class="text-gray-600 dark:text-gray-400">Update your profile information</p>
         </div>
-        <a href="{{ route('partner.profile.show') }}" 
+        <a href="{{ route('partner.profile.show-partnar') }}" 
            class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors duration-200">
             View Profile
         </a>

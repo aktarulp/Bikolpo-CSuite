@@ -3,19 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Batch;
-use App\Models\Course;
+use App\Traits\HasPartnerContext;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 
 class BatchController extends Controller
 {
+    use HasPartnerContext;
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $partnerId = 1; // For now, using default partner ID
-        $batches = Batch::byPartner($partnerId)
+        $batches = Batch::byPartner($this->getPartnerId())
             ->visible()
             ->latest()
             ->paginate(15);
@@ -45,7 +47,7 @@ class BatchController extends Controller
             'name' => $request->name,
             'year' => $request->year,
             'status' => 'active', // Default to active
-            'partner_id' => 1, // For now, using default partner ID
+            'partner_id' => $this->getPartnerId(),
         ]);
 
         return redirect()->route('partner.batches.index')
@@ -112,8 +114,7 @@ class BatchController extends Controller
 
     public function trashed()
     {
-        $partnerId = 1; // For now, using default partner ID
-        $deletedBatches = Batch::byPartner($partnerId)
+        $deletedBatches = Batch::byPartner($this->getPartnerId())
             ->where('flag', 'deleted')
             ->latest()
             ->paginate(15);

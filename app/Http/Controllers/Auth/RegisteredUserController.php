@@ -4,11 +4,16 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Partner;
+use App\Models\VerificationCode;
+use App\Notifications\OtpVerificationNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
@@ -57,32 +62,69 @@ class RegisteredUserController extends Controller
             'name.max' => 'Organization Name cannot exceed 255 characters.',
         ]);
 
-        // Prepare user data
-        $userData = [
-            'password' => Hash::make($request->password),
-            'role' => $registerType,
-        ];
-
-        // Add email or phone based on registration type
+        // For partner registration, implement OTP verification
         if ($registerType === 'partner') {
-            $userData['name'] = $request->name;
-            $userData['email'] = $request->email;
-        } else {
-            $userData['phone'] = $request->phone;
+            try {
+                // Store registration data in session
+                $request->session()->put('registration_data', [
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'password' => $request->password,
+                    'organization_type' => $request->organization_type,
+                ]);
+                
+                $request->session()->put('registration_email', $request->email);
+
+                // Generate OTP
+                $verificationCode = VerificationCode::generateCode($request->email, 'registration');
+
+                // Send OTP email
+                $this->sendOtpEmail($request->email, $verificationCode->code);
+
+                // Redirect to OTP verification page
+                return redirect()->route('otp.verify');
+            } catch (\Exception $e) {
+                // Log the error for debugging
+                \Log::error('OTP registration failed: ' . $e->getMessage());
+                
+                return back()->withErrors(['email' => 'Failed to send verification code. Please try again.']);
+            }
         }
 
-        $user = User::create($userData);
+        // For student registration, continue with existing logic
+        try {
+            // Prepare user data
+            $userData = [
+                'password' => Hash::make($request->password),
+                'role' => $registerType,
+            ];
 
-        event(new Registered($user));
+            if ($registerType === 'student') {
+                $userData['phone'] = $request->phone;
+            }
 
-        Auth::login($user);
+            $user = User::create($userData);
 
-        // Redirect based on registration type
-        if ($registerType === 'student') {
+            event(new Registered($user));
+            Auth::login($user);
+
             return redirect(route('student.dashboard', absolute: false));
-        } else {
-            // Default to partner dashboard
-            return redirect(route('partner.dashboard', absolute: false));
+        } catch (\Exception $e) {
+            return back()->withErrors(['email' => 'Registration failed. Please try again.']);
+        }
+    }
+
+    /**
+     * Send OTP email
+     */
+    private function sendOtpEmail(string $email, string $otp): void
+    {
+        try {
+            $user = new User(['email' => $email]);
+            $user->notify(new OtpVerificationNotification($otp));
+        } catch (\Exception $e) {
+            \Log::error('Failed to send OTP email: ' . $e->getMessage());
+            throw new \Exception('Failed to send verification code: ' . $e->getMessage());
         }
     }
 }

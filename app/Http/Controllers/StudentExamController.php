@@ -106,7 +106,14 @@ class StudentExamController extends Controller
         }
 
         $totalMarks = $questions->sum('marks');
-        $earnedMarks = $correctAnswers * $questions->first()->marks; // Assuming all questions have same marks
+        $earnedMarks = $correctAnswers * ($questions->first()->marks ?? 1); // Assuming all questions have same marks
+        
+        // Apply negative marking if enabled
+        if ($exam->has_negative_marking && $wrongAnswers > 0) {
+            $deduction = $wrongAnswers * $exam->negative_marks_per_question;
+            $earnedMarks -= $deduction;
+        }
+        
         $percentage = $totalMarks > 0 ? ($earnedMarks / $totalMarks) * 100 : 0;
 
         $result->update([
@@ -130,6 +137,7 @@ class StudentExamController extends Controller
         
         $result = StudentExamResult::where('student_id', $studentId)
             ->where('exam_id', $exam->id)
+            ->with(['student.partner', 'exam'])
             ->firstOrFail();
 
         // $questions = $exam->questionSet->questions;

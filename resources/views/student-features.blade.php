@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Student Features - বিকল্প কম্পিউটার</title>
+    <title>Student Features - বিকল্প পাঠশালা</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -48,9 +48,9 @@
                             <div class="absolute -top-1 -right-1 w-4 h-4 bg-primaryOrange rounded-full animate-pulse"></div>
                         </div>
                         <div>
-                            <h1 class="text-2xl font-bold bg-gradient-to-r from-primaryGreen to-primaryBlue bg-clip-text bg-clip-text text-transparent">
-                                বিকল্প কম্পিউটার
-                            </h1>
+                                                         <h1 class="text-2xl font-bold bg-gradient-to-r from-primaryGreen to-primaryBlue bg-clip-text bg-clip-text text-transparent">
+                                 বিকল্প পাঠশালা
+                             </h1>
                             <p class="text-xs text-gray-500 dark:text-gray-400">Your Smart Exam Partner</p>
                         </div>
                     </a>
@@ -368,7 +368,7 @@
         <div class="mt-16 bg-gradient-to-r from-primaryBlue to-blue-600 rounded-3xl p-8 text-white text-center">
             <h3 class="text-3xl font-bold mb-6">Ready to Start Your Learning Journey?</h3>
             <p class="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
-                Join thousands of students already using বিকল্প কম্পিউটার to excel in their exams and achieve their academic goals.
+                Join thousands of students already using বিকল্প পাঠশালা to excel in their exams and achieve their academic goals.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
                 <a href="{{ route('student.dashboard') }}" class="bg-white text-primaryBlue px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors duration-200 transform hover:scale-105 shadow-lg">

@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use App\Traits\HasPartnerContext;
 use Illuminate\Http\Request;
 
 class CourseController extends Controller
 {
+    use HasPartnerContext;
+
     public function index()
     {
         $courses = Course::withCount('subjects')->latest()->paginate(15);
@@ -26,7 +29,17 @@ class CourseController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        Course::create($request->all());
+        // Get the authenticated user's partner ID using the trait
+        $partnerId = $this->getPartnerId();
+
+        // Create course with partner_id
+        Course::create([
+            'name' => $request->name,
+            'code' => $request->code,
+            'description' => $request->description,
+            'partner_id' => $partnerId,
+            'status' => 'active',
+        ]);
 
         return redirect()->route('partner.courses.index')
             ->with('success', 'Course created successfully.');

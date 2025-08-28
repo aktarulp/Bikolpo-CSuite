@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -72,7 +71,15 @@ class User extends Authenticatable
      */
     public function partner()
     {
-        return $this->belongsTo(Partner::class);
+        return $this->hasOne(Partner::class);
+    }
+
+    /**
+     * Get the partner ID for the user
+     */
+    public function getPartnerIdAttribute()
+    {
+        return $this->partner?->id;
     }
 
     /**

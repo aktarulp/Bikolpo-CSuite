@@ -7,40 +7,62 @@ use App\Models\Question;
 use App\Models\Exam;
 use App\Models\StudentExamResult;
 use App\Models\Student;
+use App\Traits\HasPartnerContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class PartnerDashboardController extends Controller
 {
+    use HasPartnerContext;
+
     public function index()
     {
-        // Get the authenticated user's ID
-        $partnerId = auth()->id();
-        
-        $stats = [
-            'total_questions' => Question::where('partner_id', $partnerId)->count(),
+        try {
+            // Get the authenticated user's partner ID using the trait
+            $partnerId = $this->getPartnerId();
+            
+            $stats = [
+                'total_questions' => Question::where('partner_id', $partnerId)->count(),
+                'total_exams' => Exam::where('partner_id', $partnerId)->count(),
+                'total_students' => \App\Models\Student::whereHas('examResults.exam', function($query) use ($partnerId) {
+                    $query->where('partner_id', $partnerId);
+                })->distinct()->count(),
+            ];
 
-            'total_exams' => Exam::where('partner_id', $partnerId)->count(),
-            'total_students' => \App\Models\Student::whereHas('examResults.exam', function($query) use ($partnerId) {
+            $recent_exams = Exam::where('partner_id', $partnerId)
+                ->latest()
+                ->take(5)
+                ->get();
+
+            $recent_results = StudentExamResult::whereHas('exam', function($query) use ($partnerId) {
                 $query->where('partner_id', $partnerId);
-            })->distinct()->count(),
-        ];
-
-        $recent_exams = Exam::where('partner_id', $partnerId)
-            // ->with('questionSet')
+            })
+            ->with(['student', 'exam'])
             ->latest()
-            ->take(5)
+            ->take(10)
             ->get();
 
-        $recent_results = StudentExamResult::whereHas('exam', function($query) use ($partnerId) {
-            $query->where('partner_id', $partnerId);
-        })
-        ->with(['student', 'exam'])
-        ->latest()
-        ->take(10)
-        ->get();
+            // Get the partner data for the layout
+            $partner = Partner::where('user_id', auth()->id())->first();
 
-        return view('partner.dashboard', compact('stats', 'recent_exams', 'recent_results'));
+            return view('partner.dashboard', compact('stats', 'recent_exams', 'recent_results', 'partner'));
+            
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            \Log::error('PartnerDashboardController error: ' . $e->getMessage(), [
+                'user_id' => auth()->id(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            // Return a view with an error message
+            return view('partner.dashboard', [
+                'stats' => ['total_questions' => 0, 'total_exams' => 0, 'total_students' => 0],
+                'recent_exams' => collect(),
+                'recent_results' => collect(),
+                'partner' => null,
+                'error' => 'Unable to load dashboard data: ' . $e->getMessage()
+            ]);
+        }
     }
 
     /**

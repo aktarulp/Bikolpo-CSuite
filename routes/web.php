@@ -170,9 +170,21 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'role:partner'])
     Route::resource('students', StudentController::class);
     
     // Partner Profile Management
-    Route::get('profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
-    Route::get('profile/edit', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::get('profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show-partnar');
+    Route::get('profile/edit', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit-partnar');
     Route::put('profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+    Route::put('profile/partner', [\App\Http\Controllers\ProfileController::class, 'updatePartner'])->name('profile.updatePartner');
+    
+    // User Profile Management
+    Route::get('profile/user', [\App\Http\Controllers\ProfileController::class, 'showUser'])->name('profile.show-user-profile');
+    Route::get('profile/user/edit', [\App\Http\Controllers\ProfileController::class, 'editUser'])->name('profile.edit-user-profile');
+    Route::put('profile/user', [\App\Http\Controllers\ProfileController::class, 'updateUser'])->name('profile.update-user');
+    
+    // Additional profile routes for better naming consistency
+    Route::put('profile/update', [\App\Http\Controllers\ProfileController::class, 'updatePartner'])->name('profile.update');
+    
+    // Partner profile update route (alias for consistency)
+    Route::put('profile/update-partner', [\App\Http\Controllers\ProfileController::class, 'updatePartner'])->name('profile.updatePartner');
     
     // Demo Data Seeding
     Route::post('seed-demo-students', [\App\Http\Controllers\PartnerDashboardController::class, 'seedDemoStudents'])->name('seed-demo-students');

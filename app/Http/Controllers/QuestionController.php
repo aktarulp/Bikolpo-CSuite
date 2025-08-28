@@ -7,15 +7,21 @@ use App\Models\Course;
 use App\Models\Subject;
 use App\Models\Topic;
 use App\Models\QuestionType;
+use App\Traits\HasPartnerContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class QuestionController extends Controller
 {
+    use HasPartnerContext;
+
     public function index(Request $request)
     {
+        // Get the authenticated user's partner ID using the trait
+        $partnerId = $this->getPartnerId();
+        
         $query = Question::with(['topic.subject.course', 'partner', 'questionType'])
-            ->where('partner_id', 1); // Default partner ID
+            ->where('partner_id', $partnerId);
 
         // Apply filters
         if ($request->filled('course')) {
@@ -151,8 +157,11 @@ class QuestionController extends Controller
      */
     public function allQuestions(Request $request)
     {
+        // Get the authenticated user's partner ID using the trait
+        $partnerId = $this->getPartnerId();
+        
         $query = Question::with(['course', 'subject', 'topic', 'partner', 'questionType'])
-            ->where('partner_id', 1); // Default partner ID
+            ->where('partner_id', $partnerId);
 
         // Apply search filter
         if ($request->filled('search')) {
@@ -250,7 +259,11 @@ class QuestionController extends Controller
         ]);
 
         $data = $request->all();
-        $data['partner_id'] = 1; // Default partner ID
+        // Get the authenticated user's partner ID using the trait
+        $data['partner_id'] = $this->getPartnerId();
+        
+        // Set the authenticated user's ID as created_by
+        $data['created_by'] = auth()->id();
 
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('questions', 'public');
@@ -385,9 +398,12 @@ class QuestionController extends Controller
     // MCQ Question Methods
     public function mcqAllQuestionView(Request $request)
     {
+        // Get the authenticated user's partner ID using the trait
+        $partnerId = $this->getPartnerId();
+        
         $query = Question::with(['course', 'subject', 'topic', 'partner'])
             ->where('question_type', 'mcq')
-            ->where('partner_id', 1); // Default partner ID
+            ->where('partner_id', $partnerId);
 
         // Apply filters
         if ($request->filled('course_filter')) {
@@ -444,7 +460,20 @@ class QuestionController extends Controller
 
             $data = $request->all();
             $data['question_type'] = 'mcq';
-            $data['partner_id'] = 1; // Default partner ID
+            
+            // Get the authenticated user's partner ID using the trait
+            $data['partner_id'] = $this->getPartnerId();
+            
+            if (!$data['partner_id']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Partner profile not found. Please contact administrator.'
+                ], 400);
+            }
+            
+            // Set the authenticated user's ID as created_by
+            $data['created_by'] = auth()->id();
+            
             $data['status'] = 'active';
             $data['marks'] = $data['marks'] ?? 1; // Default marks to 1
             $data['difficulty_level'] = $data['difficulty_level'] ?? 2; // Default difficulty to Medium (2)
@@ -608,7 +637,12 @@ class QuestionController extends Controller
 
         $data = $request->all();
         $data['question_type'] = 'descriptive';
-        $data['partner_id'] = 1; // Default partner ID
+        // Get the authenticated user's partner ID using the trait
+        $data['partner_id'] = $this->getPartnerId();
+        
+        if (!$data['partner_id']) {
+            return redirect()->back()->with('error', 'Partner profile not found. Please contact administrator.');
+        }
         
         // Handle empty topic_id
         if (empty($data['topic_id'])) {

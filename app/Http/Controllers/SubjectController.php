@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Subject;
 use App\Models\Course;
+use App\Traits\HasPartnerContext;
 use Illuminate\Http\Request;
 
 class SubjectController extends Controller
 {
+    use HasPartnerContext;
+
     public function index()
     {
         $subjects = Subject::with(['course'])->withCount('topics')->latest()->paginate(15);
@@ -29,7 +32,18 @@ class SubjectController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        Subject::create($request->all());
+        // Get the authenticated user's partner ID using the trait
+        $partnerId = $this->getPartnerId();
+
+        // Create subject with partner_id
+        Subject::create([
+            'course_id' => $request->course_id,
+            'name' => $request->name,
+            'code' => $request->code,
+            'description' => $request->description,
+            'partner_id' => $partnerId,
+            'status' => 'active',
+        ]);
 
         return redirect()->route('partner.subjects.index')
             ->with('success', 'Subject created successfully.');
