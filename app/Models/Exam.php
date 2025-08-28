@@ -40,6 +40,8 @@ class Exam extends Model
         'has_negative_marking' => 'boolean',
         'negative_marks_per_question' => 'decimal:2',
         'question_head' => 'string',
+        'status' => 'string',
+        'flag' => 'string',
     ];
 
     // Relationships

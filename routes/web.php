@@ -150,6 +150,7 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'role:partner'])
     Route::resource('exams', ExamController::class);
     Route::post('exams/{exam}/publish', [ExamController::class, 'publish'])->name('exams.publish');
     Route::post('exams/{exam}/unpublish', [ExamController::class, 'unpublish'])->name('exams.unpublish');
+    Route::get('exams/{exam}/debug', [ExamController::class, 'debug'])->name('exams.debug');
     Route::get('exams/{exam}/results', [ExamController::class, 'results'])->name('exams.results');
     Route::get('exams/{exam}/export', [ExamController::class, 'export'])->name('exams.export');
     Route::get('exams/{exam}/assign-questions', [ExamController::class, 'assignQuestions'])->name('exams.assign-questions');
@@ -170,6 +171,9 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'role:partner'])
     Route::get('profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
     Route::get('profile/edit', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+    
+    // Demo Data Seeding
+    Route::post('seed-demo-students', [\App\Http\Controllers\PartnerDashboardController::class, 'seedDemoStudents'])->name('seed-demo-students');
 });
 
 // Student Routes

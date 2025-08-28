@@ -24,11 +24,13 @@ class PartnerController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:partners,email',
-            'phone' => 'nullable|string|max:20',
+            'phone' => 'nullable|string|regex:/^01[3-9][0-9]{8}$/|max:20',
             'address' => 'nullable|string|max:500',
             'city' => 'nullable|string|max:100',
             'description' => 'nullable|string',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
         ]);
 
         $data = $request->all();
@@ -59,11 +61,13 @@ class PartnerController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:partners,email,' . $partner->id,
-            'phone' => 'nullable|string|max:20',
+            'phone' => 'nullable|string|regex:/^01[3-9][0-9]{8}$/|max:20',
             'address' => 'nullable|string|max:500',
             'city' => 'nullable|string|max:100',
             'description' => 'nullable|string',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
         ]);
 
         $data = $request->all();

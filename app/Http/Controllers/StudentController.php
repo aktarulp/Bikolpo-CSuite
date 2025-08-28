@@ -27,14 +27,17 @@ class StudentController extends Controller
             'date_of_birth' => 'required|date',
             'gender' => 'required|in:male,female,other',
             'email' => 'required|email|unique:students,email',
-            'phone' => 'nullable|string|max:20',
+            'phone' => 'nullable|string|regex:/^01[3-9][0-9]{8}$/|max:20',
             'address' => 'nullable|string|max:500',
             'city' => 'nullable|string|max:100',
             'school_college' => 'nullable|string|max:255',
             'class_grade' => 'nullable|string|max:50',
             'parent_name' => 'nullable|string|max:255',
-            'parent_phone' => 'nullable|string|max:20',
+            'parent_phone' => 'nullable|string|regex:/^01[3-9][0-9]{8}$/|max:20',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
+            'parent_phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
         ]);
 
         $data = $request->all();
@@ -68,14 +71,17 @@ class StudentController extends Controller
             'date_of_birth' => 'required|date',
             'gender' => 'required|in:male,female,other',
             'email' => 'required|email|unique:students,email,' . $student->id,
-            'phone' => 'nullable|string|max:20',
+            'phone' => 'nullable|string|regex:/^01[3-9][0-9]{8}$/|max:20',
             'address' => 'nullable|string|max:500',
             'city' => 'nullable|string|max:100',
             'school_college' => 'nullable|string|max:255',
             'class_grade' => 'nullable|string|max:50',
             'parent_name' => 'nullable|string|max:255',
-            'parent_phone' => 'nullable|string|max:20',
+            'parent_phone' => 'nullable|string|regex:/^01[3-9][0-9]{8}$/|max:20',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
+            'parent_phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
         ]);
 
         $data = $request->all();

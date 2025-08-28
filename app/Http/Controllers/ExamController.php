@@ -193,18 +193,92 @@ class ExamController extends Controller
 
     public function publish(Exam $exam)
     {
-        $exam->update(['status' => 'published']);
+        $partnerId = $this->getPartnerId();
+        
+        // Verify the exam belongs to this partner
+        if ($exam->partner_id !== $partnerId) {
+            abort(403, 'Unauthorized access to this exam.');
+        }
 
-        return redirect()->route('partner.exams.show', $exam)
-            ->with('success', 'Exam published successfully.');
+        // Debug: Log the current exam status and attempt to update
+        \Log::info('Attempting to publish exam', [
+            'exam_id' => $exam->id,
+            'current_status' => $exam->status,
+            'partner_id' => $partnerId,
+            'exam_partner_id' => $exam->partner_id
+        ]);
+
+        try {
+            $result = $exam->update(['status' => 'published']);
+            
+            \Log::info('Exam update result', [
+                'exam_id' => $exam->id,
+                'update_result' => $result,
+                'new_status' => $exam->fresh()->status
+            ]);
+
+            if ($result) {
+                return redirect()->route('partner.exams.show', $exam)
+                    ->with('success', 'Exam published successfully.');
+            } else {
+                return redirect()->back()
+                    ->with('error', 'Failed to publish exam. Please try again.');
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error publishing exam', [
+                'exam_id' => $exam->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()
+                ->with('error', 'Error publishing exam: ' . $e->getMessage());
+        }
     }
 
     public function unpublish(Exam $exam)
     {
-        $exam->update(['status' => 'draft']);
+        $partnerId = $this->getPartnerId();
+        
+        // Verify the exam belongs to this partner
+        if ($exam->partner_id !== $partnerId) {
+            abort(403, 'Unauthorized access to this exam.');
+        }
 
-        return redirect()->route('partner.exams.show', $exam)
-            ->with('success', 'Exam unpublished successfully.');
+        // Debug: Log the current exam status and attempt to update
+        \Log::info('Attempting to unpublish exam', [
+            'exam_id' => $exam->id,
+            'current_status' => $exam->status,
+            'partner_id' => $partnerId,
+            'exam_partner_id' => $exam->partner_id
+        ]);
+
+        try {
+            $result = $exam->update(['status' => 'draft']);
+            
+            \Log::info('Exam update result', [
+                'exam_id' => $exam->id,
+                'update_result' => $result,
+                'new_status' => $exam->fresh()->status
+            ]);
+
+            if ($result) {
+                return redirect()->route('partner.exams.show', $exam)
+                    ->with('success', 'Exam unpublished successfully.');
+            } else {
+                return redirect()->back()
+                    ->with('error', 'Failed to unpublish exam. Please try again.');
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error unpublishing exam', [
+                'exam_id' => $exam->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()
+                ->with('error', 'Error unpublishing exam: ' . $e->getMessage());
+        }
     }
 
     public function results(Exam $exam)
@@ -330,6 +404,33 @@ class ExamController extends Controller
                 ->with('error', 'Error assigning questions: ' . $e->getMessage())
                 ->withInput();
         }
+    }
+
+    public function debug(Exam $exam)
+    {
+        $partnerId = $this->getPartnerId();
+        
+        // Debug information
+        $debugInfo = [
+            'exam_id' => $exam->id,
+            'current_status' => $exam->status,
+            'partner_id' => $partnerId,
+            'exam_partner_id' => $exam->partner_id,
+            'fillable_fields' => $exam->getFillable(),
+            'table_name' => $exam->getTable(),
+            'connection' => $exam->getConnectionName(),
+        ];
+        
+        // Check if status field exists in database
+        try {
+            $columns = \Schema::getColumnListing($exam->getTable());
+            $debugInfo['database_columns'] = $columns;
+            $debugInfo['status_column_exists'] = in_array('status', $columns);
+        } catch (\Exception $e) {
+            $debugInfo['database_error'] = $e->getMessage();
+        }
+        
+        return response()->json($debugInfo);
     }
 
     private function getPartnerId(): int

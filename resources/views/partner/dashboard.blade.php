@@ -77,6 +77,34 @@
         </div>
     </div>
 
+    <!-- Demo Data Seeding -->
+    @if($stats['total_students'] == 0)
+    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <h3 class="text-lg font-semibold text-blue-900 dark:text-blue-100">Get Started with Demo Data</h3>
+                <p class="text-blue-700 dark:text-blue-300 mt-1">No students found yet. Click the button below to create demo students for testing.</p>
+            </div>
+            <button id="seedDemoStudentsBtn" 
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                <span>Create Demo Students</span>
+            </button>
+        </div>
+        <div id="seedingStatus" class="mt-4 hidden">
+            <div class="flex items-center space-x-2 text-blue-700 dark:text-blue-300">
+                <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span id="seedingMessage">Creating demo students...</span>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- Recent Activities -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Recent Exams -->
@@ -195,4 +223,75 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const seedBtn = document.getElementById('seedDemoStudentsBtn');
+    const seedingStatus = document.getElementById('seedingStatus');
+    const seedingMessage = document.getElementById('seedingMessage');
+    
+    if (seedBtn) {
+        seedBtn.addEventListener('click', async function() {
+            try {
+                // Show loading state
+                seedBtn.disabled = true;
+                seedBtn.innerHTML = `
+                    <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Creating...</span>
+                `;
+                
+                seedingStatus.classList.remove('hidden');
+                seedingMessage.textContent = 'Creating demo students...';
+                
+                // Make API call
+                const response = await fetch('{{ route("partner.seed-demo-students") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    seedingMessage.textContent = result.message;
+                    seedBtn.innerHTML = `
+                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span>Success!</span>
+                    `;
+                    seedBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    seedBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+                    
+                    // Reload page after 2 seconds to show updated stats
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                } else {
+                    throw new Error(result.message);
+                }
+                
+            } catch (error) {
+                console.error('Error seeding demo students:', error);
+                seedingMessage.textContent = 'Error: ' + error.message;
+                seedBtn.innerHTML = `
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    <span>Try Again</span>
+                `;
+                seedBtn.disabled = false;
+            }
+        });
+    }
+});
+</script>
+@endpush
+
 @endsection 

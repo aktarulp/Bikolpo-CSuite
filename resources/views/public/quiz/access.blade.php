@@ -68,9 +68,12 @@
                                    name="phone" 
                                    value="{{ old('phone') }}"
                                    class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryGreen focus:border-primaryGreen transition-colors"
-                                   placeholder="Enter your phone number"
+                                   placeholder="01XXXXXXXXX"
+                                   pattern="01[3-9][0-9]{8}"
+                                   maxlength="11"
                                    required>
                         </div>
+                        <p class="mt-2 text-sm text-gray-500">Enter your 11-digit Bangladeshi phone number (e.g., 01XXXXXXXXX)</p>
                     </div>
 
                     <!-- Access Code -->
@@ -128,12 +131,28 @@
     </div>
 
     <script>
-        // Auto-format phone number
+        // Auto-format phone number for Bangladeshi format (01XXXXXXXXX)
         document.getElementById('phone').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 0) {
-                value = value.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+            let value = e.target.value.replace(/\D/g, ''); // Remove all non-digits
+            
+            // Limit to 11 digits
+            if (value.length > 11) {
+                value = value.substring(0, 11);
             }
+            
+            // Ensure it starts with 01
+            if (value.length >= 2 && value.substring(0, 2) !== '01') {
+                value = '01' + value.substring(2);
+            }
+            
+            // Ensure second digit is 3-9 (valid Bangladeshi mobile prefixes)
+            if (value.length >= 3) {
+                const secondDigit = parseInt(value.charAt(2));
+                if (secondDigit < 3 || secondDigit > 9) {
+                    value = value.substring(0, 2) + '3' + value.substring(3);
+                }
+            }
+            
             e.target.value = value;
         });
 

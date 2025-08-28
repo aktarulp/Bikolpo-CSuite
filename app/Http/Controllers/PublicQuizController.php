@@ -26,8 +26,10 @@ class PublicQuizController extends Controller
     public function processAccess(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'phone' => 'required|string|max:15',
+            'phone' => 'required|string|regex:/^01[3-9][0-9]{8}$/|max:15',
             'access_code' => 'required|string|size:6',
+        ], [
+            'phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
         ]);
 
         if ($validator->fails()) {

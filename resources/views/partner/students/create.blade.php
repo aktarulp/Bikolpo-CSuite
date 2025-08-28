@@ -80,8 +80,12 @@
 
                     <div>
                         <label class="block text-sm font-medium mb-2">Phone Number</label>
-                        <input type="text" name="phone" value="{{ old('phone') }}"
+                        <input type="tel" name="phone" value="{{ old('phone') }}"
+                               placeholder="01XXXXXXXXX"
+                               pattern="01[3-9][0-9]{8}"
+                               maxlength="11"
                                class="w-full rounded-md border p-2">
+                        <p class="mt-1 text-xs text-gray-500">Format: 01XXXXXXXXX (11 digits)</p>
                         @error('phone')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
@@ -146,8 +150,12 @@
 
                     <div>
                         <label class="block text-sm font-medium mb-2">Parent Phone</label>
-                        <input type="text" name="parent_phone" value="{{ old('parent_phone') }}"
+                        <input type="tel" name="parent_phone" value="{{ old('parent_phone') }}"
+                               placeholder="01XXXXXXXXX"
+                               pattern="01[3-9][0-9]{8}"
+                               maxlength="11"
                                class="w-full rounded-md border p-2">
+                        <p class="mt-1 text-xs text-gray-500">Format: 01XXXXXXXXX (11 digits)</p>
                         @error('parent_phone')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
