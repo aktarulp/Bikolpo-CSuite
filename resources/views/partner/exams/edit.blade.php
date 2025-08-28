@@ -131,64 +131,47 @@
                             <div class="space-y-3">
                                 <div>
                                     <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Start Date & Time</label>
-                                    <div class="relative">
-                                        <input type="datetime-local" name="start_time" id="start_time"
-                                               value="{{ old('start_time', $exam->start_time ? $exam->start_time->format('Y-m-d\TH:i') : '') }}" required
-                                               min="{{ now()->format('Y-m-d\TH:i') }}"
-                                               class="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-400 dark:focus:border-blue-400 transition-colors duration-200"
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <input type="date" name="startDate" id="startDate"
+                                               value="{{ old('startDate', $exam->start_time ? $exam->start_time->format('Y-m-d') : '') }}" required
+                                               min="{{ now()->format('Y-m-d') }}"
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-400 dark:focus:border-blue-400 transition-colors duration-200"
                                                onchange="updateEndTime()">
-                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                            </svg>
-                                        </div>
+                                        <input type="time" name="startTime" id="startTime"
+                                               value="{{ old('startTime', $exam->start_time ? $exam->start_time->format('H:i') : '') }}" required
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-400 dark:focus:border-blue-400 transition-colors duration-200"
+                                               onchange="updateEndTime()">
                                     </div>
                                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Select when the exam will start</p>
-                                    @error('start_time')
+                                    @error('startDate')
+                                        <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
+                                    @error('startTime')
                                         <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
                                     @enderror
                                 </div>
                                 
                                 <div>
                                     <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">End Date & Time</label>
-                                    <div class="relative">
-                                        <input type="datetime-local" name="end_time" id="end_time"
-                                               value="{{ old('end_time', $exam->end_time ? $exam->end_time->format('Y-m-d\TH:i') : '') }}" required
-                                               class="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-400 dark:focus:border-blue-400 transition-colors duration-200"
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <input type="date" name="endDate" id="endDate"
+                                               value="{{ old('endDate', $exam->end_time ? $exam->end_time->format('Y-m-d') : '') }}" required
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-400 dark:focus:border-blue-400 transition-colors duration-200"
                                                onchange="calculateDuration()">
-                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                            </svg>
-                                        </div>
+                                        <input type="time" name="endTime" id="endTime"
+                                               value="{{ old('endTime', $exam->end_time ? $exam->end_time->format('H:i') : '') }}" required
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-400 dark:focus:border-blue-400 transition-colors duration-200"
+                                               onchange="calculateDuration()">
                                     </div>
                                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Select when the exam will end</p>
-                                    @error('end_time')
+                                    @error('endDate')
+                                        <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
+                                    @error('endTime')
                                         <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
                                     @enderror
                                 </div>
                             </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                End Date & Time <span class="text-red-500">*</span>
-                            </label>
-                            <div class="relative">
-                                <input type="datetime-local" name="end_time" id="end_time"
-                                       value="{{ old('end_time', $exam->end_time ? $exam->end_time->format('Y-m-d\TH:i') : '') }}" required
-                                       class="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-400 dark:focus:border-blue-400 transition-colors duration-200"
-                                       onchange="calculateDuration()">
-                                <div class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Select when the exam will end</p>
-                            @error('end_time')
-                                <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
                         </div>
 
                         <div>
@@ -196,7 +179,7 @@
                                 Duration (minutes) <span class="text-red-500">*</span>
                             </label>
                             <div class="relative">
-                                <input type="number" name="duration" id="duration" min="1" max="1440"
+                                <input type="number" name="duration" id="duration" min="15" max="480"
                                        value="{{ old('duration', $exam->duration) }}" required
                                        class="w-full px-3 py-2 pr-16 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-400 dark:focus:border-blue-400 transition-colors duration-200"
                                        placeholder="e.g., 120"
@@ -404,33 +387,34 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize on page load
     toggleNegativeMarking();
 
-    // Function to update min attribute of end_time input
+    // Function to update min attribute of endTime input
     function updateEndTimeMin() {
-        const startDateTime = new Date(document.getElementById('start_time').value);
-        const endDateTime = new Date(document.getElementById('end_time').value);
+        const startDateTime = new Date(document.getElementById('startDate').value + 'T' + document.getElementById('startTime').value);
+        const endDateTime = new Date(document.getElementById('endDate').value + 'T' + document.getElementById('endTime').value);
 
         if (startDateTime > endDateTime) {
             endDateTime.setMinutes(startDateTime.getMinutes() + 1); // Ensure end time is at least 1 minute after start
-            document.getElementById('end_time').value = endDateTime.toISOString().slice(0, 16);
+            document.getElementById('endTime').value = endDateTime.toISOString().slice(11, 16); // Format to HH:MM
         }
     }
 
     // Function to update end time when start time changes
     function updateEndTime() {
-        const startTime = document.getElementById('start_time').value;
+        const startDate = document.getElementById('startDate').value;
+        const startTime = document.getElementById('startTime').value;
         const duration = parseInt(document.getElementById('duration').value) || 120;
         
-        if (startTime && duration > 0) {
+        if (startDate && startTime && duration > 0) {
             try {
-                const startDate = new Date(startTime);
-                if (isNaN(startDate.getTime())) {
-                    console.error('Invalid start time:', startTime);
+                const startDateTime = new Date(startDate + 'T' + startTime);
+                if (isNaN(startDateTime.getTime())) {
+                    console.error('Invalid start time:', startDate + 'T' + startTime);
                     return;
                 }
                 
-                const endDate = new Date(startDate.getTime() + (duration * 60 * 1000));
-                const endTimeString = endDate.toISOString().slice(0, 16);
-                document.getElementById('end_time').value = endTimeString;
+                const endDateTime = new Date(startDateTime.getTime() + (duration * 60 * 1000));
+                const endTimeString = endDateTime.toISOString().slice(0, 16); // YYYY-MM-DDTHH:MM
+                document.getElementById('endTime').value = endTimeString.slice(11, 16); // HH:MM
                 
                 updateDurationPreview();
                 console.log('End time updated:', endTimeString);
@@ -440,14 +424,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Function to calculate duration and update end_time input
+    // Function to calculate duration and update endTime input
     function calculateDuration() {
-        const startDateTime = new Date(document.getElementById('start_time').value);
-        const endDateTime = new Date(document.getElementById('end_time').value);
+        const startDate = document.getElementById('startDate').value;
+        const startTime = document.getElementById('startTime').value;
+        const endDate = document.getElementById('endDate').value;
+        const endTime = document.getElementById('endTime').value;
         const durationInput = document.getElementById('duration');
         const durationPreview = document.getElementById('duration-preview');
 
-        if (startDateTime && endDateTime) {
+        if (startDate && startTime && endDate && endTime) {
+            const startDateTime = new Date(startDate + 'T' + startTime);
+            const endDateTime = new Date(endDate + 'T' + endTime);
             const duration = endDateTime.getTime() - startDateTime.getTime();
             const minutes = Math.floor(duration / (1000 * 60));
             durationInput.value = minutes;
@@ -458,40 +446,45 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Function to update end_time input from duration input
+    // Function to update endTime input from duration input
     function updateEndTimeFromDuration() {
-        const startDateTime = new Date(document.getElementById('start_time').value);
+        const startDate = document.getElementById('startDate').value;
+        const startTime = document.getElementById('startTime').value;
         const durationInput = document.getElementById('duration');
         const durationPreview = document.getElementById('duration-preview');
 
-        if (startDateTime) {
+        if (startDate && startTime) {
+            const startDateTime = new Date(startDate + 'T' + startTime);
             const minutes = parseInt(durationInput.value) || 0;
             const endDateTime = new Date(startDateTime.getTime() + minutes * 60000); // Add minutes in milliseconds
-            document.getElementById('end_time').value = endDateTime.toISOString().slice(0, 16);
+            const endTimeString = endDateTime.toISOString().slice(0, 16); // YYYY-MM-DDTHH:MM
+            document.getElementById('endTime').value = endTimeString.slice(11, 16); // HH:MM
             durationPreview.textContent = `${minutes} minutes`;
         } else {
-            document.getElementById('end_time').value = '';
+            document.getElementById('endTime').value = '';
             durationPreview.textContent = 'Set start and end times to see duration';
         }
     }
 
     // Function to update duration preview
     function updateDurationPreview() {
-        const startTime = document.getElementById('start_time').value;
-        const endTime = document.getElementById('end_time').value;
+        const startDate = document.getElementById('startDate').value;
+        const startTime = document.getElementById('startTime').value;
+        const endDate = document.getElementById('endDate').value;
+        const endTime = document.getElementById('endTime').value;
         const durationPreview = document.getElementById('duration-preview');
         
-        if (startTime && endTime) {
+        if (startDate && startTime && endDate && endTime) {
             try {
-                const startDate = new Date(startTime);
-                const endDate = new Date(endTime);
+                const startDateTime = new Date(startDate + 'T' + startTime);
+                const endDateTime = new Date(endDate + 'T' + endTime);
                 
-                if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+                if (isNaN(startDateTime.getTime()) || isNaN(endDateTime.getTime())) {
                     durationPreview.textContent = 'Set start and end times to see duration';
                     return;
                 }
                 
-                const durationMinutes = Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60));
+                const durationMinutes = Math.round((endDateTime.getTime() - startDateTime.getTime()) / (1000 * 60));
                 
                 if (durationMinutes > 0) {
                     const hours = Math.floor(durationMinutes / 60);
@@ -516,14 +509,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to set duration from quick presets
     function setDuration(minutes) {
-        const startDateTime = new Date(document.getElementById('start_time').value);
-        if (!startDateTime || isNaN(startDateTime.getTime())) {
-            showValidationMessage('Please set a start time first');
+        const startDate = document.getElementById('startDate').value;
+        const startTime = document.getElementById('startTime').value;
+        if (!startDate || !startTime) {
+            showValidationMessage('Please set a start date and time first');
+            return;
+        }
+        
+        const startDateTime = new Date(startDate + 'T' + startTime);
+        if (isNaN(startDateTime.getTime())) {
+            showValidationMessage('Invalid start date/time');
             return;
         }
         
         const endDateTime = new Date(startDateTime.getTime() + minutes * 60000); // Add minutes in milliseconds
-        document.getElementById('end_time').value = endDateTime.toISOString().slice(0, 16);
+        const endTimeString = endDateTime.toISOString().slice(0, 16); // YYYY-MM-DDTHH:MM
+        document.getElementById('endTime').value = endTimeString.slice(11, 16); // HH:MM
         document.getElementById('duration').value = minutes;
         updateDurationPreview(); // Update preview
         hideValidationMessage();
@@ -542,15 +543,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to validate datetime inputs
     function validateDateTimeInputs() {
-        const startTime = document.getElementById('start_time').value;
-        const endTime = document.getElementById('end_time').value;
+        const startDate = document.getElementById('startDate').value;
+        const startTime = document.getElementById('startTime').value;
+        const endDate = document.getElementById('endDate').value;
+        const endTime = document.getElementById('endTime').value;
         
-        if (!startTime || !endTime) {
+        if (!startDate || !startTime || !endDate || !endTime) {
             return true; // Let HTML5 validation handle required fields
         }
         
-        const startDateTime = new Date(startTime);
-        const endDateTime = new Date(endTime);
+        const startDateTime = new Date(startDate + 'T' + startTime);
+        const endDateTime = new Date(endDate + 'T' + endTime);
         const now = new Date();
         
         // Check if start time is in the past
@@ -578,11 +581,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Add event listeners for validation and updates
-    document.getElementById('start_time').addEventListener('change', function() {
+    document.getElementById('startDate').addEventListener('change', function() {
+        updateEndTimeMin(); // Update end time min based on new start date
         validateDateTimeInputs();
         updateEndTime();
     });
-    document.getElementById('end_time').addEventListener('change', function() {
+    document.getElementById('startTime').addEventListener('change', function() {
+        updateEndTimeMin(); // Update end time min based on new start time
+        validateDateTimeInputs();
+        updateEndTime();
+    });
+    document.getElementById('endDate').addEventListener('change', function() {
+        validateDateTimeInputs();
+        calculateDuration();
+    });
+    document.getElementById('endTime').addEventListener('change', function() {
         validateDateTimeInputs();
         calculateDuration();
     });

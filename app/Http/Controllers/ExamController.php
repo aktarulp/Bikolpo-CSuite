@@ -60,9 +60,11 @@ class ExamController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'exam_type' => 'required|in:online,offline',
-            'start_time' => 'required|date_format:Y-m-d\\TH:i|after:now',
-            'end_time' => 'required|date_format:Y-m-d\\TH:i|after:start_time',
-            'duration' => 'required|integer|min:1',
+            'startDate' => 'required|date|after_or_equal:today',
+            'startTime' => 'required|date_format:H:i',
+            'endDate' => 'required|date|after_or_equal:startDate',
+            'endTime' => 'required|date_format:H:i',
+            'duration' => 'required|integer|min:15|max:480',
             'total_questions' => 'required|integer|min:1|max:1000',
             'passing_marks' => 'required|integer|min:0|max:100',
             'allow_retake' => 'boolean',
@@ -72,18 +74,34 @@ class ExamController extends Controller
             'question_head' => 'nullable|string',
         ]);
 
+        // Combine date and time fields to create datetime values
+        $startDateTime = \Carbon\Carbon::parse($request->startDate . ' ' . $request->startTime);
+        $endDateTime = \Carbon\Carbon::parse($request->endDate . ' ' . $request->endTime);
+
+        // Validate that end datetime is after start datetime
+        if ($endDateTime <= $startDateTime) {
+            return back()->withErrors(['endTime' => 'End time must be after start time.'])->withInput();
+        }
+
+        // Validate that start datetime is in the future
+        if ($startDateTime <= now()) {
+            return back()->withErrors(['startDate' => 'Start date and time must be in the future.'])->withInput();
+        }
+
         // Whitelist fields to avoid mass-assigning unexpected input
         $data = $request->only([
             'title',
             'description',
             'exam_type',
-            'start_time',
-            'end_time',
             'duration',
             'total_questions',
             'passing_marks',
             'question_head',
         ]);
+
+        // Add the combined datetime values
+        $data['start_time'] = $startDateTime->format('Y-m-d H:i:s');
+        $data['end_time'] = $endDateTime->format('Y-m-d H:i:s');
 
         $data['partner_id'] = $this->getPartnerId();
         
@@ -92,15 +110,6 @@ class ExamController extends Controller
         $data['flag'] = 'active';
         $data['exam_question_id'] = null;
         $data['created_by'] = auth()->id(); // Set to the authenticated partner user's ID
-        
-        // Ensure end time is after start time
-        $startTime = \Carbon\Carbon::parse($data['start_time']);
-        $endTime = \Carbon\Carbon::parse($data['end_time']);
-        
-        if ($endTime <= $startTime) {
-            // Auto-calculate end time based on start time + duration
-            $data['end_time'] = $startTime->addMinutes($data['duration'])->format('Y-m-d H:i:s');
-        }
         
         // Set boolean fields first
         $data['allow_retake'] = $request->boolean('allow_retake');
@@ -162,9 +171,11 @@ class ExamController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'exam_type' => 'required|in:online,offline',
-            'start_time' => 'required|date_format:Y-m-d\\TH:i',
-            'end_time' => 'required|date_format:Y-m-d\\TH:i|after:start_time',
-            'duration' => 'required|integer|min:1',
+            'startDate' => 'required|date',
+            'startTime' => 'required|date_format:H:i',
+            'endDate' => 'required|date|after_or_equal:startDate',
+            'endTime' => 'required|date_format:H:i',
+            'duration' => 'required|integer|min:15|max:480',
             'total_questions' => 'required|integer|min:1|max:1000',
             'passing_marks' => 'required|integer|min:0|max:100',
             'allow_retake' => 'boolean',
@@ -175,27 +186,29 @@ class ExamController extends Controller
             'exam_question_id' => 'nullable|exists:exam_questions,id',
         ]);
 
+        // Combine date and time fields to create datetime values
+        $startDateTime = \Carbon\Carbon::parse($request->startDate . ' ' . $request->startTime);
+        $endDateTime = \Carbon\Carbon::parse($request->endDate . ' ' . $request->endTime);
+
+        // Validate that end datetime is after start datetime
+        if ($endDateTime <= $startDateTime) {
+            return back()->withErrors(['endTime' => 'End time must be after start time.'])->withInput();
+        }
+
         $data = $request->only([
             'title',
             'description',
             'exam_type',
-            'start_time',
-            'end_time',
             'duration',
             'total_questions',
             'passing_marks',
             'question_head',
             'exam_question_id',
         ]);
-        
-        // Ensure end time is after start time
-        $startTime = \Carbon\Carbon::parse($data['start_time']);
-        $endTime = \Carbon\Carbon::parse($data['end_time']);
-        
-        if ($endTime <= $startTime) {
-            // Auto-calculate end time based on start time + duration
-            $data['end_time'] = $startTime->addMinutes($data['duration'])->format('Y-m-d H:i:s');
-        }
+
+        // Add the combined datetime values
+        $data['start_time'] = $startDateTime->format('Y-m-d H:i:s');
+        $data['end_time'] = $endDateTime->format('Y-m-d H:i:s');
         
         $data['allow_retake'] = $request->boolean('allow_retake');
         $data['show_results_immediately'] = $request->boolean('show_results_immediately', true);
