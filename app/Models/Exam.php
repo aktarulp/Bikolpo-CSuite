@@ -47,6 +47,59 @@ class Exam extends Model
         'flag' => 'string',
     ];
 
+    /**
+     * Boot the model and add global scopes
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Global scope to only show active records
+        static::addGlobalScope('active', function ($query) {
+            $query->where('flag', 'active');
+        });
+    }
+
+    /**
+     * Scope to include deleted records
+     */
+    public function scopeWithDeleted($query)
+    {
+        return $query->withoutGlobalScope('active');
+    }
+
+    /**
+     * Scope to only show deleted records
+     */
+    public function scopeOnlyDeleted($query)
+    {
+        return $query->withoutGlobalScope('active')->where('flag', 'deleted');
+    }
+
+    /**
+     * Soft delete the exam by changing flag to 'deleted'
+     */
+    public function softDelete()
+    {
+        return $this->update(['flag' => 'deleted']);
+    }
+
+    /**
+     * Restore the exam by changing flag back to 'active'
+     */
+    public function restore()
+    {
+        return $this->update(['flag' => 'active']);
+    }
+
+    /**
+     * Check if the exam is deleted
+     */
+    public function isDeleted()
+    {
+        return $this->flag === 'deleted';
+    }
+
     // Relationships
     public function partner()
     {

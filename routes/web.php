@@ -151,6 +151,8 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'role:partner'])
     Route::post('exams/{exam}/publish', [ExamController::class, 'publish'])->name('exams.publish');
     Route::post('exams/{exam}/unpublish', [ExamController::class, 'unpublish'])->name('exams.unpublish');
     Route::get('exams/{exam}/debug', [ExamController::class, 'debug'])->name('exams.debug');
+    Route::get('exams/deleted', [ExamController::class, 'deleted'])->name('exams.deleted');
+    Route::post('exams/{exam}/restore', [ExamController::class, 'restore'])->name('exams.restore');
     Route::get('exams/{exam}/results', [ExamController::class, 'results'])->name('exams.results');
     Route::get('exams/{exam}/export', [ExamController::class, 'export'])->name('exams.export');
     Route::get('exams/{exam}/assign-questions', [ExamController::class, 'assignQuestions'])->name('exams.assign-questions');

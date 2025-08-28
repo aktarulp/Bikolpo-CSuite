@@ -37,6 +37,7 @@ class ExamController extends Controller
             'published' => Exam::where('partner_id', $partnerId)->where('status', 'published')->count(),
             'ongoing' => Exam::where('partner_id', $partnerId)->where('status', 'ongoing')->count(),
             'completed' => Exam::where('partner_id', $partnerId)->where('status', 'completed')->count(),
+            'deleted' => Exam::withoutGlobalScope('active')->where('partner_id', $partnerId)->where('flag', 'deleted')->count(),
         ];
 
         return view('partner.exams.index', compact('exams', 'counts'));
@@ -206,10 +207,57 @@ class ExamController extends Controller
 
     public function destroy(Exam $exam)
     {
-        $exam->delete();
+        // Ensure the authenticated user is a partner
+        if (!auth()->user() || auth()->user()->role !== 'partner') {
+            abort(403, 'Only partners can delete exams.');
+        }
+
+        // Verify the exam belongs to this partner
+        $partnerId = $this->getPartnerId();
+        if ($exam->partner_id !== $partnerId) {
+            abort(403, 'Unauthorized access to this exam.');
+        }
+
+        // Soft delete by changing flag to 'deleted'
+        $exam->softDelete();
 
         return redirect()->route('partner.exams.index')
-            ->with('success', 'Exam deleted successfully.');
+            ->with('success', 'Exam deleted successfully. It can be restored from the deleted exams section.');
+    }
+
+    public function restore(Exam $exam)
+    {
+        // Ensure the authenticated user is a partner
+        if (!auth()->user() || auth()->user()->role !== 'partner') {
+            abort(403, 'Only partners can restore exams.');
+        }
+
+        // Verify the exam belongs to this partner
+        $partnerId = $this->getPartnerId();
+        if ($exam->partner_id !== $partnerId) {
+            abort(403, 'Unauthorized access to this exam.');
+        }
+
+        // Restore by changing flag back to 'active'
+        $exam->restore();
+
+        return redirect()->route('partner.exams.index')
+            ->with('success', 'Exam restored successfully.');
+    }
+
+    public function deleted()
+    {
+        $partnerId = $this->getPartnerId();
+        
+        // Get deleted exams for this partner
+        $deletedExams = Exam::withoutGlobalScope('active')
+            ->where('partner_id', $partnerId)
+            ->where('flag', 'deleted')
+            ->with(['partner', 'examQuestion'])
+            ->latest()
+            ->paginate(15);
+
+        return view('partner.exams.deleted', compact('deletedExams'));
     }
 
     public function publish(Exam $exam)
