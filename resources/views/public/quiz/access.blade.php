@@ -108,6 +108,19 @@
                         </svg>
                         Access Quiz
                     </button>
+
+                    <!-- Multiple Exams Button -->
+                    <div class="text-center">
+                        <p class="text-sm text-gray-500 mb-2">Have multiple exams?</p>
+                        <button type="button" 
+                                onclick="handleMultipleExams()"
+                                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primaryGreen transition-all duration-200">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                            </svg>
+                            Check All Available Exams
+                        </button>
+                    </div>
                 </form>
 
                 <!-- Help Section -->
@@ -161,6 +174,47 @@
             let value = e.target.value.replace(/\D/g, '');
             e.target.value = value;
         });
+
+        // Handle multiple exams button click
+        function handleMultipleExams() {
+            const phone = document.getElementById('phone').value;
+            const accessCode = document.getElementById('access_code').value;
+            
+            if (!phone || !accessCode) {
+                alert('Please enter both phone number and access code first.');
+                return;
+            }
+            
+            // Create a form and submit to multiple-exams route
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{{ route("public.quiz.multiple-exams") }}';
+            
+            // Add CSRF token
+            const csrfToken = document.createElement('input');
+            csrfToken.type = 'hidden';
+            csrfToken.name = '_token';
+            csrfToken.value = '{{ csrf_token() }}';
+            form.appendChild(csrfToken);
+            
+            // Add phone
+            const phoneInput = document.createElement('input');
+            phoneInput.type = 'hidden';
+            phoneInput.name = 'phone';
+            phoneInput.value = phone;
+            form.appendChild(phoneInput);
+            
+            // Add access code
+            const accessCodeInput = document.createElement('input');
+            accessCodeInput.type = 'hidden';
+            accessCodeInput.name = 'access_code';
+            accessCodeInput.value = accessCode;
+            form.appendChild(accessCodeInput);
+            
+            // Submit form
+            document.body.appendChild(form);
+            form.submit();
+        }
     </script>
 </body>
 </html>

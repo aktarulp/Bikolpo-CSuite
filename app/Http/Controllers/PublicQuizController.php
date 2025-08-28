@@ -70,6 +70,110 @@ class PublicQuizController extends Controller
     }
 
     /**
+     * Handle multiple exam access
+     */
+    public function handleMultipleExams(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'phone' => 'required|string|regex:/^01[3-9][0-9]{8}$/|max:15',
+            'access_code' => 'required|string|size:6',
+        ], [
+            'phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
+        // Find the student by phone number
+        $student = Student::where('phone', $request->phone)->first();
+        
+        if (!$student) {
+            return back()->withErrors(['access' => 'Phone number not found.'])->withInput();
+        }
+
+        // Find all access codes for this student
+        $accessCodes = ExamAccessCode::where('student_id', $student->id)
+            ->where('access_code', $request->access_code)
+            ->with(['exam'])
+            ->get();
+
+        if ($accessCodes->isEmpty()) {
+            return back()->withErrors(['access' => 'Invalid access code for this phone number.'])->withInput();
+        }
+
+        // Check if any access code is valid
+        $validAccessCodes = $accessCodes->filter(function ($accessCode) {
+            return $accessCode->isValid();
+        });
+
+        if ($validAccessCodes->isEmpty()) {
+            return back()->withErrors(['access' => 'Access code is no longer valid.'])->withInput();
+        }
+
+        // Get all available exams for this student
+        $availableExams = $validAccessCodes->map(function ($accessCode) {
+            return [
+                'access_code_id' => $accessCode->id,
+                'exam' => $accessCode->exam,
+                'status' => $this->getExamStatus($accessCode->exam),
+                'can_take' => $this->canTakeExam($accessCode->exam, $accessCode->student_id),
+            ];
+        })->filter(function ($examData) {
+            return $examData['exam'] && $examData['exam']->flag === 'active';
+        });
+
+        if ($availableExams->isEmpty()) {
+            return back()->withErrors(['access' => 'No available exams found.'])->withInput();
+        }
+
+        // Store student info in session
+        session([
+            'student_info' => [
+                'student_id' => $student->id,
+                'student_name' => $student->full_name,
+                'phone' => $student->phone,
+            ]
+        ]);
+
+        // If only one exam, redirect directly to it
+        if ($availableExams->count() === 1) {
+            $examData = $availableExams->first();
+            return $this->redirectToExam($examData);
+        }
+
+        // Multiple exams available - show selection dashboard
+        return view('public.quiz.select', compact('availableExams'));
+    }
+
+    /**
+     * Redirect to appropriate exam page
+     */
+    private function redirectToExam($examData)
+    {
+        $exam = $examData['exam'];
+        $accessCodeId = $examData['access_code_id'];
+        
+        // Store access info in session for the quiz
+        session([
+            'quiz_access' => [
+                'access_code_id' => $accessCodeId,
+                'student_id' => session('student_info.student_id'),
+                'exam_id' => $exam->id,
+                'student_name' => session('student_info.student_name'),
+            ]
+        ]);
+
+        if ($exam->isActive) {
+            return redirect()->route('public.quiz.start', $exam);
+        } elseif ($exam->isScheduled()) {
+            return redirect()->route('public.quiz.waiting', $exam);
+        } else {
+            return redirect()->route('public.quiz.access')->withErrors(['access' => 'This exam is not currently available.']);
+        }
+    }
+
+    /**
      * Show the quiz start page
      */
     public function showQuiz(Exam $exam)
@@ -281,5 +385,108 @@ class PublicQuizController extends Controller
             'score' => 0,
             'percentage' => 0,
         ]);
+    }
+
+    /**
+     * Show available exams for a student
+     */
+    public function showAvailableExams()
+    {
+        $studentInfo = session('student_info');
+        
+        if (!$studentInfo) {
+            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Please login first.']);
+        }
+
+        // Get all access codes for this student
+        $accessCodes = ExamAccessCode::where('student_id', $studentInfo['student_id'])
+            ->where('status', 'active')
+            ->with(['exam'])
+            ->get();
+
+        $availableExams = $accessCodes->map(function ($accessCode) {
+            return [
+                'access_code_id' => $accessCode->id,
+                'exam' => $accessCode->exam,
+                'status' => $this->getExamStatus($accessCode->exam),
+                'can_take' => $this->canTakeExam($accessCode->exam, $accessCode->student_id),
+            ];
+        })->filter(function ($examData) {
+            return $examData['exam'] && $examData['exam']->flag === 'active';
+        });
+
+        return view('public.quiz.select', compact('availableExams'));
+    }
+
+    /**
+     * Get exam status for display
+     */
+    private function getExamStatus($exam)
+    {
+        if ($exam->isActive) {
+            return 'active';
+        } elseif ($exam->isScheduled()) {
+            return 'scheduled';
+        } elseif ($exam->isCompleted) {
+            return 'completed';
+        } else {
+            return 'unavailable';
+        }
+    }
+
+    /**
+     * Check if student can take the exam
+     */
+    private function canTakeExam($exam, $studentId)
+    {
+        // Check if already completed
+        $existingResult = StudentExamResult::where('student_id', $studentId)
+            ->where('exam_id', $exam->id)
+            ->first();
+
+        if ($existingResult && $existingResult->status === 'completed') {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Handle exam selection
+     */
+    public function selectExam(Request $request, $accessCodeId)
+    {
+        $accessCode = ExamAccessCode::find($accessCodeId);
+        
+        if (!$accessCode || !$accessCode->isValid()) {
+            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Access code is no longer valid.']);
+        }
+
+        // Verify student info
+        $studentInfo = session('student_info');
+        if (!$studentInfo || $studentInfo['student_id'] != $accessCode->student_id) {
+            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Invalid access. Please try again.']);
+        }
+
+        // Store access info in session for the quiz
+        session([
+            'quiz_access' => [
+                'access_code_id' => $accessCode->id,
+                'student_id' => $studentInfo['student_id'],
+                'exam_id' => $accessCode->exam_id,
+                'student_name' => $studentInfo['student_name'],
+            ]
+        ]);
+
+        $exam = $accessCode->exam;
+
+        // Redirect based on exam status
+        if ($exam->isActive) {
+            return redirect()->route('public.quiz.start', $exam);
+        } elseif ($exam->isScheduled()) {
+            return redirect()->route('public.quiz.waiting', $exam);
+        } else {
+            return redirect()->route('public.quiz.access')->withErrors(['access' => 'This exam is not currently available.']);
+        }
     }
 }

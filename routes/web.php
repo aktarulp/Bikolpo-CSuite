@@ -222,6 +222,9 @@ Route::patch('/typing-passages/{typingPassage}/toggle', [\App\Http\Controllers\T
 Route::prefix('quiz')->name('public.quiz.')->group(function () {
     Route::get('/', [\App\Http\Controllers\PublicQuizController::class, 'showAccessPage'])->name('access');
     Route::post('/access', [\App\Http\Controllers\PublicQuizController::class, 'processAccess'])->name('process-access');
+    Route::post('/multiple-exams', [\App\Http\Controllers\PublicQuizController::class, 'handleMultipleExams'])->name('multiple-exams');
+    Route::get('/available', [\App\Http\Controllers\PublicQuizController::class, 'showAvailableExams'])->name('available');
+    Route::get('/select/{accessCode}', [\App\Http\Controllers\PublicQuizController::class, 'selectExam'])->name('select');
     Route::get('/{exam}/start', [\App\Http\Controllers\PublicQuizController::class, 'showQuiz'])->name('start');
     Route::post('/{exam}/start', [\App\Http\Controllers\PublicQuizController::class, 'startQuiz'])->name('start-quiz');
     Route::get('/{exam}/take', [\App\Http\Controllers\PublicQuizController::class, 'takeQuiz'])->name('take');
