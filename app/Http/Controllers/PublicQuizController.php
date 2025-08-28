@@ -80,14 +80,21 @@ class PublicQuizController extends Controller
             return redirect()->route('public.quiz.access')->withErrors(['access' => 'Invalid access. Please try again.']);
         }
 
-        // Check if exam is active
-        if (!$exam->isActive) {
-            return redirect()->route('public.quiz.access')->withErrors(['access' => 'This exam is not currently active.']);
-        }
-
         $accessCode = ExamAccessCode::find($accessInfo['access_code_id']);
         if (!$accessCode || !$accessCode->isValid()) {
             return redirect()->route('public.quiz.access')->withErrors(['access' => 'Access code is no longer valid.']);
+        }
+
+        // Check if exam is active
+        if (!$exam->isActive) {
+            // Check if exam is scheduled for the future
+            if ($exam->isScheduled()) {
+                // Show waiting room for scheduled exams
+                return view('public.quiz.waiting', compact('exam', 'accessInfo'));
+            } else {
+                // Exam is not available (cancelled, completed, etc.)
+                return redirect()->route('public.quiz.access')->withErrors(['access' => 'This exam is not currently available.']);
+            }
         }
 
         return view('public.quiz.start', compact('exam', 'accessInfo'));

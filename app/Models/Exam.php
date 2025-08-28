@@ -100,6 +100,52 @@ class Exam extends Model
         return $this->flag === 'deleted';
     }
 
+    /**
+     * Check if the exam is scheduled for the future
+     */
+    public function isScheduled()
+    {
+        return $this->status === 'published' && now()->lt($this->start_time);
+    }
+
+    /**
+     * Check if the exam is currently ongoing
+     */
+    public function isOngoing()
+    {
+        return $this->status === 'published' && 
+               now()->gte($this->start_time) && 
+               now()->lte($this->end_time);
+    }
+
+    /**
+     * Get time until exam starts in human readable format
+     */
+    public function getTimeUntilStartAttribute()
+    {
+        if ($this->status !== 'published' || now()->gte($this->start_time)) {
+            return null;
+        }
+        
+        return now()->diffForHumans($this->start_time, ['parts' => 2]);
+    }
+
+    /**
+     * Get formatted start time for display
+     */
+    public function getFormattedStartTimeAttribute()
+    {
+        return $this->start_time ? $this->start_time->format('M d, Y g:i A') : 'Not set';
+    }
+
+    /**
+     * Get formatted end time for display
+     */
+    public function getFormattedEndTimeAttribute()
+    {
+        return $this->end_time ? $this->end_time->format('M d, Y g:i A') : 'Not set';
+    }
+
     // Relationships
     public function partner()
     {
