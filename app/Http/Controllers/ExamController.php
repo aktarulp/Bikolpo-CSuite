@@ -137,7 +137,16 @@ class ExamController extends Controller
 
     public function show(Exam $exam)
     {
-        $exam->load(['studentResults.student', 'examQuestion']);
+        $exam->load([
+            'studentResults.student', 
+            'examQuestion',
+            'questions' => function($query) {
+                $query->orderBy('pivot_order', 'asc');
+            },
+            'accessCodes.student' => function($query) {
+                $query->orderBy('full_name', 'asc');
+            }
+        ]);
         return view('partner.exams.show', compact('exam'));
     }
 
