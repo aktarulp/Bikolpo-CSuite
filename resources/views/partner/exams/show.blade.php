@@ -8,10 +8,7 @@
         <!-- Header -->
         <div class="mb-6">
             <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ $exam->title }}</h1>
-                    <p class="mt-2 text-gray-600 dark:text-gray-400">Exam ID: #{{ $exam->id }}</p>
-                </div>
+                
                 <div class="flex space-x-3">
                     <a href="{{ route('partner.exams.edit', $exam) }}" 
                        class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">
@@ -38,7 +35,12 @@
                                  <!-- Basic Information -->
                  <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
                      <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                         <h2 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $exam->title }}</h2>
+                         <div class="flex items-center space-x-3">
+                             <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-bold bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg ring-2 ring-blue-200 dark:ring-blue-800/50 transform hover:scale-105 transition-all duration-200">
+                                 #{{ $exam->id }}
+                             </span>
+                             <h2 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $exam->title }}</h2>
+                         </div>
                      </div>
                                                               <div class="px-4 py-3">
                          <!-- Exam Details Grid -->
