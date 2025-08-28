@@ -5,28 +5,32 @@
 @section('content')
 <div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-6">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Header -->
-        <div class="mb-6">
-            <div class="flex items-center justify-between">
-                
-                <div class="flex space-x-3">
-                    <a href="{{ route('partner.exams.edit', $exam) }}" 
-                       class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                        </svg>
-                        Edit Exam
-                    </a>
-                    <a href="{{ route('partner.exams.index') }}" 
-                       class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                        </svg>
-                        Back to Exams
-                    </a>
-                </div>
-            </div>
-        </div>
+                          <!-- Header -->
+         <div class="mb-6">
+             <div class="flex items-center justify-between">
+                 <div>
+                     <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ $exam->title }}</h1>
+                     <p class="mt-2 text-gray-600 dark:text-gray-400">Exam ID: #{{ $exam->id }}</p>
+                 </div>
+                 
+                 <div class="flex space-x-3">
+                     <a href="{{ route('partner.exams.edit', $exam) }}" 
+                        class="inline-flex items-center px-4 py-2 rounded-lg shadow-lg text-sm font-bold text-white bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transform hover:scale-105 transition-all duration-200">
+                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                         </svg>
+                         Edit Exam
+                     </a>
+                     <a href="{{ route('partner.exams.index') }}" 
+                        class="inline-flex items-center px-4 py-2 rounded-lg shadow-lg text-sm font-bold text-white bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transform hover:scale-105 transition-all duration-200">
+                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                         </svg>
+                         Back to Exams
+                     </a>
+                 </div>
+             </div>
+         </div>
 
         <!-- Exam Information Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">

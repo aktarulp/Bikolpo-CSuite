@@ -77,6 +77,160 @@ class Exam extends Model
     }
 
     /**
+     * Get the current status of the exam based on time
+     */
+    public function getCurrentStatusAttribute()
+    {
+        $now = Carbon::now();
+        $startTime = Carbon::parse($this->start_time);
+        $endTime = Carbon::parse($this->end_time);
+
+        if ($now < $startTime) {
+            return 'scheduled';
+        } elseif ($now >= $startTime && $now <= $endTime) {
+            return 'ongoing';
+        } else {
+            return 'completed';
+        }
+    }
+
+    /**
+     * Check if exam is currently running
+     */
+    public function isRunning()
+    {
+        $now = Carbon::now();
+        $startTime = Carbon::parse($this->start_time);
+        $endTime = Carbon::parse($this->end_time);
+        
+        return $now >= $startTime && $now <= $endTime;
+    }
+
+    /**
+     * Check if exam has started
+     */
+    public function hasStarted()
+    {
+        return Carbon::now() >= Carbon::parse($this->start_time);
+    }
+
+    /**
+     * Check if exam has ended
+     */
+    public function hasEnded()
+    {
+        return Carbon::now() > Carbon::parse($this->end_time);
+    }
+
+    /**
+     * Get time until exam starts (for countdown)
+     */
+    public function getTimeUntilStart()
+    {
+        $now = Carbon::now();
+        $startTime = Carbon::parse($this->start_time);
+        
+        if ($now < $startTime) {
+            return $now->diffForHumans($startTime, ['parts' => 2]);
+        }
+        
+        return null;
+    }
+
+    /**
+     * Get time remaining in exam
+     */
+    public function getTimeRemaining()
+    {
+        $now = Carbon::now();
+        $endTime = Carbon::parse($this->end_time);
+        
+        if ($now < $endTime) {
+            return $now->diffForHumans($endTime, ['parts' => 2]);
+        }
+        
+        return null;
+    }
+
+    /**
+     * Update exam status based on current time
+     */
+    public function updateStatus()
+    {
+        $currentStatus = $this->getCurrentStatusAttribute();
+        
+        if ($currentStatus === 'ongoing' && $this->status !== 'ongoing') {
+            $this->update(['status' => 'ongoing']);
+            \Log::info("Exam {$this->id} ({$this->title}) status updated to ongoing");
+        } elseif ($currentStatus === 'completed' && $this->status !== 'completed') {
+            $this->update(['status' => 'completed']);
+            \Log::info("Exam {$this->id} ({$this->title}) status updated to completed");
+        }
+        
+        return $this->status;
+    }
+
+    /**
+     * Scope for exams that need status updates
+     */
+    public function scopeNeedsStatusUpdate($query)
+    {
+        return $query->whereIn('status', ['published', 'ongoing'])
+            ->where(function($q) {
+                $q->where('start_time', '<=', now())
+                  ->orWhere('end_time', '<=', now());
+            });
+    }
+
+    /**
+     * Get user-friendly status display with countdown
+     */
+    public function getStatusDisplayAttribute()
+    {
+        $currentStatus = $this->getCurrentStatusAttribute();
+        
+        switch ($currentStatus) {
+            case 'scheduled':
+                $timeUntil = $this->getTimeUntilStart();
+                return [
+                    'status' => 'scheduled',
+                    'label' => 'Scheduled',
+                    'badge_class' => 'bg-blue-100 text-blue-800',
+                    'message' => "Starts in {$timeUntil}",
+                    'countdown' => $timeUntil
+                ];
+                
+            case 'ongoing':
+                $timeRemaining = $this->getTimeRemaining();
+                return [
+                    'status' => 'ongoing',
+                    'label' => 'Running',
+                    'badge_class' => 'bg-green-100 text-green-800',
+                    'message' => "Ends in {$timeRemaining}",
+                    'countdown' => $timeRemaining
+                ];
+                
+            case 'completed':
+                return [
+                    'status' => 'completed',
+                    'label' => 'Completed',
+                    'badge_class' => 'bg-purple-100 text-purple-800',
+                    'message' => 'Exam has ended',
+                    'countdown' => null
+                ];
+                
+            default:
+                return [
+                    'status' => $this->status,
+                    'label' => ucfirst($this->status),
+                    'badge_class' => 'bg-gray-100 text-gray-800',
+                    'message' => 'Status unknown',
+                    'countdown' => null
+                ];
+        }
+    }
+
+    /**
      * Soft delete the exam by changing flag to 'deleted'
      */
     public function softDelete()
