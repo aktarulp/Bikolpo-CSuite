@@ -1,47 +1,151 @@
 @extends('layouts.partner-layout')
 
-@section('title', 'Create Exam')
+@section('title', 'Create New Exam')
 
 @section('content')
 <style>
-    /* Style for the negative marking toggle */
-    input:checked + .dot {
-        transform: translateX(100%);
-        background-color: #6366f1; /* Indigo-500 */
+    /* Custom scrollbar */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 3px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 3px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
+
+    /* Gradient backgrounds */
+    .gradient-bg {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
     
-    /* Dark mode support for toggle */
-    .dark input:checked + .dot {
-        background-color: #818cf8; /* Indigo-400 */
+    .gradient-bg-secondary {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
     }
-</style>
-<div class="flex items-center justify-center min-h-screen py-6">
-    <div class="bg-white dark:bg-gray-800 p-6 md:p-8 lg:p-12 rounded-3xl shadow-2xl w-full max-w-5xl mx-auto">
 
-        <!-- Header -->
-        <div class="flex items-center justify-between pb-8 mb-8 border-b border-gray-200 dark:border-gray-600">
-            <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Create New Exam</h1>
-            <div class="flex items-center space-x-2 text-indigo-500 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 cursor-pointer transition duration-200">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+    /* Card hover effects */
+    .card-hover {
+        transition: all 0.3s ease;
+    }
+    
+    .card-hover:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    /* Toggle switch styling */
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 30px;
+    }
+    
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #e2e8f0;
+        transition: 0.3s;
+        border-radius: 30px;
+    }
+    
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 22px;
+        width: 22px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: 0.3s;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    input:checked + .slider {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    input:checked + .slider:before {
+        transform: translateX(30px);
+    }
+
+    /* Progress indicator */
+    .progress-step {
+        transition: all 0.3s ease;
+    }
+    
+    .progress-step.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        transform: scale(1.1);
+    }
+
+    /* Form section animations */
+    .form-section {
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.6s ease forwards;
+    }
+    
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .form-section:nth-child(1) { animation-delay: 0.1s; }
+    .form-section:nth-child(2) { animation-delay: 0.2s; }
+    .form-section:nth-child(3) { animation-delay: 0.3s; }
+    .form-section:nth-child(4) { animation-delay: 0.4s; }
+</style>
+
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 py-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header Section -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full mb-4 shadow-lg">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                 </svg>
-                <span>Back</span>
             </div>
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">Create New Exam</h1>
+            <p class="text-lg text-gray-600 dark:text-gray-300">Set up your exam with all the necessary details and configurations</p>
         </div>
+
+        
 
         <!-- Error Messages -->
         @if ($errors->any())
-            <div class="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl">
-                <div class="flex">
+            <div class="mb-8 p-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl shadow-lg">
+                <div class="flex items-start">
                     <div class="flex-shrink-0">
-                        <svg class="h-5 w-5 text-red-400 dark:text-red-500" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        <svg class="h-6 w-6 text-red-400 dark:text-red-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
                         </svg>
                     </div>
-                    <div class="ml-3">
-                        <h3 class="text-sm font-medium text-red-800 dark:text-red-200">Please fix the following errors:</h3>
-                        <div class="mt-1 text-sm text-red-700 dark:text-red-300">
-                            <ul class="list-disc pl-5 space-y-1">
+                    <div class="ml-4">
+                        <h3 class="text-lg font-medium text-red-800 dark:text-red-200">Please fix the following errors:</h3>
+                        <div class="mt-3 text-sm text-red-700 dark:text-red-300">
+                            <ul class="list-disc pl-5 space-y-2">
                                 @foreach ($errors->all() as $error)
                                     <li>{{ $error }}</li>
                                 @endforeach
@@ -52,143 +156,223 @@
             </div>
         @endif
 
-        <!-- Form Section -->
-        <form id="examForm" action="{{ route('partner.exams.store') }}" method="POST" class="space-y-10">
+        <!-- Form -->
+        <form id="examForm" action="{{ route('partner.exams.store') }}" method="POST" class="space-y-8">
             @csrf
 
-            <!-- Basic Information -->
-            <div class="bg-gray-50 dark:bg-gray-700/50 p-6 rounded-2xl border border-gray-100 dark:border-gray-600">
-                <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-200 flex items-center mb-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-indigo-500 dark:text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Basic Information
-                </h2>
-                <div class="grid md:grid-cols-4 gap-6">
-                    <div>
-                        <label for="examTitle" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Exam Title *</label>
-                        <input type="text" id="examTitle" name="title" value="{{ old('title') }}" placeholder="Enter exam title" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-500 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-600 dark:text-white transition duration-200 shadow-sm">
-                        @error('title')
-                            <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
-                        @enderror
+            <!-- Section 1: Basic Details -->
+            <div class="form-section bg-white dark:bg-slate-800 rounded-3xl shadow-xl p-8 card-hover">
+                <div class="flex items-center mb-6">
+                    <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mr-4">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
                     </div>
                     <div>
-                        <label for="examType" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Exam Type *</label>
-                        <select id="examType" name="exam_type" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-500 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-600 dark:text-white transition duration-200 shadow-sm">
-                            <option value="online" {{ old('exam_type', 'online') === 'online' ? 'selected' : '' }}>Online Exam</option>
-                            <option value="offline" {{ old('exam_type', 'online') === 'offline' ? 'selected' : '' }}>Offline Exam</option>
-                        </select>
-                        @error('exam_type')
-                            <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
-                        @enderror
+                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Basic Details</h2>
+                        <p class="text-gray-600 dark:text-gray-300">Essential information about your exam</p>
                     </div>
-                    <div class="flex items-center space-x-2">
-                        <input type="checkbox" id="allowRetake" name="allow_retake" value="1" {{ old('allow_retake') ? 'checked' : '' }} class="h-5 w-5 rounded-md text-indigo-600 border-gray-300 dark:border-gray-500 focus:ring-indigo-500">
-                        <label for="allowRetake" class="text-sm font-medium text-gray-700 dark:text-gray-300">Allow Retake</label>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="space-y-6">
+                        <div>
+                            <label for="examTitle" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Exam Title *</label>
+                            <input type="text" id="examTitle" name="title" value="{{ old('title') }}" 
+                                   placeholder="e.g., Mid-Term Mathematics Exam" required 
+                                   class="w-full px-4 py-4 border-2 border-gray-200 dark:border-gray-600 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-slate-700 dark:text-white transition-all duration-300 text-lg">
+                            @error('title')
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="examType" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Exam Type *</label>
+                            <select id="examType" name="exam_type" required 
+                                    class="w-full px-4 py-4 border-2 border-gray-200 dark:border-gray-600 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-slate-700 dark:text-white transition-all duration-300 text-lg">
+                                <option value="online" {{ old('exam_type', 'online') === 'online' ? 'selected' : '' }}>🖥️ Online Exam</option>
+                                <option value="offline" {{ old('exam_type', 'online') === 'offline' ? 'selected' : '' }}>📝 Offline Exam</option>
+                            </select>
+                            @error('exam_type')
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="description" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Description</label>
+                            <textarea id="description" name="description" rows="4" 
+                                      placeholder="Provide a detailed description of the exam, topics covered, and any special instructions..." 
+                                      class="w-full px-4 py-4 border-2 border-gray-200 dark:border-gray-600 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-slate-700 dark:text-white transition-all duration-300 resize-none">{{ old('description') }}</textarea>
+                            @error('description')
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
-                    <div class="flex items-center space-x-4">
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Negative Marking</span>
-                        <label for="negativeMarking" class="flex items-center cursor-pointer">
-                            <div class="relative">
-                                <input type="checkbox" id="negativeMarking" name="has_negative_marking" value="1" {{ old('has_negative_marking') ? 'checked' : '' }} class="sr-only" onchange="toggleNegativeMarkingInput(this)">
-                                <div class="block bg-gray-300 dark:bg-gray-500 w-14 h-8 rounded-full"></div>
-                                <div class="dot absolute left-1 top-1 bg-white dark:bg-gray-200 w-6 h-6 rounded-full transition-transform"></div>
+
+                    <div class="space-y-6">
+                        <div>
+                            <label for="totalQuestions" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Total Questions *</label>
+                            <input type="number" id="totalQuestions" name="total_questions" value="{{ old('total_questions') }}" 
+                                   min="1" max="100" required 
+                                   class="w-full px-4 py-4 border-2 border-gray-200 dark:border-gray-600 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-slate-700 dark:text-white transition-all duration-300 text-lg">
+                            @error('total_questions')
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="duration" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Duration (minutes) *</label>
+                            <input type="number" id="duration" name="duration" value="{{ old('duration') }}" 
+                                   min="15" max="480" required 
+                                   class="w-full px-4 py-4 border-2 border-gray-200 dark:border-gray-600 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-slate-700 dark:text-white transition-all duration-300 text-lg">
+                            @error('duration')
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="passingMarks" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Passing Marks (%) *</label>
+                            <input type="number" id="passingMarks" name="passing_marks" value="{{ old('passing_marks') }}" 
+                                   min="0" max="100" required 
+                                   class="w-full px-4 py-4 border-2 border-gray-200 dark:border-gray-600 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-slate-700 dark:text-white transition-all duration-300 text-lg">
+                            @error('passing_marks')
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Schedule & Timing -->
+            <div class="form-section bg-white dark:bg-slate-800 rounded-3xl shadow-xl p-8 card-hover">
+                <div class="flex items-center mb-6">
+                    <div class="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center mr-4">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h.01M9 16h.01M15 16h.01M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Schedule & Timing</h2>
+                        <p class="text-gray-600 dark:text-gray-300">Set when your exam starts and ends</p>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <label for="startDateTime" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Start Date & Time *</label>
+                        <input type="datetime-local" id="startDateTime" name="startDateTime" 
+                               value="{{ old('startDateTime', now()->format('Y-m-d\TH:i')) }}" required 
+                               class="w-full px-4 py-4 border-2 border-gray-200 dark:border-gray-600 rounded-2xl focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 dark:bg-slate-700 dark:text-white transition-all duration-300 text-lg" 
+                               onchange="validateDateTime()">
+                        <div id="startDateTimeError" class="mt-2 text-sm text-red-600 dark:text-red-400 hidden"></div>
+                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">📅 Choose a future date and time</p>
+                    </div>
+
+                    <div>
+                        <label for="endDateTime" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">End Date & Time *</label>
+                        <input type="datetime-local" id="endDateTime" name="endDateTime" 
+                               value="{{ old('endDateTime', now()->addHours(2)->format('Y-m-d\TH:i')) }}" required 
+                               class="w-full px-4 py-4 border-2 border-gray-200 dark:border-gray-600 rounded-2xl focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 dark:bg-slate-700 dark:text-white transition-all duration-300 text-lg" 
+                               onchange="validateDateTime()">
+                        <div id="endDateTimeError" class="mt-2 text-sm text-red-600 dark:text-red-400 hidden"></div>
+                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">⏰ Must be after start time</p>
+                    </div>
+                </div>
+
+                <!-- DateTime Validation Summary -->
+                <div id="dateTimeValidationSummary" class="mt-6 p-4 rounded-2xl hidden">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span class="text-sm font-medium" id="validationMessage"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Exam Settings -->
+            <div class="form-section bg-white dark:bg-slate-800 rounded-3xl shadow-xl p-8 card-hover">
+                <div class="flex items-center mb-6">
+                    <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mr-4">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Exam Settings</h2>
+                        <p class="text-gray-600 dark:text-gray-300">Configure advanced options and preferences</p>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="space-y-6">
+                        <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-700 rounded-2xl">
+                            <div>
+                                <h3 class="font-semibold text-gray-900 dark:text-white">Allow Retake</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Students can retake the exam if they fail</p>
                             </div>
-                        </label>
-                        <div id="negativeMarkingInputContainer" class="flex items-center space-x-2 {{ old('has_negative_marking') ? '' : 'hidden' }}">
-                            <input type="number" id="negativeMarkingInput" name="negative_marks_per_question" value="{{ old('negative_marks_per_question', 0.25) }}" min="0" max="5" step="0.25" placeholder="Mark" class="w-20 px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-600 dark:text-white transition duration-200 text-sm shadow-sm">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="allowRetake" name="allow_retake" value="1" {{ old('allow_retake') ? 'checked' : '' }}>
+                                <span class="slider"></span>
+                            </label>
                         </div>
-                    </div>
-                </div>
-                <div class="mt-6">
-                    <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
-                    <textarea id="description" name="description" rows="3" placeholder="Provide a detailed description of the exam" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-500 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-600 dark:text-white transition duration-200 shadow-sm">{{ old('description') }}</textarea>
-                    @error('description')
-                        <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
-                    @enderror
-                </div>
-                <div class="mt-6">
-                    <label for="instructions" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Question Head/Instructions</label>
-                    <textarea id="instructions" name="question_head" rows="3" placeholder="Special instructions or header text for questions" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-500 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-600 dark:text-white transition duration-200 shadow-sm">{{ old('question_head') }}</textarea>
-                    @error('question_head')
-                        <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
-                    @enderror
-                </div>
-            </div>
 
-            <!-- Schedule & Duration -->
-            <div class="bg-gray-50 dark:bg-gray-700/50 p-6 rounded-2xl border border-gray-100 dark:border-gray-600">
-                <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-200 flex items-center mb-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-emerald-500 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h.01M9 16h.01M15 16h.01M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    Schedule & Duration
-                </h2>
-                <div class="grid md:grid-cols-4 gap-6">
-                    <!-- Start Date and Time -->
-                    <div>
-                        <label for="startDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Start Date *</label>
-                        <input type="date" id="startDate" name="startDate" value="{{ old('startDate', now()->addDay()->format('Y-m-d')) }}" required class="w-40 px-4 py-3 border border-gray-300 dark:border-gray-500 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-600 dark:text-white transition duration-200 shadow-sm">
-                    </div>
-                    <div>
-                        <label for="startTime" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Start Time *</label>
-                        <input type="time" id="startTime" name="startTime" value="{{ old('startTime', '19:15') }}" required class="w-36 px-4 py-3 border border-gray-300 dark:border-gray-500 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-600 dark:text-white transition duration-200 shadow-sm">
-                    </div>
-                    <div>
-                        <label for="duration" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Duration *</label>
-                        <div class="flex items-center">
-                            <input type="number" id="duration" name="duration" value="{{ old('duration', 120) }}" min="15" max="480" required class="w-2/3 px-4 py-3 border border-gray-300 dark:border-gray-500 rounded-l-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-600 dark:text-white transition duration-200 shadow-sm">
-                            <span class="w-1/3 px-4 py-3 bg-gray-200 dark:bg-gray-500 text-gray-600 dark:text-gray-300 rounded-r-xl text-center border border-gray-300 dark:border-gray-500 border-l-0">min</span>
+                        <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-700 rounded-2xl">
+                            <div>
+                                <h3 class="font-semibold text-gray-900 dark:text-white">Show Results Immediately</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Display results right after exam completion</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="showResults" name="show_results_immediately" value="1" {{ old('show_results_immediately', true) ? 'checked' : '' }}>
+                                <span class="slider"></span>
+                            </label>
                         </div>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Minutes (15 min - 8 hours)</p>
-                        @error('duration')
-                            <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
-                        @enderror
                     </div>
-                    <div class="flex items-center space-x-2">
-                        <label for="passingMarks" class="text-sm font-medium text-gray-700 dark:text-gray-300">Passing Marks (%):</label>
-                        <input type="number" id="passingMarks" name="passing_marks" value="{{ old('passing_marks', 60) }}" min="0" max="100" required class="w-20 px-3 py-2 border border-gray-300 dark:border-gray-500 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-600 dark:text-white transition duration-200 shadow-sm text-center">
-                        @error('passing_marks')
-                            <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
-                <div class="grid md:grid-cols-4 gap-6 mt-6">
-                    <!-- End Date and Time -->
-                    <div>
-                        <label for="endDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">End Date *</label>
-                        <input type="date" id="endDate" name="endDate" value="{{ old('endDate', now()->addDay()->format('Y-m-d')) }}" required class="w-40 px-4 py-3 border border-gray-300 dark:border-gray-500 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-600 dark:text-white transition duration-200 shadow-sm">
-                    </div>
-                    <div>
-                        <label for="endTime" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">End Time</label>
-                        <input type="time" id="endTime" name="endTime" value="{{ old('endTime', '21:15') }}" required class="w-36 px-4 py-3 border border-gray-300 dark:border-gray-500 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-blue-500 transition duration-200 shadow-sm">
-                    </div>
-                    <div>
-                        <label for="totalQuestions" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Total Questions</label>
-                        <input type="number" id="totalQuestions" name="total_questions" value="{{ old('total_questions', 10) }}" min="1" max="100" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-500 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-600 dark:text-white transition duration-200 shadow-sm">
-                        @error('total_questions')
-                            <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <input type="checkbox" id="showResults" name="show_results_immediately" value="1" {{ old('show_results_immediately', true) ? 'checked' : '' }} class="h-5 w-5 rounded-md text-emerald-600 border-gray-300 dark:border-gray-500 focus:ring-emerald-500">
-                        <label for="showResults" class="text-sm font-medium text-gray-700 dark:text-gray-300">Show Results Immediately</label>
+
+                    <div class="space-y-6">
+                        <div class="p-4 bg-gray-50 dark:bg-slate-700 rounded-2xl">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-semibold text-gray-900 dark:text-white">Negative Marking</h3>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="negativeMarking" name="has_negative_marking" value="1" {{ old('has_negative_marking') ? 'checked' : '' }} onchange="toggleNegativeMarkingInput(this)">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <div id="negativeMarkingInputContainer" class="{{ old('has_negative_marking') ? '' : 'hidden' }}">
+                                <label for="negativeMarkingInput" class="block text-sm text-gray-600 dark:text-gray-400 mb-2">Marks per wrong answer:</label>
+                                <input type="number" id="negativeMarkingInput" name="negative_marks_per_question" 
+                                       value="{{ old('negative_marks_per_question') }}" min="0" max="5" step="0.25" 
+                                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 border-purple-500 focus:border-purple-500 dark:bg-slate-600 dark:text-white">
+                            </div>
+                        </div>
+
+
                     </div>
                 </div>
             </div>
 
+            <!-- Section 4: Action Buttons -->
+            <div class="form-section bg-white dark:bg-slate-800 rounded-3xl shadow-xl p-8 card-hover">
+                <div class="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
+                    <div class="text-center sm:text-left">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Ready to create your exam?</h3>
+                        <p class="text-gray-600 dark:text-gray-400">Review all details before proceeding</p>
+                    </div>
+                    <div class="flex space-x-4">
+                        <a href="{{ route('partner.exams.index') }}" 
+                           class="px-8 py-4 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-2xl hover:bg-gray-50 dark:hover:bg-slate-700 transition-all duration-300">
+                            Cancel
+                        </a>
+                        <button type="submit" form="examForm" 
+                                class="px-8 py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-2xl hover:from-indigo-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg" 
+                                onclick="return validateFormBeforeSubmit()">
+                            🚀 Create Exam
+                        </button>
+                    </div>
+                </div>
+            </div>
         </form>
-
-        <!-- Footer Buttons -->
-        <div class="flex justify-end space-x-4 mt-10 pt-6 border-t border-gray-200 dark:border-gray-600">
-            <a href="{{ route('partner.exams.index') }}" class="px-6 py-3 border border-gray-300 dark:border-gray-500 rounded-xl text-gray-700 dark:text-gray-300 font-semibold hover:bg-gray-100 dark:hover:bg-gray-600 transition duration-200 shadow-sm">
-                Cancel
-            </a>
-            <button type="submit" form="examForm" class="px-6 py-3 bg-indigo-600 dark:bg-indigo-500 text-white font-semibold rounded-xl hover:bg-indigo-700 dark:hover:bg-indigo-600 transition duration-200 shadow-lg">
-                Create Exam
-            </button>
-        </div>
-
     </div>
 </div>
 
@@ -202,12 +386,101 @@
         }
     }
 
-    // Initialize negative marking toggle on page load
+    function validateDateTime() {
+        const startDateTimeInput = document.getElementById('startDateTime').value;
+        const endDateTimeInput = document.getElementById('endDateTime').value;
+        
+        // Reset error states
+        clearDateTimeErrors();
+        
+        if (!startDateTimeInput || !endDateTimeInput) {
+            return true; // Don't validate if fields are empty
+        }
+        
+        const now = new Date();
+        const startDateTime = new Date(startDateTimeInput);
+        const endDateTime = new Date(endDateTimeInput);
+        
+        let hasErrors = false;
+        
+        // Check if start datetime is in the future
+        if (startDateTime <= now) {
+            showDateTimeError('startDateTime', 'Start date and time must be in the future');
+            hasErrors = true;
+        }
+        
+        // Check if end datetime is after start datetime
+        if (endDateTime <= startDateTime) {
+            showDateTimeError('endDateTime', 'End date and time must be after start date and time');
+            hasErrors = true;
+        }
+        
+        // Show validation summary
+        showValidationSummary(hasErrors);
+        
+        return !hasErrors;
+    }
+    
+    function showDateTimeError(fieldId, message) {
+        const field = document.getElementById(fieldId);
+        const errorDiv = document.getElementById(fieldId + 'Error');
+        
+        field.classList.add('border-red-500', 'focus:border-red-500', 'focus:ring-red-500/20');
+        errorDiv.textContent = message;
+        errorDiv.classList.remove('hidden');
+    }
+    
+    function clearDateTimeErrors() {
+        const fields = ['startDateTime', 'endDateTime'];
+        fields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(fieldId + 'Error');
+            
+            field.classList.remove('border-red-500', 'focus:border-red-500', 'focus:ring-red-500/20');
+            field.classList.add('border-gray-200', 'dark:border-gray-600');
+            errorDiv.classList.add('hidden');
+        });
+    }
+    
+    function showValidationSummary(hasErrors) {
+        const summary = document.getElementById('dateTimeValidationSummary');
+        const message = document.getElementById('validationMessage');
+        
+        if (hasErrors) {
+            summary.classList.remove('hidden');
+            summary.classList.remove('bg-green-50', 'border-green-200', 'text-green-800');
+            summary.classList.add('bg-red-50', 'border-red-200', 'text-red-800');
+            message.textContent = 'Please fix the date and time validation errors above.';
+        } else {
+            summary.classList.remove('hidden');
+            summary.classList.remove('bg-red-50', 'border-red-200', 'text-red-800');
+            summary.classList.add('bg-green-50', 'border-green-200', 'text-green-800');
+            message.textContent = '✅ Date and time validation passed!';
+        }
+    }
+    
+    function validateFormBeforeSubmit() {
+        return validateDateTime();
+    }
+
+    // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
         const negativeMarkingCheckbox = document.getElementById('negativeMarking');
         if (negativeMarkingCheckbox.checked) {
             document.getElementById('negativeMarkingInputContainer').classList.remove('hidden');
         }
+        
+        // Initial validation
+        validateDateTime();
+        
+        // Add progress step functionality
+        const progressSteps = document.querySelectorAll('.progress-step');
+        progressSteps.forEach((step, index) => {
+            step.addEventListener('click', () => {
+                progressSteps.forEach(s => s.classList.remove('active'));
+                step.classList.add('active');
+            });
+        });
     });
 </script>
 @endsection 

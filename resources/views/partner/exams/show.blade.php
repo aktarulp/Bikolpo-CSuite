@@ -3,31 +3,14 @@
 @section('title', 'Exam Details')
 
 @section('content')
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-6">
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-0">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                           <!-- Header -->
-         <div class="mb-6">
+         <div class="mb-1">
              <div class="flex items-center justify-between">
-                 <div>
-                     <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ $exam->title }}</h1>
-                     <p class="mt-2 text-gray-600 dark:text-gray-400">Exam ID: #{{ $exam->id }}</p>
-                 </div>
-                 
+
                  <div class="flex space-x-3">
-                     <a href="{{ route('partner.exams.edit', $exam) }}" 
-                        class="inline-flex items-center px-4 py-2 rounded-lg shadow-lg text-sm font-bold text-white bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transform hover:scale-105 transition-all duration-200">
-                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                         </svg>
-                         Edit Exam
-                     </a>
-                     <a href="{{ route('partner.exams.index') }}" 
-                        class="inline-flex items-center px-4 py-2 rounded-lg shadow-lg text-sm font-bold text-white bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transform hover:scale-105 transition-all duration-200">
-                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                         </svg>
-                         Back to Exams
-                     </a>
+                     <!-- Header actions can be added here if needed in the future -->
                  </div>
              </div>
          </div>
@@ -121,6 +104,136 @@
                          </div>
                      </div>
                                  </div>
+                                 
+                                 <!-- Students Assigned Section -->
+                                 <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
+                                     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Students Assigned</h3>
+                                     </div>
+                                     <div class="px-6 py-4">
+                                         @if($exam->accessCodes->count() > 0)
+                                             <div class="space-y-2">
+                                                 @foreach($exam->accessCodes as $accessCode)
+                                                     <div class="flex items-center justify-between py-3 px-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                                         <div class="flex items-center space-x-4">
+                                                             <div class="flex items-center space-x-3">
+                                                                 <span class="inline-flex items-center justify-center w-8 h-8 bg-green-100 text-green-800 text-sm font-medium rounded-full">
+                                                                     {{ strtoupper(substr($accessCode->student->full_name ?? 'S', 0, 1)) }}
+                                                                 </span>
+                                                                 <div>
+                                                                     <span class="text-sm font-medium text-gray-900 dark:text-white">
+                                                                         {{ $accessCode->student->full_name ?? 'Unknown Student' }}
+                                                                     </span>
+                                                                     <div class="text-xs text-gray-500 dark:text-gray-400">
+                                                                         {{ $accessCode->student->phone ?? 'No phone number' }}
+                                                                     </div>
+                                                                 </div>
+                                                             </div>
+                                                         </div>
+                                                         <div class="flex items-center space-x-4">
+                                                             <div class="text-right">
+                                                                 <div class="text-sm font-mono text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-600 px-3 py-1 rounded">
+                                                                     {{ $accessCode->access_code ?? 'No code' }}
+                                                                 </div>
+                                                                 <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                                                     @if($accessCode->status === 'active')
+                                                                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                                             Active
+                                                                         </span>
+                                                                     @elseif($accessCode->status === 'used')
+                                                                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                                             Used
+                                                                         </span>
+                                                                     @else
+                                                                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                                                             {{ ucfirst($accessCode->status ?? 'Unknown') }}
+                                                                         </span>
+                                                                     @endif
+                                                                 </div>
+                                                             </div>
+                                                         </div>
+                                                     </div>
+                                                 @endforeach
+                                             </div>
+                                             <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+                                                 <span class="font-medium">Total Students:</span> {{ $exam->accessCodes->count() }} | 
+                                                 <span class="font-medium">Active Codes:</span> {{ $exam->accessCodes->where('status', 'active')->count() }} | 
+                                                 <span class="font-medium">Used Codes:</span> {{ $exam->accessCodes->where('status', 'used')->count() }}
+                                             </div>
+                                         @else
+                                             <div class="text-center py-8">
+                                                 <div class="mx-auto h-16 w-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                                                     <svg class="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                                                     </svg>
+                                                 </div>
+                                                 <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No Students Assigned</h4>
+                                                 <p class="text-gray-500 dark:text-gray-400 mb-4">This exam doesn't have any students assigned yet.</p>
+                                                 <a href="{{ route('partner.exams.assign', $exam) }}" 
+                                                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                                                     </svg>
+                                                     Assign Students
+                                                 </a>
+                                             </div>
+                                         @endif
+                                     </div>
+                                 </div>
+                                 
+                                 <!-- Questions Assigned Section -->
+                                 <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
+                                     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Questions Assigned</h3>
+                                     </div>
+                                     <div class="px-6 py-4">
+                                         @if($exam->questions->count() > 0)
+                                             <div class="space-y-2">
+                                                 @foreach($exam->questions as $question)
+                                                     <div class="flex items-center justify-between py-2 px-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                                         <div class="flex items-center space-x-3">
+                                                             <span class="inline-flex items-center justify-center w-6 h-6 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
+                                                                 {{ $loop->iteration }}
+                                                             </span>
+                                                             <span class="text-sm text-gray-900 dark:text-white font-medium">
+                                                                 {{ Str::limit($question->question_text, 80) }}
+                                                             </span>
+                                                         </div>
+                                                         <div class="flex items-center space-x-4">
+                                                             <span class="text-xs text-gray-500 dark:text-gray-400">
+                                                                 {{ ucfirst($question->question_type) }}
+                                                             </span>
+                                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                                 {{ $question->pivot->marks ?? 1 }} marks
+                                                             </span>
+                                                         </div>
+                                                     </div>
+                                                 @endforeach
+                                             </div>
+                                             <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+                                                 <span class="font-medium">Total Questions:</span> {{ $exam->questions->count() }} | 
+                                                 <span class="font-medium">Total Marks:</span> {{ $exam->questions->sum('pivot.marks') ?? $exam->questions->count() }}
+                                             </div>
+                                         @else
+                                             <div class="text-center py-8">
+                                                 <div class="mx-auto h-16 w-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                                                     <svg class="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                                     </svg>
+                                                 </div>
+                                                 <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No Questions Assigned</h4>
+                                                 <p class="text-gray-500 dark:text-gray-400 mb-4">This exam doesn't have any questions assigned yet.</p>
+                                                 <a href="{{ route('partner.exams.assign-questions', $exam) }}" 
+                                                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                                     </svg>
+                                                     Assign Questions
+                                                 </a>
+                                             </div>
+                                         @endif
+                                     </div>
+                                 </div>
             </div>
 
             <!-- Sidebar -->
@@ -134,7 +247,10 @@
                                  <form action="{{ route('partner.exams.publish', $exam) }}" method="POST" class="inline">
                                      @csrf
                                      <button type="submit" 
-                                             class="px-3 py-1 bg-green-600 text-white text-xs rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200">
+                                             class="inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xs font-medium rounded-md hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transform hover:scale-105 transition-all duration-200 shadow-md">
+                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+                                         </svg>
                                          Publish
                                      </button>
                                  </form>
@@ -142,7 +258,10 @@
                                  <form action="{{ route('partner.exams.unpublish', $exam) }}" method="POST" class="inline">
                                      @csrf
                                      <button type="submit" 
-                                             class="px-3 py-1 bg-yellow-600 text-white text-xs rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors duration-200">
+                                             class="inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-yellow-500 to-orange-600 text-white text-xs font-medium rounded-md hover:from-yellow-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transform hover:scale-105 transition-all duration-200 shadow-md">
+                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"></path>
+                                         </svg>
                                          Unpublish
                                      </button>
                                  </form>
@@ -150,6 +269,20 @@
                          </div>
                      </div>
                      <div class="px-4 py-3 space-y-2">
+                        <a href="{{ route('partner.exams.edit', $exam) }}" 
+                           class="w-full flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors duration-200">
+                            <svg class="w-4 h-4 mr-3 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                            </svg>
+                            Edit Exam
+                        </a>
+                        <a href="{{ route('partner.exams.index') }}" 
+                           class="w-full flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors duration-200">
+                            <svg class="w-4 h-4 mr-3 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                            </svg>
+                            Back to Exams
+                        </a>
                         <a href="{{ route('partner.exams.assign-questions', $exam) }}" 
                            class="w-full flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors duration-200">
                             <svg class="w-4 h-4 mr-3 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -167,7 +300,7 @@
                         <a href="{{ route('partner.exams.results', $exam) }}" 
                            class="w-full flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors duration-200">
                             <svg class="w-4 h-4 mr-3 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                             </svg>
                             View Results
                         </a>
@@ -178,6 +311,18 @@
                             </svg>
                             Export Data
                         </a>
+                        <div class="border-t border-gray-200 dark:border-gray-700 my-2"></div>
+                        <form action="{{ route('partner.exams.destroy', $exam) }}" method="POST" class="block">
+                            @csrf @method('DELETE')
+                            <button type="submit" 
+                                    class="w-full flex items-center px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors duration-200"
+                                    onclick="return confirm('Are you sure you want to delete this exam? This action cannot be undone.')">
+                                <svg class="w-4 h-4 mr-3 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                                Delete Exam
+                            </button>
+                        </form>
                     </div>
                 </div>
 
@@ -221,139 +366,9 @@
             </div>
         </div>
 
-        <!-- Questions Assigned Section -->
-        <div class="mt-6">
-            <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Questions Assigned</h3>
-                </div>
-                <div class="px-6 py-4">
-                    @if($exam->questions->count() > 0)
-                        <div class="space-y-2">
-                            @foreach($exam->questions as $question)
-                                <div class="flex items-center justify-between py-2 px-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                                    <div class="flex items-center space-x-3">
-                                        <span class="inline-flex items-center justify-center w-6 h-6 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
-                                            {{ $loop->iteration }}
-                                        </span>
-                                        <span class="text-sm text-gray-900 dark:text-white font-medium">
-                                            {{ Str::limit($question->question_text, 80) }}
-                                        </span>
-                                    </div>
-                                    <div class="flex items-center space-x-4">
-                                        <span class="text-xs text-gray-500 dark:text-gray-400">
-                                            {{ ucfirst($question->question_type) }}
-                                        </span>
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                            {{ $question->pivot->marks ?? 1 }} marks
-                                        </span>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                        <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">
-                            <span class="font-medium">Total Questions:</span> {{ $exam->questions->count() }} | 
-                            <span class="font-medium">Total Marks:</span> {{ $exam->questions->sum('pivot.marks') ?? $exam->questions->count() }}
-                        </div>
-                    @else
-                        <div class="text-center py-8">
-                            <div class="mx-auto h-16 w-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
-                                <svg class="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                </svg>
-                            </div>
-                            <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No Questions Assigned</h4>
-                            <p class="text-gray-500 dark:text-gray-400 mb-4">This exam doesn't have any questions assigned yet.</p>
-                            <a href="{{ route('partner.exams.assign', $exam) }}" 
-                               class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                </svg>
-                                Assign Questions
-                            </a>
-                        </div>
-                    @endif
-                </div>
-            </div>
-        </div>
 
-        <!-- Students Assigned Section -->
-        <div class="mt-6">
-            <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Students Assigned</h3>
-                </div>
-                <div class="px-6 py-4">
-                    @if($exam->accessCodes->count() > 0)
-                        <div class="space-y-2">
-                            @foreach($exam->accessCodes as $accessCode)
-                                <div class="flex items-center justify-between py-3 px-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                                    <div class="flex items-center space-x-4">
-                                        <div class="flex items-center space-x-3">
-                                            <span class="inline-flex items-center justify-center w-8 h-8 bg-green-100 text-green-800 text-sm font-medium rounded-full">
-                                                {{ strtoupper(substr($accessCode->student->full_name ?? 'S', 0, 1)) }}
-                                            </span>
-                                            <div>
-                                                <span class="text-sm font-medium text-gray-900 dark:text-white">
-                                                    {{ $accessCode->student->full_name ?? 'Unknown Student' }}
-                                                </span>
-                                                <div class="text-xs text-gray-500 dark:text-gray-400">
-                                                    {{ $accessCode->student->phone ?? 'No phone number' }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center space-x-4">
-                                        <div class="text-right">
-                                            <div class="text-sm font-mono text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-600 px-3 py-1 rounded">
-                                                {{ $accessCode->access_code ?? 'No code' }}
-                                            </div>
-                                            <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                                @if($accessCode->status === 'active')
-                                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                        Active
-                                                    </span>
-                                                @elseif($accessCode->status === 'used')
-                                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                                        Used
-                                                    </span>
-                                                @else
-                                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                                        {{ ucfirst($accessCode->status ?? 'Unknown') }}
-                                                    </span>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                        <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">
-                            <span class="font-medium">Total Students:</span> {{ $exam->accessCodes->count() }} | 
-                            <span class="font-medium">Active Codes:</span> {{ $exam->accessCodes->where('status', 'active')->count() }} | 
-                            <span class="font-medium">Used Codes:</span> {{ $exam->accessCodes->where('status', 'used')->count() }}
-                        </div>
-                    @else
-                        <div class="text-center py-8">
-                            <div class="mx-auto h-16 w-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
-                                <svg class="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                                </svg>
-                            </div>
-                            <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No Students Assigned</h4>
-                            <p class="text-gray-500 dark:text-gray-400 mb-4">This exam doesn't have any students assigned yet.</p>
-                            <a href="{{ route('partner.exams.assign', $exam) }}" 
-                               class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                                </svg>
-                                Assign Students
-                            </a>
-                        </div>
-                    @endif
-                </div>
-            </div>
-        </div>
+
+
     </div>
 </div>
 @endsection

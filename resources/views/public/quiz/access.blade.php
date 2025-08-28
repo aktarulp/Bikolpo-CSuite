@@ -29,6 +29,24 @@
 
             <!-- Access Form -->
             <div class="bg-white rounded-xl shadow-xl p-8">
+                <!-- Phone Number Format Help -->
+                <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div class="flex">
+                        <svg class="w-5 h-5 text-blue-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-blue-800">Phone Number Format</h3>
+                            <div class="mt-2 text-sm text-blue-700">
+                                <p><strong>Important:</strong> Enter your phone number in the format <code class="bg-blue-100 px-1 rounded">01XXXXXXXXX</code></p>
+                                <p class="mt-1">• <strong>Do NOT</strong> include +880 or country code</p>
+                                <p class="mt-1">• <strong>Do NOT</strong> include spaces or dashes</p>
+                                <p class="mt-1">• <strong>Example:</strong> If your number is +880 17 1234 5678, enter: <code class="bg-blue-100 px-1 rounded">01712345678</code></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 @if ($errors->any())
                     <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
                         <div class="flex">
@@ -73,7 +91,8 @@
                                    maxlength="11"
                                    required>
                         </div>
-                        <p class="mt-2 text-sm text-gray-500">Enter your 11-digit Bangladeshi phone number (e.g., 01XXXXXXXXX)</p>
+                        <p class="mt-2 text-sm text-gray-500">Enter your 11-digit Bangladeshi phone number starting with 01 (e.g., 01712345678)</p>
+                        <p class="mt-1 text-xs text-gray-400">Note: Do not include +880 or country code</p>
                     </div>
 
                     <!-- Access Code -->

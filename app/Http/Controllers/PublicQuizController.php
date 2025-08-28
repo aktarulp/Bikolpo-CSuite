@@ -25,35 +25,102 @@ class PublicQuizController extends Controller
      */
     public function processAccess(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        // Normalize phone number to handle both formats
+        $phone = $this->normalizePhoneNumber($request->phone);
+        
+        // Log the phone number processing for debugging
+        \Log::info('Quiz access attempt', [
+            'original_phone' => $request->phone,
+            'normalized_phone' => $phone,
+            'access_code' => $request->access_code
+        ]);
+        
+        $validator = Validator::make(['phone' => $phone, 'access_code' => $request->access_code], [
             'phone' => 'required|string|regex:/^01[3-9][0-9]{8}$/|max:15',
             'access_code' => 'required|string|size:6',
         ], [
-            'phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
+            'phone.regex' => 'Please enter a valid Bangladeshi phone number starting with 01 (e.g., 01712345678). Do not include +880 or country code.',
         ]);
 
         if ($validator->fails()) {
+            \Log::warning('Quiz access validation failed', [
+                'phone' => $phone,
+                'access_code' => $request->access_code,
+                'errors' => $validator->errors()->toArray()
+            ]);
             return back()->withErrors($validator)->withInput();
         }
 
+        // Try to find access code with normalized phone number
         $accessCode = ExamAccessCode::where('access_code', $request->access_code)
-            ->whereHas('student', function ($query) use ($request) {
-                $query->where('phone', $request->phone);
+            ->whereHas('student', function ($query) use ($phone) {
+                $query->where('phone', $phone)
+                      ->orWhere('phone', '+880 ' . substr($phone, 0, 2) . ' ' . substr($phone, 2))
+                      ->orWhere('phone', '+880' . substr($phone, 0, 2) . ' ' . substr($phone, 2));
             })
             ->with(['exam', 'student'])
             ->first();
 
+        // Debug: Log what we're searching for
+        \Log::info('Phone number search details', [
+            'normalized_phone' => $phone,
+            'search_patterns' => [
+                $phone,
+                '+880 ' . substr($phone, 0, 2) . ' ' . substr($phone, 2),
+                '+880' . substr($phone, 0, 2) . ' ' . substr($phone, 2)
+            ]
+        ]);
+
         if (!$accessCode || !$accessCode->isValid()) {
-            return back()->withErrors(['access' => 'Invalid phone number or access code.'])->withInput();
+            \Log::warning('Quiz access failed - invalid access code or phone', [
+                'phone' => $phone,
+                'access_code' => $request->access_code,
+                'access_code_found' => $accessCode ? true : false,
+                'is_valid' => $accessCode ? $accessCode->isValid() : false
+            ]);
+            
+            // Additional debugging: Check what students exist with similar phone numbers
+            $similarStudents = \App\Models\Student::where('phone', 'LIKE', '%' . substr($phone, 2) . '%')->get();
+            \Log::info('Similar students found', [
+                'count' => $similarStudents->count(),
+                'students' => $similarStudents->map(function($s) {
+                    return ['id' => $s->id, 'phone' => $s->phone, 'name' => $s->full_name];
+                })->toArray()
+            ]);
+            
+            // Provide more specific error messages
+            if (!$accessCode) {
+                return back()->withErrors(['access' => 'Invalid access code. Please check your code and try again.'])->withInput();
+            }
+            
+            if ($accessCode->status === 'used') {
+                return back()->withErrors(['access' => 'This access code has already been used. Contact your teacher if you need to retake the exam.'])->withInput();
+            }
+            
+            if ($accessCode->isExpired()) {
+                return back()->withErrors(['access' => 'This access code has expired. Please contact your teacher for a new code.'])->withInput();
+            }
+            
+            return back()->withErrors(['access' => 'Access code is not valid. Please check your code and try again.'])->withInput();
         }
+
+        \Log::info('Quiz access successful', [
+            'student_id' => $accessCode->student_id,
+            'exam_id' => $accessCode->exam_id,
+            'student_name' => $accessCode->student->full_name
+        ]);
 
         // Check if student has already attempted this exam
         $existingResult = StudentExamResult::where('student_id', $accessCode->student_id)
             ->where('exam_id', $accessCode->exam_id)
             ->first();
 
-        if ($existingResult && $existingResult->status === 'completed') {
-            return back()->withErrors(['access' => 'You have already completed this exam.'])->withInput();
+        if ($existingResult) {
+            if ($existingResult->status === 'completed') {
+                return back()->withErrors(['access' => 'You have already completed this exam.'])->withInput();
+            } elseif ($existingResult->status === 'in_progress') {
+                return back()->withErrors(['access' => 'You have an exam in progress. Please complete it first or contact your teacher to reset it.'])->withInput();
+            }
         }
 
         // Store access info in session for the quiz
@@ -74,19 +141,25 @@ class PublicQuizController extends Controller
      */
     public function handleMultipleExams(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        // Normalize phone number to handle both formats
+        $phone = $this->normalizePhoneNumber($request->phone);
+        
+        $validator = Validator::make(['phone' => $phone, 'access_code' => $request->access_code], [
             'phone' => 'required|string|regex:/^01[3-9][0-9]{8}$/|max:15',
             'access_code' => 'required|string|size:6',
         ], [
-            'phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
+            'phone.regex' => 'Please enter a valid Bangladeshi phone number starting with 01 (e.g., 01712345678). Do not include +880 or country code.',
         ]);
 
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
 
-        // Find the student by phone number
-        $student = Student::where('phone', $request->phone)->first();
+        // Find the student by phone number (try multiple formats)
+        $student = Student::where('phone', $phone)
+                         ->orWhere('phone', '+880 ' . substr($phone, 0, 2) . ' ' . substr($phone, 2))
+                         ->orWhere('phone', '+880' . substr($phone, 0, 2) . ' ' . substr($phone, 2))
+                         ->first();
         
         if (!$student) {
             return back()->withErrors(['access' => 'Phone number not found.'])->withInput();
@@ -488,5 +561,28 @@ class PublicQuizController extends Controller
         } else {
             return redirect()->route('public.quiz.access')->withErrors(['access' => 'This exam is not currently available.']);
         }
+    }
+
+    /**
+     * Normalize phone number to handle both formats (01XXXXXXXXX and +880 17XXXXXXXX)
+     */
+    private function normalizePhoneNumber($phone)
+    {
+        // Remove any leading/trailing whitespace
+        $phone = trim($phone);
+
+        // Remove any +880 or 880 prefix if present
+        if (strpos($phone, '+880') === 0) {
+            $phone = substr($phone, 4);
+        } elseif (strpos($phone, '880') === 0) {
+            $phone = substr($phone, 3);
+        }
+
+        // Ensure it starts with 01
+        if (strpos($phone, '01') !== 0) {
+            $phone = '01' . $phone;
+        }
+
+        return $phone;
     }
 }

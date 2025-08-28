@@ -32,7 +32,9 @@
                             <div class="flex items-center space-x-4">
                                 <div class="flex-shrink-0">
                                     @if($student->photo)
-                                        <img class="h-12 w-12 rounded-full" src="{{ Storage::url($student->photo) }}" alt="{{ $student->full_name }}">
+                                        <img class="h-12 w-12 rounded-full object-cover" 
+                                             src="{{ Storage::url($student->photo) }}" 
+                                             alt="{{ $student->full_name }}">
                                     @else
                                         <div class="h-12 w-12 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center">
                                             <span class="text-gray-600 dark:text-gray-400 font-medium">
