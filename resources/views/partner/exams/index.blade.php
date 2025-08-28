@@ -199,8 +199,49 @@
                                         </span>
                                     </td>
                                     <td class="px-3 py-3 whitespace-nowrap">
-                                        <div class="relative" x-data="{ open: false }" @click.outside="open = false">
-                                            <button @click="open = !open" class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-200 border border-gray-200 dark:border-gray-600">
+                                        <div class="relative" x-data="{ open: false }" @click.outside="open = false" x-init="$nextTick(() => {
+                                            // Close dropdown when scrolling
+                                            window.addEventListener('scroll', () => { open = false; });
+                                            // Close dropdown when resizing
+                                            window.addEventListener('resize', () => { open = false; });
+                                        })">
+                                            <!-- Backdrop for dropdown -->
+                                            <div x-show="open" 
+                                                 x-transition:enter="transition-opacity ease-out duration-200"
+                                                 x-transition:enter-start="opacity-0"
+                                                 x-transition:enter-end="opacity-100"
+                                                 x-transition:leave="transition-opacity ease-in duration-75"
+                                                 x-transition:leave-start="opacity-100"
+                                                 x-transition:leave-end="opacity-0"
+                                                 class="fixed inset-0 bg-black bg-opacity-25 z-[9998]"
+                                                 style="display: none;"
+                                                 @click="open = false"></div>
+                                            <button @click="open = !open; if(open) $nextTick(() => {
+                                                const button = $el;
+                                                const rect = button.getBoundingClientRect();
+                                                const viewportWidth = window.innerWidth;
+                                                const viewportHeight = window.innerHeight;
+                                                
+                                                const dropdown = $refs.dropdown;
+                                                let left = rect.right - dropdown.offsetWidth;
+                                                let top = rect.bottom + 4;
+                                                
+                                                // Ensure dropdown doesn't go off-screen to the left
+                                                if (left < 8) left = 8;
+                                                
+                                                // Ensure dropdown doesn't go off-screen to the right
+                                                if (left + dropdown.offsetWidth > viewportWidth - 8) {
+                                                    left = viewportWidth - dropdown.offsetWidth - 8;
+                                                }
+                                                
+                                                // If dropdown would go below viewport, position it above the button
+                                                if (top + dropdown.offsetHeight > viewportHeight - 8) {
+                                                    top = rect.top - dropdown.offsetHeight - 4;
+                                                }
+                                                
+                                                dropdown.style.top = top + 'px';
+                                                dropdown.style.left = left + 'px';
+                                            })" class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-200 border border-gray-200 dark:border-gray-600">
                                                 Actions
                                                 <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -215,10 +256,11 @@
                                                  x-transition:leave="transition ease-in duration-75"
                                                  x-transition:leave-start="opacity-100 scale-100"
                                                  x-transition:leave-end="opacity-0 scale-95"
-                                                 class="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-10"
-                                                 style="display: none;">
+                                                 class="fixed w-48 bg-white dark:bg-gray-800 rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700 z-[9999] backdrop-blur-sm"
+                                                 style="display: none;"
+                                                 x-ref="dropdown">
                                                 <div class="py-1">
-                                                    <a href="{{ route('partner.exams.show', $exam) }}" class="flex items-center px-3 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                                                    <a href="{{ route('partner.exams.show', $exam) }}" class="flex items-center px-3 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors duration-200 rounded mx-1">
                                                         <svg class="w-3 h-3 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
@@ -226,21 +268,21 @@
                                                         View Exam
                                                     </a>
                                                     
-                                                    <a href="{{ route('partner.exams.edit', $exam) }}" class="flex items-center px-3 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                                                    <a href="{{ route('partner.exams.edit', $exam) }}" class="flex items-center px-3 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors duration-200 rounded mx-1">
                                                         <svg class="w-3 h-3 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                                         </svg>
                                                         Edit Exam
                                                     </a>
                                                     
-                                                    <a href="{{ route('partner.exams.assign', $exam) }}" class="flex items-center px-3 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                                                    <a href="{{ route('partner.exams.assign', $exam) }}" class="flex items-center px-3 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors duration-200 rounded mx-1">
                                                         <svg class="w-3 h-3 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
                                                         </svg>
                                                         Assign Students
                                                     </a>
                                                     
-                                                    <a href="{{ route('partner.exams.assign-questions', $exam) }}" class="flex items-center px-3 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                                                    <a href="{{ route('partner.exams.assign-questions', $exam) }}" class="flex items-center px-3 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20 transition-colors duration-200 rounded mx-1">
                                                         <svg class="w-3 h-3 mr-2 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                                         </svg>
