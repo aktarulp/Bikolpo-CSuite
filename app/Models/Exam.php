@@ -26,6 +26,9 @@ class Exam extends Model
         'negative_marks_per_question',
         'question_head',
         'exam_question_id',
+        'status',
+        'flag',
+        'created_by',
     ];
 
     protected $casts = [
@@ -80,6 +83,11 @@ class Exam extends Model
         return $this->belongsToMany(Question::class, 'exam_questions')
                     ->withPivot('order', 'marks')
                     ->withTimestamps();
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'created_by');
     }
 
     // Accessors

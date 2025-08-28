@@ -50,6 +50,11 @@ class ExamController extends Controller
 
     public function store(Request $request)
     {
+        // Ensure the authenticated user is a partner
+        if (!auth()->user() || auth()->user()->role !== 'partner') {
+            abort(403, 'Only partners can create exams.');
+        }
+
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -85,6 +90,7 @@ class ExamController extends Controller
         $data['status'] = 'draft';
         $data['flag'] = 'active';
         $data['exam_question_id'] = null;
+        $data['created_by'] = auth()->id(); // Set to the authenticated partner user's ID
         
         // Ensure end time is after start time
         $startTime = \Carbon\Carbon::parse($data['start_time']);
@@ -108,6 +114,21 @@ class ExamController extends Controller
         }
 
         $exam = Exam::create($data);
+
+        // Debug: Log what was actually saved to the database
+        \Log::info('Exam created', [
+            'exam_id' => $exam->id,
+            'data_sent' => $data,
+            'exam_attributes' => $exam->getAttributes(),
+            'created_by_value' => $exam->created_by,
+            'auth_user_id' => auth()->id(),
+            'partner_id' => $this->getPartnerId(),
+            'user_info' => [
+                'user_id' => auth()->id(),
+                'user_name' => auth()->user()->name ?? 'Unknown',
+                'user_email' => auth()->user()->email ?? 'Unknown'
+            ]
+        ]);
 
         return redirect()->route('partner.exams.index')
             ->with('success', 'Exam created successfully.');
@@ -193,6 +214,11 @@ class ExamController extends Controller
 
     public function publish(Exam $exam)
     {
+        // Ensure the authenticated user is a partner
+        if (!auth()->user() || auth()->user()->role !== 'partner') {
+            abort(403, 'Only partners can publish exams.');
+        }
+
         $partnerId = $this->getPartnerId();
         
         // Verify the exam belongs to this partner
@@ -238,6 +264,11 @@ class ExamController extends Controller
 
     public function unpublish(Exam $exam)
     {
+        // Ensure the authenticated user is a partner
+        if (!auth()->user() || auth()->user()->role !== 'partner') {
+            abort(403, 'Only partners can unpublish exams.');
+        }
+
         $partnerId = $this->getPartnerId();
         
         // Verify the exam belongs to this partner
