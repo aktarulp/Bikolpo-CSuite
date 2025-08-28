@@ -177,6 +177,28 @@
         // Timer functionality
         let timeRemaining = {{ $remainingTime }};
         const totalTime = {{ $exam->duration * 60 }};
+        
+        // Debug information
+        console.log('Debug Timer Info:', {
+            timeRemaining: {{ $remainingTime }},
+            examDuration: {{ $exam->duration }},
+            totalTimeSeconds: {{ $exam->duration * 60 }},
+            startedAt: '{{ $result->started_at }}',
+            currentTime: '{{ now() }}'
+        });
+        
+        // Fallback for negative or zero remaining time
+        if (timeRemaining <= 0) {
+            console.warn('Timer shows expired or negative time, using exam duration as fallback');
+            timeRemaining = totalTime;
+        }
+        
+        // Fallback for invalid exam duration
+        if (totalTime <= 0) {
+            console.error('Invalid exam duration detected:', totalTime);
+            timeRemaining = 3600; // Default to 1 hour
+        }
+        
         let timerInterval;
         
         function updateTimer() {

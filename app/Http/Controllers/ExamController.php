@@ -184,10 +184,8 @@ class ExamController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'exam_type' => 'required|in:online,offline',
-            'startDate' => 'required|date',
-            'startTime' => 'required|date_format:H:i',
-            'endDate' => 'required|date|after_or_equal:startDate',
-            'endTime' => 'required|date_format:H:i',
+            'startDateTime' => 'required|date',
+            'endDateTime' => 'required|date',
             'duration' => 'required|integer|min:15|max:480',
             'total_questions' => 'required|integer|min:1|max:1000',
             'passing_marks' => 'required|integer|min:0|max:100',
@@ -199,13 +197,33 @@ class ExamController extends Controller
             'exam_question_id' => 'nullable|exists:exam_questions,id',
         ]);
 
-        // Combine date and time fields to create datetime values
-        $startDateTime = \Carbon\Carbon::parse($request->startDate . ' ' . $request->startTime);
-        $endDateTime = \Carbon\Carbon::parse($request->endDate . ' ' . $request->endTime);
+        // Parse the datetime-local inputs directly
+        $startDateTime = \Carbon\Carbon::parse($request->startDateTime);
+        $endDateTime = \Carbon\Carbon::parse($request->endDateTime);
+        $now = \Carbon\Carbon::now();
+
+        // Comprehensive datetime validation
+        $errors = [];
+
+        // Validate that start datetime is in the future
+        if ($startDateTime <= $now) {
+            $errors['startDateTime'] = 'Start date and time must be in the future. Current time is ' . $now->format('M d, Y H:i');
+        }
 
         // Validate that end datetime is after start datetime
         if ($endDateTime <= $startDateTime) {
-            return back()->withErrors(['endTime' => 'End time must be after start time.'])->withInput();
+            $errors['endDateTime'] = 'End date and time must be after start date and time.';
+        }
+
+        // Validate that end datetime is not too far in the future (optional: limit to 1 year)
+        $maxEndDate = $now->copy()->addYear();
+        if ($endDateTime > $maxEndDate) {
+            $errors['endDateTime'] = 'End date and time cannot be more than 1 year in the future.';
+        }
+
+        // If there are validation errors, return with errors
+        if (!empty($errors)) {
+            return back()->withErrors($errors)->withInput();
         }
 
         $data = $request->only([
@@ -219,7 +237,7 @@ class ExamController extends Controller
             'exam_question_id',
         ]);
 
-        // Add the combined datetime values
+        // Add the parsed datetime values
         $data['start_time'] = $startDateTime->format('Y-m-d H:i:s');
         $data['end_time'] = $endDateTime->format('Y-m-d H:i:s');
         

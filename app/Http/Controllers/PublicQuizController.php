@@ -344,8 +344,8 @@ class PublicQuizController extends Controller
             return redirect()->route('public.quiz.result', $exam->id);
         }
 
-        // $questions = $exam->questionSet->questions;
-        $questions = collect(); // Empty collection for now
+        // Load questions from exam_questions table
+        $questions = $exam->questions()->orderBy('pivot_order')->get();
         $remainingTime = $endTime->diffInSeconds(now());
 
         return view('public.quiz.take', compact('exam', 'questions', 'result', 'remainingTime'));
