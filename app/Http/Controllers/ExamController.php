@@ -14,6 +14,7 @@ class ExamController extends Controller
         $partnerId = $this->getPartnerId();
         $query = Exam::with(['partner', 'examQuestion'])
             ->withCount('questions as assigned_questions_count')
+            ->withCount('assignedStudents as assigned_students_count')
             ->where('partner_id', $partnerId);
 
         // Filters

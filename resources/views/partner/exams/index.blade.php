@@ -145,6 +145,7 @@
                                 <th class="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider min-w-48">Title</th>
                                 <th class="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-20">Type</th>
                                 <th class="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-32" title="Questions: Assigned/Total">Total Questions</th>
+                                <th class="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-28" title="Students Assigned to Exam">Total Students</th>
                                 <th class="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-24">Status</th>
                                 <th class="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-32">Actions</th>
                             </tr>
@@ -183,6 +184,24 @@
                                             @if(($exam->assigned_questions_count ?? 0) > 0 && ($exam->total_questions ?? 0) > 0)
                                                 <span class="text-xs text-gray-500 dark:text-gray-400">
                                                     {{ round((($exam->assigned_questions_count / $exam->total_questions) * 100), 1) }}% filled
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </td>
+                                    
+                                    <td class="px-3 py-3 whitespace-nowrap">
+                                        <div class="flex flex-col items-start space-y-1">
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
+                                                @if(($exam->assigned_students_count ?? 0) > 0)
+                                                    bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200
+                                                @else
+                                                    bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400
+                                                @endif">
+                                                {{ $exam->assigned_students_count ?? 0 }} students
+                                            </span>
+                                            @if(($exam->assigned_students_count ?? 0) > 0)
+                                                <span class="text-xs text-gray-500 dark:text-gray-400">
+                                                    Assigned
                                                 </span>
                                             @endif
                                         </div>
