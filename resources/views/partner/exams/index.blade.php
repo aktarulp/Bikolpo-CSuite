@@ -144,11 +144,7 @@
                                 <th class="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-16">ID</th>
                                 <th class="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider min-w-48">Title</th>
                                 <th class="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-20">Type</th>
-                                <th class="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-24">Qty</th>
-                                <th class="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-28">Passing</th>
-                                <th class="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-20">Dur</th>
-                                <th class="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-28">Marking</th>
-                                <th class="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-32">Window</th>
+                                <th class="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-32" title="Questions: Assigned/Total">Total Questions</th>
                                 <th class="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-24">Status</th>
                                 <th class="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider w-32">Actions</th>
                             </tr>
@@ -175,34 +171,23 @@
                                     </td>
                                     
                                     <td class="px-3 py-3 whitespace-nowrap">
-                                        <span class="text-xs font-medium text-gray-700 dark:text-gray-200">{{ $exam->total_questions ?? 'N/A' }}</span>
-                                    </td>
-                                    
-                                    <td class="px-3 py-3 whitespace-nowrap">
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200">
-                                            {{ $exam->passing_marks }}%
-                                        </span>
-                                    </td>
-                                    <td class="px-3 py-3 whitespace-nowrap">
-                                        <span class="text-xs font-medium text-gray-700 dark:text-gray-200">{{ $exam->duration }}m</span>
-                                    </td>
-                                    <td class="px-3 py-3 whitespace-nowrap">
-                                        @if($exam->has_negative_marking)
-                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200">
-                                                -{{ $exam->negative_marks_per_question }}
+                                        <div class="flex flex-col items-start space-y-1">
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium 
+                                                @if(($exam->assigned_questions_count ?? 0) > 0) 
+                                                    bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200
+                                                @else 
+                                                    bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400
+                                                @endif">
+                                                {{ $exam->assigned_questions_count ?? 0 }}/{{ $exam->total_questions ?? 0 }}
                                             </span>
-                                        @else
-                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
-                                                No
-                                            </span>
-                                        @endif
-                                    </td>
-                                    <td class="px-3 py-3 whitespace-nowrap">
-                                        <div class="text-xs text-gray-700 dark:text-gray-200">
-                                            <div class="font-medium">{{ $exam->start_time->format('M d') }}</div>
-                                            <div class="text-gray-500 dark:text-gray-400">{{ $exam->start_time->format('H:i') }}-{{ $exam->end_time->format('H:i') }}</div>
+                                            @if(($exam->assigned_questions_count ?? 0) > 0 && ($exam->total_questions ?? 0) > 0)
+                                                <span class="text-xs text-gray-500 dark:text-gray-400">
+                                                    {{ round((($exam->assigned_questions_count / $exam->total_questions) * 100), 1) }}% filled
+                                                </span>
+                                            @endif
                                         </div>
                                     </td>
+                                    
                                     <td class="px-3 py-3 whitespace-nowrap">
                                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
                                             @if($exam->status === 'published') bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200
