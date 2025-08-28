@@ -235,30 +235,99 @@ class ExamController extends Controller
             ->with(['topic', 'subject'])
             ->get();
             
-        $assignedQuestions = collect();
+        // Get currently assigned questions for this exam
+        $assignedQuestions = \App\Models\ExamQuestion::where('exam_id', $exam->id)
+            ->pluck('question_id');
         
-        return view('partner.exams.assign-questions', compact('exam', 'questions', 'assignedQuestions'));
+        // Get subjects and topics for filters
+        $subjects = \App\Models\Subject::where('status', 'active')->get();
+        $topics = \App\Models\Topic::where('status', 'active')->get();
+        
+        // Debug: Log the data being passed to the view
+        \Log::info('Assign Questions View Data', [
+            'exam_id' => $exam->id,
+            'questions_count' => $questions->count(),
+            'assigned_questions_count' => $assignedQuestions->count(),
+            'subjects_count' => $subjects->count(),
+            'topics_count' => $topics->count(),
+            'partner_id' => $partnerId
+        ]);
+        
+        return view('partner.exams.assign-questions', compact('exam', 'questions', 'assignedQuestions', 'subjects', 'topics'));
     }
 
     public function storeAssignedQuestions(Request $request, Exam $exam)
     {
-        $request->validate([
-            'question_ids' => 'required|array',
-            'question_ids.*' => 'exists:questions,id'
-        ]);
+        try {
+            // Debug: Log the request data
+            \Log::info('Assign Questions Request', [
+                'exam_id' => $exam->id,
+                'request_data' => $request->all(),
+                'question_ids' => $request->question_ids
+            ]);
 
-        $partnerId = $this->getPartnerId();
-        
-        // Verify the exam belongs to this partner
-        if ($exam->partner_id !== $partnerId) {
-            abort(403, 'Unauthorized access to this exam.');
+            $request->validate([
+                'question_ids' => 'required|array',
+                'question_ids.*' => 'exists:questions,id'
+            ]);
+
+            $partnerId = $this->getPartnerId();
+            
+            // Verify the exam belongs to this partner
+            if ($exam->partner_id !== $partnerId) {
+                abort(403, 'Unauthorized access to this exam.');
+            }
+
+            // Clear existing assigned questions for this exam
+            $deletedCount = \App\Models\ExamQuestion::where('exam_id', $exam->id)->delete();
+            \Log::info('Deleted existing exam questions', ['deleted_count' => $deletedCount]);
+
+            // Store new assigned questions
+            $questionIds = $request->question_ids;
+            $examQuestions = [];
+            
+            foreach ($questionIds as $index => $questionId) {
+                $question = \App\Models\Question::find($questionId);
+                $examQuestions[] = [
+                    'exam_id' => $exam->id,
+                    'question_id' => $questionId,
+                    'order' => $index + 1,
+                    'marks' => $question->marks ?? 1,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+
+            // Debug: Log the exam questions to be inserted
+            \Log::info('Exam Questions to Insert', [
+                'exam_id' => $exam->id,
+                'exam_questions' => $examQuestions
+            ]);
+
+            // Insert all exam questions
+            if (!empty($examQuestions)) {
+                $insertedCount = \App\Models\ExamQuestion::insert($examQuestions);
+                \Log::info('Inserted exam questions', ['inserted_count' => $insertedCount]);
+            }
+
+            // Update the exam's total questions count
+            $exam->update(['total_questions' => count($questionIds)]);
+            \Log::info('Updated exam total questions', ['new_total' => count($questionIds)]);
+
+            return redirect()->route('partner.exams.index')
+                ->with('success', 'Questions assigned successfully to the exam.');
+
+        } catch (\Exception $e) {
+            \Log::error('Error assigning questions to exam', [
+                'exam_id' => $exam->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->back()
+                ->with('error', 'Error assigning questions: ' . $e->getMessage())
+                ->withInput();
         }
-
-        // For now, just update the total questions count
-        $exam->update(['total_questions' => count($request->question_ids)]);
-
-        return redirect()->route('partner.exams.index')
-            ->with('success', 'Questions assigned successfully to the exam.');
     }
 
     private function getPartnerId(): int

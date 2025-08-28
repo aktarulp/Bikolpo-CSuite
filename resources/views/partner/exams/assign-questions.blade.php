@@ -246,6 +246,22 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Form submission debugging
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        console.log('Form submitting...');
+        const formData = new FormData(form);
+        const questionIds = formData.getAll('question_ids[]');
+        console.log('Question IDs being submitted:', questionIds);
+        console.log('Total questions selected:', questionIds.length);
+        
+        if (questionIds.length === 0) {
+            e.preventDefault();
+            alert('Please select at least one question before submitting.');
+            return false;
+        }
+    });
+
     const questionCheckboxes = document.querySelectorAll('.question-checkbox');
     const selectAllBtn = document.getElementById('select-all');
     const clearAllBtn = document.getElementById('clear-all');
