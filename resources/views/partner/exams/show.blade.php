@@ -35,106 +35,126 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Main Exam Details -->
             <div class="lg:col-span-2 space-y-6">
-                <!-- Basic Information -->
-                <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Basic Information</h2>
-                    </div>
+                                 <!-- Basic Information -->
+                 <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
+                     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                         <h2 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $exam->title }}</h2>
+                     </div>
                     <div class="px-6 py-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500 dark:text-gray-400">Exam Title</label>
-                                <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $exam->title }}</p>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500 dark:text-gray-400">Exam Type</label>
-                                <span class="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                    {{ $exam->exam_type === 'online' ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800' }}">
-                                    {{ ucfirst($exam->exam_type) }}
-                                </span>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500 dark:text-gray-400">Status</label>
-                                <span class="mt-1 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                    @if($exam->status === 'published') bg-green-100 text-green-800
-                                    @elseif($exam->status === 'draft') bg-gray-100 text-gray-800
-                                    @elseif($exam->status === 'ongoing') bg-blue-100 text-blue-800
-                                    @elseif($exam->status === 'completed') bg-purple-100 text-purple-800
-                                    @else bg-red-100 text-red-800 @endif">
-                                    {{ ucfirst($exam->status) }}
-                                </span>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500 dark:text-gray-400">Created</label>
-                                <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $exam->created_at->format('M d, Y H:i') }}</p>
+                                                                         <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Exam Title</span>
+                                <span class="text-sm text-gray-900 dark:text-white">{{ $exam->title }}</span>
                             </div>
                         </div>
-                        @if($exam->description)
-                        <div class="mt-4">
-                            <label class="block text-sm font-medium text-gray-500 dark:text-gray-400">Description</label>
-                            <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $exam->description }}</p>
+                        
+                        <!-- Exam Details Grid -->
+                        <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div class="text-center">
+                                    <div class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Status</div>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                        @if($exam->status === 'published') bg-green-100 text-green-800
+                                        @elseif($exam->status === 'draft') bg-gray-100 text-gray-800
+                                        @elseif($exam->status === 'ongoing') bg-blue-100 text-blue-800
+                                        @elseif($exam->status === 'completed') bg-purple-100 text-purple-800
+                                        @else bg-red-100 text-red-800 @endif">
+                                        {{ ucfirst($exam->status) }}
+                                    </span>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Exam Type</div>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                        {{ $exam->exam_type === 'online' ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800' }}">
+                                        {{ ucfirst($exam->exam_type) }}
+                                    </span>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Total Questions</div>
+                                    <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ $exam->total_questions }}</span>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Passing Marks</div>
+                                    <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ $exam->passing_marks }}%</span>
+                                </div>
+                            </div>
                         </div>
-                        @endif
+                        
+                        <!-- Schedule Section -->
+                        <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                            <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Schedule</label>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="flex items-center space-x-2">
+                                    <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                    <span class="text-sm text-gray-900 dark:text-white">
+                                        <span class="font-medium">Start:</span> {{ $exam->start_time->format('M d, Y H:i') }}
+                                    </span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-2">
+                                        <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <span class="text-sm text-gray-900 dark:text-white">
+                                            <span class="font-medium">End:</span> {{ $exam->end_time->format('M d, Y H:i') }}
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <span class="text-sm text-gray-900 dark:text-white">
+                                            @php
+                                                $hours = floor($exam->duration / 60);
+                                                $minutes = $exam->duration % 60;
+                                            @endphp
+                                            @if($hours > 0)
+                                                {{ $hours }}H{{ $minutes > 0 ? ' ' . $minutes . 'M' : '' }}
+                                            @else
+                                                {{ $minutes }}M
+                                            @endif
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Exam Schedule -->
-                <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Exam Schedule</h2>
-                    </div>
-                    <div class="px-6 py-4">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500 dark:text-gray-400">Start Time</label>
-                                <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $exam->start_time->format('M d, Y H:i') }}</p>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500 dark:text-gray-400">End Time</label>
-                                <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $exam->end_time->format('M d, Y H:i') }}</p>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500 dark:text-gray-400">Duration</label>
-                                <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $exam->duration }} minutes</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Exam Configuration -->
-                <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Exam Configuration</h2>
-                    </div>
-                    <div class="px-6 py-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500 dark:text-gray-400">Total Questions</label>
-                                <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $exam->total_questions }}</p>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-500 dark:text-gray-400">Passing Marks</label>
-                                <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $exam->passing_marks }}%</p>
-                            </div>
-                            @if($exam->question_head)
-                            <div class="md:col-span-2">
-                                <label class="block text-sm font-medium text-gray-500 dark:text-gray-400">Question Head</label>
-                                <p class="mt-1 text-sm text-gray-900 dark:text-white">{{ $exam->question_head }}</p>
-                            </div>
-                            @endif
-                        </div>
-                    </div>
-                </div>
+
+                                 <!-- Exam Configuration section removed - content moved to Basic Information -->
             </div>
 
             <!-- Sidebar -->
             <div class="space-y-6">
-                <!-- Quick Actions -->
-                <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Quick Actions</h3>
-                    </div>
-                    <div class="px-6 py-4 space-y-3">
+                                 <!-- Quick Actions -->
+                 <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
+                     <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                         <div class="flex items-center justify-between">
+                             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Quick Actions</h3>
+                             @if($exam->status === 'draft')
+                                 <form action="{{ route('partner.exams.publish', $exam) }}" method="POST" class="inline">
+                                     @csrf
+                                     <button type="submit" 
+                                             class="px-3 py-1 bg-green-600 text-white text-xs rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200">
+                                         Publish
+                                     </button>
+                                 </form>
+                             @elseif($exam->status === 'published')
+                                 <form action="{{ route('partner.exams.unpublish', $exam) }}" method="POST" class="inline">
+                                     @csrf
+                                     <button type="submit" 
+                                             class="px-3 py-1 bg-yellow-600 text-white text-xs rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors duration-200">
+                                         Unpublish
+                                     </button>
+                                 </form>
+                             @endif
+                         </div>
+                     </div>
+                     <div class="px-4 py-3 space-y-2">
                         <a href="{{ route('partner.exams.assign-questions', $exam) }}" 
                            class="w-full flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors duration-200">
                             <svg class="w-4 h-4 mr-3 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -193,46 +213,18 @@
                                 {{ $exam->has_negative_marking ? 'Yes' : 'No' }}
                             </span>
                         </div>
-                        @if($exam->has_negative_marking)
-                        <div class="text-sm text-gray-600 dark:text-gray-400">
-                            <span class="font-medium">Negative Marks:</span> {{ $exam->negative_marks_per_question }} per wrong answer
-                        </div>
-                        @endif
+                                                 @if($exam->has_negative_marking)
+                         <div class="flex items-center justify-between">
+                             <span class="text-sm text-gray-600 dark:text-gray-400">Negative Marks</span>
+                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                 {{ $exam->negative_marks_per_question }}
+                             </span>
+                         </div>
+                         @endif
                     </div>
                 </div>
 
-                <!-- Status Actions -->
-                @if($exam->status === 'draft')
-                <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Publish Exam</h3>
-                    </div>
-                    <div class="px-6 py-4">
-                        <form action="{{ route('partner.exams.publish', $exam) }}" method="POST">
-                            @csrf
-                            <button type="submit" 
-                                    class="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200">
-                                Publish Exam
-                            </button>
-                        </form>
-                    </div>
-                </div>
-                @elseif($exam->status === 'published')
-                <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Unpublish Exam</h3>
-                    </div>
-                    <div class="px-6 py-4">
-                        <form action="{{ route('partner.exams.unpublish', $exam) }}" method="POST">
-                            @csrf
-                            <button type="submit" 
-                                    class="w-full px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors duration-200">
-                                Unpublish Exam
-                            </button>
-                        </form>
-                    </div>
-                </div>
-                @endif
+                                 <!-- Status Actions section removed - buttons moved to Quick Actions header -->
             </div>
         </div>
 

@@ -112,7 +112,7 @@
                     </div>
                 </div>
 
-                <!-- Exam Schedule -->
+                <!-- Schedule & Duration -->
                 <div class="px-4 py-4 border-b border-gray-200 dark:border-gray-700">
                     <div class="flex items-center mb-4">
                         <div class="w-6 h-6 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center mr-3">
@@ -120,30 +120,54 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                             </svg>
                         </div>
-                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Exam Schedule</h2>
+                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Schedule & Duration</h2>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                Start Date & Time <span class="text-red-500">*</span>
+                                Schedule <span class="text-red-500">*</span>
                             </label>
-                            <div class="relative">
-                                <input type="datetime-local" name="start_time" id="start_time"
-                                       value="{{ old('start_time', $exam->start_time ? $exam->start_time->format('Y-m-d\TH:i') : '') }}" required
-                                       min="{{ now()->format('Y-m-d\TH:i') }}"
-                                       class="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-400 dark:focus:border-blue-400 transition-colors duration-200"
-                                       onchange="updateEndTimeMin()">
-                                <div class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                    </svg>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Start Date & Time</label>
+                                    <div class="relative">
+                                        <input type="datetime-local" name="start_time" id="start_time"
+                                               value="{{ old('start_time', $exam->start_time ? $exam->start_time->format('Y-m-d\TH:i') : '') }}" required
+                                               min="{{ now()->format('Y-m-d\TH:i') }}"
+                                               class="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-400 dark:focus:border-blue-400 transition-colors duration-200"
+                                               onchange="updateEndTime()">
+                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Select when the exam will start</p>
+                                    @error('start_time')
+                                        <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">End Date & Time</label>
+                                    <div class="relative">
+                                        <input type="datetime-local" name="end_time" id="end_time"
+                                               value="{{ old('end_time', $exam->end_time ? $exam->end_time->format('Y-m-d\TH:i') : '') }}" required
+                                               class="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-400 dark:focus:border-blue-400 transition-colors duration-200"
+                                               onchange="calculateDuration()">
+                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Select when the exam will end</p>
+                                    @error('end_time')
+                                        <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
-                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Select when the exam will start</p>
-                            @error('start_time')
-                                <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
                         </div>
 
                         <div>
@@ -185,41 +209,43 @@
                             @error('duration')
                                 <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
-                        </div>
-                    </div>
-
-                    <!-- Duration Display -->
-                    <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-2">
-                                <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                <span class="text-sm font-medium text-blue-800 dark:text-blue-200">Duration Preview:</span>
-                            </div>
-                            <span class="text-sm text-blue-700 dark:text-blue-300" id="duration-preview">
-                                @if($exam->start_time && $exam->end_time)
-                                    {{ $exam->start_time->diffInMinutes($exam->end_time) }} minutes
-                                @else
-                                    Set start and end times to see duration
-                                @endif
-                            </span>
-                        </div>
-                        
-                        <!-- Quick Duration Presets -->
-                        <div class="mt-3 pt-3 border-t border-blue-200 dark:border-blue-700">
-                            <div class="flex items-center space-x-2">
-                                <span class="text-xs font-medium text-blue-700 dark:text-blue-300">Quick Presets:</span>
-                                <div class="flex flex-wrap gap-2">
-                                    <button type="button" onclick="setDuration(30)" class="px-2 py-1 text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 rounded border border-blue-300 transition-colors duration-200">30 min</button>
-                                    <button type="button" onclick="setDuration(60)" class="px-2 py-1 text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 rounded border border-blue-300 transition-colors duration-200">1 hour</button>
-                                    <button type="button" onclick="setDuration(90)" class="px-2 py-1 text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 rounded border border-blue-300 transition-colors duration-200">1.5 hours</button>
-                                    <button type="button" onclick="setDuration(120)" class="px-2 py-1 text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 rounded border border-blue-300 transition-colors duration-200">2 hours</button>
-                                    <button type="button" onclick="setDuration(180)" class="px-2 py-1 text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 rounded border border-blue-300 transition-colors duration-200">3 hours</button>
+                            
+                            <!-- Duration Preview -->
+                            <div class="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-2">
+                                        <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        <span class="text-sm font-medium text-blue-800 dark:text-blue-200">Duration Preview:</span>
+                                    </div>
+                                    <span class="text-sm text-blue-700 dark:text-blue-300" id="duration-preview">
+                                        @if($exam->start_time && $exam->end_time)
+                                            {{ $exam->start_time->diffInMinutes($exam->end_time) }} minutes
+                                        @else
+                                            Set start and end times to see duration
+                                        @endif
+                                    </span>
+                                </div>
+                                
+                                <!-- Quick Duration Presets -->
+                                <div class="mt-3 pt-3 border-t border-blue-200 dark:border-blue-700">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-xs font-medium text-blue-700 dark:text-blue-300">Quick Presets:</span>
+                                        <div class="flex flex-wrap gap-2">
+                                            <button type="button" onclick="setDuration(30)" class="px-2 py-1 text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 rounded border border-blue-300 transition-colors duration-200">30 min</button>
+                                            <button type="button" onclick="setDuration(60)" class="px-2 py-1 text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 rounded border border-blue-300 transition-colors duration-200">1 hour</button>
+                                            <button type="button" onclick="setDuration(90)" class="px-2 py-1 text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 rounded border border-blue-300 transition-colors duration-200">1.5 hours</button>
+                                            <button type="button" onclick="setDuration(120)" class="px-2 py-1 text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 rounded border border-blue-300 transition-colors duration-200">2 hours</button>
+                                            <button type="button" onclick="setDuration(180)" class="px-2 py-1 text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 rounded border border-blue-300 transition-colors duration-200">3 hours</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+
 
                     <!-- Validation Messages -->
                     <div class="mt-3 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg" id="validation-message" style="display: none;">
@@ -389,6 +415,31 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Function to update end time when start time changes
+    function updateEndTime() {
+        const startTime = document.getElementById('start_time').value;
+        const duration = parseInt(document.getElementById('duration').value) || 120;
+        
+        if (startTime && duration > 0) {
+            try {
+                const startDate = new Date(startTime);
+                if (isNaN(startDate.getTime())) {
+                    console.error('Invalid start time:', startTime);
+                    return;
+                }
+                
+                const endDate = new Date(startDate.getTime() + (duration * 60 * 1000));
+                const endTimeString = endDate.toISOString().slice(0, 16);
+                document.getElementById('end_time').value = endTimeString;
+                
+                updateDurationPreview();
+                console.log('End time updated:', endTimeString);
+            } catch (error) {
+                console.error('Error updating end time:', error);
+            }
+        }
+    }
+
     // Function to calculate duration and update end_time input
     function calculateDuration() {
         const startDateTime = new Date(document.getElementById('start_time').value);
@@ -424,6 +475,45 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Function to update duration preview
+    function updateDurationPreview() {
+        const startTime = document.getElementById('start_time').value;
+        const endTime = document.getElementById('end_time').value;
+        const durationPreview = document.getElementById('duration-preview');
+        
+        if (startTime && endTime) {
+            try {
+                const startDate = new Date(startTime);
+                const endDate = new Date(endTime);
+                
+                if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+                    durationPreview.textContent = 'Set start and end times to see duration';
+                    return;
+                }
+                
+                const durationMinutes = Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60));
+                
+                if (durationMinutes > 0) {
+                    const hours = Math.floor(durationMinutes / 60);
+                    const minutes = durationMinutes % 60;
+                    
+                    if (hours > 0) {
+                        durationPreview.textContent = `${hours} hour${hours > 1 ? 's' : ''} ${minutes > 0 ? minutes + ' min' : ''}`.trim();
+                    } else {
+                        durationPreview.textContent = `${minutes} minutes`;
+                    }
+                } else {
+                    durationPreview.textContent = 'End time must be after start time';
+                }
+            } catch (error) {
+                console.error('Error updating duration preview:', error);
+                durationPreview.textContent = 'Error calculating duration';
+            }
+        } else {
+            durationPreview.textContent = 'Set start and end times to see duration';
+        }
+    }
+
     // Function to set duration from quick presets
     function setDuration(minutes) {
         const startDateTime = new Date(document.getElementById('start_time').value);
@@ -435,7 +525,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const endDateTime = new Date(startDateTime.getTime() + minutes * 60000); // Add minutes in milliseconds
         document.getElementById('end_time').value = endDateTime.toISOString().slice(0, 16);
         document.getElementById('duration').value = minutes;
-        calculateDuration(); // Update preview
+        updateDurationPreview(); // Update preview
         hideValidationMessage();
     }
 
@@ -487,9 +577,20 @@ document.addEventListener('DOMContentLoaded', function() {
         return true;
     }
 
-    // Add event listeners for validation
-    document.getElementById('start_time').addEventListener('change', validateDateTimeInputs);
-    document.getElementById('end_time').addEventListener('change', validateDateTimeInputs);
+    // Add event listeners for validation and updates
+    document.getElementById('start_time').addEventListener('change', function() {
+        validateDateTimeInputs();
+        updateEndTime();
+    });
+    document.getElementById('end_time').addEventListener('change', function() {
+        validateDateTimeInputs();
+        calculateDuration();
+    });
+    
+    // Initialize duration preview on page load
+    window.addEventListener('load', function() {
+        updateDurationPreview();
+    });
     document.getElementById('duration').addEventListener('change', validateDateTimeInputs);
 
     // Form submission validation
