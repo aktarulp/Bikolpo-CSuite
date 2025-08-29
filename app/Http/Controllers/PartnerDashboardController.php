@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Partner;
 use App\Models\Question;
 use App\Models\Exam;
-use App\Models\StudentExamResult;
 use App\Models\Student;
-use App\Traits\HasPartnerContext;
+use App\Models\QuestionSet;
+use App\Models\Subject;
+use App\Models\Topic;
+use App\Models\ExamResult;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -34,7 +36,7 @@ class PartnerDashboardController extends Controller
                 ->take(5)
                 ->get();
 
-            $recent_results = StudentExamResult::whereHas('exam', function($query) use ($partnerId) {
+            $recent_results = ExamResult::whereHas('exam', function($query) use ($partnerId) {
                 $query->where('partner_id', $partnerId);
             })
             ->with(['student', 'exam'])

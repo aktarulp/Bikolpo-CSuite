@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Exam;
+use App\Models\ExamResult;
 use App\Models\Student;
-use App\Models\StudentExamResult;
+use App\Models\ExamAccessCode;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class StudentExamController extends Controller
 {
@@ -27,7 +29,7 @@ class StudentExamController extends Controller
         $studentId = 1; // Default student ID
         
         // Check if student has already taken this exam
-        $existingResult = StudentExamResult::where('student_id', $studentId)
+        $existingResult = ExamResult::where('student_id', $studentId)
             ->where('exam_id', $exam->id)
             ->first();
 
@@ -50,7 +52,7 @@ class StudentExamController extends Controller
         }
 
         // Check if student has already taken this exam
-        $existingResult = StudentExamResult::where('student_id', $studentId)
+        $existingResult = ExamResult::where('student_id', $studentId)
             ->where('exam_id', $exam->id)
             ->where('status', 'completed')
             ->first();
@@ -61,7 +63,7 @@ class StudentExamController extends Controller
         }
 
         // Create or get existing result
-        $result = StudentExamResult::firstOrCreate([
+        $result = ExamResult::firstOrCreate([
             'student_id' => $studentId,
             'exam_id' => $exam->id,
         ], [
@@ -80,7 +82,7 @@ class StudentExamController extends Controller
     {
         $studentId = 1; // Default student ID
         
-        $result = StudentExamResult::where('student_id', $studentId)
+        $result = ExamResult::where('student_id', $studentId)
             ->where('exam_id', $exam->id)
             ->where('status', 'in_progress')
             ->firstOrFail();
@@ -135,7 +137,7 @@ class StudentExamController extends Controller
     {
         $studentId = 1; // Default student ID
         
-        $result = StudentExamResult::where('student_id', $studentId)
+        $result = ExamResult::where('student_id', $studentId)
             ->where('exam_id', $exam->id)
             ->with(['student.partner', 'exam'])
             ->firstOrFail();
@@ -150,7 +152,7 @@ class StudentExamController extends Controller
     {
         $studentId = 1; // Default student ID
         
-        $results = StudentExamResult::where('student_id', $studentId)
+        $results = ExamResult::where('student_id', $studentId)
             ->with(['exam'])
             ->latest()
             ->paginate(15);

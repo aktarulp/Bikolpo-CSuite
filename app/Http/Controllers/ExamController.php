@@ -3,9 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Exam;
-use App\Models\StudentExamResult;
+use App\Models\Student;
 use App\Models\Partner;
+use App\Models\Question;
+use App\Models\QuestionSet;
+use App\Models\QuestionType;
+use App\Models\Subject;
+use App\Models\Topic;
+use App\Models\Course;
+use App\Models\Batch;
+use App\Models\ExamQuestion;
+use App\Models\ExamAccessCode;
+use App\Models\ExamResult;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 class ExamController extends Controller
 {
@@ -415,7 +430,7 @@ class ExamController extends Controller
 
     public function results(Exam $exam)
     {
-        $results = StudentExamResult::where('exam_id', $exam->id)
+        $results = ExamResult::where('exam_id', $exam->id)
             ->with('student')
             ->latest()
             ->paginate(20);
@@ -425,7 +440,7 @@ class ExamController extends Controller
 
     public function export(Exam $exam)
     {
-        $results = StudentExamResult::where('exam_id', $exam->id)
+        $results = ExamResult::where('exam_id', $exam->id)
             ->with('student')
             ->get();
 

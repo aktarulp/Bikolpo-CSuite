@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Exam;
 use App\Models\ExamAccessCode;
 use App\Models\Student;
-use App\Models\StudentExamResult;
+use App\Models\ExamResult;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -111,7 +111,7 @@ class PublicQuizController extends Controller
         ]);
 
         // Check if student has already attempted this exam
-        $existingResult = StudentExamResult::where('student_id', $accessCode->student_id)
+        $existingResult = ExamResult::where('student_id', $accessCode->student_id)
             ->where('exam_id', $accessCode->exam_id)
             ->first();
 
@@ -289,7 +289,7 @@ class PublicQuizController extends Controller
         }
 
         // Check if already started
-        $existingResult = StudentExamResult::where('student_id', $accessInfo['student_id'])
+        $existingResult = ExamResult::where('student_id', $accessInfo['student_id'])
             ->where('exam_id', $exam->id)
             ->first();
 
@@ -299,7 +299,7 @@ class PublicQuizController extends Controller
         }
 
         // Create new exam result
-        $result = StudentExamResult::create([
+        $result = ExamResult::create([
             'student_id' => $accessInfo['student_id'],
             'exam_id' => $exam->id,
             'started_at' => now(),
@@ -325,7 +325,7 @@ class PublicQuizController extends Controller
             return redirect()->route('public.quiz.access')->withErrors(['access' => 'Invalid access. Please try again.']);
         }
 
-        $result = StudentExamResult::where('student_id', $accessInfo['student_id'])
+        $result = ExamResult::where('student_id', $accessInfo['student_id'])
             ->where('exam_id', $exam->id)
             ->where('status', 'in_progress')
             ->first();
@@ -334,19 +334,22 @@ class PublicQuizController extends Controller
             return redirect()->route('public.quiz.start', $exam->id);
         }
 
-        // Check if time has expired
-        $startTime = $result->started_at;
-        $endTime = $startTime->addMinutes($exam->duration);
+        // Check if time has expired - ONLY based on exam end_time, not duration
+        $examEndTime = \Carbon\Carbon::parse($exam->end_time);
         
-        if (now()->gt($endTime)) {
-            // Auto-submit exam
+        if (now()->gt($examEndTime)) {
+            // Auto-submit exam - exam has ended
             $this->autoSubmitExam($result);
             return redirect()->route('public.quiz.result', $exam->id);
         }
 
         // Load questions from exam_questions table
         $questions = $exam->questions()->orderBy('pivot_order')->get();
-        $remainingTime = $endTime->diffInSeconds(now());
+        
+        // Duration is only used for countdown display, not for expiration
+        $startTime = $result->started_at;
+        $quizEndTime = $startTime->copy()->addMinutes($exam->duration);
+        $remainingTime = $quizEndTime->diffInSeconds(now());
 
         return view('public.quiz.take', compact('exam', 'questions', 'result', 'remainingTime'));
     }
@@ -362,7 +365,7 @@ class PublicQuizController extends Controller
             return redirect()->route('public.quiz.access')->withErrors(['access' => 'Invalid access. Please try again.']);
         }
 
-        $result = StudentExamResult::where('student_id', $accessInfo['student_id'])
+        $result = ExamResult::where('student_id', $accessInfo['student_id'])
             ->where('exam_id', $exam->id)
             ->where('status', 'in_progress')
             ->first();
@@ -401,7 +404,7 @@ class PublicQuizController extends Controller
             return redirect()->route('public.quiz.access')->withErrors(['access' => 'Invalid access. Please try again.']);
         }
 
-        $result = StudentExamResult::where('student_id', $accessInfo['student_id'])
+        $result = ExamResult::where('student_id', $accessInfo['student_id'])
             ->where('exam_id', $exam->id)
             ->where('status', 'completed')
             ->first();
@@ -448,10 +451,25 @@ class PublicQuizController extends Controller
     }
 
     /**
-     * Auto-submit exam when time expires
+     * Auto-submit exam when exam end time is reached
      */
-    private function autoSubmitExam(StudentExamResult $result)
+    private function autoSubmitExam(ExamResult $result)
     {
+        // Get the exam details for better logging
+        $exam = $result->exam;
+        
+        // Log the auto-submission details
+        \Log::info('Auto-submitting quiz due to exam end time', [
+            'exam_id' => $exam->id ?? 'unknown',
+            'exam_title' => $exam->title ?? 'unknown',
+            'student_id' => $result->student_id,
+            'started_at' => $result->started_at->toDateTimeString(),
+            'exam_end_time' => $exam->end_time ?? 'unknown',
+            'auto_submitted_at' => now()->toDateTimeString(),
+            'total_time_taken' => $result->started_at->diffInMinutes(now()),
+            'reason' => 'exam_end_time_reached'
+        ]);
+        
         $result->update([
             'completed_at' => now(),
             'status' => 'abandoned',
@@ -513,7 +531,7 @@ class PublicQuizController extends Controller
     private function canTakeExam($exam, $studentId)
     {
         // Check if already completed
-        $existingResult = StudentExamResult::where('student_id', $studentId)
+        $existingResult = ExamResult::where('student_id', $studentId)
             ->where('exam_id', $exam->id)
             ->first();
 

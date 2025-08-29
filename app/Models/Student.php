@@ -36,14 +36,17 @@ class Student extends Model
     ];
 
     // Relationships
+    /**
+     * Get all exam results for this student
+     */
     public function examResults()
     {
-        return $this->hasMany(StudentExamResult::class);
+        return $this->hasMany(ExamResult::class);
     }
 
     public function exams()
     {
-        return $this->belongsToMany(Exam::class, 'student_exam_results');
+        return $this->belongsToMany(Exam::class, 'exam_results');
     }
 
     /**

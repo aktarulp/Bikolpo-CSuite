@@ -272,6 +272,14 @@ class Exam extends Model
     }
 
     /**
+     * Get all exam results for this exam
+     */
+    public function examResults()
+    {
+        return $this->hasMany(ExamResult::class);
+    }
+
+    /**
      * Get time until exam starts in human readable format
      */
     public function getTimeUntilStartAttribute()
@@ -307,12 +315,12 @@ class Exam extends Model
 
     public function studentResults()
     {
-        return $this->hasMany(StudentExamResult::class);
+        return $this->hasMany(ExamResult::class);
     }
 
     public function students()
     {
-        return $this->belongsToMany(Student::class, 'student_exam_results');
+        return $this->belongsToMany(Student::class, 'exam_results');
     }
 
     public function accessCodes()

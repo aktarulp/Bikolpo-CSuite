@@ -47,9 +47,12 @@ class Partner extends Model
         return $this->hasMany(Exam::class);
     }
 
-    public function studentExamResults()
+    /**
+     * Get all exam results for exams created by this partner
+     */
+    public function examResults()
     {
-        return $this->hasManyThrough(StudentExamResult::class, Exam::class);
+        return $this->hasManyThrough(ExamResult::class, Exam::class);
     }
 
     public function courses()
