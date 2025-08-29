@@ -12,6 +12,8 @@ class Student extends Model
     protected $fillable = [
         'user_id',
         'partner_id',
+        'course_id',
+        'batch_id',
         'full_name',
         'student_id',
         'date_of_birth',
@@ -58,5 +60,21 @@ class Student extends Model
     public function partner()
     {
         return $this->belongsTo(Partner::class);
+    }
+
+    /**
+     * Get the course associated with the student.
+     */
+    public function course()
+    {
+        return $this->belongsTo(Course::class);
+    }
+
+    /**
+     * Get the batch associated with the student.
+     */
+    public function batch()
+    {
+        return $this->belongsTo(Batch::class);
     }
 }

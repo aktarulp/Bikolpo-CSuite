@@ -7,6 +7,8 @@ use Illuminate\Database\Seeder;
 use App\Models\Student;
 use App\Models\User;
 use App\Models\Partner;
+use App\Models\Course;
+use App\Models\Batch;
 
 class StudentSeeder extends Seeder
 {
@@ -25,8 +27,17 @@ class StudentSeeder extends Seeder
         $partner = Partner::first();
         $user = User::first();
         
+        // Get first course and batch to associate students with
+        $course = Course::first();
+        $batch = Batch::first();
+        
         if (!$partner || !$user) {
             $this->command->error('No partners or users found. Please run PartnerSeeder and create a user first.');
+            return;
+        }
+
+        if (!$course || !$batch) {
+            $this->command->error('No courses or batches found. Please run CourseSeeder and BatchSeeder first.');
             return;
         }
 
@@ -46,6 +57,8 @@ class StudentSeeder extends Seeder
             'status' => 'active',
             'partner_id' => $partner->id,
             'user_id' => $user->id,
+            'course_id' => $course->id,
+            'batch_id' => $batch->id,
         ]);
 
         Student::create([
@@ -64,6 +77,8 @@ class StudentSeeder extends Seeder
             'status' => 'active',
             'partner_id' => $partner->id,
             'user_id' => $user->id,
+            'course_id' => $course->id,
+            'batch_id' => $batch->id,
         ]);
 
         Student::create([
@@ -82,6 +97,8 @@ class StudentSeeder extends Seeder
             'status' => 'active',
             'partner_id' => $partner->id,
             'user_id' => $user->id,
+            'course_id' => $course->id,
+            'batch_id' => $batch->id,
         ]);
 
         $this->command->info('Students have been created successfully!');

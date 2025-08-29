@@ -38,9 +38,13 @@ class StudentController extends Controller
             'parent_name' => 'nullable|string|max:255',
             'parent_phone' => 'nullable|string|regex:/^01[3-9][0-9]{8}$/|max:20',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'course_id' => 'nullable|exists:courses,id',
+            'batch_id' => 'nullable|exists:batches,id',
         ], [
             'phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
             'parent_phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
+            'course_id.exists' => 'The selected course is invalid.',
+            'batch_id.exists' => 'The selected batch is invalid.',
         ]);
 
         $data = $request->all();
@@ -85,9 +89,13 @@ class StudentController extends Controller
             'parent_name' => 'nullable|string|max:255',
             'parent_phone' => 'nullable|string|regex:/^01[3-9][0-9]{8}$/|max:20',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'course_id' => 'nullable|exists:courses,id',
+            'batch_id' => 'nullable|exists:batches,id',
         ], [
             'phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
             'parent_phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
+            'course_id.exists' => 'The selected course is invalid.',
+            'batch_id.exists' => 'The selected batch is invalid.',
         ]);
 
         $data = $request->all();

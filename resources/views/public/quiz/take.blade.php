@@ -13,6 +13,281 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
+    <script>
+        // Quiz state management
+        let currentQuestion = 0;
+        let totalQuestions = {{ $questions->count() }};
+        let answeredQuestions = new Set();
+        let skippedQuestions = new Set();
+        let timeRemaining = {{ $remainingTime }};
+        const totalTime = {{ $exam->duration * 60 }};
+        let timerInterval;
+        
+        // Question Navigator Drawer functions
+        function toggleQuestionNavigator() {
+            const drawer = document.getElementById('question-navigator-drawer');
+            if (drawer.classList.contains('hidden')) {
+                drawer.classList.remove('hidden');
+                // Update the drawer content to reflect current state
+                updateNavigationButtons();
+            } else {
+                drawer.classList.add('hidden');
+            }
+        }
+        
+        // Navigation functions
+        function navigateToQuestion(questionIndex) {
+            if (questionIndex < 0 || questionIndex >= totalQuestions) return;
+            
+            // Hide current question
+            document.querySelectorAll('.question-container').forEach(q => q.classList.add('hidden'));
+            
+            // Show target question
+            document.getElementById(`question-${questionIndex}`).classList.remove('hidden');
+            document.getElementById(`question-${questionIndex}`).classList.add('question-fade-in');
+            
+            // Update current question
+            currentQuestion = questionIndex;
+            
+            // Update navigation buttons
+            updateNavigationButtons();
+            
+            // Update progress
+            updateProgress();
+            
+            // Close drawer after navigation
+            toggleQuestionNavigator();
+        }
+        
+        function updateNavigationButtons() {
+            // Update question grid in drawer
+            document.querySelectorAll('.question-nav-btn').forEach((btn, index) => {
+                btn.classList.remove('border-primaryGreen', 'bg-primaryGreen', 'text-white', 'border-green-300', 'bg-green-100', 'text-green-700', 'border-yellow-300', 'bg-yellow-100', 'text-yellow-700');
+                
+                if (index === currentQuestion) {
+                    btn.classList.add('border-primaryGreen', 'bg-primaryGreen', 'text-white');
+                } else if (answeredQuestions.has(index)) {
+                    btn.classList.add('border-green-300', 'bg-green-100', 'text-green-700');
+                } else {
+                    btn.classList.add('border-gray-300', 'text-gray-600');
+                }
+            });
+        }
+        
+        function updateQuestionStatus(questionIndex, status) {
+            // Update question buttons in drawer
+            const btn = document.querySelector(`.question-nav-btn[data-question="${questionIndex}"]`);
+            if (btn) {
+                btn.classList.remove('border-primaryGreen', 'bg-primaryGreen', 'text-white', 'border-green-300', 'bg-green-100', 'text-green-700', 'border-yellow-300', 'bg-yellow-100', 'text-yellow-700');
+                
+                if (status === 'answered') {
+                    btn.classList.add('border-green-300', 'bg-green-100', 'text-green-700');
+                } else if (status === 'skipped') {
+                    btn.classList.add('border-yellow-300', 'bg-yellow-100', 'text-yellow-700');
+                }
+            }
+        }
+        
+        function updateProgress() {
+            const progress = (answeredQuestions.size / totalQuestions) * 100;
+            
+            // Update desktop progress
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            if (progressBar && progressText) {
+                progressBar.style.width = progress + '%';
+                progressText.textContent = `${answeredQuestions.size}/${totalQuestions}`;
+            }
+            
+            // Update mobile progress
+            const progressBarMobile = document.getElementById('progress-bar-mobile');
+            const progressTextMobile = document.getElementById('progress-text-mobile');
+            if (progressBarMobile && progressTextMobile) {
+                progressBarMobile.style.width = progress + '%';
+                progressTextMobile.textContent = `${answeredQuestions.size}/${totalQuestions}`;
+            }
+        }
+        
+        function markQuestionAnswered(questionIndex) {
+            answeredQuestions.add(questionIndex);
+            skippedQuestions.delete(questionIndex);
+            updateQuestionStatus(questionIndex, 'answered');
+            updateProgress();
+        }
+        
+        function nextQuestion() {
+            if (currentQuestion < totalQuestions - 1) {
+                navigateToQuestion(currentQuestion + 1);
+            }
+        }
+        
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                navigateToQuestion(currentQuestion - 1);
+            }
+        }
+        
+        function skipQuestion() {
+            skippedQuestions.add(currentQuestion);
+            updateQuestionStatus(currentQuestion, 'skipped');
+            
+            if (currentQuestion < totalQuestions - 1) {
+                nextQuestion();
+            } else {
+                showReviewModal();
+            }
+        }
+        
+        // Review modal functions
+        function showReviewModal() {
+            populateReviewContent();
+            document.getElementById('review-modal').classList.remove('hidden');
+        }
+        
+        function hideReviewModal() {
+            document.getElementById('review-modal').classList.add('hidden');
+        }
+        
+        function populateReviewContent() {
+            const reviewContent = document.getElementById('review-content');
+            let content = '';
+            
+            for (let i = 0; i < totalQuestions; i++) {
+                const question = document.querySelector(`#question-${i}`);
+                const questionText = question.querySelector('p').textContent;
+                const status = answeredQuestions.has(i) ? 'Answered' : (skippedQuestions.has(i) ? 'Skipped' : 'Unanswered');
+                const statusClass = answeredQuestions.has(i) ? 'text-green-600' : (skippedQuestions.has(i) ? 'text-yellow-600' : 'text-gray-500');
+                
+                content += `
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex-1 min-w-0">
+                            <p class="font-medium text-gray-900 text-sm">Question ${i + 1}</p>
+                            <p class="text-xs text-gray-600 truncate">${questionText}</p>
+                        </div>
+                        <span class="px-2 sm:px-3 py-1 rounded-full text-xs font-medium ${statusClass} flex-shrink-0 ml-2">
+                            ${status}
+                        </span>
+                    </div>
+                `;
+            }
+            
+            reviewContent.innerHTML = content;
+            
+            // Update counts
+            document.getElementById('answered-count').textContent = answeredQuestions.size;
+            document.getElementById('skipped-count').textContent = skippedQuestions.size;
+        }
+        
+        function submitQuiz() {
+            const confirmed = confirm('Are you sure you want to submit your quiz? You cannot change your answers after submission.');
+            if (confirmed) {
+                document.getElementById('quiz-form').submit();
+            }
+        }
+        
+        // Timer functionality
+        function updateTimer() {
+            if (timeRemaining <= 0) {
+                clearInterval(timerInterval);
+                showAutoSubmitModal();
+                return;
+            }
+            
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            document.getElementById('timer').textContent = timeString;
+            
+            // Update progress circle
+            const percentage = (timeRemaining / totalTime) * 100;
+            const circumference = 2 * Math.PI * 15.9155;
+            const offset = circumference - (percentage / 100) * circumference;
+            
+            document.getElementById('timer-circle').style.strokeDashoffset = offset;
+            document.getElementById('timer-percentage').textContent = Math.round(percentage) + '%';
+            
+            // Change color based on time remaining
+            if (timeRemaining <= 300) { // 5 minutes
+                document.getElementById('timer-circle').classList.remove('text-primaryGreen', 'text-yellow-500');
+                document.getElementById('timer-circle').classList.add('text-red-500');
+                document.getElementById('timer').classList.add('text-red-600', 'timer-warning');
+            } else if (timeRemaining <= 600) { // 10 minutes
+                document.getElementById('timer-circle').classList.remove('text-primaryGreen');
+                document.getElementById('timer-circle').classList.add('text-yellow-500');
+                document.getElementById('timer').classList.add('text-yellow-600');
+            }
+            
+            timeRemaining--;
+        }
+        
+        function showAutoSubmitModal() {
+            document.getElementById('auto-submit-modal').classList.remove('hidden');
+        }
+        
+        function autoSubmit() {
+            document.getElementById('quiz-form').submit();
+        }
+        
+        // Question Navigator Drawer functions
+        function toggleQuestionNavigator() {
+            const drawer = document.getElementById('question-navigator-drawer');
+            if (drawer.classList.contains('hidden')) {
+                drawer.classList.remove('hidden');
+                // Update the drawer content to reflect current state
+                updateNavigationButtons();
+            } else {
+                drawer.classList.add('hidden');
+            }
+        }
+        
+        // Word count for descriptive questions
+        function updateWordCount(questionId, value) {
+            const wordCount = value.trim().split(/\s+/).filter(word => word.length > 0).length;
+            document.getElementById(`word-count-${questionId}`).textContent = `${wordCount} words`;
+        }
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Start timer
+            timerInterval = setInterval(updateTimer, 1000);
+            updateTimer();
+            
+            // Auto-submit button
+            document.getElementById('auto-submit-btn').addEventListener('click', autoSubmit);
+            
+            // Initialize progress
+            updateProgress();
+            updateNavigationButtons();
+            
+            // Word count for existing textareas
+            document.querySelectorAll('textarea').forEach(textarea => {
+                const questionId = textarea.id.replace('answer_', '');
+                if (textarea.value) {
+                    updateWordCount(questionId, textarea.value);
+                }
+            });
+            
+            // Close drawer when clicking outside
+            document.addEventListener('click', function(event) {
+                const drawer = document.getElementById('question-navigator-drawer');
+                const toggleBtns = document.querySelectorAll('button[onclick="toggleQuestionNavigator()"]');
+                
+                if (!drawer.contains(event.target) && !Array.from(toggleBtns).some(btn => btn.contains(event.target)) && !drawer.classList.contains('hidden')) {
+                    drawer.classList.add('hidden');
+                }
+            });
+            
+            // Warn before leaving page
+            window.addEventListener('beforeunload', function(e) {
+                if (timeRemaining > 0) {
+                    e.preventDefault();
+                    e.returnValue = 'Are you sure you want to leave? Your quiz progress will be lost.';
+                }
+            });
+        });
+    </script>
+    
     <style>
         .question-transition { transition: all 0.3s ease-in-out; }
         .question-fade-in { animation: fadeIn 0.5s ease-in-out; }
@@ -130,19 +405,28 @@
 
     <!-- Main Content -->
     <div class="max-w-6xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-8">
-        <!-- Question Navigator - Top of Quiz Window -->
-        <div class="mb-6 sm:mb-8">
-            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-4 sm:p-6">
-                <div class="flex items-center justify-between mb-4">
+
+        <!-- Question Navigator Drawer -->
+        <div id="question-navigator-drawer" class="fixed inset-0 bg-gray-600 bg-opacity-50 z-50 hidden">
+            <div class="absolute right-0 top-0 h-full w-full sm:w-96 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out">
+                <!-- Drawer Header -->
+                <div class="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200">
                     <h3 class="text-lg font-semibold text-gray-900 flex items-center">
                         <svg class="w-5 h-5 mr-2 text-primaryGreen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                         </svg>
-                        Question Navigator:
+                        Question Navigator
                     </h3>
-                    
-                    <!-- Legend -->
-                    <div class="flex items-center space-x-4 text-xs sm:text-sm text-gray-600">
+                    <button onclick="toggleQuestionNavigator()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Legend -->
+                <div class="px-4 sm:px-6 py-3 border-b border-gray-200">
+                    <div class="flex items-center justify-center space-x-4 text-xs sm:text-sm text-gray-600">
                         <div class="flex items-center space-x-2">
                             <div class="w-3 h-3 rounded-full border-2 border-primaryGreen bg-primaryGreen"></div>
                             <span>Current</span>
@@ -158,26 +442,14 @@
                     </div>
                 </div>
                 
-                <div class="question-navigation">
-                    <!-- Desktop Grid - Landscape Layout -->
-                    <div class="hidden sm:flex flex-wrap justify-center gap-1" id="question-grid">
+                <!-- Question Grid -->
+                <div class="p-4 sm:p-6">
+                    <div class="grid grid-cols-5 sm:grid-cols-6 gap-2 sm:gap-3">
                         @foreach($questions as $index => $question)
                         <button type="button" 
-                                class="question-nav-btn w-7 h-7 rounded-full border-2 text-sm font-medium transition-all duration-200 {{ $index === 0 ? 'border-primaryGreen bg-primaryGreen text-white' : 'border-gray-300 text-gray-600 hover:border-primaryGreen hover:text-primaryGreen' }}"
+                                class="question-nav-btn w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 text-sm font-medium transition-all duration-200 {{ $index === 0 ? 'border-primaryGreen bg-primaryGreen text-white' : 'border-gray-300 text-gray-600 hover:border-primaryGreen hover:text-primaryGreen' }}"
                                 data-question="{{ $index }}"
-                                onclick="navigateToQuestion({{ $index }})">
-                            {{ $index + 1 }}
-                        </button>
-                        @endforeach
-                    </div>
-                    
-                    <!-- Mobile Grid - Landscape Layout -->
-                    <div class="sm:hidden flex flex-wrap justify-center gap-1.5" id="question-grid-mobile">
-                        @foreach($questions as $index => $question)
-                        <button type="button" 
-                                class="question-nav-btn-mobile w-9 h-9 rounded-full border-2 text-xs font-medium transition-all duration-200 {{ $index === 0 ? 'border-primaryGreen bg-primaryGreen text-white' : 'border-gray-300 text-gray-600 hover:border-primaryGreen hover:text-primaryGreen' }}"
-                                data-question="{{ $index }}"
-                                onclick="navigateToQuestion({{ $index }})">
+                                onclick="navigateToQuestion({{ $index }}); toggleQuestionNavigator();">
                             {{ $index + 1 }}
                         </button>
                         @endforeach
@@ -210,11 +482,15 @@
                             </div>
                         </div>
                         
-                        <!-- Question Type Badge -->
-                        <span class="inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium 
-                            {{ $question->question_type === 'mcq' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' }}">
-                            {{ strtoupper($question->question_type) }}
-                        </span>
+                        <!-- Question Navigator Button -->
+                        <button type="button" 
+                                onclick="toggleQuestionNavigator()"
+                                class="inline-flex items-center px-3 sm:px-4 py-2 bg-gradient-to-r from-primaryGreen to-emerald-600 text-white text-sm font-medium rounded-lg hover:from-primaryGreen/90 hover:to-emerald-600/90 transition-all duration-200 shadow-md">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                            </svg>
+                            Navigator
+                        </button>
                     </div>
 
                     <!-- Question Text -->
@@ -471,21 +747,8 @@
         }
         
         function updateNavigationButtons() {
-            // Update question grid (desktop)
-            document.querySelectorAll('#question-grid .question-nav-btn').forEach((btn, index) => {
-                btn.classList.remove('border-primaryGreen', 'bg-primaryGreen', 'text-white', 'border-green-300', 'bg-green-100', 'text-green-700', 'border-yellow-300', 'bg-yellow-100', 'text-yellow-700');
-                
-                if (index === currentQuestion) {
-                    btn.classList.add('border-primaryGreen', 'bg-primaryGreen', 'text-white');
-                } else if (answeredQuestions.has(index)) {
-                    btn.classList.add('border-green-300', 'bg-green-100', 'text-green-700');
-                } else {
-                    btn.classList.add('border-gray-300', 'text-gray-600');
-                }
-            });
-            
-            // Update question grid (mobile)
-            document.querySelectorAll('#question-grid-mobile .question-nav-btn-mobile').forEach((btn, index) => {
+            // Update question grid in drawer
+            document.querySelectorAll('.question-nav-btn').forEach((btn, index) => {
                 btn.classList.remove('border-primaryGreen', 'bg-primaryGreen', 'text-white', 'border-green-300', 'bg-green-100', 'text-green-700', 'border-yellow-300', 'bg-yellow-100', 'text-yellow-700');
                 
                 if (index === currentQuestion) {
@@ -515,8 +778,8 @@
         }
         
         function updateQuestionStatus(questionIndex, status) {
-            // Update desktop buttons
-            const btn = document.querySelector(`#question-grid [data-question="${questionIndex}"]`);
+            // Update question buttons in drawer
+            const btn = document.querySelector(`.question-nav-btn[data-question="${questionIndex}"]`);
             if (btn) {
                 btn.classList.remove('border-primaryGreen', 'bg-primaryGreen', 'text-white', 'border-green-300', 'bg-green-100', 'text-green-700', 'border-yellow-300', 'bg-yellow-100', 'text-yellow-700');
                 
@@ -524,18 +787,6 @@
                     btn.classList.add('border-green-300', 'bg-green-100', 'text-green-700');
                 } else if (status === 'skipped') {
                     btn.classList.add('border-yellow-300', 'bg-yellow-100', 'text-yellow-700');
-                }
-            }
-            
-            // Update mobile buttons
-            const mobileBtn = document.querySelector(`#question-grid-mobile [data-question="${questionIndex}"]`);
-            if (mobileBtn) {
-                mobileBtn.classList.remove('border-primaryGreen', 'bg-primaryGreen', 'text-white', 'border-green-300', 'bg-green-100', 'text-green-700', 'border-yellow-300', 'bg-yellow-100', 'text-yellow-700');
-                
-                if (status === 'answered') {
-                    mobileBtn.classList.add('border-green-300', 'bg-green-100', 'text-green-700');
-                } else if (status === 'skipped') {
-                    mobileBtn.classList.add('border-yellow-300', 'bg-yellow-100', 'text-yellow-700');
                 }
             }
         }
@@ -650,6 +901,28 @@
         function autoSubmit() {
             document.getElementById('quiz-form').submit();
         }
+        
+        // Question Navigator Drawer functions
+        function toggleQuestionNavigator() {
+            const drawer = document.getElementById('question-navigator-drawer');
+            if (drawer.classList.contains('hidden')) {
+                drawer.classList.remove('hidden');
+                // Update the drawer content to reflect current state
+                updateNavigationButtons();
+            } else {
+                drawer.classList.add('hidden');
+            }
+        }
+        
+        // Close drawer when clicking outside
+        document.addEventListener('click', function(event) {
+            const drawer = document.getElementById('question-navigator-drawer');
+            const toggleBtn = document.querySelector('button[onclick="toggleQuestionNavigator()"]');
+            
+            if (!drawer.contains(event.target) && !toggleBtn.contains(event.target) && !drawer.classList.contains('hidden')) {
+                drawer.classList.add('hidden');
+            }
+        });
         
         // Word count for descriptive questions
         function updateWordCount(questionId, value) {

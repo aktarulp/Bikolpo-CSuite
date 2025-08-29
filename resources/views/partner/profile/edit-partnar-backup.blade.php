@@ -125,8 +125,6 @@
                 @enderror
             </div>
 
-
-
             <!-- Additional Contact Information -->
             <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
                 <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Additional Contact Information</h4>
@@ -174,101 +172,11 @@
                         <label for="facebook_page" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Facebook Page
                         </label>
-                        <input type="text" id="facebook_page" name="facebook_page"
+                        <input type="url" id="facebook_page" name="facebook_page"
                                value="{{ old('facebook_page', $partner->facebook_page ?? '') }}"
                                placeholder="https://facebook.com/..."
                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
                         @error('facebook_page')
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
-            </div>
-
-            <!-- Location Details -->
-            <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
-                <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Location Details</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label for="division" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Division
-                        </label>
-                        <input type="text" id="division" name="division"
-                               value="{{ old('division', $partner->division ?? '') }}"
-                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
-                        @error('division')
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="district" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            District
-                        </label>
-                        <input type="text" id="district" name="district"
-                               value="{{ old('district', $partner->district ?? '') }}"
-                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
-                        @error('district')
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="upazila" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Upazila
-                        </label>
-                        <input type="text" id="upazila" name="upazila"
-                               value="{{ old('upazila', $partner->upazila ?? '') }}"
-                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
-                        @error('upazila')
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="post_office" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Post Office
-                        </label>
-                        <input type="text" id="post_office" name="post_office"
-                               value="{{ old('post_office', $partner->post_office ?? '') }}"
-                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
-                        @error('post_office')
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="post_code" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Post Code
-                        </label>
-                        <input type="text" id="post_code" name="post_code"
-                               value="{{ old('post_code', $partner->post_code ?? '') }}"
-                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
-                        @error('post_code')
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="village_road_no" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Village/Road No
-                        </label>
-                        <input type="text" id="village_road_no" name="village_road_no"
-                               value="{{ old('village_road_no', $partner->village_road_no ?? '') }}"
-                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
-                        @error('village_road_no')
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="flat_house_no" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Flat/House No
-                        </label>
-                        <input type="text" id="flat_house_no" name="flat_house_no"
-                               value="{{ old('flat_house_no', $partner->flat_house_no ?? '') }}"
-                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
-                        @error('flat_house_no')
                             <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                         @enderror
                     </div>
@@ -746,33 +654,6 @@
             <!-- Additional Information -->
             <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
                 <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Additional Information</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div>
-                        <label for="subscription_plan_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Subscription Plan ID
-                        </label>
-                        <input type="text" id="subscription_plan_id" name="subscription_plan_id"
-                               value="{{ old('subscription_plan_id', $partner->subscription_plan_id ?? '') }}"
-                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
-                        @error('subscription_plan_id')
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="flag" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Flag
-                        </label>
-                        <select id="flag" name="flag"
-                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
-                            <option value="active" {{ old('flag', $partner->flag ?? '') == 'active' ? 'selected' : '' }}>Active</option>
-                            <option value="deleted" {{ old('flag', $partner->flag ?? '') == 'deleted' ? 'selected' : '' }}>Deleted</option>
-                        </select>
-                        @error('flag')
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label for="slug" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -821,84 +702,6 @@
                               placeholder="Google Maps coordinates or embed code"
                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primaryGreen focus:border-transparent">{{ old('map_location', $partner->map_location ?? '') }}</textarea>
                     @error('map_location')
-                        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div class="mt-6">
-                    <label for="cover_photo" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Cover Photo
-                    </label>
-                    <input type="file" id="cover_photo" name="cover_photo" accept="image/*"
-                           class="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-primaryGreen file:text-white hover:file:bg-green-600 file:cursor-pointer">
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">PNG, JPG, GIF up to 2MB</p>
-                    @error('cover_photo')
-                        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div class="mt-6">
-                    <label for="upazila_p_s" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Upazila P.S.
-                    </label>
-                    <input type="text" id="upazila_p_s" name="upazila_p_s"
-                           value="{{ old('upazila_p_s', $partner->upazila_p_s ?? '') }}"
-                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
-                    @error('upazila_p_s')
-                        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div class="mt-6">
-                    <label for="subscription_plan" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Subscription Plan
-                    </label>
-                    <input type="text" id="subscription_plan" name="subscription_plan"
-                           value="{{ old('subscription_plan', $partner->subscription_plan ?? '') }}"
-                           class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
-                    @error('subscription_plan')
-                        <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                    <div>
-                        <label for="subscription_start_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Subscription Start Date
-                        </label>
-                        <input type="date" id="subscription_start_date" name="subscription_start_date"
-                               value="{{ old('subscription_start_date', $partner->subscription_start_date ?? '') }}"
-                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
-                        @error('subscription_start_date')
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label for="subscription_end_date" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Subscription End Date
-                        </label>
-                        <input type="date" id="subscription_end_date" name="subscription_end_date"
-                               value="{{ old('subscription_end_date', $partner->subscription_end_date ?? '') }}"
-                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
-                        @error('subscription_end_date')
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
-
-                <div class="mt-6">
-                    <label for="payment_status" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Payment Status
-                    </label>
-                    <select id="payment_status" name="payment_status"
-                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
-                        <option value="pending" {{ old('payment_status', $partner->payment_status ?? '') == 'pending' ? 'selected' : '' }}>Pending</option>
-                        <option value="paid" {{ old('payment_status', $partner->payment_status ?? '') == 'paid' ? 'selected' : '' }}>Paid</option>
-                        <option value="overdue" {{ old('payment_status', $partner->payment_status ?? '') == 'overdue' ? 'selected' : '' }}>Overdue</option>
-                        <option value="cancelled" {{ old('payment_status', $partner->payment_status ?? '') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                    </select>
-                    @error('payment_status')
                         <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                     @enderror
                 </div>
