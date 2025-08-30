@@ -358,6 +358,34 @@
                 height: 0 !important;
                 overflow: hidden !important;
             }
+            
+            /* Remove all top spacing on mobile */
+            .main-content-wrapper {
+                margin-top: 0 !important;
+                padding-top: 0 !important;
+            }
+            
+            .sticky-top-bar {
+                margin-top: 0 !important;
+                padding-top: 0 !important;
+            }
+            
+            .sticky-top-bar > div:first-child {
+                padding-top: 0 !important;
+            }
+            
+            /* Additional padding removal for mobile */
+            .sticky-top-bar * {
+                padding-top: 0 !important;
+            }
+            
+            .sticky-top-bar .mobile-layout {
+                padding-top: 0 !important;
+            }
+            
+            .sticky-top-bar .mobile-content {
+                padding-top: 0 !important;
+            }
         }
     </style>
 </head>
@@ -488,7 +516,7 @@
 
         <div class="main-content-wrapper flex-1 flex flex-col">
             <div class="sticky-top-bar">
-                <div class="px-8 py-6">
+                <div class="px-8 py-0 lg:py-6">
                     <div class="flex items-center justify-between mobile-layout">
                         <div class="flex items-center space-x-8 mobile-content">
                             <div class="flex items-center space-x-4">
