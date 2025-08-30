@@ -38,10 +38,11 @@
         .sticky-top-bar {
             position: sticky;
             top: 0;
-            z-index: 50;
+            z-index: 30;
             background: white;
             border-bottom: 1px solid #e5e7eb;
             box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            transition: margin-left 0.3s ease-in-out;
         }
         
         .dark .sticky-top-bar {
@@ -55,26 +56,80 @@
             top: 0;
             left: 0;
             height: 100vh;
-            z-index: 40;
+            z-index: 50;
             transition: transform 0.3s ease-in-out;
         }
+        
+        /* Mobile hamburger button styles */
+        @media (max-width: 1023px) {
+            #sidebar-toggle {
+                position: fixed;
+                top: 1rem;
+                left: 1rem;
+                z-index: 60;
+                background: white;
+                border: 1px solid #e5e7eb;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            }
+            
+            .dark #sidebar-toggle {
+                background: #1f2937;
+                border-color: #4b5563;
+            }
+        }
+        
+        /* Desktop: Completely hide sidebar toggle button */
+        @media (min-width: 1024px) {
+            #sidebar-toggle {
+                display: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+                pointer-events: none !important;
+                position: absolute !important;
+                left: -9999px !important;
+                top: -9999px !important;
+            }
+        }
+        
+        /* Additional desktop hiding with higher specificity */
+        .lg\:hidden {
+            display: none !important;
+        }
+        
+        /* Force hide on all desktop breakpoints */
+        @media (min-width: 640px) and (min-width: 1024px) {
+            #sidebar-toggle {
+                display: none !important;
+            }
+        }
+        
+
         
         /* Mobile sidebar styles */
         @media (max-width: 1023px) {
             .sidebar-container {
                 transform: translateX(-100%);
+                z-index: 50; /* Ensure sidebar is above top bar on mobile */
+            }
+            
+            /* Ensure mobile hamburger button doesn't overlap content */
+            .main-content-wrapper {
+                padding-top: 4rem;
+            }
+            
+            /* Ensure proper layering on mobile */
+            .sticky-top-bar {
+                position: relative; /* Change to relative on mobile for proper stacking */
             }
         }
         
         .main-content-wrapper {
             margin-left: 16rem; /* 256px for sidebar width */
             min-height: 100vh;
-            transition: margin-left 0.3s ease-in-out;
+            transition: margin-left 0.3s ease-in-out, padding-top 0.3s ease-in-out;
         }
         
-        .sidebar-collapsed .main-content-wrapper {
-            margin-left: 4rem; /* 64px for collapsed sidebar */
-        }
+
         
         @media (max-width: 1023px) {
             .main-content-wrapper {
@@ -100,6 +155,8 @@
                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">Partner Portal</p>
                     </div>
                 </div>
+                
+
 
                 <!-- Navigation Menu -->
                 <nav class="flex-1 px-4">
@@ -219,10 +276,19 @@
         </div>
 
         <!-- Mobile Sidebar Backdrop -->
-        <div id="sidebar-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden hidden"></div>
+        <div id="sidebar-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-45 lg:hidden hidden"></div>
 
         <!-- Main Content Area -->
         <div class="main-content-wrapper flex-1 flex flex-col">
+            <!-- Mobile Hamburger Menu Button - Positioned outside top bar -->
+            <div class="lg:hidden fixed top-4 left-4 z-50">
+                <button id="sidebar-toggle" class="p-3 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg shadow-lg border border-gray-200 dark:border-gray-600 transition-all duration-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+            
             <!-- Sticky Top Bar -->
             <div class="sticky-top-bar">
                 <div class="px-8 py-6">
@@ -267,7 +333,7 @@
                                     <div class="flex items-center space-x-2">
                                         <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
                                             <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                                             </svg>
                                         </div>
                                         <div class="text-left">
@@ -295,12 +361,6 @@
                         
                         <!-- Right Side: User Controls -->
                         <div class="flex items-center space-x-3">
-                            <!-- Mobile Sidebar Toggle -->
-                            <button id="sidebar-toggle" class="lg:hidden p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                                </svg>
-                            </button>
                             
                             <!-- Notification Bell -->
                             <button class="relative p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
@@ -481,8 +541,8 @@
     <!-- JavaScript for Sidebar Toggle, Mobile Sidebar, and Theme -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Sidebar state management
-            let sidebarOpen = localStorage.getItem('sidebarOpen') !== 'false'; // Default to open
+            // Sidebar state management - always open on desktop
+            let sidebarOpen = true; // Always keep sidebar open
             
             const sidebar = document.getElementById('sidebar');
             const sidebarToggle = document.getElementById('sidebar-toggle');
@@ -511,19 +571,56 @@
                         const isHidden = sidebar.style.transform === 'translateX(-100%)';
                         sidebar.style.transform = isHidden ? 'translateX(0)' : 'translateX(-100%)';
                         sidebarBackdrop.classList.toggle('hidden');
-                    } else {
-                        // Desktop: toggle sidebar collapsed state
-                        sidebarOpen = !sidebarOpen;
-                        updateSidebar();
+                        
+                        // Adjust top bar positioning on mobile
+                        const topBar = document.querySelector('.sticky-top-bar');
+                        if (topBar) {
+                            if (isHidden) {
+                                topBar.style.marginLeft = '16rem'; // 256px - same as sidebar width
+                            } else {
+                                topBar.style.marginLeft = '0';
+                            }
+                        }
+                        
+                        // Also adjust main content wrapper on mobile
+                        if (mainContentWrapper) {
+                            if (isHidden) {
+                                mainContentWrapper.style.marginLeft = '16rem'; // 256px - same as sidebar width
+                            } else {
+                                mainContentWrapper.style.marginLeft = '0';
+                            }
+                        }
+                        
+                        // Add/remove body scroll lock for mobile
+                        if (isHidden) {
+                            document.body.style.overflow = 'hidden';
+                        } else {
+                            document.body.style.overflow = '';
+                        }
                     }
                 });
             }
+            
+
 
             // Close mobile sidebar when backdrop is clicked
             if (sidebarBackdrop) {
                 sidebarBackdrop.addEventListener('click', () => {
                     sidebar.style.transform = 'translateX(-100%)';
                     sidebarBackdrop.classList.add('hidden');
+                    
+                    // Reset top bar positioning
+                    const topBar = document.querySelector('.sticky-top-bar');
+                    if (topBar) {
+                        topBar.style.marginLeft = '0';
+                    }
+                    
+                    // Reset main content wrapper positioning
+                    if (mainContentWrapper) {
+                        mainContentWrapper.style.marginLeft = '0';
+                    }
+                    
+                    document.body.style.overflow = '';
                 });
             }
 
@@ -533,67 +630,70 @@
                     // On desktop, restore sidebar state
                     sidebar.style.transform = 'translateX(0)';
                     sidebarBackdrop.classList.add('hidden');
+                    document.body.style.overflow = '';
                     updateSidebar();
+                    
+                    // Hide sidebar toggle button on desktop
+                    if (sidebarToggle) {
+                        sidebarToggle.style.display = 'none';
+                        sidebarToggle.style.visibility = 'hidden';
+                        sidebarToggle.style.opacity = '0';
+                        sidebarToggle.style.pointerEvents = 'none';
+                    }
                 } else {
                     // On mobile, ensure sidebar is hidden by default
                     sidebar.style.transform = 'translateX(-100%)';
                     sidebarBackdrop.classList.add('hidden');
+                    document.body.style.overflow = '';
+                    
+                    // Show sidebar toggle button on mobile
+                    if (sidebarToggle) {
+                        sidebarToggle.style.display = 'block';
+                        sidebarToggle.style.visibility = 'visible';
+                        sidebarToggle.style.opacity = '1';
+                        sidebarToggle.style.pointerEvents = 'auto';
+                    }
+                    
+                    // Reset top bar positioning on mobile
+                    const topBar = document.querySelector('.sticky-top-bar');
+                    if (topBar) {
+                        topBar.style.marginLeft = '0';
+                    }
+                    
+                    // Reset main content wrapper positioning on mobile
+                    if (mainContentWrapper) {
+                        mainContentWrapper.style.marginLeft = '0';
+                    }
                 }
             });
 
             function updateSidebar() {
-                if (sidebarOpen) {
-                    sidebar.classList.remove('w-16');
-                    sidebar.classList.add('w-64');
-                    
-                    // Adjust main content margin for expanded sidebar
-                    if (mainContentWrapper) {
-                        mainContentWrapper.classList.remove('sidebar-collapsed');
-                    }
-                    
-                    logoText.style.opacity = '1';
-                    logoText.style.display = 'block';
-                    userInfo.style.opacity = '1';
-                    userInfo.style.display = 'block';
-                    logoutButton.style.opacity = '1';
-                    logoutButton.style.display = 'block';
-                    
-                    navTexts.forEach(id => {
-                        const element = document.getElementById(id);
-                        if (element) {
-                            element.style.opacity = '1';
-                            element.style.display = 'block';
-                        }
-                    });
-                    
-
-                } else {
-                    sidebar.classList.remove('w-64');
-                    sidebar.classList.add('w-16');
-                    
-                    // Adjust main content margin for collapsed sidebar
-                    if (mainContentWrapper) {
-                        mainContentWrapper.classList.add('sidebar-collapsed');
-                    }
-                    
-                    logoText.style.opacity = '0';
-                    logoText.style.display = 'none';
-                    userInfo.style.opacity = '0';
-                    userInfo.style.display = 'none';
-                    logoutButton.style.opacity = '0';
-                    logoutButton.style.display = 'none';
-                    
-                    navTexts.forEach(id => {
-                        const element = document.getElementById(id);
-                        if (element) {
-                            element.style.opacity = '0';
-                            element.style.display = 'none';
-                        }
-                    });
-                    
-
+                // Always keep sidebar expanded on desktop
+                sidebar.classList.remove('w-16');
+                sidebar.classList.add('w-64');
+                
+                // Adjust main content margin for expanded sidebar
+                if (mainContentWrapper) {
+                    mainContentWrapper.classList.remove('sidebar-collapsed');
                 }
-                localStorage.setItem('sidebarOpen', sidebarOpen);
+                
+                logoText.style.opacity = '1';
+                logoText.style.display = 'block';
+                userInfo.style.opacity = '1';
+                userInfo.style.display = 'block';
+                logoutButton.style.opacity = '1';
+                logoutButton.style.display = 'block';
+                
+                navTexts.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.style.opacity = '1';
+                        element.style.display = 'block';
+                    }
+                });
+                
+                // Always set sidebar as open
+                sidebarOpen = true;
             }
 
             updateSidebar();
@@ -602,9 +702,25 @@
             if (window.innerWidth >= 1024) {
                 sidebar.style.transform = 'translateX(0)';
                 sidebarBackdrop.classList.add('hidden');
+                
+                // Ensure sidebar toggle button is hidden on desktop
+                if (sidebarToggle) {
+                    sidebarToggle.style.display = 'none';
+                    sidebarToggle.style.visibility = 'hidden';
+                    sidebarToggle.style.opacity = '0';
+                    sidebarToggle.style.pointerEvents = 'none';
+                }
             } else {
                 sidebar.style.transform = 'translateX(-100%)';
                 sidebarBackdrop.classList.add('hidden');
+                
+                // Show sidebar toggle button on mobile
+                if (sidebarToggle) {
+                    sidebarToggle.style.display = 'block';
+                    sidebarToggle.style.visibility = 'visible';
+                    sidebarToggle.style.opacity = '1';
+                    sidebarToggle.style.pointerEvents = 'auto';
+                }
             }
 
             if (themeToggle) {
@@ -626,28 +742,7 @@
                 });
             }
 
-            if (!sidebarOpen) {
-                const navItems = sidebar.querySelectorAll('nav a');
-                navItems.forEach(item => {
-                    item.addEventListener('mouseenter', () => {
-                        const text = item.querySelector('span')?.textContent || '';
-                        if (text) {
-                            const tooltip = document.createElement('div');
-                            tooltip.className = 'absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-sm rounded shadow-lg z-50 whitespace-nowrap';
-                            tooltip.textContent = text;
-                            item.style.position = 'relative';
-                            item.appendChild(tooltip);
-                        }
-                    });
-                    
-                    item.addEventListener('mouseleave', () => {
-                        const tooltip = item.querySelector('div');
-                        if (tooltip) {
-                            tooltip.remove();
-                        }
-                    });
-                });
-            }
+
 
             // Profile submenu functionality removed - simplified to direct links
         });
