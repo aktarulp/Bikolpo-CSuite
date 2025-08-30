@@ -33,13 +33,61 @@
         .text-transparent {
             color: transparent;
         }
+        
+        /* Sticky top bar styles */
+        .sticky-top-bar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+        
+        .dark .sticky-top-bar {
+            background: #111827;
+            border-bottom-color: #374151;
+        }
+        
+        /* Ensure sidebar is always visible */
+        .sidebar-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 40;
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        /* Mobile sidebar styles */
+        @media (max-width: 1023px) {
+            .sidebar-container {
+                transform: translateX(-100%);
+            }
+        }
+        
+        .main-content-wrapper {
+            margin-left: 16rem; /* 256px for sidebar width */
+            min-height: 100vh;
+            transition: margin-left 0.3s ease-in-out;
+        }
+        
+        .sidebar-collapsed .main-content-wrapper {
+            margin-left: 4rem; /* 64px for collapsed sidebar */
+        }
+        
+        @media (max-width: 1023px) {
+            .main-content-wrapper {
+                margin-left: 0;
+            }
+        }
     </style>
 </head>
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-100 flex">
-        <!-- Left Sidebar (same as layouts/dashboard) -->
-        <div id="sidebar" class="fixed inset-y-0 left-0 z-50 flex flex-col transition-all duration-300 ease-in-out w-64 lg:relative lg:inset-0" style="transform: translateX(-100%);">
-            <div class="flex flex-col flex-grow pt-5 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700">
+        <!-- Left Sidebar - Always visible -->
+        <div id="sidebar" class="sidebar-container w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700">
+            <div class="flex flex-col flex-grow pt-5 h-full overflow-y-auto">
                 <!-- Logo Section -->
                 <div class="flex flex-col items-center flex-shrink-0 px-6 mb-8">
                     <div class="w-12 h-12 bg-gradient-to-br from-primaryGreen to-emerald-500 rounded-xl flex items-center justify-center shadow-lg mb-4 transform hover:scale-110 transition-all duration-300">
@@ -73,8 +121,7 @@
                         <span id="nav-questions" class="ml-3 transition-all duration-300">Questions</span>
                     </a>
 
-
-
+                    <!-- Questions Menu -->
                     <a href="{{ route('partner.exams.index') }}" 
                        class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.exams.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
                         <svg class="h-5 w-5 {{ request()->routeIs('partner.exams.*') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -83,25 +130,7 @@
                         <span id="nav-exams" class="ml-3 transition-all duration-300">Exams</span>
                     </a>
 
-                    <!-- Public Quiz Management -->
-                    <div class="space-y-1">
-                        <a href="{{ route('partner.exams.index') }}" 
-                           class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.exams.assign*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                            <svg class="h-5 w-5 {{ request()->routeIs('partner.exams.assign*') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                            </svg>
-                            <span class="ml-3">Student Assignments</span>
-                        </a>
-                        
-                        <a href="{{ route('public.quiz.access') }}" target="_blank"
-                           class="group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white">
-                            <svg class="h-5 w-5 text-gray-400 group-hover:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                            </svg>
-                            <span class="ml-3">Public Quiz Access</span>
-                        </a>
-                    </div>
+
 
                     <a href="{{ route('partner.students.index') }}" 
                        class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.students.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
@@ -208,188 +237,189 @@
         <!-- Mobile Sidebar Backdrop -->
         <div id="sidebar-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden hidden"></div>
 
-        <!-- Main Content Area with Partner Top Banner -->
-        <div id="main-content" class="flex-1 flex flex-col lg:ml-64">
-            <main class="flex-1 overflow-y-auto px-6 pb-6">
-                <!-- Professional Welcome Banner with Navigation Tabs -->
-                <div class="sticky top-0 z-50 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm">
-                    <div class="px-8 py-6">
-                        <div class="flex items-center justify-between">
-                            <!-- Left Side: Welcome & Stats -->
-                            <div class="flex items-center space-x-8">
-                                <!-- Welcome Section -->
-                                <div class="flex items-center space-x-4">
-                                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-sm">
-                                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
-                                            Welcome back, <span class="text-blue-600 dark:text-blue-400">{{ $partner?->slug ?? $partner?->name ?? Auth::user()->name ?? 'Partner' }}</span>
-                                        </h2>
-                                        <p class="text-gray-600 dark:text-gray-400 text-sm">Manage your exam system efficiently</p>
-                                    </div>
+        <!-- Main Content Area -->
+        <div class="main-content-wrapper flex-1 flex flex-col">
+            <!-- Sticky Top Bar -->
+            <div class="sticky-top-bar">
+                <div class="px-8 py-6">
+                    <div class="flex items-center justify-between">
+                        <!-- Left Side: Welcome & Stats -->
+                        <div class="flex items-center space-x-8">
+                            <!-- Welcome Section -->
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-sm">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                    </svg>
                                 </div>
-                                
-                                <!-- Divider -->
-                                <div class="w-px h-12 bg-gray-300 dark:bg-gray-600"></div>
-                                
-                                <!-- Quick Stats -->
-                                <div class="flex items-center space-x-6">
-                                    <div class="text-center">
-                                        <div class="flex items-center space-x-2">
-                                            <div class="w-8 h-8 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center">
-                                                <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                </svg>
-                                            </div>
-                                            <div class="text-left">
-                                                <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $stats['total_questions'] ?? 0 }}</p>
-                                                <p class="text-xs text-gray-500 dark:text-gray-400">Questions</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="text-center">
-                                        <div class="flex items-center space-x-2">
-                                            <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-                                                <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                                                </svg>
-                                            </div>
-                                            <div class="text-left">
-                                                <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $stats['total_exams'] ?? 0 }}</p>
-                                                <p class="text-xs text-gray-500 dark:text-gray-400">Exams</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="text-center">
-                                        <div class="flex items-center space-x-2">
-                                            <div class="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
-                                                <svg class="w-4 h-4 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                                                </svg>
-                                            </div>
-                                            <div class="text-left">
-                                                <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $stats['total_students'] ?? 0 }}</p>
-                                                <p class="text-xs text-gray-500 dark:text-gray-400">Students</p>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div>
+                                    <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
+                                        Welcome back, <span class="text-blue-600 dark:text-blue-400">{{ $partner?->slug ?? $partner?->name ?? Auth::user()->name ?? 'Partner' }}</span>
+                                    </h2>
+                                    <p class="text-gray-600 dark:text-gray-400 text-sm">Manage your exam system efficiently</p>
                                 </div>
                             </div>
                             
-                            <!-- Right Side: User Controls -->
-                            <div class="flex items-center space-x-3">
-                                <!-- Mobile Sidebar Toggle -->
-                                <button id="sidebar-toggle" class="lg:hidden p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                                    </svg>
-                                </button>
-                                
-                                <!-- Notification Bell -->
-                                <button class="relative p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                                    </svg>
-                                    <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
-                                        <span class="text-xs font-bold text-white text-[10px]">3</span>
-                                    </span>
-                                </button>
-                                
-                                <!-- Dark Mode Toggle -->
-                                <button id="theme-toggle" class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.66-13.66l-.71.71M4.05 19.95l.71-.71M21 12h-1M4 12H3m16.95 7.95l-.71-.71M4.05 4.05l.71.71M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                                    </svg>
-                                </button>
-                                
-                                <!-- Profile Menu -->
-                                <div class="relative group">
-                                    <button class="flex items-center space-x-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200 focus:outline-none">
-                                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center overflow-hidden">
-                                            @if(!empty($partner?->logo))
-                                                <img src="{{ asset('storage/' . $partner->logo) }}" alt="Partner Logo" class="w-full h-full object-cover">
-                                            @else
-                                                <span class="text-sm font-bold text-white">{{ substr($partner?->slug ?? $partner?->name ?? Auth::user()->name ?? 'P', 0, 1) }}</span>
-                                            @endif
+                            <!-- Divider -->
+                            <div class="w-px h-12 bg-gray-300 dark:bg-gray-600"></div>
+                            
+                            <!-- Quick Stats -->
+                            <div class="flex items-center space-x-6">
+                                <div class="text-center">
+                                    <div class="flex items-center space-x-2">
+                                        <div class="w-8 h-8 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center">
+                                            <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
                                         </div>
-                                        <svg class="w-4 h-4 text-gray-400 group-hover:text-gray-500 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                        </svg>
-                                    </button>
-                                    
-                                    <!-- Profile Dropdown Menu -->
-                                    <div class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                                        <div class="py-1">
-                                            <a href="{{ route('partner.profile.show-partnar') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-                                                <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                                </svg>
-                                                Institution Profile
-                                            </a>
-                                            <a href="{{ route('partner.profile.edit-partnar') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-                                                <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                                </svg>
-                                                Edit Institution
-                                            </a>
-                                            <hr class="my-1 border-gray-200 dark:border-gray-700">
-                                            <a href="{{ route('partner.profile.show-user-profile') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-                                                <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                                </svg>
-                                                User Profile
-                                            </a>
-                                            <a href="{{ route('partner.profile.edit-user-profile') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-                                                <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                                </svg>
-                                                Edit User Profile
-                                            </a>
-                                            <hr class="my-1 border-gray-200 dark:border-gray-700">
-                                            <form method="POST" action="{{ route('logout') }}" class="block">
-                                                @csrf
-                                                <button type="submit" class="w-full flex items-center px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200 text-left">
-                                                    <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                                                    </svg>
-                                                    Logout
-                                                </button>
-                                            </form>
+                                        <div class="text-left">
+                                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $stats['total_questions'] ?? 0 }}</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Questions</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="text-center">
+                                    <div class="flex items-center space-x-2">
+                                        <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                                            <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="text-left">
+                                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $stats['total_exams'] ?? 0 }}</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Exams</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="text-center">
+                                    <div class="flex items-center space-x-2">
+                                        <div class="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
+                                            <svg class="w-4 h-4 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="text-left">
+                                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $stats['total_students'] ?? 0 }}</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Students</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Navigation Tabs -->
-                        <div class="border-t border-gray-200 dark:border-gray-700">
-                            <nav class="flex items-center space-x-1">
-                                <a href="{{ route('partner.dashboard') }}" 
-                                   class="px-4 py-2 text-sm font-medium text-primaryGreen bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-                                    Overview
-                                </a>
-                                <a href="{{ route('partner.questions.all') }}" 
-                                   class="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
-                                    Questions
-                                </a>
-                                <a href="{{ route('partner.exams.index') }}" 
-                                   class="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
-                                    Exams
-                                </a>
-                                <a href="{{ route('partner.students.index') }}" 
-                                   class="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
-                                    Students
-                                </a>
-                            </nav>
+                        <!-- Right Side: User Controls -->
+                        <div class="flex items-center space-x-3">
+                            <!-- Mobile Sidebar Toggle -->
+                            <button id="sidebar-toggle" class="lg:hidden p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                                </svg>
+                            </button>
+                            
+                            <!-- Notification Bell -->
+                            <button class="relative p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                                </svg>
+                                <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
+                                    <span class="text-xs font-bold text-white text-[10px]">3</span>
+                                </span>
+                            </button>
+                            
+                            <!-- Dark Mode Toggle -->
+                            <button id="theme-toggle" class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.66-13.66l-.71.71M4.05 19.95l.71-.71M21 12h-1M4 12H3m16.95 7.95l-.71-.71M4.05 4.05l.71.71M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                                </svg>
+                            </button>
+                            
+                            <!-- Profile Menu -->
+                            <div class="relative group">
+                                <button class="flex items-center space-x-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200 focus:outline-none">
+                                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center overflow-hidden">
+                                        @if(!empty($partner?->logo))
+                                            <img src="{{ asset('storage/' . $partner->logo) }}" alt="Partner Logo" class="w-full h-full object-cover">
+                                        @else
+                                            <span class="text-sm font-bold text-white">{{ substr($partner?->slug ?? $partner?->name ?? Auth::user()->name ?? 'P', 0, 1) }}</span>
+                                        @endif
+                                    </div>
+                                    <svg class="w-4 h-4 text-gray-400 group-hover:text-gray-500 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </button>
+                                
+                                <!-- Profile Dropdown Menu -->
+                                <div class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                                    <div class="py-1">
+                                        <a href="{{ route('partner.profile.show-partnar') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                                            <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                            </svg>
+                                            Institution Profile
+                                        </a>
+                                        <a href="{{ route('partner.profile.edit-partnar') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                                            <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                            </svg>
+                                            Edit Institution
+                                        </a>
+                                        <hr class="my-1 border-gray-200 dark:border-gray-700">
+                                        <a href="{{ route('partner.profile.show-user-profile') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                                            <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                            </svg>
+                                            User Profile
+                                        </a>
+                                        <a href="{{ route('partner.profile.edit-user-profile') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                                            <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                            </svg>
+                                            Edit User Profile
+                                        </a>
+                                        <hr class="my-1 border-gray-200 dark:border-gray-700">
+                                        <form method="POST" action="{{ route('logout') }}" class="block">
+                                            @csrf
+                                            <button type="submit" class="w-full flex items-center px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200 text-left">
+                                                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                                </svg>
+                                                Logout
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    
+                    <!-- Navigation Tabs -->
+                    <div class="border-t border-gray-200 dark:border-gray-700 mt-4 pt-4">
+                        <nav class="flex items-center space-x-1">
+                            <a href="{{ route('partner.dashboard') }}" 
+                               class="px-4 py-2 text-sm font-medium text-primaryGreen bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                                Overview
+                            </a>
+                            <a href="{{ route('partner.questions.all') }}" 
+                               class="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
+                                Questions
+                            </a>
+                            <a href="{{ route('partner.exams.index') }}" 
+                               class="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
+                                Exams
+                            </a>
+                            <a href="{{ route('partner.students.index') }}" 
+                               class="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
+                                Students
+                            </a>
+                        </nav>
+                    </div>
                 </div>
+            </div>
 
+            <!-- Main Content -->
+            <main class="flex-1 overflow-y-auto px-6 pb-6 pt-6">
                 <!-- Session Messages -->
                 @if(session('success'))
                     <div class="fixed top-4 right-4 z-50 max-w-sm w-full bg-green-50 border border-green-200 rounded-lg shadow-lg p-4 transition-all duration-300 transform translate-x-full" id="success-message">
@@ -473,7 +503,7 @@
             const sidebar = document.getElementById('sidebar');
             const sidebarToggle = document.getElementById('sidebar-toggle');
             const sidebarBackdrop = document.getElementById('sidebar-backdrop');
-            const mainContent = document.getElementById('main-content');
+            const mainContentWrapper = document.querySelector('.main-content-wrapper');
             const themeToggle = document.getElementById('theme-toggle');
             const htmlTag = document.documentElement;
 
@@ -484,7 +514,7 @@
             const navTexts = [
                 'nav-dashboard', 'nav-questions', 'nav-exams',
                 'nav-students', 'nav-batches', 'nav-courses', 'nav-subjects',
-                'nav-topics', 'nav-question-history', 'nav-partners', 'nav-partner-profile'
+                'nav-topics', 'nav-question-history', 'nav-partners', 'nav-partner-profile', 'nav-user-profile'
             ];
 
             // Mobile sidebar toggle
@@ -519,19 +549,11 @@
                     // On desktop, restore sidebar state
                     sidebar.style.transform = 'translateX(0)';
                     sidebarBackdrop.classList.add('hidden');
-                    // Reset main content margin for desktop
-                    if (mainContent) {
-                        mainContent.style.marginLeft = sidebarOpen ? '16rem' : '4rem';
-                    }
                     updateSidebar();
                 } else {
                     // On mobile, ensure sidebar is hidden by default
                     sidebar.style.transform = 'translateX(-100%)';
                     sidebarBackdrop.classList.add('hidden');
-                    // Reset main content margin for mobile
-                    if (mainContent) {
-                        mainContent.style.marginLeft = '0';
-                    }
                 }
             });
 
@@ -541,8 +563,8 @@
                     sidebar.classList.add('w-64');
                     
                     // Adjust main content margin for expanded sidebar
-                    if (mainContent && window.innerWidth >= 1024) {
-                        mainContent.style.marginLeft = '16rem'; // 256px = 16rem
+                    if (mainContentWrapper) {
+                        mainContentWrapper.classList.remove('sidebar-collapsed');
                     }
                     
                     logoText.style.opacity = '1';
@@ -566,8 +588,8 @@
                     sidebar.classList.add('w-16');
                     
                     // Adjust main content margin for collapsed sidebar
-                    if (mainContent && window.innerWidth >= 1024) {
-                        mainContent.style.marginLeft = '4rem'; // 64px = 4rem
+                    if (mainContentWrapper) {
+                        mainContentWrapper.classList.add('sidebar-collapsed');
                     }
                     
                     logoText.style.opacity = '0';
@@ -595,16 +617,10 @@
             // Initialize sidebar visibility based on screen size
             if (window.innerWidth >= 1024) {
                 sidebar.style.transform = 'translateX(0)';
-                // Set initial margin for desktop
-                if (mainContent) {
-                    mainContent.style.marginLeft = sidebarOpen ? '16rem' : '4rem';
-                }
+                sidebarBackdrop.classList.add('hidden');
             } else {
                 sidebar.style.transform = 'translateX(-100%)';
-                // Set initial margin for mobile
-                if (mainContent) {
-                    mainContent.style.marginLeft = '0';
-                }
+                sidebarBackdrop.classList.add('hidden');
             }
 
             if (themeToggle) {
