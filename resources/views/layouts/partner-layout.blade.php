@@ -37,7 +37,7 @@
             top: 0;
             left: 0;
             height: 100vh;
-            z-index: 50;
+            z-index: 60;
             width: 16rem; /* Tailwind's w-64 */
             transform: translateX(0); /* Default for desktop */
             transition: transform 0.3s ease-in-out;
@@ -130,7 +130,7 @@
             right: 0;
             bottom: 0;
             background-color: rgba(0, 0, 0, 0.5);
-            z-index: 40;
+            z-index: 55;
             display: none; /* Hidden by default */
         }
         #sidebar-backdrop.active {
@@ -381,10 +381,17 @@
             
             .sticky-top-bar .mobile-layout {
                 padding-top: 0 !important;
+                justify-content: center !important;
             }
             
             .sticky-top-bar .mobile-content {
                 padding-top: 0 !important;
+                justify-content: center !important;
+                width: 100% !important;
+            }
+            
+            .sticky-top-bar .mobile-content > div:first-child {
+                margin: 0 auto !important;
             }
         }
     </style>
@@ -529,11 +536,11 @@
                                         </svg>
                                     @endif
                                 </div>
-                                <div>
-                                    <h2 class="text-lg lg:text-2xl font-semibold text-gray-900 dark:text-white whitespace-nowrap">
+                                <div class="text-center">
+                                    <h2 class="text-lg lg:text-2xl font-semibold text-gray-900 dark:text-white whitespace-nowrap text-center">
                                         Welcome back,<br/> <span class="text-blue-600 dark:text-blue-400 whitespace-nowrap">{{ $partner?->slug ?? $partner?->name ?? Auth::user()->name ?? 'Partner' }}</span>
                                     </h2>
-                                    <p class="text-gray-600 dark:text-gray-400 text-xs lg:text-sm">Manage your exam system efficiently</p>
+                                    <p class="text-gray-600 dark:text-gray-400 text-xs lg:text-sm text-center">Manage your exam system efficiently</p>
                                 </div>
                             </div>
 
@@ -793,12 +800,22 @@
             document.addEventListener('DOMContentLoaded', () => {
                 const sidebar = document.getElementById('sidebar');
                 const sidebarToggle = document.getElementById('sidebar-toggle');
+                const sideNavToggler = document.getElementById('sideNavToggler');
                 const sidebarBackdrop = document.getElementById('sidebar-backdrop');
                 const themeToggle = document.getElementById('theme-toggle');
                 const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
                 const htmlTag = document.documentElement;
 
-                // Handle mobile sidebar toggle
+                // Handle mobile sidebar toggle for sideNavToggler button
+                if (sideNavToggler && sidebar && sidebarBackdrop) {
+                    sideNavToggler.addEventListener('click', () => {
+                        sidebar.classList.toggle('open');
+                        sidebarBackdrop.classList.toggle('active');
+                        document.body.classList.toggle('overflow-hidden');
+                    });
+                }
+
+                // Handle mobile sidebar toggle for sidebar-toggle button (existing functionality)
                 if (sidebarToggle && sidebar && sidebarBackdrop) {
                     sidebarToggle.addEventListener('click', () => {
                         sidebar.classList.toggle('open');
@@ -812,6 +829,23 @@
                         document.body.classList.remove('overflow-hidden');
                     });
                 }
+
+                // Close sidebar when clicking anywhere on the document (except the sidebar itself)
+                document.addEventListener('click', (event) => {
+                    if (sidebar && sidebar.classList.contains('open')) {
+                        // Don't close if clicking on the sidebar or its toggle buttons
+                        if (sidebar.contains(event.target) || 
+                            sideNavToggler?.contains(event.target) || 
+                            sidebarToggle?.contains(event.target)) {
+                            return;
+                        }
+                        
+                        // Close the sidebar
+                        sidebar.classList.remove('open');
+                        sidebarBackdrop.classList.remove('active');
+                        document.body.classList.remove('overflow-hidden');
+                    }
+                });
 
                 // Handle window resize to manage mobile vs desktop view
                 function handleResize() {
