@@ -592,7 +592,7 @@
                             </div>
 
                             <div class="flex items-center space-x-3">
-                                <button class="relative p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
+                                <button class="relative p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200 lg:block hidden">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
                                     </svg>
@@ -601,13 +601,13 @@
                                     </span>
                                 </button>
 
-                                <button id="theme-toggle" class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
+                                <button id="theme-toggle" class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200 lg:block hidden">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.66-13.66l-.71.71M4.05 19.95l.71-.71M21 12h-1M4 12H3m16.95 7.95l-.71-.71M4.05 4.05l.71.71M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
                                     </svg>
                                 </button>
 
-                                <div class="relative group">
+                                <div class="relative group lg:block hidden">
                                     <button class="flex items-center space-x-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200 focus:outline-none">
                                         <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center overflow-hidden">
                                             @if(!empty($partner?->logo))
@@ -660,8 +660,11 @@
                                             </form>
                                         </div>
                                     </div>
-                                    <button id="sideNavToggler" class="lg:hidden p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
-                                    <svg class="w-5 h-5" viewBox="0 0 24 24">
+                                </div>
+                                
+                                <!-- SideNavToggler Button - Visible only on mobile -->
+                                <button id="sideNavToggler" class="lg:hidden p-4 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
+                                    <svg class="w-12 h-12" viewBox="0 0 24 24">
                                         <defs>
                                             <linearGradient id="skyblueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
                                                 <stop offset="0%" style="stop-color:#87CEEB;stop-opacity:1" />
@@ -674,9 +677,6 @@
                                         <line x1="6" y1="16" x2="18" y2="16" stroke="white" stroke-width="2" stroke-linecap="round" />
                                     </svg>
                                 </button>
-
-
-                                </div>
                             </div>
                         </div>
                     </div>
