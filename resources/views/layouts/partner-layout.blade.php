@@ -143,10 +143,27 @@
             display: block; /* Show when active */
         }
 
-        .sticky-top-bar {
+        /* Mobile top bar styles */
+        .mobile-top-bar {
             position: sticky;
             top: 0;
-            z-index: 30;
+            z-index: 60;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .dark .mobile-top-bar {
+            background: #111827;
+            border-color: #374151;
+        }
+        
+        /* Sticky top bar styles */
+        .sticky-top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
             background: white;
             border-bottom: 1px solid #e5e7eb;
             box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
@@ -154,7 +171,55 @@
         
         .dark .sticky-top-bar {
             background: #111827;
-            border-bottom-color: #374151;
+            border-color: #374151;
+        }
+        
+        /* Adjust main content to account for fixed top bars */
+        .main-content-wrapper {
+            padding-top: 120px; /* Account for top bars */
+        }
+        
+        /* Mobile specific adjustments */
+        @media (max-width: 1023px) {
+            .sticky-top-bar {
+                top: 60px; /* Position below mobile top bar */
+                left: 0; /* Full width on mobile */
+                right: 0;
+            }
+            
+            .main-content-wrapper {
+                padding-top: 180px; /* Account for both top bars */
+            }
+        }
+        
+        /* Desktop specific adjustments */
+        @media (min-width: 1024px) {
+            .mobile-top-bar {
+                display: none; /* Hide on desktop */
+            }
+            
+            .sticky-top-bar {
+                top: 0; /* Position at very top on desktop */
+                left: 16rem; /* Start where sidebar ends (16rem = 256px) */
+                right: 0;
+            }
+            
+            .main-content-wrapper {
+                padding-top: 120px; /* Account for sticky top bar only */
+            }
+        }
+        
+        /* Mobile touch improvements */
+        @media (max-width: 1023px) {
+            .mobile-top-bar button {
+                min-height: 44px;
+                min-width: 44px;
+            }
+            
+            .mobile-top-bar .group:hover .group-hover\:opacity-100 {
+                opacity: 1;
+                visibility: visible;
+            }
         }
         
         /* Dark mode for main content area */
@@ -412,76 +477,79 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <div class="flex items-center space-x-3">
                             
-                            <button class="relative p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-                                </svg>
-                                <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
-                                    <span class="text-xs font-bold text-white text-[10px]">3</span>
-                                </span>
-                            </button>
-                            
-                            <button id="theme-toggle" class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.66-13.66l-.71.71M4.05 19.95l.71-.71M21 12h-1M4 12H3m16.95 7.95l-.71-.71M4.05 4.05l.71.71M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                                </svg>
-                            </button>
-                            
-                            <div class="relative group">
-                                <button class="flex items-center space-x-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200 focus:outline-none">
-                                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center overflow-hidden">
-                                        @if(!empty($partner?->logo))
-                                            <img src="{{ asset('storage/' . $partner->logo) }}" alt="Partner Logo" class="w-full h-full object-cover">
-                                        @else
-                                            <span class="text-sm font-bold text-white">{{ substr($partner?->slug ?? $partner?->name ?? Auth::user()->name ?? 'P', 0, 1) }}</span>
-                                        @endif
-                                    </div>
-                                    <svg class="w-4 h-4 text-gray-400 group-hover:text-gray-500 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            <!-- Right side - Action buttons -->
+                            <div class="flex items-center space-x-3">
+                                <!-- Notifications -->
+                                <button class="relative p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                                    </svg>
+                                    <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
+                                        <span class="text-xs font-bold text-white text-[10px]">3</span>
+                                    </span>
+                                </button>
+                                
+                                <!-- Dark mode toggle -->
+                                <button id="theme-toggle" class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.66-13.66l-.71.71M4.05 19.95l.71-.71M21 12h-1M4 12H3m16.95 7.95l-.71-.71M4.05 4.05l.71.71M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
                                     </svg>
                                 </button>
                                 
-                                <div class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                                    <div class="py-1">
-                                        <a href="{{ route('partner.profile.show-partnar') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-                                            <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                            </svg>
-                                            Institution Profile
-                                        </a>
-                                        <a href="{{ route('partner.profile.edit-partnar') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-                                            <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                            </svg>
-                                            Edit Institution
-                                        </a>
-                                        <hr class="my-1 border-gray-200 dark:border-gray-700">
-                                        <a href="{{ route('partner.profile.show-user-profile') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-                                            <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                            </svg>
-                                            User Profile
-                                        </a>
-                                        <a href="{{ route('partner.profile.edit-user-profile') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-                                            <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                            </svg>
-                                            Edit User Profile
-                                        </a>
-                                        <hr class="my-1 border-gray-200 dark:border-gray-700">
-                                        <form method="POST" action="{{ route('logout') }}" class="block">
-                                            @csrf
-                                            <button type="submit" class="w-full flex items-center px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200 text-left">
-                                                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                <!-- User menu dropdown -->
+                                <div class="relative group">
+                                    <button class="flex items-center space-x-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200 focus:outline-none">
+                                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center overflow-hidden">
+                                            @if(!empty($partner?->logo))
+                                                <img src="{{ asset('storage/' . $partner->logo) }}" alt="Partner Logo" class="w-full h-full object-cover">
+                                            @else
+                                                <span class="text-sm font-bold text-white">{{ substr($partner?->slug ?? $partner?->name ?? Auth::user()->name ?? 'P', 0, 1) }}</span>
+                                            @endif
+                                        </div>
+                                        <svg class="w-4 h-4 text-gray-400 group-hover:text-gray-500 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                        </svg>
+                                    </button>
+                                    
+                                    <div class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                                        <div class="py-1">
+                                            <a href="{{ route('partner.profile.show-partnar') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                                                <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                                                 </svg>
-                                                Logout
-                                            </button>
-                                        </form>
+                                                Institution Profile
+                                            </a>
+                                            <a href="{{ route('partner.profile.edit-partnar') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                                                <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                                </svg>
+                                                Edit Institution
+                                            </a>
+                                            <hr class="my-1 border-gray-200 dark:border-gray-700">
+                                            <a href="{{ route('partner.profile.show-user-profile') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                                                <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                                </svg>
+                                                User Profile
+                                            </a>
+                                            <a href="{{ route('partner.profile.edit-user-profile') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                                                <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                                </svg>
+                                                Edit User Profile
+                                            </a>
+                                            <hr class="my-1 border-gray-200 dark:border-gray-700">
+                                            <form method="POST" action="{{ route('logout') }}" class="block">
+                                                @csrf
+                                                <button type="submit" class="w-full flex items-center px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200 text-left">
+                                                    <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                                    </svg>
+                                                    Logout
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -490,6 +558,8 @@
                     
                     <div class="border-t border-gray-200 dark:border-gray-700"></div>
                 </div>
+
+                <div class="border-t border-gray-200 dark:border-gray-700"></div>
             </div>
 
             <main class="flex-1 overflow-y-auto px-6 pb-6 pt-6">
@@ -566,64 +636,64 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const sidebar = document.getElementById('sidebar');
-            const sidebarToggle = document.getElementById('sidebar-toggle');
-            const sidebarBackdrop = document.getElementById('sidebar-backdrop');
-            const themeToggle = document.getElementById('theme-toggle');
-            const htmlTag = document.documentElement;
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const sidebar = document.getElementById('sidebar');
+                const sidebarToggle = document.getElementById('sidebar-toggle');
+                const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+                const themeToggle = document.getElementById('theme-toggle');
+                const htmlTag = document.documentElement;
 
-            // Handle mobile sidebar toggle
-            if (sidebarToggle && sidebar && sidebarBackdrop) {
-                sidebarToggle.addEventListener('click', () => {
-                    sidebar.classList.toggle('open');
-                    sidebarBackdrop.classList.toggle('active');
-                    document.body.classList.toggle('overflow-hidden');
-                });
+                // Handle mobile sidebar toggle
+                if (sidebarToggle && sidebar && sidebarBackdrop) {
+                    sidebarToggle.addEventListener('click', () => {
+                        sidebar.classList.toggle('open');
+                        sidebarBackdrop.classList.toggle('active');
+                        document.body.classList.toggle('overflow-hidden');
+                    });
 
-                sidebarBackdrop.addEventListener('click', () => {
-                    sidebar.classList.remove('open');
-                    sidebarBackdrop.classList.remove('active');
-                    document.body.classList.remove('overflow-hidden');
-                });
-            }
-
-            // Handle window resize to manage mobile vs desktop view
-            function handleResize() {
-                if (window.innerWidth >= 1024) {
-                    // Desktop view
-                    sidebar.classList.remove('open');
-                    sidebarBackdrop.classList.remove('active');
-                    document.body.classList.remove('overflow-hidden');
-                }
-            }
-
-            window.addEventListener('resize', handleResize);
-            handleResize(); // Initial check on load
-
-            // Theme toggle
-            if (themeToggle) {
-                const currentTheme = localStorage.getItem('theme');
-                if (currentTheme) {
-                    htmlTag.classList.add(currentTheme);
-                } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    htmlTag.classList.add('dark');
+                    sidebarBackdrop.addEventListener('click', () => {
+                        sidebar.classList.remove('open');
+                        sidebarBackdrop.classList.remove('active');
+                        document.body.classList.remove('overflow-hidden');
+                    });
                 }
 
-                themeToggle.addEventListener('click', () => {
-                    if (htmlTag.classList.contains('dark')) {
-                        htmlTag.classList.remove('dark');
-                        localStorage.setItem('theme', 'light');
-                    } else {
-                        htmlTag.classList.add('dark');
-                        localStorage.setItem('theme', 'dark');
+                // Handle window resize to manage mobile vs desktop view
+                function handleResize() {
+                    if (window.innerWidth >= 1024) {
+                        // Desktop view
+                        sidebar.classList.remove('open');
+                        sidebarBackdrop.classList.remove('active');
+                        document.body.classList.remove('overflow-hidden');
                     }
-                });
-            }
-        });
-    </script>
-    
-    @stack('scripts')
-</body>
-</html>
+                }
+
+                window.addEventListener('resize', handleResize);
+                handleResize(); // Initial check on load
+
+                // Theme toggle
+                if (themeToggle) {
+                    const currentTheme = localStorage.getItem('theme');
+                    if (currentTheme) {
+                        htmlTag.classList.add(currentTheme);
+                    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                        htmlTag.classList.add('dark');
+                    }
+
+                    themeToggle.addEventListener('click', () => {
+                        if (htmlTag.classList.contains('dark')) {
+                            htmlTag.classList.remove('dark');
+                            localStorage.setItem('theme', 'light');
+                        } else {
+                            htmlTag.classList.add('dark');
+                            localStorage.setItem('theme', 'dark');
+                        }
+                    });
+                }
+            });
+        </script>
+        
+        @stack('scripts')
+    </body>
+    </html>
