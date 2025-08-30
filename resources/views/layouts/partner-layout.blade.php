@@ -338,6 +338,16 @@
                 width: 100%;
             }
         }
+
+        /* Hide sideNavToggler button on desktop */
+        @media (min-width: 1024px) {
+            #sideNavToggler {
+                display: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+                pointer-events: none !important;
+            }
+        }
     </style>
 </head>
 <body class="font-sans antialiased">
@@ -639,7 +649,7 @@
                                             </form>
                                         </div>
                                     </div>
-                                    <button id="sideNavToggler" class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
+                                    <button id="sideNavToggler" class="lg:hidden p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
                                     <svg class="w-5 h-5" viewBox="0 0 24 24">
                                         <defs>
                                             <linearGradient id="skyblueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
