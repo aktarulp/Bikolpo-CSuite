@@ -43,6 +43,28 @@
             transition: transform 0.3s ease-in-out;
             box-shadow: 0 4px 12px rgba(0,0,0,0.25);
         }
+        
+        /* Dark mode styles for full view */
+        .dark .sidebar-container {
+            background: #111827;
+            border-color: #374151;
+        }
+        
+        .dark .main-content-wrapper {
+            background: #111827;
+        }
+        
+        .dark body {
+            background: #111827;
+        }
+        
+        .dark html {
+            background: #111827;
+        }
+        
+        .dark .min-h-screen {
+            background: #111827;
+        }
 
         .main-content-wrapper, .sticky-top-bar {
             margin-left: 0;
@@ -127,6 +149,15 @@
         .dark .sticky-top-bar {
             background: #111827;
             border-bottom-color: #374151;
+        }
+        
+        /* Dark mode for main content area */
+        .dark .main-content-wrapper {
+            background: #111827;
+        }
+        
+        .dark main {
+            background: #111827;
         }
         
     </style>
