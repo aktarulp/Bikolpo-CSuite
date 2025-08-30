@@ -438,27 +438,10 @@
                         </div>
                     </div>
                     
-                    <!-- Navigation Tabs -->
-                    <div class="border-t border-gray-200 dark:border-gray-700 mt-4 pt-4">
-                        <nav class="flex items-center space-x-1">
-                            <a href="{{ route('partner.dashboard') }}" 
-                               class="px-4 py-2 text-sm font-medium text-primaryGreen bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-                                Overview
-                            </a>
-                            <a href="{{ route('partner.questions.all') }}" 
-                               class="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
-                                Questions
-                            </a>
-                            <a href="{{ route('partner.exams.index') }}" 
-                               class="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
-                                Exams
-                            </a>
-                            <a href="{{ route('partner.students.index') }}" 
-                               class="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
-                                Students
-                            </a>
-                        </nav>
-                    </div>
+                    <!-- Separator Line -->
+                    <div class="border-t border-gray-200 dark:border-gray-700"></div>
+                    
+                    
                 </div>
             </div>
 
