@@ -166,14 +166,12 @@
     <div class="min-h-screen bg-gray-100 flex">
         <div id="sidebar" class="sidebar-container bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700">
             <div class="flex flex-col flex-grow pt-5 h-full overflow-y-auto">
-                <div class="flex flex-col items-center flex-shrink-0 px-6 mb-8">
-                    <div class="w-12 h-12 bg-gradient-to-br from-primaryGreen to-emerald-500 rounded-xl flex items-center justify-center shadow-lg mb-4 transform hover:scale-110 transition-all duration-300">
-                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                        </svg>
-                    </div>
+                <div class="flex flex-col items-center flex-shrink-0 px-6 mb-5">
+                    <a href="{{ route('partner.dashboard') }}" class="w-12 h-12 bg-gradient-to-br from-primaryGreen to-emerald-500 rounded-xl flex items-center justify-center shadow-lg mb-4 transform hover:scale-110 transition-all duration-300 overflow-hidden">
+                        <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-8 h-8 object-contain">
+                    </a>
                     <div id="logo-text" class="text-center transition-all duration-300">
-                        <h1 class="text-2xl font-extrabold bg-gradient-to-r from-primaryGreen via-emerald-600 to-blue-600 bg-clip-text text-transparent drop-shadow-sm hover:drop-shadow-md transition-all duration-300 font-bengali">বিকল্প পাঠশালা</h1>
+                        <h1 class="text-2xl font-extrabold bg-gradient-to-r from-primaryGreen via-emerald-600 to-blue-600 bg-clip-text text-transparent drop-shadow-sm hover:drop-shadow-md transition-all duration-300 font-bengali p-0 m-0">বিকল্প পাঠশালা</h1>
                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">Partner Portal</p>
                     </div>
                 </div>
@@ -310,7 +308,7 @@
                                 </div>
                                 <div>
                                     <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
-                                        Welcome back, <span class="text-blue-600 dark:text-blue-400">{{ $partner?->slug ?? $partner?->name ?? Auth::user()->name ?? 'Partner' }}</span>
+                                        Welcome back,<br/> <span class="text-blue-600 dark:text-blue-400">{{ $partner?->slug ?? $partner?->name ?? Auth::user()->name ?? 'Partner' }}</span>
                                     </h2>
                                     <p class="text-gray-600 dark:text-gray-400 text-sm">Manage your exam system efficiently</p>
                                 </div>
