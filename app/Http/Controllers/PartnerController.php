@@ -96,4 +96,23 @@ class PartnerController extends Controller
         return redirect()->route('partner.partners.index')
             ->with('success', 'Partner deleted successfully.');
     }
+
+    public function assign(Partner $partner)
+    {
+        // This method can be used to assign students, courses, or other resources to a partner
+        // For now, redirecting to the partner show page
+        return redirect()->route('partner.partners.show', $partner)
+            ->with('info', 'Partner assignment functionality coming soon.');
+    }
+
+    public function toggleStatus(Partner $partner)
+    {
+        $partner->update([
+            'status' => $partner->status === 'active' ? 'inactive' : 'active'
+        ]);
+
+        $status = $partner->status === 'active' ? 'activated' : 'deactivated';
+        return redirect()->route('partner.partners.index')
+            ->with('success', "Partner {$status} successfully.");
+    }
 }

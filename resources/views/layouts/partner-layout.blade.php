@@ -19,14 +19,14 @@
         <div id="sidebar" class="fixed inset-y-0 left-0 z-50 flex flex-col transition-all duration-300 ease-in-out w-64 lg:relative lg:inset-0" style="transform: translateX(-100%);">
             <div class="flex flex-col flex-grow pt-5 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700">
                 <!-- Logo Section -->
-                <div class="flex items-center flex-shrink-0 px-6 mb-8">
-                    <div class="w-10 h-10 bg-gradient-to-br from-primaryGreen to-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
+                <div class="flex flex-col items-center flex-shrink-0 px-6 mb-8">
+                    <div class="w-10 h-10 bg-gradient-to-br from-primaryGreen to-emerald-500 rounded-xl flex items-center justify-center shadow-lg mb-3">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                         </svg>
                     </div>
-                    <div id="logo-text" class="ml-3 transition-all duration-300">
-                        <h1 class="text-xl font-bold text-gray-900 dark:text-white">CSuite</h1>
+                    <div id="logo-text" class="text-center transition-all duration-300">
+                        <h1 class="text-xl font-bold text-gray-900 dark:text-white">বিকল্প পাঠশালা</h1>
                         <p class="text-xs text-gray-500 dark:text-gray-400">Partner Portal</p>
                     </div>
                 </div>
@@ -188,7 +188,7 @@
 
         <!-- Main Content Area with Partner Top Banner -->
         <div id="main-content" class="flex-1 flex flex-col lg:ml-64">
-            <main class="flex-1 overflow-y-auto p-6">
+            <main class="flex-1 overflow-y-auto px-6 pb-6">
                 <!-- Professional Welcome Banner with Navigation Tabs -->
                 <div class="sticky top-0 z-50 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm">
                     <div class="px-8 py-6">

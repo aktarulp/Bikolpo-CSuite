@@ -70,6 +70,8 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'role:partner'])
     
     // Partner Management
     Route::resource('partners', PartnerController::class);
+    Route::get('partners/{partner}/assign', [PartnerController::class, 'assign'])->name('partners.assign');
+    Route::patch('partners/{partner}/toggle-status', [PartnerController::class, 'toggleStatus'])->name('partners.toggle-status');
     
     // Course Management
     Route::resource('courses', CourseController::class);
