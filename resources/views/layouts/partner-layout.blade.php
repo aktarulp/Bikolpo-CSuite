@@ -93,16 +93,11 @@
             max-width: 100%; /* Ensure inner content doesn't overflow */
         }
         
-        /* Debug: Ensure Quick Stats are visible */
-        .sticky-top-bar .flex.items-center.space-x-3 {
+        /* Ensure Quick Stats are visible */
+        .sticky-top-bar .flex.items-center.space-x-2.lg\:flex {
             display: flex !important;
             visibility: visible !important;
             opacity: 1 !important;
-        }
-        
-        /* Additional debug for Quick Stats */
-        .sticky-top-bar .flex.items-center.space-x-3.hidden.lg\:flex {
-            display: flex !important;
         }
             #sidebar-toggle {
                 display: none !important; /* Hide hamburger on desktop */
@@ -312,14 +307,18 @@
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-8">
                             <div class="flex items-center space-x-4">
-                                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-sm">
-                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                    </svg>
+                                <div class="w-12 h-12 flex items-center justify-center">
+                                    @if(!empty($partner?->logo))
+                                        <img src="{{ asset('storage/' . $partner->logo) }}" alt="Partner Logo" class="w-12 h-12 object-cover">
+                                    @else
+                                        <svg class="w-6 h-6 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                        </svg>
+                                    @endif
                                 </div>
                                 <div>
-                                    <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">
-                                        Welcome back,<br/> <span class="text-blue-600 dark:text-blue-400">{{ $partner?->slug ?? $partner?->name ?? Auth::user()->name ?? 'Partner' }}</span>
+                                    <h2 class="text-2xl font-semibold text-gray-900 dark:text-white whitespace-nowrap">
+                                        Welcome back,<br/> <span class="text-blue-600 dark:text-blue-400 whitespace-nowrap">{{ $partner?->slug ?? $partner?->name ?? Auth::user()->name ?? 'Partner' }}</span>
                                     </h2>
                                     <p class="text-gray-600 dark:text-gray-400 text-sm">Manage your exam system efficiently</p>
                                 </div>
@@ -327,7 +326,7 @@
                             
                             <div class="w-px h-12 bg-gray-300 dark:bg-gray-600 hidden lg:block"></div>
                             
-                            <div class="flex items-center space-x-3 hidden lg:flex" style="background: rgba(255, 0, 0, 0.1); padding: 8px; border-radius: 8px;">
+                            <div class="flex items-center space-x-2 lg:flex" style="padding: 4px;">
                                 <!-- Course Stats -->
                                 <div class="text-center">
                                     <div class="flex items-center space-x-2">
