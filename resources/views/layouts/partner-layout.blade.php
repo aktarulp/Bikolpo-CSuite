@@ -348,6 +348,17 @@
                 pointer-events: none !important;
             }
         }
+
+        /* Hide quick stats container on mobile */
+        @media (max-width: 1023px) {
+            .sticky-top-bar .flex.items-center.space-x-2 {
+                display: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+                height: 0 !important;
+                overflow: hidden !important;
+            }
+        }
     </style>
 </head>
 <body class="font-sans antialiased">
