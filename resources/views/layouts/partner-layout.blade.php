@@ -6,16 +6,13 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Laravel') }}</title>
     
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-    <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
-    <!-- Custom Styles -->
     <style>
         .font-bengali {
             font-family: 'Noto Sans Bengali', 'Noto Sans', 'Arial Unicode MS', sans-serif;
@@ -34,35 +31,61 @@
             color: transparent;
         }
         
-        /* Sticky top bar styles */
-        .sticky-top-bar {
-            position: sticky;
-            top: 0;
-            z-index: 30;
-            background: white;
-            border-bottom: 1px solid #e5e7eb;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-            transition: margin-left 0.3s ease-in-out;
-        }
-        
-        .dark .sticky-top-bar {
-            background: #111827;
-            border-bottom-color: #374151;
-        }
-        
-        /* Ensure sidebar is always visible */
+        /* Layout for Desktop and Mobile */
         .sidebar-container {
             position: fixed;
             top: 0;
             left: 0;
             height: 100vh;
             z-index: 50;
+            width: 16rem; /* Tailwind's w-64 */
+            transform: translateX(0); /* Default for desktop */
             transition: transform 0.3s ease-in-out;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+        }
+
+        .main-content-wrapper, .sticky-top-bar {
+            margin-left: 0;
+            transition: margin-left 0.3s ease-in-out;
         }
         
-        /* Mobile hamburger button styles */
-        @media (max-width: 1023px) {
+        /* Ensure top bar is properly contained within main content wrapper */
+        .main-content-wrapper {
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Desktop Styles (lg breakpoint) */
+        @media (min-width: 1024px) {
+            .sidebar-container {
+                box-shadow: none; /* No shadow on desktop */
+            }
+            .main-content-wrapper {
+                margin-left: 16rem !important; /* Align with sidebar width - force override */
+            }
+            .sticky-top-bar {
+                margin-left: 0; /* Reset margin for top bar since it's inside main-content-wrapper */
+                width: 100%; /* Take full width of its container */
+                overflow: hidden; /* Prevent content from extending beyond bounds */
+            }
+            .sticky-top-bar > div {
+                max-width: 100%; /* Ensure inner content doesn't overflow */
+            }
             #sidebar-toggle {
+                display: none !important; /* Hide hamburger on desktop */
+            }
+        }
+        
+        /* Mobile Styles (up to lg breakpoint) */
+        @media (max-width: 1023px) {
+            .sidebar-container {
+                transform: translateX(-100%); /* Hide sidebar by default on mobile */
+            }
+            .sidebar-container.open {
+                transform: translateX(0); /* Show sidebar when 'open' class is present */
+            }
+            #sidebar-toggle {
+                display: block !important; /* Show hamburger on mobile */
                 position: fixed;
                 top: 1rem;
                 left: 1rem;
@@ -71,79 +94,47 @@
                 border: 1px solid #e5e7eb;
                 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             }
-            
             .dark #sidebar-toggle {
                 background: #1f2937;
                 border-color: #4b5563;
             }
         }
-        
-        /* Desktop: Completely hide sidebar toggle button */
-        @media (min-width: 1024px) {
-            #sidebar-toggle {
-                display: none !important;
-                visibility: hidden !important;
-                opacity: 0 !important;
-                pointer-events: none !important;
-                position: absolute !important;
-                left: -9999px !important;
-                top: -9999px !important;
-            }
-        }
-        
-        /* Additional desktop hiding with higher specificity */
-        .lg\:hidden {
-            display: none !important;
-        }
-        
-        /* Force hide on all desktop breakpoints */
-        @media (min-width: 640px) and (min-width: 1024px) {
-            #sidebar-toggle {
-                display: none !important;
-            }
-        }
-        
 
-        
-        /* Mobile sidebar styles */
-        @media (max-width: 1023px) {
-            .sidebar-container {
-                transform: translateX(-100%);
-                z-index: 50; /* Ensure sidebar is above top bar on mobile */
-            }
-            
-            /* Ensure mobile hamburger button doesn't overlap content */
-            .main-content-wrapper {
-                padding-top: 4rem;
-            }
-            
-            /* Ensure proper layering on mobile */
-            .sticky-top-bar {
-                position: relative; /* Change to relative on mobile for proper stacking */
-            }
+        /* Mobile Sidebar Backdrop */
+        #sidebar-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 40;
+            display: none; /* Hidden by default */
         }
-        
-        .main-content-wrapper {
-            margin-left: 16rem; /* 256px for sidebar width */
-            min-height: 100vh;
-            transition: margin-left 0.3s ease-in-out, padding-top 0.3s ease-in-out;
+        #sidebar-backdrop.active {
+            display: block; /* Show when active */
         }
-        
 
-        
-        @media (max-width: 1023px) {
-            .main-content-wrapper {
-                margin-left: 0;
-            }
+        .sticky-top-bar {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
         }
+        
+        .dark .sticky-top-bar {
+            background: #111827;
+            border-bottom-color: #374151;
+        }
+        
     </style>
 </head>
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-100 flex">
-        <!-- Left Sidebar - Always visible -->
-        <div id="sidebar" class="sidebar-container w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700">
+        <div id="sidebar" class="sidebar-container bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700">
             <div class="flex flex-col flex-grow pt-5 h-full overflow-y-auto">
-                <!-- Logo Section -->
                 <div class="flex flex-col items-center flex-shrink-0 px-6 mb-8">
                     <div class="w-12 h-12 bg-gradient-to-br from-primaryGreen to-emerald-500 rounded-xl flex items-center justify-center shadow-lg mb-4 transform hover:scale-110 transition-all duration-300">
                         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -156,9 +147,6 @@
                     </div>
                 </div>
                 
-
-
-                <!-- Navigation Menu -->
                 <nav class="flex-1 px-4">
                     <a href="{{ route('partner.dashboard') }}" 
                        class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.dashboard') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
@@ -169,7 +157,6 @@
                         <span id="nav-dashboard" class="ml-3 transition-all duration-300">Dashboard</span>
                     </a>
 
-                    <!-- Questions Menu -->
                     <a href="{{ route('partner.questions.all') }}" 
                        class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.questions.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
                         <svg class="h-5 w-5 {{ request()->routeIs('partner.questions.*') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -178,7 +165,6 @@
                         <span id="nav-questions" class="ml-3 transition-all duration-300">Questions</span>
                     </a>
 
-                    <!-- Questions Menu -->
                     <a href="{{ route('partner.exams.index') }}" 
                        class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.exams.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
                         <svg class="h-5 w-5 {{ request()->routeIs('partner.exams.*') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -186,8 +172,6 @@
                         </svg>
                         <span id="nav-exams" class="ml-3 transition-all duration-300">Exams</span>
                     </a>
-
-
 
                     <a href="{{ route('partner.students.index') }}" 
                        class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.students.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
@@ -240,15 +224,12 @@
                     <a href="{{ route('partner.partners.index') }}" 
                        class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.partners.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
                         <svg class="h-5 w-5 {{ request()->routeIs('partner.partners.*') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                         </svg>
                         <span id="nav-partners" class="ml-3 transition-all duration-300">Partners</span>
                     </a>
-
-
                 </nav>
 
-                <!-- Bottom Section -->
                 <div class="flex-shrink-0 p-4 border-t border-gray-200 dark:border-gray-700">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
@@ -275,12 +256,9 @@
             </div>
         </div>
 
-        <!-- Mobile Sidebar Backdrop -->
-        <div id="sidebar-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-45 lg:hidden hidden"></div>
+        <div id="sidebar-backdrop" class="lg:hidden"></div>
 
-        <!-- Main Content Area -->
         <div class="main-content-wrapper flex-1 flex flex-col">
-            <!-- Mobile Hamburger Menu Button - Positioned outside top bar -->
             <div class="lg:hidden fixed top-4 left-4 z-50">
                 <button id="sidebar-toggle" class="p-3 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg shadow-lg border border-gray-200 dark:border-gray-600 transition-all duration-200">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -289,13 +267,10 @@
                 </button>
             </div>
             
-            <!-- Sticky Top Bar -->
             <div class="sticky-top-bar">
                 <div class="px-8 py-6">
                     <div class="flex items-center justify-between">
-                        <!-- Left Side: Welcome & Stats -->
                         <div class="flex items-center space-x-8">
-                            <!-- Welcome Section -->
                             <div class="flex items-center space-x-4">
                                 <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-sm">
                                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -310,11 +285,9 @@
                                 </div>
                             </div>
                             
-                            <!-- Divider -->
-                            <div class="w-px h-12 bg-gray-300 dark:bg-gray-600"></div>
+                            <div class="w-px h-12 bg-gray-300 dark:bg-gray-600 hidden lg:block"></div>
                             
-                            <!-- Quick Stats -->
-                            <div class="flex items-center space-x-6">
+                            <div class="items-center space-x-6 hidden lg:flex">
                                 <div class="text-center">
                                     <div class="flex items-center space-x-2">
                                         <div class="w-8 h-8 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center">
@@ -333,7 +306,7 @@
                                     <div class="flex items-center space-x-2">
                                         <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
                                             <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                                             </svg>
                                         </div>
                                         <div class="text-left">
@@ -359,10 +332,8 @@
                             </div>
                         </div>
                         
-                        <!-- Right Side: User Controls -->
                         <div class="flex items-center space-x-3">
                             
-                            <!-- Notification Bell -->
                             <button class="relative p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
@@ -372,14 +343,12 @@
                                 </span>
                             </button>
                             
-                            <!-- Dark Mode Toggle -->
                             <button id="theme-toggle" class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.66-13.66l-.71.71M4.05 19.95l.71-.71M21 12h-1M4 12H3m16.95 7.95l-.71-.71M4.05 4.05l.71.71M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
                                 </svg>
                             </button>
                             
-                            <!-- Profile Menu -->
                             <div class="relative group">
                                 <button class="flex items-center space-x-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200 focus:outline-none">
                                     <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center overflow-hidden">
@@ -394,7 +363,6 @@
                                     </svg>
                                 </button>
                                 
-                                <!-- Profile Dropdown Menu -->
                                 <div class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                                     <div class="py-1">
                                         <a href="{{ route('partner.profile.show-partnar') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
@@ -438,16 +406,11 @@
                         </div>
                     </div>
                     
-                    <!-- Separator Line -->
                     <div class="border-t border-gray-200 dark:border-gray-700"></div>
-                    
-                    
                 </div>
             </div>
 
-            <!-- Main Content -->
             <main class="flex-1 overflow-y-auto px-6 pb-6 pt-6">
-                <!-- Session Messages -->
                 @if(session('success'))
                     <div class="fixed top-4 right-4 z-50 max-w-sm w-full bg-green-50 border border-green-200 rounded-lg shadow-lg p-4 transition-all duration-300 transform translate-x-full" id="success-message">
                         <div class="flex items-start">
@@ -521,191 +484,43 @@
         </div>
     </div>
 
-    <!-- JavaScript for Sidebar Toggle, Mobile Sidebar, and Theme -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Sidebar state management - always open on desktop
-            let sidebarOpen = true; // Always keep sidebar open
-            
             const sidebar = document.getElementById('sidebar');
             const sidebarToggle = document.getElementById('sidebar-toggle');
             const sidebarBackdrop = document.getElementById('sidebar-backdrop');
-            const mainContentWrapper = document.querySelector('.main-content-wrapper');
             const themeToggle = document.getElementById('theme-toggle');
             const htmlTag = document.documentElement;
 
-            // Elements to show/hide
-            const logoText = document.getElementById('logo-text');
-            const userInfo = document.getElementById('user-info');
-            const logoutButton = document.getElementById('logout-button');
-            const navTexts = [
-                'nav-dashboard', 'nav-questions', 'nav-exams',
-                'nav-students', 'nav-batches', 'nav-courses', 'nav-subjects',
-                'nav-topics', 'nav-question-history', 'nav-partners'
-            ];
-
-            // Mobile sidebar toggle
-            if (sidebarToggle) {
+            // Handle mobile sidebar toggle
+            if (sidebarToggle && sidebar && sidebarBackdrop) {
                 sidebarToggle.addEventListener('click', () => {
-                    const isMobile = window.innerWidth < 1024; // lg breakpoint
-                    
-                    if (isMobile) {
-                        // Mobile: toggle sidebar visibility
-                        const isHidden = sidebar.style.transform === 'translateX(-100%)';
-                        sidebar.style.transform = isHidden ? 'translateX(0)' : 'translateX(-100%)';
-                        sidebarBackdrop.classList.toggle('hidden');
-                        
-                        // Adjust top bar positioning on mobile
-                        const topBar = document.querySelector('.sticky-top-bar');
-                        if (topBar) {
-                            if (isHidden) {
-                                topBar.style.marginLeft = '16rem'; // 256px - same as sidebar width
-                            } else {
-                                topBar.style.marginLeft = '0';
-                            }
-                        }
-                        
-                        // Also adjust main content wrapper on mobile
-                        if (mainContentWrapper) {
-                            if (isHidden) {
-                                mainContentWrapper.style.marginLeft = '16rem'; // 256px - same as sidebar width
-                            } else {
-                                mainContentWrapper.style.marginLeft = '0';
-                            }
-                        }
-                        
-                        // Add/remove body scroll lock for mobile
-                        if (isHidden) {
-                            document.body.style.overflow = 'hidden';
-                        } else {
-                            document.body.style.overflow = '';
-                        }
-                    }
+                    sidebar.classList.toggle('open');
+                    sidebarBackdrop.classList.toggle('active');
+                    document.body.classList.toggle('overflow-hidden');
                 });
-            }
-            
 
-
-            // Close mobile sidebar when backdrop is clicked
-            if (sidebarBackdrop) {
                 sidebarBackdrop.addEventListener('click', () => {
-                    sidebar.style.transform = 'translateX(-100%)';
-                    sidebarBackdrop.classList.add('hidden');
-                    
-                    // Reset top bar positioning
-                    const topBar = document.querySelector('.sticky-top-bar');
-                    if (topBar) {
-                        topBar.style.marginLeft = '0';
-                    }
-                    
-                    // Reset main content wrapper positioning
-                    if (mainContentWrapper) {
-                        mainContentWrapper.style.marginLeft = '0';
-                    }
-                    
-                    document.body.style.overflow = '';
+                    sidebar.classList.remove('open');
+                    sidebarBackdrop.classList.remove('active');
+                    document.body.classList.remove('overflow-hidden');
                 });
             }
 
-            // Close mobile sidebar on window resize
-            window.addEventListener('resize', () => {
+            // Handle window resize to manage mobile vs desktop view
+            function handleResize() {
                 if (window.innerWidth >= 1024) {
-                    // On desktop, restore sidebar state
-                    sidebar.style.transform = 'translateX(0)';
-                    sidebarBackdrop.classList.add('hidden');
-                    document.body.style.overflow = '';
-                    updateSidebar();
-                    
-                    // Hide sidebar toggle button on desktop
-                    if (sidebarToggle) {
-                        sidebarToggle.style.display = 'none';
-                        sidebarToggle.style.visibility = 'hidden';
-                        sidebarToggle.style.opacity = '0';
-                        sidebarToggle.style.pointerEvents = 'none';
-                    }
-                } else {
-                    // On mobile, ensure sidebar is hidden by default
-                    sidebar.style.transform = 'translateX(-100%)';
-                    sidebarBackdrop.classList.add('hidden');
-                    document.body.style.overflow = '';
-                    
-                    // Show sidebar toggle button on mobile
-                    if (sidebarToggle) {
-                        sidebarToggle.style.display = 'block';
-                        sidebarToggle.style.visibility = 'visible';
-                        sidebarToggle.style.opacity = '1';
-                        sidebarToggle.style.pointerEvents = 'auto';
-                    }
-                    
-                    // Reset top bar positioning on mobile
-                    const topBar = document.querySelector('.sticky-top-bar');
-                    if (topBar) {
-                        topBar.style.marginLeft = '0';
-                    }
-                    
-                    // Reset main content wrapper positioning on mobile
-                    if (mainContentWrapper) {
-                        mainContentWrapper.style.marginLeft = '0';
-                    }
-                }
-            });
-
-            function updateSidebar() {
-                // Always keep sidebar expanded on desktop
-                sidebar.classList.remove('w-16');
-                sidebar.classList.add('w-64');
-                
-                // Adjust main content margin for expanded sidebar
-                if (mainContentWrapper) {
-                    mainContentWrapper.classList.remove('sidebar-collapsed');
-                }
-                
-                logoText.style.opacity = '1';
-                logoText.style.display = 'block';
-                userInfo.style.opacity = '1';
-                userInfo.style.display = 'block';
-                logoutButton.style.opacity = '1';
-                logoutButton.style.display = 'block';
-                
-                navTexts.forEach(id => {
-                    const element = document.getElementById(id);
-                    if (element) {
-                        element.style.opacity = '1';
-                        element.style.display = 'block';
-                    }
-                });
-                
-                // Always set sidebar as open
-                sidebarOpen = true;
-            }
-
-            updateSidebar();
-            
-            // Initialize sidebar visibility based on screen size
-            if (window.innerWidth >= 1024) {
-                sidebar.style.transform = 'translateX(0)';
-                sidebarBackdrop.classList.add('hidden');
-                
-                // Ensure sidebar toggle button is hidden on desktop
-                if (sidebarToggle) {
-                    sidebarToggle.style.display = 'none';
-                    sidebarToggle.style.visibility = 'hidden';
-                    sidebarToggle.style.opacity = '0';
-                    sidebarToggle.style.pointerEvents = 'none';
-                }
-            } else {
-                sidebar.style.transform = 'translateX(-100%)';
-                sidebarBackdrop.classList.add('hidden');
-                
-                // Show sidebar toggle button on mobile
-                if (sidebarToggle) {
-                    sidebarToggle.style.display = 'block';
-                    sidebarToggle.style.visibility = 'visible';
-                    sidebarToggle.style.opacity = '1';
-                    sidebarToggle.style.pointerEvents = 'auto';
+                    // Desktop view
+                    sidebar.classList.remove('open');
+                    sidebarBackdrop.classList.remove('active');
+                    document.body.classList.remove('overflow-hidden');
                 }
             }
 
+            window.addEventListener('resize', handleResize);
+            handleResize(); // Initial check on load
+
+            // Theme toggle
             if (themeToggle) {
                 const currentTheme = localStorage.getItem('theme');
                 if (currentTheme) {
@@ -724,10 +539,6 @@
                     }
                 });
             }
-
-
-
-            // Profile submenu functionality removed - simplified to direct links
         });
     </script>
     
