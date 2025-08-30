@@ -188,23 +188,7 @@
                         <span id="nav-partners" class="ml-3 transition-all duration-300">Partners</span>
                     </a>
 
-                    <!-- Institution Profile Menu -->
-                    <a href="{{ route('partner.profile.show-partnar') }}" 
-                       class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.profile.show-partnar') || request()->routeIs('partner.profile.edit-partnar') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                        <svg class="h-5 w-5 {{ request()->routeIs('partner.profile.show-partnar') || request()->routeIs('partner.profile.edit-partnar') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                        </svg>
-                        <span id="nav-partner-profile" class="ml-3 transition-all duration-300">Institution Profile</span>
-                    </a>
 
-                    <!-- User Profile Menu -->
-                    <a href="{{ route('partner.profile.show-user-profile') }}" 
-                       class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.profile.show-user-profile') || request()->routeIs('partner.profile.edit-user-profile') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                        <svg class="h-5 w-5 {{ request()->routeIs('partner.profile.show-user-profile') || request()->routeIs('partner.profile.edit-user-profile') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                        </svg>
-                        <span id="nav-user-profile" class="ml-3 transition-all duration-300">User Profile</span>
-                    </a>
                 </nav>
 
                 <!-- Bottom Section -->
@@ -514,7 +498,7 @@
             const navTexts = [
                 'nav-dashboard', 'nav-questions', 'nav-exams',
                 'nav-students', 'nav-batches', 'nav-courses', 'nav-subjects',
-                'nav-topics', 'nav-question-history', 'nav-partners', 'nav-partner-profile', 'nav-user-profile'
+                'nav-topics', 'nav-question-history', 'nav-partners'
             ];
 
             // Mobile sidebar toggle
