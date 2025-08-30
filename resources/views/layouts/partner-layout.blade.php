@@ -9,9 +9,31 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    <!-- Custom Styles -->
+    <style>
+        .font-bengali {
+            font-family: 'Noto Sans Bengali', 'Noto Sans', 'Arial Unicode MS', sans-serif;
+        }
+        
+        .bg-gradient-to-r {
+            background: linear-gradient(135deg, #10b981 0%, #059669 50%, #2563eb 100%);
+        }
+        
+        .bg-clip-text {
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+        
+        .text-transparent {
+            color: transparent;
+        }
+    </style>
 </head>
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-100 flex">
@@ -20,19 +42,19 @@
             <div class="flex flex-col flex-grow pt-5 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700">
                 <!-- Logo Section -->
                 <div class="flex flex-col items-center flex-shrink-0 px-6 mb-8">
-                    <div class="w-10 h-10 bg-gradient-to-br from-primaryGreen to-emerald-500 rounded-xl flex items-center justify-center shadow-lg mb-3">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-12 h-12 bg-gradient-to-br from-primaryGreen to-emerald-500 rounded-xl flex items-center justify-center shadow-lg mb-4 transform hover:scale-110 transition-all duration-300">
+                        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                         </svg>
                     </div>
                     <div id="logo-text" class="text-center transition-all duration-300">
-                        <h1 class="text-xl font-bold text-gray-900 dark:text-white">বিকল্প পাঠশালা</h1>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Partner Portal</p>
+                        <h1 class="text-2xl font-extrabold bg-gradient-to-r from-primaryGreen via-emerald-600 to-blue-600 bg-clip-text text-transparent drop-shadow-sm hover:drop-shadow-md transition-all duration-300 font-bengali">বিকল্প পাঠশালা</h1>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">Partner Portal</p>
                     </div>
                 </div>
 
                 <!-- Navigation Menu -->
-                <nav class="flex-1 px-4 space-y-1">
+                <nav class="flex-1 px-4">
                     <a href="{{ route('partner.dashboard') }}" 
                        class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.dashboard') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
                         <svg class="h-5 w-5 {{ request()->routeIs('partner.dashboard') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
