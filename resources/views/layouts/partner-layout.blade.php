@@ -174,21 +174,21 @@
             border-color: #374151;
         }
         
-        /* Adjust main content to account for fixed top bars */
+        /* Adjust main content to account for fixed top bar */
         .main-content-wrapper {
-            padding-top: 120px; /* Account for top bars */
+            padding-top: 120px; /* Account for single top bar */
         }
         
         /* Mobile specific adjustments */
         @media (max-width: 1023px) {
             .sticky-top-bar {
-                top: 60px; /* Position below mobile top bar */
+                top: 0; /* At the very top on mobile */
                 left: 0; /* Full width on mobile */
                 right: 0;
             }
             
             .main-content-wrapper {
-                padding-top: 180px; /* Account for both top bars */
+                padding-top: 120px; /* Account for single sticky bar */
             }
         }
         
@@ -199,13 +199,13 @@
             }
             
             .sticky-top-bar {
-                top: 0; /* Position at very top on desktop */
-                left: 16rem; /* Start where sidebar ends (16rem = 256px) */
+                top: 0; /* At very top on desktop */
+                left: 16rem; /* Start where sidebar ends */
                 right: 0;
             }
             
             .main-content-wrapper {
-                padding-top: 120px; /* Account for sticky top bar only */
+                padding-top: 120px; /* Account for single sticky top bar */
             }
         }
         
@@ -359,14 +359,7 @@
         <div id="sidebar-backdrop" class="lg:hidden"></div>
 
         <div class="main-content-wrapper flex-1 flex flex-col">
-            <div class="lg:hidden fixed top-4 right-4 z-50">
-                <button id="sidebar-toggle" class="p-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg shadow-lg border border-gray-200 dark:border-gray-600 transition-all duration-200">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                </button>
-            </div>
-            
+            <!-- Original Top Navigation Bar -->
             <div class="sticky-top-bar">
                 <div class="px-8 py-6">
                     <div class="flex items-center justify-between">
@@ -551,6 +544,16 @@
                                             </form>
                                         </div>
                                     </div>
+                                    <!-- My Buttton -->
+
+                                <button id="theme-toggle" class="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.66-13.66l-.71.71M4.05 19.95l.71-.71M21 12h-1M4 12H3m16.95 7.95l-.71-.71M4.05 4.05l.71.71M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                                    </svg>
+                                </button>
+
+
+                                    
                                 </div>
                             </div>
                         </div>
@@ -642,6 +645,7 @@
                 const sidebarToggle = document.getElementById('sidebar-toggle');
                 const sidebarBackdrop = document.getElementById('sidebar-backdrop');
                 const themeToggle = document.getElementById('theme-toggle');
+                const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
                 const htmlTag = document.documentElement;
 
                 // Handle mobile sidebar toggle
@@ -672,7 +676,18 @@
                 window.addEventListener('resize', handleResize);
                 handleResize(); // Initial check on load
 
-                // Theme toggle
+                // Theme toggle function
+                function toggleTheme() {
+                    if (htmlTag.classList.contains('dark')) {
+                        htmlTag.classList.remove('dark');
+                        localStorage.setItem('theme', 'light');
+                    } else {
+                        htmlTag.classList.add('dark');
+                        localStorage.setItem('theme', 'dark');
+                    }
+                }
+
+                // Theme toggle for desktop
                 if (themeToggle) {
                     const currentTheme = localStorage.getItem('theme');
                     if (currentTheme) {
@@ -681,15 +696,12 @@
                         htmlTag.classList.add('dark');
                     }
 
-                    themeToggle.addEventListener('click', () => {
-                        if (htmlTag.classList.contains('dark')) {
-                            htmlTag.classList.remove('dark');
-                            localStorage.setItem('theme', 'light');
-                        } else {
-                            htmlTag.classList.add('dark');
-                            localStorage.setItem('theme', 'dark');
-                        }
-                    });
+                    themeToggle.addEventListener('click', toggleTheme);
+                }
+
+                // Theme toggle for mobile
+                if (mobileThemeToggle) {
+                    mobileThemeToggle.addEventListener('click', toggleTheme);
                 }
             });
         </script>
