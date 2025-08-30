@@ -88,11 +88,22 @@
             .sticky-top-bar {
                 margin-left: 0; /* Reset margin for top bar since it's inside main-content-wrapper */
                 width: 100%; /* Take full width of its container */
-                overflow: hidden; /* Prevent content from extending beyond bounds */
             }
-            .sticky-top-bar > div {
-                max-width: 100%; /* Ensure inner content doesn't overflow */
-            }
+                    .sticky-top-bar > div {
+            max-width: 100%; /* Ensure inner content doesn't overflow */
+        }
+        
+        /* Debug: Ensure Quick Stats are visible */
+        .sticky-top-bar .flex.items-center.space-x-3 {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        /* Additional debug for Quick Stats */
+        .sticky-top-bar .flex.items-center.space-x-3.hidden.lg\:flex {
+            display: flex !important;
+        }
             #sidebar-toggle {
                 display: none !important; /* Hide hamburger on desktop */
             }
@@ -316,7 +327,44 @@
                             
                             <div class="w-px h-12 bg-gray-300 dark:bg-gray-600 hidden lg:block"></div>
                             
-                            <div class="items-center space-x-6 hidden lg:flex">
+                            <div class="flex items-center space-x-3 hidden lg:flex" style="background: rgba(255, 0, 0, 0.1); padding: 8px; border-radius: 8px;">
+                                <!-- Course Stats -->
+                                <div class="text-center">
+                                    <div class="flex items-center space-x-2">
+                                        <div class="w-8 h-8 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
+                                            <svg class="w-4 h-4 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="text-left">
+                                            <p class="text-2xl font-bold text-orange-600 dark:text-orange-400">{{ $stats['total_courses'] ?? 0 }}</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Courses</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Divider -->
+                                <div class="w-px h-10 bg-gray-300 dark:bg-gray-600"></div>
+                                
+                                <!-- Batch Stats -->
+                                <div class="text-center">
+                                    <div class="flex items-center space-x-2">
+                                        <div class="w-8 h-8 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center">
+                                            <svg class="w-4 h-4 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="text-left">
+                                            <p class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{{ $stats['total_batches'] ?? 0 }}</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">Batches</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Divider -->
+                                <div class="w-px h-10 bg-gray-300 dark:bg-gray-600"></div>
+                                
+                                <!-- Questions Stats -->
                                 <div class="text-center">
                                     <div class="flex items-center space-x-2">
                                         <div class="w-8 h-8 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center">
@@ -325,11 +373,14 @@
                                             </svg>
                                         </div>
                                         <div class="text-left">
-                                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $stats['total_questions'] ?? 0 }}</p>
+                                            <p class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{{ $stats['total_questions'] ?? 0 }}</p>
                                             <p class="text-xs text-gray-500 dark:text-gray-400">Questions</p>
                                         </div>
                                     </div>
                                 </div>
+                                
+                                <!-- Divider -->
+                                <div class="w-px h-10 bg-gray-300 dark:bg-gray-600"></div>
                                 
                                 <div class="text-center">
                                     <div class="flex items-center space-x-2">
@@ -339,11 +390,14 @@
                                             </svg>
                                         </div>
                                         <div class="text-left">
-                                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $stats['total_exams'] ?? 0 }}</p>
+                                            <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ $stats['total_exams'] ?? 0 }}</p>
                                             <p class="text-xs text-gray-500 dark:text-gray-400">Exams</p>
                                         </div>
                                     </div>
                                 </div>
+                                
+                                <!-- Divider -->
+                                <div class="w-px h-10 bg-gray-300 dark:bg-gray-600"></div>
                                 
                                 <div class="text-center">
                                     <div class="flex items-center space-x-2">
@@ -353,7 +407,7 @@
                                             </svg>
                                         </div>
                                         <div class="text-left">
-                                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $stats['total_students'] ?? 0 }}</p>
+                                            <p class="text-2xl font-bold text-purple-600 dark:text-purple-400">{{ $stats['total_students'] ?? 0 }}</p>
                                             <p class="text-xs text-gray-500 dark:text-gray-400">Students</p>
                                         </div>
                                     </div>
