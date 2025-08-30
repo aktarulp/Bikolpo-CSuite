@@ -10,12 +10,12 @@ class Subject extends Model
     use HasFactory;
 
     protected $fillable = [
-        'course_id',
         'name',
         'code',
         'description',
         'status',
         'partner_id',
+        'created_by',
     ];
 
     protected $casts = [
@@ -28,10 +28,20 @@ class Subject extends Model
         return $this->belongsTo(Partner::class);
     }
 
-    public function course()
+    public function creator()
     {
-        return $this->belongsTo(Course::class);
+        return $this->belongsTo(User::class, 'created_by');
     }
+
+    // Many-to-many relationship with courses
+    public function courses()
+    {
+        return $this->belongsToMany(Course::class, 'subject_on_course')
+                    ->withPivot('partner_id')
+                    ->withTimestamps();
+    }
+
+
 
     public function topics()
     {

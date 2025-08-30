@@ -17,6 +17,7 @@ class Topic extends Model
         'chapter_number',
         'status',
         'partner_id',
+        'created_by',
     ];
 
     protected $casts = [
@@ -27,6 +28,11 @@ class Topic extends Model
     public function partner()
     {
         return $this->belongsTo(Partner::class);
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function subject()

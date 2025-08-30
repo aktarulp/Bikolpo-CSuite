@@ -20,16 +20,6 @@
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-300: #d1d5db;
-            --gray-400: #9ca3af;
-            --gray-500: #6b7280;
-            --gray-600: #4b5563;
-            --gray-700: #374151;
-            --gray-800: #1f2937;
-            --gray-900: #111827;
         }
         
         body {
@@ -47,17 +37,17 @@
         .question-card {
             background: white;
             border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         .question-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
         }
         
         .option-card {
-            border: 2px solid var(--gray-200);
+            border: 2px solid #e5e7eb;
             border-radius: 12px;
             transition: all 0.2s ease;
             cursor: pointer;
@@ -73,18 +63,10 @@
             background-color: #eff6ff;
         }
         
-        .option-card input[type="radio"]:checked + .option-content {
-            background-color: #eff6ff;
-        }
-        
         .timer-circle {
             stroke-dasharray: 283;
             stroke-dashoffset: 283;
             transition: stroke-dashoffset 0.3s ease;
-        }
-        
-        .progress-ring {
-            transform: rotate(-90deg);
         }
         
         .question-nav-btn {
@@ -112,8 +94,8 @@
         }
         
         .question-nav-btn.unanswered {
-            background: var(--gray-100);
-            color: var(--gray-600);
+            background: #f3f4f6;
+            color: #6b7280;
         }
         
         .fade-in {
@@ -125,39 +107,10 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
-        .slide-in {
-            animation: slideIn 0.3s ease-out;
-        }
-        
-        @keyframes slideIn {
-            from { transform: translateX(100%); }
-            to { transform: translateX(0); }
-        }
-        
-        .pulse-warning {
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-        
         .glass-effect {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        /* Ensure proper spacing and prevent overlap */
-        main {
-            position: relative;
-            z-index: 10;
-        }
-        
-        .question-card {
-            position: relative;
-            z-index: 1;
         }
         
         @media (max-width: 768px) {
@@ -169,18 +122,6 @@
                 width: 36px;
                 height: 36px;
                 font-size: 12px;
-            }
-            
-            /* Mobile-specific spacing adjustments */
-            main {
-                padding-top: 6rem;
-                padding-left: 1rem;
-                padding-right: 1rem;
-            }
-            
-            .question-card {
-                padding: 1.5rem;
-                margin-bottom: 1.5rem;
             }
         }
     </style>
@@ -222,7 +163,7 @@
                     
                     <!-- Timer Circle -->
                     <div class="relative w-12 h-12">
-                        <svg class="w-12 h-12 progress-ring" viewBox="0 0 100 100">
+                        <svg class="w-12 h-12 transform -rotate-90" viewBox="0 0 100 100">
                             <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="4"/>
                             <circle cx="50" cy="50" r="45" fill="none" stroke="white" stroke-width="4" 
                                     class="timer-circle" id="timer-circle" stroke-linecap="round"/>
@@ -237,7 +178,7 @@
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-8">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="flex gap-8">
             <!-- Question Area -->
             <div class="flex-1">
@@ -386,7 +327,7 @@
             </div>
 
             <!-- Question Navigator -->
-            <div class="w-80 bg-white rounded-2xl shadow-xl border border-gray-200 h-fit sticky top-28">
+            <div class="w-80 bg-white rounded-2xl shadow-xl border border-gray-200 h-fit sticky top-24">
                 <div class="p-6 border-b border-gray-200">
                     <h3 class="text-lg font-bold text-gray-900 flex items-center space-x-2">
                         <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -683,7 +624,6 @@
             
             // Change color based on time remaining
             if (timeRemaining <= 300) { // 5 minutes
-                document.getElementById('timer').classList.add('pulse-warning');
                 document.getElementById('timer').classList.add('text-red-400');
             } else if (timeRemaining <= 600) { // 10 minutes
                 document.getElementById('timer').classList.add('text-yellow-400');

@@ -12,12 +12,16 @@ class Batch extends Model
     protected $fillable = [
         'name',
         'year',
+        'start_date',
+        'end_date',
         'status',
         'flag',
         'partner_id'
     ];
 
     protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date',
         'year' => 'integer'
     ];
 
@@ -30,6 +34,22 @@ class Batch extends Model
     public function students()
     {
         return $this->hasMany(Student::class);
+    }
+
+    /**
+     * Get all migrations from this batch.
+     */
+    public function migrationsFrom()
+    {
+        return $this->hasMany(StudentMigration::class, 'from_batch_id');
+    }
+
+    /**
+     * Get all migrations to this batch.
+     */
+    public function migrationsTo()
+    {
+        return $this->hasMany(StudentMigration::class, 'to_batch_id');
     }
 
     // Scopes
@@ -51,5 +71,52 @@ class Batch extends Model
     public function scopeVisible($query)
     {
         return $query->where('flag', 'active');
+    }
+
+    // Helper method to get batch name with year
+    public function getDisplayNameAttribute()
+    {
+        return $this->name . ' (' . $this->year . ')';
+    }
+
+    /**
+     * Get the batch duration in days.
+     */
+    public function getDurationAttribute()
+    {
+        if (!$this->start_date || !$this->end_date) {
+            return null;
+        }
+
+        return $this->start_date->diffInDays($this->end_date);
+    }
+
+    /**
+     * Check if batch is currently active.
+     */
+    public function isActive()
+    {
+        if (!$this->start_date || !$this->end_date) {
+            return false;
+        }
+
+        $now = now();
+        return $now->between($this->start_date, $this->end_date);
+    }
+
+    /**
+     * Check if batch has started.
+     */
+    public function hasStarted()
+    {
+        return $this->start_date && now()->gte($this->start_date);
+    }
+
+    /**
+     * Check if batch has ended.
+     */
+    public function hasEnded()
+    {
+        return $this->end_date && now()->gt($this->end_date);
     }
 }

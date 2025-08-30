@@ -12,7 +12,15 @@ class CourseController extends Controller
 
     public function index()
     {
-        $courses = Course::withCount('subjects')->latest()->paginate(15);
+        // Get the authenticated user's partner ID using the trait
+        $partnerId = $this->getPartnerId();
+        
+        // Only show courses for the logged-in partner
+        $courses = Course::withCount('subjects')
+            ->where('partner_id', $partnerId)
+            ->latest()
+            ->paginate(15);
+            
         return view('partner.courses.index', compact('courses'));
     }
 
@@ -31,13 +39,15 @@ class CourseController extends Controller
 
         // Get the authenticated user's partner ID using the trait
         $partnerId = $this->getPartnerId();
+        $userId = auth()->id();
 
-        // Create course with partner_id
+        // Create course with partner_id and created_by
         Course::create([
             'name' => $request->name,
             'code' => $request->code,
             'description' => $request->description,
             'partner_id' => $partnerId,
+            'created_by' => $userId,
             'status' => 'active',
         ]);
 
@@ -47,17 +57,35 @@ class CourseController extends Controller
 
     public function show(Course $course)
     {
+        // Ensure the course belongs to the logged-in partner
+        $partnerId = $this->getPartnerId();
+        if ($course->partner_id !== $partnerId) {
+            abort(403, 'Unauthorized access to this course.');
+        }
+        
         $course->load(['subjects.topics']);
         return view('partner.courses.show', compact('course'));
     }
 
     public function edit(Course $course)
     {
+        // Ensure the course belongs to the logged-in partner
+        $partnerId = $this->getPartnerId();
+        if ($course->partner_id !== $partnerId) {
+            abort(403, 'Unauthorized access to this course.');
+        }
+        
         return view('partner.courses.edit', compact('course'));
     }
 
     public function update(Request $request, Course $course)
     {
+        // Ensure the course belongs to the logged-in partner
+        $partnerId = $this->getPartnerId();
+        if ($course->partner_id !== $partnerId) {
+            abort(403, 'Unauthorized access to this course.');
+        }
+        
         $request->validate([
             'name' => 'required|string|max:255',
             'code' => 'required|string|max:50|unique:courses,code,' . $course->id,
@@ -72,6 +100,12 @@ class CourseController extends Controller
 
     public function destroy(Course $course)
     {
+        // Ensure the course belongs to the logged-in partner
+        $partnerId = $this->getPartnerId();
+        if ($course->partner_id !== $partnerId) {
+            abort(403, 'Unauthorized access to this course.');
+        }
+        
         $course->delete();
 
         return redirect()->route('partner.courses.index')

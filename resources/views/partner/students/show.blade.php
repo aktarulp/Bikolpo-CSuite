@@ -11,6 +11,10 @@
             <p class="text-gray-600 dark:text-gray-400">View student information</p>
         </div>
         <div class="flex items-center space-x-3">
+            <a href="{{ route('partner.students.migrate', $student) }}" 
+               class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg transition-colors duration-200">
+                Migrate Student
+            </a>
             <a href="{{ route('partner.students.edit', $student) }}" 
                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200">
                 Edit Student
@@ -86,6 +90,10 @@
                                     {{ ucfirst($student->status) }}
                                 </span>
                             </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Enrollment Date</label>
+                                <p class="text-gray-900 dark:text-white">{{ $student->enroll_date ? $student->enroll_date->format('F j, Y') : 'Not set' }}</p>
+                            </div>
                         </div>
                     </div>
 
@@ -109,6 +117,39 @@
                             </div>
                         </div>
                     @endif
+
+                    <!-- Course & Batch Information -->
+                    <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-3">Course & Batch Information</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Current Course</label>
+                                @if($student->course)
+                                    <p class="text-gray-900 dark:text-white">{{ $student->course->name }}</p>
+                                    @if($student->course->start_date && $student->course->end_date)
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                                            {{ $student->course->start_date->format('M d, Y') }} - {{ $student->course->end_date->format('M d, Y') }}
+                                        </p>
+                                    @endif
+                                @else
+                                    <p class="text-gray-500 dark:text-gray-400">Not assigned</p>
+                                @endif
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Current Batch</label>
+                                @if($student->batch)
+                                    <p class="text-gray-900 dark:text-white">{{ $student->batch->name }} ({{ $student->batch->year }})</p>
+                                    @if($student->batch->start_date && $student->batch->end_date)
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                                            {{ $student->batch->start_date->format('M d, Y') }} - {{ $student->batch->end_date->format('M d, Y') }}
+                                        </p>
+                                    @endif
+                                @else
+                                    <p class="text-gray-500 dark:text-gray-400">Not assigned</p>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Parent Information -->
                     @if($student->parent_name || $student->parent_phone)

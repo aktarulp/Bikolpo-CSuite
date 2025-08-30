@@ -16,7 +16,7 @@
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-100 flex">
         <!-- Left Sidebar (same as layouts/dashboard) -->
-        <div id="sidebar" class="flex flex-col transition-all duration-300 ease-in-out w-64">
+        <div id="sidebar" class="fixed inset-y-0 left-0 z-50 flex flex-col transition-all duration-300 ease-in-out w-64 lg:relative lg:inset-0" style="transform: translateX(-100%);">
             <div class="flex flex-col flex-grow pt-5 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700">
                 <!-- Logo Section -->
                 <div class="flex items-center flex-shrink-0 px-6 mb-8">
@@ -183,8 +183,11 @@
             </div>
         </div>
 
+        <!-- Mobile Sidebar Backdrop -->
+        <div id="sidebar-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden hidden"></div>
+
         <!-- Main Content Area with Partner Top Banner -->
-        <div class="flex-1 flex flex-col">
+        <div id="main-content" class="flex-1 flex flex-col lg:ml-64">
             <main class="flex-1 overflow-y-auto p-6">
                 <!-- Professional Welcome Banner with Navigation Tabs -->
                 <div class="sticky top-0 z-50 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm">
@@ -258,6 +261,13 @@
                             
                             <!-- Right Side: User Controls -->
                             <div class="flex items-center space-x-3">
+                                <!-- Mobile Sidebar Toggle -->
+                                <button id="sidebar-toggle" class="lg:hidden p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                                    </svg>
+                                </button>
+                                
                                 <!-- Notification Bell -->
                                 <button class="relative p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all duration-200">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -440,6 +450,8 @@
             
             const sidebar = document.getElementById('sidebar');
             const sidebarToggle = document.getElementById('sidebar-toggle');
+            const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+            const mainContent = document.getElementById('main-content');
             const themeToggle = document.getElementById('theme-toggle');
             const htmlTag = document.documentElement;
 
@@ -453,10 +465,63 @@
                 'nav-topics', 'nav-question-history', 'nav-partners', 'nav-partner-profile'
             ];
 
+            // Mobile sidebar toggle
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', () => {
+                    const isMobile = window.innerWidth < 1024; // lg breakpoint
+                    
+                    if (isMobile) {
+                        // Mobile: toggle sidebar visibility
+                        const isHidden = sidebar.style.transform === 'translateX(-100%)';
+                        sidebar.style.transform = isHidden ? 'translateX(0)' : 'translateX(-100%)';
+                        sidebarBackdrop.classList.toggle('hidden');
+                    } else {
+                        // Desktop: toggle sidebar collapsed state
+                        sidebarOpen = !sidebarOpen;
+                        updateSidebar();
+                    }
+                });
+            }
+
+            // Close mobile sidebar when backdrop is clicked
+            if (sidebarBackdrop) {
+                sidebarBackdrop.addEventListener('click', () => {
+                    sidebar.style.transform = 'translateX(-100%)';
+                    sidebarBackdrop.classList.add('hidden');
+                });
+            }
+
+            // Close mobile sidebar on window resize
+            window.addEventListener('resize', () => {
+                if (window.innerWidth >= 1024) {
+                    // On desktop, restore sidebar state
+                    sidebar.style.transform = 'translateX(0)';
+                    sidebarBackdrop.classList.add('hidden');
+                    // Reset main content margin for desktop
+                    if (mainContent) {
+                        mainContent.style.marginLeft = sidebarOpen ? '16rem' : '4rem';
+                    }
+                    updateSidebar();
+                } else {
+                    // On mobile, ensure sidebar is hidden by default
+                    sidebar.style.transform = 'translateX(-100%)';
+                    sidebarBackdrop.classList.add('hidden');
+                    // Reset main content margin for mobile
+                    if (mainContent) {
+                        mainContent.style.marginLeft = '0';
+                    }
+                }
+            });
+
             function updateSidebar() {
                 if (sidebarOpen) {
                     sidebar.classList.remove('w-16');
                     sidebar.classList.add('w-64');
+                    
+                    // Adjust main content margin for expanded sidebar
+                    if (mainContent && window.innerWidth >= 1024) {
+                        mainContent.style.marginLeft = '16rem'; // 256px = 16rem
+                    }
                     
                     logoText.style.opacity = '1';
                     logoText.style.display = 'block';
@@ -477,6 +542,11 @@
                 } else {
                     sidebar.classList.remove('w-64');
                     sidebar.classList.add('w-16');
+                    
+                    // Adjust main content margin for collapsed sidebar
+                    if (mainContent && window.innerWidth >= 1024) {
+                        mainContent.style.marginLeft = '4rem'; // 64px = 4rem
+                    }
                     
                     logoText.style.opacity = '0';
                     logoText.style.display = 'none';
@@ -499,6 +569,21 @@
             }
 
             updateSidebar();
+            
+            // Initialize sidebar visibility based on screen size
+            if (window.innerWidth >= 1024) {
+                sidebar.style.transform = 'translateX(0)';
+                // Set initial margin for desktop
+                if (mainContent) {
+                    mainContent.style.marginLeft = sidebarOpen ? '16rem' : '4rem';
+                }
+            } else {
+                sidebar.style.transform = 'translateX(-100%)';
+                // Set initial margin for mobile
+                if (mainContent) {
+                    mainContent.style.marginLeft = '0';
+                }
+            }
 
             if (themeToggle) {
                 const currentTheme = localStorage.getItem('theme');

@@ -7,7 +7,13 @@
     <div class="flex justify-between items-center">
         <div>
             <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ $topic->name }}</h1>
-            <p class="text-gray-600 dark:text-gray-400">Code: {{ $topic->code }} • Subject: {{ $topic->subject->name }} • Course: {{ $topic->subject->course->name }}</p>
+            <p class="text-gray-600 dark:text-gray-400">Code: {{ $topic->code }} • Subject: {{ $topic->subject->name }} • Course: 
+                @if($topic->subject->courses->count() > 0)
+                    {{ $topic->subject->courses->pluck('name')->join(', ') }}
+                @else
+                    No courses
+                @endif
+            </p>
         </div>
         <div class="flex gap-2">
             <a href="{{ route('partner.topics.edit', $topic) }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">Edit</a>

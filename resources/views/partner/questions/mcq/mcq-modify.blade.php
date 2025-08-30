@@ -1695,8 +1695,10 @@ document.addEventListener('DOMContentLoaded', function() {
         topicSelect.innerHTML = '<option value="">Select a topic</option>';
         
         if (courseId) {
-            // Filter subjects by course
-            const filteredSubjects = allSubjects.filter(subject => subject.course_id == courseId);
+            // Filter subjects by course using the many-to-many relationship
+            const filteredSubjects = allSubjects.filter(subject => 
+                subject.courses && subject.courses.some(course => course.id == courseId)
+            );
             filteredSubjects.forEach(subject => {
                 const option = document.createElement('option');
                 option.value = subject.id;
@@ -1730,7 +1732,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (courseSelect.value) {
             // Populate subjects based on current course
             const courseId = courseSelect.value;
-            const filteredSubjects = allSubjects.filter(subject => subject.course_id == courseId);
+            const filteredSubjects = allSubjects.filter(subject => 
+                subject.courses && subject.courses.some(course => course.id == courseId)
+            );
             
             // Clear and populate subjects
             subjectSelect.innerHTML = '<option value="">Select a subject</option>';

@@ -10,6 +10,9 @@ use App\Models\QuestionSet;
 use App\Models\Subject;
 use App\Models\Topic;
 use App\Models\ExamResult;
+use App\Models\Course;
+use App\Models\Batch;
+use App\Traits\HasPartnerContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,15 +23,44 @@ class PartnerDashboardController extends Controller
     public function index()
     {
         try {
+            // Test database connection first
+            try {
+                \DB::connection()->getPdo();
+                \Log::info('Database connection successful');
+            } catch (\Exception $e) {
+                \Log::error('Database connection failed: ' . $e->getMessage());
+                throw new \Exception('Database connection failed: ' . $e->getMessage());
+            }
+            
             // Get the authenticated user's partner ID using the trait
             $partnerId = $this->getPartnerId();
+            
+            // Debug: Log the partner ID and student counts
+            \Log::info('PartnerDashboardController - Partner ID: ' . $partnerId);
+            
+            // Get student count with debugging
+            $totalStudents = Student::where('partner_id', $partnerId)->count();
+            $studentsWithExams = Student::whereHas('examResults.exam', function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId);
+            })->distinct()->count();
+            
+            \Log::info('PartnerDashboardController - Total Students: ' . $totalStudents . ', Students with Exams: ' . $studentsWithExams);
+            
+            // Also log the raw SQL query for debugging
+            $studentQuery = Student::where('partner_id', $partnerId);
+            \Log::info('Student Query SQL: ' . $studentQuery->toSql());
+            \Log::info('Student Query Bindings: ' . json_encode($studentQuery->getBindings()));
+            
+            // Test direct database query
+            $directCount = \DB::table('students')->where('partner_id', $partnerId)->count();
+            \Log::info('Direct DB Query Count: ' . $directCount);
             
             $stats = [
                 'total_questions' => Question::where('partner_id', $partnerId)->count(),
                 'total_exams' => Exam::where('partner_id', $partnerId)->count(),
-                'total_students' => \App\Models\Student::whereHas('examResults.exam', function($query) use ($partnerId) {
-                    $query->where('partner_id', $partnerId);
-                })->distinct()->count(),
+                'total_students' => $totalStudents,
+                'total_courses' => Course::where('partner_id', $partnerId)->count(),
+                'total_batches' => Batch::where('partner_id', $partnerId)->count(),
             ];
 
             $recent_exams = Exam::where('partner_id', $partnerId)
@@ -58,7 +90,7 @@ class PartnerDashboardController extends Controller
             
             // Return a view with an error message
             return view('partner.dashboard', [
-                'stats' => ['total_questions' => 0, 'total_exams' => 0, 'total_students' => 0],
+                'stats' => ['total_questions' => 0, 'total_exams' => 0, 'total_students' => 0, 'total_courses' => 0, 'total_batches' => 0],
                 'recent_exams' => collect(),
                 'recent_results' => collect(),
                 'partner' => null,
@@ -207,6 +239,67 @@ class PartnerDashboardController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error creating demo students: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Refresh dashboard statistics
+     */
+    public function refreshStats()
+    {
+        try {
+            $partnerId = $this->getPartnerId();
+            
+            // Clear any potential query cache
+            \DB::flushQueryLog();
+            
+            $stats = [
+                'total_questions' => Question::where('partner_id', $partnerId)->count(),
+                'total_exams' => Exam::where('partner_id', $partnerId)->count(),
+                'total_students' => Student::where('partner_id', $partnerId)->count(),
+                'total_courses' => Course::where('partner_id', $partnerId)->count(),
+                'total_batches' => Batch::where('partner_id', $partnerId)->count(),
+            ];
+            
+            return response()->json([
+                'success' => true,
+                'stats' => $stats
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error refreshing stats: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get current student count for debugging
+     */
+    public function getStudentCount()
+    {
+        try {
+            $partnerId = $this->getPartnerId();
+            
+            $totalStudents = Student::where('partner_id', $partnerId)->count();
+            $studentsWithExams = Student::whereHas('examResults.exam', function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId);
+            })->distinct()->count();
+            
+            return response()->json([
+                'success' => true,
+                'partner_id' => $partnerId,
+                'total_students' => $totalStudents,
+                'students_with_exams' => $studentsWithExams,
+                'all_students' => Student::where('partner_id', $partnerId)->get(['id', 'full_name', 'student_id', 'status'])
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error getting student count: ' . $e->getMessage()
             ], 500);
         }
     }

@@ -5,39 +5,29 @@
 @section('content')
 <div class="space-y-6">
     <!-- Search Bar -->
-    <div class="search-bar-container bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl shadow-lg border-2 border-blue-200 dark:border-blue-700 p-6">
-        <!-- Page Header Moved Here -->
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+        <!-- Page Header -->
         <div class="flex justify-between items-center mb-6">
             <div class="text-left">
-                <h1 class="text-3xl font-bold text-gray-900 dark:text-white">All Questions</h1>
-                <p class="text-gray-600 dark:text-gray-400">Manage your questions of all types</p>
+                <h1 class="text-3xl font-bold text-gray-900">All Questions</h1>
+                <p class="text-gray-600">Manage your questions of all types</p>
             </div>
             
             <!-- Action Buttons -->
             <div class="flex gap-3">
                 <a href="{{ route('partner.questions.mcq.create') }}" 
-                   class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2.5 rounded-lg transition-all duration-300 flex items-center gap-2.5 shadow-lg hover:shadow-xl transform hover:-translate-y-1 border-2 border-blue-400">
-                    <div class="w-6 h-6 bg-white/20 rounded-lg flex items-center justify-center">
-                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
-                        </svg>
-                    </div>
-                    <div class="text-left">
-                        <div class="font-bold text-base">+ MCQ</div>
-                        <div class="text-xs text-blue-100">Multiple Choice</div>
-                    </div>
+                   class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg transition-colors duration-200 flex items-center gap-2.5">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                    </svg>
+                    <span>+ MCQ</span>
                 </a>
                 <a href="{{ route('partner.questions.descriptive.create') }}" 
-                   class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-4 py-2.5 rounded-lg transition-all duration-300 flex items-center gap-2.5 shadow-lg hover:shadow-xl transform hover:-translate-y-1 border-2 border-green-400">
-                    <div class="w-6 h-6 bg-white/20 rounded-lg flex items-center justify-center">
-                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                        </svg>
-                    </div>
-                    <div class="text-left">
-                        <div class="font-bold text-base">+ CQ</div>
-                        <div class="text-xs text-green-100">Comprehensive</div>
-                    </div>
+                   class="bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-lg transition-colors duration-200 flex items-center gap-2.5">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    </svg>
+                    <span>+ CQ</span>
                 </a>
             </div>
         </div>
@@ -48,28 +38,23 @@
                    name="search" 
                    value="{{ request('search') }}"
                    placeholder="🔍 Type to search questions, options, explanations, courses, subjects, topics..." 
-                   class="block w-full {{ request('search') ? 'pl-4 pr-16' : 'pl-4 pr-14' }} py-4 border-2 border-blue-300 dark:border-blue-600 rounded-xl leading-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 dark:focus:ring-blue-400/20 dark:focus:border-blue-400 transition-all duration-300 text-lg shadow-inner search-input">
+                   class="block w-full pl-4 pr-14 py-3 border border-gray-300 rounded-lg leading-6 bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-base">
             
             <!-- Loading Indicator -->
-            <div id="searchLoading" class="absolute inset-y-0 right-0 pr-16 flex items-center hidden">
-                <svg class="animate-spin h-6 w-6 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <div id="searchLoading" class="absolute inset-y-0 right-0 pr-4 flex items-center hidden">
+                <svg class="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-            </div>
-            
-            <!-- Search Status Indicator -->
-            <div id="searchStatus" class="absolute inset-y-0 right-0 pr-20 flex items-center hidden">
-                <span class="text-xs text-blue-500 font-medium">Searching...</span>
             </div>
             
             <!-- Clear Search Button -->
             @if(request('search'))
                 <button type="button" 
                         id="clearSearch" 
-                        class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors duration-200"
+                        class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-red-500 transition-colors duration-200"
                         title="Clear search">
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
@@ -78,15 +63,15 @@
         
         <!-- Search Results Info -->
         @if(request('search'))
-            <div class="mt-4 p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-700">
+            <div class="mt-4 p-3 bg-blue-100 rounded-lg border border-blue-200">
                 <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2 text-sm text-blue-800 dark:text-blue-200">
+                    <div class="flex items-center gap-2 text-sm text-blue-800">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                         <span class="font-medium">Search results for:</span> "<span class="font-bold">{{ request('search') }}</span>"
                     </div>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-200 dark:bg-blue-700 text-blue-800 dark:text-blue-200">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-200 text-blue-800">
                         {{ $questions->total() }} questions found
                     </span>
                 </div>
@@ -98,7 +83,7 @@
             <form method="GET" id="filterForm" class="grid grid-cols-1 md:grid-cols-5 gap-4">
                 <input type="hidden" name="search" id="searchHidden" value="{{ request('search') }}">
                 <div>
-                    <select name="course_filter" class="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                    <select name="course_filter" class="w-full rounded-md border border-gray-300 p-2 bg-white text-gray-900">
                         <option value="">All Courses</option>
                         @foreach($courses ?? [] as $course)
                             <option value="{{ $course->id }}" {{ request('course_filter') == $course->id ? 'selected' : '' }}>
@@ -108,7 +93,7 @@
                     </select>
                 </div>
                 <div>
-                    <select name="subject_filter" class="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                    <select name="subject_filter" class="w-full rounded-md border border-gray-300 p-2 bg-white text-gray-900">
                         <option value="">All Subjects</option>
                         @foreach($subjects ?? [] as $subject)
                             <option value="{{ $subject->id }}" {{ request('subject_filter') == $subject->id ? 'selected' : '' }}>
@@ -118,7 +103,7 @@
                     </select>
                 </div>
                 <div>
-                    <select name="topic_filter" class="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                    <select name="topic_filter" class="w-full rounded-md border border-gray-300 p-2 bg-white text-gray-900">
                         <option value="">All Topics</option>
                         @foreach($topics ?? [] as $topic)
                             <option value="{{ $topic->id }}" {{ request('topic_filter') == $topic->id ? 'selected' : '' }}>
@@ -128,7 +113,7 @@
                     </select>
                 </div>
                 <div>
-                    <select name="question_type_filter" class="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                    <select name="question_type_filter" class="w-full rounded-md border border-gray-300 p-2 bg-white text-gray-900">
                         <option value="">All Types</option>
                         @foreach($questionTypes ?? [] as $questionType)
                             <option value="{{ $questionType->q_type_code }}" {{ request('question_type_filter') == $questionType->q_type_code ? 'selected' : '' }}>
@@ -148,21 +133,21 @@
     </div>
 
     <!-- Questions List -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
-        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
+    <div class="bg-white rounded-lg shadow border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900">
                 Questions ({{ $questions->total() }})
             </h2>
         </div>
 
         @if($questions->count() > 0)
-            <div class="divide-y divide-gray-200 dark:divide-gray-700 questions-container">
+            <div class="divide-y divide-gray-200 questions-container">
                 @foreach($questions as $question)
-                    <div class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 border-l-4 border-transparent hover:border-primaryGreen">
+                    <div class="p-4 hover:bg-gray-50 transition-colors duration-200 border-l-4 border-transparent hover:border-green-500">
                         <div class="flex items-start gap-4">
                             <div class="flex flex-col items-start gap-2 min-w-[120px]">
                                 <a href="{{ route('partner.questions.mcq.show', $question) }}" 
-                                   class="inline-flex items-center gap-2 px-3 py-2 text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition-colors duration-200">
+                                   class="inline-flex items-center gap-2 px-3 py-2 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-md transition-colors duration-200">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
@@ -170,7 +155,7 @@
                                     View
                                 </a>
                                 <a href="{{ route('partner.questions.mcq.edit', $question) }}" 
-                                   class="inline-flex items-center gap-2 px-3 py-2 text-sm text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-md transition-colors duration-200">
+                                   class="inline-flex items-center gap-2 px-3 py-2 text-sm text-green-600 hover:text-green-800 hover:bg-green-50 rounded-md transition-colors duration-200">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                     </svg>
@@ -179,39 +164,30 @@
                             </div>
                             <div class="flex-1">
                                 <div class="flex items-center gap-3 mb-3">
-                                    <span class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-bold bg-gradient-to-r from-orange-400 to-red-500 text-white border-2 border-orange-300 shadow-lg shadow-orange-200 dark:shadow-orange-900/30 transform hover:scale-105 transition-all duration-200">
+                                    <span class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-bold bg-orange-500 text-white">
                                         @if($question->questionType->q_type_name === 'Descriptive')
                                             CQ
                                         @else
                                             {{ $question->questionType->q_type_name ?? 'N/A' }}
                                         @endif
-                                        @if($question->questionType->q_type_name === 'MCQ')
-                                            <svg class="w-4 h-4 ml-1.5" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
-                                            </svg>
-                                        @elseif($question->questionType->q_type_name === 'Descriptive')
-                                            <svg class="w-4 h-4 ml-1.5" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H8a1 1 0 01-1-1zm1 3a1 0 100 2h6a1 1 0 100-2H8z" clip-rule="evenodd"/>
-                                            </svg>
-                                        @endif
                                     </span>
-                                    <span class="text-gray-400 dark:text-gray-500">→</span>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                                    <span class="text-gray-400">→</span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
                                         {{ $question->course->name ?? 'N/A' }}
                                     </span>
-                                    <span class="text-gray-400 dark:text-gray-500">→</span>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+                                    <span class="text-gray-400">→</span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200">
                                         {{ $question->subject->name ?? 'N/A' }}
                                     </span>
-                                    <span class="text-gray-400 dark:text-gray-500">→</span>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-800">
+                                    <span class="text-gray-400">→</span>
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
                                         {{ $question->topic->name ?? 'N/A' }}
                                     </span>
                                 </div>
                                 
                                 <!-- Question Text and Answer Options -->
                                 <div class="flex-1">
-                                    <h3 class="text-base font-medium text-gray-900 dark:text-white mb-3 leading-relaxed flex items-center gap-2">
+                                    <h3 class="text-base font-medium text-gray-900 mb-3 leading-relaxed flex items-center gap-2">
                                         {!! Str::limit($question->question_text, 150) !!}
                                         @if($question->image)
                                             <div class="relative group">
@@ -220,56 +196,56 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                                 </svg>
                                                 <!-- Image Preview Tooltip -->
-                                                <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-50 scale-95 group-hover:scale-100 image-preview-tooltip">
-                                                    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-xl p-3">
+                                                <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 image-preview-tooltip">
+                                                    <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-3">
                                                         <img src="{{ asset('storage/' . $question->image) }}" 
                                                              alt="Question Image" 
                                                              class="rounded">
                                                     </div>
                                                     <!-- Arrow -->
-                                                    <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-200 dark:border-t-gray-600"></div>
-                                                    <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-3 border-r-3 border-t-3 border-transparent border-t-white dark:border-t-gray-800 -mt-1"></div>
+                                                    <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-200"></div>
+                                                    <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-3 border-r-3 border-t-3 border-transparent border-t-white -mt-1"></div>
                                                 </div>
                                             </div>
                                         @endif
                                         
                                         <!-- Answer Options in One Line -->
                                         <div class="flex items-center gap-2 text-sm ml-4">
-                                            <span class="inline-flex items-center px-2 py-1 rounded-lg shadow-sm {{ $question->correct_answer === 'a' ? 'bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/40 dark:to-emerald-900/40 border-2 border-green-300 dark:border-green-600 text-green-800 dark:text-green-200 font-medium shadow-green-100 dark:shadow-green-900/20' : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-500 transition-colors duration-200' }}">
-                                                <span class="font-bold mr-1 text-xs {{ $question->correct_answer === 'a' ? 'text-green-700 dark:text-green-300' : 'text-gray-500 dark:text-gray-400' }}">A</span> 
+                                            <span class="inline-flex items-center px-2 py-1 rounded-lg {{ $question->correct_answer === 'a' ? 'bg-green-100 border-2 border-green-300 text-green-800 font-medium' : 'bg-white border border-gray-200 text-gray-700 hover:border-gray-300 transition-colors duration-200' }}">
+                                                <span class="font-bold mr-1 text-xs {{ $question->correct_answer === 'a' ? 'text-green-700' : 'text-gray-500' }}">A</span> 
                                                 {!! Str::limit($question->option_a, 25) !!}
                                                 @if($question->correct_answer === 'a')
-                                                    <svg class="w-3 h-3 ml-1 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                                    <svg class="w-3 h-3 ml-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                                                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                                                     </svg>
                                                 @endif
                                             </span>
-                                            <span class="text-gray-400 dark:text-gray-500">|</span>
-                                            <span class="inline-flex items-center px-2 py-1 rounded-lg shadow-sm {{ $question->correct_answer === 'b' ? 'bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/40 dark:to-emerald-900/40 border-2 border-green-300 dark:border-green-600 text-green-800 dark:text-green-200 font-medium shadow-green-100 dark:shadow-green-900/20' : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-500 transition-colors duration-200' }}">
-                                                <span class="font-bold mr-1 text-xs {{ $question->correct_answer === 'b' ? 'text-green-700 dark:text-green-300' : 'text-gray-500 dark:text-gray-400' }}">B</span> 
+                                            <span class="text-gray-400">|</span>
+                                            <span class="inline-flex items-center px-2 py-1 rounded-lg {{ $question->correct_answer === 'b' ? 'bg-green-100 border-2 border-green-300 text-green-800 font-medium' : 'bg-white border border-gray-200 text-gray-700 hover:border-gray-300 transition-colors duration-200' }}">
+                                                <span class="font-bold mr-1 text-xs {{ $question->correct_answer === 'b' ? 'text-green-700' : 'text-gray-500' }}">B</span> 
                                                 {!! Str::limit($question->option_b, 25) !!}
                                                 @if($question->correct_answer === 'b')
-                                                    <svg class="w-3 h-3 ml-1 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                                    <svg class="w-3 h-3 ml-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                                                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                                                     </svg>
                                                 @endif
                                             </span>
-                                            <span class="text-gray-400 dark:text-gray-500">|</span>
-                                            <span class="inline-flex items-center px-2 py-1 rounded-lg shadow-sm {{ $question->correct_answer === 'c' ? 'bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/40 dark:to-emerald-900/40 border-2 border-green-300 dark:border-green-600 text-green-800 dark:text-green-200 font-medium shadow-green-100 dark:shadow-green-900/20' : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-500 transition-colors duration-200' }}">
-                                                <span class="font-bold mr-1 text-xs {{ $question->correct_answer === 'c' ? 'text-green-700 dark:text-green-300' : 'text-gray-500 dark:text-gray-400' }}">C</span> 
+                                            <span class="text-gray-400">|</span>
+                                            <span class="inline-flex items-center px-2 py-1 rounded-lg {{ $question->correct_answer === 'c' ? 'bg-green-100 border-2 border-green-300 text-green-800 font-medium' : 'bg-white border border-gray-200 text-gray-700 hover:border-gray-300 transition-colors duration-200' }}">
+                                                <span class="font-bold mr-1 text-xs {{ $question->correct_answer === 'c' ? 'text-green-700' : 'text-gray-500' }}">C</span> 
                                                 {!! Str::limit($question->option_c, 25) !!}
                                                 @if($question->correct_answer === 'c')
-                                                    <svg class="w-3 h-3 ml-1 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                                    <svg class="w-3 h-3 ml-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                                                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                                                     </svg>
                                                 @endif
                                             </span>
-                                            <span class="text-gray-400 dark:text-gray-500">|</span>
-                                            <span class="inline-flex items-center px-2 py-1 rounded-lg shadow-sm {{ $question->correct_answer === 'd' ? 'bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/40 dark:to-emerald-900/40 border-2 border-green-300 dark:border-green-600 text-green-800 dark:text-green-200 font-medium shadow-green-100 dark:shadow-green-900/20' : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-500 transition-colors duration-200' }}">
-                                                <span class="font-bold mr-1 text-xs {{ $question->correct_answer === 'd' ? 'text-green-700 dark:text-green-300' : 'text-gray-500 dark:text-gray-400' }}">D</span> 
+                                            <span class="text-gray-400">|</span>
+                                            <span class="inline-flex items-center px-2 py-1 rounded-lg {{ $question->correct_answer === 'd' ? 'bg-green-100 border-2 border-green-300 text-green-800 font-medium' : 'bg-white border border-gray-200 text-gray-700 hover:border-gray-300 transition-colors duration-200' }}">
+                                                <span class="font-bold mr-1 text-xs {{ $question->correct_answer === 'd' ? 'text-green-700' : 'text-gray-500' }}">D</span> 
                                                 {!! Str::limit($question->option_d, 25) !!}
                                                 @if($question->correct_answer === 'd')
-                                                    <svg class="w-3 h-3 ml-1 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                                    <svg class="w-3 h-3 ml-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                                                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                                                     </svg>
                                                 @endif
@@ -284,7 +260,7 @@
             </div>
             
             <!-- Pagination -->
-            <div class="p-6 border-t border-gray-200 dark:border-gray-700">
+            <div class="p-6 border-t border-gray-200">
                 {{ $questions->links() }}
             </div>
         @else
@@ -292,14 +268,14 @@
                 <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">
+                <h3 class="mt-2 text-sm font-medium text-gray-900">
                     @if(request('search'))
                         No questions found for "{{ request('search') }}"
                     @else
                         No questions found
                     @endif
                 </h3>
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                <p class="mt-1 text-sm text-gray-500">
                     @if(request('search'))
                         Try adjusting your search terms or filters.
                     @else
@@ -308,21 +284,17 @@
                 </p>
                 <div class="mt-6 flex gap-3">
                     <a href="{{ route('partner.questions.mcq.create') }}" 
-                       class="inline-flex items-center gap-2.5 px-4 py-2.5 border border-transparent shadow-lg text-sm font-bold rounded-lg text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 transition-all duration-300 transform hover:-translate-y-1">
-                        <div class="w-5 h-5 bg-white/20 rounded-lg flex items-center justify-center">
-                            <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
-                            </svg>
-                        </div>
+                       class="inline-flex items-center gap-2.5 px-4 py-2.5 border border-transparent shadow text-sm font-bold rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                        </svg>
                         + MCQ
                     </a>
                     <a href="{{ route('partner.questions.descriptive.create') }}" 
-                       class="inline-flex items-center gap-2.5 px-4 py-2.5 border border-transparent shadow-lg text-sm font-bold rounded-lg text-white bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 transition-all duration-300 transform hover:-translate-y-1">
-                        <div class="w-5 h-5 bg-white/20 rounded-lg flex items-center justify-center">
-                            <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                            </svg>
-                        </div>
+                       class="inline-flex items-center gap-2.5 px-4 py-2.5 border border-transparent shadow text-sm font-bold rounded-lg text-white bg-green-600 hover:bg-green-700 transition-colors duration-200">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
                         + CQ
                     </a>
                 </div>
@@ -332,101 +304,10 @@
 </div>
 
 <style>
-.image-preview-tooltip {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    transform-origin: bottom center;
-}
-
-.image-preview-tooltip.group:hover\:opacity-100 {
-    transition-delay: 0.1s;
-}
-
 .image-preview-tooltip img {
     max-width: 300px;
     max-height: 200px;
     object-fit: contain;
-}
-
-/* Search input transitions */
-#searchInput {
-    transition: all 0.3s ease-in-out;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-#searchInput:focus {
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
-    transform: translateY(-1px);
-}
-
-/* Enhanced search input animations */
-.search-input {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.search-input:focus {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
-}
-
-.search-input.searching {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 82, 246, 0.1);
-}
-
-/* Loading indicator positioning */
-#searchLoading {
-    z-index: 10;
-}
-
-/* Search status indicator */
-#searchStatus {
-    z-index: 15;
-    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes pulse {
-    0%, 100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: .5;
-    }
-}
-
-/* Clear button positioning */
-#clearSearch {
-    z-index: 20;
-}
-
-/* Search bar animations */
-.search-bar-container {
-    animation: slideInDown 0.5s ease-out;
-}
-
-@keyframes slideInDown {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Hover effects for search tips */
-.search-tip {
-    transition: all 0.2s ease-in-out;
-}
-
-.search-tip:hover {
-    transform: translateX(5px);
-    color: #3b82f6;
-}
-
-/* Search results animation */
-.questions-container {
-    transition: opacity 0.3s ease-in-out;
 }
 
 .questions-container.updating {
@@ -441,7 +322,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchHidden = document.getElementById('searchHidden');
     const filterForm = document.getElementById('filterForm');
     const searchLoading = document.getElementById('searchLoading');
-    const searchStatus = document.getElementById('searchStatus');
     
     // Check if all required elements exist
     if (!searchInput || !searchHidden || !filterForm) {
@@ -468,8 +348,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const searchValue = searchInput.value;
         const currentUrl = new URL(window.location);
         
-        // Add searching class to input and updating class to questions container
-        searchInput.classList.add('searching');
+        // Add updating class to questions container
         const questionsContainer = document.querySelector('.questions-container');
         if (questionsContainer) {
             questionsContainer.classList.add('updating');
@@ -477,7 +356,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Show loading indicators
         if (searchLoading) searchLoading.classList.remove('hidden');
-        if (searchStatus) searchStatus.classList.remove('hidden');
         
         // Update URL parameters
         if (searchValue) {
@@ -550,8 +428,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     existingSearchInfo.innerHTML = newSearchInfo.innerHTML;
                 } else {
                     // Insert search info if it doesn't exist
-                    const searchBar = document.querySelector('.search-bar-container');
-                    const searchTips = document.querySelector('.mt-4.grid');
+                    const searchBar = document.querySelector('.bg-blue-50');
+                    const searchTips = document.querySelector('.mt-6');
                     if (searchBar && searchTips) {
                         searchBar.insertBefore(newSearchInfo.cloneNode(true), searchTips);
                     }
@@ -563,10 +441,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
             
-            // Hide loading indicator and remove searching class
+            // Hide loading indicator and remove updating class
             if (searchLoading) searchLoading.classList.add('hidden');
-            if (searchStatus) searchStatus.classList.add('hidden');
-            searchInput.classList.remove('searching');
             if (questionsContainer) {
                 questionsContainer.classList.remove('updating');
             }
@@ -578,8 +454,6 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Search error:', error);
             // Hide loading indicators on error
             if (searchLoading) searchLoading.classList.add('hidden');
-            if (searchStatus) searchStatus.classList.add('hidden');
-            searchInput.classList.remove('searching');
             if (questionsContainer) {
                 questionsContainer.classList.remove('updating');
             }
@@ -598,16 +472,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 const clearButton = document.createElement('button');
                 clearButton.type = 'button';
                 clearButton.id = 'clearSearch';
-                clearButton.className = 'absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors duration-200';
+                clearButton.className = 'absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-red-500 transition-colors duration-200';
                 clearButton.title = 'Clear search';
-                clearButton.innerHTML = '<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>';
+                clearButton.innerHTML = '<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>';
                 
                 // Add click event
                 clearButton.addEventListener('click', function() {
                     searchInput.value = '';
                     searchHidden.value = '';
-                    searchInput.classList.remove('pr-16');
-                    searchInput.classList.add('pr-4');
                     performAjaxSearch();
                 });
                 
@@ -616,16 +488,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (loadingIndicator) {
                     loadingIndicator.parentNode.insertBefore(clearButton, loadingIndicator);
                 }
-                
-                // Update padding
-                searchInput.classList.remove('pr-4');
-                searchInput.classList.add('pr-16');
             }
         } else {
             if (clearBtn) {
                 clearBtn.remove();
-                searchInput.classList.remove('pr-16');
-                searchInput.classList.add('pr-4');
             }
         }
     }
@@ -645,7 +511,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Add input event listener for real-time search
     searchInput.addEventListener('input', function() {
-        
         // Clear the previous timeout
         clearTimeout(searchTimeout);
         
@@ -656,16 +521,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Show loading indicator
         if (searchLoading) searchLoading.classList.remove('hidden');
-        if (searchStatus) searchStatus.classList.remove('hidden');
-        
-        // Adjust padding based on search content
-        if (this.value.length > 0) {
-            this.classList.remove('pr-4');
-            this.classList.add('pr-16');
-        } else {
-            this.classList.remove('pr-16');
-            this.classList.add('pr-4');
-        }
         
         // Set a new timeout to perform AJAX search after 300ms of no typing
         searchTimeout = setTimeout(function() {
@@ -693,9 +548,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (searchHidden) {
                 searchHidden.value = '';
             }
-            // Reset padding
-            searchInput.classList.remove('pr-16');
-            searchInput.classList.add('pr-4');
             performAjaxSearch();
         });
     }

@@ -19,6 +19,13 @@
             <p class="text-gray-600 dark:text-gray-400">Welcome to your exam management dashboard</p>
         </div>
         <div class="flex space-x-3">
+            <button id="refreshStatsBtn" 
+                    class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                <span>Refresh Stats</span>
+            </button>
             <a href="{{ route('partner.questions.create') }}" 
                class="bg-primaryGreen hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors duration-200">
                 Add Question
@@ -35,7 +42,7 @@
     </div>
 
     <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
         <!-- Total Questions -->
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
             <div class="flex items-center">
@@ -46,7 +53,7 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Questions</p>
-                    <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ $stats['total_questions'] }}</p>
+                    <p class="text-2xl font-semibold text-gray-900 dark:text-white" data-stat="total_questions">{{ $stats['total_questions'] }}</p>
                 </div>
             </div>
         </div>
@@ -63,7 +70,7 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Exams</p>
-                    <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ $stats['total_exams'] }}</p>
+                    <p class="text-2xl font-semibold text-gray-900 dark:text-white" data-stat="total_exams">{{ $stats['total_exams'] }}</p>
                 </div>
             </div>
         </div>
@@ -78,8 +85,40 @@
                 </div>
                 <div class="ml-4">
                     <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Students</p>
-                    <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ $stats['total_students'] }}</p>
+                    <p class="text-2xl font-semibold text-gray-900 dark:text-white" data-stat="total_students">{{ $stats['total_students'] }}</p>
                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">From Database</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Course Offer -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-green-100 dark:bg-green-900">
+                    <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 5.477 5.754 5 7.5 5c1.747 0 3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.523 18.246 19 16.5 19c-1.746 0-3.332-.477-4.5-1.253"></path>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Course Offer</p>
+                    <p class="text-2xl font-semibold text-gray-900 dark:text-white" data-stat="total_courses">{{ $stats['total_courses'] }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Available Courses</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Batch -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-indigo-100 dark:bg-indigo-900">
+                    <svg class="w-6 h-6 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Batch</p>
+                    <p class="text-2xl font-semibold text-gray-900 dark:text-white" data-stat="total_batches">{{ $stats['total_batches'] }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Active Batches</p>
                 </div>
             </div>
         </div>
@@ -93,13 +132,23 @@
                 <h3 class="text-lg font-semibold text-blue-900 dark:text-blue-100">Get Started with Demo Data</h3>
                 <p class="text-blue-700 dark:text-blue-300 mt-1">No students found yet. Click the button below to create demo students for testing.</p>
             </div>
-            <button id="seedDemoStudentsBtn" 
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                </svg>
-                <span>Create Demo Students</span>
-            </button>
+            <div class="flex space-x-3">
+                <button id="seedDemoStudentsBtn" 
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    <span>Create Demo Students</span>
+                </button>
+                
+                <button id="debugStudentCountBtn" 
+                        class="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>Debug Student Count</span>
+                </button>
+            </div>
         </div>
         <div id="seedingStatus" class="mt-4 hidden">
             <div class="flex items-center space-x-2 text-blue-700 dark:text-blue-300">
@@ -238,6 +287,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const seedBtn = document.getElementById('seedDemoStudentsBtn');
     const seedingStatus = document.getElementById('seedingStatus');
     const seedingMessage = document.getElementById('seedingMessage');
+    const refreshStatsBtn = document.getElementById('refreshStatsBtn');
+    const debugStudentCountBtn = document.getElementById('debugStudentCountBtn');
     
     if (seedBtn) {
         seedBtn.addEventListener('click', async function() {
@@ -295,6 +346,200 @@ document.addEventListener('DOMContentLoaded', function() {
                     <span>Try Again</span>
                 `;
                 seedBtn.disabled = false;
+            }
+        });
+    }
+    
+    // Handle debug student count button
+    if (debugStudentCountBtn) {
+        debugStudentCountBtn.addEventListener('click', async function() {
+            try {
+                // Show loading state
+                debugStudentCountBtn.disabled = true;
+                debugStudentCountBtn.innerHTML = `
+                    <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Checking...</span>
+                `;
+                
+                // Make API call to get student count details
+                const response = await fetch('{{ route("partner.student-count") }}', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Show debug information in console and alert
+                    console.log('Debug Student Count:', result);
+                    
+                    let debugMessage = `Partner ID: ${result.partner_id}\n`;
+                    debugMessage += `Total Students: ${result.total_students}\n`;
+                    debugMessage += `Students with Exams: ${result.students_with_exams}\n`;
+                    debugMessage += `All Students: ${result.all_students.length}\n\n`;
+                    
+                    if (result.all_students.length > 0) {
+                        debugMessage += 'Student Details:\n';
+                        result.all_students.forEach((student, index) => {
+                            debugMessage += `${index + 1}. ${student.full_name} (${student.student_id}) - Status: ${student.status}\n`;
+                        });
+                    }
+                    
+                    alert(debugMessage);
+                    
+                    // Update the stats on the page
+                    const totalStudentsElement = document.querySelector('[data-stat="total_students"]');
+                    if (totalStudentsElement) {
+                        totalStudentsElement.textContent = result.total_students;
+                    }
+                    
+                    // Show success message
+                    debugStudentCountBtn.innerHTML = `
+                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span>Checked!</span>
+                    `;
+                    debugStudentCountBtn.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
+                    debugStudentCountBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+                    
+                    // Reset button after 2 seconds
+                    setTimeout(() => {
+                        debugStudentCountBtn.innerHTML = `
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>Debug Student Count</span>
+                        `;
+                        debugStudentCountBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                        debugStudentCountBtn.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
+                        debugStudentCountBtn.disabled = false;
+                    }, 2000);
+                } else {
+                    throw new Error(result.message);
+                }
+                
+            } catch (error) {
+                console.error('Error debugging student count:', error);
+                debugStudentCountBtn.innerHTML = `
+                    <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                    <span>Error</span>
+                `;
+                debugStudentCountBtn.classList.remove('bg-yellow-600', 'hover:bg-yellow-700');
+                debugStudentCountBtn.classList.add('bg-red-600', 'hover:bg-red-700');
+                
+                // Reset button after 3 seconds
+                setTimeout(() => {
+                    debugStudentCountBtn.innerHTML = `
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                        <span>Debug Student Count</span>
+                    `;
+                    debugStudentCountBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
+                    debugStudentCountBtn.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
+                    debugStudentCountBtn.disabled = false;
+                }, 3000);
+            }
+        });
+    }
+    
+    // Handle refresh stats button
+    if (refreshStatsBtn) {
+        refreshStatsBtn.addEventListener('click', async function() {
+            try {
+                // Show loading state
+                refreshStatsBtn.disabled = true;
+                refreshStatsBtn.innerHTML = `
+                    <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Refreshing...</span>
+                `;
+                
+                // Make API call to refresh stats
+                const response = await fetch('{{ route("partner.refresh-stats") }}', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Update the stats on the page
+                    const totalQuestionsElement = document.querySelector('[data-stat="total_questions"]');
+                    const totalExamsElement = document.querySelector('[data-stat="total_exams"]');
+                    const totalStudentsElement = document.querySelector('[data-stat="total_students"]');
+                    const totalCoursesElement = document.querySelector('[data-stat="total_courses"]');
+                    const totalBatchesElement = document.querySelector('[data-stat="total_batches"]');
+                    
+                    if (totalQuestionsElement) totalQuestionsElement.textContent = result.stats.total_questions;
+                    if (totalExamsElement) totalExamsElement.textContent = result.stats.total_exams;
+                    if (totalStudentsElement) totalStudentsElement.textContent = result.stats.total_students;
+                    if (totalCoursesElement) totalCoursesElement.textContent = result.stats.total_courses;
+                    if (totalBatchesElement) totalBatchesElement.textContent = result.stats.total_batches;
+                    
+                    // Show success message
+                    refreshStatsBtn.innerHTML = `
+                        <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span>Refreshed!</span>
+                    `;
+                    refreshStatsBtn.classList.remove('bg-gray-600', 'hover:bg-gray-700');
+                    refreshStatsBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+                    
+                    // Reset button after 2 seconds
+                    setTimeout(() => {
+                        refreshStatsBtn.innerHTML = `
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                            <span>Refresh Stats</span>
+                        `;
+                        refreshStatsBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                        refreshStatsBtn.classList.add('bg-gray-600', 'hover:bg-gray-700');
+                        refreshStatsBtn.disabled = false;
+                    }, 2000);
+                } else {
+                    throw new Error(result.message);
+                }
+                
+            } catch (error) {
+                console.error('Error refreshing stats:', error);
+                refreshStatsBtn.innerHTML = `
+                    <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                    <span>Error</span>
+                `;
+                refreshStatsBtn.classList.remove('bg-gray-600', 'hover:bg-gray-700');
+                refreshStatsBtn.classList.add('bg-red-600', 'hover:bg-red-700');
+                
+                // Reset button after 3 seconds
+                setTimeout(() => {
+                    refreshStatsBtn.innerHTML = `
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                        <span>Refresh Stats</span>
+                    `;
+                    refreshStatsBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
+                    refreshStatsBtn.classList.add('bg-gray-600', 'hover:bg-gray-700');
+                    refreshStatsBtn.disabled = false;
+                }, 3000);
             }
         });
     }

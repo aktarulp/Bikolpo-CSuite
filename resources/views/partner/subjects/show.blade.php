@@ -7,7 +7,15 @@
     <div class="flex justify-between items-center">
         <div>
             <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ $subject->name }}</h1>
-            <p class="text-gray-600 dark:text-gray-400">Code: {{ $subject->code }} • Course: {{ $subject->course->name }}</p>
+            <p class="text-gray-600 dark:text-gray-400">Code: {{ $subject->code }}</p>
+            <div class="mt-2">
+                <span class="text-sm text-gray-600 dark:text-gray-400">Courses: </span>
+                @foreach($subject->courses as $course)
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 mr-2">
+                        {{ $course->name }}
+                    </span>
+                @endforeach
+            </div>
         </div>
         <div class="flex gap-2">
             <a href="{{ route('partner.subjects.edit', $subject) }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">Edit</a>

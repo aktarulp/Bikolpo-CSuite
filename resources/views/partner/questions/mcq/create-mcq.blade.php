@@ -1,20 +1,20 @@
 @extends('layouts.partner-layout')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-gray-50 py-4">
+    <div class="max-w-4xl mx-auto px-4">
         <!-- Header Section -->
-        <div class="mb-8">
-            <div class="flex items-center justify-between">
+        <div class="mb-6">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900">
                         Create Multiple Choice Question
                     </h1>
-                    <p class="mt-2 text-gray-600">Design engaging questions for your students</p>
+                    <p class="mt-1 text-gray-600">Design engaging questions for your students</p>
                 </div>
-                <div class="flex items-center space-x-3">
+                <div>
                     <a href="{{ route('partner.questions.index') }}" 
-                       class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
+                       class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                         </svg>
@@ -25,35 +25,35 @@
         </div>
 
         <!-- Main Form Container -->
-        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-            <form action="{{ route('partner.questions.mcq.store') }}" method="POST" id="mcqForm" class="p-8" enctype="multipart/form-data">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <form action="{{ route('partner.questions.mcq.store') }}" method="POST" id="mcqForm" class="p-4 sm:p-6" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="question_type" value="mcq">
                 
                 <!-- Question Details Section -->
-                <div class="mb-8">
-                    <div class="flex items-center mb-6">
+                <div class="mb-6">
+                    <div class="flex items-center mb-4">
                         <div class="flex-shrink-0">
-                            <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                             </div>
                         </div>
-                        <div class="ml-4">
-                            <h2 class="text-xl font-semibold text-gray-900">Question Details</h2>
-                            <p class="text-gray-600">Enter the main question and basic information</p>
+                        <div class="ml-3">
+                            <h2 class="text-lg font-semibold text-gray-900">Question Details</h2>
+                            <p class="text-sm text-gray-600">Enter the main question and basic information</p>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         <!-- Course Selection -->
-                        <div class="space-y-2">
+                        <div class="space-y-1">
                             <label for="course_id" class="block text-sm font-medium text-gray-700">
                                 Course <span class="text-red-500">*</span>
                             </label>
                             <select name="course_id" id="course_id" required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white">
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white">
                                 <option value="">Select a course</option>
                                 @foreach($courses ?? [] as $course)
                                     <option value="{{ $course->id }}">{{ $course->name }}</option>
@@ -62,12 +62,12 @@
                         </div>
 
                         <!-- Subject Selection -->
-                        <div class="space-y-2">
+                        <div class="space-y-1">
                             <label for="subject_id" class="block text-sm font-medium text-gray-700">
                                 Subject <span class="text-red-500">*</span>
                             </label>
                             <select name="subject_id" id="subject_id" required
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white">
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white">
                                 <option value="">Select a subject</option>
                                 @foreach($subjects ?? [] as $subject)
                                     <option value="{{ $subject->id }}">{{ $subject->name }}</option>
@@ -76,12 +76,12 @@
                         </div>
 
                         <!-- Topic Selection -->
-                        <div class="space-y-2">
+                        <div class="space-y-1">
                             <label for="topic_id" class="block text-sm font-medium text-gray-700">
                                 Topic <span class="text-gray-400">(Optional)</span>
                             </label>
                             <select name="topic_id" id="topic_id"
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white">
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white">
                                 <option value="">Select a topic (optional)</option>
                                 @foreach($topics ?? [] as $topic)
                                     <option value="{{ $topic->id }}">{{ $topic->name }}</option>
@@ -91,194 +91,187 @@
                     </div>
                 </div>
 
-                                 <!-- Question Text and Answer Options Section -->
-                 <div class="mb-8">
-                     <div class="flex items-center justify-between mb-6">
-                         <div class="flex items-center">
-                             <div class="flex-shrink-0">
-                                                                   <div class="w-10 h-10 bg-gradient-to-r from-green-500 to-teal-600 rounded-full flex items-center justify-center">
-                                      <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                      </svg>
-                                  </div>
-                             </div>
-                             <div class="ml-4">
-                                 <h2 class="text-xl font-semibold text-gray-900">Question Text</h2>
-                                 <p class="text-gray-600">Write your question clearly and concisely</p>
-                             </div>
-                         </div>
-                         
-                         <!-- Answer Options Header -->
-                         <div class="flex items-center">
-                             <div class="flex-shrink-0">
-                                 <div class="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center">
-                                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                                     </svg>
-                                 </div>
-                             </div>
-                             <div class="ml-4">
-                                 <h2 class="text-xl font-semibold text-gray-900">Answer Options</h2>
-                                 <p class="text-gray-600">Select the correct answer and provide options</p>
-                             </div>
-                         </div>
-                     </div>
+                <!-- Question Text and Answer Options Section -->
+                <div class="mb-6">
+                    <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between mb-4 gap-4">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="ml-3">
+                                <h2 class="text-lg font-semibold text-gray-900">Question Text</h2>
+                                <p class="text-sm text-gray-600">Write your question clearly and concisely</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Answer Options Header -->
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="ml-3">
+                                <h2 class="text-lg font-semibold text-gray-900">Answer Options</h2>
+                                <p class="text-sm text-gray-600">Select the correct answer and provide options</p>
+                            </div>
+                        </div>
+                    </div>
 
-                                                                                   <div class="space-y-2">
-                         
-                                                   <div class="flex gap-3">
-                              <!-- Left Side: Rich Text Editor -->
-                              <div class="flex-1">
-                                 <!-- Rich Text Editor Toolbar -->
-                                 <div class="border border-gray-300 rounded-t-lg bg-gray-50 p-2 flex flex-wrap items-center gap-2">
-                                     <!-- Text Formatting -->
-                                     <button type="button" id="boldBtn" class="p-2 hover:bg-gray-200 rounded" title="Bold">
-                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12h8a4 4 0 100-8H6v8zm0 0h8a4 4 0 110 8H6v-8z"></path>
-                                         </svg>
-                                     </button>
-                                     <button type="button" id="italicBtn" class="p-2 hover:bg-gray-200 rounded" title="Italic">
-                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
-                                         </svg>
-                                     </button>
-                                     <button type="button" id="underlineBtn" class="p-2 hover:bg-gray-200 rounded" title="Underline">
-                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
-                                         </svg>
-                                     </button>
-                                     
-                                     <div class="w-px h-6 bg-gray-300"></div>
-                                     
-                                     <!-- Equation -->
-                                     <button type="button" id="equationBtn" class="p-2 hover:bg-gray-200 rounded text-sm font-medium" title="Insert Equation">
-                                         ∑
-                                     </button>
-                                     
-                                     <!-- Local Image Upload -->
-                                     <button type="button" id="uploadImageBtn" class="p-2 hover:bg-gray-200 rounded" title="Upload Local Image">
-                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                                         </svg>
-                                     </button>
-                                     
-                                     <!-- Hidden file input for image upload -->
-                                     <input type="file" id="imageFileInput" accept="image/*" class="hidden">
-                                     
-                                     <!-- Image Resize -->
-                                     <button type="button" id="resizeBtn" class="p-2 hover:bg-gray-200 rounded bg-blue-50 border border-blue-200" title="Resize Selected Image" style="display: inline-flex !important; visibility: visible !important;">
-                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
-                                         </svg>
-                                         <span class="ml-1 text-xs text-blue-600 font-medium">Resize</span>
-                                     </button>
-                                    
-                                     <div class="w-px h-6 bg-gray-300"></div>
-                                     
-                                     <!-- Hyperlink -->
-                                     <button type="button" id="linkBtn" class="p-2 hover:bg-gray-200 rounded" title="Insert Hyperlink">
-                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
-                                         </svg>
-                                     </button>
-                                    
-                                     <div class="w-px h-6 bg-gray-300"></div>
-                                     
-                                     <!-- Clear Formatting -->
-                                     <button type="button" id="clearFormatBtn" class="p-2 hover:bg-gray-200 rounded text-sm font-medium" title="Clear Formatting">
-                                         Clear
-                                     </button>
-                                 </div>
-                                 
-                                 <!-- Rich Text Editor Content -->
-                                 <div id="richTextEditor" class="border border-t-0 border-gray-300 rounded-b-lg min-h-[150px] p-4 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all duration-200" contenteditable="true" data-placeholder="Enter your question here... You can use formatting, images, and equations."></div>
-                                 
-                                 <!-- Hidden textarea for form submission -->
-                                 <textarea name="question_text" id="question_text" class="hidden" required></textarea>
-                                 <input type="hidden" name="q_type_id" value="1">
-                                 
-                                 <div class="flex justify-between items-center text-sm text-gray-500 mt-2">
-                                     <span>Use the toolbar above for formatting, equations, and images.</span>
-                                     <span id="charCount">0 characters</span>
-                                 </div>
-                             </div>
-                             
-                                                                                         <!-- Right Side: Answer Options -->
-                              <div class="w-72">
-                                  <div class="space-y-1">
-                                                                                                                 <!-- Option A -->
-                                      <div class="option-item bg-gray-50 rounded-lg p-2 border-2 border-transparent hover:border-blue-200 transition-all duration-200">
-                                          <div class="flex items-center space-x-2">
-                                              <div class="flex-shrink-0">
-                                                  <input type="radio" name="correct_answer" value="a" id="correct_A" required
-                                                         class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 focus:ring-2">
-                                              </div>
-                                              <label for="correct_A" class="flex-1">
-                                                  <div class="flex items-center space-x-2">
-                                                      <span class="option-bullet w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center text-xs font-semibold">A</span>
-                                                      <input type="text" name="option_a" placeholder="Option A" required
-                                                             class="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
-                                                  </div>
-                                              </label>
-                                          </div>
-                                      </div>
-                                      
-                                      <!-- Option B -->
-                                      <div class="option-item bg-gray-50 rounded-lg p-2 border-2 border-transparent hover:border-blue-200 transition-all duration-200">
-                                          <div class="flex items-center space-x-2">
-                                              <div class="flex-shrink-0">
-                                                  <input type="radio" name="correct_answer" value="b" id="correct_B" required
-                                                         class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 focus:ring-2">
-                                              </div>
-                                              <label for="correct_B" class="flex-1">
-                                                  <div class="flex items-center space-x-2">
-                                                      <span class="option-bullet w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center text-xs font-semibold">B</span>
-                                                      <input type="text" name="option_b" placeholder="Option B" required
-                                                             class="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
-                                                  </div>
-                                              </label>
-                                          </div>
-                                      </div>
-                                      
-                                      <!-- Option C -->
-                                      <div class="option-item bg-gray-50 rounded-lg p-2 border-2 border-transparent hover:border-blue-200 transition-all duration-200">
-                                          <div class="flex items-center space-x-2">
-                                              <div class="flex-shrink-0">
-                                                  <input type="radio" name="correct_answer" value="c" id="correct_C" required
-                                                         class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 focus:ring-2">
-                                              </div>
-                                              <label for="correct_C" class="flex-1">
-                                                  <div class="flex items-center space-x-2">
-                                                      <span class="option-bullet w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center text-xs font-semibold">C</span>
-                                                      <input type="text" name="option_c" placeholder="Option C" required
-                                                             class="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
-                                                  </div>
-                                              </label>
-                                          </div>
-                                      </div>
-                                      
-                                      <!-- Option D -->
-                                      <div class="option-item bg-gray-50 rounded-lg p-2 border-2 border-transparent hover:border-blue-200 transition-all duration-200">
-                                          <div class="flex items-center space-x-2">
-                                              <div class="flex-shrink-0">
-                                                                                                 <input type="radio" name="correct_answer" value="d" id="correct_D" required
-                                                          class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 focus:ring-2">
-                                              </div>
-                                              <label for="correct_D" class="flex-1">
-                                                  <div class="flex items-center space-x-2">
-                                                      <span class="option-bullet w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center text-xs font-semibold">D</span>
-                                                      <input type="text" name="option_d" placeholder="Option D" required
-                                                             class="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
-                                                  </div>
-                                              </label>
-                                          </div>
-                                      </div>
-                                 </div>
-                             </div>
-                         </div>
-                     </div>
-                     
-
+                    <div class="flex flex-col lg:flex-row gap-4">
+                        <!-- Left Side: Rich Text Editor -->
+                        <div class="flex-1">
+                            <!-- Rich Text Editor Toolbar -->
+                            <div class="border border-gray-300 rounded-t-md bg-gray-50 p-2 flex flex-wrap items-center gap-1">
+                                <!-- Text Formatting -->
+                                <button type="button" id="boldBtn" class="p-1.5 hover:bg-gray-200 rounded text-sm" title="Bold">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12h8a4 4 0 100-8H6v8zm0 0h8a4 4 0 110 8H6v-8z"></path>
+                                    </svg>
+                                </button>
+                                <button type="button" id="italicBtn" class="p-1.5 hover:bg-gray-200 rounded text-sm" title="Italic">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                                    </svg>
+                                </button>
+                                <button type="button" id="underlineBtn" class="p-1.5 hover:bg-gray-200 rounded text-sm" title="Underline">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+                                    </svg>
+                                </button>
+                                
+                                <div class="w-px h-4 bg-gray-300"></div>
+                                
+                                <!-- Equation -->
+                                <button type="button" id="equationBtn" class="p-1.5 hover:bg-gray-200 rounded text-sm font-medium" title="Insert Equation">
+                                    ∑
+                                </button>
+                                
+                                <!-- Local Image Upload -->
+                                <button type="button" id="uploadImageBtn" class="p-1.5 hover:bg-gray-200 rounded text-sm" title="Upload Local Image">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                    </svg>
+                                </button>
+                                
+                                <!-- Hidden file input for image upload -->
+                                <input type="file" id="imageFileInput" accept="image/*" class="hidden">
+                                
+                                <!-- Image Resize -->
+                                <button type="button" id="resizeBtn" class="p-1.5 hover:bg-gray-200 rounded bg-blue-50 border border-blue-200 text-sm" title="Resize Selected Image">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                                    </svg>
+                                    <span class="ml-1 text-xs text-blue-600 font-medium">Resize</span>
+                                </button>
+                                
+                                <div class="w-px h-4 bg-gray-300"></div>
+                                
+                                <!-- Hyperlink -->
+                                <button type="button" id="linkBtn" class="p-1.5 hover:bg-gray-200 rounded text-sm" title="Insert Hyperlink">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                                    </svg>
+                                </button>
+                                
+                                <!-- Clear Formatting -->
+                                <button type="button" id="clearFormatBtn" class="p-1.5 hover:bg-gray-200 rounded text-sm font-medium" title="Clear Formatting">
+                                    Clear
+                                </button>
+                            </div>
+                            
+                            <!-- Rich Text Editor Content -->
+                            <div id="richTextEditor" class="border border-t-0 border-gray-300 rounded-b-md min-h-[120px] p-3 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all duration-200" contenteditable="true" data-placeholder="Enter your question here... You can use formatting, images, and equations."></div>
+                            
+                            <!-- Hidden textarea for form submission -->
+                            <textarea name="question_text" id="question_text" class="hidden" required></textarea>
+                            <input type="hidden" name="q_type_id" value="1">
+                            
+                            <div class="flex justify-between items-center text-xs text-gray-500 mt-2">
+                                <span>Use the toolbar above for formatting, equations, and images.</span>
+                                <span id="charCount">0 characters</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Right Side: Answer Options -->
+                        <div class="w-full lg:w-80">
+                            <div class="space-y-2">
+                                <!-- Option A -->
+                                <div class="option-item bg-gray-50 rounded-md p-2 border-2 border-transparent hover:border-blue-200 transition-all duration-200">
+                                    <div class="flex items-center space-x-2">
+                                        <div class="flex-shrink-0">
+                                            <input type="radio" name="correct_answer" value="a" id="correct_A" required
+                                                   class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 focus:ring-2">
+                                        </div>
+                                        <label for="correct_A" class="flex-1">
+                                            <div class="flex items-center space-x-2">
+                                                <span class="option-bullet w-5 h-5 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center text-xs font-semibold">A</span>
+                                                <input type="text" name="option_a" placeholder="Option A" required
+                                                       class="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Option B -->
+                                <div class="option-item bg-gray-50 rounded-md p-2 border-2 border-transparent hover:border-blue-200 transition-all duration-200">
+                                    <div class="flex items-center space-x-2">
+                                        <div class="flex-shrink-0">
+                                            <input type="radio" name="correct_answer" value="b" id="correct_B" required
+                                                   class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 focus:ring-2">
+                                        </div>
+                                        <label for="correct_B" class="flex-1">
+                                            <div class="flex items-center space-x-2">
+                                                <span class="option-bullet w-5 h-5 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center text-xs font-semibold">B</span>
+                                                <input type="text" name="option_b" placeholder="Option B" required
+                                                       class="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Option C -->
+                                <div class="option-item bg-gray-50 rounded-md p-2 border-2 border-transparent hover:border-blue-200 transition-all duration-200">
+                                    <div class="flex items-center space-x-2">
+                                        <div class="flex-shrink-0">
+                                            <input type="radio" name="correct_answer" value="c" id="correct_C" required
+                                                   class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 focus:ring-2">
+                                        </div>
+                                        <label for="correct_C" class="flex-1">
+                                            <div class="flex items-center space-x-2">
+                                                <span class="option-bullet w-5 h-5 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center text-xs font-semibold">C</span>
+                                                <input type="text" name="option_c" placeholder="Option C" required
+                                                       class="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Option D -->
+                                <div class="option-item bg-gray-50 rounded-md p-2 border-2 border-transparent hover:border-blue-200 transition-all duration-200">
+                                    <div class="flex items-center space-x-2">
+                                        <div class="flex-shrink-0">
+                                            <input type="radio" name="correct_answer" value="d" id="correct_D" required
+                                                   class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 focus:ring-2">
+                                        </div>
+                                        <label for="correct_D" class="flex-1">
+                                            <div class="flex items-center space-x-2">
+                                                <span class="option-bullet w-5 h-5 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center text-xs font-semibold">D</span>
+                                                <input type="text" name="option_d" placeholder="Option D" required
+                                                       class="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
 
@@ -287,69 +280,69 @@
 
 
                 <!-- Explanation Section -->
-                <div class="mb-8">
-                    <div class="flex items-center justify-between mb-6">
+                <div class="mb-6">
+                    <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between mb-4 gap-4">
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
-                                <div class="w-10 h-10 bg-gradient-to-r from-indigo-500 to-blue-600 rounded-full flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
                                 </div>
                             </div>
-                            <div class="ml-4">
-                                <h2 class="text-xl font-semibold text-gray-900">Explanation (Optional)</h2>
-                                <p class="text-gray-600">Provide reasoning for the correct answer</p>
+                            <div class="ml-3">
+                                <h2 class="text-lg font-semibold text-gray-900">Explanation (Optional)</h2>
+                                <p class="text-sm text-gray-600">Provide reasoning for the correct answer</p>
                             </div>
                         </div>
                         
                         <!-- Right Side: Tags Header -->
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
-                                <div class="w-10 h-10 bg-gradient-to-r from-pink-500 to-rose-600 rounded-full flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
                                     </svg>
                                 </div>
                             </div>
-                            <div class="ml-4">
-                                <h2 class="text-xl font-semibold text-gray-900">Tags</h2>
-                                <p class="text-gray-600">Add relevant tags for easy categorization</p>
+                            <div class="ml-3">
+                                <h2 class="text-lg font-semibold text-gray-900">Tags</h2>
+                                <p class="text-sm text-gray-600">Add relevant tags for easy categorization</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="flex gap-3">
+                    <div class="flex flex-col lg:flex-row gap-4">
                         <!-- Left Side: Explanation Rich Text Editor -->
                         <div class="flex-1">
                             <!-- Rich Text Editor Toolbar for Explanation -->
-                            <div class="border border-gray-300 rounded-t-lg bg-gray-50 p-2 flex flex-wrap items-center gap-2">
+                            <div class="border border-gray-300 rounded-t-md bg-gray-50 p-2 flex flex-wrap items-center gap-1">
                                 <!-- Text Formatting -->
-                                <button type="button" id="explanationBoldBtn" class="p-2 hover:bg-gray-200 rounded" title="Bold">
+                                <button type="button" id="explanationBoldBtn" class="p-1.5 hover:bg-gray-200 rounded text-sm" title="Bold">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12h8a4 4 0 100-8H6v8zm0 0h8a4 4 0 110 8H6v-8z"></path>
                                     </svg>
                                 </button>
-                                <button type="button" id="explanationItalicBtn" class="p-2 hover:bg-gray-200 rounded" title="Italic">
+                                <button type="button" id="explanationItalicBtn" class="p-1.5 hover:bg-gray-200 rounded text-sm" title="Italic">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
                                     </svg>
                                 </button>
-                                <button type="button" id="explanationUnderlineBtn" class="p-2 hover:bg-gray-200 rounded" title="Underline">
+                                <button type="button" id="explanationUnderlineBtn" class="p-1.5 hover:bg-gray-200 rounded text-sm" title="Underline">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
                                     </svg>
                                 </button>
                                 
-                                <div class="w-px h-6 bg-gray-300"></div>
+                                <div class="w-px h-4 bg-gray-300"></div>
                                 
                                 <!-- Equation -->
-                                <button type="button" id="explanationEquationBtn" class="p-2 hover:bg-gray-200 rounded text-sm font-medium" title="Insert Equation">
+                                <button type="button" id="explanationEquationBtn" class="p-1.5 hover:bg-gray-200 rounded text-sm font-medium" title="Insert Equation">
                                     ∑
                                 </button>
                                 
                                 <!-- Local Image Upload -->
-                                <button type="button" id="explanationUploadImageBtn" class="p-2 hover:bg-gray-200 rounded" title="Upload Local Image">
+                                <button type="button" id="explanationUploadImageBtn" class="p-1.5 hover:bg-gray-200 rounded text-sm" title="Upload Local Image">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                                     </svg>
@@ -359,74 +352,73 @@
                                 <input type="file" id="explanationImageFileInput" accept="image/*" class="hidden">
                                 
                                 <!-- Image Resize -->
-                                <button type="button" id="explanationResizeBtn" class="p-2 hover:bg-gray-200 rounded bg-blue-50 border border-blue-200" title="Resize Selected Image" style="display: inline-flex !important; visibility: visible !important;">
+                                <button type="button" id="explanationResizeBtn" class="p-1.5 hover:bg-gray-200 rounded bg-blue-50 border border-blue-200 text-sm" title="Resize Selected Image">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
                                     </svg>
                                     <span class="ml-1 text-xs text-blue-600 font-medium">Resize</span>
                                 </button>
                                 
-                                <div class="w-px h-6 bg-gray-300"></div>
+                                <div class="w-px h-4 bg-gray-300"></div>
                                 
                                 <!-- Hyperlink -->
-                                <button type="button" id="explanationLinkBtn" class="p-2 hover:bg-gray-200 rounded" title="Insert Hyperlink">
+                                <button type="button" id="explanationLinkBtn" class="p-1.5 hover:bg-gray-200 rounded text-sm" title="Insert Hyperlink">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
                                     </svg>
                                 </button>
                                 
                                 <!-- Clear Formatting -->
-                                <button type="button" id="explanationClearFormatBtn" class="p-2 hover:bg-gray-200 rounded text-sm font-medium" title="Clear Formatting">
+                                <button type="button" id="explanationClearFormatBtn" class="p-1.5 hover:bg-gray-200 rounded text-sm font-medium" title="Clear Formatting">
                                     Clear
                                 </button>
                             </div>
                             
                             <!-- Rich Text Editor Content for Explanation -->
-                            <div id="explanationRichTextEditor" class="border border-t-0 border-gray-300 rounded-b-lg min-h-[150px] p-4 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all duration-200" contenteditable="true" data-placeholder="Enter explanation here... You can use formatting, images, equations, and hyperlinks."></div>
+                            <div id="explanationRichTextEditor" class="border border-t-0 border-gray-300 rounded-b-md min-h-[120px] p-3 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all duration-200" contenteditable="true" data-placeholder="Enter explanation here... You can use formatting, images, equations, and hyperlinks."></div>
                             
                             <!-- Hidden textarea for form submission -->
                             <textarea name="explanation" id="explanation" class="hidden"></textarea>
                             
-                            <div class="flex justify-between items-center text-sm text-gray-500 mt-2">
+                            <div class="flex justify-between items-center text-xs text-gray-500 mt-2">
                                 <span>Use the toolbar above for formatting, equations, images, and hyperlinks.</span>
                                 <span id="explanationCharCount">0 characters</span>
                             </div>
                         </div>
                         
                         <!-- Right Side: Tags Section -->
-                        <div class="w-72">
+                        <div class="w-full lg:w-80">
                             <!-- Tags Section -->
-                            <div class="space-y-2">
                             <div class="space-y-2">
                                 <label for="tags" class="block text-sm font-medium text-gray-700">
                                     Tags
                                 </label>
-                                <div id="tag-list" class="flex flex-wrap gap-2 mb-2 min-h-[44px] p-2 border border-gray-300 rounded-lg bg-white">
+                                <div id="tag-list" class="flex flex-wrap gap-2 mb-2 min-h-[44px] p-2 border border-gray-300 rounded-md bg-white">
                                     <!-- Tags will be dynamically added here -->
                                 </div>
                                 <input type="text" id="new-tag" 
                                        placeholder="Type and press Enter or comma to add tags"
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
                                 <input type="hidden" name="tags" id="tagsInput" value="">
-                                <p class="text-sm text-gray-500">Tags help organize and search questions</p>
+                                <p class="text-xs text-gray-500">Tags help organize and search questions</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Question Image (Optional) -->
-                <div class="mb-8">
-                    <div class="flex items-center mb-6">
+                <div class="mb-6">
+                    <div class="flex items-center mb-4">
                         <div class="flex-shrink-0">
-                            <div class="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
-                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                 </svg>
                             </div>
                         </div>
-                        <div class="ml-4">
-                            <h2 class="text-xl font-semibold text-gray-900">Question Image (Optional)</h2>
-                            <p class="text-gray-600">Add an image to support your question</p>
+                        <div class="ml-3">
+                            <h2 class="text-lg font-semibold text-gray-900">Question Image (Optional)</h2>
+                            <p class="text-sm text-gray-600">Add an image to support your question</p>
                         </div>
                     </div>
                     
@@ -435,7 +427,7 @@
                             Upload Image
                         </label>
                         <input type="file" name="image" id="image" accept="image/*"
-                               class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white file:mr-4 file:px-4 file:py-2 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white file:mr-4 file:px-3 file:py-2 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                     </div>
                 </div>
 
@@ -519,10 +511,10 @@
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="flex items-center justify-between pt-6 border-t border-gray-200">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-6 border-t border-gray-200 gap-4">
                     <div class="flex items-center space-x-4">
                         <button type="button" id="previewBtn"
-                                class="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
+                                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
@@ -533,7 +525,7 @@
 
                     <div class="flex items-center space-x-4">
                         <button type="button" id="resetBtn"
-                                class="inline-flex items-center px-6 py-3 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
+                                class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                             </svg>
@@ -541,7 +533,7 @@
                         </button>
                         
                         <button type="submit" id="submitBtn"
-                                class="inline-flex items-center px-8 py-3 border border-transparent rounded-lg text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transform hover:scale-105 transition-all duration-200 shadow-lg">
+                                class="inline-flex items-center px-6 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                             </svg>
@@ -1933,8 +1925,10 @@ document.addEventListener('DOMContentLoaded', function() {
         topicSelect.innerHTML = '<option value="">Select a topic</option>';
         
         if (courseId) {
-            // Filter subjects by course
-            const filteredSubjects = allSubjects.filter(subject => subject.course_id == courseId);
+            // Filter subjects by course using the many-to-many relationship
+            const filteredSubjects = allSubjects.filter(subject => 
+                subject.courses && subject.courses.some(course => course.id == courseId)
+            );
             filteredSubjects.forEach(subject => {
                 const option = document.createElement('option');
                 option.value = subject.id;
@@ -2523,7 +2517,7 @@ function initializeQuestionHistory() {
     line-height: 1.6;
     color: #374151;
     background-color: #ffffff;
-    min-height: 150px;
+    min-height: 120px;
     outline: none;
     overflow-y: auto;
 }
@@ -2536,7 +2530,7 @@ function initializeQuestionHistory() {
 
 #richTextEditor:focus {
     border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
 }
 
 /* Rich Text Editor Toolbar */
@@ -2546,12 +2540,11 @@ function initializeQuestionHistory() {
 
 /* Toolbar button styles */
 #richTextEditor + div button {
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
 }
 
 #richTextEditor + div button:hover {
     background-color: #e5e7eb;
-    transform: translateY(-1px);
 }
 
 #richTextEditor + div button.bg-blue-200 {
@@ -2699,7 +2692,7 @@ function initializeQuestionHistory() {
     line-height: 1.6;
     color: #374151;
     background-color: #ffffff;
-    min-height: 150px;
+    min-height: 120px;
     outline: none;
     overflow-y: auto;
 }
@@ -2712,7 +2705,7 @@ function initializeQuestionHistory() {
 
 #explanationRichTextEditor:focus-within {
     border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
 }
 
 /* Explanation editor image styling */
@@ -2821,42 +2814,31 @@ function initializeQuestionHistory() {
 
 /* Smooth transitions */
 * {
-    transition-property: all;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 200ms;
+    transition-property: color, background-color, border-color, box-shadow;
+    transition-timing-function: ease;
+    transition-duration: 150ms;
 }
 
 /* Custom focus styles */
 .focus-within\:ring-2:focus-within {
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
 }
 
- /* Hover effects */
- .option-item:hover {
-     transform: translateY(-2px);
-     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
- }
- 
- /* Option bullet styling */
- .option-bullet {
-     transition: all 0.3s ease;
- }
- 
- .option-bullet.bg-green-500 {
-     transform: scale(1.1);
-     box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
- }
-
-/* Gradient text animation */
-@keyframes gradient {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+/* Hover effects */
+.option-item:hover {
+    border-color: #93c5fd;
+    background-color: #f8fafc;
 }
 
-.bg-gradient-to-r {
-    background-size: 200% 200%;
-    animation: gradient 3s ease infinite;
+/* Option bullet styling */
+.option-bullet {
+    transition: all 0.15s ease;
+}
+
+.option-bullet.bg-green-500 {
+    background-color: #10b981;
+    color: white;
+    font-weight: 600;
 }
 
 /* Form validation styles */
@@ -2877,32 +2859,102 @@ input:invalid, select:invalid, textarea:invalid {
 
 /* Custom button hover effects */
 button:hover {
-    transform: translateY(-1px);
+    opacity: 0.9;
 }
 
 button:active {
-    transform: translateY(0);
-}
-
-/* Modal backdrop blur */
-.modal-backdrop {
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    opacity: 0.8;
 }
 
 /* Responsive design improvements */
 @media (max-width: 768px) {
-    .max-w-6xl {
+    .max-w-4xl {
         max-width: 100%;
         margin: 0 1rem;
     }
     
-    .p-8 {
-        padding: 1.5rem;
+    .p-4.sm\:p-6 {
+        padding: 1rem;
     }
     
-    .grid-cols-1.lg\:grid-cols-2 {
+    .grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-3 {
         grid-template-columns: 1fr;
+    }
+    
+    .flex-col.lg\:flex-row {
+        flex-direction: column;
+    }
+    
+    .w-full.lg\:w-80 {
+        width: 100%;
+    }
+    
+    .w-full.lg\:w-72 {
+        width: 100%;
+    }
+    
+    .text-2xl.sm\:text-3xl {
+        font-size: 1.5rem;
+    }
+    
+    .text-lg {
+        font-size: 1.125rem;
+    }
+    
+    .min-h-\[120px\] {
+        min-height: 100px;
+    }
+    
+    .p-3 {
+        padding: 0.75rem;
+    }
+    
+    .gap-4 {
+        gap: 1rem;
+    }
+    
+    .space-y-2 {
+        margin-top: 0.5rem;
+    }
+    
+    .space-y-2 > * + * {
+        margin-top: 0.5rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .p-4.sm\:p-6 {
+        padding: 0.75rem;
+    }
+    
+    .px-4 {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .py-4 {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+    
+    .gap-4 {
+        gap: 0.75rem;
+    }
+    
+    .space-y-1 {
+        margin-top: 0.25rem;
+    }
+    
+    .space-y-1 > * + * {
+        margin-top: 0.25rem;
+    }
+    
+    .text-sm {
+        font-size: 0.875rem;
+    }
+    
+    .text-xs {
+        font-size: 0.75rem;
     }
 }
 
@@ -2933,115 +2985,84 @@ button:active {
     }
 }
 
+/* Mobile-specific improvements */
+@media (max-width: 480px) {
+    .flex-col.lg\:flex-row {
+        flex-direction: column;
+    }
+    
+    .gap-4 {
+        gap: 0.5rem;
+    }
+    
+    .space-y-2 {
+        margin-top: 0.25rem;
+    }
+    
+    .space-y-2 > * + * {
+        margin-top: 0.25rem;
+    }
+    
+    .p-2 {
+        padding: 0.5rem;
+    }
+    
+    .px-3 {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+    
+    .py-2 {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+    
+    .text-lg {
+        font-size: 1rem;
+    }
+    
+    .text-sm {
+        font-size: 0.8125rem;
+    }
+    
+    .text-xs {
+        font-size: 0.6875rem;
+    }
+    
+    .min-h-\[120px\] {
+        min-height: 80px;
+    }
+    
+    .w-8.h-8 {
+        width: 2rem;
+        height: 2rem;
+    }
+    
+    .w-5.h-5 {
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+}
+
 /* Enhanced form styling */
 .form-input:focus {
-    transform: scale(1.02);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
 }
-
-/* Floating label animation */
-.floating-label {
-    position: relative;
-}
-
-.floating-label input:focus + label,
-.floating-label input:not(:placeholder-shown) + label {
-    transform: translateY(-1.5rem) scale(0.85);
-    color: #3b82f6;
-}
-
-/* Card hover effects */
-.card-hover {
-    transition: all 0.3s ease;
-}
-
-.card-hover:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-}
-
-/* Glow effects */
-.glow-on-hover:hover {
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
-}
-
-/* Smooth page transitions */
-.page-transition {
-    animation: fadeInUp 0.6s ease-out;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Enhanced button animations */
-.btn-animate {
-    position: relative;
-    overflow: hidden;
-}
-
-.btn-animate::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s;
-}
-
-.btn-animate:hover::before {
-    left: 100%;
-}
-
-/* Form section animations */
-.form-section {
-    animation: slideInLeft 0.8s ease-out;
-}
-
-@keyframes slideInLeft {
-    from {
-        opacity: 0;
-        transform: translateX(-30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-/* Staggered animation for form elements */
-.form-element:nth-child(1) { animation-delay: 0.1s; }
-.form-element:nth-child(2) { animation-delay: 0.2s; }
-.form-element:nth-child(3) { animation-delay: 0.3s; }
-.form-element:nth-child(4) { animation-delay: 0.4s; }
 
 /* Enhanced focus rings */
 .enhanced-focus:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 0 0 1px rgba(59, 130, 246, 0.2);
-}
-
-/* Smooth color transitions */
-.color-transition {
-    transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
 }
 
 /* Enhanced shadows */
 .enhanced-shadow {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .enhanced-shadow:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Tags Auto-completion Styling */

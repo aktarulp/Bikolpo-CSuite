@@ -166,8 +166,27 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'role:partner'])
     Route::post('exams/{exam}/bulk-operations', [\App\Http\Controllers\ExamAssignmentController::class, 'bulkOperations'])->name('exams.bulk-operations');
     Route::get('exams/{exam}/export-assignments', [\App\Http\Controllers\ExamAssignmentController::class, 'exportAssignments'])->name('exams.export-assignments');
     
+    // Student Assignment Routes (must come BEFORE resource route)
+    Route::match(['get', 'post', 'put'], 'students/assignment', [StudentController::class, 'assignment'])->name('students.assignment');
+    Route::put('students/{student}/assignment', [StudentController::class, 'updateAssignment'])->name('students.update-assignment');
+    Route::post('students/bulk-assignment', [StudentController::class, 'bulkAssignment'])->name('students.bulk-assignment');
+    
     // Student Management
     Route::resource('students', StudentController::class);
+    
+    // Student Migration Management
+    Route::prefix('students')->name('students.')->group(function () {
+        Route::get('{student}/migrate', [\App\Http\Controllers\StudentMigrationController::class, 'showMigrationForm'])->name('migrate');
+        Route::post('{student}/migrate', [\App\Http\Controllers\StudentMigrationController::class, 'migrateStudent'])->name('migrate.process');
+        Route::get('{student}/migration-history', [\App\Http\Controllers\StudentMigrationController::class, 'getMigrationHistory'])->name('migration.history');
+        Route::get('migrations/pending', [\App\Http\Controllers\StudentMigrationController::class, 'getPendingMigrations'])->name('migrations.pending');
+    });
+    
+    // Course/Batch Migration Statistics
+    Route::prefix('migrations')->name('migrations.')->group(function () {
+        Route::get('courses/{course}/stats', [\App\Http\Controllers\StudentMigrationController::class, 'getCourseMigrationStats'])->name('course.stats');
+        Route::get('batches/{batch}/stats', [\App\Http\Controllers\StudentMigrationController::class, 'getBatchMigrationStats'])->name('batch.stats');
+    });
     
     // Partner Profile Management
     Route::get('profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show-partnar');
@@ -188,6 +207,8 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'role:partner'])
     
     // Demo Data Seeding
     Route::post('seed-demo-students', [\App\Http\Controllers\PartnerDashboardController::class, 'seedDemoStudents'])->name('seed-demo-students');
+    Route::get('refresh-stats', [\App\Http\Controllers\PartnerDashboardController::class, 'refreshStats'])->name('refresh-stats');
+    Route::get('student-count', [\App\Http\Controllers\PartnerDashboardController::class, 'getStudentCount'])->name('student-count');
 });
 
 // Student Routes
@@ -210,6 +231,8 @@ Route::prefix('student')->name('student.')->middleware(['auth', 'role:student'])
     // Exam History
     Route::get('history', [StudentExamController::class, 'history'])->name('exams.history');
 });
+
+
 
 // Typing Test Routes
 Route::get('/typing-test', function () {

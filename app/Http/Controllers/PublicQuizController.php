@@ -335,10 +335,32 @@ class PublicQuizController extends Controller
         }
 
         // Check if time has expired - ONLY based on exam end_time, not duration
-        $examEndTime = \Carbon\Carbon::parse($exam->end_time);
+        $examEndTime = \Carbon\Carbon::parse($exam->end_time)->setTimezone(config('app.timezone'));
+        $currentTime = \Carbon\Carbon::now(config('app.timezone'));
         
-        if (now()->gt($examEndTime)) {
+        // Debug logging for time calculations
+        \Log::info('Quiz Time Debug', [
+            'exam_id' => $exam->id,
+            'exam_title' => $exam->title,
+            'exam_start_time' => $exam->start_time,
+            'exam_end_time' => $exam->end_time,
+            'exam_duration' => $exam->duration,
+            'current_time' => $currentTime->toDateTimeString(),
+            'exam_end_time_parsed' => $examEndTime->toDateTimeString(),
+            'timezone' => config('app.timezone'),
+            'is_exam_ended' => $currentTime->gt($examEndTime),
+            'remaining_seconds' => $examEndTime->diffInSeconds($currentTime),
+            'remaining_minutes' => $examEndTime->diffInMinutes($currentTime),
+            'remaining_hours' => $examEndTime->diffInHours($currentTime),
+        ]);
+        
+        if ($currentTime->gt($examEndTime)) {
             // Auto-submit exam - exam has ended
+            \Log::info('Auto-submitting quiz due to exam end time', [
+                'exam_id' => $exam->id,
+                'exam_end_time' => $examEndTime->toDateTimeString(),
+                'current_time' => $currentTime->toDateTimeString(),
+            ]);
             $this->autoSubmitExam($result);
             return redirect()->route('public.quiz.result', $exam->id);
         }
@@ -346,10 +368,20 @@ class PublicQuizController extends Controller
         // Load questions from exam_questions table
         $questions = $exam->questions()->orderBy('pivot_order')->get();
         
-        // Duration is only used for countdown display, not for expiration
-        $startTime = $result->started_at;
-        $quizEndTime = $startTime->copy()->addMinutes($exam->duration);
-        $remainingTime = $quizEndTime->diffInSeconds(now());
+        // Remaining time is based on exam end time, not quiz duration
+        $remainingTime = $currentTime->diffInSeconds($examEndTime);
+        
+        // Ensure remaining time is not negative
+        if ($remainingTime < 0) {
+            $remainingTime = 0;
+        }
+        
+        \Log::info('Quiz Timer Set', [
+            'exam_id' => $exam->id,
+            'remaining_time_seconds' => $remainingTime,
+            'remaining_time_minutes' => floor($remainingTime / 60),
+            'remaining_time_hours' => floor($remainingTime / 3600),
+        ]);
 
         return view('public.quiz.take', compact('exam', 'questions', 'result', 'remainingTime'));
     }

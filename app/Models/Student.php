@@ -14,6 +14,7 @@ class Student extends Model
         'partner_id',
         'course_id',
         'batch_id',
+        'enroll_date',
         'full_name',
         'student_id',
         'date_of_birth',
@@ -31,6 +32,7 @@ class Student extends Model
     ];
 
     protected $casts = [
+        'enroll_date' => 'date',
         'date_of_birth' => 'date',
         'status' => 'string',
     ];
@@ -79,5 +81,50 @@ class Student extends Model
     public function batch()
     {
         return $this->belongsTo(Batch::class);
+    }
+
+    /**
+     * Get all migrations for this student.
+     */
+    public function migrations()
+    {
+        return $this->hasMany(StudentMigration::class);
+    }
+
+    /**
+     * Get the latest migration for this student.
+     */
+    public function latestMigration()
+    {
+        return $this->hasOne(StudentMigration::class)->latestOfMany();
+    }
+
+    /**
+     * Get the current course duration for this student.
+     */
+    public function getCurrentCourseDurationAttribute()
+    {
+        if (!$this->course || !$this->enroll_date) {
+            return null;
+        }
+
+        $endDate = $this->course->end_date ?? now();
+        return $this->enroll_date->diffInDays($endDate);
+    }
+
+    /**
+     * Check if student is currently enrolled in a course.
+     */
+    public function isCurrentlyEnrolled()
+    {
+        if (!$this->course || !$this->enroll_date) {
+            return false;
+        }
+
+        $now = now();
+        $startDate = $this->course->start_date ?? $this->enroll_date;
+        $endDate = $this->course->end_date;
+
+        return $now->between($startDate, $endDate);
     }
 }

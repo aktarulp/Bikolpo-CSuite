@@ -20,16 +20,22 @@
             @csrf
 
             <div class="mb-6">
-                <label class="block text-sm font-medium mb-2">Course</label>
-                <select name="course_id" required class="w-full rounded-md border p-2">
-                    <option value="">Select Course</option>
+                <label class="block text-sm font-medium mb-2">Courses</label>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Select one or more courses for this subject</p>
+                <div class="space-y-2 max-h-48 overflow-y-auto border rounded-md p-3">
                     @foreach($courses as $course)
-                        <option value="{{ $course->id }}" {{ old('course_id') == $course->id ? 'selected' : '' }}>
-                            {{ $course->name }} ({{ $course->code }})
-                        </option>
+                        <label class="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded">
+                            <input type="checkbox" name="course_ids[]" value="{{ $course->id }}" 
+                                   {{ in_array($course->id, old('course_ids', [])) ? 'checked' : '' }}
+                                   class="rounded border-gray-300 text-primaryGreen focus:ring-primaryGreen">
+                            <span class="text-sm">{{ $course->name }} ({{ $course->code }})</span>
+                        </label>
                     @endforeach
-                </select>
-                @error('course_id')
+                </div>
+                @error('course_ids')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
+                @error('course_ids.*')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                 @enderror
             </div>

@@ -89,4 +89,28 @@ class User extends Authenticatable
     {
         return $this->hasOne(Student::class);
     }
+
+    /**
+     * Get courses created by this user
+     */
+    public function createdCourses()
+    {
+        return $this->hasMany(Course::class, 'created_by');
+    }
+
+    /**
+     * Get subjects created by this user
+     */
+    public function createdSubjects()
+    {
+        return $this->hasMany(Subject::class, 'created_by');
+    }
+
+    /**
+     * Get topics created by this user
+     */
+    public function createdTopics()
+    {
+        return $this->hasMany(Topic::class, 'created_by');
+    }
 }

@@ -13,13 +13,27 @@ class TopicController extends Controller
 
     public function index()
     {
-        $topics = Topic::with(['subject.course'])->latest()->paginate(15);
+        // Get the authenticated user's partner ID using the trait
+        $partnerId = $this->getPartnerId();
+        
+        // Only show topics for the logged-in partner
+        $topics = Topic::with(['subject.courses'])
+            ->where('partner_id', $partnerId)
+            ->latest()
+            ->paginate(15);
+            
         return view('partner.topics.index', compact('topics'));
     }
 
     public function create()
     {
-        $subjects = Subject::where('status', 'active')->get();
+        $partnerId = $this->getPartnerId();
+        $subjects = Subject::where('status', 'active')
+            ->with('courses')
+            ->whereHas('courses', function($query) use ($partnerId) {
+                $query->where('courses.partner_id', $partnerId);
+            })
+            ->get();
         return view('partner.topics.create', compact('subjects'));
     }
 
@@ -35,8 +49,9 @@ class TopicController extends Controller
 
         // Get the authenticated user's partner ID using the trait
         $partnerId = $this->getPartnerId();
+        $userId = auth()->id();
 
-        // Create topic with partner_id
+        // Create topic with partner_id and created_by
         Topic::create([
             'subject_id' => $request->subject_id,
             'name' => $request->name,
@@ -44,6 +59,7 @@ class TopicController extends Controller
             'description' => $request->description,
             'chapter_number' => $request->chapter_number,
             'partner_id' => $partnerId,
+            'created_by' => $userId,
             'status' => 'active',
         ]);
 
@@ -53,13 +69,19 @@ class TopicController extends Controller
 
     public function show(Topic $topic)
     {
-        $topic->load(['subject.course', 'questions']);
+        $topic->load(['subject.courses', 'questions']);
         return view('partner.topics.show', compact('topic'));
     }
 
     public function edit(Topic $topic)
     {
-        $subjects = Subject::where('status', 'active')->get();
+        $partnerId = $this->getPartnerId();
+        $subjects = Subject::where('status', 'active')
+            ->with('courses')
+            ->whereHas('courses', function($query) use ($partnerId) {
+                $query->where('courses.partner_id', $partnerId);
+            })
+            ->get();
         return view('partner.topics.edit', compact('topic', 'subjects'));
     }
 

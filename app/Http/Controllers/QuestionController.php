@@ -20,7 +20,7 @@ class QuestionController extends Controller
         // Get the authenticated user's partner ID using the trait
         $partnerId = $this->getPartnerId();
         
-        $query = Question::with(['topic.subject.course', 'partner', 'questionType'])
+        $query = Question::with(['topic.subject.courses', 'partner', 'questionType'])
             ->where('partner_id', $partnerId);
 
         // Apply filters
@@ -65,7 +65,7 @@ class QuestionController extends Controller
         }
 
         // For question set creation, show all available questions (not just partner's own)
-        $query = Question::with(['topic.subject.course', 'questionType'])
+        $query = Question::with(['topic.subject.courses', 'questionType'])
             ->where('status', 'active');
 
         // Apply filters
@@ -98,7 +98,7 @@ class QuestionController extends Controller
                   ->orWhere('option_c', 'like', "%{$search}%")
                   ->orWhere('option_d', 'like', "%{$search}%")
                   ->orWhere('explanation', 'like', "%{$search}%")
-                  ->orWhereHas('topic.subject.course', function($q) use ($search) {
+                  ->orWhereHas('topic.subject.courses', function($q) use ($search) {
                       $q->where('name', 'like', "%{$search}%");
                   })
                   ->orWhereHas('topic.subject', function($q) use ($search) {
@@ -173,7 +173,7 @@ class QuestionController extends Controller
                   ->orWhere('option_c', 'like', "%{$search}%")
                   ->orWhere('option_d', 'like', "%{$search}%")
                   ->orWhere('explanation', 'like', "%{$search}%")
-                  ->orWhereHas('topic.subject.course', function($q) use ($search) {
+                  ->orWhereHas('topic.subject.courses', function($q) use ($search) {
                       $q->where('name', 'like', "%{$search}%");
                   })
                   ->orWhereHas('topic.subject', function($q) use ($search) {
@@ -237,7 +237,7 @@ class QuestionController extends Controller
     public function create()
     {
         $courses = Course::where('status', 'active')->get();
-        $subjects = Subject::where('status', 'active')->with('course')->get();
+        $subjects = Subject::where('status', 'active')->with('courses')->get();
         $topics = Topic::where('status', 'active')->with('subject')->get();
 
         return view('partner.questions.create', compact('courses', 'subjects', 'topics'));
@@ -277,7 +277,7 @@ class QuestionController extends Controller
 
     public function show(Question $question)
     {
-        $question->load(['topic.subject.course', 'partner']);
+        $question->load(['topic.subject.courses', 'partner']);
         return view('partner.questions.show', compact('question'));
     }
 
@@ -373,7 +373,7 @@ class QuestionController extends Controller
 
         return response()->json([
             'duplicate' => $duplicate ? true : false,
-            'question' => $duplicate ? $duplicate->load('topic.subject.course') : null,
+            'question' => $duplicate ? $duplicate->load('topic.subject.courses') : null,
         ]);
     }
 
@@ -431,7 +431,7 @@ class QuestionController extends Controller
     public function mcqCreate()
     {
         $courses = Course::where('status', 'active')->get();
-        $subjects = Subject::where('status', 'active')->with('course')->get();
+        $subjects = Subject::where('status', 'active')->with('courses')->get();
         $topics = Topic::where('status', 'active')->with('subject')->get();
 
         return view('partner.questions.mcq.create-mcq', compact('courses', 'subjects', 'topics'));
@@ -551,7 +551,7 @@ class QuestionController extends Controller
         $question->load(['course', 'subject', 'topic']);
 
         $courses = Course::where('status', 'active')->get();
-        $subjects = Subject::where('status', 'active')->with('course')->get();
+        $subjects = Subject::where('status', 'active')->with('courses')->get();
         $topics = Topic::where('status', 'active')->with('subject')->get();
 
         return view('partner.questions.mcq.mcq-modify', compact('question', 'courses', 'subjects', 'topics'));
