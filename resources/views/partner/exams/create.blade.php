@@ -104,45 +104,7 @@
         animation: fadeInUp 0.6s ease forwards;
     }
 
-    /* Rich Text Editor Styling */
-    #questionHeaderEditor {
-        min-height: 120px;
-        padding: 1rem;
-        line-height: 1.6;
-        outline: none;
-        overflow-y: auto;
-    }
 
-    #questionHeaderEditor:empty:before {
-        content: attr(data-placeholder);
-        color: #9ca3af;
-        pointer-events: none;
-    }
-
-    #questionHeaderEditor:focus {
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    }
-
-    #questionHeaderEditor[contenteditable="true"] {
-        cursor: text;
-    }
-
-    #questionHeaderEditor[contenteditable="true"]:empty:before {
-        content: attr(data-placeholder);
-        color: #9ca3af;
-        font-style: italic;
-    }
-
-    /* Rich text editor toolbar button hover effects */
-    #questionHeaderEditor + div button:hover {
-        background-color: #e5e7eb;
-        transform: translateY(-1px);
-    }
-
-    #questionHeaderEditor + div button:active {
-        transform: translateY(0);
-    }
     }
     
     @keyframes fadeInUp {
@@ -541,15 +503,10 @@
 
     // Rich Text Editor for Question Header
     function initializeQuestionHeaderEditor() {
-        console.log('Initializing question header editor...');
         const editor = document.getElementById('questionHeaderEditor');
         const hiddenInput = document.getElementById('questionHeader');
         
-        console.log('Editor element:', editor);
-        console.log('Hidden input element:', hiddenInput);
-        
         if (!editor || !hiddenInput) {
-            console.log('Editor or hidden input not found, returning...');
             return;
         }
 
