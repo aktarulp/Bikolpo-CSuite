@@ -25,6 +25,7 @@ class Exam extends Model
         'has_negative_marking',
         'negative_marks_per_question',
         'question_head',
+        'question_header',
         'status',
         'flag',
         'created_by',
@@ -42,6 +43,7 @@ class Exam extends Model
         'has_negative_marking' => 'boolean',
         'negative_marks_per_question' => 'decimal:2',
         'question_head' => 'string',
+        'question_header' => 'string',
         'status' => 'string',
         'flag' => 'string',
     ];

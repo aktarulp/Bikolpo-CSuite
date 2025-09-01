@@ -85,6 +85,7 @@ class ExamController extends Controller
             'has_negative_marking' => 'boolean',
             'negative_marks_per_question' => 'required_if:has_negative_marking,1|nullable|numeric|min:0|max:5',
             'question_head' => 'nullable|string',
+            'question_header' => 'nullable|string',
         ]);
 
         // Parse the datetime-local inputs directly
@@ -125,6 +126,7 @@ class ExamController extends Controller
             'total_questions',
             'passing_marks',
             'question_head',
+            'question_header',
         ]);
 
         // Add the combined datetime values
@@ -209,6 +211,7 @@ class ExamController extends Controller
             'has_negative_marking' => 'boolean',
             'negative_marks_per_question' => 'required_if:has_negative_marking,1|nullable|numeric|min:0|max:5',
             'question_head' => 'nullable|string',
+            'question_header' => 'nullable|string',
             'exam_question_id' => 'nullable|exists:exam_questions,id',
         ]);
 
@@ -249,6 +252,7 @@ class ExamController extends Controller
             'total_questions',
             'passing_marks',
             'question_head',
+            'question_header',
             'exam_question_id',
         ]);
 

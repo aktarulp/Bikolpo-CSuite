@@ -186,6 +186,16 @@
                                 </button>
                             </div>
                             
+                            <!-- Question Header Field -->
+                            <div class="mb-3">
+                                <label for="question_header" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Question Header <span class="text-gray-400">(Optional)</span>
+                                </label>
+                                <input type="text" name="question_header" id="question_header" 
+                                       placeholder="Enter a brief header or title for this question"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+                            </div>
+                            
                             <!-- Rich Text Editor Content -->
                             <div id="richTextEditor" class="border border-t-0 border-gray-300 rounded-b-md min-h-[120px] p-3 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all duration-200" contenteditable="true" data-placeholder="Enter your question here... You can use formatting, images, and equations."></div>
                             

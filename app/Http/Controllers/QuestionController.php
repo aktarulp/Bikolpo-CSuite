@@ -248,6 +248,7 @@ class QuestionController extends Controller
         $request->validate([
             'topic_id' => 'required|exists:topics,id',
             'question_text' => 'required|string|max:1000',
+            'question_header' => 'nullable|string|max:500',
             'option_a' => 'required|string|max:255',
             'option_b' => 'required|string|max:255',
             'option_c' => 'required|string|max:255',
@@ -498,6 +499,7 @@ class QuestionController extends Controller
             'subject_id' => 'required|exists:subjects,id',
             'topic_id' => 'nullable|exists:topics,id',
             'question_text' => 'required|string|max:1000',
+            'question_header' => 'nullable|string|max:500',
             'option_a' => 'required|string|max:255',
             'option_b' => 'required|string|max:255',
             'option_c' => 'required|string|max:255',
@@ -708,6 +710,7 @@ class QuestionController extends Controller
             'subject_id' => 'required|exists:subjects,id',
             'topic_id' => 'nullable|exists:topics,id',
             'question_text' => 'required|string|max:5000',
+            'question_header' => 'nullable|string|max:500',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'tags' => 'nullable|json',
             'appearance_history' => 'nullable|json',

@@ -18,6 +18,7 @@ class Question extends Model
         'partner_id',
         'created_by',
         'question_text',
+        'question_header',
         'option_a',
         'option_b',
         'option_c',

@@ -2,7 +2,11 @@
 
 @section('title', 'Edit Exam')
 
+
+
 @section('content')
+
+
 <style>
     /* Custom scrollbar */
     .custom-scrollbar::-webkit-scrollbar {
@@ -103,6 +107,8 @@
         transform: translateY(20px);
         animation: fadeInUp 0.6s ease forwards;
     }
+
+
     
     @keyframes fadeInUp {
         to {
@@ -255,6 +261,17 @@
                                 <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
+
+                        <div>
+                            <label for="questionHeader" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Question Header</label>
+                            <input type="text" id="questionHeader" name="question_header" 
+                                   value="{{ old('question_header', $exam->question_header) }}"
+                                   placeholder="Optional question header text for this exam"
+                                   class="w-full px-4 py-4 border-2 border-gray-200 dark:border-gray-600 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-slate-700 dark:text-white transition-all duration-300 text-lg">
+                            @error('question_header')
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
                 </div>
             </div>
@@ -373,6 +390,8 @@
                                 <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
+
+
                     </div>
                 </div>
             </div>
@@ -506,6 +525,14 @@
                 step.classList.add('active');
             });
         });
+
+
     });
+
+
+
+
+        
+
 </script>
 @endsection
