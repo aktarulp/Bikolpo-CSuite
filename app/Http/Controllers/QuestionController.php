@@ -379,18 +379,50 @@ class QuestionController extends Controller
 
     public function getSubjects(Request $request)
     {
-        $subjects = Subject::where('course_id', $request->course_id)
+        $partnerId = $this->getPartnerId();
+        
+        // Add logging for debugging
+        \Log::info('getSubjects called', [
+            'course_id' => $request->course_id,
+            'partner_id' => $partnerId
+        ]);
+        
+        $subjects = Subject::whereHas('courses', function($query) use ($request) {
+                $query->where('course_id', $request->course_id);
+            })
+            ->where('partner_id', $partnerId)
             ->where('status', 'active')
+            ->orderBy('name')
             ->get();
+
+        \Log::info('Subjects found', [
+            'count' => $subjects->count(),
+            'subjects' => $subjects->pluck('name', 'id')->toArray()
+        ]);
 
         return response()->json($subjects);
     }
 
     public function getTopics(Request $request)
     {
+        $partnerId = $this->getPartnerId();
+        
+        // Add logging for debugging
+        \Log::info('getTopics called', [
+            'subject_id' => $request->subject_id,
+            'partner_id' => $partnerId
+        ]);
+        
         $topics = Topic::where('subject_id', $request->subject_id)
+            ->where('partner_id', $partnerId)
             ->where('status', 'active')
+            ->orderBy('name')
             ->get();
+
+        \Log::info('Topics found', [
+            'count' => $topics->count(),
+            'topics' => $topics->pluck('name', 'id')->toArray()
+        ]);
 
         return response()->json($topics);
     }
@@ -421,18 +453,40 @@ class QuestionController extends Controller
 
 
         $questions = $query->latest()->paginate(15);
-        $courses = Course::where('status', 'active')->get();
-        $subjects = Subject::where('status', 'active')->get();
-        $topics = Topic::where('status', 'active')->get();
+        $courses = Course::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
+        $subjects = Subject::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
+        $topics = Topic::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
 
         return view('partner.questions.all-question-view', compact('questions', 'courses', 'subjects', 'topics'));
     }
 
     public function mcqCreate()
     {
-        $courses = Course::where('status', 'active')->get();
-        $subjects = Subject::where('status', 'active')->with('courses')->get();
-        $topics = Topic::where('status', 'active')->with('subject')->get();
+        $partnerId = $this->getPartnerId();
+        
+        $courses = Course::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
+        $subjects = Subject::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->with('courses')
+            ->orderBy('name')
+            ->get();
+        $topics = Topic::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->with('subject')
+            ->orderBy('name')
+            ->get();
 
         return view('partner.questions.mcq.create-mcq', compact('courses', 'subjects', 'topics'));
     }
@@ -550,9 +604,22 @@ class QuestionController extends Controller
         // Load the question with its relationships
         $question->load(['course', 'subject', 'topic']);
 
-        $courses = Course::where('status', 'active')->get();
-        $subjects = Subject::where('status', 'active')->with('courses')->get();
-        $topics = Topic::where('status', 'active')->with('subject')->get();
+        $partnerId = $this->getPartnerId();
+        
+        $courses = Course::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
+        $subjects = Subject::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->with('courses')
+            ->orderBy('name')
+            ->get();
+        $topics = Topic::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->with('subject')
+            ->orderBy('name')
+            ->get();
 
         return view('partner.questions.mcq.mcq-modify', compact('question', 'courses', 'subjects', 'topics'));
     }
@@ -616,9 +683,20 @@ class QuestionController extends Controller
     // Descriptive Question Methods
     public function descriptiveCreate()
     {
-        $courses = Course::where('status', 'active')->get();
-        $subjects = Subject::where('status', 'active')->get();
-        $topics = Topic::where('status', 'active')->get();
+        $partnerId = $this->getPartnerId();
+        
+        $courses = Course::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
+        $subjects = Subject::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
+        $topics = Topic::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
 
         return view('partner.questions.create-desc', compact('courses', 'subjects', 'topics'));
     }
@@ -789,5 +867,404 @@ class QuestionController extends Controller
         }
 
         return redirect()->back()->with('success', "{$created} sample MCQ questions created for your partner.");
+    }
+
+    /**
+     * Check the current session and user authentication status.
+     */
+    public function checkSession(Request $request)
+    {
+        $sessionData = [
+            'authenticated' => auth()->check(),
+            'user_id' => auth()->id(),
+            'user_name' => auth()->user()?->name,
+            'user_email' => auth()->user()?->email,
+            'user_role' => auth()->user()?->role,
+            'session_id' => session()->getId(),
+            'session_lifetime' => config('session.lifetime'),
+            'session_driver' => config('session.driver'),
+            'csrf_token' => csrf_token(),
+            'timestamp' => now()->toISOString(),
+        ];
+
+        if (auth()->check() && auth()->user()->isPartner()) {
+            $partner = auth()->user()->partner;
+            if ($partner) {
+                $sessionData['partner'] = [
+                    'id' => $partner->id,
+                    'name' => $partner->name,
+                    'status' => $partner->status,
+                    'user_id' => $partner->user_id,
+                ];
+                
+                // Get existing question counts
+                $sessionData['question_counts'] = [
+                    'total' => Question::where('partner_id', $partner->id)->count(),
+                    'mcq' => Question::where('partner_id', $partner->id)->where('question_type', 'mcq')->count(),
+                    'descriptive' => Question::where('partner_id', $partner->id)->where('question_type', 'descriptive')->count(),
+                ];
+            }
+        }
+
+        if ($request->wantsJson()) {
+            return response()->json($sessionData);
+        }
+
+        return view('partner.questions.session-check', compact('sessionData'));
+    }
+
+    /**
+     * Seed MCQ questions for the authenticated partner.
+     */
+    public function seedMcqQuestions(Request $request)
+    {
+        // Auth partner context
+        $user = auth()->user();
+        if (!$user || !$user->isPartner()) {
+            abort(403, 'Unauthorized access. Partner login required.');
+        }
+        
+        $partner = $user->partner;
+        if (!$partner) {
+            abort(404, 'Partner profile not found.');
+        }
+
+        $count = (int)($request->input('count', 100));
+        $count = max(1, min($count, 500)); // Safety cap
+
+        try {
+            // Get required data
+            $mcqType = QuestionType::where('q_type_code', 'MCQ')->first();
+            if (!$mcqType) {
+                return redirect()->back()->with('error', 'MCQ question type not found. Please ensure question types are seeded first.');
+            }
+
+            $courses = Course::where('status', 'active')->get();
+            if ($courses->isEmpty()) {
+                return redirect()->back()->with('error', 'No active courses found. Please create courses first.');
+            }
+
+            $subjectsByCourse = Subject::where('status', 'active')->get()->groupBy('course_id');
+            $topicsBySubject = Topic::where('status', 'active')->get()->groupBy('subject_id');
+
+            // Enhanced sample question templates with explanations
+            $samples = [
+                ['What is the capital of France?', 'Paris', 'Berlin', 'Madrid', 'Rome', 'a', 'Paris is the capital and largest city of France.'],
+                ['Which planet is known as the Red Planet?', 'Earth', 'Mars', 'Jupiter', 'Venus', 'b', 'Mars is called the Red Planet due to iron oxide on its surface.'],
+                ['What is the largest ocean on Earth?', 'Indian', 'Atlantic', 'Pacific', 'Arctic', 'c', 'The Pacific Ocean is the largest and deepest ocean on Earth.'],
+                ['Who wrote Hamlet?', 'Shakespeare', 'Hemingway', 'Tolstoy', 'Dickens', 'a', 'William Shakespeare wrote the famous tragedy Hamlet.'],
+                ['The chemical symbol for water is?', 'H2O', 'CO2', 'O2', 'NaCl', 'a', 'H2O represents two hydrogen atoms and one oxygen atom.'],
+                ['What gas do plants absorb?', 'Oxygen', 'Nitrogen', 'Carbon Dioxide', 'Hydrogen', 'c', 'Plants absorb carbon dioxide during photosynthesis.'],
+                ['What is 9 × 8?', '72', '64', '81', '56', 'a', '9 multiplied by 8 equals 72.'],
+                ['Which is a prime number?', '21', '29', '35', '39', 'b', '29 is a prime number as it has no divisors other than 1 and itself.'],
+                ['Speed unit is?', 'Pascal', 'Newton', 'm/s', 'Watt', 'c', 'Meters per second (m/s) is the SI unit for speed.'],
+                ['Energy unit is?', 'Joule', 'Volt', 'Ohm', 'Ampere', 'a', 'Joule is the SI unit for energy.'],
+                ['What is the largest mammal?', 'Elephant', 'Blue Whale', 'Giraffe', 'Hippopotamus', 'b', 'The Blue Whale is the largest mammal on Earth.'],
+                ['Which element has the symbol Fe?', 'Iron', 'Fluorine', 'Francium', 'Fermium', 'a', 'Fe is the chemical symbol for Iron.'],
+                ['What is the square root of 144?', '10', '11', '12', '13', 'c', '12 × 12 = 144, so the square root is 12.'],
+                ['Who painted the Mona Lisa?', 'Van Gogh', 'Da Vinci', 'Picasso', 'Rembrandt', 'b', 'Leonardo da Vinci painted the Mona Lisa.'],
+                ['What is the main component of the sun?', 'Liquid Lava', 'Molten Iron', 'Hot Gases', 'Solid Rock', 'c', 'The sun is primarily composed of hot gases, mainly hydrogen and helium.'],
+                ['Which country has the largest population?', 'India', 'China', 'USA', 'Russia', 'b', 'China has the largest population in the world.'],
+                ['What is the chemical symbol for gold?', 'Ag', 'Au', 'Fe', 'Cu', 'b', 'Au is the chemical symbol for gold (from Latin "aurum").'],
+                ['Who discovered gravity?', 'Einstein', 'Newton', 'Galileo', 'Copernicus', 'b', 'Isaac Newton formulated the law of universal gravitation.'],
+                ['What is the largest desert in the world?', 'Sahara', 'Antarctic', 'Arabian', 'Gobi', 'b', 'The Antarctic Desert is the largest desert in the world.'],
+                ['Which language has the most native speakers?', 'English', 'Spanish', 'Mandarin', 'Hindi', 'c', 'Mandarin Chinese has the most native speakers worldwide.'],
+            ];
+
+            $created = 0;
+            DB::beginTransaction();
+
+            for ($i = 1; $i <= $count; $i++) {
+                $course = $courses->random();
+                $subjects = $subjectsByCourse->get($course->id) ?? collect();
+                $subject = $subjects->isNotEmpty() ? $subjects->random() : Subject::where('status', 'active')->inRandomOrder()->first();
+                $topics = $subject ? ($topicsBySubject->get($subject->id) ?? collect()) : collect();
+                $topic = $topics->isNotEmpty() ? $topics->random() : (Topic::where('status', 'active')->inRandomOrder()->first());
+
+                // Skip if no subject/topic context exists
+                if (!$subject || !$topic) {
+                    continue;
+                }
+
+                $tpl = $samples[array_rand($samples)];
+                [$qt, $a, $b, $c, $d, $correct, $explanation] = $tpl;
+                $questionText = "[Sample MCQ #{$i}] {$qt}";
+
+                Question::create([
+                    'question_type' => 'mcq',
+                    'q_type_id' => $mcqType->q_type_id,
+                    'course_id' => $course->id,
+                    'subject_id' => $subject->id,
+                    'topic_id' => $topic->id,
+                    'partner_id' => $partner->id,
+                    'created_by' => $user->id,
+                    'question_text' => $questionText,
+                    'option_a' => $a,
+                    'option_b' => $b,
+                    'option_c' => $c,
+                    'option_d' => $d,
+                    'correct_answer' => $correct,
+                    'explanation' => $explanation,
+                    'marks' => 1,
+                    'status' => 'active',
+                ]);
+
+                $created++;
+            }
+
+            DB::commit();
+
+            return redirect()->back()->with('success', "Successfully created {$created} MCQ questions for your partner.");
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()->with('error', 'Error seeding MCQ questions: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Show the bulk upload form for questions.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function showBulkUploadForm()
+    {
+        return view('partner.questions.bulk-upload');
+    }
+
+    /**
+     * Handle bulk upload of questions from CSV file.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function bulkUpload(Request $request)
+    {
+        $request->validate([
+            'csv_file' => 'required|file|mimes:csv,txt|max:2048',
+        ]);
+
+        try {
+            $file = $request->file('csv_file');
+            $partnerId = $this->getPartnerId();
+            
+            $handle = fopen($file->getPathname(), 'r');
+            $headers = fgetcsv($handle);
+            
+            // Simplified required headers - only essential question data
+            $requiredHeaders = ['question_text', 'option_a', 'option_b', 'option_c', 'option_d', 'correct_answer'];
+            $missingHeaders = array_diff($requiredHeaders, $headers);
+            
+            if (!empty($missingHeaders)) {
+                fclose($handle);
+                return redirect()->back()->withErrors(['csv_file' => 'Missing required headers: ' . implode(', ', $missingHeaders)]);
+            }
+
+            $successCount = 0;
+            $errorCount = 0;
+            $errors = [];
+            $rowNumber = 1; // Start from 1 since we already read headers
+
+            while (($data = fgetcsv($handle)) !== false) {
+                $rowNumber++;
+                
+                try {
+                    // Map CSV data to array
+                    $rowData = array_combine($headers, $data);
+                    
+                    // Get MCQ question type
+                    $mcqType = QuestionType::where('q_type_code', 'MCQ')->first();
+                    if (!$mcqType) {
+                        $errors[] = "Row {$rowNumber}: MCQ question type not found in system";
+                        $errorCount++;
+                        continue;
+                    }
+
+                    // Validate correct answer format
+                    $correctAnswer = strtolower(trim($rowData['correct_answer']));
+                    if (!in_array($correctAnswer, ['a', 'b', 'c', 'd'])) {
+                        $errors[] = "Row {$rowNumber}: Correct answer must be 'a', 'b', 'c', or 'd'";
+                        $errorCount++;
+                        continue;
+                    }
+
+                    // Create question as draft (no course/subject/topic assigned yet)
+                    $question = Question::create([
+                        'question_type' => 'mcq',
+                        'q_type_id' => $mcqType->q_type_id,
+                        'course_id' => null, // Will be set later
+                        'subject_id' => null, // Will be set later
+                        'topic_id' => null, // Will be set later
+                        'partner_id' => $partnerId,
+                        'created_by' => auth()->id(),
+                        'question_text' => trim($rowData['question_text']),
+                        'option_a' => trim($rowData['option_a'] ?? ''),
+                        'option_b' => trim($rowData['option_b'] ?? ''),
+                        'option_c' => trim($rowData['option_c'] ?? ''),
+                        'option_d' => trim($rowData['option_d'] ?? ''),
+                        'correct_answer' => $correctAnswer,
+                        'explanation' => trim($rowData['explanation'] ?? ''),
+                        'marks' => 1, // Default marks
+                        'difficulty_level' => 2, // Default to Medium
+                        'status' => 'draft', // Important: Set as draft
+                        'tags' => json_encode(['bulk_upload', 'draft']),
+                    ]);
+
+                    $successCount++;
+                } catch (\Exception $e) {
+                    $errors[] = "Row {$rowNumber}: " . $e->getMessage();
+                    $errorCount++;
+                }
+            }
+
+            fclose($handle);
+
+            $message = "Successfully imported {$successCount} questions as drafts.";
+            if ($errorCount > 0) {
+                $message .= " {$errorCount} questions failed to import.";
+            }
+
+            if (!empty($errors)) {
+                session()->flash('import_errors', $errors);
+            }
+
+            // Redirect to draft questions page instead of all questions
+            return redirect()->route('partner.questions.drafts')->with('success', $message);
+
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['csv_file' => 'Error processing file: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Show draft questions for review and publishing.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function showDrafts()
+    {
+        $partnerId = $this->getPartnerId();
+        
+        // Fetch draft questions for this partner
+        $draftQuestions = Question::where('partner_id', $partnerId)
+            ->where('status', 'draft')
+            ->orderBy('created_at', 'desc')
+            ->paginate(20);
+
+        // Fetch available courses, subjects, and topics for this partner only
+        $courses = Course::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
+            
+        // Load subjects with their course relationships
+        $subjects = Subject::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->with('courses')
+            ->orderBy('name')
+            ->get();
+            
+        $topics = Topic::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
+
+        return view('partner.questions.drafts', compact('draftQuestions', 'courses', 'subjects', 'topics'));
+    }
+
+    /**
+     * Update draft questions with metadata and publish them.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateDrafts(Request $request)
+    {
+        $request->validate([
+            'questions' => 'required|array',
+            'questions.*.id' => 'required|exists:questions,id',
+            'questions.*.course_id' => 'required|exists:courses,id',
+            'questions.*.subject_id' => 'required|exists:subjects,id',
+            'questions.*.topic_id' => 'nullable|exists:topics,id',
+        ]);
+
+        try {
+            \DB::beginTransaction();
+
+            $partnerId = $this->getPartnerId();
+            $updatedCount = 0;
+
+            foreach ($request->questions as $questionData) {
+                $question = Question::where('id', $questionData['id'])
+                    ->where('partner_id', $partnerId)
+                    ->where('status', 'draft')
+                    ->first();
+
+                if (!$question) {
+                    continue; // Skip if question doesn't exist or doesn't belong to partner
+                }
+
+                // Update question with metadata
+                $question->update([
+                    'course_id' => $questionData['course_id'],
+                    'subject_id' => $questionData['subject_id'],
+                    'topic_id' => $questionData['topic_id'] ?? null,
+                    'status' => 'active', // Publish the question
+                    'tags' => json_encode(array_filter(['published', $questionData['topic_id'] ? 'topic_' . $questionData['topic_id'] : null])),
+                ]);
+
+                $updatedCount++;
+            }
+
+            \DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => "Successfully published {$updatedCount} questions!",
+                'updated_count' => $updatedCount
+            ]);
+
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return response()->json([
+                'success' => false,
+                'message' => 'Error updating questions: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Delete draft questions.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteDrafts(Request $request)
+    {
+        $request->validate([
+            'question_ids' => 'required|array',
+            'question_ids.*' => 'required|exists:questions,id'
+        ]);
+
+        try {
+            $partnerId = $this->getPartnerId();
+            
+            $deletedCount = Question::where('partner_id', $partnerId)
+                ->where('status', 'draft')
+                ->whereIn('id', $request->question_ids)
+                ->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => "Successfully deleted {$deletedCount} draft questions!",
+                'deleted_count' => $deletedCount
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error deleting questions: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

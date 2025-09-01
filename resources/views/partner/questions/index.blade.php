@@ -24,7 +24,10 @@
                            class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md transition-colors duration-200">
                             Create Descriptive
                         </a>
-                        
+                        <a href="{{ route('partner.check-session') }}" 
+                           class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md transition-colors duration-200">
+                            Session & Seed MCQ
+                        </a>
                     </div>
                 </div>
 
