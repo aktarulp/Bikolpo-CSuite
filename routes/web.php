@@ -173,6 +173,8 @@ Route::middleware('auth')->group(function () {
         Route::post('exams/{exam}/restore', [ExamController::class, 'restore'])->name('exams.restore');
         Route::get('exams/{exam}/results', [ExamController::class, 'results'])->name('exams.results');
         Route::get('exams/{exam}/export', [ExamController::class, 'export'])->name('exams.export');
+        Route::get('exams/{exam}/paper-parameters', [ExamController::class, 'paperParameters'])->name('exams.paper-parameters');
+        Route::post('exams/{exam}/download-paper', [ExamController::class, 'downloadPaper'])->name('exams.download-paper');
         Route::get('exams/{exam}/assign-questions', [ExamController::class, 'assignQuestions'])->name('exams.assign-questions');
         Route::post('exams/{exam}/assign-questions', [ExamController::class, 'storeAssignedQuestions'])->name('exams.store-assigned-questions');
         

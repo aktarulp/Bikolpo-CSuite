@@ -444,12 +444,154 @@ class ExamController extends Controller
 
     public function export(Exam $exam)
     {
-        $results = ExamResult::where('exam_id', $exam->id)
-            ->with('student')
+        // Get exam questions with their details - order by the pivot table's order column
+        $questions = $exam->questions()
+            ->with(['topic', 'subject'])
+            ->orderBy('exam_questions.order')
             ->get();
-
-        // For now, return a simple view. In a real app, you'd generate CSV/PDF
-        return view('partner.exams.export', compact('exam', 'results'));
+        
+        // Generate HTML content for the question paper
+        $html = $this->generateQuestionPaperHTML($exam, $questions);
+        
+        // Generate filename
+        $filename = 'question_paper_' . $exam->id . '_' . date('Y-m-d_H-i-s') . '.html';
+        
+        // Return response with HTML content for download
+        return response($html)
+            ->header('Content-Type', 'text/html')
+            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+    }
+    
+    public function paperParameters(Exam $exam)
+    {
+        // Get exam questions for display purposes
+        $questions = $exam->questions()->with(['topic', 'subject'])->get();
+        
+        return view('partner.exams.paper-question-parameter', compact('exam', 'questions'));
+    }
+    
+    public function downloadPaper(Request $request, Exam $exam)
+    {
+        // Validate the request
+        $request->validate([
+            'paper_size' => 'required|in:A4,Letter,Legal,A3',
+            'orientation' => 'required|in:portrait,landscape',
+            'font_family' => 'required|string',
+            'font_size' => 'required|integer|min:8|max:20',
+            'line_spacing' => 'required|numeric|min:0.5|max:3.0',
+            'margin_top' => 'required|integer|min:10|max:50',
+            'margin_bottom' => 'required|integer|min:10|max:50',
+            'margin_left' => 'required|integer|min:10|max:50',
+            'margin_right' => 'required|integer|min:10|max:50',
+        ]);
+        
+        // Get exam questions with their details - order by the pivot table's order column
+        $questions = $exam->questions()
+            ->with(['topic', 'subject'])
+            ->orderBy('exam_questions.order')
+            ->get();
+        
+        // Generate HTML content for the question paper with custom parameters
+        $html = $this->generateQuestionPaperHTMLWithParameters($exam, $questions, $request->all());
+        
+        // Generate filename
+        $filename = 'question_paper_' . $exam->id . '_' . date('Y-m-d_H-i-s') . '.html';
+        
+        // Return response with HTML content for download
+        return response($html)
+            ->header('Content-Type', 'text/html')
+            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+    }
+    
+    private function generateQuestionPaperHTML($exam, $questions)
+    {
+        $html = '<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question Paper - ' . htmlspecialchars($exam->title) . '</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+        .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 30px; }
+        .exam-title { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
+        .exam-info { font-size: 14px; color: #666; }
+        .instructions { background: #f5f5f5; padding: 20px; border-radius: 5px; margin-bottom: 30px; }
+        .question { margin-bottom: 25px; page-break-inside: avoid; }
+        .question-number { font-weight: bold; color: #333; }
+        .question-text { margin: 10px 0; }
+        .question-header { margin: 10px 0; font-style: italic; color: #666; }
+        .options { margin-left: 20px; }
+        .option { margin: 5px 0; }
+        .marks { font-weight: bold; color: #333; float: right; }
+        .footer { margin-top: 40px; text-align: center; font-size: 12px; color: #666; border-top: 1px solid #ccc; padding-top: 20px; }
+        @media print { body { margin: 20px; } .question { page-break-inside: avoid; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="exam-title">' . htmlspecialchars($exam->title) . '</div>
+        <div class="exam-info">
+            <strong>Exam ID:</strong> ' . $exam->id . ' | 
+            <strong>Duration:</strong> ' . $exam->duration . ' minutes | 
+            <strong>Total Questions:</strong> ' . $exam->total_questions . ' | 
+            <strong>Passing Marks:</strong> ' . $exam->passing_marks . '% | 
+            <strong>Total Marks:</strong> ' . $questions->sum(function($q) { return $q->pivot->marks ?? 1; }) . '
+        </div>';
+        
+        if ($exam->question_header) {
+            $html .= '<div class="question-header" style="margin-top: 15px; padding: 15px; background: #f9f9f9; border-radius: 5px;">' . $exam->question_header . '</div>';
+        }
+        
+        $html .= '</div>
+    
+    <div class="instructions">
+        <strong>Instructions:</strong>
+        <ul>
+            <li>Read each question carefully before answering</li>
+            <li>All questions are compulsory</li>
+            <li>Write your answers clearly and legibly</li>
+            <li>Check your answers before submitting</li>
+        </ul>
+    </div>';
+        
+        foreach ($questions as $index => $question) {
+            $questionNumber = $index + 1;
+            $marks = $question->pivot->marks ?? 1;
+            
+            $html .= '
+    <div class="question">
+        <div class="question-number">
+            Question ' . $questionNumber . ' <span class="marks">[' . $marks . ' mark' . ($marks > 1 ? 's' : '') . ']</span>
+        </div>';
+            
+            if ($question->question_header) {
+                $html .= '<div class="question-header">' . htmlspecialchars($question->question_header) . '</div>';
+            }
+            
+            $html .= '<div class="question-text">' . htmlspecialchars($question->question_text) . '</div>';
+            
+            if ($question->question_type === 'mcq') {
+                $html .= '<div class="options">';
+                if ($question->option_a) $html .= '<div class="option">A) ' . htmlspecialchars($question->option_a) . '</div>';
+                if ($question->option_b) $html .= '<div class="option">B) ' . htmlspecialchars($question->option_b) . '</div>';
+                if ($question->option_c) $html .= '<div class="option">C) ' . htmlspecialchars($question->option_c) . '</div>';
+                if ($question->option_d) $html .= '<div class="option">D) ' . htmlspecialchars($question->option_d) . '</div>';
+                $html .= '</div>';
+            }
+            
+            $html .= '</div>';
+        }
+        
+        $html .= '
+    <div class="footer">
+        <p>Generated on: ' . date('F d, Y \a\t g:i A') . '</p>
+        <p>Total Questions: ' . $questions->count() . ' | Total Marks: ' . $questions->sum(function($q) { return $q->pivot->marks ?? 1; }) . '</p>
+    </div>
+</body>
+</html>';
+        
+        return $html;
     }
 
     public function assignQuestions(Exam $exam)
@@ -602,5 +744,119 @@ class ExamController extends Controller
         }
         
         throw new \Exception('No partner found. Please create a partner first.');
+    }
+    
+    private function generateQuestionPaperHTMLWithParameters($exam, $questions, $parameters)
+    {
+        $html = '<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question Paper - ' . htmlspecialchars($exam->title) . '</title>
+    <style>
+        @page {
+            size: ' . $parameters['paper_size'] . ' ' . $parameters['orientation'] . ';
+            margin: ' . $parameters['margin_top'] . 'mm ' . $parameters['margin_right'] . 'mm ' . $parameters['margin_bottom'] . 'mm ' . $parameters['margin_left'] . 'mm;
+        }
+        body { 
+            font-family: "' . $parameters['font_family'] . '", Arial, sans-serif; 
+            margin: 0; 
+            line-height: ' . $parameters['line_spacing'] . '; 
+            font-size: ' . $parameters['font_size'] . 'pt;
+        }
+        .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 30px; }
+        .exam-title { font-size: ' . ($parameters['font_size'] + 8) . 'pt; font-weight: bold; margin-bottom: 10px; }
+        .exam-info { font-size: ' . ($parameters['font_size'] - 2) . 'pt; color: #666; }
+        .instructions { background: #f5f5f5; padding: 20px; border-radius: 5px; margin-bottom: 30px; }
+        .question { margin-bottom: 25px; page-break-inside: avoid; }
+        .question-number { font-weight: bold; color: #333; }
+        .question-text { margin: 10px 0; }
+        .question-header { margin: 10px 0; font-style: italic; color: #666; }
+        .options { margin-left: 20px; }
+        .option { margin: 5px 0; }
+        .marks { font-weight: bold; color: #333; float: right; }
+        .footer { margin-top: 40px; text-align: center; font-size: ' . ($parameters['font_size'] - 2) . 'pt; color: #666; border-top: 1px solid #ccc; padding-top: 20px; }
+        @media print { 
+            body { margin: 0; } 
+            .question { page-break-inside: avoid; } 
+        }
+    </style>
+</head>
+<body>
+    <div class="header">';
+        
+        if ($parameters['include_header'] ?? true) {
+            $html .= '
+        <div class="exam-title">' . htmlspecialchars($exam->title) . '</div>
+        <div class="exam-info">
+            <strong>Exam ID:</strong> ' . $exam->id . ' | 
+            <strong>Duration:</strong> ' . $exam->duration . ' minutes | 
+            <strong>Total Questions:</strong> ' . $exam->total_questions . ' | 
+            <strong>Passing Marks:</strong> ' . $exam->passing_marks . '% | 
+            <strong>Total Marks:</strong> ' . $questions->sum(function($q) { return $q->pivot->marks ?? 1; }) . '
+        </div>';
+            
+            if ($exam->question_header && ($parameters['include_question_headers'] ?? true)) {
+                $html .= '<div class="question-header" style="margin-top: 15px; padding: 15px; background: #f9f9f9; border-radius: 5px;">' . $exam->question_header . '</div>';
+            }
+        }
+        
+        $html .= '</div>';
+        
+        if ($parameters['include_instructions'] ?? true) {
+            $html .= '
+    <div class="instructions">
+        <strong>Instructions:</strong>
+        <ul>
+            <li>Read each question carefully before answering</li>
+            <li>All questions are compulsory</li>
+            <li>Write your answers clearly and legibly</li>
+            <li>Check your answers before submitting</li>
+        </ul>
+    </div>';
+        }
+        
+        foreach ($questions as $index => $question) {
+            $questionNumber = $index + 1;
+            $marks = $question->pivot->marks ?? 1;
+            
+            $html .= '
+    <div class="question">
+        <div class="question-number">
+            Question ' . $questionNumber . ' <span class="marks">[' . $marks . ' mark' . ($marks > 1 ? 's' : '') . ']</span>
+        </div>';
+            
+            if ($question->question_header && ($parameters['include_question_headers'] ?? true)) {
+                $html .= '<div class="question-header">' . htmlspecialchars($question->question_header) . '</div>';
+            }
+            
+            $html .= '<div class="question-text">' . htmlspecialchars($question->question_text) . '</div>';
+            
+            if ($question->question_type === 'mcq') {
+                $html .= '<div class="options">';
+                if ($question->option_a) $html .= '<div class="option">A) ' . htmlspecialchars($question->option_a) . '</div>';
+                if ($question->option_b) $html .= '<div class="option">B) ' . htmlspecialchars($question->option_b) . '</div>';
+                if ($question->option_c) $html .= '<div class="option">C) ' . htmlspecialchars($question->option_c) . '</div>';
+                if ($question->option_d) $html .= '<div class="option">D) ' . htmlspecialchars($question->option_d) . '</div>';
+                $html .= '</div>';
+            }
+            
+            $html .= '</div>';
+        }
+        
+        if ($parameters['include_footer'] ?? true) {
+            $html .= '
+    <div class="footer">
+        <p>Generated on: ' . date('F d, Y \a\t g:i A') . '</p>
+        <p>Total Questions: ' . $questions->count() . ' | Total Marks: ' . $questions->sum(function($q) { return $q->pivot->marks ?? 1; }) . '</p>
+    </div>';
+        }
+        
+        $html .= '
+</body>
+</html>';
+        
+        return $html;
     }
 }
