@@ -103,9 +103,6 @@
         transform: translateY(20px);
         animation: fadeInUp 0.6s ease forwards;
     }
-
-
-    }
     
     @keyframes fadeInUp {
         to {
@@ -134,7 +131,22 @@
             <p class="text-lg text-gray-600 dark:text-gray-300">Set up your exam with all the necessary details and configurations</p>
         </div>
 
-        
+        <!-- Progress Indicator -->
+        <div class="flex justify-center mb-8">
+            <div class="flex items-center space-x-4">
+                <div class="progress-step active flex items-center justify-center w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full font-semibold shadow-lg">
+                    1
+                </div>
+                <div class="w-16 h-1 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+                <div class="progress-step flex items-center justify-center w-10 h-10 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full font-semibold">
+                    2
+                </div>
+                <div class="w-16 h-1 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+                <div class="progress-step flex items-center justify-center w-10 h-10 bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full font-semibold">
+                    3
+                </div>
+            </div>
+        </div>
 
         <!-- Error Messages -->
         @if ($errors->any())
@@ -357,11 +369,20 @@
                                 <label for="negativeMarkingInput" class="block text-sm text-gray-600 dark:text-gray-400 mb-2">Marks per wrong answer:</label>
                                 <input type="number" id="negativeMarkingInput" name="negative_marks_per_question" 
                                        value="{{ old('negative_marks_per_question') }}" min="0" max="5" step="0.25" 
-                                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 border-purple-500 focus:border-purple-500 dark:bg-slate-600 dark:text-white">
+                                       class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-slate-600 dark:text-white">
                             </div>
                         </div>
 
-
+                        <div class="p-4 bg-gray-50 dark:bg-slate-700 rounded-2xl">
+                            <label for="questionHead" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Question Head</label>
+                            <input type="text" id="questionHead" name="question_head" 
+                                   value="{{ old('question_head') }}"
+                                   placeholder="Optional question header text"
+                                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 dark:bg-slate-600 dark:text-white">
+                            @error('question_head')
+                                <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
 
                     </div>
                 </div>
