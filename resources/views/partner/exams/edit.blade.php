@@ -108,7 +108,45 @@
         animation: fadeInUp 0.6s ease forwards;
     }
 
+    /* Rich Text Editor Styling */
+    #questionHeaderEditor {
+        min-height: 120px;
+        padding: 1rem;
+        line-height: 1.6;
+        outline: none;
+        overflow-y: auto;
+    }
 
+    #questionHeaderEditor:empty:before {
+        content: attr(data-placeholder);
+        color: #9ca3af;
+        pointer-events: none;
+    }
+
+    #questionHeaderEditor:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    #questionHeaderEditor[contenteditable="true"] {
+        cursor: text;
+    }
+
+    #questionHeaderEditor[contenteditable="true"]:empty:before {
+        content: attr(data-placeholder);
+        color: #9ca3af;
+        font-style: italic;
+    }
+
+    /* Rich text editor toolbar button hover effects */
+    #questionHeaderEditor + div button:hover {
+        background-color: #e5e7eb;
+        transform: translateY(-1px);
+    }
+
+    #questionHeaderEditor + div button:active {
+        transform: translateY(0);
+    }
     
     @keyframes fadeInUp {
         to {
@@ -264,10 +302,10 @@
 
                         <div>
                             <label for="questionHeader" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Question Header</label>
-                            <input type="text" id="questionHeader" name="question_header" 
-                                   value="{{ old('question_header', $exam->question_header) }}"
-                                   placeholder="Optional question header text for this exam"
-                                   class="w-full px-4 py-4 border-2 border-gray-200 dark:border-gray-600 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 dark:bg-slate-700 dark:text-white transition-all duration-300 text-lg">
+                            <div class="relative">
+                                <div id="questionHeaderEditor" class="w-full min-h-[120px] border-2 border-gray-200 dark:border-gray-600 rounded-2xl focus-within:ring-4 focus-within:ring-blue-500/20 focus-within:border-blue-500 dark:bg-slate-700 dark:text-white transition-all duration-300" contenteditable="true" data-placeholder="Enter question header text... You can use formatting, multiple lines, and styling."></div>
+                                <input type="hidden" id="questionHeader" name="question_header" value="{{ old('question_header', $exam->question_header) }}">
+                            </div>
                             @error('question_header')
                                 <p class="mt-2 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
@@ -526,8 +564,97 @@
             });
         });
 
-
+        // Initialize rich text editor for question header
+        initializeQuestionHeaderEditor();
     });
+
+    // Rich Text Editor for Question Header
+    function initializeQuestionHeaderEditor() {
+        const editor = document.getElementById('questionHeaderEditor');
+        const hiddenInput = document.getElementById('questionHeader');
+        
+        if (!editor || !hiddenInput) {
+            return;
+        }
+
+        // Add toolbar above the editor
+        const toolbar = document.createElement('div');
+        toolbar.className = 'flex items-center space-x-2 p-2 bg-gray-50 dark:bg-slate-600 border-b border-gray-200 dark:border-gray-600 rounded-t-2xl';
+        toolbar.innerHTML = `
+            <button type="button" class="p-2 text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-slate-500 rounded transition-colors" onclick="execCommand('bold')" title="Bold">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12h8a4 4 0 100-8H6v8z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12h8a4 4 0 110 8H6v8z"></path></svg>
+            </button>
+            <button type="button" class="p-2 text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-slate-500 rounded transition-colors" onclick="execCommand('italic')" title="Italic">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+            </button>
+            <button type="button" class="p-2 text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-slate-500 rounded transition-colors" onclick="execCommand('underline')" title="Underline">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+            </button>
+            <div class="w-px h-6 bg-gray-300 dark:bg-gray-500"></div>
+            <button type="button" class="p-2 text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-slate-500 rounded transition-colors" onclick="execCommand('justifyLeft')" title="Align Left">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+            <button type="button" class="p-2 text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-slate-500 rounded transition-colors" onclick="execCommand('justifyCenter')" title="Align Center">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h10M4 18h10"></path></svg>
+            </button>
+            <button type="button" class="p-2 text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-slate-500 rounded transition-colors" onclick="execCommand('justifyRight')" title="Align Right">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h6M4 18h6"></path></svg>
+            </button>
+            <div class="w-px h-6 bg-gray-300 dark:bg-gray-500"></div>
+            <select class="p-2 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-slate-700 text-gray-700 dark:text-gray-300" onchange="execCommand('fontSize', this.value)">
+                <option value="1">Small</option>
+                <option value="3" selected>Normal</option>
+                <option value="5">Large</option>
+                <option value="7">Extra Large</option>
+            </select>
+            <select class="p-2 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-slate-700 text-gray-700 dark:text-gray-300" onchange="execCommand('fontName', this.value)">
+                <option value="Arial">Arial</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Courier New">Courier New</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Verdana">Verdana</option>
+            </select>
+        `;
+        
+        // Insert toolbar before the editor
+        editor.parentNode.insertBefore(toolbar, editor);
+        
+        // Load existing content into the editor
+        const existingContent = hiddenInput.value;
+        if (existingContent && existingContent.trim() !== '') {
+            editor.innerHTML = existingContent;
+        }
+        
+        // Update hidden input when editor content changes
+        editor.addEventListener('input', function() {
+            hiddenInput.value = editor.innerHTML;
+        });
+        
+        // Handle paste to strip unwanted formatting
+        editor.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const text = e.clipboardData.getData('text/plain');
+            document.execCommand('insertText', false, text);
+        });
+        
+        // Handle focus and blur for placeholder
+        editor.addEventListener('focus', function() {
+            if (editor.textContent === '') {
+                editor.classList.add('placeholder-shown');
+            }
+        });
+        
+        editor.addEventListener('blur', function() {
+            if (editor.textContent === '') {
+                editor.classList.remove('placeholder-shown');
+            }
+        });
+    }
+
+    function execCommand(command, value = null) {
+        document.execCommand(command, false, value);
+        document.getElementById('questionHeaderEditor').focus();
+    }
 
 
 
