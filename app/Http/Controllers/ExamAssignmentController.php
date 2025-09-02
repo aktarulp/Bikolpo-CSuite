@@ -13,7 +13,7 @@ class ExamAssignmentController extends Controller
     /**
      * Show the exam assignment page
      */
-    public function index(Exam $exam)
+    public function index(Request $request, Exam $exam)
     {
         $exam->load(['assignedStudents', 'accessCodes.student']);
         
@@ -41,10 +41,43 @@ class ExamAssignmentController extends Controller
                 ->withErrors(['error' => 'You do not have access to this exam.']);
         }
         
-        $availableStudents = Student::where('partner_id', $partnerId)
+        // Build query for available students with filters
+        $query = Student::where('partner_id', $partnerId)
             ->where('status', 'active')
-            ->whereNotIn('id', $exam->assignedStudents->pluck('id'))
-            ->get();
+            ->whereNotIn('id', $exam->assignedStudents->pluck('id'));
+        
+        // Search filter
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('full_name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('student_id', 'like', "%{$search}%")
+                  ->orWhere('school_college', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%");
+            });
+        }
+        
+        // Course filter
+        if ($request->filled('course_id') && $request->course_id !== 'all') {
+            $query->where('course_id', $request->course_id);
+        }
+        
+        // Batch filter
+        if ($request->filled('batch_id') && $request->batch_id !== 'all') {
+            $query->where('batch_id', $request->batch_id);
+        }
+        
+        // Gender filter
+        if ($request->filled('gender') && $request->gender !== 'all') {
+            $query->where('gender', $request->gender);
+        }
+        
+        $availableStudents = $query->with(['course', 'batch'])->get();
+        
+        // Get filter options
+        $courses = \App\Models\Course::where('partner_id', $partnerId)->get();
+        $batches = \App\Models\Batch::where('partner_id', $partnerId)->get();
 
         // Debug information
         \Log::info('Exam Assignment Debug', [
@@ -57,7 +90,7 @@ class ExamAssignmentController extends Controller
             'available_students_count' => $availableStudents->count(),
         ]);
 
-        return view('partner.exams.assign', compact('exam', 'availableStudents'));
+        return view('partner.exams.assign', compact('exam', 'availableStudents', 'courses', 'batches'));
     }
 
     /**

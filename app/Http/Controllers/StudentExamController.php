@@ -75,6 +75,33 @@ class StudentExamController extends Controller
         // $questions = $exam->questionSet->questions()->orderBy('pivot_order')->get();
         $questions = collect(); // Empty collection for now
 
+        return view('student.exams.start', compact('exam', 'questions', 'result'));
+    }
+
+    public function takeExam(Exam $exam)
+    {
+        $studentId = 1; // Default student ID
+        
+        // Check if exam is available
+        if (!$exam->isActive) {
+            return redirect()->route('student.exams.available')
+                ->with('error', 'This exam is not available at this time.');
+        }
+
+        // Get existing result
+        $result = ExamResult::where('student_id', $studentId)
+            ->where('exam_id', $exam->id)
+            ->where('status', 'in_progress')
+            ->first();
+
+        if (!$result) {
+            return redirect()->route('student.exams.start', $exam)
+                ->with('error', 'Please start the exam first.');
+        }
+
+        // $questions = $exam->questionSet->questions()->orderBy('pivot_order')->get();
+        $questions = collect(); // Empty collection for now
+
         return view('student.exams.take', compact('exam', 'questions', 'result'));
     }
 

@@ -1,329 +1,453 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $exam->title ?? 'Quiz' }} - Online Exam</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ $exam->title }} - Quiz</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
-<body class="bg-gray-100">
-    <!-- Header -->
-    <header class="bg-blue-600 text-white shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 py-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-xl font-bold">{{ $exam->title ?? 'Online Quiz' }}</h1>
-                    <p class="text-sm opacity-90">Professional Assessment</p>
+<body class="bg-gray-100 font-sans leading-relaxed text-gray-800 antialiased">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="w-full max-w-4xl bg-white rounded-3xl shadow-2xl p-8 md:p-12">
+            <!-- Header and Progress -->
+            <header class="text-center mb-8">
+                <h1 class="text-4xl md:text-5xl font-extrabold text-blue-700 tracking-tight mb-2">{{ $exam->title }}</h1>
+                <p class="text-sm text-gray-500 font-medium">{{ $exam->description ?? 'Test your knowledge with our curated questions!' }}</p>
+                
+                <!-- Countdown Timer and Progress Bar -->
+                <div class="flex items-center justify-between mt-6">
+                    <div id="countdown-timer" class="w-20 h-20 rounded-full flex items-center justify-center p-2 watch-bezel">
+                        <div id="countdown-display" class="w-full h-full rounded-full flex items-center justify-center text-center font-bold text-sm text-gray-100 bg-gray-900 shadow-inner watch-face">
+                            --:--
+                        </div>
+                    </div>
+                    <div class="relative flex-1 mx-4">
+                        <div class="overflow-hidden h-3 mb-2 text-xs flex rounded-full bg-gray-200 shadow-inner">
+                            <div id="progress-bar" style="width:0%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500 transition-all duration-500 ease-in-out rounded-full shadow-lg"></div>
                 </div>
-                <div class="text-center">
-                    <div class="text-2xl font-bold" id="timer">--:--</div>
-                    <div class="text-sm opacity-90">Time Left</div>
+                        <div class="flex justify-between text-xs font-semibold text-gray-500">
+                            <span id="current-question-display">Question 1</span>
+                            <span id="total-questions-display">of {{ $questions->count() }}</span>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="max-w-6xl mx-auto px-4 py-8">
+            <!-- Main Quiz Section with Navigator -->
         <div class="flex flex-col lg:flex-row gap-8">
-            <!-- Question Area -->
-            <div class="flex-1">
-                @if($questions && $questions->count() > 0)
-                    <form id="quiz-form" method="POST" action="{{ route('public.quiz.submit', $exam->id ?? 1) }}">
+                <!-- Question Block -->
+                <main class="w-full lg:w-2/3">
+                    <form id="examForm" action="{{ route('public.quiz.submit', $exam) }}" method="POST">
                         @csrf
                         
-                        @foreach($questions as $index => $question)
-                        <div class="bg-white rounded-lg shadow-md p-6 mb-6 {{ $index === 0 ? '' : 'hidden' }}" 
-                             id="question-{{ $index }}" data-question="{{ $index }}">
-                            
-                            <!-- Question Header -->
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="flex items-center space-x-3">
-                                    <span class="w-10 h-10 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">
-                                        {{ $index + 1 }}
-                                    </span>
-                                    <div>
-                                        <h2 class="text-lg font-bold">Question {{ $index + 1 }} of {{ $questions->count() }}</h2>
-                                        <span class="text-sm text-gray-600">{{ strtoupper($question->question_type ?? 'MCQ') }}</span>
-                                    </div>
-                                </div>
+                        <div class="mb-8">
+                            <h2 id="question-text" class="text-xl md:text-2xl font-bold mb-6"></h2>
+                            <div id="options-container" class="space-y-4">
+                                <!-- Options will be dynamically added here -->
+                            </div>
                             </div>
 
-                            <!-- Question Text -->
-                            <div class="mb-6">
-                                <p class="text-gray-800 text-lg">{{ $question->question_text ?? 'Question text not available' }}</p>
+                        <!-- Navigation Buttons -->
+                        <div class="flex justify-between items-center mt-10">
+                            <button type="button" id="prev-btn" class="px-6 py-3 rounded-full text-sm font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                                Previous
+                            </button>
+                            <div class="flex-1 mx-4 text-center">
+                                <button type="button" id="skip-btn" class="px-8 py-3 rounded-full font-bold text-white bg-orange-500 hover:bg-orange-600 transition-colors duration-200 shadow-lg">Skip</button>
                             </div>
-
-                            <!-- MCQ Options -->
-                            @if(($question->question_type ?? 'mcq') === 'mcq')
-                            <div class="space-y-3 mb-6">
-                                @foreach(['a', 'b', 'c', 'd'] as $option)
-                                    @if(isset($question->{'option_' . $option}) && $question->{'option_' . $option})
-                                    <label class="block border-2 border-gray-200 rounded-lg p-4 cursor-pointer hover:border-blue-300 transition-colors">
-                                        <input type="radio" 
-                                               name="answers[{{ $question->id ?? $index }}]" 
-                                               value="{{ $option }}"
-                                               class="mr-3"
-                                               onchange="markQuestionAnswered({{ $index }})">
-                                        <span class="font-medium">{{ strtoupper($option) }}.</span>
-                                        <span class="ml-2">{{ $question->{'option_' . $option} }}</span>
-                                    </label>
-                                    @endif
-                                @endforeach
-                            </div>
-                            @endif
-
-                            <!-- Descriptive Answer -->
-                            @if(($question->question_type ?? 'mcq') === 'descriptive')
-                            <div class="mb-6">
-                                <label class="block text-lg font-medium mb-3">Your Answer</label>
-                                <textarea name="answers[{{ $question->id ?? $index }}]"
-                                          rows="6"
-                                          class="w-full border-2 border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                          placeholder="Type your detailed answer here..."
-                                          oninput="markQuestionAnswered({{ $index }})"></textarea>
-                            </div>
-                            @endif
-
-                            <!-- Navigation -->
-                            <div class="flex justify-between pt-4 border-t border-gray-200">
-                                <div>
-                                    @if($index > 0)
-                                    <button type="button" 
-                                            onclick="navigateToQuestion({{ $index - 1 }})"
-                                            class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
-                                        Previous
-                                    </button>
-                                    @endif
-                                </div>
-                                
-                                <div class="flex space-x-3">
-                                    <button type="button" 
-                                            onclick="skipQuestion({{ $index }})"
-                                            class="px-6 py-2 border border-yellow-300 text-yellow-700 rounded-lg hover:bg-yellow-50">
-                                        Skip
-                                    </button>
-                                    
-                                    @if($index < $questions->count() - 1)
-                                    <button type="button" 
-                                            onclick="navigateToQuestion({{ $index + 1 }})"
-                                            class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                            <button type="button" id="next-btn" class="px-6 py-3 rounded-full text-sm font-semibold text-white bg-blue-500 hover:bg-blue-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
                                         Next
                                     </button>
-                                    @else
-                                    <button type="button" 
-                                            onclick="showReviewModal()"
-                                            class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
-                                        Review & Submit
-                                    </button>
-                                    @endif
-                                </div>
-                            </div>
                         </div>
-                        @endforeach
                     </form>
-                @else
-                    <div class="bg-white rounded-lg shadow-md p-8 text-center">
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">No Questions Available</h3>
-                        <p class="text-gray-600 mb-6">This exam doesn't have any questions assigned yet.</p>
-                        <a href="{{ route('public.quiz.access') }}" 
-                           class="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700">
-                            Return to Access Page
-                        </a>
-                    </div>
-                @endif
+                </main>
+                
+                <!-- Question Navigator and Legend -->
+                <div class="w-full lg:w-1/3 bg-gray-50 p-6 rounded-xl shadow-inner">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Question Navigator</h3>
+                    <div id="navigator-container" class="grid grid-cols-5 md:grid-cols-6 lg:grid-cols-7 gap-2 mb-6">
+                        <!-- Navigator buttons dynamically added here -->
             </div>
 
-            <!-- Question Navigator -->
-            @if($questions && $questions->count() > 0)
-            <div class="w-full lg:w-64 bg-white rounded-lg shadow-md p-6 h-fit">
-                <h3 class="text-lg font-bold mb-4">Question Navigator</h3>
-                
-                <!-- Question Grid -->
-                <div class="grid grid-cols-5 gap-2 mb-6">
-                    @foreach($questions as $index => $question)
-                    <button type="button" 
-                            class="w-10 h-10 rounded-lg border-2 {{ $index === 0 ? 'bg-blue-500 text-white border-blue-500' : 'bg-gray-100 text-gray-700 border-gray-300' }}"
-                            onclick="navigateToQuestion({{ $index }})"
-                            data-question="{{ $index }}">
-                        {{ $index + 1 }}
-                    </button>
-                    @endforeach
+                    <!-- Legend -->
+                    <div>
+                        <h4 class="text-sm font-semibold text-gray-600 mb-2">Legend</h4>
+                        <div class="space-y-2">
+                            <div class="flex items-center">
+                                <span class="block w-4 h-4 rounded-full bg-blue-500"></span>
+                                <span class="ml-2 text-sm text-gray-700">Current Question</span>
                 </div>
-                
-                <!-- Progress Summary -->
-                <div class="bg-gray-50 rounded-lg p-4">
-                    <h4 class="font-semibold mb-3">Progress</h4>
-                    <div class="space-y-2 text-sm">
-                        <div class="flex justify-between">
-                            <span>Total:</span>
-                            <span class="font-medium">{{ $questions->count() }}</span>
+                            <div class="flex items-center">
+                                <span class="block w-4 h-4 rounded-full bg-green-500"></span>
+                                <span class="ml-2 text-sm text-gray-700">Answered</span>
                         </div>
-                        <div class="flex justify-between">
-                            <span>Answered:</span>
-                            <span class="font-medium text-green-600" id="answered-count">0</span>
+                            <div class="flex items-center">
+                                <span class="block w-4 h-4 rounded-full bg-orange-500"></span>
+                                <span class="ml-2 text-sm text-gray-700">Skipped</span>
                         </div>
-                        <div class="flex justify-between">
-                            <span>Skipped:</span>
-                            <span class="font-medium text-yellow-600" id="skipped-count">0</span>
                         </div>
                     </div>
                 </div>
             </div>
-            @endif
-        </div>
-    </main>
 
-    <!-- Review Modal -->
-    <div id="review-modal" class="fixed inset-0 bg-black/50 hidden z-50">
-        <div class="min-h-screen flex items-center justify-center p-4">
-            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full">
-                <div class="p-6 border-b">
-                    <h3 class="text-2xl font-bold">Review Your Answers</h3>
-                </div>
-                
-                <div class="p-6">
-                    <div id="review-content"></div>
-                </div>
-                
-                <div class="p-6 border-t bg-gray-50">
-                    <div class="flex justify-end space-x-3">
-                        <button onclick="hideReviewModal()" 
-                                class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
-                            Continue Quiz
+            <!-- Result Modal -->
+            <div id="result-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center p-4 transition-opacity duration-300 hidden z-50">
+                <div class="bg-white rounded-xl p-8 md:p-10 text-center shadow-lg transform transition-transform duration-300 scale-95">
+                    <h3 id="modal-title" class="text-2xl font-bold mb-4"></h3>
+                    <p id="modal-message" class="text-lg text-gray-700 mb-6"></p>
+                    <button id="close-modal-btn" class="px-6 py-2 rounded-full font-semibold text-white bg-green-500 hover:bg-green-600 transition-colors duration-200">
+                        Okay
                         </button>
-                        <button onclick="submitQuiz()" 
-                                class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
-                            Submit Quiz
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <style>
+    .option-btn.selected {
+        background-color: #22c55e;
+        color: white;
+        border-color: #22c55e;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        position: relative;
+    }
+    .option-btn.selected:hover {
+        background-color: #16a34a;
+    }
+    .navigator-btn.current {
+        background-color: #3b82f6;
+        color: white;
+        border-color: #3b82f6;
+    }
+    .navigator-btn.answered {
+        background-color: #22c55e;
+        color: white;
+        border-color: #22c55e;
+    }
+    .navigator-btn.skipped {
+        background-color: #f97316;
+        color: white;
+        border-color: #f97316;
+    }
+    .selected-icon {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+    @keyframes pulse-once {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    .animate-pulse-once {
+        animation: pulse-once 0.5s ease-in-out;
+    }
+    .watch-bezel {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), inset 0 2px 4px rgba(255, 255, 255, 0.5), inset 0 -2px 4px rgba(0, 0, 0, 0.2);
+        background-image: linear-gradient(145deg, #e0e0e0, #ffffff);
+    }
+    .watch-face {
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+    }
+    </style>
+
     <script>
-        let currentQuestion = 0;
-        let totalQuestions = {{ $questions->count() ?? 0 }};
-        let answeredQuestions = new Set();
-        let skippedQuestions = new Set();
-        let timeRemaining = {{ $remainingTime ?? 0 }};
-        let timerInterval;
+    // Questions data
+    @php
+    $questionsData = $questions->map(function($q) {
+        $options = [];
+        if (!empty($q->option_a)) $options[] = $q->option_a;
+        if (!empty($q->option_b)) $options[] = $q->option_b;
+        if (!empty($q->option_c)) $options[] = $q->option_c;
+        if (!empty($q->option_d)) $options[] = $q->option_d;
         
-        function navigateToQuestion(questionIndex) {
-            if (questionIndex < 0 || questionIndex >= totalQuestions) return;
-            
-            document.querySelectorAll('.question-card, [id^="question-"]').forEach(q => q.classList.add('hidden'));
-            
-            const targetQuestion = document.getElementById(`question-${questionIndex}`);
-            if (targetQuestion) {
-                targetQuestion.classList.remove('hidden');
-            }
-            
-            currentQuestion = questionIndex;
+        return [
+            'id' => $q->id,
+            'question' => $q->question_text,
+            'type' => $q->question_type ?? 'mcq',
+            'options' => $options,
+            'marks' => $q->marks ?? 1
+        ];
+    })->toArray();
+    @endphp
+    const questions = @json($questionsData);
+
+    // State management
+    const state = {
+        currentQuestionIndex: 0,
+        answers: new Array(questions.length).fill(null),
+        skipped: new Array(questions.length).fill(false),
+        isSubmitted: false,
+        timer: null
+    };
+
+    const QUIZ_DURATION = {{ $exam->duration * 60 }};
+    let timeRemaining = QUIZ_DURATION;
+
+    // DOM elements
+    const questionTextEl = document.getElementById('question-text');
+    const optionsContainerEl = document.getElementById('options-container');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const skipBtn = document.getElementById('skip-btn');
+    const progressBar = document.getElementById('progress-bar');
+    const currentQuestionDisplay = document.getElementById('current-question-display');
+    const countdownDisplayEl = document.getElementById('countdown-display');
+    const navigatorContainer = document.getElementById('navigator-container');
+    const resultModal = document.getElementById('result-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalMessage = document.getElementById('modal-message');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    const examForm = document.getElementById('examForm');
+
+    // Rendering functions
+    function render() {
+        renderQuestion();
             updateNavigation();
             updateProgress();
-        }
+        renderNavigator();
+    }
+
+    function renderQuestion() {
+        const question = questions[state.currentQuestionIndex];
+        questionTextEl.textContent = `${state.currentQuestionIndex + 1}. ${question.question}`;
+        optionsContainerEl.innerHTML = '';
         
-        function skipQuestion(questionIndex) {
-            skippedQuestions.add(questionIndex);
-            updateQuestionStatus(questionIndex, 'skipped');
+        if (question.type === 'mcq' && question.options.length > 0) {
+            question.options.forEach((option, index) => {
+                const optionBtn = document.createElement('button');
+                optionBtn.type = 'button';
+                optionBtn.className = 'option-btn w-full text-left px-6 py-4 rounded-xl border-2 border-gray-200 text-lg font-medium transition-colors duration-200 hover:bg-gray-100 flex items-center gap-4';
+                
+                // Create option label (A, B, C, D)
+                const optionLabel = document.createElement('div');
+                optionLabel.className = 'flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 text-blue-600 font-bold text-sm flex items-center justify-center border-2 border-blue-200';
+                optionLabel.textContent = String.fromCharCode(65 + index); // A, B, C, D
+                
+                // Create option text
+                const optionText = document.createElement('span');
+                optionText.className = 'flex-1';
+                optionText.textContent = option;
+                
+                optionBtn.appendChild(optionLabel);
+                optionBtn.appendChild(optionText);
+                
+                if (state.answers[state.currentQuestionIndex] === option) {
+                    optionBtn.classList.add('selected');
+                    optionLabel.classList.remove('bg-blue-100', 'text-blue-600', 'border-blue-200');
+                    optionLabel.classList.add('bg-white', 'text-white', 'border-white');
+                    
+                    const checkIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                    checkIcon.setAttribute("class", "selected-icon");
+                    checkIcon.setAttribute("viewBox", "0 0 24 24");
+                    checkIcon.setAttribute("fill", "none");
+                    checkIcon.setAttribute("stroke", "currentColor");
+                    checkIcon.setAttribute("stroke-width", "2");
+                    checkIcon.setAttribute("stroke-linecap", "round");
+                    checkIcon.setAttribute("stroke-linejoin", "round");
+                    checkIcon.innerHTML = '<polyline points="20 6 9 17 4 12"></polyline>';
+                    optionBtn.appendChild(checkIcon);
+                }
+
+                optionBtn.addEventListener('click', () => {
+                    if (!state.isSubmitted) {
+                        state.answers[state.currentQuestionIndex] = option;
+                        state.skipped[state.currentQuestionIndex] = false;
+                        render();
+                    }
+                });
+
+                optionsContainerEl.appendChild(optionBtn);
+            });
+        } else if (question.type === 'descriptive') {
+            const textarea = document.createElement('textarea');
+            textarea.name = `answers[${question.id}]`;
+            textarea.rows = 6;
+            textarea.className = 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none';
+            textarea.placeholder = 'Type your detailed answer here...';
+            textarea.value = state.answers[state.currentQuestionIndex] || '';
             
-            if (questionIndex < totalQuestions - 1) {
-                navigateToQuestion(questionIndex + 1);
-            } else {
-                showReviewModal();
-            }
-        }
-        
-        function markQuestionAnswered(questionIndex) {
-            answeredQuestions.add(questionIndex);
-            updateQuestionStatus(questionIndex, 'answered');
-            updateProgress();
-        }
-        
-        function updateQuestionStatus(questionIndex, status) {
-            const btn = document.querySelector(`[data-question="${questionIndex}"]`);
-            if (btn) {
-                btn.className = `w-10 h-10 rounded-lg border-2 ${
-                    status === 'answered' ? 'bg-green-500 text-white border-green-500' :
-                    status === 'skipped' ? 'bg-yellow-500 text-white border-yellow-500' :
-                    questionIndex === currentQuestion ? 'bg-blue-500 text-white border-blue-500' :
-                    'bg-gray-100 text-gray-700 border-gray-300'
-                }`;
-            }
-        }
-        
-        function updateProgress() {
-            const answeredCount = document.getElementById('answered-count');
-            const skippedCount = document.getElementById('skipped-count');
-            
-            if (answeredCount) answeredCount.textContent = answeredQuestions.size;
-            if (skippedCount) skippedCount.textContent = skippedQuestions.size;
-        }
-        
-        function updateNavigation() {
-            document.querySelectorAll('[data-question]').forEach((btn, index) => {
-                if (index === currentQuestion) {
-                    btn.classList.add('bg-blue-500', 'text-white', 'border-blue-500');
-                    btn.classList.remove('bg-gray-100', 'text-gray-700', 'border-gray-300');
+            textarea.addEventListener('input', () => {
+                if (!state.isSubmitted) {
+                    state.answers[state.currentQuestionIndex] = textarea.value;
+                    state.skipped[state.currentQuestionIndex] = false;
+                    updateProgress();
+                    renderNavigator();
                 }
             });
-        }
-        
-        function showReviewModal() {
-            const modal = document.getElementById('review-modal');
-            const content = document.getElementById('review-content');
             
-            let html = '';
-            for (let i = 0; i < totalQuestions; i++) {
-                const status = answeredQuestions.has(i) ? 'Answered' : (skippedQuestions.has(i) ? 'Skipped' : 'Unanswered');
-                const color = answeredQuestions.has(i) ? 'text-green-600' : (skippedQuestions.has(i) ? 'text-yellow-600' : 'text-gray-500');
-                
-                html += `<div class="flex justify-between items-center p-3 bg-gray-50 rounded mb-2">
-                    <span>Question ${i + 1}</span>
-                    <span class="${color} font-medium">${status}</span>
-                </div>`;
+            optionsContainerEl.appendChild(textarea);
+        }
+    }
+
+    function renderNavigator() {
+        navigatorContainer.innerHTML = '';
+        questions.forEach((q, index) => {
+            const navBtn = document.createElement('button');
+            navBtn.type = 'button';
+            navBtn.textContent = index + 1;
+            navBtn.className = 'navigator-btn w-8 h-8 rounded-full text-xs font-semibold flex items-center justify-center border-2 border-gray-300';
+
+            if (index === state.currentQuestionIndex) {
+                navBtn.classList.add('current');
+            } else if (state.answers[index] !== null) {
+                navBtn.classList.add('answered');
+            } else if (state.skipped[index]) {
+                navBtn.classList.add('skipped');
             }
             
-            content.innerHTML = html;
-            modal.classList.remove('hidden');
-        }
+            navBtn.addEventListener('click', () => {
+                if (!state.isSubmitted) {
+                    state.currentQuestionIndex = index;
+                    render();
+                }
+            });
+            navigatorContainer.appendChild(navBtn);
+        });
+    }
+
+    function updateNavigation() {
+        prevBtn.disabled = state.currentQuestionIndex === 0 || state.isSubmitted;
+        nextBtn.disabled = state.currentQuestionIndex === questions.length - 1 || state.isSubmitted;
+        skipBtn.style.display = state.isSubmitted ? 'none' : 'block';
         
-        function hideReviewModal() {
-            document.getElementById('review-modal').classList.add('hidden');
+        if (state.currentQuestionIndex === questions.length - 1) {
+            skipBtn.textContent = 'Submit';
+            skipBtn.classList.remove('bg-orange-500', 'hover:bg-orange-600');
+            skipBtn.classList.add('bg-green-500', 'hover:bg-green-600');
+        } else {
+            skipBtn.textContent = 'Skip';
+            skipBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
+            skipBtn.classList.add('bg-orange-500', 'hover:bg-orange-600');
         }
+    }
+
+    function updateProgress() {
+        const answeredCount = state.answers.filter(answer => answer !== null && answer.trim() !== '').length;
+        const progressPercentage = (answeredCount / questions.length) * 100;
+        progressBar.style.width = `${progressPercentage}%`;
+        progressBar.classList.add('animate-pulse-once');
+        setTimeout(() => {
+            progressBar.classList.remove('animate-pulse-once');
+        }, 500);
         
-        function submitQuiz() {
-            if (confirm('Are you sure you want to submit your quiz?')) {
-                document.getElementById('quiz-form').submit();
-            }
-        }
+        currentQuestionDisplay.textContent = `Question ${state.currentQuestionIndex + 1}`;
+    }
+
+    function updateTimer() {
+        const minutes = Math.floor(timeRemaining / 60);
+        const seconds = timeRemaining % 60;
+        countdownDisplayEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         
-        function updateTimer() {
-            if (timeRemaining <= 0) {
-                clearInterval(timerInterval);
-                submitQuiz();
-                return;
-            }
-            
-            const minutes = Math.floor(timeRemaining / 60);
-            const seconds = timeRemaining % 60;
-            document.getElementById('timer').textContent = 
-                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            
+        if (timeRemaining <= 0) {
+            clearInterval(state.timer);
+            submitQuiz(true);
+        } else {
             timeRemaining--;
         }
+    }
+
+    // Event handlers
+    function handlePrev() {
+        if (state.currentQuestionIndex > 0) {
+            state.currentQuestionIndex--;
+            render();
+        }
+    }
+
+    function handleNext() {
+        if (state.currentQuestionIndex < questions.length - 1) {
+            state.currentQuestionIndex++;
+            render();
+        }
+    }
+
+    function handleSkip() {
+        if (state.currentQuestionIndex === questions.length - 1) {
+            submitQuiz();
+        } else {
+            state.skipped[state.currentQuestionIndex] = true;
+            state.answers[state.currentQuestionIndex] = null;
+            handleNext();
+        }
+    }
+
+    function submitQuiz(timedOut = false) {
+        if (state.isSubmitted) return;
         
-        document.addEventListener('DOMContentLoaded', function() {
-            if (timeRemaining > 0) {
-                timerInterval = setInterval(updateTimer, 1000);
-                updateTimer();
+        // Prepare form data
+        const formData = new FormData();
+        formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+        
+        questions.forEach((question, index) => {
+            if (state.answers[index] !== null) {
+                formData.append(`answers[${question.id}]`, state.answers[index]);
             }
-            
-            updateProgress();
-            updateNavigation();
+        });
+        
+        if (timedOut) {
+            showResult('Time\'s Up!', 'Your time has run out. Your quiz has been submitted automatically.', true);
+        } else {
+            showResult('Quiz Complete!', 'Your quiz has been submitted successfully.', true);
+        }
+        
+        // Submit the form and redirect
+        fetch(examForm.action, {
+            method: 'POST',
+            body: formData,
+            redirect: 'follow'
+        }).then(response => {
+            if (response.ok) {
+                // Server will handle the redirect to results page
+                window.location.href = '{{ route("public.quiz.result", $exam) }}';
+            } else {
+                console.error('Error submitting quiz');
+                alert('There was an error submitting your quiz. Please try again.');
+            }
+        }).catch(error => {
+            console.error('Error submitting quiz:', error);
+            alert('There was an error submitting your quiz. Please try again.');
+        });
+    }
+
+    function showResult(title, message, shouldSubmit = false) {
+        modalTitle.textContent = title;
+        modalMessage.textContent = message;
+        resultModal.classList.remove('hidden');
+        
+        if (shouldSubmit) {
+            state.isSubmitted = true;
+            clearInterval(state.timer);
+            render();
+        }
+    }
+
+    function hideResult() {
+        resultModal.classList.add('hidden');
+    }
+
+    // Initialization
+    document.addEventListener('DOMContentLoaded', () => {
+        prevBtn.addEventListener('click', handlePrev);
+        nextBtn.addEventListener('click', handleNext);
+        skipBtn.addEventListener('click', handleSkip);
+        closeModalBtn.addEventListener('click', hideResult);
+        
+        state.timer = setInterval(updateTimer, 1000);
+        render();
+        
+        // Prevent accidental navigation
+        window.addEventListener('beforeunload', function(e) {
+            if (timeRemaining > 0 && !state.isSubmitted) {
+                e.preventDefault();
+                e.returnValue = 'Are you sure you want to leave? Your quiz progress will be lost.';
+                return e.returnValue;
+            }
+        });
         });
     </script>
 </body>

@@ -472,40 +472,72 @@ class ExamController extends Controller
     
     public function downloadPaper(Request $request, Exam $exam)
     {
-        // Validate the request
-        $request->validate([
-            'paper_size' => 'required|in:A4,Letter,Legal,A3',
-            'orientation' => 'required|in:portrait,landscape',
-            'paper_columns' => 'required|in:1,2,3',
-            'header_span' => 'required|in:1,2,3,4,full',
-            'font_family' => 'required|string',
-            'font_size' => 'required|integer|min:8|max:20',
-            'line_spacing' => 'required|numeric|min:0.5|max:3.0',
-            'mcq_columns' => 'required|in:1,2,3,4',
-            'margin_top' => 'required|integer|min:10|max:50',
-            'margin_bottom' => 'required|integer|min:10|max:50',
-            'margin_left' => 'required|integer|min:10|max:50',
-            'margin_right' => 'required|integer|min:10|max:50',
-            'include_header' => 'boolean',
-            'mark_answer' => 'boolean',
-        ]);
-        
-        // Get exam questions with their details - order by the pivot table's order column
-        $questions = $exam->questions()
-            ->with(['topic', 'subject'])
-            ->orderBy('exam_questions.order')
-            ->get();
-        
-        // Generate HTML content for the question paper with custom parameters
-        $html = $this->generateQuestionPaperHTMLWithParameters($exam, $questions, $request->all());
-        
-        // Generate filename
-        $filename = 'question_paper_' . $exam->id . '_' . date('Y-m-d_H-i-s') . '.html';
-        
-        // Return response with HTML content for download
-        return response($html)
-            ->header('Content-Type', 'text/html')
-            ->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+        try {
+            // Validate the request
+            $request->validate([
+                'preview_html' => 'required|string',
+                'parameters' => 'required|array',
+                'parameters.paper_size' => 'required|in:A4,Letter,Legal,A3',
+                'parameters.orientation' => 'required|in:portrait,landscape',
+                'parameters.paper_columns' => 'required|in:1,2,3',
+                'parameters.header_span' => 'required|in:1,2,3,4,full',
+                'parameters.font_family' => 'required|string',
+                'parameters.font_size' => 'required|integer|min:8|max:20',
+                'parameters.line_spacing' => 'required|numeric|min:0.5|max:3.0',
+                'parameters.mcq_columns' => 'required|in:1,2,3,4',
+                'parameters.margin_top' => 'required|integer|min:10|max:50',
+                'parameters.margin_bottom' => 'required|integer|min:10|max:50',
+                'parameters.margin_left' => 'required|integer|min:10|max:50',
+                'parameters.margin_right' => 'required|integer|min:10|max:50',
+                'parameters.include_header' => 'boolean',
+                'parameters.mark_answer' => 'boolean',
+            ]);
+            
+            $parameters = $request->input('parameters');
+            $previewHtml = $request->input('preview_html');
+            
+            // Validate PDF parameters
+            $this->validatePDFParameters($parameters);
+            
+            // Debug: Log the HTML structure
+            \Log::info('PDF Generation Debug', [
+                'html_length' => strlen($previewHtml),
+                'page_containers_count' => substr_count($previewHtml, 'class="page-container"'),
+                'page_break_always_count' => substr_count($previewHtml, 'page-break-after: always'),
+                'page_break_avoid_count' => substr_count($previewHtml, 'page-break-after: avoid'),
+                'break_after_page_count' => substr_count($previewHtml, 'break-after: page'),
+                'break_after_avoid_count' => substr_count($previewHtml, 'break-after: avoid'),
+                'page_break_inside_avoid_count' => substr_count($previewHtml, 'page-break-inside: avoid'),
+                'break_inside_avoid_count' => substr_count($previewHtml, 'break-inside: avoid'),
+            ]);
+            
+            // Generate PDF using Browsershot with exact preview HTML
+            $pdf = $this->generatePDFWithBrowsershot($previewHtml, $parameters);
+            
+            // Generate filename
+            $filename = 'question_paper_' . $exam->id . '_' . date('Y-m-d_H-i-s') . '.pdf';
+            
+            // Return PDF response
+            return response($pdf, 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+                'Cache-Control' => 'no-cache, no-store, must-revalidate',
+                'Pragma' => 'no-cache',
+                'Expires' => '0'
+            ]);
+            
+        } catch (\Exception $e) {
+            \Log::error('PDF Generation Error: ' . $e->getMessage(), [
+                'exam_id' => $exam->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'error' => 'PDF generation failed',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
     
     private function generateQuestionPaperHTML($exam, $questions)
@@ -974,5 +1006,308 @@ class ExamController extends Controller
         $html .= '</div>';
         
         return $html;
+    }
+    
+    /**
+     * Validate PDF generation parameters
+     */
+    private function validatePDFParameters($parameters)
+    {
+        $validPaperSizes = ['A4', 'Letter', 'Legal', 'A3'];
+        $validOrientations = ['portrait', 'landscape'];
+        
+        if (!in_array($parameters['paper_size'], $validPaperSizes)) {
+            throw new \InvalidArgumentException('Invalid paper size: ' . $parameters['paper_size']);
+        }
+        
+        if (!in_array($parameters['orientation'], $validOrientations)) {
+            throw new \InvalidArgumentException('Invalid orientation: ' . $parameters['orientation']);
+        }
+        
+        // Validate margins
+        $margins = ['margin_top', 'margin_bottom', 'margin_left', 'margin_right'];
+        foreach ($margins as $margin) {
+            if (!isset($parameters[$margin]) || !is_numeric($parameters[$margin]) || $parameters[$margin] < 10 || $parameters[$margin] > 50) {
+                throw new \InvalidArgumentException('Invalid margin value for ' . $margin . ': ' . ($parameters[$margin] ?? 'not set'));
+            }
+        }
+    }
+    
+    /**
+     * Generate PDF using Browsershot with exact preview HTML
+     */
+    private function generatePDFWithBrowsershot($html, $parameters)
+    {
+        try {
+            // Create Browsershot instance
+            $browsershot = \Spatie\Browsershot\Browsershot::html($html);
+            
+            // Configure paper size and orientation
+            $paperSize = $parameters['paper_size'] ?? 'A4';
+            $orientation = $parameters['orientation'] ?? 'portrait';
+            
+            // Set paper format with exact parameters
+            $browsershot->format($paperSize)
+                       ->landscape($orientation === 'landscape')
+                       ->margins(
+                           (int)($parameters['margin_top'] ?? 20),
+                           (int)($parameters['margin_right'] ?? 20),
+                           (int)($parameters['margin_bottom'] ?? 20),
+                           (int)($parameters['margin_left'] ?? 20),
+                           'mm'
+                       );
+            
+            // Log the exact parameters being used
+            \Log::info('Browsershot Parameters', [
+                'paper_size' => $paperSize,
+                'orientation' => $orientation,
+                'margins' => [
+                    'top' => $parameters['margin_top'] ?? 20,
+                    'right' => $parameters['margin_right'] ?? 20,
+                    'bottom' => $parameters['margin_bottom'] ?? 20,
+                    'left' => $parameters['margin_left'] ?? 20,
+                ],
+                'font_family' => $parameters['font_family'] ?? 'Arial',
+                'font_size' => $parameters['font_size'] ?? 12,
+                'line_spacing' => $parameters['line_spacing'] ?? 1.5,
+            ]);
+            
+            // Enhanced Browsershot configuration for pixel-perfect PDF generation
+            $browsershot->timeout(120) // 2 minutes timeout
+                       ->setOption('printBackground', true) // Include background colors and images
+                       ->setOption('preferCSSPageSize', true) // Use CSS @page rules
+                       ->setOption('displayHeaderFooter', false) // No header/footer
+                       ->setOption('scale', 1.0) // No scaling
+                       ->setOption('dpi', 300) // High DPI for crisp text
+                       ->setOption('width', 1200) // High resolution for pixel-perfect rendering
+                       ->setOption('height', 1600) // High resolution for pixel-perfect rendering
+                       ->setOption('deviceScaleFactor', 2) // Retina quality
+                       ->emulateMedia('print') // Use print media queries
+                       ->addChromiumArguments([
+                           '--no-sandbox',
+                           '--disable-gpu',
+                           '--disable-dev-shm-usage',
+                           '--disable-extensions',
+                           '--disable-plugins',
+                           '--disable-images', // Disable images for faster rendering
+                           '--disable-javascript', // Disable JS for consistent rendering
+                           '--run-all-compositor-stages-before-draw',
+                           '--disable-background-timer-throttling',
+                           '--disable-backgrounding-occluded-windows',
+                           '--disable-renderer-backgrounding',
+                           '--disable-features=TranslateUI',
+                           '--disable-ipc-flooding-protection',
+                           '--font-render-hinting=none',
+                           '--disable-font-subpixel-positioning',
+                           '--disable-web-security', // Disable web security for consistent rendering
+                           '--disable-features=VizDisplayCompositor', // Disable display compositor
+                           '--force-device-scale-factor=2', // Force high DPI rendering
+                           '--high-dpi-support=1', // Enable high DPI support
+                           '--force-color-profile=srgb', // Force sRGB color profile
+                           '--disable-features=TranslateUI,BlinkGenPropertyTrees', // Disable unnecessary features
+                           '--enable-font-antialiasing', // Enable font antialiasing
+                           '--disable-features=VizDisplayCompositor,TranslateUI' // Additional optimizations
+                       ]);
+            
+            // Generate PDF
+            $pdf = $browsershot->pdf();
+            
+            return $pdf;
+            
+        } catch (\Exception $e) {
+            \Log::error('Browsershot PDF Generation Error: ' . $e->getMessage(), [
+                'parameters' => $parameters,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            throw new \Exception('PDF generation failed: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Test PDF generation with various configurations
+     */
+    public function testPDFGeneration(Request $request, Exam $exam)
+    {
+        if (!config('app.debug')) {
+            return response()->json(['error' => 'Test endpoint only available in debug mode'], 403);
+        }
+        
+        $testResults = [];
+        $paperSizes = ['A4', 'Letter', 'Legal'];
+        $orientations = ['portrait', 'landscape'];
+        
+        foreach ($paperSizes as $paperSize) {
+            foreach ($orientations as $orientation) {
+                try {
+                    $startTime = microtime(true);
+                    
+                    // Generate test HTML
+                    $testHtml = $this->generateTestHTML($exam, $paperSize, $orientation);
+                    
+                    // Generate PDF
+                    $parameters = [
+                        'paper_size' => $paperSize,
+                        'orientation' => $orientation,
+                        'margin_top' => 20,
+                        'margin_bottom' => 20,
+                        'margin_left' => 20,
+                        'margin_right' => 20,
+                        'font_family' => 'Arial',
+                        'font_size' => 12,
+                        'line_spacing' => 1.5,
+                        'paper_columns' => 1,
+                        'header_span' => 'full',
+                        'mcq_columns' => 2,
+                        'include_header' => true,
+                        'mark_answer' => false
+                    ];
+                    
+                    $pdf = $this->generatePDFWithBrowsershot($testHtml, $parameters);
+                    
+                    $endTime = microtime(true);
+                    $generationTime = round(($endTime - $startTime) * 1000, 2);
+                    
+                    $testResults[] = [
+                        'paper_size' => $paperSize,
+                        'orientation' => $orientation,
+                        'status' => 'success',
+                        'generation_time_ms' => $generationTime,
+                        'pdf_size_bytes' => strlen($pdf)
+                    ];
+                    
+                } catch (\Exception $e) {
+                    $testResults[] = [
+                        'paper_size' => $paperSize,
+                        'orientation' => $orientation,
+                        'status' => 'error',
+                        'error' => $e->getMessage()
+                    ];
+                }
+            }
+        }
+        
+        $summary = [
+            'total_tests' => count($testResults),
+            'successful' => count(array_filter($testResults, fn($r) => $r['status'] === 'success')),
+            'failed' => count(array_filter($testResults, fn($r) => $r['status'] === 'error'))
+        ];
+        
+        return response()->json([
+            'test_results' => $testResults,
+            'summary' => $summary
+        ]);
+    }
+    
+    /**
+     * Generate simple test HTML for PDF testing
+     */
+    private function generateTestHTML($exam, $paperSize, $orientation)
+    {
+        return '<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test PDF - ' . $exam->title . '</title>
+    <style>
+        @page {
+            size: ' . $paperSize . ' ' . $orientation . ';
+            margin: 20mm;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            margin: 0;
+            padding: 20px;
+        }
+        .test-content {
+            text-align: center;
+            padding: 50px;
+        }
+        .test-title {
+            font-size: 24pt;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .test-info {
+            font-size: 14pt;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-content">
+        <div class="test-title">PDF Generation Test</div>
+        <div class="test-info">
+            <p>Paper Size: ' . $paperSize . '</p>
+            <p>Orientation: ' . $orientation . '</p>
+            <p>Exam: ' . htmlspecialchars($exam->title) . '</p>
+            <p>Generated: ' . date('Y-m-d H:i:s') . '</p>
+        </div>
+    </div>
+</body>
+</html>';
+    }
+    
+    /**
+     * Simple PDF test endpoint
+     */
+    public function simplePDFTest()
+    {
+        if (!config('app.debug')) {
+            return response()->json(['error' => 'Test endpoint only available in debug mode'], 403);
+        }
+        
+        try {
+            $testHtml = '<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple PDF Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        h1 { color: #333; }
+    </style>
+</head>
+<body>
+    <h1>PDF Generation Test</h1>
+    <p>This is a simple test to verify Browsershot is working correctly.</p>
+    <p>Generated at: ' . date('Y-m-d H:i:s') . '</p>
+</body>
+</html>';
+            
+            $parameters = [
+                'paper_size' => 'A4',
+                'orientation' => 'portrait',
+                'margin_top' => 20,
+                'margin_bottom' => 20,
+                'margin_left' => 20,
+                'margin_right' => 20,
+                'font_family' => 'Arial',
+                'font_size' => 12,
+                'line_spacing' => 1.5,
+                'paper_columns' => 1,
+                'header_span' => 'full',
+                'mcq_columns' => 2,
+                'include_header' => true,
+                'mark_answer' => false
+            ];
+            
+            $pdf = $this->generatePDFWithBrowsershot($testHtml, $parameters);
+            
+            return response()->json([
+                'status' => 'success',
+                'message' => 'PDF generation successful',
+                'pdf_size_bytes' => strlen($pdf)
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'PDF generation failed: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

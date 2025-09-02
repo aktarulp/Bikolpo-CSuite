@@ -275,47 +275,7 @@
             font-weight: bold;
         }
         
-        /* Pagination styling */
-        #livePreview .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin-top: 20px;
-            padding: 15px;
-            background: #f8fafc;
-            border-radius: 8px;
-            border: 2px solid #3b82f6;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        
-        #livePreview .pagination button {
-            padding: 8px 16px;
-            border: 1px solid #d1d5db;
-            background: white;
-            color: #374151;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-        
-        #livePreview .pagination button:hover {
-            background: #f3f4f6;
-            border-color: #9ca3af;
-        }
-        
-        #livePreview .pagination button:disabled {
-            background: #f3f4f6;
-            color: #9ca3af;
-            cursor: not-allowed;
-        }
-        
-        #livePreview .pagination .page-info {
-            font-size: 14px;
-            color: #6b7280;
-            font-weight: 500;
-        }
+        /* Continuous page layout - no pagination needed */
         
         /* Ensure questions don't break across grid columns */
      .header-container[style*="grid-column"] {
@@ -407,7 +367,7 @@
                 <!-- Paper Format Section -->
                 <div class="space-y-6">
                     <!-- Two Column Grid Layout -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         
                         <!-- Layout Column -->
                         <div class="space-y-4">
@@ -471,7 +431,7 @@
                         </div>
                         
                         <!-- Display Options Column -->
-                        <div class="space-y-4">
+                        <div class="space-y-4 lg:col-span-2">
                             <h4 class="text-lg font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">Display Options</h4>
                             
                             <!-- Font Settings, Line Spacing, MCQ Columns and Header Span -->
@@ -562,10 +522,16 @@
                          ← Back to Exam
                      </a>
                      
-                     <button type="submit" 
+                     <button type="button" id="downloadPdfBtn"
                              class="px-6 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-indigo-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
-                         📥 Download Question Paper
+                         📄 Download as PDF
                      </button>
+                     @if(config('app.debug'))
+                     <button type="button" id="testPdfBtn"
+                             class="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-600 text-white font-semibold rounded-lg hover:from-purple-600 hover:to-pink-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
+                         🧪 Test PDF
+                     </button>
+                     @endif
                  </div>
             </form>
         </div>
@@ -597,65 +563,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const previewContainer = document.getElementById('livePreview');
     const form = document.getElementById('parameterForm');
     
-    // Global variable to track current page
-    let currentPage = 1;
+    // Continuous page layout - no current page tracking needed
     
-    // Function to navigate between pages
-    window.goToPage = function(pageNum) {
-        console.log(`goToPage called with pageNum: ${pageNum}`);
-        
-        const totalPages = document.querySelectorAll('.page-container').length;
-        console.log(`Total pages found: ${totalPages}`);
-        
-        if (pageNum < 1 || pageNum > totalPages) {
-            console.log(`Invalid page number: ${pageNum}. Must be between 1 and ${totalPages}`);
-            return;
-        }
-        
-        currentPage = pageNum;
-        console.log(`Current page set to: ${currentPage}`);
-        
-        // Hide all pages
-        document.querySelectorAll('.page-container').forEach((page, index) => {
-            const pageNumber = index + 1;
-            if (pageNumber === pageNum) {
-                page.style.display = 'block';
-                console.log(`Showing page ${pageNumber}`);
-            } else {
-                page.style.display = 'none';
-                console.log(`Hiding page ${pageNumber}`);
-            }
-        });
-        
-        // Update pagination display
-        const currentPageDisplay = document.getElementById('currentPageDisplay');
-        if (currentPageDisplay) {
-            currentPageDisplay.textContent = pageNum;
-            console.log(`Updated page display to: ${pageNum}`);
-        } else {
-            console.log('Could not find currentPageDisplay element');
-        }
-        
-        // Update button states
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        
-        if (prevBtn) {
-            prevBtn.disabled = pageNum === 1;
-            console.log(`Previous button disabled: ${pageNum === 1}`);
-        } else {
-            console.log('Could not find prevBtn element');
-        }
-        
-        if (nextBtn) {
-            nextBtn.disabled = pageNum === totalPages;
-            console.log(`Next button disabled: ${pageNum === totalPages}`);
-        } else {
-            console.log('Could not find nextBtn element');
-        }
-        
-        console.log(`Successfully navigated to page ${pageNum}`);
-    };
+    // Navigation removed - all pages displayed continuously
     
              // Function to update live preview
     function updatePreview() {
@@ -694,11 +604,24 @@ document.addEventListener('DOMContentLoaded', function() {
          console.log('Preview HTML generated, length:', previewHTML.length);
          previewContainer.innerHTML = previewHTML;
          
-         // Debug: Check what was actually created
+         // Debug: Check what was actually created and show all pages stacked vertically
          setTimeout(() => {
              const pageContainers = document.querySelectorAll('.page-container');
              console.log(`After setting innerHTML, found ${pageContainers.length} page containers`);
+             
+             // Show all pages stacked vertically with page breaks
              pageContainers.forEach((page, index) => {
+                 page.style.display = 'block';
+                 page.style.marginBottom = '20px';
+                 page.style.pageBreakAfter = 'always';
+                 page.style.breakAfter = 'page';
+                 
+                 // Remove page break from last page
+                 if (index === pageContainers.length - 1) {
+                     page.style.pageBreakAfter = 'avoid';
+                     page.style.breakAfter = 'avoid';
+                 }
+                 
                  console.log(`Page ${index + 1}:`, {
                      dataPage: page.getAttribute('data-page'),
                      dataColumns: page.getAttribute('data-columns'),
@@ -706,68 +629,12 @@ document.addEventListener('DOMContentLoaded', function() {
                      visible: page.offsetHeight > 0
                  });
              });
+             
+             console.log('All pages displayed vertically with page breaks');
          }, 100);
          
-         // Set up pagination - show only first page initially
-         const totalPages = document.querySelectorAll('.page-container').length;
-         console.log(`Found ${totalPages} pages in preview`);
-         
-         if (totalPages > 1) {
-             // Hide all pages except the first one
-             document.querySelectorAll('.page-container').forEach((page, index) => {
-                 if (index === 0) {
-                     page.style.display = 'block';
-                     console.log(`Showing page ${index + 1}`);
-                 } else {
-                     page.style.display = 'none';
-                     console.log(`Hiding page ${index + 1}`);
-                 }
-             });
-             
-             // Reset current page
-             currentPage = 1;
-             
-             // Update pagination display
-             const currentPageDisplay = document.getElementById('currentPageDisplay');
-             if (currentPageDisplay) {
-                 currentPageDisplay.textContent = '1';
-                 console.log('Updated current page display to 1');
-             }
-             
-             // Update button states
-             const prevBtn = document.getElementById('prevBtn');
-             const nextBtn = document.getElementById('nextBtn');
-             if (prevBtn) {
-                 prevBtn.disabled = true;
-                 console.log('Disabled previous button');
-             }
-             if (nextBtn) {
-                 nextBtn.disabled = totalPages === 1;
-                 console.log(`Next button disabled: ${totalPages === 1}`);
-             }
-             
-                     // Add event listeners to pagination buttons
-        if (prevBtn) {
-            prevBtn.addEventListener('click', () => {
-                console.log('Previous button clicked, going to page:', currentPage - 1);
-                goToPage(currentPage - 1);
-            });
-            console.log('Added click listener to previous button');
-        }
-        
-        if (nextBtn) {
-            nextBtn.addEventListener('click', () => {
-                console.log('Next button clicked, going to page:', currentPage + 1);
-                goToPage(currentPage + 1);
-            });
-            console.log('Added click listener to next button');
-        }
-        
-                 // Pagination setup complete
-         console.log('Pagination setup completed successfully');
-         } else {
-             console.log('Only one page found, no pagination needed');
-         }
+                  // All pages are now displayed vertically with page breaks
+         console.log('All pages displayed in continuous vertical layout');
         
                  // Apply current styling
          previewContainer.style.fontFamily = params.font_family || 'Arial';
@@ -852,8 +719,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Generate each page
         currentIndex = 0;
         for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
-            const questionsForThisPage = calculateActualQuestionsPerPage(exam, params, currentIndex);
             const startIndex = currentIndex;
+            const questionsForThisPage = calculateActualQuestionsPerPage(exam, params, startIndex);
             const endIndex = Math.min(startIndex + questionsForThisPage, totalQuestions);
             const pageQuestions = exam.questions.slice(startIndex, endIndex);
             
@@ -861,6 +728,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             console.log(`Page ${pageNum}: Questions ${startIndex + 1} to ${endIndex} (${pageQuestions.length} questions) - Filling page completely`);
             console.log(`Page ${pageNum} questions array:`, pageQuestions.map((q, i) => `Q${startIndex + i + 1}: ${q.question_text.substring(0, 30)}...`));
+            console.log(`DEBUG: Page ${pageNum} - questionsForThisPage: ${questionsForThisPage}, actual questions: ${pageQuestions.length}`);
             
             // Start page container with proper paper size classes
             const paperColumns = parseInt(params.paper_columns) || 1;
@@ -979,15 +847,8 @@ document.addEventListener('DOMContentLoaded', function() {
             html += '</div>';
         }
         
-        // Add pagination controls
-        if (totalPages > 1) {
-            html += generatePaginationHTML(totalPages);
-            console.log(`Added pagination for ${totalPages} pages`);
-         } else {
-            console.log('No pagination needed - only one page');
-        }
-        
-        console.log(`Generated HTML with ${totalPages} pages and pagination`);
+        // No pagination needed - all pages displayed continuously
+        console.log(`Generated HTML with ${totalPages} pages in continuous layout`);
         return html;
     }
     
@@ -1032,7 +893,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Ensure minimum questions per page - increase minimum for better filling
-        questionsPerPage = Math.max(12, questionsPerPage);
+        // Allow more questions per page to match what preview actually shows
+        questionsPerPage = Math.max(25, questionsPerPage);
         
         console.log('A4 Page Calculation:', {
             pageHeight,
@@ -1050,34 +912,36 @@ document.addEventListener('DOMContentLoaded', function() {
     function calculateActualQuestionsPerPage(exam, params, startIndex) {
         const paperColumns = parseInt(params.paper_columns) || 1;
         const baseQuestionsPerPage = calculateQuestionsPerPage(params);
+        const remainingQuestions = exam.questions.length - startIndex;
         
-        // For multi-column layouts, we need to ensure we fill both columns properly
+        let questionsForPage;
+        
+        // For multi-column layouts, we can fit more questions
         if (paperColumns > 1) {
-            // Ensure we have enough questions to fill all columns
-            const questionsNeeded = Math.ceil(baseQuestionsPerPage / paperColumns) * paperColumns;
-            return Math.min(questionsNeeded, exam.questions.length - startIndex);
+            // With columns, we can fit significantly more questions
+            // Each column gets the full height, so multiply by column count
+            questionsForPage = baseQuestionsPerPage * paperColumns;
+        } else {
+            // For single column, use the base calculation but allow more questions
+            // Increase the limit to match what the preview actually shows
+            questionsForPage = Math.max(baseQuestionsPerPage, 30); // Allow up to 30 questions per page
         }
         
-        return Math.min(baseQuestionsPerPage, exam.questions.length - startIndex);
+        const finalCount = Math.min(questionsForPage, remainingQuestions);
+        
+        console.log(`calculateActualQuestionsPerPage:`, {
+            paperColumns,
+            baseQuestionsPerPage,
+            remainingQuestions,
+            questionsForPage,
+            finalCount,
+            startIndex
+        });
+        
+        return finalCount;
     }
     
-    // Function to generate pagination HTML
-    function generatePaginationHTML(totalPages) {
-        let html = '<div class="pagination">';
-        
-        // Previous button
-        html += '<button id="prevBtn" disabled>← Previous</button>';
-        
-        // Page info
-        html += `<div class="page-info">Page <span id="currentPageDisplay">1</span> of ${totalPages}</div>`;
-        
-        // Next button
-        html += '<button id="nextBtn">Next →</button>';
-        
-        html += '</div>';
-        
-        return html;
-    }
+    // Pagination removed - all pages displayed continuously
     
          // Function to generate HTML for a single question
      function generateQuestionHTML(question, questionNumber, params) {
@@ -1161,11 +1025,609 @@ document.addEventListener('DOMContentLoaded', function() {
          input.addEventListener('input', updatePreview);
      });
      
+     // PDF Download functionality
+     const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+     if (downloadPdfBtn) {
+         downloadPdfBtn.addEventListener('click', function() {
+             downloadPDF();
+         });
+     }
+     
+     // Test PDF functionality (debug mode only)
+     const testPdfBtn = document.getElementById('testPdfBtn');
+     if (testPdfBtn) {
+         testPdfBtn.addEventListener('click', function() {
+             testPDFGeneration();
+         });
+     }
+     
+     // Function to download PDF
+     function downloadPDF() {
+         const downloadBtn = document.getElementById('downloadPdfBtn');
+         const originalText = downloadBtn.innerHTML;
+         
+         // Show loading state
+         downloadBtn.innerHTML = '⏳ Generating PDF...';
+         downloadBtn.disabled = true;
+         
+         try {
+             // Get the current preview HTML with exact page break styles
+             let previewHTML = previewContainer.innerHTML;
+             
+             // Debug: Log the number of page containers in preview
+             const tempDiv = document.createElement('div');
+             tempDiv.innerHTML = previewHTML;
+             const pageContainers = tempDiv.querySelectorAll('.page-container');
+             console.log(`Preview contains ${pageContainers.length} page containers`);
+             
+             // CRITICAL: Convert ALL computed styles to inline styles for pixel-perfect matching
+             function convertComputedStylesToInline(element) {
+                 const computedStyle = window.getComputedStyle(element);
+                 const importantStyles = [
+                     'font-family', 'font-size', 'font-weight', 'font-style',
+                     'line-height', 'color', 'background-color', 'background',
+                     'margin', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
+                     'padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
+                     'border', 'border-top', 'border-right', 'border-bottom', 'border-left',
+                     'border-radius', 'border-width', 'border-style', 'border-color',
+                     'box-shadow', 'text-align', 'text-decoration', 'text-transform',
+                     'width', 'height', 'min-width', 'min-height', 'max-width', 'max-height',
+                     'display', 'position', 'top', 'right', 'bottom', 'left',
+                     'z-index', 'overflow', 'visibility', 'opacity',
+                     'page-break-before', 'page-break-after', 'page-break-inside',
+                     'break-before', 'break-after', 'break-inside'
+                 ];
+                 
+                 let inlineStyles = '';
+                 importantStyles.forEach(style => {
+                     const value = computedStyle.getPropertyValue(style);
+                     if (value && value !== 'initial' && value !== 'inherit' && value !== 'normal') {
+                         inlineStyles += `${style}: ${value} !important; `;
+                     }
+                 });
+                 
+                 if (inlineStyles) {
+                     element.setAttribute('style', inlineStyles + (element.getAttribute('style') || ''));
+                 }
+                 
+                 // Apply to all child elements
+                 Array.from(element.children).forEach(child => {
+                     convertComputedStylesToInline(child);
+                 });
+             }
+             
+             // Apply computed styles to all elements in the preview
+             const previewClone = previewContainer.cloneNode(true);
+             convertComputedStylesToInline(previewClone);
+             
+             // Ensure page break styles are properly set
+             const clonedPageContainers = previewClone.querySelectorAll('.page-container');
+             clonedPageContainers.forEach((page, index) => {
+                 if (index === clonedPageContainers.length - 1) {
+                     // Last page - no page break
+                     page.style.setProperty('page-break-after', 'avoid', 'important');
+                     page.style.setProperty('break-after', 'avoid', 'important');
+                 } else {
+                     // All other pages - page break after
+                     page.style.setProperty('page-break-after', 'always', 'important');
+                     page.style.setProperty('break-after', 'page', 'important');
+                 }
+             });
+             
+             // Get the HTML with all inline styles
+             previewHTML = previewClone.innerHTML;
+             
+             // Debug: Log page break styles
+             const finalTempDiv = document.createElement('div');
+             finalTempDiv.innerHTML = previewHTML;
+             const finalPageContainers = finalTempDiv.querySelectorAll('.page-container');
+             console.log('Page break styles in final HTML:');
+             finalPageContainers.forEach((page, index) => {
+                 const pageBreakAfter = page.style.pageBreakAfter;
+                 const breakAfter = page.style.breakAfter;
+                 console.log(`Page ${index + 1}: page-break-after="${pageBreakAfter}", break-after="${breakAfter}"`);
+             });
+             
+             // Get form parameters
+             const formData = new FormData(form);
+             const params = Object.fromEntries(formData.entries());
+             
+             // Debug: Log the parameters being sent
+             console.log('Form parameters being sent to PDF:', params);
+             console.log('Paper size:', params.paper_size);
+             console.log('Orientation:', params.orientation);
+             console.log('Font family:', params.font_family);
+             console.log('Font size:', params.font_size);
+             console.log('Line spacing:', params.line_spacing);
+             console.log('Margins:', {
+                 top: params.margin_top,
+                 right: params.margin_right,
+                 bottom: params.margin_bottom,
+                 left: params.margin_left
+             });
+             
+             // Create the complete HTML for PDF generation
+             const completeHTML = createCompleteHTMLForPDF(previewHTML, params);
+             
+             // Send to server for PDF generation
+             fetch('{{ route("partner.exams.download-paper", $exam) }}', {
+                 method: 'POST',
+                 headers: {
+                     'Content-Type': 'application/json',
+                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                 },
+                 body: JSON.stringify({
+                     preview_html: completeHTML,
+                     parameters: params
+                 })
+             })
+             .then(response => {
+                 if (!response.ok) {
+                     throw new Error(`HTTP error! status: ${response.status}`);
+                 }
+                 return response.blob();
+             })
+             .then(blob => {
+                 // Create download link
+                 const url = window.URL.createObjectURL(blob);
+                 const a = document.createElement('a');
+                 a.href = url;
+                 a.download = 'question_paper_{{ $exam->id }}_' + new Date().toISOString().slice(0,19).replace(/:/g, '-') + '.pdf';
+                 document.body.appendChild(a);
+                 a.click();
+                 window.URL.revokeObjectURL(url);
+                 document.body.removeChild(a);
+                 
+                 // Show success message
+                 downloadBtn.innerHTML = '✅ PDF Downloaded!';
+                 setTimeout(() => {
+                     downloadBtn.innerHTML = originalText;
+                     downloadBtn.disabled = false;
+                 }, 2000);
+             })
+             .catch(error => {
+                 console.error('PDF Generation Error:', error);
+                 
+                 // Show error message
+                 downloadBtn.innerHTML = '❌ Failed to Generate PDF';
+                 setTimeout(() => {
+                     downloadBtn.innerHTML = originalText;
+                     downloadBtn.disabled = false;
+                 }, 3000);
+                 
+                 alert('Failed to generate PDF: ' + error.message + '\n\nPlease try again or contact support if the problem persists.');
+             });
+         } catch (error) {
+             console.error('Preview Generation Error:', error);
+             downloadBtn.innerHTML = '❌ Preview Error';
+             setTimeout(() => {
+                 downloadBtn.innerHTML = originalText;
+                 downloadBtn.disabled = false;
+             }, 3000);
+             alert('Failed to generate preview content. Please refresh the page and try again.');
+         }
+     }
+     
+     // Helper functions for page dimensions
+     function getPageWidth(params) {
+         const paperSize = params.paper_size || 'A4';
+         const orientation = params.orientation || 'portrait';
+         
+         if (paperSize === 'A4') {
+             return orientation === 'landscape' ? '297mm' : '210mm';
+         } else if (paperSize === 'Letter') {
+             return orientation === 'landscape' ? '11in' : '8.5in';
+         } else if (paperSize === 'Legal') {
+             return orientation === 'landscape' ? '14in' : '8.5in';
+         } else if (paperSize === 'A3') {
+             return orientation === 'landscape' ? '420mm' : '297mm';
+         }
+         return '210mm'; // Default to A4 portrait
+     }
+     
+     function getPageHeight(params) {
+         const paperSize = params.paper_size || 'A4';
+         const orientation = params.orientation || 'portrait';
+         
+         if (paperSize === 'A4') {
+             return orientation === 'landscape' ? '210mm' : '297mm';
+         } else if (paperSize === 'Letter') {
+             return orientation === 'landscape' ? '8.5in' : '11in';
+         } else if (paperSize === 'Legal') {
+             return orientation === 'landscape' ? '8.5in' : '14in';
+         } else if (paperSize === 'A3') {
+             return orientation === 'landscape' ? '297mm' : '420mm';
+         }
+         return '297mm'; // Default to A4 portrait
+     }
+     
+     // Function to create pixel-perfect HTML for PDF generation
+     function createCompleteHTMLForPDF(previewHTML, params) {
+         // Debug: Log the parameters being used
+         console.log('PDF Generation Parameters:', params);
+         console.log('Preview HTML length:', previewHTML.length);
+         
+         // Log sample of the HTML to verify inline styles are captured
+         const sampleDiv = document.createElement('div');
+         sampleDiv.innerHTML = previewHTML;
+         const firstPage = sampleDiv.querySelector('.page-container');
+         if (firstPage) {
+             console.log('First page inline styles:', firstPage.getAttribute('style'));
+         }
+         
+         // Get exact computed styles from the preview for fallback
+         const previewElement = document.getElementById('livePreview');
+         const computedStyles = window.getComputedStyle(previewElement);
+         
+         const exactStyles = {
+             fontFamily: computedStyles.fontFamily,
+             fontSize: computedStyles.fontSize,
+             lineHeight: computedStyles.lineHeight,
+             color: computedStyles.color,
+             backgroundColor: computedStyles.backgroundColor
+         };
+         
+         return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question Paper - {{ $exam->title }}</title>
+    <style>
+        @page {
+            size: ${params.paper_size || 'A4'} ${params.orientation || 'portrait'};
+            margin: ${params.margin_top || '20'}mm ${params.margin_right || '20'}mm ${params.margin_bottom || '20'}mm ${params.margin_left || '20'}mm;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body { 
+            font-family: "${exactStyles.fontFamily}" !important;
+            font-size: ${exactStyles.fontSize} !important;
+            line-height: ${exactStyles.lineHeight} !important;
+            color: ${exactStyles.color} !important;
+            background-color: ${exactStyles.backgroundColor} !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        /* PIXEL-PERFECT MATCHING - Use exact preview styles */
+        #livePreview {
+            font-family: "${exactStyles.fontFamily}" !important;
+            font-size: ${exactStyles.fontSize} !important;
+            line-height: ${exactStyles.lineHeight} !important;
+            color: ${exactStyles.color} !important;
+            background-color: ${exactStyles.backgroundColor} !important;
+            margin: ${exactStyles.margin} !important;
+            padding: ${exactStyles.padding} !important;
+            border: ${exactStyles.border} !important;
+            border-radius: ${exactStyles.borderRadius} !important;
+            box-shadow: ${exactStyles.boxShadow} !important;
+            display: block !important;
+            overflow: visible !important;
+        }
+        
+        /* Exact page container styling - match preview pixel by pixel */
+        .page-container {
+            border: 3px solid #3b82f6 !important;
+            background: white !important;
+            margin: 20px auto !important;
+            padding: 20px !important;
+            border-radius: 8px !important;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+            width: ${getPageWidth(params)} !important;
+            min-height: ${getPageHeight(params)} !important;
+            max-width: ${getPageWidth(params)} !important;
+            box-sizing: border-box !important;
+            position: relative !important;
+        }
+        
+        /* Apply exact same styling as preview to ALL elements */
+        .page-container, .page-container * {
+            font-family: "${exactStyles.fontFamily}" !important;
+            font-size: ${exactStyles.fontSize} !important;
+            line-height: ${exactStyles.lineHeight} !important;
+            color: ${exactStyles.color} !important;
+        }
+        
+        /* Ensure all text elements use the exact preview font */
+        h1, h2, h3, h4, h5, h6, p, div, span, li, td, th, label, input, textarea, select {
+            font-family: "${exactStyles.fontFamily}" !important;
+            font-size: ${exactStyles.fontSize} !important;
+            line-height: ${exactStyles.lineHeight} !important;
+            color: ${exactStyles.color} !important;
+        }
+        
+        /* Header styling - exact match */
+        .header-container {
+            background: rgba(248, 250, 252, 0.8) !important;
+            border-radius: 8px !important;
+            padding: 10px !important;
+            margin-bottom: 15px !important;
+            text-align: center !important;
+            border-bottom: 2px solid #333 !important;
+            padding-bottom: 15px !important;
+            margin-bottom: 20px !important;
+            width: 100% !important;
+            clear: both !important;
+            font-family: "${exactStyles.fontFamily}" !important;
+            font-size: ${exactStyles.fontSize} !important;
+            line-height: ${exactStyles.lineHeight} !important;
+            color: ${exactStyles.color} !important;
+        }
+        
+        /* Question styling - exact match */
+        .question {
+            margin-bottom: 15px !important;
+            padding: 10px !important;
+            border: 1px solid #e5e7eb !important;
+            border-radius: 4px !important;
+            font-family: "${exactStyles.fontFamily}" !important;
+            font-size: ${exactStyles.fontSize} !important;
+            line-height: ${exactStyles.lineHeight} !important;
+            color: ${exactStyles.color} !important;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+        }
+        
+        /* Page breaks - exact match to preview */
+        .page-container {
+            page-break-after: always !important;
+            break-after: page !important;
+        }
+        
+        .page-container:last-child {
+            page-break-after: avoid !important;
+            break-after: avoid !important;
+        }
+        
+        /* Override with inline styles if they exist */
+        .page-container[style*="page-break-after: always"] {
+            page-break-after: always !important;
+            break-after: page !important;
+        }
+        
+        .page-container[style*="page-break-after: avoid"] {
+            page-break-after: avoid !important;
+            break-after: avoid !important;
+        }
+        
+        /* Additional page break rules for better PDF compatibility */
+        .page-container[data-page="1"] {
+            page-break-before: auto !important;
+        }
+        
+        .page-container[data-page]:not([data-page="1"]) {
+            page-break-before: always !important;
+        }
+        
+        /* Ensure headers don't break */
+        .header-container {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+        }
+        
+        .page-title {
+            position: absolute !important;
+            top: -12px !important;
+            left: 20px !important;
+            background: white !important;
+            padding: 0 8px !important;
+            font-size: 12px !important;
+            color: #6b7280 !important;
+            font-weight: 500 !important;
+            font-family: "${exactStyles.fontFamily}" !important;
+        }
+        
+        .questions-grid {
+            position: relative !important;
+            overflow: hidden !important;
+        }
+        
+        .column-separator {
+            position: absolute !important;
+            top: 0 !important;
+            bottom: 0 !important;
+            width: 1px !important;
+            background: #333 !important;
+            opacity: 0.3 !important;
+            z-index: 1 !important;
+        }
+        
+        .question-column {
+            padding: 0 10px !important;
+            min-width: 0 !important;
+            float: left !important;
+            box-sizing: border-box !important;
+        }
+        
+        /* Column widths for different layouts */
+        .question-column[data-columns="2"] {
+            width: 50% !important;
+        }
+        
+        .question-column[data-columns="3"] {
+            width: 33.333% !important;
+        }
+        
+        .question-column[data-columns="4"] {
+            width: 25% !important;
+        }
+        
+        .question-column[data-columns="5"] {
+            width: 20% !important;
+        }
+        
+        /* Clear floats */
+        .questions-grid::after {
+            content: "" !important;
+            display: table !important;
+            clear: both !important;
+        }
+        
+        .pagination {
+            display: none !important;
+        }
+        
+        /* Print-specific styles - maintain exact appearance */
+        @media print {
+            body { 
+                margin: 0 !important; 
+                padding: 0 !important;
+            }
+            .page-container { 
+                margin: 20px auto !important; 
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important; 
+                border: 3px solid #3b82f6 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="livePreview">
+        ${previewHTML}
+    </div>
+</body>
+</html>`;
+     }
+     
+     // Function to test PDF generation
+     function testPDFGeneration() {
+         const testBtn = document.getElementById('testPdfBtn');
+         const originalText = testBtn.innerHTML;
+         
+         // Show loading state
+         testBtn.innerHTML = '⏳ Testing PDF Generation...';
+         testBtn.disabled = true;
+         
+         fetch('{{ route("partner.exams.test-pdf", $exam) }}', {
+             method: 'GET',
+             headers: {
+                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+             }
+         })
+         .then(response => {
+             if (!response.ok) {
+                 throw new Error(`HTTP error! status: ${response.status}`);
+             }
+             return response.json();
+         })
+         .then(data => {
+             // Check if there's an error in the response
+             if (data.error) {
+                 throw new Error(data.message || data.error);
+             }
+             
+             // Show results in a modal or alert
+             let resultMessage = 'PDF Generation Test Results:\n\n';
+             resultMessage += `Total Tests: ${data.summary.total_tests}\n`;
+             resultMessage += `Successful: ${data.summary.successful}\n`;
+             resultMessage += `Failed: ${data.summary.failed}\n\n`;
+             
+             data.test_results.forEach(result => {
+                 if (result.status === 'success') {
+                     resultMessage += `✅ ${result.paper_size} ${result.orientation}: ${result.generation_time_ms}ms (${Math.round(result.pdf_size_bytes/1024)}KB)\n`;
+                 } else {
+                     resultMessage += `❌ ${result.paper_size} ${result.orientation}: ${result.error}\n`;
+                 }
+             });
+             
+             alert(resultMessage);
+             
+             // Show success message
+             testBtn.innerHTML = '✅ Test Complete!';
+             setTimeout(() => {
+                 testBtn.innerHTML = originalText;
+                 testBtn.disabled = false;
+             }, 2000);
+         })
+         .catch(error => {
+             console.error('Test Error:', error);
+             testBtn.innerHTML = '❌ Test Failed';
+             setTimeout(() => {
+                 testBtn.innerHTML = originalText;
+                 testBtn.disabled = false;
+             }, 3000);
+             
+             // Show detailed error message
+             let errorMessage = 'Failed to run PDF tests.\n\n';
+             errorMessage += `Error: ${error.message}\n\n`;
+             errorMessage += 'Possible causes:\n';
+             errorMessage += '• Browsershot/Chrome not installed\n';
+             errorMessage += '• Server configuration issues\n';
+             errorMessage += '• Memory or timeout issues\n\n';
+             errorMessage += 'Please check the browser console and server logs for more details.';
+             
+             alert(errorMessage);
+         });
+     }
+     
+     // Function to debug preview vs PDF differences
+     function debugPreviewPDF() {
+         console.log('=== DEBUGGING PREVIEW VS PDF ===');
+         
+         // Get current preview HTML
+         const previewHTML = previewContainer.innerHTML;
+         console.log('Preview HTML length:', previewHTML.length);
+         
+         // Create a sample div to analyze
+         const sampleDiv = document.createElement('div');
+         sampleDiv.innerHTML = previewHTML;
+         
+         // Analyze page containers
+         const pageContainers = sampleDiv.querySelectorAll('.page-container');
+         console.log('Number of page containers:', pageContainers.length);
+         
+         pageContainers.forEach((page, index) => {
+             console.log(`Page ${index + 1}:`, {
+                 dataPage: page.getAttribute('data-page'),
+                 dataColumns: page.getAttribute('data-columns'),
+                 inlineStyles: page.getAttribute('style'),
+                 computedStyles: {
+                     width: window.getComputedStyle(page).width,
+                     height: window.getComputedStyle(page).height,
+                     fontSize: window.getComputedStyle(page).fontSize,
+                     fontFamily: window.getComputedStyle(page).fontFamily,
+                     margin: window.getComputedStyle(page).margin,
+                     padding: window.getComputedStyle(page).padding,
+                     border: window.getComputedStyle(page).border,
+                     boxShadow: window.getComputedStyle(page).boxShadow
+                 }
+             });
+         });
+         
+         // Analyze questions
+         const questions = sampleDiv.querySelectorAll('.question');
+         console.log('Number of questions:', questions.length);
+         
+         if (questions.length > 0) {
+             const firstQuestion = questions[0];
+             console.log('First question styles:', {
+                 inlineStyles: firstQuestion.getAttribute('style'),
+                 computedStyles: {
+                     fontSize: window.getComputedStyle(firstQuestion).fontSize,
+                     fontFamily: window.getComputedStyle(firstQuestion).fontFamily,
+                     margin: window.getComputedStyle(firstQuestion).margin,
+                     padding: window.getComputedStyle(firstQuestion).padding,
+                     border: window.getComputedStyle(firstQuestion).border
+                 }
+             });
+         }
+         
+         console.log('=== END DEBUG ===');
+     }
 
      
              // Initial preview
         console.log('DOM loaded, calling updatePreview');
         updatePreview();
+        
+        // Add debug function to window for console access
+        window.debugPreviewPDF = debugPreviewPDF;
     });
 </script>
 @endsection

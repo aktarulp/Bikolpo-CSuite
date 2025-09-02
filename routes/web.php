@@ -175,6 +175,8 @@ Route::middleware('auth')->group(function () {
         Route::get('exams/{exam}/export', [ExamController::class, 'export'])->name('exams.export');
         Route::get('exams/{exam}/paper-parameters', [ExamController::class, 'paperParameters'])->name('exams.paper-parameters');
         Route::post('exams/{exam}/download-paper', [ExamController::class, 'downloadPaper'])->name('exams.download-paper');
+        Route::get('exams/{exam}/test-pdf', [ExamController::class, 'testPDFGeneration'])->name('exams.test-pdf');
+        Route::get('test-pdf-simple', [ExamController::class, 'simplePDFTest'])->name('test-pdf-simple');
         Route::get('exams/{exam}/assign-questions', [ExamController::class, 'assignQuestions'])->name('exams.assign-questions');
         Route::post('exams/{exam}/assign-questions', [ExamController::class, 'storeAssignedQuestions'])->name('exams.store-assigned-questions');
         
@@ -297,6 +299,7 @@ Route::middleware('auth')->group(function () {
         
         // Take Exam
         Route::get('exams/{exam}/start', [StudentExamController::class, 'startExam'])->name('exams.start');
+        Route::get('exams/{exam}/take', [StudentExamController::class, 'takeExam'])->name('exams.take');
         Route::post('exams/{exam}/submit', [StudentExamController::class, 'submitExam'])->name('exams.submit');
         Route::get('exams/{exam}/result', [StudentExamController::class, 'showResult'])->name('exams.result');
         
