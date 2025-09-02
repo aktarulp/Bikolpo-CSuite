@@ -916,16 +916,25 @@ document.addEventListener('DOMContentLoaded', function() {
                     html += `<div class="column-separator" style="position: absolute; top: ${separatorTop}; bottom: 0; left: ${(i * 100) / paperColumns}%; width: 1px; background: #333; opacity: 0.3;"></div>`;
                 }
                 
-                // Create columns and distribute questions evenly
-                console.log(`Page ${pageNum}: Starting multi-column distribution with ${paperColumns} columns`);
+                // Create columns and distribute questions sequentially (fill each column completely)
+                console.log(`Page ${pageNum}: Starting sequential column filling with ${paperColumns} columns`);
+                
+                // Calculate questions per column for this page
+                const questionsPerColumn = Math.ceil(pageQuestions.length / paperColumns);
+                console.log(`Page ${pageNum}: ${pageQuestions.length} questions, ${questionsPerColumn} questions per column`);
+                
                 for (let columnIndex = 0; columnIndex < paperColumns; columnIndex++) {
                     html += `<div class="question-column" data-column="${columnIndex + 1}" style="padding: 0 10px;">`;
                     
-                    // Distribute questions across columns for this page
+                    // Calculate start and end indices for this column
+                    const columnStartIndex = columnIndex * questionsPerColumn;
+                    const columnEndIndex = Math.min(columnStartIndex + questionsPerColumn, pageQuestions.length);
+                    
                     let questionsInThisColumn = 0;
                     const columnQuestions = [];
                     
-                    for (let i = columnIndex; i < pageQuestions.length; i += paperColumns) {
+                    // Fill this column completely with questions
+                    for (let i = columnStartIndex; i < columnEndIndex; i++) {
                         const question = pageQuestions[i];
                         // Calculate the correct question number based on the page and position
                         const questionNumber = startIndex + i + 1;
@@ -934,7 +943,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         columnQuestions.push(`Q${questionNumber}`);
                     }
                     
-                    console.log(`Page ${pageNum}, Column ${columnIndex + 1}: ${questionsInThisColumn} questions - ${columnQuestions.join(', ')}`);
+                    console.log(`Page ${pageNum}, Column ${columnIndex + 1}: ${questionsInThisColumn} questions (${columnStartIndex + 1}-${columnEndIndex}) - ${columnQuestions.join(', ')}`);
                     html += '</div>';
                 }
                 
