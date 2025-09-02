@@ -6,34 +6,20 @@
 <div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Page Header -->
-        <div class="mb-8">
+        <div class="mb-4">
             <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-4">
-                    <div>
-                        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Assign Questions to Exam</h1>
-                        <p class="mt-2 text-gray-600 dark:text-gray-400">Select questions for: {{ $exam->title }}</p>
-                    </div>
-                    <div class="hidden lg:block">
-                        <div class="px-4 py-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                            <span class="text-sm font-medium text-blue-800 dark:text-blue-200">Exam:</span>
-                            <span class="ml-2 text-lg font-semibold text-blue-900 dark:text-blue-100">{{ $exam->title }}</span>
-                        </div>
-                    </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Assign Questions</h1>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ $exam->title }}</p>
                 </div>
-                <div class="flex space-x-3">
+                <div class="flex space-x-2">
                     <a href="{{ route('partner.exams.show', $exam) }}" 
-                       class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        </svg>
+                       class="px-3 py-1 text-sm border border-gray-300 rounded text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300">
                         View Exam
                     </a>
                     <a href="{{ route('partner.exams.index') }}" 
-                       class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                        </svg>
-                        Back to Exams
+                       class="px-3 py-1 text-sm border border-gray-300 rounded text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300">
+                        Back
                     </a>
                 </div>
             </div>
@@ -45,137 +31,133 @@
                 @csrf
                 
                 <!-- Exam Info -->
-                <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                        <div>
-                            <span class="font-medium text-gray-700 dark:text-gray-300">Total Questions:</span>
-                            <span class="ml-2 text-gray-900 dark:text-white">{{ $exam->total_questions }}</span>
+                <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
+                    <div class="flex items-center justify-between text-sm">
+                        <div class="flex items-center space-x-4">
+                            <span class="text-gray-700 dark:text-gray-300">Max: <strong>{{ $exam->total_questions }}</strong></span>
+                            <span class="text-gray-700 dark:text-gray-300">Duration: <strong>{{ $exam->duration }}min</strong></span>
                         </div>
-                        <div>
-                            <span class="font-medium text-gray-700 dark:text-gray-300">Duration:</span>
-                            <span class="ml-2 text-gray-900 dark:text-white">{{ $exam->duration }} minutes</span>
-                        </div>
-                        <div>
-                            <span class="font-medium text-gray-700 dark:text-gray-300">Status:</span>
-                            <span class="ml-2 px-2 py-1 text-xs font-medium rounded-full 
-                                {{ $exam->status === 'published' ? 'bg-green-100 text-green-800' : 
-                                   ($exam->status === 'draft' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800') }}">
-                                {{ ucfirst($exam->status) }}
-                            </span>
-                        </div>
+                        <span class="px-2 py-1 text-xs font-medium rounded-full 
+                            {{ $exam->status === 'published' ? 'bg-green-100 text-green-800' : 
+                               ($exam->status === 'draft' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800') }}">
+                            {{ ucfirst($exam->status) }}
+                        </span>
                     </div>
                 </div>
 
                 <!-- Questions Selection -->
-                <div class="px-6 py-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Select Questions</h2>
-                        <div class="flex items-center space-x-4">
-                            <span class="text-sm text-gray-600 dark:text-gray-400">
-                                Selected: <span id="selected-count">0</span> questions
-                            </span>
-                            <button type="button" id="select-all" class="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                <div class="px-4 py-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Select Questions</h2>
+                        <div class="flex items-center space-x-3">
+                            <div class="flex flex-col items-end">
+                                <span class="text-sm text-gray-600 dark:text-gray-400">
+                                    <span id="selected-count">0</span>/<span id="total-allowed">{{ $exam->total_questions }}</span>
+                                    <span class="ml-2 text-xs text-gray-500 dark:text-gray-400">
+                                        (<span id="remaining-count">{{ $exam->total_questions }}</span> remaining)
+                                    </span>
+                                </span>
+                                <div class="selection-progress w-32 mt-1">
+                                    <div class="selection-progress-bar" id="progress-bar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <button type="button" id="select-all" class="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400">
                                 Select All
                             </button>
-                            <button type="button" id="clear-all" class="text-sm text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300">
-                                Clear All
+                            <button type="button" id="clear-all" class="text-sm text-red-600 hover:text-red-800 dark:text-red-400">
+                                Clear
                             </button>
+                            @if($questions->count() > 0)
+                                <div class="flex space-x-2">
+                                    <a href="{{ route('partner.exams.show', $exam) }}" 
+                                       class="px-3 py-1 text-sm border border-gray-300 rounded text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300">
+                                        Cancel
+                                    </a>
+                                    <button type="submit" 
+                                            class="px-3 py-1 text-sm border border-transparent rounded text-white bg-blue-600 hover:bg-blue-700">
+                                        Assign Questions
+                                    </button>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Limit Warning -->
+                    <div id="limit-warning" class="hidden mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg dark:bg-yellow-900/20 dark:border-yellow-800">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 text-yellow-600 dark:text-yellow-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                            <span class="text-sm text-yellow-800 dark:text-yellow-200">
+                                You have reached the maximum number of questions allowed for this exam. Deselect some questions to select others.
+                            </span>
                         </div>
                     </div>
 
                     <!-- Search and Filters -->
-                    <div class="mb-6 space-y-4">
+                    <div class="mb-4 space-y-3">
                         <!-- Search Bar -->
-                        <div class="flex items-center space-x-4">
-                            <div class="flex-1 max-w-md">
-                                <label for="search" class="sr-only">Search questions</label>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                        </svg>
-                                    </div>
-                                    <input type="text" id="search" name="search" placeholder="Search questions by text, subject, or topic..."
-                                           class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400">
-                                </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="flex-1">
+                                <input type="text" id="search" name="search" placeholder="Search questions..."
+                                       class="block w-full px-3 py-2 border border-gray-300 rounded text-sm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
                             </div>
-                            <button type="button" id="clear-search" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600">
+                            <button type="button" id="clear-search" class="px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300">
                                 Clear
                             </button>
                         </div>
 
-                        <!-- Dynamic Filters -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            <!-- Question Type Filter -->
-                            <div>
-                                <label for="type-filter" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Question Type</label>
-                                <select id="type-filter" class="block w-full px-3 py-2 border border-gray-300 rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400">
-                                    <option value="">All Types</option>
-                                    <option value="mcq">MCQ</option>
-                                    <option value="descriptive">Descriptive</option>
-                                </select>
-                            </div>
+                        <!-- Filters -->
+                        <div class="flex items-center space-x-3">
+                            <select id="type-filter" class="px-3 py-2 border border-gray-300 rounded text-sm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-1 focus:ring-blue-500">
+                                <option value="">All Types</option>
+                                <option value="mcq">MCQ</option>
+                                <option value="descriptive">Descriptive</option>
+                            </select>
 
-                            <!-- Subject Filter -->
-                            <div>
-                                <label for="subject-filter" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Subject</label>
-                                <select id="subject-filter" class="block w-full px-3 py-2 border border-gray-300 rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400">
-                                    <option value="">All Subjects</option>
-                                    @foreach($subjects ?? [] as $subject)
-                                        <option value="{{ $subject->id }}">{{ $subject->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                            <select id="subject-filter" class="px-3 py-2 border border-gray-300 rounded text-sm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-1 focus:ring-blue-500">
+                                <option value="">All Subjects</option>
+                                @foreach($subjects ?? [] as $subject)
+                                    <option value="{{ $subject->id }}">{{ $subject->name }}</option>
+                                @endforeach
+                            </select>
 
-                            <!-- Topic Filter -->
-                            <div>
-                                <label for="topic-filter" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Topic</label>
-                                <select id="topic-filter" class="block w-full px-3 py-2 border border-gray-300 rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400">
-                                    <option value="">All Topics</option>
-                                    @foreach($topics ?? [] as $topic)
-                                        <option value="{{ $topic->id }}">{{ $topic->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
+                            <select id="topic-filter" class="px-3 py-2 border border-gray-300 rounded text-sm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-1 focus:ring-blue-500">
+                                <option value="">All Topics</option>
+                                @foreach($topics ?? [] as $topic)
+                                    <option value="{{ $topic->id }}">{{ $topic->name }}</option>
+                                @endforeach
+                            </select>
 
-                        <!-- Active Filters Display -->
-                        <div id="active-filters" class="hidden">
-                            <div class="flex items-center space-x-2">
-                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Active Filters:</span>
-                                <div id="filter-tags" class="flex flex-wrap gap-2"></div>
-                                <button type="button" id="clear-filters" class="text-sm text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300">
-                                    Clear All Filters
-                                </button>
-                            </div>
+                            <button type="button" id="clear-filters" class="px-3 py-2 text-sm text-red-600 hover:text-red-800 dark:text-red-400">
+                                Clear Filters
+                            </button>
                         </div>
                     </div>
 
                     @if($questions->count() > 0)
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 max-h-96 overflow-y-auto">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 max-h-80 overflow-y-auto">
                             @foreach($questions as $question)
-                                <div class="border border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                                <div class="question-card border border-gray-200 dark:border-gray-600 rounded p-3 hover:bg-gray-50 dark:hover:bg-gray-700"
                                      data-type="{{ $question->question_type }}"
                                      data-subject="{{ $question->subject->name ?? '' }}"
                                      data-topic="{{ $question->topic->name ?? '' }}">
-                                    <label class="flex items-start space-x-3 cursor-pointer">
+                                    <label class="flex items-start space-x-2 cursor-pointer">
                                         <input type="checkbox" name="question_ids[]" value="{{ $question->id }}" 
                                                class="question-checkbox mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                                                {{ $assignedQuestions->contains($question->id) ? 'checked' : '' }}>
                                         <div class="flex-1 min-w-0">
                                             <div class="flex items-center justify-between">
-                                                <span class="text-sm font-medium text-gray-900 dark:text-white">
-                                                    {{ Str::limit($question->question_text, 80) }}
+                                                <span class="text-sm text-gray-900 dark:text-white">
+                                                    {{ Str::limit($question->question_text, 60) }}
                                                 </span>
-                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
+                                                <span class="text-xs px-2 py-1 rounded
                                                     {{ $question->question_type === 'mcq' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' }}">
                                                     {{ strtoupper($question->question_type) }}
                                                 </span>
                                             </div>
-                                            <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                                                <span class="font-medium">Subject:</span> {{ $question->subject->name ?? 'N/A' }} |
-                                                <span class="font-medium">Topic:</span> {{ $question->topic->name ?? 'N/A' }} |
-                                                <span class="font-medium">Marks:</span> {{ $question->marks ?? 1 }}
+                                            <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                                {{ $question->subject->name ?? 'N/A' }} | {{ $question->topic->name ?? 'N/A' }}
                                             </div>
                                         </div>
                                     </label>
@@ -198,53 +180,246 @@
                     @endif
                 </div>
 
-                <!-- Form Actions -->
-                @if($questions->count() > 0)
-                    <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600">
-                        <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">
-                            <a href="{{ route('partner.exams.show', $exam) }}" 
-                               class="inline-flex justify-center items-center px-6 py-3 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors duration-200">
-                                Cancel
-                            </a>
-                            <button type="submit" 
-                                    class="inline-flex justify-center items-center px-6 py-3 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                Assign Selected Questions
-                            </button>
-                        </div>
-                    </div>
-                @endif
+
             </form>
         </div>
     </div>
 </div>
 @endsection
 
+@push('styles')
+<style>
+/* Question Selection Limit Styling */
+.question-limit-container {
+    transition: all 0.3s ease-in-out;
+}
+
+/* Selection Counter Styling */
+#selected-count {
+    font-weight: 700;
+    transition: color 0.3s ease;
+}
+
+#total-allowed {
+    font-weight: 600;
+    color: #6b7280;
+}
+
+/* Remaining Count Styling */
+#remaining-count {
+    transition: all 0.3s ease;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+    background-color: rgba(34, 197, 94, 0.1);
+}
+
+#remaining-count.warning {
+    background-color: rgba(245, 158, 11, 0.1);
+    animation: pulse-warning 2s infinite;
+}
+
+#remaining-count.danger {
+    background-color: rgba(239, 68, 68, 0.1);
+    animation: pulse-danger 1.5s infinite;
+}
+
+/* Warning Banner Styling */
+#limit-warning {
+    transition: all 0.3s ease-in-out;
+    animation: slideDown 0.3s ease-out;
+}
+
+#limit-warning.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Question Card Styling */
+.question-card {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.question-card:hover:not(.disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: #3b82f6;
+}
+
+.question-card.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #f9fafb;
+    border-color: #e5e7eb;
+}
+
+.question-card.disabled:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: #e5e7eb;
+}
+
+.question-card.selected {
+    border-color: #10b981;
+    background-color: rgba(16, 185, 129, 0.05);
+}
+
+.question-card.selected:hover {
+    border-color: #059669;
+    background-color: rgba(16, 185, 129, 0.1);
+}
+
+/* Checkbox Styling */
+.question-checkbox {
+    transition: all 0.2s ease;
+}
+
+.question-checkbox:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.question-checkbox:checked {
+    transform: scale(1.1);
+}
+
+/* Button Styling */
+#select-all {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+#select-all:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+#select-all:not(:disabled):hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+#clear-all {
+    transition: all 0.3s ease;
+}
+
+#clear-all:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+/* Progress Bar Styling */
+.selection-progress {
+    height: 4px;
+    background-color: #e5e7eb;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 8px;
+}
+
+.selection-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #3b82f6);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+.selection-progress-bar.warning {
+    background: linear-gradient(90deg, #f59e0b, #f97316);
+}
+
+.selection-progress-bar.danger {
+    background: linear-gradient(90deg, #ef4444, #dc2626);
+    animation: pulse-progress 1s infinite;
+}
+
+/* Animations */
+@keyframes pulse-warning {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+@keyframes pulse-danger {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+@keyframes pulse-progress {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+/* Dark mode adjustments */
+.dark .question-card.disabled {
+    background-color: #374151;
+    border-color: #4b5563;
+}
+
+.dark .selection-progress {
+    background-color: #4b5563;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .question-card:hover:not(.disabled) {
+        transform: none;
+    }
+    
+    #select-all:not(:disabled):hover,
+    #clear-all:hover {
+        transform: none;
+    }
+}
+
+/* Focus states for accessibility */
+.question-checkbox:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+#select-all:focus,
+#clear-all:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+</style>
+@endpush
+
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Form submission debugging
     const form = document.querySelector('form');
-    form.addEventListener('submit', function(e) {
-        console.log('Form submitting...');
-        const formData = new FormData(form);
-        const questionIds = formData.getAll('question_ids[]');
-        console.log('Question IDs being submitted:', questionIds);
-        console.log('Total questions selected:', questionIds.length);
-        
-        if (questionIds.length === 0) {
-            e.preventDefault();
-            alert('Please select at least one question before submitting.');
-            return false;
-        }
-    });
-
     const questionCheckboxes = document.querySelectorAll('.question-checkbox');
     const selectAllBtn = document.getElementById('select-all');
     const clearAllBtn = document.getElementById('clear-all');
     const selectedCountSpan = document.getElementById('selected-count');
+    const totalAllowedSpan = document.getElementById('total-allowed');
+    const remainingCountSpan = document.getElementById('remaining-count');
+    const progressBar = document.getElementById('progress-bar');
+    const maxQuestions = parseInt(totalAllowedSpan.textContent);
     
     // Filter elements
     const searchInput = document.getElementById('search');
@@ -253,12 +428,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const subjectFilter = document.getElementById('subject-filter');
     const topicFilter = document.getElementById('topic-filter');
     const clearFiltersBtn = document.getElementById('clear-filters');
-    const activeFiltersDiv = document.getElementById('active-filters');
-    const filterTagsDiv = document.getElementById('filter-tags');
     
     // Store all questions for filtering
     const allQuestions = Array.from(document.querySelectorAll('.question-checkbox')).map(checkbox => {
-        const questionDiv = checkbox.closest('.border');
+        const questionDiv = checkbox.closest('.question-card');
         return {
             checkbox: checkbox,
             element: questionDiv,
@@ -272,12 +445,69 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateSelectedCount() {
         const selectedCount = document.querySelectorAll('.question-checkbox:checked').length;
         selectedCountSpan.textContent = selectedCount;
+        
+        // Update the remaining count display
+        const remaining = maxQuestions - selectedCount;
+        remainingCountSpan.textContent = remaining;
+        
+        // Update remaining count styling based on how many are left
+        remainingCountSpan.className = 'text-xs';
+        if (remaining <= 0) {
+            remainingCountSpan.classList.add('text-red-600', 'font-semibold');
+        } else if (remaining <= 2) {
+            remainingCountSpan.classList.add('text-yellow-600', 'font-semibold');
+        } else {
+            remainingCountSpan.classList.add('text-gray-500');
+        }
+        
+        // Update progress bar
+        const progressPercentage = (selectedCount / maxQuestions) * 100;
+        progressBar.style.width = progressPercentage + '%';
+        
+        // Update progress bar color based on selection level
+        progressBar.className = 'selection-progress-bar';
+        if (progressPercentage >= 100) {
+            progressBar.classList.add('danger');
+        } else if (progressPercentage >= 80) {
+            progressBar.classList.add('warning');
+        }
+        
+        // Disable/enable checkboxes based on limit
+        const isAtLimit = selectedCount >= maxQuestions;
+        document.querySelectorAll('.question-card').forEach(card => {
+            const checkbox = card.querySelector('.question-checkbox');
+            if (!checkbox.checked && isAtLimit) {
+                card.classList.add('disabled');
+                checkbox.disabled = true;
+            } else {
+                card.classList.remove('disabled');
+                checkbox.disabled = false;
+            }
+        });
+        
+        // Show/hide limit warning
+        const limitWarning = document.getElementById('limit-warning');
+        if (isAtLimit) {
+            limitWarning.classList.remove('hidden');
+        } else {
+            limitWarning.classList.add('hidden');
+        }
+        
+        // Update button states
+        selectAllBtn.disabled = isAtLimit;
     }
     
     function selectAll() {
         const visibleQuestions = document.querySelectorAll('.question-checkbox:not(.hidden)');
+        const selectedCount = document.querySelectorAll('.question-checkbox:checked').length;
+        const remaining = maxQuestions - selectedCount;
+        
+        let selected = 0;
         visibleQuestions.forEach(checkbox => {
-            checkbox.checked = true;
+            if (!checkbox.checked && selected < remaining) {
+                checkbox.checked = true;
+                selected++;
+            }
         });
         updateSelectedCount();
     }
@@ -295,71 +525,20 @@ document.addEventListener('DOMContentLoaded', function() {
         const selectedSubject = subjectFilter.value;
         const selectedTopic = topicFilter.value;
         
-        let visibleCount = 0;
-        
         allQuestions.forEach(question => {
             let shouldShow = true;
             
-            // Search filter
-            if (searchTerm && !question.text.includes(searchTerm)) {
-                shouldShow = false;
-            }
-            
-            // Type filter
-            if (selectedType && question.type !== selectedType) {
-                shouldShow = false;
-            }
-            
-            // Subject filter
-            if (selectedSubject && question.subject !== selectedSubject) {
-                shouldShow = false;
-            }
-            
-            // Topic filter
-            if (selectedTopic && question.topic !== selectedTopic) {
-                shouldShow = false;
-            }
+            if (searchTerm && !question.text.includes(searchTerm)) shouldShow = false;
+            if (selectedType && question.type !== selectedType) shouldShow = false;
+            if (selectedSubject && question.subject !== selectedSubject) shouldShow = false;
+            if (selectedTopic && question.topic !== selectedTopic) shouldShow = false;
             
             if (shouldShow) {
                 question.element.classList.remove('hidden');
-                visibleCount++;
             } else {
                 question.element.classList.add('hidden');
             }
         });
-        
-        // Update active filters display
-        updateActiveFiltersDisplay();
-        
-        // Update select all functionality for visible questions only
-        updateSelectAllButtons();
-    }
-    
-    function updateActiveFiltersDisplay() {
-        const filters = [];
-        
-        if (searchInput.value) filters.push(`Search: "${searchInput.value}"`);
-        if (typeFilter.value) filters.push(`Type: ${typeFilter.options[typeFilter.selectedIndex].text}`);
-        if (subjectFilter.value) filters.push(`Subject: ${subjectFilter.options[subjectFilter.selectedIndex].text}`);
-        if (topicFilter.value) filters.push(`Topic: ${topicFilter.options[topicFilter.selectedIndex].text}`);
-        
-        if (filters.length > 0) {
-            activeFiltersDiv.classList.remove('hidden');
-            filterTagsDiv.innerHTML = filters.map(filter => 
-                `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">${filter}</span>`
-            ).join('');
-        } else {
-            activeFiltersDiv.classList.add('hidden');
-        }
-    }
-    
-    function updateSelectAllButtons() {
-        const visibleQuestions = document.querySelectorAll('.question-checkbox:not(.hidden)');
-        const allVisibleChecked = Array.from(visibleQuestions).every(checkbox => checkbox.checked);
-        
-        if (visibleQuestions.length > 0) {
-            selectAllBtn.textContent = allVisibleChecked ? 'Deselect All' : 'Select All';
-        }
     }
     
     function clearAllFilters() {
@@ -367,40 +546,52 @@ document.addEventListener('DOMContentLoaded', function() {
         typeFilter.value = '';
         subjectFilter.value = '';
         topicFilter.value = '';
-        
-        // Show all questions
         allQuestions.forEach(question => {
             question.element.classList.remove('hidden');
         });
-        
-        activeFiltersDiv.classList.add('hidden');
-        updateSelectAllButtons();
     }
     
     // Event listeners
     questionCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', updateSelectedCount);
+        checkbox.addEventListener('change', function(e) {
+            // If checking a checkbox, verify we haven't exceeded the limit
+            if (e.target.checked) {
+                const selectedCount = document.querySelectorAll('.question-checkbox:checked').length;
+                if (selectedCount > maxQuestions) {
+                    e.target.checked = false;
+                    alert(`Maximum ${maxQuestions} questions allowed`);
+                    return;
+                }
+            }
+            // Always update the count and UI state
+            updateSelectedCount();
+        });
     });
     
     selectAllBtn.addEventListener('click', selectAll);
     clearAllBtn.addEventListener('click', clearAll);
-    
-    // Filter event listeners
     searchInput.addEventListener('input', applyFilters);
     clearSearchBtn.addEventListener('click', () => {
         searchInput.value = '';
         applyFilters();
     });
-    
     typeFilter.addEventListener('change', applyFilters);
     subjectFilter.addEventListener('change', applyFilters);
     topicFilter.addEventListener('change', applyFilters);
-    
     clearFiltersBtn.addEventListener('click', clearAllFilters);
+    
+    // Form validation
+    form.addEventListener('submit', function(e) {
+        const questionIds = new FormData(form).getAll('question_ids[]');
+        if (questionIds.length === 0) {
+            e.preventDefault();
+            alert('Please select at least one question before submitting.');
+            return false;
+        }
+    });
     
     // Initial setup
     updateSelectedCount();
-    updateSelectAllButtons();
 });
 </script>
 @endpush

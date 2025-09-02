@@ -341,4 +341,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/{exam}/submit', [\App\Http\Controllers\PublicQuizController::class, 'submitQuiz'])->name('submit');
         Route::get('/{exam}/result', [\App\Http\Controllers\PublicQuizController::class, 'showResult'])->name('result');
     });
+
+    // API Routes for Public Quiz (No Authentication Required)
+    Route::prefix('api/exam')->group(function () {
+        Route::get('/{exam}/waiting-students', [\App\Http\Controllers\PublicQuizController::class, 'getWaitingStudentsApi'])->name('api.exam.waiting-students');
+    });
 });

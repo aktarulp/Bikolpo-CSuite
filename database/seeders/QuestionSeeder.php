@@ -73,7 +73,7 @@ class QuestionSeeder extends Seeder
             'correct_answer' => 'a',
             'explanation' => 'Dhaka is the capital and largest city of Bangladesh.',
 
-            'marks' => 1,
+
             'status' => 'active'
         ]);
     }

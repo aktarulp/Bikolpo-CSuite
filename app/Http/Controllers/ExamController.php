@@ -698,7 +698,7 @@ class ExamController extends Controller
                     'exam_id' => $exam->id,
                     'question_id' => $questionId,
                     'order' => $index + 1,
-                    'marks' => $question->marks ?? 1,
+                    'marks' => 1, // Default marks, can be updated later
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];

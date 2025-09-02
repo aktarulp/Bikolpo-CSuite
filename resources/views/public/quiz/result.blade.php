@@ -40,7 +40,7 @@
                         <div class="text-center">
                             <div class="inline-flex items-center justify-center w-32 h-32 bg-white/20 rounded-full backdrop-blur-sm">
                                 <div class="text-center">
-                                    <div class="text-4xl font-bold">{{ number_format($result->percentage, 1) }}%</div>
+                                    <div class="text-4xl font-bold">{{ number_format($result->percentage ?? 0, 1) }}%</div>
                                     <div class="text-sm text-emerald-100">Score</div>
                                 </div>
                             </div>
@@ -49,7 +49,7 @@
                         <div class="text-center lg:text-right">
                             <div class="text-2xl font-bold mb-2">{{ $result->grade ?? 'N/A' }}</div>
                             <div class="text-emerald-100">
-                                @if($result->percentage >= ($exam->passing_marks ?? 50))
+                                @if(($result->percentage ?? 0) >= ($exam->passing_marks ?? 50))
                                     <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-500 text-white">
                                         PASSED
                                     </span>
@@ -71,21 +71,21 @@
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                             <div class="text-center">
                                 <div class="bg-white rounded-lg p-4 shadow-sm">
-                                    <div class="text-3xl font-bold text-blue-600 mb-2">{{ $result->total_questions }}</div>
+                                    <div class="text-3xl font-bold text-blue-600 mb-2">{{ $result->total_questions ?? 0 }}</div>
                                     <div class="text-sm text-gray-600 font-medium">Total Questions</div>
                                 </div>
                             </div>
                             
                             <div class="text-center">
                                 <div class="bg-white rounded-lg p-4 shadow-sm">
-                                    <div class="text-3xl font-bold text-green-600 mb-2">{{ $result->correct_answers }}</div>
+                                    <div class="text-3xl font-bold text-green-600 mb-2">{{ $result->correct_answers ?? 0 }}</div>
                                     <div class="text-sm text-gray-600 font-medium">Correct Answers</div>
                                 </div>
                             </div>
                             
                             <div class="text-center">
                                 <div class="bg-white rounded-lg p-4 shadow-sm">
-                                    <div class="text-3xl font-bold text-red-600 mb-2">{{ $result->wrong_answers }}</div>
+                                    <div class="text-3xl font-bold text-red-600 mb-2">{{ $result->wrong_answers ?? 0 }}</div>
                                     <div class="text-sm text-gray-600 font-medium">Wrong Answers</div>
                                 </div>
                             </div>
@@ -111,7 +111,7 @@
                             <div class="space-y-4">
                                 <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
                                     <span class="text-gray-700 font-medium">Correct Answers:</span>
-                                    <span class="text-green-600 font-bold">{{ $result->correct_answers }} × {{ $exam->total_questions > 0 ? round($result->score / $result->correct_answers, 2) : 1 }} = {{ $result->score }}</span>
+                                    <span class="text-green-600 font-bold">{{ $result->correct_answers ?? 0 }} × {{ (($result->correct_answers ?? 0) > 0 && ($result->score ?? 0) > 0) ? round(($result->score ?? 0) / ($result->correct_answers ?? 1), 2) : 1 }} = {{ $result->score ?? 0 }}</span>
                                 </div>
                                 @if(isset($exam->has_negative_marking) && $exam->has_negative_marking && $result->wrong_answers > 0)
                                 <div class="flex justify-between items-center p-3 bg-red-50 rounded-lg">
@@ -121,7 +121,7 @@
                                 @endif
                                 <div class="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
                                     <span class="text-gray-700 font-medium">Final Score:</span>
-                                    <span class="text-blue-600 font-bold text-xl">{{ $result->score }}</span>
+                                    <span class="text-blue-600 font-bold text-xl">{{ $result->score ?? 0 }}</span>
                                 </div>
                             </div>
                         </div>
@@ -136,7 +136,7 @@
                             <div class="space-y-4">
                                 <div class="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
                                     <span class="text-gray-700 font-medium">Score Percentage:</span>
-                                    <span class="text-purple-600 font-bold text-xl">{{ number_format($result->percentage, 1) }}%</span>
+                                    <span class="text-purple-600 font-bold text-xl">{{ number_format($result->percentage ?? 0, 1) }}%</span>
                                 </div>
                                 <div class="flex justify-between items-center p-3 bg-indigo-50 rounded-lg">
                                     <span class="text-gray-700 font-medium">Grade:</span>
@@ -162,21 +162,21 @@
                             <div class="text-center">
                                 <div class="bg-white rounded-lg p-4 shadow-sm">
                                     <div class="text-sm text-gray-600 mb-2">Started At</div>
-                                    <div class="text-lg font-semibold text-gray-900">{{ $result->started_at->format('M d, Y g:i A') }}</div>
+                                    <div class="text-lg font-semibold text-gray-900">{{ $result->started_at ? $result->started_at->format('M d, Y g:i A') : 'N/A' }}</div>
                                 </div>
                             </div>
                             
                             <div class="text-center">
                                 <div class="bg-white rounded-lg p-4 shadow-sm">
                                     <div class="text-sm text-gray-600 mb-2">Completed At</div>
-                                    <div class="text-lg font-semibold text-gray-900">{{ $result->completed_at->format('M d, Y g:i A') }}</div>
+                                    <div class="text-lg font-semibold text-gray-900">{{ $result->completed_at ? $result->completed_at->format('M d, Y g:i A') : 'N/A' }}</div>
                                 </div>
                             </div>
                             
                             <div class="text-center">
                                 <div class="bg-white rounded-lg p-4 shadow-sm">
                                     <div class="text-sm text-gray-600 mb-2">Time Taken</div>
-                                    <div class="text-lg font-semibold text-gray-900">{{ $result->started_at->diffInMinutes($result->completed_at) }} min</div>
+                                    <div class="text-lg font-semibold text-gray-900">{{ ($result->started_at && $result->completed_at) ? $result->started_at->diffInMinutes($result->completed_at) : 'N/A' }} min</div>
                                 </div>
                             </div>
                             
@@ -193,21 +193,21 @@
                     <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 mb-8">
                         <h3 class="text-xl font-semibold text-gray-900 mb-4 text-center">Performance Insights</h3>
                         <div class="space-y-3">
-                            @if($result->percentage >= 90)
+                            @if(($result->percentage ?? 0) >= 90)
                                 <div class="flex items-center p-4 bg-green-100 rounded-lg border border-green-200">
                                     <svg class="w-6 h-6 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                     </svg>
                                     <span class="text-green-800 font-medium">Outstanding performance! You've mastered this material with exceptional understanding.</span>
                                 </div>
-                            @elseif($result->percentage >= 80)
+                            @elseif(($result->percentage ?? 0) >= 80)
                                 <div class="flex items-center p-4 bg-blue-100 rounded-lg border border-blue-200">
                                     <svg class="w-6 h-6 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                     </svg>
                                     <span class="text-blue-800 font-medium">Excellent work! You have a solid understanding of the subject matter.</span>
                                 </div>
-                            @elseif($result->percentage >= 70)
+                            @elseif(($result->percentage ?? 0) >= 70)
                                 <div class="flex items-center p-4 bg-yellow-100 rounded-lg border border-yellow-200">
                                     <svg class="w-6 h-6 text-yellow-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>

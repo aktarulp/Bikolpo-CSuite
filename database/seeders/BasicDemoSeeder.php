@@ -213,7 +213,7 @@ class BasicDemoSeeder extends Seeder
                 'option_d' => 'Pascal',
                 'correct_answer' => 'a',
                 'explanation' => 'Force is measured in Newtons (N) in the SI system.',
-                'marks' => 1,
+
                 'difficulty_level' => 1,
                 'status' => 'active',
                 'partner_id' => $partner->id,
@@ -228,7 +228,7 @@ class BasicDemoSeeder extends Seeder
                 'option_d' => 'Time',
                 'correct_answer' => 'c',
                 'explanation' => 'Velocity has both magnitude and direction, making it a vector quantity.',
-                'marks' => 1,
+
                 'difficulty_level' => 2,
                 'status' => 'active',
                 'partner_id' => $partner->id,
@@ -243,7 +243,7 @@ class BasicDemoSeeder extends Seeder
                 'option_d' => 'Pressure and volume are inversely proportional',
                 'correct_answer' => 'a',
                 'explanation' => 'The first law states that energy cannot be created or destroyed, only transformed.',
-                'marks' => 1,
+
                 'difficulty_level' => 2,
                 'status' => 'active',
                 'partner_id' => $partner->id,
@@ -259,7 +259,7 @@ class BasicDemoSeeder extends Seeder
                 'option_d' => 'CnH2n+1',
                 'correct_answer' => 'b',
                 'explanation' => 'Alkanes have the general formula CnH2n+2.',
-                'marks' => 1,
+
                 'difficulty_level' => 1,
                 'status' => 'active',
                 'partner_id' => $partner->id,
@@ -274,7 +274,7 @@ class BasicDemoSeeder extends Seeder
                 'option_d' => '-NH2',
                 'correct_answer' => 'b',
                 'explanation' => 'Alcohols contain the hydroxyl (-OH) functional group.',
-                'marks' => 1,
+
                 'difficulty_level' => 1,
                 'status' => 'active',
                 'partner_id' => $partner->id,
@@ -290,7 +290,7 @@ class BasicDemoSeeder extends Seeder
                 'option_d' => 'x²',
                 'correct_answer' => 'b',
                 'explanation' => 'The derivative of x² is 2x using the power rule.',
-                'marks' => 1,
+
                 'difficulty_level' => 1,
                 'status' => 'active',
                 'partner_id' => $partner->id,
@@ -305,7 +305,7 @@ class BasicDemoSeeder extends Seeder
                 'option_d' => '2x² + C',
                 'correct_answer' => 'b',
                 'explanation' => 'The integral of 2x is x² + C, where C is the constant of integration.',
-                'marks' => 1,
+
                 'difficulty_level' => 2,
                 'status' => 'active',
                 'partner_id' => $partner->id,
@@ -316,7 +316,7 @@ class BasicDemoSeeder extends Seeder
                 'q_type_id' => $descType->id,
                 'question_text' => 'Explain Newton\'s three laws of motion with examples.',
                 'explanation' => 'Newton\'s laws describe the relationship between forces and motion.',
-                'marks' => 5,
+
                 'difficulty_level' => 3,
                 'status' => 'active',
                 'partner_id' => $partner->id,
@@ -326,7 +326,7 @@ class BasicDemoSeeder extends Seeder
                 'q_type_id' => $descType->id,
                 'question_text' => 'Describe the process of fractional distillation of crude oil.',
                 'explanation' => 'Fractional distillation separates crude oil into different fractions based on boiling points.',
-                'marks' => 5,
+
                 'difficulty_level' => 3,
                 'status' => 'active',
                 'partner_id' => $partner->id,
@@ -336,7 +336,7 @@ class BasicDemoSeeder extends Seeder
                 'q_type_id' => $descType->id,
                 'question_text' => 'Solve the differential equation dy/dx = 2x + 3.',
                 'explanation' => 'This is a first-order linear differential equation that can be solved by integration.',
-                'marks' => 5,
+
                 'difficulty_level' => 3,
                 'status' => 'active',
                 'partner_id' => $partner->id,

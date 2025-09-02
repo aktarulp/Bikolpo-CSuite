@@ -50,7 +50,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'All of the above',
                 'correct_answer' => 'd',
                 'explanation' => 'All three empires had territories in present-day Bangladesh during different periods.',
-                'marks' => 2,
+
                 'tags' => ['ancient-history', 'kingdoms', 'empires']
             ],
             [
@@ -61,7 +61,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'Mahipala',
                 'correct_answer' => 'a',
                 'explanation' => 'Gopala founded the Pala Empire in 750 CE, establishing one of the most powerful dynasties in Bengal.',
-                'marks' => 2,
+
                 'tags' => ['pala-empire', 'founders', 'medieval-history']
             ],
             [
@@ -72,7 +72,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'All of the above',
                 'correct_answer' => 'd',
                 'explanation' => 'All three universities were established or flourished during the Pala period.',
-                'marks' => 2,
+
                 'tags' => ['buddhism', 'education', 'pala-empire']
             ],
             [
@@ -83,7 +83,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'Tamralipta',
                 'correct_answer' => 'b',
                 'explanation' => 'Gauda (present-day Malda, West Bengal) was the capital of the Pala Empire.',
-                'marks' => 2,
+
                 'tags' => ['pala-empire', 'capitals', 'medieval-history']
             ],
             [
@@ -94,7 +94,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'Rashtrakuta Dynasty',
                 'correct_answer' => 'a',
                 'explanation' => 'The Sena Dynasty ruled Bengal from 1070 to 1230 CE after the decline of the Pala Empire.',
-                'marks' => 2,
+
                 'tags' => ['sena-dynasty', 'medieval-history', 'bengal']
             ]
         ];
@@ -109,7 +109,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'Jahangir',
                 'correct_answer' => 'c',
                 'explanation' => 'Akbar conquered Bengal in 1576, defeating Daud Khan Karrani.',
-                'marks' => 2,
+
                 'tags' => ['mughal-empire', 'akbar', 'conquest']
             ],
             [
@@ -120,7 +120,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'Alivardi Khan',
                 'correct_answer' => 'b',
                 'explanation' => 'Shaista Khan was known as the "Tiger of Bengal" for his military campaigns.',
-                'marks' => 2,
+
                 'tags' => ['mughal-empire', 'governors', 'shaista-khan']
             ],
             [
@@ -131,7 +131,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => '1727',
                 'correct_answer' => 'c',
                 'explanation' => 'Murshid Quli Khan became the first Nawab of Bengal in 1717.',
-                'marks' => 2,
+
                 'tags' => ['mughal-empire', 'nawabs', 'murshid-quli-khan']
             ],
             [
@@ -142,7 +142,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'Rajshahi',
                 'correct_answer' => 'b',
                 'explanation' => 'Murshidabad was the capital of Bengal during the Mughal period.',
-                'marks' => 1,
+
                 'tags' => ['mughal-empire', 'capitals', 'murshidabad']
             ],
             [
@@ -153,7 +153,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'Najm ud-Din Ali Khan',
                 'correct_answer' => 'a',
                 'explanation' => 'Siraj ud-Daulah was the last independent Nawab of Bengal, defeated at the Battle of Plassey.',
-                'marks' => 2,
+
                 'tags' => ['mughal-empire', 'nawabs', 'siraj-ud-daulah']
             ]
         ];
@@ -168,7 +168,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => '1785',
                 'correct_answer' => 'a',
                 'explanation' => 'The Battle of Plassey took place on June 23, 1757, marking the beginning of British rule in Bengal.',
-                'marks' => 1,
+
                 'tags' => ['british-rule', 'battle-of-plassey', 'colonial-history']
             ],
             [
@@ -179,7 +179,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'Lord Wellesley',
                 'correct_answer' => 'a',
                 'explanation' => 'Robert Clive led the British forces to victory at the Battle of Plassey.',
-                'marks' => 1,
+
                 'tags' => ['british-rule', 'robert-clive', 'battle-of-plassey']
             ],
             [
@@ -190,7 +190,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => '1820',
                 'correct_answer' => 'a',
                 'explanation' => 'The Permanent Settlement was introduced by Lord Cornwallis in 1793.',
-                'marks' => 2,
+
                 'tags' => ['british-rule', 'permanent-settlement', 'land-revenue']
             ],
             [
@@ -201,7 +201,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'Lord Wellesley',
                 'correct_answer' => 'b',
                 'explanation' => 'Warren Hastings was the first Governor-General of Bengal from 1773 to 1785.',
-                'marks' => 2,
+
                 'tags' => ['british-rule', 'governors-general', 'warren-hastings']
             ],
             [
@@ -212,7 +212,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'Dhaka Famine',
                 'correct_answer' => 'a',
                 'explanation' => 'The Great Bengal Famine of 1943 resulted in the death of millions of people.',
-                'marks' => 1,
+
                 'tags' => ['british-rule', 'famine', '1943']
             ]
         ];
@@ -227,7 +227,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'January 26',
                 'correct_answer' => 'a',
                 'explanation' => 'International Mother Language Day is observed on February 21 to commemorate the Language Movement.',
-                'marks' => 1,
+
                 'tags' => ['language-movement', 'international-day', 'february-21']
             ],
             [
@@ -238,7 +238,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => '1971',
                 'correct_answer' => 'b',
                 'explanation' => 'The Language Movement reached its peak in 1952 with the martyrdom of students.',
-                'marks' => 1,
+
                 'tags' => ['language-movement', '1952', 'bengali-language']
             ],
             [
@@ -249,7 +249,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'Shafiur Rahman',
                 'correct_answer' => 'a',
                 'explanation' => 'Rafiq Uddin Ahmed was the first martyr of the Language Movement.',
-                'marks' => 2,
+
                 'tags' => ['language-movement', 'martyrs', 'rafiq-uddin-ahmed']
             ],
             [
@@ -260,7 +260,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'All of the above',
                 'correct_answer' => 'd',
                 'explanation' => 'All these organizations played important roles in the Language Movement.',
-                'marks' => 2,
+
                 'tags' => ['language-movement', 'organizations', 'student-league']
             ],
             [
@@ -271,7 +271,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => '1962',
                 'correct_answer' => 'c',
                 'explanation' => 'Bengali was declared as a state language of Pakistan in 1956.',
-                'marks' => 2,
+
                 'tags' => ['language-movement', 'state-language', '1956']
             ]
         ];
@@ -286,7 +286,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'December 16, 1971',
                 'correct_answer' => 'a',
                 'explanation' => 'The Liberation War began on March 25, 1971, with Operation Searchlight.',
-                'marks' => 1,
+
                 'tags' => ['liberation-war', 'march-25', 'operation-searchlight']
             ],
             [
@@ -297,7 +297,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'Mansur Ali',
                 'correct_answer' => 'b',
                 'explanation' => 'Major Ziaur Rahman declared the independence of Bangladesh on behalf of Sheikh Mujibur Rahman.',
-                'marks' => 2,
+
                 'tags' => ['liberation-war', 'independence', 'ziaur-rahman']
             ],
             [
@@ -308,7 +308,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'December 17, 1971',
                 'correct_answer' => 'c',
                 'explanation' => 'Bangladesh achieved victory on December 16, 1971, known as Victory Day.',
-                'marks' => 1,
+
                 'tags' => ['liberation-war', 'victory-day', 'december-16']
             ],
             [
@@ -319,7 +319,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'Sector 4',
                 'correct_answer' => 'a',
                 'explanation' => 'Major Ziaur Rahman commanded Sector 1 during the Liberation War.',
-                'marks' => 2,
+
                 'tags' => ['liberation-war', 'sectors', 'ziaur-rahman']
             ],
             [
@@ -330,7 +330,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'General Shafiullah',
                 'correct_answer' => 'a',
                 'explanation' => 'General M.A.G. Osmani was the Commander-in-Chief of the Mukti Bahini.',
-                'marks' => 2,
+
                 'tags' => ['liberation-war', 'mukti-bahini', 'general-osmani']
             ]
         ];
@@ -345,7 +345,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'Marigold',
                 'correct_answer' => 'c',
                 'explanation' => 'The Water Lily (Shapla) is the national flower of Bangladesh.',
-                'marks' => 1,
+
                 'tags' => ['culture', 'national-symbols', 'water-lily']
             ],
             [
@@ -356,7 +356,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'Deer',
                 'correct_answer' => 'a',
                 'explanation' => 'The Royal Bengal Tiger is the national animal of Bangladesh.',
-                'marks' => 1,
+
                 'tags' => ['culture', 'national-symbols', 'royal-bengal-tiger']
             ],
             [
@@ -367,7 +367,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'Buddha Purnima',
                 'correct_answer' => 'c',
                 'explanation' => 'Holi is known as the "Festival of Colors" and is celebrated by the Hindu community.',
-                'marks' => 1,
+
                 'tags' => ['culture', 'festivals', 'holi']
             ],
             [
@@ -378,7 +378,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'Western Dress',
                 'correct_answer' => 'c',
                 'explanation' => 'Both Sari and Salwar Kameez are traditional dresses for women in Bangladesh.',
-                'marks' => 1,
+
                 'tags' => ['culture', 'traditional-dress', 'sari', 'salwar-kameez']
             ],
             [
@@ -389,7 +389,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'Sitar',
                 'correct_answer' => 'b',
                 'explanation' => 'Ektara is the traditional musical instrument associated with Baul tradition.',
-                'marks' => 2,
+
                 'tags' => ['culture', 'baul-tradition', 'ektara', 'music']
             ]
         ];
@@ -404,7 +404,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'Bankim Chandra Chatterjee',
                 'correct_answer' => 'a',
                 'explanation' => 'Kazi Nazrul Islam is known as the "National Poet of Bangladesh".',
-                'marks' => 1,
+
                 'tags' => ['literature', 'national-poet', 'kazi-nazrul-islam']
             ],
             [
@@ -415,7 +415,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'All of the above',
                 'correct_answer' => 'b',
                 'explanation' => 'Rabindranath Tagore, the first Asian Nobel laureate, was born in Calcutta (now Kolkata).',
-                'marks' => 2,
+
                 'tags' => ['literature', 'nobel-laureate', 'rabindranath-tagore']
             ],
             [
@@ -426,7 +426,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'Sare Jahan Se Achha',
                 'correct_answer' => 'a',
                 'explanation' => 'Amar Shonar Bangla is the national anthem of Bangladesh.',
-                'marks' => 1,
+
                 'tags' => ['culture', 'national-anthem', 'amar-shonar-bangla']
             ],
             [
@@ -437,7 +437,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'Bankim Chandra Chatterjee',
                 'correct_answer' => 'b',
                 'explanation' => 'Rabindranath Tagore wrote the song "Amar Shonar Bangla".',
-                'marks' => 1,
+
                 'tags' => ['literature', 'national-anthem', 'rabindranath-tagore']
             ],
             [
@@ -448,7 +448,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => 'Classical Movement',
                 'correct_answer' => 'c',
                 'explanation' => 'Kazi Nazrul Islam led the Revolutionary Movement in Bengali literature.',
-                'marks' => 2,
+
                 'tags' => ['literature', 'revolutionary-movement', 'kazi-nazrul-islam']
             ]
         ];
@@ -529,7 +529,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => $option['d'],
                 'correct_answer' => $option['correct'],
                 'explanation' => 'This question tests knowledge of Bangladesh history and culture.',
-                'marks' => rand(1, 3),
+
                 'tags' => ['bangladesh-history', 'culture', 'mcq']
             ];
         }
@@ -573,7 +573,7 @@ class BangladeshHistoryCultureSeeder extends Seeder
                 'option_d' => $questionData['option_d'],
                 'correct_answer' => $questionData['correct_answer'],
                 'explanation' => $questionData['explanation'],
-                'marks' => $questionData['marks'],
+
                 'tags' => $questionData['tags'],
                 'status' => 'active',
                 'time_allocation' => rand(30, 120), // 30 seconds to 2 minutes

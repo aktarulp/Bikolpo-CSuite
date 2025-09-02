@@ -56,7 +56,7 @@ class ExamResult extends Model
     // Accessors
     public function getIsPassedAttribute()
     {
-        return $this->percentage >= $this->exam->passing_marks;
+        return ($this->percentage ?? 0) >= ($this->exam->passing_marks ?? 50);
     }
 
     public function getTimeTakenAttribute()
@@ -69,12 +69,13 @@ class ExamResult extends Model
 
     public function getGradeAttribute()
     {
+        $percentage = $this->percentage ?? 0;
         return match(true) {
-            $this->percentage >= 90 => 'A+',
-            $this->percentage >= 80 => 'A',
-            $this->percentage >= 70 => 'B',
-            $this->percentage >= 60 => 'C',
-            $this->percentage >= 50 => 'D',
+            $percentage >= 90 => 'A+',
+            $percentage >= 80 => 'A',
+            $percentage >= 70 => 'B',
+            $percentage >= 60 => 'C',
+            $percentage >= 50 => 'D',
             default => 'F'
         };
     }

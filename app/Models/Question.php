@@ -33,7 +33,6 @@ class Question extends Model
         'expected_answer_structure',
         'key_concepts',
         'time_allocation',
-        'marks',
         'image',
         'status',
         'tags',
@@ -42,7 +41,6 @@ class Question extends Model
 
     protected $casts = [
         'question_type' => 'string',
-        'marks' => 'integer',
         'status' => 'string',
         'tags' => 'array',
         'appearance_history' => 'array',

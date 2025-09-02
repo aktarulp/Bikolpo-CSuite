@@ -512,23 +512,9 @@
             showResult('Quiz Complete!', 'Your quiz has been submitted successfully.', true);
         }
         
-        // Submit the form and redirect
-        fetch(examForm.action, {
-            method: 'POST',
-            body: formData,
-            redirect: 'follow'
-        }).then(response => {
-            if (response.ok) {
-                // Server will handle the redirect to results page
-                window.location.href = '{{ route("public.quiz.result", $exam) }}';
-            } else {
-                console.error('Error submitting quiz');
-                alert('There was an error submitting your quiz. Please try again.');
-            }
-        }).catch(error => {
-            console.error('Error submitting quiz:', error);
-            alert('There was an error submitting your quiz. Please try again.');
-        });
+        // Submit the form using regular form submission
+        // This will handle redirects properly
+        examForm.submit();
     }
 
     function showResult(title, message, shouldSubmit = false) {

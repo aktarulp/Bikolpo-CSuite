@@ -22,11 +22,21 @@
                                  <!-- Basic Information -->
                  <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
                      <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                         <div class="flex items-center space-x-3">
-                             <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-bold bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg ring-2 ring-blue-200 dark:ring-blue-800/50 transform hover:scale-105 transition-all duration-200">
-                                 #{{ $exam->id }}
-                             </span>
-                             <h2 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $exam->title }}</h2>
+                         <div class="flex items-center justify-between flex-wrap gap-3">
+                             <div class="flex items-center space-x-3">
+                                 <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-bold bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg ring-2 ring-blue-200 dark:ring-blue-800/50 transform hover:scale-105 transition-all duration-200">
+                                     #{{ $exam->id }}
+                                 </span>
+                                 <h2 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $exam->title }}</h2>
+                             </div>
+                             <a href="{{ route('partner.exams.index') }}" 
+                                class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-all duration-200 shadow-lg whitespace-nowrap border border-orange-600"
+                                style="background-color: #ea580c; color: white; text-decoration: none;">
+                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: white;">
+                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                                 </svg>
+                                 <span style="color: white; font-weight: 500;">Back to Exams</span>
+                             </a>
                          </div>
                      </div>
                                                               <div class="px-4 py-3">
@@ -105,81 +115,83 @@
                      </div>
                                  </div>
                                  
-                                 <!-- Students Assigned Section -->
-                                 <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
-                                     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Students Assigned</h3>
-                                     </div>
-                                     <div class="px-6 py-4">
-                                         @if($exam->accessCodes->count() > 0)
-                                             <div class="space-y-2">
-                                                 @foreach($exam->accessCodes as $accessCode)
-                                                     <div class="flex items-center justify-between py-3 px-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                                                         <div class="flex items-center space-x-4">
-                                                             <div class="flex items-center space-x-3">
-                                                                 <span class="inline-flex items-center justify-center w-8 h-8 bg-green-100 text-green-800 text-sm font-medium rounded-full">
-                                                                     {{ strtoupper(substr($accessCode->student->full_name ?? 'S', 0, 1)) }}
-                                                                 </span>
-                                                                 <div>
-                                                                     <span class="text-sm font-medium text-gray-900 dark:text-white">
-                                                                         {{ $accessCode->student->full_name ?? 'Unknown Student' }}
-                                                                     </span>
-                                                                     <div class="text-xs text-gray-500 dark:text-gray-400">
-                                                                         {{ $accessCode->student->phone ?? 'No phone number' }}
-                                                                     </div>
-                                                                 </div>
-                                                             </div>
-                                                         </div>
-                                                         <div class="flex items-center space-x-4">
-                                                             <div class="text-right">
-                                                                 <div class="text-sm font-mono text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-600 px-3 py-1 rounded">
-                                                                     {{ $accessCode->access_code ?? 'No code' }}
-                                                                 </div>
-                                                                 <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                                                     @if($accessCode->status === 'active')
-                                                                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                                             Active
-                                                                         </span>
-                                                                     @elseif($accessCode->status === 'used')
-                                                                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                                                             Used
-                                                                         </span>
-                                                                     @else
-                                                                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                                                                             {{ ucfirst($accessCode->status ?? 'Unknown') }}
-                                                                         </span>
-                                                                     @endif
-                                                                 </div>
-                                                             </div>
-                                                         </div>
-                                                     </div>
-                                                 @endforeach
-                                             </div>
-                                             <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">
-                                                 <span class="font-medium">Total Students:</span> {{ $exam->accessCodes->count() }} | 
-                                                 <span class="font-medium">Active Codes:</span> {{ $exam->accessCodes->where('status', 'active')->count() }} | 
-                                                 <span class="font-medium">Used Codes:</span> {{ $exam->accessCodes->where('status', 'used')->count() }}
-                                             </div>
-                                         @else
-                                             <div class="text-center py-8">
-                                                 <div class="mx-auto h-16 w-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
-                                                     <svg class="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                                                     </svg>
-                                                 </div>
-                                                 <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No Students Assigned</h4>
-                                                 <p class="text-gray-500 dark:text-gray-400 mb-4">This exam doesn't have any students assigned yet.</p>
-                                                 <a href="{{ route('partner.exams.assign', $exam) }}" 
-                                                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                                                     </svg>
-                                                     Assign Students
-                                                 </a>
-                                             </div>
-                                         @endif
-                                     </div>
-                                 </div>
+                                                                 <!-- Students Assigned Section -->
+                                <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
+                                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Students Assigned</h3>
+                                    </div>
+                                    <div class="px-6 py-4">
+                                        @if($exam->accessCodes->count() > 0)
+                                            <!-- Compact horizontal layout for students -->
+                                            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                                                <div class="flex flex-wrap gap-3 items-center">
+                                                    @foreach($exam->accessCodes as $accessCode)
+                                                        <div class="flex items-center space-x-2 bg-white dark:bg-gray-600 rounded-lg px-3 py-2 shadow-sm border border-gray-200 dark:border-gray-500">
+                                                            <!-- Student Avatar -->
+                                                            <span class="inline-flex items-center justify-center w-6 h-6 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                                                                {{ strtoupper(substr($accessCode->student->full_name ?? 'S', 0, 1)) }}
+                                                            </span>
+                                                            
+                                                            <!-- Student Info -->
+                                                            <div class="flex flex-col min-w-0">
+                                                                <span class="text-xs font-medium text-gray-900 dark:text-white truncate max-w-24" title="{{ $accessCode->student->full_name ?? 'Unknown Student' }}">
+                                                                    {{ $accessCode->student->full_name ?? 'Unknown' }}
+                                                                </span>
+                                                                <span class="text-xs text-gray-500 dark:text-gray-400 truncate max-w-20" title="{{ $accessCode->student->phone ?? 'No phone number' }}">
+                                                                    {{ $accessCode->student->phone ?? 'No phone' }}
+                                                                </span>
+                                                            </div>
+                                                            
+                                                            <!-- Access Code -->
+                                                            <div class="flex flex-col items-center">
+                                                                <span class="text-xs font-mono text-gray-900 dark:text-white bg-gray-100 dark:bg-gray-500 px-2 py-1 rounded text-center min-w-16" title="{{ $accessCode->access_code ?? 'No code' }}">
+                                                                    {{ $accessCode->access_code ?? 'No code' }}
+                                                                </span>
+                                                                @if($accessCode->status === 'active')
+                                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 mt-1">
+                                                                        Active
+                                                                    </span>
+                                                                @elseif($accessCode->status === 'used')
+                                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mt-1">
+                                                                        Used
+                                                                    </span>
+                                                                @else
+                                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 mt-1">
+                                                                        {{ ucfirst($accessCode->status ?? 'Unknown') }}
+                                                                    </span>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Summary Stats -->
+                                            <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+                                                <span class="font-medium">Total Students:</span> {{ $exam->accessCodes->count() }} | 
+                                                <span class="font-medium">Active Codes:</span> {{ $exam->accessCodes->where('status', 'active')->count() }} | 
+                                                <span class="font-medium">Used Codes:</span> {{ $exam->accessCodes->where('status', 'used')->count() }}
+                                            </div>
+                                        @else
+                                            <div class="text-center py-8">
+                                                <div class="mx-auto h-16 w-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                                                    <svg class="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                                                    </svg>
+                                                </div>
+                                                <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No Students Assigned</h4>
+                                                <p class="text-gray-500 dark:text-gray-400 mb-4">This exam doesn't have any students assigned yet.</p>
+                                                <a href="{{ route('partner.exams.assign', $exam) }}" 
+                                                   class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                                                    </svg>
+                                                    Assign Students
+                                                </a>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
                                  
                                  <!-- Questions Assigned Section -->
                                  <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
@@ -276,19 +288,31 @@
                             </svg>
                             Edit Exam
                         </a>
-                        <a href="{{ route('partner.exams.index') }}" 
-                           class="w-full flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors duration-200">
-                            <svg class="w-4 h-4 mr-3 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                            </svg>
-                            Back to Exams
-                        </a>
                         <a href="{{ route('partner.exams.assign-questions', $exam) }}" 
-                           class="w-full flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors duration-200">
-                            <svg class="w-4 h-4 mr-3 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                            Assign Questions
+                           class="quick-action-item w-full flex items-center justify-between px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors duration-200">
+                            <div class="flex items-center">
+                                <svg class="w-4 h-4 mr-3 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <span>Assign Questions</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="question-counter inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
+                                    @if($exam->questions->count() == 0) bg-red-100 text-red-800 danger
+                                    @elseif($exam->questions->count() < $exam->total_questions) bg-yellow-100 text-yellow-800 warning
+                                    @else bg-green-100 text-green-800 complete @endif">
+                                    {{ $exam->questions->count() }}/{{ $exam->total_questions }}
+                                </span>
+                                @if($exam->questions->count() < $exam->total_questions)
+                                    <svg class="status-icon w-3 h-3 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                    </svg>
+                                @elseif($exam->questions->count() == $exam->total_questions)
+                                    <svg class="status-icon w-3 h-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                @endif
+                            </div>
                         </a>
                         <a href="{{ route('partner.exams.assign', $exam) }}" 
                            class="w-full flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors duration-200">
@@ -372,3 +396,88 @@
     </div>
 </div>
 @endsection
+
+@push('styles')
+<style>
+/* Quick Action Panel Styling */
+.quick-action-item {
+    transition: all 0.3s ease;
+}
+
+.quick-action-item:hover {
+    transform: translateX(2px);
+}
+
+/* Question Counter Styling */
+.question-counter {
+    transition: all 0.3s ease;
+    animation: pulse-gentle 2s infinite;
+}
+
+.question-counter.complete {
+    animation: none;
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+}
+
+.question-counter.warning {
+    animation: pulse-warning 1.5s infinite;
+}
+
+.question-counter.danger {
+    animation: pulse-danger 1s infinite;
+}
+
+/* Status Icons */
+.status-icon {
+    transition: all 0.3s ease;
+}
+
+.quick-action-item:hover .status-icon {
+    transform: scale(1.1);
+}
+
+/* Animations */
+@keyframes pulse-gentle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+}
+
+@keyframes pulse-warning {
+    0%, 100% { 
+        opacity: 1; 
+        transform: scale(1);
+    }
+    50% { 
+        opacity: 0.7; 
+        transform: scale(1.05);
+    }
+}
+
+@keyframes pulse-danger {
+    0%, 100% { 
+        opacity: 1; 
+        transform: scale(1);
+    }
+    50% { 
+        opacity: 0.6; 
+        transform: scale(1.1);
+    }
+}
+
+/* Dark mode adjustments */
+.dark .question-counter.complete {
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .quick-action-item:hover {
+        transform: none;
+    }
+    
+    .quick-action-item:hover .status-icon {
+        transform: none;
+    }
+}
+</style>
+@endpush

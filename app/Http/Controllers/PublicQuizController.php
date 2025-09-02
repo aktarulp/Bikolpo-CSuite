@@ -274,7 +274,65 @@ class PublicQuizController extends Controller
             }
         }
 
-        return view('public.quiz.start', compact('exam', 'accessInfo'));
+        // Get other students who are waiting to join this exam
+        $waitingStudents = $this->getWaitingStudents($exam, $accessInfo['student_id']);
+
+        return view('public.quiz.start', compact('exam', 'accessInfo', 'waitingStudents'));
+    }
+
+    /**
+     * Get students who are waiting to join the exam
+     */
+    private function getWaitingStudents(Exam $exam, $currentStudentId)
+    {
+        // Get students who have access codes for this exam but haven't started yet
+        $waitingStudents = ExamAccessCode::where('exam_id', $exam->id)
+            ->where('status', 'active')
+            ->where('used_at', null)
+            ->with('student')
+            ->get()
+            ->map(function ($accessCode) {
+                return [
+                    'id' => $accessCode->student->id,
+                    'name' => $accessCode->student->full_name,
+                    'joined_at' => $accessCode->created_at,
+                ];
+            })
+            ->filter(function ($student) use ($currentStudentId) {
+                return $student['id'] != $currentStudentId;
+            })
+            ->sortBy('joined_at')
+            ->values();
+
+        return $waitingStudents;
+    }
+
+    /**
+     * API endpoint to get waiting students for real-time updates
+     */
+    public function getWaitingStudentsApi(Exam $exam)
+    {
+        $accessInfo = session('quiz_access');
+        
+        if (!$accessInfo || $accessInfo['exam_id'] != $exam->id) {
+            return response()->json(['success' => false, 'message' => 'Invalid access'], 403);
+        }
+
+        $waitingStudents = $this->getWaitingStudents($exam, $accessInfo['student_id']);
+        
+        // Format the data for JSON response
+        $formattedStudents = $waitingStudents->map(function ($student) {
+            return [
+                'id' => $student['id'],
+                'name' => $student['name'],
+                'joined_at' => $student['joined_at']->diffForHumans(),
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'waitingStudents' => $formattedStudents
+        ]);
     }
 
     /**
@@ -423,38 +481,82 @@ class PublicQuizController extends Controller
      */
     public function submitQuiz(Request $request, Exam $exam)
     {
-        $accessInfo = session('quiz_access');
-        
-        if (!$accessInfo || $accessInfo['exam_id'] != $exam->id) {
-            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Invalid access. Please try again.']);
+        try {
+            \Log::info('Quiz submission started', [
+                'exam_id' => $exam->id,
+                'request_data' => $request->all(),
+                'session_data' => session('quiz_access')
+            ]);
+
+            $accessInfo = session('quiz_access');
+            
+            if (!$accessInfo || $accessInfo['exam_id'] != $exam->id) {
+                \Log::warning('Quiz submission failed - invalid access', [
+                    'exam_id' => $exam->id,
+                    'access_info' => $accessInfo
+                ]);
+                return redirect()->route('public.quiz.access')->withErrors(['access' => 'Invalid access. Please try again.']);
+            }
+
+            $result = ExamResult::where('student_id', $accessInfo['student_id'])
+                ->where('exam_id', $exam->id)
+                ->where('status', 'in_progress')
+                ->first();
+
+            if (!$result) {
+                \Log::warning('Quiz submission failed - no active quiz found', [
+                    'exam_id' => $exam->id,
+                    'student_id' => $accessInfo['student_id']
+                ]);
+                return redirect()->route('public.quiz.access')->withErrors(['access' => 'No active quiz found.']);
+            }
+
+            // Process answers and calculate score
+            $answers = $request->input('answers', []);
+            \Log::info('Processing quiz answers', [
+                'exam_id' => $exam->id,
+                'answers_count' => count($answers),
+                'answers' => $answers
+            ]);
+
+            $scoreData = $this->calculateScore($exam, $answers);
+            \Log::info('Quiz score calculated', [
+                'exam_id' => $exam->id,
+                'score_data' => $scoreData
+            ]);
+
+            // Update result
+            $result->update([
+                'completed_at' => now(),
+                'status' => 'completed',
+                'answers' => $answers,
+                'score' => $scoreData['score'],
+                'percentage' => $scoreData['percentage'],
+                'correct_answers' => $scoreData['correct_answers'],
+                'wrong_answers' => $scoreData['wrong_answers'],
+                'unanswered' => $scoreData['unanswered'],
+                'total_questions' => $scoreData['total_questions'],
+            ]);
+
+            \Log::info('Quiz submission completed successfully', [
+                'exam_id' => $exam->id,
+                'student_id' => $accessInfo['student_id'],
+                'result_id' => $result->id
+            ]);
+
+            // Clear session
+            session()->forget('quiz_access');
+
+            return redirect()->route('public.quiz.result', $exam->id);
+        } catch (\Exception $e) {
+            \Log::error('Quiz submission failed with exception', [
+                'exam_id' => $exam->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return redirect()->route('public.quiz.access')->withErrors(['access' => 'An error occurred while submitting your quiz. Please try again.']);
         }
-
-        $result = ExamResult::where('student_id', $accessInfo['student_id'])
-            ->where('exam_id', $exam->id)
-            ->where('status', 'in_progress')
-            ->first();
-
-        if (!$result) {
-            return redirect()->route('public.quiz.access')->withErrors(['access' => 'No active quiz found.']);
-        }
-
-        // Process answers and calculate score
-        $answers = $request->input('answers', []);
-        $score = $this->calculateScore($exam, $answers);
-
-        // Update result
-        $result->update([
-            'completed_at' => now(),
-            'status' => 'completed',
-            'answers' => $answers,
-            'score' => $score,
-            'percentage' => 0, // Placeholder since questionSet is removed
-        ]);
-
-        // Clear session
-        session()->forget('quiz_access');
-
-        return redirect()->route('public.quiz.result', $exam->id);
     }
 
     /**
@@ -501,17 +603,28 @@ class PublicQuizController extends Controller
     private function calculateScore(Exam $exam, array $answers)
     {
         $score = 0;
-        // $questions = $exam->questionSet->questions;
-        $questions = collect(); // Empty collection for now
+        $correctAnswers = 0;
+        $wrongAnswers = 0;
+        $unanswered = 0;
+        $totalMarks = 0;
+        
+        $questions = $exam->questions()->orderBy('pivot_order')->get();
 
         foreach ($questions as $question) {
             $questionId = $question->id;
             $studentAnswer = $answers[$questionId] ?? null;
+            $questionMarks = $question->pivot->marks ?? 1;
+            $totalMarks += $questionMarks;
 
-            if ($studentAnswer) {
+            if ($studentAnswer === null || $studentAnswer === '') {
+                $unanswered++;
+            } else {
                 if ($question->question_type === 'mcq') {
                     if ($studentAnswer === $question->correct_answer) {
-                        $score += $question->pivot->marks ?? 1;
+                        $score += $questionMarks;
+                        $correctAnswers++;
+                    } else {
+                        $wrongAnswers++;
                     }
                 } else {
                     // For descriptive questions, give partial marks based on word count
@@ -520,13 +633,27 @@ class PublicQuizController extends Controller
                     $maxWords = $question->max_words ?? 100;
                     
                     if ($wordCount >= $minWords) {
-                        $score += ($question->pivot->marks ?? 1) * min(1, $wordCount / $maxWords);
+                        $partialScore = $questionMarks * min(1, $wordCount / $maxWords);
+                        $score += $partialScore;
+                        $correctAnswers++; // Count as correct if meets minimum word requirement
+                    } else {
+                        $wrongAnswers++;
                     }
                 }
             }
         }
 
-        return $score;
+        $percentage = $totalMarks > 0 ? ($score / $totalMarks) * 100 : 0;
+
+        return [
+            'score' => $score,
+            'percentage' => $percentage,
+            'correct_answers' => $correctAnswers,
+            'wrong_answers' => $wrongAnswers,
+            'unanswered' => $unanswered,
+            'total_marks' => $totalMarks,
+            'total_questions' => $questions->count(),
+        ];
     }
 
     /**

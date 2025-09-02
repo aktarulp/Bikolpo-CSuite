@@ -93,7 +93,7 @@ class SampleQuestionSeeder extends Seeder
                     'correct_answer' => $correct,
                     'explanation' => 'Auto-generated sample question for testing and demos.',
 
-                    'marks' => 1,
+
                     'status' => 'active',
                     'tags' => json_encode([$domain, 'sample', 'auto']),
                     'time_allocation' => rand(30, 90),

@@ -200,14 +200,23 @@
                     <h3 class="text-lg font-semibold text-gray-900">Available Students</h3>
                     <p class="text-sm text-gray-600">Select students to assign to this exam</p>
                         </div>
-                        <button type="button" 
-                                id="toggle-filters"
-                                class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primaryGreen">
-                            <span id="toggle-text">Hide Filters</span>
-                            <svg id="toggle-icon" class="ml-2 -mr-0.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
-                            </svg>
-                        </button>
+                        <div class="flex items-center space-x-3">
+                            <button type="button" 
+                                    id="toggle-filters"
+                                    class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primaryGreen">
+                                <span id="toggle-text">Hide Filters</span>
+                                <svg id="toggle-icon" class="ml-2 -mr-0.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                                </svg>
+                            </button>
+                            @if($availableStudents->count() > 0)
+                                <button type="submit" 
+                                        form="assign-students-form"
+                                        class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-primaryGreen to-emerald-600 text-white font-medium rounded-lg hover:from-primaryGreen/90 hover:to-emerald-600/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primaryGreen transition-all duration-200">
+                                    Assign Selected Students
+                                </button>
+                            @endif
+                        </div>
                     </div>
                 </div>
                 
@@ -273,7 +282,7 @@
                 
                 <div class="p-6">
                     @if($availableStudents->count() > 0)
-                        <form method="POST" action="{{ route('partner.exams.assign-students', $exam) }}" class="space-y-4">
+                        <form id="assign-students-form" method="POST" action="{{ route('partner.exams.assign-students', $exam) }}" class="space-y-4">
                             @csrf
                             
                             <!-- Bulk Actions -->
@@ -339,11 +348,6 @@
                                 </label>
                                 @endforeach
                             </div>
-                            
-                            <button type="submit" 
-                                    class="w-full mt-4 px-4 py-2 bg-gradient-to-r from-primaryGreen to-emerald-600 text-white font-medium rounded-lg hover:from-primaryGreen/90 hover:to-emerald-600/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primaryGreen transition-all duration-200">
-                                Assign Selected Students
-                            </button>
                         </form>
                     @else
                         <div class="text-center py-8">

@@ -363,7 +363,7 @@ class ConsolidatedSeeder extends Seeder
                 'correct_answer' => $faker->randomElement(['a', 'b', 'c', 'd']),
                 'explanation' => "Explanation for question {$i}",
                 'difficulty_level' => $faker->numberBetween(1, 5),
-                'marks' => $faker->numberBetween(1, 5),
+
                 'status' => 'active',
                 'q_type_id' => $mcqType->q_type_id,
                 'created_by' => $adminUser->id,

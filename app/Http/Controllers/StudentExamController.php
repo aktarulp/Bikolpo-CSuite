@@ -115,8 +115,7 @@ class StudentExamController extends Controller
             ->firstOrFail();
 
         $answers = $request->input('answers', []);
-        // $questions = $exam->questionSet->questions;
-        $questions = collect(); // Empty collection for now
+        $questions = $exam->questions()->orderBy('pivot_order')->get();
         
         $correctAnswers = 0;
         $wrongAnswers = 0;
@@ -134,8 +133,16 @@ class StudentExamController extends Controller
             }
         }
 
-        $totalMarks = $questions->sum('marks');
-        $earnedMarks = $correctAnswers * ($questions->first()->marks ?? 1); // Assuming all questions have same marks
+        $totalMarks = $questions->sum(function($q) { return $q->pivot->marks ?? 1; });
+        $earnedMarks = 0;
+        
+        // Calculate earned marks based on correct answers and their individual marks
+        foreach ($questions as $question) {
+            $studentAnswer = $answers[$question->id] ?? null;
+            if ($studentAnswer === $question->correct_answer) {
+                $earnedMarks += $question->pivot->marks ?? 1;
+            }
+        }
         
         // Apply negative marking if enabled
         if ($exam->has_negative_marking && $wrongAnswers > 0) {
@@ -175,8 +182,7 @@ class StudentExamController extends Controller
             ->with(['student.partner', 'exam'])
             ->firstOrFail();
 
-        // $questions = $exam->questionSet->questions;
-        $questions = collect(); // Empty collection for now
+        $questions = $exam->questions()->orderBy('pivot_order')->get();
 
         return view('student.exams.result', compact('exam', 'result', 'questions'));
     }
