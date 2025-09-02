@@ -43,29 +43,118 @@
      
         /* Questions container styling - now handled by questions-grid */
       
-        /* Page container styling */
+                /* Page container styling */
         #livePreview .page-container {
             border: 3px solid #3b82f6;
             background: white;
-            margin-bottom: 30px;
+            margin: 20px auto;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-             page-break-inside: avoid;
+            page-break-inside: avoid;
             break-inside: avoid;
-            min-height: 400px; /* More reasonable height for preview */
-            width: 100%;
+            width: 210mm; /* A4 width */
+            min-height: 297mm; /* A4 height */
+            max-width: 210mm;
             box-sizing: border-box;
             position: relative;
         }
         
+        /* A4 aspect ratio maintenance */
+        #livePreview .page-container.a4-portrait {
+            width: 210mm;
+            min-height: 297mm;
+            max-width: 210mm;
+        }
+        
+        #livePreview .page-container.a4-landscape {
+            width: 297mm;
+            min-height: 210mm;
+            max-width: 297mm;
+        }
+        
+        /* Letter size */
+        #livePreview .page-container.letter-portrait {
+            width: 8.5in;
+            min-height: 11in;
+            max-width: 8.5in;
+        }
+        
+        #livePreview .page-container.letter-landscape {
+            width: 11in;
+            min-height: 8.5in;
+            max-width: 11in;
+        }
+        
+        /* Legal size */
+        #livePreview .page-container.legal-portrait {
+            width: 8.5in;
+            min-height: 14in;
+            max-width: 8.5in;
+        }
+        
+        #livePreview .page-container.legal-landscape {
+            width: 14in;
+            min-height: 8.5in;
+            max-width: 14in;
+        }
+        
+        /* A3 size */
+        #livePreview .page-container.a3-portrait {
+            width: 297mm;
+            min-height: 420mm;
+            max-width: 297mm;
+        }
+        
+        #livePreview .page-container.a3-landscape {
+            width: 420mm;
+            min-height: 297mm;
+            max-width: 420mm;
+        }
+        
+        /* Responsive scaling for smaller screens */
+        @media (max-width: 1200px) {
+            #livePreview .page-container {
+                transform: scale(0.8);
+                transform-origin: top center;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            #livePreview .page-container {
+                transform: scale(0.6);
+                transform-origin: top center;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            #livePreview .page-container {
+                transform: scale(0.4);
+                transform-origin: top center;
+            }
+        }
+        
         /* Add page number indicator */
         #livePreview .page-container::before {
-            content: "PAGE " attr(data-page);
+            content: "PAGE " attr(data-page) " - " attr(data-paper-size) " " attr(data-orientation);
             position: absolute;
             top: -15px;
             left: 20px;
             background: #3b82f6;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        /* Add paper size dimensions indicator */
+        #livePreview .page-container::after {
+            content: attr(data-paper-size) " (" attr(data-orientation) ")";
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            background: #10b981;
             color: white;
             padding: 5px 10px;
             border-radius: 4px;
@@ -634,72 +723,28 @@ document.addEventListener('DOMContentLoaded', function() {
          previewContainer.style.fontSize = (params.font_size || 12) + 'pt';
          previewContainer.style.lineHeight = params.line_spacing || 1.5;
          
-         // Apply paper format settings
-         if (params.paper_size) {
-             // Adjust preview container based on paper size
-             const paperSizes = {
-                 'A4': { width: '210mm', height: '297mm' },
-                 'Letter': { width: '8.5in', height: '11in' },
-                 'Legal': { width: '8.5in', height: '14in' },
-                 'A3': { width: '297mm', height: '420mm' }
-             };
-             
-             if (paperSizes[params.paper_size]) {
-                 const size = paperSizes[params.paper_size];
-                 
-                 // Check if landscape orientation is selected
-                 if (params.orientation === 'landscape') {
-                     // Swap width and height for landscape
-                     previewContainer.style.width = size.height;
-                     previewContainer.style.height = size.width;
-                 } else {
-                     // Normal portrait orientation
-                     previewContainer.style.width = size.width;
-                     previewContainer.style.height = size.height;
-                 }
-                 
-                 previewContainer.style.maxWidth = '100%';
-                 previewContainer.style.maxHeight = '100%';
-             }
-         }
+         // Apply paper format settings to page containers
+         const paperSize = params.paper_size || 'A4';
+         const orientation = params.orientation || 'portrait';
+         const sizeClass = `${paperSize.toLowerCase()}-${orientation}`;
          
-         if (params.orientation) {
-             // Adjust preview container orientation
-             if (params.orientation === 'landscape') {
-                 // For landscape, swap width and height instead of rotating
-                 const currentWidth = previewContainer.style.width;
-                 const currentHeight = previewContainer.style.height;
-                 
-                 if (currentWidth && currentHeight) {
-                     previewContainer.style.width = currentHeight;
-                     previewContainer.style.height = currentWidth;
-                 }
-                 
-                 // Add landscape class for styling
-                 previewContainer.classList.add('landscape');
-                 previewContainer.classList.remove('portrait');
-             } else {
-                 // For portrait, ensure normal dimensions
-                 previewContainer.classList.add('portrait');
-                 previewContainer.classList.remove('landscape');
-                 
-                 // Reset any landscape adjustments
-                 if (params.paper_size) {
-                     const paperSizes = {
-                         'A4': { width: '210mm', height: '297mm' },
-                         'Letter': { width: '8.5in', height: '11in' },
-                         'Legal': { width: '8.5in', height: '14in' },
-                         'A3': { width: '297mm', height: '420mm' }
-                     };
-                     
-                     if (paperSizes[params.paper_size]) {
-                         const size = paperSizes[params.paper_size];
-                         previewContainer.style.width = size.width;
-                         previewContainer.style.height = size.height;
-                     }
-                 }
-             }
-         }
+         // Update all page containers with the correct paper size class
+         document.querySelectorAll('.page-container').forEach((pageContainer, index) => {
+             // Remove all existing paper size classes
+             pageContainer.classList.remove('a4-portrait', 'a4-landscape', 'letter-portrait', 'letter-landscape', 'legal-portrait', 'legal-landscape', 'a3-portrait', 'a3-landscape');
+             
+             // Add the correct paper size class
+             pageContainer.classList.add(sizeClass);
+             
+             // Update data attributes
+             pageContainer.setAttribute('data-paper-size', paperSize);
+             pageContainer.setAttribute('data-orientation', orientation);
+             
+             // Log the exact dimensions being applied
+             const computedStyle = window.getComputedStyle(pageContainer);
+             console.log(`Updated page container ${index + 1} with class: ${sizeClass}`);
+             console.log(`Dimensions: width=${computedStyle.width}, height=${computedStyle.height}`);
+         });
          
          // Add visual indicator for MCQ columns
          if (params.mcq_columns) {
@@ -749,10 +794,14 @@ document.addEventListener('DOMContentLoaded', function() {
             
             console.log(`Page ${pageNum}: Questions ${startIndex + 1} to ${endIndex} (${pageQuestions.length} questions)`);
             
-            // Start page container
-            const paperColumns = parseInt(params.paper_columns) || 1;
-            html += `<div class="page-container" data-columns="${paperColumns}" data-page="${pageNum}">`;
-            console.log(`Created page container ${pageNum} with ${paperColumns} columns`);
+                         // Start page container with proper paper size classes
+             const paperColumns = parseInt(params.paper_columns) || 1;
+             const paperSize = params.paper_size || 'A4';
+             const orientation = params.orientation || 'portrait';
+             const sizeClass = `${paperSize.toLowerCase()}-${orientation}`;
+             
+             html += `<div class="page-container ${sizeClass}" data-columns="${paperColumns}" data-page="${pageNum}" data-paper-size="${paperSize}" data-orientation="${orientation}">`;
+             console.log(`Created page container ${pageNum} with ${paperColumns} columns, size: ${paperSize} ${orientation}`);
             
             // Page title
             html += `<div class="page-title">📄 Page ${pageNum} of ${totalPages} (${pageQuestions.length} questions)</div>`;
