@@ -524,8 +524,8 @@ class ExamController extends Controller
         .instructions { background: #f5f5f5; padding: 20px; border-radius: 5px; margin-bottom: 30px; }
         .question { margin-bottom: 25px; page-break-inside: avoid; }
         .question-number { font-weight: bold; color: #333; }
-        .question-text { margin: 10px 0; }
-        .question-header { margin: 10px 0; font-style: italic; color: #666; }
+        .question-text { margin: 5px 0; }
+        .question-header { margin: 5px 0; font-style: italic; color: #666; }
         .options { margin-left: 20px; }
         .option { margin: 5px 0; }
         .marks { font-weight: bold; color: #333; float: right; }
@@ -798,16 +798,22 @@ class ExamController extends Controller
             padding: 20px;
         }
         
-        .paper-container.columns-1 {
+        .paper-container.paper-columns-1 {
             grid-template-columns: 1fr;
         }
         
-        .paper-container.columns-2 {
+        .paper-container.paper-columns-2 {
+            display: grid;
             grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 15px;
         }
         
-        .paper-container.columns-3 {
+        .paper-container.paper-columns-3 {
+            display: grid;
             grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            padding: 15px;
         }
         
         /* Header Span */
@@ -815,17 +821,17 @@ class ExamController extends Controller
             grid-column: ' . $headerGridSpan . ';
             text-align: center;
             border-bottom: 2px solid #333;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
         }
         
         .exam-title { font-size: ' . ($parameters['font_size'] + 8) . 'pt; font-weight: bold; margin-bottom: 10px; }
         .exam-info { font-size: ' . ($parameters['font_size'] - 2) . 'pt; color: #666; }
         .instructions { background: #f5f5f5; padding: 20px; border-radius: 5px; margin-bottom: 30px; }
-        .question { margin-bottom: 25px; page-break-inside: avoid; break-inside: avoid; }
+        .question { margin-bottom: 10px; page-break-inside: avoid; break-inside: avoid; }
         .question-number { font-weight: bold; color: #333; }
-        .question-text { margin: 10px 0; }
-        .question-header { margin: 10px 0; font-style: italic; color: #666; }
+        .question-text { margin: 5px 0; }
+        .question-header { margin: 5px 0; font-style: italic; color: #666; }
         .options { margin-left: 20px; }
         .option { margin: 5px 0; }
         .marks { font-weight: bold; color: #333; float: right; }
@@ -835,7 +841,7 @@ class ExamController extends Controller
         .mcq-options {
             display: grid;
             gap: 10px;
-            margin: 10px 0;
+            margin: 5px 0;
         }
         
         .mcq-options.columns-1 { grid-template-columns: 1fr; }

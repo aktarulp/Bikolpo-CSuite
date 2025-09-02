@@ -21,25 +21,25 @@
    
     
                    /* Paper Column Layout Styles */
-      #livePreview.paper-columns-2 {
-          display: grid !important;
-          grid-template-columns: 1fr 1fr !important;
-          gap: 30px !important;
-          padding: 20px !important;
-          align-items: start !important;
-      }
-      
-      #livePreview.paper-columns-3 {
-          display: grid !important;
-          grid-template-columns: 1fr 1fr 1fr !important;
-          gap: 25px !important;
-          padding: 20px !important;
-          align-items: start !important;
-      }
+                    #livePreview.paper-columns-2 {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 10px !important;
+            padding: 5px !important;
+            align-items: start !important;
+        }
+        
+        #livePreview.paper-columns-3 {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr 1fr !important;
+            gap: 10px !important;
+            padding: 5px !important;
+            align-items: start !important;
+        }
       
       #livePreview.paper-columns-1 {
           display: block !important;
-          padding: 20px !important;
+          padding: 5px !important;
       }
     
                                                                                /* Ensure content doesn't break awkwardly in columns */
@@ -55,41 +55,42 @@
             page-break-inside: avoid;
         }
         
-        /* Column content spacing and flow */
-        #livePreview.paper-columns-2 > div:not(.header-container),
-        #livePreview.paper-columns-3 > div:not(.header-container) {
-            padding: 15px;
-        }
-        
-        /* Ensure questions flow naturally across columns */
-        #livePreview.paper-columns-2 .question,
-        #livePreview.paper-columns-3 .question {
-            break-inside: avoid;
-            page-break-inside: avoid;
-        }
-        
-        /* Force questions to flow naturally in grid layout */
-        #livePreview.paper-columns-2,
-        #livePreview.paper-columns-3 {
-            grid-auto-flow: row dense;
-        }
-        
-        /* Ensure questions don't get stuck in wrong columns */
-        #livePreview.paper-columns-2 .question,
-        #livePreview.paper-columns-3 .question {
-            grid-column: auto;
-        }
+                 /* Column content spacing and flow */
+         #livePreview.paper-columns-2 > div:not(.header-container),
+         #livePreview.paper-columns-3 > div:not(.header-container) {
+             padding: 3px;
+         }
+         
+         /* Ensure questions flow naturally across columns */
+         #livePreview.paper-columns-2 .question,
+         #livePreview.paper-columns-3 .question {
+             break-inside: avoid;
+             page-break-inside: avoid;
+             margin-bottom: 10px;
+         }
+         
+         /* Force questions to flow naturally in grid layout */
+         #livePreview.paper-columns-2,
+         #livePreview.paper-columns-3 {
+             grid-auto-flow: row dense;
+         }
+         
+         /* Ensure questions don't get stuck in wrong columns */
+         #livePreview.paper-columns-2 .question,
+         #livePreview.paper-columns-3 .question {
+             grid-column: auto;
+         }
      
      
      
-           /* Header container styling */
-      .header-container {
-          /* Remove display: contents to make it visible to grid */
-          background: rgba(248, 250, 252, 0.8);
-          border-radius: 8px;
-          padding: 15px;
-          margin-bottom: 20px;
-      }
+                  /* Header container styling */
+       .header-container {
+           /* Remove display: contents to make it visible to grid */
+           background: rgba(248, 250, 252, 0.8);
+           border-radius: 8px;
+           padding: 10px;
+           margin-bottom: 15px;
+       }
       
       /* Header span styles for different paper column configurations */
       #livePreview.paper-columns-2[data-header-span="1"] .header-container {
@@ -125,12 +126,12 @@
           display: contents;
       }
       
-      /* Ensure questions don't break across grid columns */
-      #livePreview .question {
-          break-inside: avoid;
-          page-break-inside: avoid;
-          margin-bottom: 20px;
-      }
+             /* Ensure questions don't break across grid columns */
+       #livePreview .question {
+           break-inside: avoid;
+           page-break-inside: avoid;
+           margin-bottom: 10px;
+       }
      
      /* Ensure header spans correctly across columns */
      .header-container[style*="grid-column"] {
@@ -569,15 +570,15 @@ document.addEventListener('DOMContentLoaded', function() {
             
 
             
-            const headerContent = `
-                <div class="header-container" style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 30px;">
-                    <div style="font-size: ${(parseInt(params.font_size) || 12) + 8}pt; font-weight: bold; margin-bottom: 5px;">${exam.title}</div>
-                    <div style="font-size: ${(parseInt(params.font_size) || 12) + 4}pt; font-weight: bold; margin-bottom: 5px;">${exam.question_header || 'Model Test'}</div>`;
+                         const headerContent = `
+                 <div class="header-container" style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 20px;">
+                     <div style="font-size: ${(parseInt(params.font_size) || 12) + 8}pt; font-weight: bold; margin-bottom: 3px;">${exam.title}</div>
+                     <div style="font-size: ${(parseInt(params.font_size) || 12) + 4}pt; font-weight: bold; margin-bottom: 3px;">${exam.question_header || 'Model Test'}</div>`;
             
             let headerFooterContent = headerContent;
             
-            // Always include Full Marks and Duration when header is enabled
-            headerFooterContent += '<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; font-size: ' + (parseInt(params.font_size) || 12) + 'pt; font-weight: bold; color: #333;">';
+                         // Always include Full Marks and Duration when header is enabled
+             headerFooterContent += '<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: ' + (parseInt(params.font_size) || 12) + 'pt; font-weight: bold; color: #333;">';
             
             const totalMarks = exam.questions.reduce((sum, q) => sum + (q.marks || 1), 0);
             headerFooterContent += `<div>Full Marks: ${totalMarks}</div>`;
@@ -621,17 +622,17 @@ document.addEventListener('DOMContentLoaded', function() {
         return html;
     }
     
-    // Function to generate HTML for a single question
-    function generateQuestionHTML(question, questionNumber, params) {
-        let questionContent = `<div style="margin-bottom: 25px;">`;
+         // Function to generate HTML for a single question
+     function generateQuestionHTML(question, questionNumber, params) {
+         let questionContent = `<div style="margin-bottom: 10px;">`;
         
-        if (question.question_header) {
-            questionContent += `<div style="margin: 10px 0; font-style: italic; color: #666;">${question.question_header}</div>`;
-        }
-        
-        // Clean question text to remove any "(Question #X)" patterns
-        const cleanQuestionText = question.question_text.replace(/\(Question\s*#\d+\)/gi, '').trim();
-        questionContent += `<div style="margin: 10px 0; font-weight: bold; color: #333;">${questionNumber}. ${cleanQuestionText}</div>`;
+                 if (question.question_header) {
+             questionContent += `<div style="margin: 5px 0; font-style: italic; color: #666;">${question.question_header}</div>`;
+         }
+         
+         // Clean question text to remove any "(Question #X)" patterns
+         const cleanQuestionText = question.question_text.replace(/\(Question\s*#\d+\)/gi, '').trim();
+         questionContent += `<div style="margin: 5px 0; font-weight: bold; color: #333;">${questionNumber}. ${cleanQuestionText}</div>`;
         
         if (question.question_type === 'mcq') {
             const columns = parseInt(params.mcq_columns) || 4;
@@ -642,8 +643,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 { label: 'D', text: question.option_d }
             ].filter(opt => opt.text); // Only include options that have text
             
-            questionContent += '<div style="margin-left: 20px;">';
-            questionContent += `<div style="display: grid; grid-template-columns: repeat(${columns}, 1fr); gap: 20px; margin: 10px 0; row-gap: 8px;">`;
+                         questionContent += '<div style="margin-left: 15px;">';
+             questionContent += `<div style="display: grid; grid-template-columns: repeat(${columns}, 1fr); gap: 10px; margin: 5px 0; row-gap: 5px;">`;
             
             // Generate options based on column count
             options.forEach((option, optionIndex) => {
