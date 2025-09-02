@@ -910,8 +910,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 
                 // Add vertical separator lines between columns (but not over header)
+                const hasHeader = (pageNum === 1 && params.include_header);
+                const separatorTop = hasHeader ? '180px' : '0px';
                 for (let i = 1; i < paperColumns; i++) {
-                    html += `<div class="column-separator" style="position: absolute; top: 60px; bottom: 0; left: ${(i * 100) / paperColumns}%; width: 1px; background: #333; opacity: 0.3;"></div>`;
+                    html += `<div class="column-separator" style="position: absolute; top: ${separatorTop}; bottom: 0; left: ${(i * 100) / paperColumns}%; width: 1px; background: #333; opacity: 0.3;"></div>`;
                 }
                 
                 // Create columns and distribute questions evenly
