@@ -5,12 +5,10 @@
 @section('content')
 <style>
     #livePreview.landscape {
-        transform: none !important;
         writing-mode: horizontal-tb;
     }
     
     #livePreview.portrait {
-        transform: none !important;
         writing-mode: horizontal-tb;
     }
     
@@ -20,70 +18,125 @@
          overflow: visible;
      }
      
-     /* Page Container Styles */
-     .page-container {
-         background: white;
-         border: 1px solid #ddd;
-         margin-bottom: 20px;
-         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-         page-break-after: always;
-         break-after: page;
-     }
-     
-     .page-container:last-child {
-         page-break-after: auto;
-         break-after: auto;
-     }
-     
-     .page-content {
-         padding: 20px;
-         min-height: 100%;
-         box-sizing: border-box;
-     }
-     
-     /* Print Styles */
-     @media print {
-         .page-container {
-             page-break-after: always;
-             break-after: page;
-             margin-bottom: 0;
-             box-shadow: none;
-         }
-         
-         .page-container:last-child {
-             page-break-after: auto;
-             break-after: auto;
-         }
-     }
+   
     
-    /* Paper Column Layout Styles */
-    #livePreview.paper-columns-2 {
-        column-count: 2 !important;
-        column-gap: 20px !important;
-        column-rule: 1px solid #ddd !important;
-        column-fill: balance !important;
-    }
+                   /* Paper Column Layout Styles */
+      #livePreview.paper-columns-2 {
+          display: grid !important;
+          grid-template-columns: 1fr 1fr !important;
+          gap: 30px !important;
+          padding: 20px !important;
+          align-items: start !important;
+      }
+      
+      #livePreview.paper-columns-3 {
+          display: grid !important;
+          grid-template-columns: 1fr 1fr 1fr !important;
+          gap: 25px !important;
+          padding: 20px !important;
+          align-items: start !important;
+      }
+      
+      #livePreview.paper-columns-1 {
+          display: block !important;
+          padding: 20px !important;
+      }
     
-    #livePreview.paper-columns-3 {
-        column-count: 3 !important;
-        column-gap: 20px !important;
-        column-rule: 1px solid #ddd !important;
-        column-fill: balance !important;
-    }
-    
-    #livePreview.paper-columns-1 {
-        column-count: 1 !important;
-        column-gap: normal !important;
-        column-rule: none !important;
-        column-fill: auto !important;
-    }
-    
-         /* Ensure content doesn't break awkwardly in columns */
-     #livePreview > div {
-         break-inside: avoid;
-         page-break-inside: avoid;
-     }
+                                                                               /* Ensure content doesn't break awkwardly in columns */
+        #livePreview > div {
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+        
+        /* Better column content handling */
+        #livePreview.paper-columns-2 .page-container,
+        #livePreview.paper-columns-3 .page-container {
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+        
+        /* Column content spacing and flow */
+        #livePreview.paper-columns-2 > div:not(.header-container),
+        #livePreview.paper-columns-3 > div:not(.header-container) {
+            padding: 15px;
+        }
+        
+        /* Ensure questions flow naturally across columns */
+        #livePreview.paper-columns-2 .question,
+        #livePreview.paper-columns-3 .question {
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+        
+        /* Force questions to flow naturally in grid layout */
+        #livePreview.paper-columns-2,
+        #livePreview.paper-columns-3 {
+            grid-auto-flow: row dense;
+        }
+        
+        /* Ensure questions don't get stuck in wrong columns */
+        #livePreview.paper-columns-2 .question,
+        #livePreview.paper-columns-3 .question {
+            grid-column: auto;
+        }
      
+     
+     
+           /* Header container styling */
+      .header-container {
+          /* Remove display: contents to make it visible to grid */
+          background: rgba(248, 250, 252, 0.8);
+          border-radius: 8px;
+          padding: 15px;
+          margin-bottom: 20px;
+      }
+      
+      /* Header span styles for different paper column configurations */
+      #livePreview.paper-columns-2[data-header-span="1"] .header-container {
+          grid-column: 1 / 2 !important;
+      }
+      
+      #livePreview.paper-columns-2[data-header-span="2"] .header-container {
+          grid-column: 1 / 3 !important;
+      }
+      
+      #livePreview.paper-columns-3[data-header-span="1"] .header-container {
+          grid-column: 1 / 2 !important;
+      }
+      
+      #livePreview.paper-columns-3[data-header-span="2"] .header-container {
+          grid-column: 1 / 3 !important;
+      }
+      
+      #livePreview.paper-columns-3[data-header-span="3"] .header-container {
+          grid-column: 1 / 4 !important;
+      }
+      
+      #livePreview.paper-columns-3[data-header-span="4"] .header-container {
+          grid-column: 1 / 5 !important;
+      }
+      
+      #livePreview.paper-columns-3[data-header-span="full"] .header-container {
+          grid-column: 1 / -1 !important;
+      }
+     
+           /* Questions container styling for multi-column layout */
+      #livePreview .questions-container {
+          display: contents;
+      }
+      
+      /* Ensure questions don't break across grid columns */
+      #livePreview .question {
+          break-inside: avoid;
+          page-break-inside: avoid;
+          margin-bottom: 20px;
+      }
+     
+     /* Ensure header spans correctly across columns */
+     .header-container[style*="grid-column"] {
+         width: 100%;
+     }
+      
      
 </style>
 <div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
@@ -150,18 +203,19 @@
                      data-total-questions="{{ $exam->questions->count() }}"
                      data-passing-marks="{{ $exam->passing_marks }}"
                      data-question-header="{{ addslashes($exam->question_header ?? "") }}"
-                     data-questions="{{ $exam->questions->map(function($q) { 
-                         return [
-                             'question_text' => $q->question_text,
-                             'question_header' => $q->question_header ?? '',
-                             'question_type' => $q->question_type,
-                             'option_a' => $q->option_a ?? '',
-                             'option_b' => $q->option_b ?? '',
-                             'option_c' => $q->option_c ?? '',
-                             'option_d' => $q->option_d ?? '',
-                             'marks' => $q->pivot->marks ?? 1
-                         ];
-                     })->toJson() }}"
+                                           data-questions="{{ $exam->questions->map(function($q) { 
+                          return [
+                              'question_text' => $q->question_text,
+                              'question_header' => $q->question_header ?? '',
+                              'question_type' => $q->question_type,
+                              'option_a' => $q->option_a ?? '',
+                              'option_b' => $q->option_b ?? '',
+                              'option_c' => $q->option_c ?? '',
+                              'option_d' => $q->option_d ?? '',
+                              'correct_answer' => $q->correct_answer ?? '',
+                              'marks' => $q->pivot->marks ?? 1
+                          ];
+                      })->toJson() }}"
                      style="display: none;">
                 </div>
                 
@@ -197,9 +251,9 @@
                                 <div>
                                     <label for="paper_columns" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Paper Columns</label>
                                     <select id="paper_columns" name="paper_columns" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
-                                        <option value="1" selected>1 Column</option>
-                                        <option value="2">2 Columns</option>
-                                        <option value="3">3 Columns</option>
+                                        <option value="1" selected>1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
                                     </select>
                                 </div>
                             </div>
@@ -235,71 +289,83 @@
                         <div class="space-y-4">
                             <h4 class="text-lg font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">Display Options</h4>
                             
-                            <!-- Font Settings, Line Spacing and MCQ Columns -->
-                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <!-- Font Settings, Line Spacing, MCQ Columns and Header Span -->
+                            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                                 <div>
                                     <label for="font_family" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Font Family</label>
-                                    <select id="font_family" name="font_family" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
-                                        <option value="Arial" selected>Arial</option>
-                                        <option value="Times New Roman">Times New Roman</option>
-                                        <option value="Calibri">Calibri</option>
-                                        <option value="Georgia">Georgia</option>
-                                        <option value="Verdana">Verdana</option>
-                                    </select>
+                                                                         <select id="font_family" name="font_family" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
+                                         <option value="Arial">Arial</option>
+                                         <option value="Times New Roman">Times New Roman</option>
+                                         <option value="Calibri" selected>Calibri</option>
+                                         <option value="Georgia">Georgia</option>
+                                         <option value="Verdana">Verdana</option>
+                                     </select>
                                 </div>
                                 
                                 <div>
                                     <label for="font_size" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Font Size</label>
-                                    <select id="font_size" name="font_size" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
-                                        <option value="10">10pt</option>
-                                        <option value="11">11pt</option>
-                                        <option value="12" selected>12pt</option>
-                                        <option value="14">14pt</option>
-                                        <option value="16">16pt</option>
-                                    </select>
+                                                                         <select id="font_size" name="font_size" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
+                                         <option value="10" selected>10pt</option>
+                                         <option value="11">11pt</option>
+                                         <option value="12">12pt</option>
+                                         <option value="14">14pt</option>
+                                         <option value="16">16pt</option>
+                                     </select>
                                 </div>
                                 
                                 <div>
                                     <label for="line_spacing" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Line Spacing</label>
-                                    <select id="line_spacing" name="line_spacing" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
-                                        <option value="1.0">Single (1.0)</option>
-                                        <option value="1.15">1.15</option>
-                                        <option value="1.5" selected>1.5</option>
-                                        <option value="2.0">Double (2.0)</option>
-                                    </select>
+                                                                         <select id="line_spacing" name="line_spacing" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
+                                         <option value="1.0" selected>Single (1.0)</option>
+                                         <option value="1.15">1.15</option>
+                                         <option value="1.5">1.5</option>
+                                         <option value="2.0">Double (2.0)</option>
+                                     </select>
                                 </div>
                                 
                                 <div>
                                     <label for="mcq_columns" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">MCQ Columns</label>
-                                    <select id="mcq_columns" name="mcq_columns" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
-                                        <option value="1">1 Column</option>
-                                        <option value="2" selected>2 Columns</option>
-                                        <option value="3">3 Columns</option>
-                                        <option value="4">4 Columns</option>
-                                    </select>
+                                                                         <select id="mcq_columns" name="mcq_columns" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
+                                         <option value="1">1</option>
+                                         <option value="2">2</option>
+                                         <option value="3">3</option>
+                                         <option value="4" selected>4</option>
+                                     </select>
+                                </div>
+                                
+                                <div>
+                                    <label for="header_span" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Header Span</label>
+                                                                         <select id="header_span" name="header_span" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
+                                         <option value="1" selected>1</option>
+                                         <option value="2">2</option>
+                                         <option value="3">3</option>
+                                         <option value="4">4</option>
+                                         <option value="full">Full Width</option>
+                                     </select>
                                 </div>
                             </div>
                             
-                            <!-- Content Options -->
-                            <div class="space-y-3">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Content Options</label>
-                                <div class="space-y-2">
-                                    <div class="flex items-center">
-                                        <input type="checkbox" id="include_header" name="include_header" value="1" checked class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                        <label for="include_header" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Include exam header information</label>
-                                    </div>
-                                    
-                                    <div class="flex items-center">
-                                        <input type="checkbox" id="include_full_marks" name="include_full_marks" value="1" checked class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                        <label for="include_full_marks" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Include full marks on left side</label>
-                                    </div>
-                                    
-                                    <div class="flex items-center">
-                                        <input type="checkbox" id="include_duration" name="include_duration" value="1" checked class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                        <label for="include_duration" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Include duration information</label>
-                                    </div>
-                                </div>
-                            </div>
+                                                                                      <!-- Content Options -->
+                              <div class="space-y-3">
+                                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Content Options</label>
+                                  <div class="grid grid-cols-2 gap-4">
+                                      <div class="space-y-2">
+                                                                                     <div class="flex items-center">
+                                               <input type="checkbox" id="include_header" name="include_header" value="1" checked class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                               <label for="include_header" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Header</label>
+                                               <span class="ml-2 text-xs text-gray-500">(Title, Model Test, Full Marks & Time)</span>
+                                           </div>
+                                       </div>
+                                       
+                                                                               <div class="space-y-2">
+                                                                                         <div class="flex items-center">
+                                                 <input type="checkbox" id="mark_answer" name="mark_answer" value="1" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                                 <label for="mark_answer" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Mark Answer</label>
+                                                 <span class="ml-2 text-xs text-gray-500">(Check to show correct answers)</span>
+                                             </div>
+                                        </div>
+                                  </div>
+                              </div>
                         </div>
                     </div>
                 </div>
@@ -350,27 +416,40 @@ document.addEventListener('DOMContentLoaded', function() {
     function updatePreview() {
         console.log('updatePreview called');
         
-        const formData = new FormData(form);
-        const params = Object.fromEntries(formData.entries());
-        console.log('Form params:', params);
+                 const formData = new FormData(form);
+         const params = Object.fromEntries(formData.entries());
+         console.log('Form params:', params);
+         console.log('Mark Answer checkbox value:', params.mark_answer);
+         console.log('Mark Answer checkbox type:', typeof params.mark_answer);
+         console.log('MCQ columns:', params.mcq_columns);
+         console.log('Paper columns:', params.paper_columns);
+         console.log('Font size:', params.font_size);
+         console.log('Current preview container classes:', previewContainer.className);
         
-        // Get exam data from the page
-        const examDataElement = document.getElementById('examData');
-        const examData = {
-            title: examDataElement.dataset.title,
-            id: parseInt(examDataElement.dataset.id),
-            duration: parseInt(examDataElement.dataset.duration),
-            total_questions: parseInt(examDataElement.dataset.totalQuestions),
-            passing_marks: parseInt(examDataElement.dataset.passingMarks),
-            question_header: examDataElement.dataset.questionHeader,
-            questions: JSON.parse(examDataElement.dataset.questions)
-        };
-        console.log('Exam data:', examData);
+                 // Get exam data from the page
+         const examDataElement = document.getElementById('examData');
+         const examData = {
+             title: examDataElement.dataset.title,
+             id: parseInt(examDataElement.dataset.id),
+             duration: parseInt(examDataElement.dataset.duration),
+             total_questions: parseInt(examDataElement.dataset.totalQuestions),
+             passing_marks: parseInt(examDataElement.dataset.passingMarks),
+             question_header: examDataElement.dataset.questionHeader,
+             questions: JSON.parse(examDataElement.dataset.questions)
+         };
+         console.log('Exam data:', examData);
+         console.log('Questions with correct answers:', examData.questions.map(q => ({
+             question_text: q.question_text.substring(0, 50) + '...',
+             correct_answer: q.correct_answer,
+             has_correct_answer: !!q.correct_answer
+         })));
         
                  // Generate preview HTML
          const previewHTML = generatePreviewHTML(examData, params);
          console.log('Preview HTML generated, length:', previewHTML.length);
          previewContainer.innerHTML = previewHTML;
+         
+          
         
                  // Apply current styling
          previewContainer.style.fontFamily = params.font_family || 'Arial';
@@ -453,209 +532,168 @@ document.addEventListener('DOMContentLoaded', function() {
              previewContainer.style.setProperty('--mcq-columns', columns);
          }
          
-         // Add visual indicator for Paper columns
-         if (params.paper_columns) {
-             const paperColumns = parseInt(params.paper_columns);
-             previewContainer.setAttribute('data-paper-columns', paperColumns);
+         // Add visual indicator for Header Span
+         if (params.header_span) {
+             const headerSpan = params.header_span;
+             previewContainer.setAttribute('data-header-span', headerSpan);
              
-             // Add CSS custom property for paper columns
-             previewContainer.style.setProperty('--paper-columns', paperColumns);
-             
-             // Apply paper column layout to the preview container
-             if (paperColumns > 1) {
-                 previewContainer.style.columnCount = paperColumns;
-                 previewContainer.style.columnGap = '20px';
-                 previewContainer.style.columnRule = '1px solid #ddd';
-                 
-                 // Force column layout with additional CSS properties
-                 previewContainer.style.columnFill = 'balance';
-                 previewContainer.style.breakInside = 'avoid';
-                 
-                 // Add CSS class for better column control
-                 previewContainer.classList.add(`paper-columns-${paperColumns}`);
-                 previewContainer.classList.remove('paper-columns-1');
-             } else {
-                 previewContainer.style.columnCount = 'auto';
-                 previewContainer.style.columnGap = 'normal';
-                 previewContainer.style.columnRule = 'none';
-                 previewContainer.style.columnFill = 'auto';
-                 previewContainer.style.breakInside = 'auto';
-                 
-                 // Remove all column classes
-                 previewContainer.classList.remove('paper-columns-2', 'paper-columns-3');
-                 previewContainer.classList.add('paper-columns-1');
-             }
+             console.log(`Applied header span: ${headerSpan}`);
+             console.log(`Header span value: ${headerSpan}, type: ${typeof headerSpan}`);
          }
+         
+                   // Add visual indicator for Paper columns
+          if (params.paper_columns) {
+              const paperColumns = parseInt(params.paper_columns);
+              previewContainer.setAttribute('data-paper-columns', paperColumns);
+              
+              // Remove all existing paper column classes first
+              previewContainer.classList.remove('paper-columns-1', 'paper-columns-2', 'paper-columns-3');
+              
+              // Add the appropriate paper column class
+              previewContainer.classList.add(`paper-columns-${paperColumns}`);
+              
+              console.log(`Applied paper-columns-${paperColumns} class`);
+          }
     }
     
-        // Function to generate preview HTML with pagination
+        // Function to generate preview HTML (simplified without pagination)
     function generatePreviewHTML(exam, params) {
         console.log('generatePreviewHTML called with:', { exam, params });
         
         let html = '';
         
-        // Get paper dimensions for pagination
-        let paperHeight;
-        const paperSizes = {
-            'A4': { width: 210, height: 297 },
-            'Letter': { width: 216, height: 279 },
-            'Legal': { width: 216, height: 356 },
-            'A3': { width: 297, height: 420 }
-        };
-        
-        if (paperSizes[params.paper_size]) {
-            const size = paperSizes[params.paper_size];
-            // Swap dimensions for landscape orientation
-            if (params.orientation === 'landscape') {
-                paperHeight = size.width;
-            } else {
-                paperHeight = size.height;
-            }
-        } else {
-            paperHeight = 297; // Default A4 height
-        }
-        
-        // Convert mm to pixels (assuming 96 DPI, 1 inch = 25.4mm)
-        const pixelsPerMm = 96 / 25.4;
-        const maxPageHeight = (paperHeight - 40) * pixelsPerMm; // Subtract margins
-        
-        let currentPageContent = '';
-        let currentPageHeight = 0;
-        let pageNumber = 1;
-        
-        // Function to add a new page
-        function addPage(content) {
-            const pageWidth = paperSizes[params.paper_size] ? 
-                (params.orientation === 'landscape' ? paperSizes[params.paper_size].height + 'mm' : paperSizes[params.paper_size].width + 'mm') : 
-                '210mm';
-            
-            html += `
-                <div class="page-container" style="width: ${pageWidth}; height: ${paperHeight}mm;">
-                    <div class="page-content">
-                        ${content}
-                    </div>
-                </div>`;
-        }
-        
-        // Function to check if content fits on current page
-        function checkPageFit(contentHeight) {
-            return (currentPageHeight + contentHeight) <= maxPageHeight;
-        }
-        
         // Header
         if (params.include_header) {
+            const headerSpan = params.header_span || '1';
+            console.log(`Generating header with span: ${headerSpan}`);
+            
+
+            
             const headerContent = `
-                <div style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 30px;">
+                <div class="header-container" style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 30px;">
                     <div style="font-size: ${(parseInt(params.font_size) || 12) + 8}pt; font-weight: bold; margin-bottom: 5px;">${exam.title}</div>
                     <div style="font-size: ${(parseInt(params.font_size) || 12) + 4}pt; font-weight: bold; margin-bottom: 5px;">${exam.question_header || 'Model Test'}</div>`;
             
             let headerFooterContent = headerContent;
             
-            // Full Marks and Duration below Model Test -1
-            if (params.include_full_marks || params.include_duration) {
-                headerFooterContent += '<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; font-size: ' + (parseInt(params.font_size) || 12) + 'pt; font-weight: bold; color: #333;">';
-                
-                if (params.include_full_marks) {
-                    const totalMarks = exam.questions.reduce((sum, q) => sum + (q.marks || 1), 0);
-                    headerFooterContent += `<div>Full Marks: ${totalMarks}</div>`;
-                } else {
-                    headerFooterContent += '<div></div>'; // Empty div for spacing
-                }
-                
-                if (params.include_duration) {
-                    headerFooterContent += `<div>Time: ${exam.duration} minutes</div>`;
-                } else {
-                    headerFooterContent += '<div></div>'; // Empty div for spacing
-                }
-                
-                headerFooterContent += '</div>';
-            }
+            // Always include Full Marks and Duration when header is enabled
+            headerFooterContent += '<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; font-size: ' + (parseInt(params.font_size) || 12) + 'pt; font-weight: bold; color: #333;">';
+            
+            const totalMarks = exam.questions.reduce((sum, q) => sum + (q.marks || 1), 0);
+            headerFooterContent += `<div>Full Marks: ${totalMarks}</div>`;
+            
+            headerFooterContent += `<div>Time: ${exam.duration} minutes</div>`;
             
             headerFooterContent += '</div>';
             
-            // Estimate header height (approximately 120px for header)
-            const headerHeight = 120;
+            headerFooterContent += '</div>';
             
-            if (!checkPageFit(headerHeight)) {
-                // Start new page with header
-                addPage(headerFooterContent);
-                currentPageHeight = headerHeight;
-                currentPageContent = '';
-            } else {
-                currentPageContent += headerFooterContent;
-                currentPageHeight += headerHeight;
-            }
+            html += headerFooterContent;
         }
         
-        // Questions
-        exam.questions.forEach((question, index) => {
-            const questionNumber = index + 1;
+                 // Questions - implement column distribution logic
+         const paperColumns = parseInt(params.paper_columns) || 1;
+         
+         if (paperColumns > 1) {
+             // Multi-column layout - distribute questions across columns
+             const totalQuestions = exam.questions.length;
+             const questionsPerColumn = Math.ceil(totalQuestions / paperColumns);
+             
+             // Create a container for all questions that will be distributed by CSS Grid
+             html += '<div class="questions-container">';
+             
+             // Add questions sequentially - CSS Grid will handle the distribution
+             exam.questions.forEach((question, index) => {
+                 const questionNumber = index + 1;
+                 html += generateQuestionHTML(question, questionNumber, params);
+             });
+             
+             html += '</div>';
+         } else {
+             // Single column - render questions sequentially
+             exam.questions.forEach((question, index) => {
+                 const questionNumber = index + 1;
+                 html += generateQuestionHTML(question, questionNumber, params);
+             });
+         }
+        
+        console.log('Generated HTML');
+        return html;
+    }
+    
+    // Function to generate HTML for a single question
+    function generateQuestionHTML(question, questionNumber, params) {
+        let questionContent = `<div style="margin-bottom: 25px;">`;
+        
+        if (question.question_header) {
+            questionContent += `<div style="margin: 10px 0; font-style: italic; color: #666;">${question.question_header}</div>`;
+        }
+        
+        // Clean question text to remove any "(Question #X)" patterns
+        const cleanQuestionText = question.question_text.replace(/\(Question\s*#\d+\)/gi, '').trim();
+        questionContent += `<div style="margin: 10px 0; font-weight: bold; color: #333;">${questionNumber}. ${cleanQuestionText}</div>`;
+        
+        if (question.question_type === 'mcq') {
+            const columns = parseInt(params.mcq_columns) || 4;
+            const options = [
+                { label: 'A', text: question.option_a },
+                { label: 'B', text: question.option_b },
+                { label: 'C', text: question.option_c },
+                { label: 'D', text: question.option_d }
+            ].filter(opt => opt.text); // Only include options that have text
             
-            // Generate question content
-            let questionContent = `<div style="margin-bottom: 25px;">`;
+            questionContent += '<div style="margin-left: 20px;">';
+            questionContent += `<div style="display: grid; grid-template-columns: repeat(${columns}, 1fr); gap: 20px; margin: 10px 0; row-gap: 8px;">`;
             
-            if (question.question_header) {
-                questionContent += `<div style="margin: 10px 0; font-style: italic; color: #666;">${question.question_header}</div>`;
-            }
-            
-            // Clean question text to remove any "(Question #X)" patterns
-            const cleanQuestionText = question.question_text.replace(/\(Question\s*#\d+\)/gi, '').trim();
-            questionContent += `<div style="margin: 10px 0; font-weight: bold; color: #333;">${questionNumber}. ${cleanQuestionText}</div>`;
-            
-            if (question.question_type === 'mcq') {
-                const columns = parseInt(params.mcq_columns) || 2;
-                const options = [
-                    { label: 'A', text: question.option_a },
-                    { label: 'B', text: question.option_b },
-                    { label: 'C', text: question.option_c },
-                    { label: 'D', text: question.option_d }
-                ].filter(opt => opt.text); // Only include options that have text
+            // Generate options based on column count
+            options.forEach((option, optionIndex) => {
+                // Check if this is the correct answer from database
+                // Handle both string and numeric correct answers
+                let isCorrectAnswer = false;
                 
-                questionContent += '<div style="margin-left: 20px;">';
-                questionContent += `<div style="display: grid; grid-template-columns: repeat(${columns}, 1fr); gap: 20px; margin: 10px 0; row-gap: 8px;">`;
-                
-                // Generate options based on column count
-                options.forEach((option, optionIndex) => {
-                    questionContent += `<div style="margin: 2px 0; display: flex; align-items: center;">
-                        <div style="width: 20px; height: 20px; border: 2px solid #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 8px; font-size: 10pt; font-weight: bold; line-height: 1; text-align: center; position: relative;">
-                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); margin: 0; padding: 0;">${option.label}</span>
-                        </div>
-                        <span>${option.text}</span>
-                    </div>`;
-                });
-                
-                questionContent += '</div>';
-                questionContent += '</div>';
-            }
-            
-            questionContent += '</div>';
-            
-            // Estimate question height (approximately 80px per question + options)
-            const questionHeight = 80 + (question.question_type === 'mcq' ? (question.option_a ? 80 : 0) : 0);
-            
-            if (!checkPageFit(questionHeight)) {
-                // Add current page content to HTML
-                if (currentPageContent) {
-                    addPage(currentPageContent);
+                if (question.correct_answer) {
+                    // Try to match the correct answer with the option label
+                    if (typeof question.correct_answer === 'string') {
+                        isCorrectAnswer = option.label === question.correct_answer.toUpperCase();
+                    } else if (typeof question.correct_answer === 'number') {
+                        // If correct_answer is numeric (1,2,3,4), convert to letter
+                        const answerMap = {1: 'A', 2: 'B', 3: 'C', 4: 'D'};
+                        isCorrectAnswer = option.label === answerMap[question.correct_answer];
+                    }
                 }
                 
-                // Start new page
-                currentPageContent = questionContent;
-                currentPageHeight = questionHeight;
-                pageNumber++;
-            } else {
-                currentPageContent += questionContent;
-                currentPageHeight += questionHeight;
-            }
-        });
-        
-        // Always add remaining content to final page
-        if (currentPageContent) {
-            addPage(currentPageContent);
+                // Debug logging
+                console.log(`Question ${questionNumber}, Option ${option.label}:`, {
+                    correct_answer: question.correct_answer,
+                    correct_answer_type: typeof question.correct_answer,
+                    option_label: option.label,
+                    isCorrect: isCorrectAnswer,
+                    mark_answer: params.mark_answer
+                });
+                
+                // Determine circle styling based on mark answer setting
+                let circleStyle = 'width: 20px; height: 20px; border: 2px solid #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 8px; font-size: 10pt; font-weight: bold; line-height: 1; text-align: center; position: relative;';
+                
+                if (params.mark_answer && isCorrectAnswer) {
+                    // Fill the circle for correct answer when mark answer is checked
+                    circleStyle = 'width: 20px; height: 20px; border: 2px solid #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 8px; font-size: 10pt; font-weight: bold; line-height: 1; text-align: center; position: relative; background-color: #333; color: white;';
+                    console.log(`Filling circle for correct answer: ${option.label}`);
+                }
+                
+                questionContent += `<div style="margin: 2px 0; display: flex; align-items: center;">
+                    <div style="${circleStyle}">
+                        <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); margin: 0; padding: 0;">${option.label}</span>
+                    </div>
+                    <span>${option.text}</span>
+                </div>`;
+            });
+            
+            questionContent += '</div>';
+            questionContent += '</div>';
         }
         
-        console.log('Generated HTML with pagination, pages:', pageNumber);
-        return html;
+        questionContent += '</div>';
+        return questionContent;
     }
     
          // Add event listeners to all form inputs
@@ -664,6 +702,8 @@ document.addEventListener('DOMContentLoaded', function() {
          input.addEventListener('change', updatePreview);
          input.addEventListener('input', updatePreview);
      });
+     
+
      
              // Initial preview
         console.log('DOM loaded, calling updatePreview');

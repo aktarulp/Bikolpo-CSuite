@@ -476,13 +476,18 @@ class ExamController extends Controller
         $request->validate([
             'paper_size' => 'required|in:A4,Letter,Legal,A3',
             'orientation' => 'required|in:portrait,landscape',
+            'paper_columns' => 'required|in:1,2,3',
+            'header_span' => 'required|in:1,2,3,4,full',
             'font_family' => 'required|string',
             'font_size' => 'required|integer|min:8|max:20',
             'line_spacing' => 'required|numeric|min:0.5|max:3.0',
+            'mcq_columns' => 'required|in:1,2,3,4',
             'margin_top' => 'required|integer|min:10|max:50',
             'margin_bottom' => 'required|integer|min:10|max:50',
             'margin_left' => 'required|integer|min:10|max:50',
             'margin_right' => 'required|integer|min:10|max:50',
+            'include_header' => 'boolean',
+            'mark_answer' => 'boolean',
         ]);
         
         // Get exam questions with their details - order by the pivot table's order column
@@ -748,6 +753,26 @@ class ExamController extends Controller
     
     private function generateQuestionPaperHTMLWithParameters($exam, $questions, $parameters)
     {
+        // Get column configuration
+        $paperColumns = (int)($parameters['paper_columns'] ?? 1);
+        $headerSpan = $parameters['header_span'] ?? '1';
+        $mcqColumns = (int)($parameters['mcq_columns'] ?? 4);
+        
+        // Calculate header grid column span based on paper columns
+        if ($headerSpan === 'full') {
+            $headerGridSpan = '1 / -1'; // Span full width
+        } else {
+            $spanValue = (int)$headerSpan;
+            
+            if ($spanValue >= $paperColumns) {
+                // If header span is >= paper columns, span across all columns
+                $headerGridSpan = "1 / " . ($paperColumns + 1);
+            } else {
+                // If header span is < paper columns, span across specified columns
+                $headerGridSpan = "1 / " . ($spanValue + 1);
+            }
+        }
+        
         $html = '<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -765,11 +790,39 @@ class ExamController extends Controller
             line-height: ' . $parameters['line_spacing'] . '; 
             font-size: ' . $parameters['font_size'] . 'pt;
         }
-        .header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 30px; }
+        
+        /* Paper Column Layout */
+        .paper-container {
+            display: grid;
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        .paper-container.columns-1 {
+            grid-template-columns: 1fr;
+        }
+        
+        .paper-container.columns-2 {
+            grid-template-columns: 1fr 1fr;
+        }
+        
+        .paper-container.columns-3 {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+        
+        /* Header Span */
+        .header-container {
+            grid-column: ' . $headerGridSpan . ';
+            text-align: center;
+            border-bottom: 2px solid #333;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
         .exam-title { font-size: ' . ($parameters['font_size'] + 8) . 'pt; font-weight: bold; margin-bottom: 10px; }
         .exam-info { font-size: ' . ($parameters['font_size'] - 2) . 'pt; color: #666; }
         .instructions { background: #f5f5f5; padding: 20px; border-radius: 5px; margin-bottom: 30px; }
-        .question { margin-bottom: 25px; page-break-inside: avoid; }
+        .question { margin-bottom: 25px; page-break-inside: avoid; break-inside: avoid; }
         .question-number { font-weight: bold; color: #333; }
         .question-text { margin: 10px 0; }
         .question-header { margin: 10px 0; font-style: italic; color: #666; }
@@ -777,18 +830,35 @@ class ExamController extends Controller
         .option { margin: 5px 0; }
         .marks { font-weight: bold; color: #333; float: right; }
         .footer { margin-top: 40px; text-align: center; font-size: ' . ($parameters['font_size'] - 2) . 'pt; color: #666; border-top: 1px solid #ccc; padding-top: 20px; }
+        
+        /* MCQ Options Grid */
+        .mcq-options {
+            display: grid;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .mcq-options.columns-1 { grid-template-columns: 1fr; }
+        .mcq-options.columns-2 { grid-template-columns: 1fr 1fr; }
+        .mcq-options.columns-3 { grid-template-columns: 1fr 1fr 1fr; }
+        .mcq-options.columns-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+        
         @media print { 
             body { margin: 0; } 
-            .question { page-break-inside: avoid; } 
+            .question { page-break-inside: avoid; break-inside: avoid; } 
         }
     </style>
 </head>
 <body>
-    <div class="header">';
+            <div class="paper-container paper-columns-' . $paperColumns . '" data-header-span="' . $headerSpan . '">
+        <div class="header-container">';
         
         if ($parameters['include_header'] ?? true) {
             $html .= '
-        <div class="exam-title">' . htmlspecialchars($exam->title) . '</div>
+        <div class="exam-title">' . htmlspecialchars($exam->title) . '</div>';
+            
+            // Always include full marks and time when header is enabled
+            $html .= '
         <div class="exam-info">
             <strong>Exam ID:</strong> ' . $exam->id . ' | 
             <strong>Duration:</strong> ' . $exam->duration . ' minutes | 
@@ -817,32 +887,12 @@ class ExamController extends Controller
     </div>';
         }
         
+        // Add questions sequentially - CSS Grid will handle the distribution
         foreach ($questions as $index => $question) {
             $questionNumber = $index + 1;
             $marks = $question->pivot->marks ?? 1;
             
-            $html .= '
-    <div class="question">
-        <div class="question-number">
-            Question ' . $questionNumber . ' <span class="marks">[' . $marks . ' mark' . ($marks > 1 ? 's' : '') . ']</span>
-        </div>';
-            
-            if ($question->question_header && ($parameters['include_question_headers'] ?? true)) {
-                $html .= '<div class="question-header">' . htmlspecialchars($question->question_header) . '</div>';
-            }
-            
-            $html .= '<div class="question-text">' . htmlspecialchars($question->question_text) . '</div>';
-            
-            if ($question->question_type === 'mcq') {
-                $html .= '<div class="options">';
-                if ($question->option_a) $html .= '<div class="option">A) ' . htmlspecialchars($question->option_a) . '</div>';
-                if ($question->option_b) $html .= '<div class="option">B) ' . htmlspecialchars($question->option_b) . '</div>';
-                if ($question->option_c) $html .= '<div class="option">C) ' . htmlspecialchars($question->option_c) . '</div>';
-                if ($question->option_d) $html .= '<div class="option">D) ' . htmlspecialchars($question->option_d) . '</div>';
-                $html .= '</div>';
-            }
-            
-            $html .= '</div>';
+            $html .= $this->generateQuestionHTML($question, $questionNumber, $marks, $parameters, $mcqColumns);
         }
         
         if ($parameters['include_footer'] ?? true) {
@@ -854,8 +904,68 @@ class ExamController extends Controller
         }
         
         $html .= '
+    </div>
 </body>
 </html>';
+        
+        return $html;
+    }
+    
+    /**
+     * Generate HTML for a single question
+     */
+    private function generateQuestionHTML($question, $questionNumber, $marks, $parameters, $mcqColumns)
+    {
+        $html = '
+    <div class="question">
+        <div class="question-number">
+            Question ' . $questionNumber . ' <span class="marks">[' . $marks . ' mark' . ($marks > 1 ? 's' : '') . ']</span>
+        </div>';
+        
+        if ($question->question_header && ($parameters['include_question_headers'] ?? true)) {
+            $html .= '<div class="question-header">' . htmlspecialchars($question->question_header) . '</div>';
+        }
+        
+        $html .= '<div class="question-text">' . htmlspecialchars($question->question_text) . '</div>';
+        
+        if ($question->question_type === 'mcq') {
+            $html .= '<div class="mcq-options columns-' . $mcqColumns . '">';
+            
+            $options = [
+                'A' => $question->option_a,
+                'B' => $question->option_b,
+                'C' => $question->option_c,
+                'D' => $question->option_d
+            ];
+            
+            foreach ($options as $label => $text) {
+                if ($text) {
+                    $isCorrect = false;
+                    if ($parameters['mark_answer'] ?? false) {
+                        // Check if this is the correct answer
+                        if ($question->correct_answer) {
+                            if (is_numeric($question->correct_answer)) {
+                                // If correct_answer is numeric (1,2,3,4), convert to letter
+                                $answerMap = [1 => 'A', 2 => 'B', 3 => 'C', 4 => 'D'];
+                                $isCorrect = $label === $answerMap[$question->correct_answer];
+                            } else {
+                                // If correct_answer is string (A,B,C,D)
+                                $isCorrect = strtoupper($question->correct_answer) === $label;
+                            }
+                        }
+                    }
+                    
+                    $optionStyle = $isCorrect ? ' style="background-color: #e8f5e8; border-left: 4px solid #28a745; padding-left: 10px;"' : '';
+                    $correctIndicator = $isCorrect ? ' <strong style="color: #28a745;">✓</strong>' : '';
+                    
+                    $html .= '<div class="option"' . $optionStyle . '>' . $label . ') ' . htmlspecialchars($text) . $correctIndicator . '</div>';
+                }
+            }
+            
+            $html .= '</div>';
+        }
+        
+        $html .= '</div>';
         
         return $html;
     }
