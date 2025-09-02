@@ -20,27 +20,7 @@
      
    
     
-                   /* Paper Column Layout Styles */
-                    #livePreview.paper-columns-2 {
-            display: grid !important;
-            grid-template-columns: 1fr 1fr !important;
-            gap: 10px !important;
-            padding: 5px !important;
-            align-items: start !important;
-        }
-        
-        #livePreview.paper-columns-3 {
-            display: grid !important;
-            grid-template-columns: 1fr 1fr 1fr !important;
-            gap: 10px !important;
-            padding: 5px !important;
-            align-items: start !important;
-        }
-      
-      #livePreview.paper-columns-1 {
-          display: block !important;
-          padding: 5px !important;
-      }
+        /* Paper Column Layout Styles - removed old grid layout that was causing page splitting */
     
                                                                                /* Ensure content doesn't break awkwardly in columns */
         #livePreview > div {
@@ -48,39 +28,6 @@
             page-break-inside: avoid;
         }
         
-        /* Better column content handling */
-        #livePreview.paper-columns-2 .page-container,
-        #livePreview.paper-columns-3 .page-container {
-            break-inside: avoid;
-            page-break-inside: avoid;
-        }
-        
-                 /* Column content spacing and flow */
-         #livePreview.paper-columns-2 > div:not(.header-container),
-         #livePreview.paper-columns-3 > div:not(.header-container) {
-             padding: 3px;
-         }
-         
-         /* Ensure questions flow naturally across columns */
-         #livePreview.paper-columns-2 .question,
-         #livePreview.paper-columns-3 .question {
-             break-inside: avoid;
-             page-break-inside: avoid;
-             margin-bottom: 10px;
-         }
-         
-         /* Force questions to flow naturally in grid layout */
-         #livePreview.paper-columns-2,
-         #livePreview.paper-columns-3 {
-             grid-auto-flow: row dense;
-         }
-         
-         /* Ensure questions don't get stuck in wrong columns */
-         #livePreview.paper-columns-2 .question,
-         #livePreview.paper-columns-3 .question {
-             grid-column: auto;
-         }
-     
      
      
                   /* Header container styling */
@@ -92,39 +39,9 @@
            margin-bottom: 15px;
        }
       
-      /* Header span styles for different paper column configurations */
-      #livePreview.paper-columns-2[data-header-span="1"] .header-container {
-          grid-column: 1 / 2 !important;
-      }
-      
-      #livePreview.paper-columns-2[data-header-span="2"] .header-container {
-          grid-column: 1 / 3 !important;
-      }
-      
-      #livePreview.paper-columns-3[data-header-span="1"] .header-container {
-          grid-column: 1 / 2 !important;
-      }
-      
-      #livePreview.paper-columns-3[data-header-span="2"] .header-container {
-          grid-column: 1 / 3 !important;
-      }
-      
-      #livePreview.paper-columns-3[data-header-span="3"] .header-container {
-          grid-column: 1 / 4 !important;
-      }
-      
-      #livePreview.paper-columns-3[data-header-span="4"] .header-container {
-          grid-column: 1 / 5 !important;
-      }
-      
-      #livePreview.paper-columns-3[data-header-span="full"] .header-container {
-          grid-column: 1 / -1 !important;
-      }
+        /* Header span styles - now handled within page containers */
      
-           /* Questions container styling for multi-column layout */
-      #livePreview .questions-container {
-          display: contents;
-      }
+        /* Questions container styling - now handled by questions-grid */
       
         /* Page container styling */
         #livePreview .page-container {
@@ -134,7 +51,7 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            page-break-inside: avoid;
+             page-break-inside: avoid;
             break-inside: avoid;
             min-height: 400px; /* More reasonable height for preview */
             width: 100%;
@@ -156,24 +73,36 @@
             font-weight: bold;
         }
         
-        /* Multi-column layout within pages */
-        #livePreview .page-container[data-columns="2"] {
+        /* Multi-column layout within pages - now handled by questions-grid */
+        #livePreview .questions-grid {
             display: grid !important;
-            grid-template-columns: 1fr 1fr !important;
-            gap: 30px !important;
+            gap: 20px !important;
+            position: relative;
         }
         
-        #livePreview .page-container[data-columns="3"] {
-            display: grid !important;
+        #livePreview .questions-grid[style*="grid-template-columns: repeat(2, 1fr)"] {
+            grid-template-columns: 1fr 1fr !important;
+        }
+        
+        #livePreview .questions-grid[style*="grid-template-columns: repeat(3, 1fr)"] {
             grid-template-columns: 1fr 1fr 1fr !important;
-            gap: 20px !important;
         }
         
         /* Question column styling */
         #livePreview .question-column {
-            border-left: 2px solid #e5e7eb;
-            padding-left: 15px;
             min-width: 0;
+            padding: 0 10px;
+        }
+        
+        /* Column separator styling */
+        #livePreview .column-separator {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: #333;
+            opacity: 0.3;
+            z-index: 1;
         }
         
         /* Question styling */
@@ -588,7 +517,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log(`Successfully navigated to page ${pageNum}`);
     };
     
-    // Function to update live preview
+             // Function to update live preview
     function updatePreview() {
         console.log('updatePreview called');
         
@@ -694,28 +623,13 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Added click listener to next button');
         }
         
-        // Add a test button for debugging
-        const testBtn = document.createElement('button');
-        testBtn.textContent = 'Test Pagination';
-        testBtn.style.cssText = 'padding: 8px 16px; margin-left: 10px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer;';
-        testBtn.addEventListener('click', () => {
-            console.log('Test button clicked');
-            console.log('Current page:', currentPage);
-            console.log('Total pages:', totalPages);
-            console.log('All page containers:', document.querySelectorAll('.page-container'));
-            console.log('Pagination buttons:', document.querySelectorAll('.pagination button'));
-        });
-        
-        const pagination = document.querySelector('.pagination');
-        if (pagination) {
-            pagination.appendChild(testBtn);
-            console.log('Added test button to pagination');
-        }
+                 // Pagination setup complete
+         console.log('Pagination setup completed successfully');
          } else {
              console.log('Only one page found, no pagination needed');
          }
-         
-         // Apply current styling
+        
+                 // Apply current styling
          previewContainer.style.fontFamily = params.font_family || 'Arial';
          previewContainer.style.fontSize = (params.font_size || 12) + 'pt';
          previewContainer.style.lineHeight = params.line_spacing || 1.5;
@@ -805,18 +719,12 @@ document.addEventListener('DOMContentLoaded', function() {
              console.log(`Header span value: ${headerSpan}, type: ${typeof headerSpan}`);
          }
          
-                   // Add visual indicator for Paper columns
+                   // Add visual indicator for Paper columns (now handled within page containers)
           if (params.paper_columns) {
               const paperColumns = parseInt(params.paper_columns);
               previewContainer.setAttribute('data-paper-columns', paperColumns);
               
-              // Remove all existing paper column classes first
-              previewContainer.classList.remove('paper-columns-1', 'paper-columns-2', 'paper-columns-3');
-              
-              // Add the appropriate paper column class
-              previewContainer.classList.add(`paper-columns-${paperColumns}`);
-              
-              console.log(`Applied paper-columns-${paperColumns} class`);
+              console.log(`Paper columns set to: ${paperColumns} (handled within page containers)`);
           }
     }
     
@@ -867,47 +775,51 @@ document.addEventListener('DOMContentLoaded', function() {
                 html += headerContent;
             }
             
-            // Questions for this page
-            if (paperColumns > 1) {
-                // Multi-column layout within the page
-                html += `<div class="questions-container">`;
-                
-                // Create columns
-                for (let columnIndex = 0; columnIndex < paperColumns; columnIndex++) {
-                    html += `<div class="question-column">`;
-                    html += `<div style="font-size: 12px; color: #666; margin-bottom: 10px; font-weight: bold;">Column ${columnIndex + 1}</div>`;
-                    
-                    // Distribute questions across columns for this page
-                    let questionsInThisColumn = 0;
-                    for (let i = columnIndex; i < pageQuestions.length; i += paperColumns) {
-                        const question = pageQuestions[i];
-                        const questionNumber = startIndex + i + 1;
-                        html += generateQuestionHTML(question, questionNumber, params);
-                        questionsInThisColumn++;
-                    }
-                    
-                    console.log(`Page ${pageNum}, Column ${columnIndex + 1}: ${questionsInThisColumn} questions`);
-                    html += '</div>';
-                }
-                
-                html += '</div>';
-            } else {
-                // Single column layout
-                pageQuestions.forEach((question, index) => {
-                    const questionNumber = startIndex + index + 1;
-                    html += generateQuestionHTML(question, questionNumber, params);
-                });
-            }
-            
+                         // Questions for this page
+             if (paperColumns > 1) {
+                 // Multi-column layout within the page - create a grid container
+                 html += `<div class="questions-grid" style="display: grid; grid-template-columns: repeat(${paperColumns}, 1fr); gap: 20px; position: relative;">`;
+                 
+                 // Add vertical separator lines between columns
+                 for (let i = 1; i < paperColumns; i++) {
+                     html += `<div class="column-separator" style="position: absolute; top: 0; bottom: 0; left: ${(i * 100) / paperColumns}%; width: 1px; background: #333; opacity: 0.3;"></div>`;
+                 }
+                 
+                 // Create columns
+                 for (let columnIndex = 0; columnIndex < paperColumns; columnIndex++) {
+                     html += `<div class="question-column" style="padding: 0 10px;">`;
+                     
+                     // Distribute questions across columns for this page
+                     let questionsInThisColumn = 0;
+                     for (let i = columnIndex; i < pageQuestions.length; i += paperColumns) {
+                         const question = pageQuestions[i];
+                         const questionNumber = startIndex + i + 1;
+                         html += generateQuestionHTML(question, questionNumber, params);
+                         questionsInThisColumn++;
+                     }
+                     
+                     console.log(`Page ${pageNum}, Column ${columnIndex + 1}: ${questionsInThisColumn} questions`);
+                     html += '</div>';
+                 }
+                 
+                 html += '</div>';
+             } else {
+                 // Single column layout
+                 pageQuestions.forEach((question, index) => {
+                     const questionNumber = startIndex + index + 1;
+                 html += generateQuestionHTML(question, questionNumber, params);
+             });
+             }
+             
             // Close page container
-            html += '</div>';
+             html += '</div>';
         }
         
         // Add pagination controls
         if (totalPages > 1) {
             html += generatePaginationHTML(totalPages);
             console.log(`Added pagination for ${totalPages} pages`);
-        } else {
+         } else {
             console.log('No pagination needed - only one page');
         }
         
