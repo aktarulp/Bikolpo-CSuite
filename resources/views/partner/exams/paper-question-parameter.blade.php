@@ -181,6 +181,22 @@
         #livePreview .question-column {
             min-width: 0;
             padding: 0 10px;
+            border: 1px dashed #ccc;
+            background: rgba(0, 0, 0, 0.02);
+            min-height: 200px;
+        }
+        
+        /* Debug: Make columns more visible */
+        #livePreview .question-column::before {
+            content: "Column " attr(data-column);
+            display: block;
+            background: #f0f0f0;
+            padding: 5px;
+            margin: -10px -10px 10px -10px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #666;
+            border-bottom: 1px solid #ddd;
         }
         
         /* Column separator styling */
@@ -780,22 +796,36 @@ document.addEventListener('DOMContentLoaded', function() {
         let html = '';
         
                 // Calculate questions per page based on A4 dimensions
-        const questionsPerPage = calculateQuestionsPerPage(params);
+        const baseQuestionsPerPage = calculateQuestionsPerPage(params);
         const totalQuestions = exam.questions.length;
         
         // Calculate total pages needed - fill each page completely before moving to next
-        const totalPages = Math.ceil(totalQuestions / questionsPerPage);
+        let totalPages = 0;
+        let currentIndex = 0;
         
-        console.log(`Calculated: ${questionsPerPage} questions per page, ${totalQuestions} total questions, ${totalPages} total pages`);
+        // Calculate pages dynamically to ensure proper filling
+        while (currentIndex < totalQuestions) {
+            const questionsForThisPage = calculateActualQuestionsPerPage(exam, params, currentIndex);
+            console.log(`Page ${totalPages + 1}: Will contain ${questionsForThisPage} questions starting from index ${currentIndex}`);
+            currentIndex += questionsForThisPage;
+            totalPages++;
+        }
+        
+        console.log(`Calculated: ${baseQuestionsPerPage} base questions per page, ${totalQuestions} total questions, ${totalPages} total pages`);
         console.log(`Page filling strategy: Fill each page completely before moving to next page`);
         
         // Generate each page
+        currentIndex = 0;
         for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
-            const startIndex = (pageNum - 1) * questionsPerPage;
-            const endIndex = Math.min(startIndex + questionsPerPage, totalQuestions);
+            const questionsForThisPage = calculateActualQuestionsPerPage(exam, params, currentIndex);
+            const startIndex = currentIndex;
+            const endIndex = Math.min(startIndex + questionsForThisPage, totalQuestions);
             const pageQuestions = exam.questions.slice(startIndex, endIndex);
             
+            currentIndex = endIndex;
+            
             console.log(`Page ${pageNum}: Questions ${startIndex + 1} to ${endIndex} (${pageQuestions.length} questions) - Filling page completely`);
+            console.log(`Page ${pageNum} questions array:`, pageQuestions.map((q, i) => `Q${startIndex + i + 1}: ${q.question_text.substring(0, 30)}...`));
             
             // Start page container with proper paper size classes
             const paperColumns = parseInt(params.paper_columns) || 1;
@@ -838,19 +868,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 
                 // Create columns and distribute questions evenly
+                console.log(`Page ${pageNum}: Starting multi-column distribution with ${paperColumns} columns`);
                 for (let columnIndex = 0; columnIndex < paperColumns; columnIndex++) {
-                    html += `<div class="question-column" style="padding: 0 10px;">`;
+                    html += `<div class="question-column" data-column="${columnIndex + 1}" style="padding: 0 10px;">`;
                     
                     // Distribute questions across columns for this page
                     let questionsInThisColumn = 0;
+                    const columnQuestions = [];
+                    
                     for (let i = columnIndex; i < pageQuestions.length; i += paperColumns) {
                         const question = pageQuestions[i];
+                        // Calculate the correct question number based on the page and position
                         const questionNumber = startIndex + i + 1;
                         html += generateQuestionHTML(question, questionNumber, params);
                         questionsInThisColumn++;
+                        columnQuestions.push(`Q${questionNumber}`);
                     }
                     
-                    console.log(`Page ${pageNum}, Column ${columnIndex + 1}: ${questionsInThisColumn} questions`);
+                    console.log(`Page ${pageNum}, Column ${columnIndex + 1}: ${questionsInThisColumn} questions - ${columnQuestions.join(', ')}`);
                     html += '</div>';
                 }
                 
@@ -913,15 +948,14 @@ document.addEventListener('DOMContentLoaded', function() {
         let questionsPerPage = Math.floor(availableHeight / avgQuestionHeightMm);
         
         // Adjust for multi-column layout - more questions can fit with columns
-        // But don't multiply by columns, instead calculate based on available space
         if (paperColumns > 1) {
             // With columns, we can fit more questions vertically
             // Each column gets the full height, so we can fit more questions
-            questionsPerPage = Math.floor(questionsPerPage * 1.5); // 50% more questions with columns
+            questionsPerPage = Math.floor(questionsPerPage * 2); // Double the questions with columns
         }
         
-        // Ensure minimum questions per page
-        questionsPerPage = Math.max(8, questionsPerPage);
+        // Ensure minimum questions per page - increase minimum for better filling
+        questionsPerPage = Math.max(12, questionsPerPage);
         
         console.log('A4 Page Calculation:', {
             pageHeight,
@@ -933,6 +967,21 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         return questionsPerPage;
+    }
+    
+    // Function to calculate actual questions that can fit on a page
+    function calculateActualQuestionsPerPage(exam, params, startIndex) {
+        const paperColumns = parseInt(params.paper_columns) || 1;
+        const baseQuestionsPerPage = calculateQuestionsPerPage(params);
+        
+        // For multi-column layouts, we need to ensure we fill both columns properly
+        if (paperColumns > 1) {
+            // Ensure we have enough questions to fill all columns
+            const questionsNeeded = Math.ceil(baseQuestionsPerPage / paperColumns) * paperColumns;
+            return Math.min(questionsNeeded, exam.questions.length - startIndex);
+        }
+        
+        return Math.min(baseQuestionsPerPage, exam.questions.length - startIndex);
     }
     
     // Function to generate pagination HTML
