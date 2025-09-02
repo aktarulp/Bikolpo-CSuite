@@ -216,7 +216,8 @@
             padding: 15px;
             background: #f8fafc;
             border-radius: 8px;
-            border: 1px solid #e2e8f0;
+            border: 2px solid #3b82f6;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         
         #livePreview .pagination button {
@@ -532,31 +533,59 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to navigate between pages
     window.goToPage = function(pageNum) {
+        console.log(`goToPage called with pageNum: ${pageNum}`);
+        
         const totalPages = document.querySelectorAll('.page-container').length;
+        console.log(`Total pages found: ${totalPages}`);
         
         if (pageNum < 1 || pageNum > totalPages) {
+            console.log(`Invalid page number: ${pageNum}. Must be between 1 and ${totalPages}`);
             return;
         }
         
         currentPage = pageNum;
+        console.log(`Current page set to: ${currentPage}`);
         
         // Hide all pages
         document.querySelectorAll('.page-container').forEach((page, index) => {
-            if (index + 1 === pageNum) {
+            const pageNumber = index + 1;
+            if (pageNumber === pageNum) {
                 page.style.display = 'block';
+                console.log(`Showing page ${pageNumber}`);
             } else {
                 page.style.display = 'none';
+                console.log(`Hiding page ${pageNumber}`);
             }
         });
         
         // Update pagination display
-        document.getElementById('currentPageDisplay').textContent = pageNum;
+        const currentPageDisplay = document.getElementById('currentPageDisplay');
+        if (currentPageDisplay) {
+            currentPageDisplay.textContent = pageNum;
+            console.log(`Updated page display to: ${pageNum}`);
+        } else {
+            console.log('Could not find currentPageDisplay element');
+        }
         
         // Update button states
-        document.getElementById('prevBtn').disabled = pageNum === 1;
-        document.getElementById('nextBtn').disabled = pageNum === totalPages;
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
         
-        console.log(`Navigated to page ${pageNum}`);
+        if (prevBtn) {
+            prevBtn.disabled = pageNum === 1;
+            console.log(`Previous button disabled: ${pageNum === 1}`);
+        } else {
+            console.log('Could not find prevBtn element');
+        }
+        
+        if (nextBtn) {
+            nextBtn.disabled = pageNum === totalPages;
+            console.log(`Next button disabled: ${pageNum === totalPages}`);
+        } else {
+            console.log('Could not find nextBtn element');
+        }
+        
+        console.log(`Successfully navigated to page ${pageNum}`);
     };
     
     // Function to update live preview
@@ -647,6 +676,41 @@ document.addEventListener('DOMContentLoaded', function() {
                  nextBtn.disabled = totalPages === 1;
                  console.log(`Next button disabled: ${totalPages === 1}`);
              }
+             
+                     // Add event listeners to pagination buttons
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                console.log('Previous button clicked, going to page:', currentPage - 1);
+                goToPage(currentPage - 1);
+            });
+            console.log('Added click listener to previous button');
+        }
+        
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                console.log('Next button clicked, going to page:', currentPage + 1);
+                goToPage(currentPage + 1);
+            });
+            console.log('Added click listener to next button');
+        }
+        
+        // Add a test button for debugging
+        const testBtn = document.createElement('button');
+        testBtn.textContent = 'Test Pagination';
+        testBtn.style.cssText = 'padding: 8px 16px; margin-left: 10px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer;';
+        testBtn.addEventListener('click', () => {
+            console.log('Test button clicked');
+            console.log('Current page:', currentPage);
+            console.log('Total pages:', totalPages);
+            console.log('All page containers:', document.querySelectorAll('.page-container'));
+            console.log('Pagination buttons:', document.querySelectorAll('.pagination button'));
+        });
+        
+        const pagination = document.querySelector('.pagination');
+        if (pagination) {
+            pagination.appendChild(testBtn);
+            console.log('Added test button to pagination');
+        }
          } else {
              console.log('Only one page found, no pagination needed');
          }
@@ -899,13 +963,13 @@ document.addEventListener('DOMContentLoaded', function() {
         let html = '<div class="pagination">';
         
         // Previous button
-        html += '<button onclick="goToPage(currentPage - 1)" id="prevBtn" disabled>← Previous</button>';
+        html += '<button id="prevBtn" disabled>← Previous</button>';
         
         // Page info
         html += `<div class="page-info">Page <span id="currentPageDisplay">1</span> of ${totalPages}</div>`;
         
         // Next button
-        html += '<button onclick="goToPage(currentPage + 1)" id="nextBtn">Next →</button>';
+        html += '<button id="nextBtn">Next →</button>';
         
         html += '</div>';
         
