@@ -105,7 +105,7 @@
                         </div>
 
                         <!-- Dynamic Filters -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             <!-- Question Type Filter -->
                             <div>
                                 <label for="type-filter" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Question Type</label>
@@ -137,17 +137,6 @@
                                     @endforeach
                                 </select>
                             </div>
-
-                            <!-- Difficulty Filter -->
-                            <div>
-                                <label for="difficulty-filter" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Difficulty</label>
-                                <select id="difficulty-filter" class="block w-full px-3 py-2 border border-gray-300 rounded-lg bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400">
-                                    <option value="">All Levels</option>
-                                    <option value="1">Easy</option>
-                                    <option value="2">Medium</option>
-                                    <option value="3">Hard</option>
-                                </select>
-                            </div>
                         </div>
 
                         <!-- Active Filters Display -->
@@ -168,8 +157,7 @@
                                 <div class="border border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                                      data-type="{{ $question->question_type }}"
                                      data-subject="{{ $question->subject->name ?? '' }}"
-                                     data-topic="{{ $question->topic->name ?? '' }}"
-                                     data-difficulty="{{ $question->difficulty_level ?? '' }}">
+                                     data-topic="{{ $question->topic->name ?? '' }}">
                                     <label class="flex items-start space-x-3 cursor-pointer">
                                         <input type="checkbox" name="question_ids[]" value="{{ $question->id }}" 
                                                class="question-checkbox mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
@@ -188,15 +176,6 @@
                                                 <span class="font-medium">Subject:</span> {{ $question->subject->name ?? 'N/A' }} |
                                                 <span class="font-medium">Topic:</span> {{ $question->topic->name ?? 'N/A' }} |
                                                 <span class="font-medium">Marks:</span> {{ $question->marks ?? 1 }}
-                                                @if($question->difficulty_level)
-                                                    | <span class="font-medium">Difficulty:</span> 
-                                                    <span class="
-                                                        {{ $question->difficulty_level == 1 ? 'text-green-600' : 
-                                                           ($question->difficulty_level == 2 ? 'text-yellow-600' : 'text-red-600') }}">
-                                                        {{ $question->difficulty_level == 1 ? 'Easy' : 
-                                                           ($question->difficulty_level == 2 ? 'Medium' : 'Hard') }}
-                                                    </span>
-                                                @endif
                                             </div>
                                         </div>
                                     </label>
@@ -273,7 +252,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const typeFilter = document.getElementById('type-filter');
     const subjectFilter = document.getElementById('subject-filter');
     const topicFilter = document.getElementById('topic-filter');
-    const difficultyFilter = document.getElementById('difficulty-filter');
     const clearFiltersBtn = document.getElementById('clear-filters');
     const activeFiltersDiv = document.getElementById('active-filters');
     const filterTagsDiv = document.getElementById('filter-tags');
@@ -287,8 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
             text: questionDiv.textContent.toLowerCase(),
             type: questionDiv.dataset.type || '',
             subject: questionDiv.dataset.subject || '',
-            topic: questionDiv.dataset.topic || '',
-            difficulty: questionDiv.dataset.difficulty || ''
+            topic: questionDiv.dataset.topic || ''
         };
     });
     
@@ -317,7 +294,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const selectedType = typeFilter.value;
         const selectedSubject = subjectFilter.value;
         const selectedTopic = topicFilter.value;
-        const selectedDifficulty = difficultyFilter.value;
         
         let visibleCount = 0;
         
@@ -344,11 +320,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 shouldShow = false;
             }
             
-            // Difficulty filter
-            if (selectedDifficulty && question.difficulty !== selectedDifficulty) {
-                shouldShow = false;
-            }
-            
             if (shouldShow) {
                 question.element.classList.remove('hidden');
                 visibleCount++;
@@ -371,7 +342,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (typeFilter.value) filters.push(`Type: ${typeFilter.options[typeFilter.selectedIndex].text}`);
         if (subjectFilter.value) filters.push(`Subject: ${subjectFilter.options[subjectFilter.selectedIndex].text}`);
         if (topicFilter.value) filters.push(`Topic: ${topicFilter.options[topicFilter.selectedIndex].text}`);
-        if (difficultyFilter.value) filters.push(`Difficulty: ${difficultyFilter.options[difficultyFilter.selectedIndex].text}`);
         
         if (filters.length > 0) {
             activeFiltersDiv.classList.remove('hidden');
@@ -397,7 +367,6 @@ document.addEventListener('DOMContentLoaded', function() {
         typeFilter.value = '';
         subjectFilter.value = '';
         topicFilter.value = '';
-        difficultyFilter.value = '';
         
         // Show all questions
         allQuestions.forEach(question => {
@@ -426,7 +395,6 @@ document.addEventListener('DOMContentLoaded', function() {
     typeFilter.addEventListener('change', applyFilters);
     subjectFilter.addEventListener('change', applyFilters);
     topicFilter.addEventListener('change', applyFilters);
-    difficultyFilter.addEventListener('change', applyFilters);
     
     clearFiltersBtn.addEventListener('click', clearAllFilters);
     

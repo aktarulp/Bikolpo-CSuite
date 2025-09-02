@@ -383,7 +383,39 @@ class PublicQuizController extends Controller
             'remaining_time_hours' => floor($remainingTime / 3600),
         ]);
 
-        return view('public.quiz.take', compact('exam', 'questions', 'result', 'remainingTime'));
+        // Get participants (students who are currently taking or have taken this exam)
+        $participants = ExamResult::where('exam_id', $exam->id)
+            ->whereIn('status', ['in_progress', 'completed'])
+            ->with('student')
+            ->get()
+            ->map(function($examResult) use ($accessInfo) {
+                return [
+                    'id' => $examResult->student->id,
+                    'name' => $examResult->student->full_name,
+                    'phone' => $this->maskPhoneNumber($examResult->student->phone),
+                    'photo' => $examResult->student->photo,
+                    'status' => $examResult->status,
+                    'started_at' => $examResult->started_at,
+                    'is_current_user' => $examResult->student->id == $accessInfo['student_id']
+                ];
+            })
+            ->sortByDesc('is_current_user'); // Sort to put current user first
+
+        return view('public.quiz.take', compact('exam', 'questions', 'result', 'remainingTime', 'participants'));
+    }
+
+    /**
+     * Mask phone number by replacing middle 6 digits with X
+     */
+    private function maskPhoneNumber($phone)
+    {
+        if (empty($phone) || strlen($phone) < 11) {
+            return $phone;
+        }
+        
+        // For 11-digit phone numbers like 01712345678
+        // Show first 2 digits and last 3 digits, mask middle 6
+        return substr($phone, 0, 2) . 'XXXXXX' . substr($phone, -3);
     }
 
     /**

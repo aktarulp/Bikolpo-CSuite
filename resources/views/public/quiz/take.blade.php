@@ -8,8 +8,123 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body class="bg-gray-100 font-sans leading-relaxed text-gray-800 antialiased">
-    <div class="flex items-center justify-center min-h-screen p-4">
+    <div class="flex items-start justify-center min-h-screen p-4 gap-6">
+        <!-- Participants Sidebar -->
+        <div class="hidden lg:block w-80 bg-blue-50 p-6 rounded-xl shadow-inner sticky top-4">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                </svg>
+                Participants ({{ $participants->count() }})
+            </h3>
+            
+            <div class="space-y-3 max-h-96 overflow-y-auto">
+                @forelse($participants as $participant)
+                    <div class="flex items-center space-x-3 p-3 bg-white rounded-lg shadow-sm border border-gray-200">
+                        <!-- Profile Picture -->
+                        <div class="flex-shrink-0">
+                            @if($participant['photo'])
+                                <img src="{{ asset('storage/' . $participant['photo']) }}" 
+                                     alt="{{ $participant['name'] }}" 
+                                     class="w-10 h-10 rounded-full object-cover border-2 border-gray-300">
+                            @else
+                                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold text-sm border-2 border-gray-300">
+                                    {{ strtoupper(substr($participant['name'], 0, 1)) }}
+                                </div>
+                            @endif
+                        </div>
+                        
+                        <!-- Participant Info -->
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <p class="text-sm font-medium text-gray-900 truncate">
+                                    {{ $participant['name'] }}
+                                </p>
+                                @if($participant['is_current_user'])
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-blue-600 text-white">
+                                        You
+                                    </span>
+                                @endif
+                            </div>
+                            <p class="text-xs text-gray-500 truncate">
+                                {{ $participant['phone'] }}
+                            </p>
+                            <div class="flex items-center mt-1">
+                                @if($participant['status'] === 'in_progress')
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        <span class="w-2 h-2 bg-green-400 rounded-full mr-1 animate-pulse"></span>
+                                        Taking Quiz
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                        <span class="w-2 h-2 bg-gray-400 rounded-full mr-1"></span>
+                                        Completed
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="text-center py-8">
+                        <svg class="w-12 h-12 mx-auto text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                        <p class="text-sm text-gray-500">No other participants yet</p>
+                    </div>
+                @endforelse
+            </div>
+        </div>
+
+        <!-- Main Quiz Container -->
         <div class="w-full max-w-4xl bg-white rounded-3xl shadow-2xl p-8 md:p-12">
+            <!-- Mobile Participants Section -->
+            <div class="lg:hidden mb-6 bg-blue-50 p-4 rounded-xl">
+                <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    Participants ({{ $participants->count() }})
+                </h3>
+                <div class="flex space-x-2 overflow-x-auto pb-2">
+                    @forelse($participants as $participant)
+                        <div class="flex-shrink-0 flex items-center space-x-2 p-2 bg-white rounded-lg shadow-sm border border-gray-200 min-w-0">
+                            <div class="flex-shrink-0">
+                                @if($participant['photo'])
+                                    <img src="{{ asset('storage/' . $participant['photo']) }}" 
+                                         alt="{{ $participant['name'] }}" 
+                                         class="w-8 h-8 rounded-full object-cover border border-gray-300">
+                                @else
+                                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold text-xs border border-gray-300">
+                                        {{ strtoupper(substr($participant['name'], 0, 1)) }}
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-1">
+                                    <p class="text-xs font-medium text-gray-900 truncate">
+                                        {{ $participant['name'] }}
+                                    </p>
+                                    @if($participant['is_current_user'])
+                                        <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-bold bg-blue-600 text-white">
+                                            You
+                                        </span>
+                                    @endif
+                                </div>
+                                <div class="flex items-center">
+                                    @if($participant['status'] === 'in_progress')
+                                        <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                                    @else
+                                        <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <p class="text-sm text-gray-500">No other participants yet</p>
+                    @endforelse
+                </div>
+            </div>
+
             <!-- Header and Progress -->
             <header class="text-center mb-8">
                 <h1 class="text-4xl md:text-5xl font-extrabold text-blue-700 tracking-tight mb-2">{{ $exam->title }}</h1>
@@ -66,7 +181,7 @@
                 <!-- Question Navigator and Legend -->
                 <div class="w-full lg:w-1/3 bg-gray-50 p-6 rounded-xl shadow-inner">
                     <h3 class="text-lg font-semibold text-gray-800 mb-4">Question Navigator</h3>
-                    <div id="navigator-container" class="grid grid-cols-5 md:grid-cols-6 lg:grid-cols-7 gap-2 mb-6">
+                    <div id="navigator-container" class="grid grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 mb-6">
                         <!-- Navigator buttons dynamically added here -->
             </div>
 
@@ -194,7 +309,6 @@
             const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const skipBtn = document.getElementById('skip-btn');
-        const submitBtn = document.getElementById('submit-btn');
     const progressBar = document.getElementById('progress-bar');
     const currentQuestionDisplay = document.getElementById('current-question-display');
     const countdownDisplayEl = document.getElementById('countdown-display');
@@ -317,12 +431,16 @@
         prevBtn.disabled = state.currentQuestionIndex === 0 || state.isSubmitted;
         nextBtn.disabled = state.currentQuestionIndex === questions.length - 1 || state.isSubmitted;
         skipBtn.style.display = state.isSubmitted ? 'none' : 'block';
-        submitBtn.style.display = state.isSubmitted ? 'none' : 'block';
         
-        // Skip button always shows "Skip"
-        skipBtn.textContent = 'Skip';
-        skipBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
-        skipBtn.classList.add('bg-orange-500', 'hover:bg-orange-600');
+        if (state.currentQuestionIndex === questions.length - 1) {
+            skipBtn.textContent = 'Submit';
+            skipBtn.classList.remove('bg-orange-500', 'hover:bg-orange-600');
+            skipBtn.classList.add('bg-green-500', 'hover:bg-green-600');
+        } else {
+            skipBtn.textContent = 'Skip';
+            skipBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
+            skipBtn.classList.add('bg-orange-500', 'hover:bg-orange-600');
+        }
     }
 
     function updateProgress() {
@@ -366,15 +484,12 @@
     }
 
     function handleSkip() {
-        state.skipped[state.currentQuestionIndex] = true;
-        state.answers[state.currentQuestionIndex] = null;
-        handleNext();
-    }
-
-    function handleSubmit() {
-        // Show confirmation modal before submitting
-        if (confirm('Are you sure you want to submit your quiz? You can still answer more questions if you continue.')) {
+        if (state.currentQuestionIndex === questions.length - 1) {
             submitQuiz();
+        } else {
+            state.skipped[state.currentQuestionIndex] = true;
+            state.answers[state.currentQuestionIndex] = null;
+            handleNext();
         }
     }
 
@@ -437,7 +552,6 @@
         prevBtn.addEventListener('click', handlePrev);
         nextBtn.addEventListener('click', handleNext);
         skipBtn.addEventListener('click', handleSkip);
-        submitBtn.addEventListener('click', handleSubmit);
         closeModalBtn.addEventListener('click', hideResult);
         
         state.timer = setInterval(updateTimer, 1000);
