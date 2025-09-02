@@ -779,12 +779,15 @@ document.addEventListener('DOMContentLoaded', function() {
         
         let html = '';
         
-        // Calculate questions per page based on A4 dimensions
+                // Calculate questions per page based on A4 dimensions
         const questionsPerPage = calculateQuestionsPerPage(params);
         const totalQuestions = exam.questions.length;
+        
+        // Calculate total pages needed - fill each page completely before moving to next
         const totalPages = Math.ceil(totalQuestions / questionsPerPage);
         
-        console.log(`Calculated: ${questionsPerPage} questions per page, ${totalPages} total pages`);
+        console.log(`Calculated: ${questionsPerPage} questions per page, ${totalQuestions} total questions, ${totalPages} total pages`);
+        console.log(`Page filling strategy: Fill each page completely before moving to next page`);
         
         // Generate each page
         for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
@@ -792,16 +795,16 @@ document.addEventListener('DOMContentLoaded', function() {
             const endIndex = Math.min(startIndex + questionsPerPage, totalQuestions);
             const pageQuestions = exam.questions.slice(startIndex, endIndex);
             
-            console.log(`Page ${pageNum}: Questions ${startIndex + 1} to ${endIndex} (${pageQuestions.length} questions)`);
+            console.log(`Page ${pageNum}: Questions ${startIndex + 1} to ${endIndex} (${pageQuestions.length} questions) - Filling page completely`);
             
-                         // Start page container with proper paper size classes
-             const paperColumns = parseInt(params.paper_columns) || 1;
-             const paperSize = params.paper_size || 'A4';
-             const orientation = params.orientation || 'portrait';
-             const sizeClass = `${paperSize.toLowerCase()}-${orientation}`;
-             
-             html += `<div class="page-container ${sizeClass}" data-columns="${paperColumns}" data-page="${pageNum}" data-paper-size="${paperSize}" data-orientation="${orientation}">`;
-             console.log(`Created page container ${pageNum} with ${paperColumns} columns, size: ${paperSize} ${orientation}`);
+            // Start page container with proper paper size classes
+            const paperColumns = parseInt(params.paper_columns) || 1;
+            const paperSize = params.paper_size || 'A4';
+            const orientation = params.orientation || 'portrait';
+            const sizeClass = `${paperSize.toLowerCase()}-${orientation}`;
+            
+            html += `<div class="page-container ${sizeClass}" data-columns="${paperColumns}" data-page="${pageNum}" data-paper-size="${paperSize}" data-orientation="${orientation}">`;
+            console.log(`Created page container ${pageNum} with ${paperColumns} columns, size: ${paperSize} ${orientation}`);
             
             // Page title
             html += `<div class="page-title">📄 Page ${pageNum} of ${totalPages} (${pageQuestions.length} questions)</div>`;
@@ -824,44 +827,44 @@ document.addEventListener('DOMContentLoaded', function() {
                 html += headerContent;
             }
             
-                         // Questions for this page
-             if (paperColumns > 1) {
-                 // Multi-column layout within the page - create a grid container
-                 html += `<div class="questions-grid" style="display: grid; grid-template-columns: repeat(${paperColumns}, 1fr); gap: 20px; position: relative;">`;
-                 
-                 // Add vertical separator lines between columns
-                 for (let i = 1; i < paperColumns; i++) {
-                     html += `<div class="column-separator" style="position: absolute; top: 0; bottom: 0; left: ${(i * 100) / paperColumns}%; width: 1px; background: #333; opacity: 0.3;"></div>`;
-                 }
-                 
-                 // Create columns
-                 for (let columnIndex = 0; columnIndex < paperColumns; columnIndex++) {
-                     html += `<div class="question-column" style="padding: 0 10px;">`;
-                     
-                     // Distribute questions across columns for this page
-                     let questionsInThisColumn = 0;
-                     for (let i = columnIndex; i < pageQuestions.length; i += paperColumns) {
-                         const question = pageQuestions[i];
-                         const questionNumber = startIndex + i + 1;
-                         html += generateQuestionHTML(question, questionNumber, params);
-                         questionsInThisColumn++;
-                     }
-                     
-                     console.log(`Page ${pageNum}, Column ${columnIndex + 1}: ${questionsInThisColumn} questions`);
-                     html += '</div>';
-                 }
-                 
-                 html += '</div>';
-             } else {
-                 // Single column layout
-                 pageQuestions.forEach((question, index) => {
-                     const questionNumber = startIndex + index + 1;
-                 html += generateQuestionHTML(question, questionNumber, params);
-             });
-             }
-             
+            // Questions for this page - fill completely before moving to next page
+            if (paperColumns > 1) {
+                // Multi-column layout within the page - create a grid container
+                html += `<div class="questions-grid" style="display: grid; grid-template-columns: repeat(${paperColumns}, 1fr); gap: 20px; position: relative;">`;
+                
+                // Add vertical separator lines between columns
+                for (let i = 1; i < paperColumns; i++) {
+                    html += `<div class="column-separator" style="position: absolute; top: 0; bottom: 0; left: ${(i * 100) / paperColumns}%; width: 1px; background: #333; opacity: 0.3;"></div>`;
+                }
+                
+                // Create columns and distribute questions evenly
+                for (let columnIndex = 0; columnIndex < paperColumns; columnIndex++) {
+                    html += `<div class="question-column" style="padding: 0 10px;">`;
+                    
+                    // Distribute questions across columns for this page
+                    let questionsInThisColumn = 0;
+                    for (let i = columnIndex; i < pageQuestions.length; i += paperColumns) {
+                        const question = pageQuestions[i];
+                        const questionNumber = startIndex + i + 1;
+                        html += generateQuestionHTML(question, questionNumber, params);
+                        questionsInThisColumn++;
+                    }
+                    
+                    console.log(`Page ${pageNum}, Column ${columnIndex + 1}: ${questionsInThisColumn} questions`);
+                    html += '</div>';
+                }
+                
+                html += '</div>';
+            } else {
+                // Single column layout - fill page completely
+                pageQuestions.forEach((question, index) => {
+                    const questionNumber = startIndex + index + 1;
+                    html += generateQuestionHTML(question, questionNumber, params);
+                });
+            }
+            
             // Close page container
-             html += '</div>';
+            html += '</div>';
         }
         
         // Add pagination controls
@@ -880,6 +883,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function calculateQuestionsPerPage(params) {
         const fontSize = parseInt(params.font_size) || 12;
         const lineSpacing = parseFloat(params.line_spacing) || 1.5;
+        const paperColumns = parseInt(params.paper_columns) || 1;
         
         // A4 dimensions in mm: 210mm x 297mm
         const pageHeight = 297;
@@ -905,14 +909,26 @@ document.addEventListener('DOMContentLoaded', function() {
         const avgLinesPerQuestion = 4;
         const avgQuestionHeightMm = lineHeightMm * avgLinesPerQuestion;
         
-        // Calculate how many questions can fit
-        const questionsPerPage = Math.max(6, Math.floor(availableHeight / avgQuestionHeightMm));
+        // Calculate how many questions can fit per page
+        let questionsPerPage = Math.floor(availableHeight / avgQuestionHeightMm);
+        
+        // Adjust for multi-column layout - more questions can fit with columns
+        // But don't multiply by columns, instead calculate based on available space
+        if (paperColumns > 1) {
+            // With columns, we can fit more questions vertically
+            // Each column gets the full height, so we can fit more questions
+            questionsPerPage = Math.floor(questionsPerPage * 1.5); // 50% more questions with columns
+        }
+        
+        // Ensure minimum questions per page
+        questionsPerPage = Math.max(8, questionsPerPage);
         
         console.log('A4 Page Calculation:', {
             pageHeight,
             availableHeight,
             lineHeightMm,
             avgQuestionHeightMm,
+            paperColumns,
             questionsPerPage
         });
         
