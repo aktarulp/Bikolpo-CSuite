@@ -48,8 +48,11 @@
                         <button type="button" id="prev-btn" class="px-6 py-3 rounded-full text-sm font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
                             Previous
                         </button>
-                        <div class="flex-1 mx-4 text-center">
-                            <button type="button" id="skip-btn" class="px-8 py-3 rounded-full font-bold text-white bg-orange-500 hover:bg-orange-600 transition-colors duration-200 shadow-lg">Skip</button>
+                        <div class="flex items-center space-x-4">
+                            <button type="button" id="skip-btn" class="px-6 py-3 rounded-full text-sm font-semibold text-white bg-orange-500 hover:bg-orange-600 transition-colors duration-200 shadow-lg">Skip</button>
+                            <button type="button" id="submit-btn" class="px-6 py-3 rounded-full text-sm font-bold text-white bg-green-500 hover:bg-green-600 transition-colors duration-200 shadow-lg">
+                                🚀 Submit Quiz
+                            </button>
                         </div>
                         <button type="button" id="next-btn" class="px-6 py-3 rounded-full text-sm font-semibold text-white bg-blue-500 hover:bg-blue-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
                             Next
@@ -197,6 +200,7 @@ const optionsContainerEl = document.getElementById('options-container');
 const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
 const skipBtn = document.getElementById('skip-btn');
+const submitBtn = document.getElementById('submit-btn');
 const progressBar = document.getElementById('progress-bar');
 const currentQuestionDisplay = document.getElementById('current-question-display');
 const countdownDisplayEl = document.getElementById('countdown-display');
@@ -217,7 +221,9 @@ function render() {
 
 function renderQuestion() {
     const question = questions[state.currentQuestionIndex];
-    questionTextEl.textContent = `${state.currentQuestionIndex + 1}. ${question.question}`;
+    // Clean question text by removing any "(Question #)" patterns
+    const cleanQuestionText = question.question.replace(/\s*\(Question\s*#?\d*\)/gi, '').trim();
+    questionTextEl.textContent = `${state.currentQuestionIndex + 1}. ${cleanQuestionText}`;
     optionsContainerEl.innerHTML = '';
     
     if (question.type === 'mcq' && question.options.length > 0) {
@@ -317,16 +323,12 @@ function updateNavigation() {
     prevBtn.disabled = state.currentQuestionIndex === 0 || state.isSubmitted;
     nextBtn.disabled = state.currentQuestionIndex === questions.length - 1 || state.isSubmitted;
     skipBtn.style.display = state.isSubmitted ? 'none' : 'block';
+    submitBtn.style.display = state.isSubmitted ? 'none' : 'block';
     
-    if (state.currentQuestionIndex === questions.length - 1) {
-        skipBtn.textContent = 'Submit';
-        skipBtn.classList.remove('bg-orange-500', 'hover:bg-orange-600');
-        skipBtn.classList.add('bg-green-500', 'hover:bg-green-600');
-    } else {
-        skipBtn.textContent = 'Skip';
-        skipBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
-        skipBtn.classList.add('bg-orange-500', 'hover:bg-orange-600');
-    }
+    // Skip button always shows "Skip"
+    skipBtn.textContent = 'Skip';
+    skipBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
+    skipBtn.classList.add('bg-orange-500', 'hover:bg-orange-600');
 }
 
 function updateProgress() {
@@ -370,12 +372,15 @@ function handleNext() {
 }
 
 function handleSkip() {
-    if (state.currentQuestionIndex === questions.length - 1) {
+    state.skipped[state.currentQuestionIndex] = true;
+    state.answers[state.currentQuestionIndex] = null;
+    handleNext();
+}
+
+function handleSubmit() {
+    // Show confirmation modal before submitting
+    if (confirm('Are you sure you want to submit your quiz? You can still answer more questions if you continue.')) {
         submitQuiz();
-    } else {
-        state.skipped[state.currentQuestionIndex] = true;
-        state.answers[state.currentQuestionIndex] = null;
-        handleNext();
     }
 }
 
@@ -438,6 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
     prevBtn.addEventListener('click', handlePrev);
     nextBtn.addEventListener('click', handleNext);
     skipBtn.addEventListener('click', handleSkip);
+    submitBtn.addEventListener('click', handleSubmit);
     closeModalBtn.addEventListener('click', hideResult);
     
     state.timer = setInterval(updateTimer, 1000);

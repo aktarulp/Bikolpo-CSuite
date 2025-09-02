@@ -430,19 +430,34 @@ class PublicQuizController extends Controller
      */
     public function showResult(Exam $exam)
     {
-        $accessInfo = session('quiz_access');
-        
-        if (!$accessInfo || $accessInfo['exam_id'] != $exam->id) {
-            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Invalid access. Please try again.']);
+        // Check if results should be shown immediately
+        if (!$exam->show_results_immediately) {
+            return redirect()->route('public.quiz.access')
+                ->with('info', 'Results are not available immediately. Please contact your instructor.');
         }
 
-        $result = ExamResult::where('student_id', $accessInfo['student_id'])
-            ->where('exam_id', $exam->id)
-            ->where('status', 'completed')
-            ->first();
+        $accessInfo = session('quiz_access');
+        
+        // If no session data, try to find the most recent completed result for this exam
+        if (!$accessInfo || $accessInfo['exam_id'] != $exam->id) {
+            // Look for the most recent completed result for this exam
+            $result = ExamResult::where('exam_id', $exam->id)
+                ->where('status', 'completed')
+                ->latest('completed_at')
+                ->first();
 
-        if (!$result) {
-            return redirect()->route('public.quiz.access')->withErrors(['access' => 'No completed quiz found.']);
+            if (!$result) {
+                return redirect()->route('public.quiz.access')->withErrors(['access' => 'No completed quiz found.']);
+            }
+        } else {
+            $result = ExamResult::where('student_id', $accessInfo['student_id'])
+                ->where('exam_id', $exam->id)
+                ->where('status', 'completed')
+                ->first();
+
+            if (!$result) {
+                return redirect()->route('public.quiz.access')->withErrors(['access' => 'No completed quiz found.']);
+            }
         }
 
         return view('public.quiz.result', compact('exam', 'result'));

@@ -162,6 +162,12 @@ class StudentExamController extends Controller
 
     public function showResult(Exam $exam)
     {
+        // Check if results should be shown immediately
+        if (!$exam->show_results_immediately) {
+            return redirect()->route('student.exams.available')
+                ->with('info', 'Results are not available immediately. Please contact your instructor.');
+        }
+
         $studentId = 1; // Default student ID
         
         $result = ExamResult::where('student_id', $studentId)
