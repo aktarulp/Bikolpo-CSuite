@@ -126,14 +126,128 @@
           display: contents;
       }
       
-             /* Ensure questions don't break across grid columns */
-       #livePreview .question {
-           break-inside: avoid;
-           page-break-inside: avoid;
-           margin-bottom: 10px;
-       }
-     
-     /* Ensure header spans correctly across columns */
+        /* Page container styling */
+        #livePreview .page-container {
+            border: 3px solid #3b82f6;
+            background: white;
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            page-break-inside: avoid;
+            break-inside: avoid;
+            min-height: 400px; /* More reasonable height for preview */
+            width: 100%;
+            box-sizing: border-box;
+            position: relative;
+        }
+        
+        /* Add page number indicator */
+        #livePreview .page-container::before {
+            content: "PAGE " attr(data-page);
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: #3b82f6;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        /* Multi-column layout within pages */
+        #livePreview .page-container[data-columns="2"] {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 30px !important;
+        }
+        
+        #livePreview .page-container[data-columns="3"] {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr 1fr !important;
+            gap: 20px !important;
+        }
+        
+        /* Question column styling */
+        #livePreview .question-column {
+            border-left: 2px solid #e5e7eb;
+            padding-left: 15px;
+            min-width: 0;
+        }
+        
+        /* Question styling */
+        #livePreview .question {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-left: 3px solid #3b82f6;
+            background: #f8fafc;
+            border-radius: 4px;
+        }
+        
+        /* Header styling */
+        #livePreview .header-container {
+            background: #f1f5f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+        
+        /* Page title styling */
+        #livePreview .page-title {
+            background: #3b82f6;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        /* Pagination styling */
+        #livePreview .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        #livePreview .pagination button {
+            padding: 8px 16px;
+            border: 1px solid #d1d5db;
+            background: white;
+            color: #374151;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        #livePreview .pagination button:hover {
+            background: #f3f4f6;
+            border-color: #9ca3af;
+        }
+        
+        #livePreview .pagination button:disabled {
+            background: #f3f4f6;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        #livePreview .pagination .page-info {
+            font-size: 14px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        /* Ensure questions don't break across grid columns */
      .header-container[style*="grid-column"] {
          width: 100%;
      }
@@ -413,7 +527,39 @@ document.addEventListener('DOMContentLoaded', function() {
     const previewContainer = document.getElementById('livePreview');
     const form = document.getElementById('parameterForm');
     
-             // Function to update live preview
+    // Global variable to track current page
+    let currentPage = 1;
+    
+    // Function to navigate between pages
+    window.goToPage = function(pageNum) {
+        const totalPages = document.querySelectorAll('.page-container').length;
+        
+        if (pageNum < 1 || pageNum > totalPages) {
+            return;
+        }
+        
+        currentPage = pageNum;
+        
+        // Hide all pages
+        document.querySelectorAll('.page-container').forEach((page, index) => {
+            if (index + 1 === pageNum) {
+                page.style.display = 'block';
+            } else {
+                page.style.display = 'none';
+            }
+        });
+        
+        // Update pagination display
+        document.getElementById('currentPageDisplay').textContent = pageNum;
+        
+        // Update button states
+        document.getElementById('prevBtn').disabled = pageNum === 1;
+        document.getElementById('nextBtn').disabled = pageNum === totalPages;
+        
+        console.log(`Navigated to page ${pageNum}`);
+    };
+    
+    // Function to update live preview
     function updatePreview() {
         console.log('updatePreview called');
         
@@ -450,9 +596,62 @@ document.addEventListener('DOMContentLoaded', function() {
          console.log('Preview HTML generated, length:', previewHTML.length);
          previewContainer.innerHTML = previewHTML;
          
-          
-        
-                 // Apply current styling
+         // Debug: Check what was actually created
+         setTimeout(() => {
+             const pageContainers = document.querySelectorAll('.page-container');
+             console.log(`After setting innerHTML, found ${pageContainers.length} page containers`);
+             pageContainers.forEach((page, index) => {
+                 console.log(`Page ${index + 1}:`, {
+                     dataPage: page.getAttribute('data-page'),
+                     dataColumns: page.getAttribute('data-columns'),
+                     display: page.style.display,
+                     visible: page.offsetHeight > 0
+                 });
+             });
+         }, 100);
+         
+         // Set up pagination - show only first page initially
+         const totalPages = document.querySelectorAll('.page-container').length;
+         console.log(`Found ${totalPages} pages in preview`);
+         
+         if (totalPages > 1) {
+             // Hide all pages except the first one
+             document.querySelectorAll('.page-container').forEach((page, index) => {
+                 if (index === 0) {
+                     page.style.display = 'block';
+                     console.log(`Showing page ${index + 1}`);
+                 } else {
+                     page.style.display = 'none';
+                     console.log(`Hiding page ${index + 1}`);
+                 }
+             });
+             
+             // Reset current page
+             currentPage = 1;
+             
+             // Update pagination display
+             const currentPageDisplay = document.getElementById('currentPageDisplay');
+             if (currentPageDisplay) {
+                 currentPageDisplay.textContent = '1';
+                 console.log('Updated current page display to 1');
+             }
+             
+             // Update button states
+             const prevBtn = document.getElementById('prevBtn');
+             const nextBtn = document.getElementById('nextBtn');
+             if (prevBtn) {
+                 prevBtn.disabled = true;
+                 console.log('Disabled previous button');
+             }
+             if (nextBtn) {
+                 nextBtn.disabled = totalPages === 1;
+                 console.log(`Next button disabled: ${totalPages === 1}`);
+             }
+         } else {
+             console.log('Only one page found, no pagination needed');
+         }
+         
+         // Apply current styling
          previewContainer.style.fontFamily = params.font_family || 'Arial';
          previewContainer.style.fontSize = (params.font_size || 12) + 'pt';
          previewContainer.style.lineHeight = params.line_spacing || 1.5;
@@ -557,68 +756,159 @@ document.addEventListener('DOMContentLoaded', function() {
           }
     }
     
-        // Function to generate preview HTML (simplified without pagination)
+        // Function to generate preview HTML with multi-page support
     function generatePreviewHTML(exam, params) {
         console.log('generatePreviewHTML called with:', { exam, params });
         
         let html = '';
         
-        // Header
-        if (params.include_header) {
-            const headerSpan = params.header_span || '1';
-            console.log(`Generating header with span: ${headerSpan}`);
+        // Calculate questions per page based on A4 dimensions
+        const questionsPerPage = calculateQuestionsPerPage(params);
+        const totalQuestions = exam.questions.length;
+        const totalPages = Math.ceil(totalQuestions / questionsPerPage);
+        
+        console.log(`Calculated: ${questionsPerPage} questions per page, ${totalPages} total pages`);
+        
+        // Generate each page
+        for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+            const startIndex = (pageNum - 1) * questionsPerPage;
+            const endIndex = Math.min(startIndex + questionsPerPage, totalQuestions);
+            const pageQuestions = exam.questions.slice(startIndex, endIndex);
             
-
+            console.log(`Page ${pageNum}: Questions ${startIndex + 1} to ${endIndex} (${pageQuestions.length} questions)`);
             
-                         const headerContent = `
-                 <div class="header-container" style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 20px;">
-                     <div style="font-size: ${(parseInt(params.font_size) || 12) + 8}pt; font-weight: bold; margin-bottom: 3px;">${exam.title}</div>
-                     <div style="font-size: ${(parseInt(params.font_size) || 12) + 4}pt; font-weight: bold; margin-bottom: 3px;">${exam.question_header || 'Model Test'}</div>`;
+            // Start page container
+            const paperColumns = parseInt(params.paper_columns) || 1;
+            html += `<div class="page-container" data-columns="${paperColumns}" data-page="${pageNum}">`;
+            console.log(`Created page container ${pageNum} with ${paperColumns} columns`);
             
-            let headerFooterContent = headerContent;
+            // Page title
+            html += `<div class="page-title">📄 Page ${pageNum} of ${totalPages} (${pageQuestions.length} questions)</div>`;
             
-                         // Always include Full Marks and Duration when header is enabled
-             headerFooterContent += '<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: ' + (parseInt(params.font_size) || 12) + 'pt; font-weight: bold; color: #333;">';
+            // Header (only on first page)
+            if (pageNum === 1 && params.include_header) {
+                const headerSpan = params.header_span || '1';
+                console.log(`Generating header with span: ${headerSpan}`);
+                
+                const headerContent = `
+                    <div class="header-container" style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 20px;">
+                        <div style="font-size: ${(parseInt(params.font_size) || 12) + 8}pt; font-weight: bold; margin-bottom: 3px;">${exam.title}</div>
+                        <div style="font-size: ${(parseInt(params.font_size) || 12) + 4}pt; font-weight: bold; margin-bottom: 3px;">${exam.question_header || 'Model Test'}</div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: ${(parseInt(params.font_size) || 12) + 4}pt; font-weight: bold; color: #333;">
+                            <div>Full Marks: ${exam.questions.reduce((sum, q) => sum + (q.marks || 1), 0)}</div>
+                            <div>Time: ${exam.duration} minutes</div>
+                        </div>
+                    </div>`;
+                
+                html += headerContent;
+            }
             
-            const totalMarks = exam.questions.reduce((sum, q) => sum + (q.marks || 1), 0);
-            headerFooterContent += `<div>Full Marks: ${totalMarks}</div>`;
+            // Questions for this page
+            if (paperColumns > 1) {
+                // Multi-column layout within the page
+                html += `<div class="questions-container">`;
+                
+                // Create columns
+                for (let columnIndex = 0; columnIndex < paperColumns; columnIndex++) {
+                    html += `<div class="question-column">`;
+                    html += `<div style="font-size: 12px; color: #666; margin-bottom: 10px; font-weight: bold;">Column ${columnIndex + 1}</div>`;
+                    
+                    // Distribute questions across columns for this page
+                    let questionsInThisColumn = 0;
+                    for (let i = columnIndex; i < pageQuestions.length; i += paperColumns) {
+                        const question = pageQuestions[i];
+                        const questionNumber = startIndex + i + 1;
+                        html += generateQuestionHTML(question, questionNumber, params);
+                        questionsInThisColumn++;
+                    }
+                    
+                    console.log(`Page ${pageNum}, Column ${columnIndex + 1}: ${questionsInThisColumn} questions`);
+                    html += '</div>';
+                }
+                
+                html += '</div>';
+            } else {
+                // Single column layout
+                pageQuestions.forEach((question, index) => {
+                    const questionNumber = startIndex + index + 1;
+                    html += generateQuestionHTML(question, questionNumber, params);
+                });
+            }
             
-            headerFooterContent += `<div>Time: ${exam.duration} minutes</div>`;
-            
-            headerFooterContent += '</div>';
-            
-            headerFooterContent += '</div>';
-            
-            html += headerFooterContent;
+            // Close page container
+            html += '</div>';
         }
         
-                 // Questions - implement column distribution logic
-         const paperColumns = parseInt(params.paper_columns) || 1;
-         
-         if (paperColumns > 1) {
-             // Multi-column layout - distribute questions across columns
-             const totalQuestions = exam.questions.length;
-             const questionsPerColumn = Math.ceil(totalQuestions / paperColumns);
-             
-             // Create a container for all questions that will be distributed by CSS Grid
-             html += '<div class="questions-container">';
-             
-             // Add questions sequentially - CSS Grid will handle the distribution
-             exam.questions.forEach((question, index) => {
-                 const questionNumber = index + 1;
-                 html += generateQuestionHTML(question, questionNumber, params);
-             });
-             
-             html += '</div>';
-         } else {
-             // Single column - render questions sequentially
-             exam.questions.forEach((question, index) => {
-                 const questionNumber = index + 1;
-                 html += generateQuestionHTML(question, questionNumber, params);
-             });
-         }
+        // Add pagination controls
+        if (totalPages > 1) {
+            html += generatePaginationHTML(totalPages);
+            console.log(`Added pagination for ${totalPages} pages`);
+        } else {
+            console.log('No pagination needed - only one page');
+        }
         
-        console.log('Generated HTML');
+        console.log(`Generated HTML with ${totalPages} pages and pagination`);
+        return html;
+    }
+    
+    // Function to calculate questions per page based on A4 dimensions
+    function calculateQuestionsPerPage(params) {
+        const fontSize = parseInt(params.font_size) || 12;
+        const lineSpacing = parseFloat(params.line_spacing) || 1.5;
+        
+        // A4 dimensions in mm: 210mm x 297mm
+        const pageHeight = 297;
+        const pageWidth = 210;
+        
+        // Margins (top, bottom, left, right) in mm
+        const marginTop = 20;
+        const marginBottom = 20;
+        const marginLeft = 15;
+        const marginRight = 15;
+        
+        // Header height in mm (if included)
+        const headerHeight = params.include_header ? 40 : 0;
+        
+        // Available height for questions
+        const availableHeight = pageHeight - marginTop - marginBottom - headerHeight;
+        
+        // Calculate line height in mm (font size * line spacing)
+        const lineHeightMm = (fontSize * lineSpacing * 0.35); // Approximate conversion from pt to mm
+        
+        // Estimate questions per page based on average question height
+        // Each question typically takes 3-5 lines depending on complexity
+        const avgLinesPerQuestion = 4;
+        const avgQuestionHeightMm = lineHeightMm * avgLinesPerQuestion;
+        
+        // Calculate how many questions can fit
+        const questionsPerPage = Math.max(6, Math.floor(availableHeight / avgQuestionHeightMm));
+        
+        console.log('A4 Page Calculation:', {
+            pageHeight,
+            availableHeight,
+            lineHeightMm,
+            avgQuestionHeightMm,
+            questionsPerPage
+        });
+        
+        return questionsPerPage;
+    }
+    
+    // Function to generate pagination HTML
+    function generatePaginationHTML(totalPages) {
+        let html = '<div class="pagination">';
+        
+        // Previous button
+        html += '<button onclick="goToPage(currentPage - 1)" id="prevBtn" disabled>← Previous</button>';
+        
+        // Page info
+        html += `<div class="page-info">Page <span id="currentPageDisplay">1</span> of ${totalPages}</div>`;
+        
+        // Next button
+        html += '<button onclick="goToPage(currentPage + 1)" id="nextBtn">Next →</button>';
+        
+        html += '</div>';
+        
         return html;
     }
     
