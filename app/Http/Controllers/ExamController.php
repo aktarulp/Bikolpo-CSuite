@@ -638,7 +638,7 @@ class ExamController extends Controller
         // Get available questions for this partner
         $questions = \App\Models\Question::where('partner_id', $partnerId)
             ->where('status', 'active')
-            ->with(['topic', 'subject'])
+            ->with(['topic', 'subject', 'course'])
             ->get();
             
         // Get currently assigned questions for this exam with their marks

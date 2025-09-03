@@ -136,7 +136,7 @@
                     </div>
 
                     @if($questions->count() > 0)
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 max-h-80 overflow-y-auto">
+                        <div class="grid grid-cols-1 gap-3 max-h-80 overflow-y-auto">
                             @foreach($questions as $question)
                                 <div class="question-card border border-gray-200 dark:border-gray-600 rounded p-3 hover:bg-gray-50 dark:hover:bg-gray-700"
                                      data-type="{{ $question->question_type }}"
@@ -148,29 +148,33 @@
                                                {{ $assignedQuestions->contains($question->id) ? 'checked' : '' }}>
                                         <div class="flex-1 min-w-0">
                                             <div class="flex items-center justify-between">
-                                                <span class="text-sm text-gray-900 dark:text-white">
-                                                    {{ Str::limit($question->question_text, 60) }}
-                                                </span>
+                                                <div class="flex items-center space-x-3 flex-1">
+                                                    <span class="text-sm text-gray-900 dark:text-white">
+                                                        {{ Str::limit($question->question_text, 50) }}
+                                                    </span>
+                                                    <div class="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
+                                                        <span class="text-gray-300 dark:text-gray-600">|</span>
+                                                        <span>{{ $question->course->name ?? 'N/A' }} | {{ $question->subject->name ?? 'N/A' }} | {{ $question->topic->name ?? 'N/A' }}</span>
+                                                    </div>
+                                                </div>
                                                 <div class="flex items-center space-x-2">
+                                                    <!-- Mark Input Field -->
+                                                    <div class="flex items-center space-x-1 question-marks-container">
+                                                        <label class="text-xs text-blue-500 dark:text-blue-400 font-semibold">Marks:</label>
+                                                        <input type="number" 
+                                                               name="question_marks[{{ $question->id }}]" 
+                                                               value="{{ $assignedQuestionsWithMarks[$question->id] ?? 1 }}" 
+                                                               min="1" 
+                                                               max="100" 
+                                                               class="question-marks w-12 px-1 py-1 text-xs border-2 border-blue-400 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-600 dark:bg-gray-700 dark:border-blue-500 dark:text-white font-semibold text-center"
+                                                               placeholder="1"
+                                                               style="border: 2px solid #60a5fa; box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.3);">
+                                                    </div>
                                                     <span class="text-xs px-2 py-1 rounded
                                                         {{ $question->question_type === 'mcq' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' }}">
                                                         {{ strtoupper($question->question_type) }}
                                                     </span>
                                                 </div>
-                                            </div>
-                                            <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                                {{ $question->subject->name ?? 'N/A' }} | {{ $question->topic->name ?? 'N/A' }}
-                                            </div>
-                                            <!-- Mark Input Field -->
-                                            <div class="mt-2 flex items-center space-x-2 question-marks-container">
-                                                <label class="text-xs text-gray-600 dark:text-gray-400">Marks:</label>
-                                                <input type="number" 
-                                                       name="question_marks[{{ $question->id }}]" 
-                                                       value="{{ $assignedQuestionsWithMarks[$question->id] ?? 1 }}" 
-                                                       min="1" 
-                                                       max="100" 
-                                                       class="question-marks w-16 px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                                                       placeholder="1">
                                             </div>
                                         </div>
                                     </div>
@@ -421,29 +425,102 @@
 
 /* Mark input styling */
 .question-marks {
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border: 2px solid #cbd5e1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-weight: 600;
+    color: #1e293b;
+    text-align: center;
+}
+
+.question-marks:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2);
+    transform: translateY(-1px);
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
 }
 
 .question-marks:focus {
-    outline: 2px solid #3b82f6;
-    outline-offset: 1px;
-    transform: scale(1.05);
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3), 0 4px 12px rgba(59, 130, 246, 0.2);
+    transform: scale(1.1);
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
 }
 
 .question-marks.border-red-500 {
     border-color: #ef4444 !important;
-    box-shadow: 0 0 0 1px #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3), 0 4px 12px rgba(239, 68, 68, 0.2);
+    background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+    animation: shake 0.5s ease-in-out;
 }
 
 /* Mark input container */
 .question-marks-container {
     transition: all 0.3s ease;
+    position: relative;
+}
+
+.question-marks-container::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #3b82f6, #8b5cf6, #06b6d4, #10b981);
+    border-radius: 6px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
+}
+
+.question-card:hover .question-marks-container::before {
+    opacity: 0.3;
 }
 
 .question-card:hover .question-marks-container {
     background-color: rgba(59, 130, 246, 0.05);
-    border-radius: 4px;
+    border-radius: 6px;
     padding: 2px;
+    transform: translateY(-1px);
+}
+
+/* Mark label styling */
+.question-marks-container label {
+    font-weight: 600;
+    color: #475569;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    transition: color 0.3s ease;
+}
+
+.question-card:hover .question-marks-container label {
+    color: #3b82f6;
+}
+
+/* Dark mode adjustments */
+.dark .question-marks {
+    background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+    border-color: #6b7280;
+    color: #f9fafb;
+}
+
+.dark .question-marks:hover {
+    background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);
+    border-color: #3b82f6;
+}
+
+.dark .question-marks:focus {
+    background: linear-gradient(135deg, #1e3a8a 0%, #312e81 100%);
+}
+
+.dark .question-marks-container label {
+    color: #d1d5db;
+}
+
+.dark .question-card:hover .question-marks-container label {
+    color: #60a5fa;
 }
 </style>
 @endpush
