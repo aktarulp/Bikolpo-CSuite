@@ -75,7 +75,7 @@
           </h1>
           
           <p class="text-lg text-gray-600 max-w-lg mx-auto lg:mx-0 leading-relaxed">
-            Access your assigned quizzes with ease. Enter your credentials to start your learning journey with বিকল্প পাঠশালা.
+            Access your assigned quizzes with ease. Enter your credentials to start your learning journey with Bikolpo LQ.
           </p>
         </div>
 

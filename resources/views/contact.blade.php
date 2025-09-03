@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>যোগাযোগ করুন - বিকল্প পাঠশালা</title>
+  <title>যোগাযোগ করুন - Bikolpo LQ</title>
   <script src="https://cdn.tailwindcss.com"></script>
      <script>
          tailwind.config = {
@@ -68,7 +68,7 @@
           </div>
           <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">WhatsApp</h3>
           <p class="text-gray-600 dark:text-gray-300 mb-6">দ্রুত যোগাযোগের জন্য WhatsApp ব্যবহার করুন</p>
-                          <a href="https://wa.me/8801610800060?text=Hello! I would like to know more about বিকল্প পাঠশালা services." 
+                          <a href="https://wa.me/8801610800060?text=Hello! I would like to know more about Bikolpo LQ services." 
              target="_blank" 
              class="inline-flex items-center justify-center w-full bg-green-500 hover:bg-green-600 text-white font-bold px-6 py-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105">
             <i class="fab fa-whatsapp mr-2"></i>
@@ -277,13 +277,12 @@
          <div class="max-w-6xl mx-auto px-3 sm:flex sm:justify-between sm:items-center">
              <!-- Logo & Name -->
              <div class="flex items-center space-x-4 mb-6 sm:mb-0">
-               <a href="{{ route('landing') }}" class="flex items-center gap-3">
-                 <img src="{{ asset('images/logo.png') }}" alt="Bikolpo Computer Logo" class="w-20 h-20 rounded-full shadow-md" />
-                 <div>
-                     <h1 class="text-white text-xl font-bold">বিকল্প কম্পিউটার</h1>
-                     <p class="text-sm">Your Smart Exam Partner</p>
-                 </div>
-               </a>
+               <x-brand-logo 
+                 size="lg" 
+                 variant="footer" 
+                 :href="route('landing')" 
+                 :show-tagline="true" 
+               />
              </div>
 
              <!-- Contact Info -->
@@ -304,7 +303,7 @@
          </div>
 
          <div class="mt-4 text-center text-s text-white">
-             © 2025 Bikolpo Computer. All rights reserved.
+             © 2025 Bikolpo LQ. All rights reserved.
          </div>
      </footer>
 

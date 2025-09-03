@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Student Features - বিকল্প পাঠশালা</title>
+    <title>Student Features - Bikolpo LQ</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -287,7 +287,7 @@
         <div class="mt-16 bg-gradient-to-r from-primaryBlue to-blue-600 rounded-3xl p-8 text-white text-center">
             <h3 class="text-3xl font-bold mb-6">Ready to Start Your Learning Journey?</h3>
             <p class="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
-                Join thousands of students already using বিকল্প পাঠশালা to excel in their exams and achieve their academic goals.
+                Join thousands of students already using Bikolpo LQ to excel in their exams and achieve their academic goals.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
                 <a href="{{ route('student.dashboard') }}" class="bg-white text-primaryBlue px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors duration-200 transform hover:scale-105 shadow-lg">
@@ -307,13 +307,12 @@
         <div class="max-w-6xl mx-auto px-3 sm:flex sm:justify-between sm:items-center">
             <!-- Logo & Name -->
             <div class="flex items-center space-x-4 mb-6 sm:mb-0">
-              <a href="{{ route('landing') }}" class="flex items-center gap-3">
-                <img src="{{ asset('images/logo.png') }}" alt="Bikolpo Computer Logo" class="w-20 h-20 rounded-full shadow-md" />
-                <div>
-                    <h1 class="text-white text-xl font-bold">বিকল্প কম্পিউটার</h1>
-                    <p class="text-sm">Your Smart Exam Partner</p>
-                </div>
-              </a>
+              <x-brand-logo 
+                size="lg" 
+                variant="footer" 
+                :href="route('landing')" 
+                :show-tagline="true" 
+              />
             </div>
 
             <!-- Contact Info -->
@@ -334,7 +333,7 @@
         </div>
 
         <div class="mt-4 text-center text-s text-white">
-            © 2025 Bikolpo Computer. All rights reserved.
+            © 2025 Bikolpo LQ. All rights reserved.
         </div>
     </footer>
 

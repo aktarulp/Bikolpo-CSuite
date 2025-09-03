@@ -37,21 +37,22 @@ Route::get('/', function () {
 Route::get('/upload-questions', [App\Http\Controllers\QuestionController::class, 'showBulkUploadForm'])->name('questions.bulk-upload.public');
 Route::post('/upload-questions', [App\Http\Controllers\QuestionController::class, 'bulkUpload'])->name('questions.bulk-upload.public.store');
 
+// Contact page route (accessible without authentication)
+Route::get('/contact', function () {
+    return view('contact');
+})->name('contact');
+
+// Partner Features page route (accessible without authentication)
+Route::get('/partner-features', function () {
+    return view('partner-features');
+})->name('partner.features');
+
+// Student Features page route (accessible without authentication)
+Route::get('/student-features', function () {
+    return view('student-features');
+})->name('student.features');
+
 Route::middleware('auth')->group(function () {
-    // Contact page route
-    Route::get('/contact', function () {
-        return view('contact');
-    })->name('contact');
-
-    // Partner Features page route
-    Route::get('/partner-features', function () {
-        return view('partner-features');
-    })->name('partner.features');
-
-    // Student Features page route
-    Route::get('/student-features', function () {
-        return view('student-features');
-    })->name('student.features');
 
     // Partner Area Access Route
     Route::get('/partner-area', function () {

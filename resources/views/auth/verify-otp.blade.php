@@ -30,20 +30,12 @@
       <div class="flex justify-between items-center py-0">
         <!-- Logo -->
         <div class="flex items-center space-x-3">
-          <a href="{{ route('landing') }}" class="flex items-center space-x-3 hover:scale-105 transition-transform duration-200">
-            <div class="relative">
-              <div class="w-12 h-12 bg-gradient-to-br from-primaryGreen to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
-                <i class="fas fa-graduation-cap text-white text-xl"></i>
-              </div>
-              <div class="absolute -top-1 -right-1 w-4 h-4 bg-primaryOrange rounded-full animate-pulse"></div>
-            </div>
-            <div>
-              <h1 class="text-2xl font-bold bg-gradient-to-r from-primaryGreen to-primaryBlue bg-clip-text text-transparent">
-                বিকল্প পাঠশালা
-              </h1>
-              <p class="text-xs text-gray-500 dark:text-gray-400">Your Smart Exam Partner</p>
-            </div>
-          </a>
+          <x-brand-logo 
+            size="lg" 
+            variant="default" 
+            :href="route('landing')" 
+            :show-tagline="true" 
+          />
         </div>
 
         <!-- Dark Mode Toggle -->

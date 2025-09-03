@@ -34,20 +34,12 @@
                 
                 <!-- Logo Section -->
                 <div class="mb-8 animate-fade-in">
-                    <a href="{{ route('landing') }}" class="flex items-center space-x-3 hover:scale-105 transition-transform duration-200">
-                        <div class="relative">
-                            <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
-                                <i class="fas fa-graduation-cap text-white text-2xl"></i>
-                            </div>
-                            <div class="absolute -top-1 -right-1 w-5 h-5 bg-orange-500 rounded-full animate-pulse"></div>
-                        </div>
-                        <div>
-                            <h1 class="text-3xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-                                বিকল্প পাঠশালা
-                            </h1>
-                            <p class="text-sm text-gray-600 dark:text-gray-400">Your Smart Exam Partner</p>
-                        </div>
-                    </a>
+                    <x-brand-logo 
+                        size="xl" 
+                        variant="hero" 
+                        :href="route('landing')" 
+                        :show-tagline="true" 
+                    />
                 </div>
 
                 <!-- Form Container -->
@@ -62,7 +54,7 @@
                 <!-- Footer -->
                 <div class="mt-8 text-center animate-fade-in">
                     <p class="text-sm text-gray-500 dark:text-gray-400">
-                        © 2025 বিকল্প কম্পিউটার. All rights reserved.
+                        © 2025 Bikolpo LQ. All rights reserved.
                     </p>
                 </div>
             </div>

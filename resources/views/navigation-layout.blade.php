@@ -1,22 +1,30 @@
 <header class="bg-white/90 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50 transition-all duration-300">
+    <!-- Font Imports -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet" />
+    
+    <style>
+        /* Brand gradient styles for navigation */
+        .brand-gradient-contrast {
+            background: linear-gradient(135deg, #047857 0%, #1d4ed8 50%, #6d28d9 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: #047857; /* Fallback color */
+        }
+    </style>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center py-4">
             <!-- Logo -->
             <div class="flex items-center space-x-3">
-                <a href="{{ route('landing') }}" class="flex items-center space-x-3 hover:scale-105 transition-transform duration-200">
-                    <div class="relative">
-                        <div class="w-12 h-12 bg-gradient-to-br from-primaryGreen to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
-                            <i class="fas fa-graduation-cap text-white text-xl"></i>
-                        </div>
-                        <div class="absolute -top-1 -right-1 w-4 h-4 bg-primaryOrange rounded-full animate-pulse"></div>
-                    </div>
-                    <div>
-                        <h1 class="text-2xl font-bold bg-gradient-to-r from-primaryGreen to-primaryBlue bg-clip-text bg-clip-text text-transparent">
-                            বিকল্প পাঠশালা
-                        </h1>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Your Smart Exam Partner</p>
-                    </div>
-                </a>
+                <x-brand-logo 
+                    size="lg" 
+                    variant="default" 
+                    :href="route('landing')" 
+                    :show-tagline="true" 
+                />
             </div>
 
             <!-- Desktop Navigation -->

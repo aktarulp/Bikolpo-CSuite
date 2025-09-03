@@ -142,12 +142,15 @@
         <div id="sidebar" class="sidebar-container bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700">
             <div class="flex flex-col flex-grow pt-5 h-full overflow-y-auto">
                 <div class="flex flex-col items-center flex-shrink-0 px-6 mb-5">
-                    <a href="{{ route('partner.dashboard') }}" class="w-12 h-12 bg-gradient-to-br from-primaryGreen to-emerald-500 rounded-xl flex items-center justify-center shadow-lg mb-4 transform hover:scale-110 transition-all duration-300 overflow-hidden">
-                        <img src="{{ asset('images/logo.png') }}" alt="Logo" class="w-8 h-8 object-contain">
-                    </a>
-                    <div class="text-center transition-all duration-300">
-                        <h1 class="text-2xl font-extrabold bg-gradient-to-r from-primaryGreen via-emerald-600 to-blue-600 bg-clip-text text-transparent drop-shadow-sm hover:drop-shadow-md transition-all duration-300 font-bengali p-0 m-0">বিকল্প পাঠশালা</h1>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">Partner Portal</p>
+                    <x-brand-logo 
+                        size="lg" 
+                        variant="minimal" 
+                        :href="route('partner.dashboard')" 
+                        :show-tagline="false" 
+                        logo-size="w-12 h-12"
+                    />
+                    <div class="text-center transition-all duration-300 mt-2">
+                        <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Partner Portal</p>
                     </div>
                 </div>
 

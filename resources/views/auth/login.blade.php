@@ -72,7 +72,7 @@
         <div class="space-y-4">
           
           <h1 class="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-primaryGreen via-primaryBlue to-primaryPurple bg-clip-text text-transparent leading-tight">
-            Welcome Back to বিকল্প পাঠশালা
+            Welcome Back to Bikolpo LQ
           </h1>
           
           <p class="text-lg text-gray-600 max-w-lg mx-auto lg:mx-0 leading-relaxed">
