@@ -349,22 +349,23 @@ Route::middleware('auth')->group(function () {
     Route::post('/typing-passages/{typingPassage}/stats', [\App\Http\Controllers\TypingPassageController::class, 'updateStats'])->name('typing-passages.stats');
     Route::patch('/typing-passages/{typingPassage}/toggle', [\App\Http\Controllers\TypingPassageController::class, 'toggleStatus'])->name('typing-passages.toggle');
 
-    // Public Quiz Routes (No Authentication Required)
-    Route::prefix('quiz')->name('public.quiz.')->group(function () {
-        Route::get('/', [\App\Http\Controllers\PublicQuizController::class, 'showAccessPage'])->name('access');
-        Route::post('/access', [\App\Http\Controllers\PublicQuizController::class, 'processAccess'])->name('process-access');
-        Route::post('/multiple-exams', [\App\Http\Controllers\PublicQuizController::class, 'handleMultipleExams'])->name('multiple-exams');
-        Route::get('/available', [\App\Http\Controllers\PublicQuizController::class, 'showAvailableExams'])->name('available');
-        Route::get('/select/{accessCode}', [\App\Http\Controllers\PublicQuizController::class, 'selectExam'])->name('select');
-        Route::get('/{exam}/start', [\App\Http\Controllers\PublicQuizController::class, 'showQuiz'])->name('start');
-        Route::post('/{exam}/start', [\App\Http\Controllers\PublicQuizController::class, 'startQuiz'])->name('start-quiz');
-        Route::get('/{exam}/take', [\App\Http\Controllers\PublicQuizController::class, 'takeQuiz'])->name('take');
-        Route::post('/{exam}/submit', [\App\Http\Controllers\PublicQuizController::class, 'submitQuiz'])->name('submit');
-        Route::get('/{exam}/result', [\App\Http\Controllers\PublicQuizController::class, 'showResult'])->name('result');
-    });
+});
 
-    // API Routes for Public Quiz (No Authentication Required)
-    Route::prefix('api/exam')->group(function () {
-        Route::get('/{exam}/waiting-students', [\App\Http\Controllers\PublicQuizController::class, 'getWaitingStudentsApi'])->name('api.exam.waiting-students');
-    });
+// Public Quiz Routes (No Authentication Required)
+Route::prefix('quiz')->name('public.quiz.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\PublicQuizController::class, 'showAccessPage'])->name('access');
+    Route::post('/access', [\App\Http\Controllers\PublicQuizController::class, 'processAccess'])->name('process-access');
+    Route::post('/multiple-exams', [\App\Http\Controllers\PublicQuizController::class, 'handleMultipleExams'])->name('multiple-exams');
+    Route::get('/available', [\App\Http\Controllers\PublicQuizController::class, 'showAvailableExams'])->name('available');
+    Route::get('/select/{accessCode}', [\App\Http\Controllers\PublicQuizController::class, 'selectExam'])->name('select');
+    Route::get('/{exam}/start', [\App\Http\Controllers\PublicQuizController::class, 'showQuiz'])->name('start');
+    Route::post('/{exam}/start', [\App\Http\Controllers\PublicQuizController::class, 'startQuiz'])->name('start-quiz');
+    Route::get('/{exam}/take', [\App\Http\Controllers\PublicQuizController::class, 'takeQuiz'])->name('take');
+    Route::post('/{exam}/submit', [\App\Http\Controllers\PublicQuizController::class, 'submitQuiz'])->name('submit');
+    Route::get('/{exam}/result', [\App\Http\Controllers\PublicQuizController::class, 'showResult'])->name('result');
+});
+
+// API Routes for Public Quiz (No Authentication Required)
+Route::prefix('api/exam')->group(function () {
+    Route::get('/{exam}/waiting-students', [\App\Http\Controllers\PublicQuizController::class, 'getWaitingStudentsApi'])->name('api.exam.waiting-students');
 });
