@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Quiz Access - CSuite</title>
+    <title>Live Exam Access - Bikolpo LQ</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -59,108 +59,46 @@
   </div>
 
   <!-- Main Content -->
-  <div class="relative min-h-screen flex items-center justify-center p-4">
+  <div class="relative py-8 px-4">
     
-    <!-- Two Column Layout -->
-    <div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-      
-      <!-- Left Column: Promotional Content -->
-      <div class="text-center lg:text-left space-y-6">
-        
-        <!-- Hero Section -->
-        <div class="space-y-4">
-          
+    <!-- Welcome Section -->
+    <div class="w-full max-w-6xl mx-auto text-left mb-12">
+      <div class="flex items-center space-x-4 mb-6">
+        <div class="relative">
+          <div class="w-32 h-32 flex items-center justify-center p-2">
+            <img src="{{ asset('images/Bikolpo_LQ_Transparent.png') }}" 
+                 alt="Bikolpo LQ Logo" 
+                 class="h-full w-auto object-contain">
+          </div>
+          <!-- Live indicator -->
+          <div class="absolute -top-1 -right-1 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center animate-ping">
+            <div class="w-3 h-3 bg-white rounded-full animate-pulse"></div>
+          </div>
+        </div>
+        <div>
           <h1 class="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-primaryGreen via-primaryBlue to-primaryPurple bg-clip-text text-transparent leading-tight">
-            Welcome to Quiz Portal
+            Welcome to Live Exam Portal
           </h1>
-          
-          <p class="text-lg text-gray-600 max-w-lg mx-auto lg:mx-0 leading-relaxed">
-            Access your assigned quizzes with ease. Enter your credentials to start your learning journey with Bikolpo LQ.
-          </p>
-        </div>
-
-        <!-- Instructions Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl mx-auto lg:mx-0">
-          
-          <div class="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mx-auto lg:mx-0 mb-3">
-              <i class="fas fa-phone text-white text-lg"></i>
+          <div class="flex items-center space-x-2 mt-2">
+            <div class="flex items-center space-x-1">
+              <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span class="text-sm font-semibold text-green-600">LIVE</span>
             </div>
-            <h3 class="text-base font-bold text-gray-800 mb-2">Phone Number</h3>
-            <p class="text-gray-600 text-sm leading-relaxed">Enter your 11-digit mobile number starting with 01 (e.g., 01712345678)</p>
-          </div>
-          
-          <div class="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto lg:mx-0 mb-3">
-              <i class="fas fa-key text-white text-lg"></i>
-            </div>
-            <h3 class="text-base font-bold text-gray-800 mb-2">Access Code</h3>
-            <p class="text-gray-600 text-sm leading-relaxed">Use the 6-digit code provided by your teacher (e.g., 123456)</p>
-          </div>
-          
-          <div class="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto lg:mx-0 mb-3">
-              <i class="fas fa-clock text-white text-lg"></i>
-            </div>
-            <h3 class="text-base font-bold text-gray-800 mb-2">Time Limit</h3>
-            <p class="text-gray-600 text-sm leading-relaxed">Complete your quiz within the allocated time. Timer will be visible during the test.</p>
-          </div>
-          
-          <div class="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center mx-auto lg:mx-0 mb-3">
-              <i class="fas fa-check-circle text-white text-lg"></i>
-            </div>
-            <h3 class="text-base font-bold text-gray-800 mb-2">Submit & Results</h3>
-            <p class="text-gray-600 text-sm leading-relaxed">Review your answers before submitting. Results are available immediately after completion.</p>
-          </div>
-        </div>
-
-        <!-- Additional Instructions -->
-        <div class="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-white/30 shadow-lg">
-          <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">Important Instructions</h3>
-          <div class="space-y-3 text-sm text-gray-600">
-            <div class="flex items-start space-x-3">
-              <div class="w-2 h-2 bg-primaryGreen rounded-full mt-2 flex-shrink-0"></div>
-              <span>Ensure you have a stable internet connection before starting the quiz</span>
-            </div>
-            <div class="flex items-start space-x-3">
-              <div class="w-2 h-2 bg-primaryBlue rounded-full mt-2 flex-shrink-0"></div>
-              <span>Don't refresh the page or close the browser during the quiz</span>
-            </div>
-            <div class="flex items-start space-x-3">
-              <div class="w-2 h-2 bg-primaryPurple rounded-full mt-2 flex-shrink-0"></div>
-              <span>You can take multiple exams with the same credentials</span>
-            </div>
-            <div class="flex items-start space-x-3">
-              <div class="w-2 h-2 bg-primaryOrange rounded-full mt-2 flex-shrink-0"></div>
-              <span>Contact your teacher if you encounter any technical issues</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Trust Indicators -->
-        <div class="pt-4">
-          <p class="text-sm text-gray-500 mb-4 text-center lg:text-left">Trusted by 1000+ students</p>
-          <div class="flex items-center justify-center lg:justify-start space-x-6">
-            <div class="flex items-center space-x-2">
-              <div class="w-2 h-2 bg-primaryGreen rounded-full animate-pulse"></div>
-              <span class="text-sm text-gray-600 font-medium">Secure Platform</span>
-            </div>
-            <div class="flex items-center space-x-2">
-              <div class="w-2 h-2 bg-primaryGreen rounded-full animate-pulse"></div>
-              <span class="text-sm text-gray-600 font-medium">Real-time Results</span>
-            </div>
-            <div class="flex items-center space-x-2">
-              <div class="w-2 h-2 bg-primaryGreen rounded-full animate-pulse"></div>
-              <span class="text-sm text-gray-600 font-medium">24/7 Access</span>
-            </div>
+            <span class="text-sm text-gray-500">•</span>
+            <span class="text-sm text-gray-500">Real-time examinations</span>
           </div>
         </div>
       </div>
+      
 
-      <!-- Right Column: Enhanced Quiz Access Card -->
-      <div class="flex justify-center lg:justify-end">
-        <div class="relative w-full max-w-lg">
+    </div>
+    
+    <!-- Two Column Layout -->
+    <div class="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+      
+      <!-- Left Column: Access Form (First on Mobile) -->
+      <div class="flex justify-center lg:justify-start order-1 lg:order-1">
+        <div class="relative w-full max-w-md">
           <!-- Abstract shapes around the card -->
           <div class="absolute -top-8 -left-8 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-transparent rounded-full blur-xl"></div>
           <div class="absolute -bottom-8 -right-8 w-28 h-28 bg-gradient-to-tl from-purple-400/20 to-transparent rounded-full blur-xl"></div>
@@ -183,7 +121,7 @@
                 <i class="fas fa-question-circle text-white text-lg"></i>
               </div>
               <h2 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-green-600 bg-clip-text text-transparent">
-                Quiz Access
+                Live Exam Access
               </h2>
               <p class="text-gray-500 mt-1 text-sm">Enter your credentials to start</p>
             </div>
@@ -256,7 +194,7 @@
                 <div class="absolute inset-0 bg-gradient-to-r from-green-400 to-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
                 <!-- Button content -->
                 <span class="relative flex items-center justify-center">
-                  Start Quiz
+                  Start Live Exam
                   <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-200"></i>
                 </span>
               </button>
@@ -274,6 +212,128 @@
           </div>
         </div>
       </div>
+
+      <!-- Right Column: Promotional Content -->
+      <div class="text-center lg:text-left space-y-6 order-2 lg:order-2">
+
+        <!-- Description Card -->
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200/50 shadow-sm">
+          <div class="flex items-start space-x-4">
+            <div class="flex-shrink-0">
+              <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                <i class="fas fa-rocket text-white text-lg animate-bounce"></i>
+              </div>
+            </div>
+            <div class="flex-1">
+              <p class="text-lg text-gray-700 leading-relaxed mb-3">
+                Access your assigned live exams with ease. Enter your credentials to start your learning journey with Bikolpo LQ.
+              </p>
+              <div class="flex flex-wrap items-center gap-4 text-sm">
+                <div class="flex items-center space-x-2 text-green-600">
+                  <i class="fas fa-check-circle"></i>
+                  <span>Instant Access</span>
+                </div>
+                <div class="flex items-center space-x-2 text-blue-600">
+                  <i class="fas fa-clock"></i>
+                  <span>Real-time Results</span>
+                </div>
+                <div class="flex items-center space-x-2 text-purple-600">
+                  <i class="fas fa-shield-alt"></i>
+                  <span>Secure Platform</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Instructions Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+          
+          <div class="bg-white/80 backdrop-blur-sm rounded-xl p-3 border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div class="flex items-center space-x-3 mb-2">
+              <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-phone text-white text-sm"></i>
+              </div>
+              <h3 class="text-sm font-bold text-gray-800">Phone Number</h3>
+            </div>
+            <p class="text-gray-600 text-xs leading-relaxed">Enter your 11-digit mobile number starting with 01 (e.g., 01712345678)</p>
+          </div>
+          
+          <div class="bg-white/80 backdrop-blur-sm rounded-xl p-3 border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div class="flex items-center space-x-3 mb-2">
+              <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-key text-white text-sm"></i>
+              </div>
+              <h3 class="text-sm font-bold text-gray-800">Access Code</h3>
+            </div>
+            <p class="text-gray-600 text-xs leading-relaxed">Use the 6-digit code provided by your teacher (e.g., 123456)</p>
+          </div>
+          
+          <div class="bg-white/80 backdrop-blur-sm rounded-xl p-3 border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div class="flex items-center space-x-3 mb-2">
+              <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-clock text-white text-sm"></i>
+              </div>
+              <h3 class="text-sm font-bold text-gray-800">Time Limit</h3>
+            </div>
+            <p class="text-gray-600 text-xs leading-relaxed">Complete your live exam within the allocated time. Timer will be visible during the test.</p>
+          </div>
+          
+          <div class="bg-white/80 backdrop-blur-sm rounded-xl p-3 border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div class="flex items-center space-x-3 mb-2">
+              <div class="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-check-circle text-white text-sm"></i>
+              </div>
+              <h3 class="text-sm font-bold text-gray-800">Submit & Results</h3>
+            </div>
+            <p class="text-gray-600 text-xs leading-relaxed">Review your answers before submitting. Results are available immediately after completion.</p>
+          </div>
+        </div>
+
+        <!-- Additional Instructions -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-white/30 shadow-lg">
+          <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">Important Instructions</h3>
+          <div class="space-y-3 text-sm text-gray-600">
+            <div class="flex items-start space-x-3">
+              <div class="w-2 h-2 bg-primaryGreen rounded-full mt-2 flex-shrink-0"></div>
+              <span>Ensure you have a stable internet connection before starting the live exam</span>
+            </div>
+            <div class="flex items-start space-x-3">
+              <div class="w-2 h-2 bg-primaryBlue rounded-full mt-2 flex-shrink-0"></div>
+              <span>Don't refresh the page or close the browser during the live exam</span>
+            </div>
+            <div class="flex items-start space-x-3">
+              <div class="w-2 h-2 bg-primaryPurple rounded-full mt-2 flex-shrink-0"></div>
+              <span>You can take multiple exams with the same credentials</span>
+            </div>
+            <div class="flex items-start space-x-3">
+              <div class="w-2 h-2 bg-primaryOrange rounded-full mt-2 flex-shrink-0"></div>
+              <span>Contact your teacher if you encounter any technical issues</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trust Indicators -->
+        <div class="pt-4 text-center">
+          <p class="text-sm text-gray-500 mb-4">Trusted by 1000+ students</p>
+          <div class="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-6">
+            <div class="flex items-center space-x-2">
+              <div class="w-2 h-2 bg-primaryGreen rounded-full animate-pulse"></div>
+              <span class="text-sm text-gray-600 font-medium">Secure Platform</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <div class="w-2 h-2 bg-primaryGreen rounded-full animate-pulse"></div>
+              <span class="text-sm text-gray-600 font-medium">Real-time Results</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <div class="w-2 h-2 bg-primaryGreen rounded-full animate-pulse"></div>
+              <span class="text-sm text-gray-600 font-medium">24/7 Access</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
     </div>
   </div>
 

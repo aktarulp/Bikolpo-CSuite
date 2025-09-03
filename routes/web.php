@@ -352,7 +352,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Public Quiz Routes (No Authentication Required)
-Route::prefix('quiz')->name('public.quiz.')->group(function () {
+Route::prefix('LiveExam')->name('public.quiz.')->group(function () {
     Route::get('/', [\App\Http\Controllers\PublicQuizController::class, 'showAccessPage'])->name('access');
     Route::post('/access', [\App\Http\Controllers\PublicQuizController::class, 'processAccess'])->name('process-access');
     Route::post('/multiple-exams', [\App\Http\Controllers\PublicQuizController::class, 'handleMultipleExams'])->name('multiple-exams');

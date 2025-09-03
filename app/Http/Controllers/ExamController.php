@@ -712,13 +712,30 @@ class ExamController extends Controller
 
             // Insert all exam questions
             if (!empty($examQuestions)) {
-                $insertedCount = \App\Models\ExamQuestion::insert($examQuestions);
+                \App\Models\ExamQuestion::insert($examQuestions);
+                $insertedCount = count($examQuestions);
                 \Log::info('Inserted exam questions', ['inserted_count' => $insertedCount]);
             }
 
-            // Update the exam's total questions count
-            $exam->update(['total_questions' => count($questionIds)]);
-            \Log::info('Updated exam total questions', ['new_total' => count($questionIds)]);
+            // Validate that assigned questions don't exceed the exam's total_questions limit
+            $assignedCount = count($questionIds);
+            if ($assignedCount > $exam->total_questions) {
+                \Log::warning('Assigned questions exceed exam limit', [
+                    'exam_id' => $exam->id,
+                    'assigned_count' => $assignedCount,
+                    'total_questions_limit' => $exam->total_questions
+                ]);
+                
+                return redirect()->back()
+                    ->with('error', "Cannot assign {$assignedCount} questions. Exam limit is {$exam->total_questions} questions.")
+                    ->withInput();
+            }
+            
+            \Log::info('Questions assigned successfully', [
+                'exam_id' => $exam->id,
+                'assigned_count' => $assignedCount,
+                'total_questions_limit' => $exam->total_questions
+            ]);
 
             return redirect()->route('partner.exams.show', $exam)
                 ->with('success', 'Questions assigned successfully to the exam.');
