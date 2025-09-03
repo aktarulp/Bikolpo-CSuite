@@ -42,6 +42,11 @@ Route::get('/contact', function () {
     return view('contact');
 })->name('contact');
 
+// About page route (accessible without authentication)
+Route::get('/about', function () {
+    return view('about');
+})->name('about');
+
 // Partner Features page route (accessible without authentication)
 Route::get('/partner-features', function () {
     return view('partner-features');
@@ -51,6 +56,21 @@ Route::get('/partner-features', function () {
 Route::get('/student-features', function () {
     return view('student-features');
 })->name('student.features');
+
+// Privacy Policy page route (accessible without authentication)
+Route::get('/privacy', function () {
+    return view('privacy');
+})->name('privacy');
+
+// Terms of Service page route (accessible without authentication)
+Route::get('/terms', function () {
+    return view('terms');
+})->name('terms');
+
+// Cookies Policy page route (accessible without authentication)
+Route::get('/cookies', function () {
+    return view('cookies');
+})->name('cookies');
 
 Route::middleware('auth')->group(function () {
 

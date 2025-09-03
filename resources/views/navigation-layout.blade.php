@@ -29,7 +29,7 @@
 
             <!-- Desktop Navigation -->
             <nav class="hidden md:flex items-center space-x-8">
-                <a href="#about" class="text-gray-700 dark:text-white hover:text-primaryGreen dark:hover:text-primaryGreen transition-colors duration-200 font-medium">
+                <a href="{{ route('about') }}" class="text-gray-700 dark:text-white hover:text-primaryGreen dark:hover:text-primaryGreen transition-colors duration-200 font-medium">
                     About
                 </a>
                 <a href="{{ route('contact') }}" class="text-gray-700 dark:text-white hover:text-primaryGreen dark:hover:text-primaryGreen transition-colors duration-200 font-medium">
@@ -73,7 +73,7 @@
             <div class="flex flex-col pt-4 px-4">
                 <!-- All Menu Items -->
                 <div class="space-y-1">
-                    <a href="#about" class="block text-gray-700 dark:text-white hover:text-primaryGreen dark:hover:text-primaryGreen transition-all duration-200 font-medium py-3 px-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 active:bg-gray-100 dark:active:bg-gray-800 touch-manipulation">
+                    <a href="{{ route('about') }}" class="block text-gray-700 dark:text-white hover:text-primaryGreen dark:hover:text-primaryGreen transition-all duration-200 font-medium py-3 px-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 active:bg-gray-100 dark:active:bg-gray-800 touch-manipulation">
                         <div class="flex items-center">
                             <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1a3 3 0 01-3-3V6a3 3 0 013-3h1m-1 0v18m0 0h1a3 3 0 013 3v7a3 3 0 01-3 3h-1"></path>

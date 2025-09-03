@@ -273,39 +273,7 @@
   </main>
 
      <!-- Footer -->
-     <footer class="bg-gray-900 text-gray-200 py-5 mt-auto">
-         <div class="max-w-6xl mx-auto px-3 sm:flex sm:justify-between sm:items-center">
-             <!-- Logo & Name -->
-             <div class="flex items-center space-x-4 mb-6 sm:mb-0">
-               <x-brand-logo 
-                 size="lg" 
-                 variant="footer" 
-                 :href="route('landing')" 
-                 :show-tagline="true" 
-               />
-             </div>
-
-             <!-- Contact Info -->
-             <div class="text-sm space-y-1 mb-5 sm:mb-0 ">
-                 <p>🏠 ঠিকানা: উদ্ভাস কোচিং এর নিচ তলা, কলেজ রোড, আলমনগর, রংপুর।</p>
-                 <p>📞 ফোন: <a href="https://wa.me/8801610800060" class="hover:text-white">+880 1610800060</a></p>
-                 <p>✉️ ইমেইল: <a href="mailto:bikolpo247@gmail.com" class="hover:text-white">bikolpo247@gmail.com</a></p>
-             </div>
-
-             <!-- Social Links -->
-             <div class="flex space-x-5 text-white text-2xl">
-                 <a href="https://m.me/BikolpoComputer.Rangpur" target="_blank" aria-label="Messenger" class="hover:text-blue-600 transition">
-                     <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="w-7 h-7" viewBox="0 0 24 24">
-                         <path d="M22.675 0H1.325C.593 0 0 .593 0 1.325v21.351C0 23.407.593 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.894-4.788 4.659-4.788 1.325 0 2.464.099 2.797.143v3.24l-1.92.001c-1.506 0-1.798.716-1.798 1.767v2.317h3.594l-.468 3.622h-3.126V24h6.127c.73 0 1.323-.593 1.323-1.324V1.325C24 .593 23.407 0 22.675 0z"/>
-                     </svg>
-                 </a>
-             </div>
-         </div>
-
-         <div class="mt-4 text-center text-s text-white">
-             © 2025 Bikolpo LQ. All rights reserved.
-         </div>
-     </footer>
+     <x-footer />
 
      <script>
          // Dark Mode Toggle

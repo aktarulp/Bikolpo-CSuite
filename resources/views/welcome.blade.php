@@ -12,7 +12,7 @@
                 extend: {
                     fontFamily: {
                     bangla: ['"Hind Siliguri"', 'sans-serif'],
-                    brand: ['"Lilita One"', 'cursive'],
+                    brand: ['"Poppins"', 'sans-serif'],
                     modern: ['"Inter"', 'sans-serif'],
                     display: ['"Space Grotesk"', 'sans-serif']
                     },
@@ -46,7 +46,7 @@
     @include('navigation-layout')
 
     <!-- Hero Section -->
-    <section class="relative overflow-hidden bg-gradient-to-br from-white via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-16 lg:py-24">
+    <section class="relative overflow-hidden bg-gradient-to-br from-white via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pt-8 pb-16 lg:pt-12 lg:pb-24">
         <div class="absolute inset-0 bg-grid-pattern opacity-5"></div>
         <div class="absolute inset-0 bg-gradient-to-r from-primaryGreen/5 via-transparent to-primaryBlue/5"></div>
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -58,13 +58,13 @@
                 </div>
                 
                 <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-gray-900 dark:text-white mb-6 leading-tight">
-                    <span class="brand-visible font-brand tracking-wide">
-                        Bikolpo LQ
-                    </span>
-                    <br />
-                    <span class="text-4xl md:text-5xl lg:text-6xl text-gray-700 dark:text-gray-300 font-light font-modern">
-                        Your Smart Exam Partner
-                    </span>
+                    <div class="brand-visible font-brand tracking-wide flex flex-col items-center">
+                        <img src="{{ asset('images/Bikolpo_LQ_Transparent.png') }}" alt="Bikolpo LQ" class="h-24 md:h-32 lg:h-40 mb-2">
+                        <span class="text-4xl md:text-5xl lg:text-6xl font-black font-brand tracking-wider bg-gradient-to-r from-primaryGreen via-primaryBlue to-primaryPurple bg-clip-text text-transparent drop-shadow-lg">Bikolpo LQ</span>
+                        <span class="text-4xl md:text-5xl lg:text-6xl text-gray-700 dark:text-gray-300 font-light font-modern mt-2">
+                            Your Smart Exam Partner
+                        </span>
+                    </div>
                 </h1>
                 <p class="text-xl md:text-2xl lg:text-3xl text-gray-600 dark:text-gray-400 mb-10 max-w-4xl mx-auto leading-relaxed font-light">
                     Revolutionize your learning journey with our AI-powered online testing platform. 
@@ -259,84 +259,155 @@
     </section>
 
     <!-- Stats Section -->
-    <section class="py-24 bg-gradient-to-br from-primaryGreen via-green-600 to-emerald-600 text-white relative overflow-hidden">
-        <div class="absolute inset-0 bg-black/10"></div>
-        <div class="absolute inset-0 bg-grid-pattern opacity-5"></div>
+    <section class="py-24 bg-gradient-to-br from-slate-900 via-gray-900 to-black text-white relative overflow-hidden">
+        <!-- Animated Background Elements -->
+        <div class="absolute inset-0">
+            <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primaryGreen/5 via-transparent to-primaryBlue/5"></div>
+            <div class="absolute top-20 left-10 w-72 h-72 bg-primaryGreen/10 rounded-full blur-3xl animate-pulse"></div>
+            <div class="absolute bottom-20 right-10 w-96 h-96 bg-primaryBlue/10 rounded-full blur-3xl animate-pulse animation-delay-1000"></div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primaryPurple/10 rounded-full blur-3xl animate-pulse animation-delay-2000"></div>
+        </div>
+        
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+            <!-- Header -->
+            <div class="text-center mb-20">
+                <div class="inline-flex items-center px-6 py-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-8">
+                    <i class="fas fa-chart-line text-primaryGreen mr-3 text-lg"></i>
+                    <span class="text-sm font-medium text-gray-300">Our Impact in Numbers</span>
+                </div>
+                <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
                     Trusted by Thousands
                 </h2>
-                <p class="text-xl text-green-100 max-w-3xl mx-auto">
-                    Join the growing community of learners and educators who trust Bikolpo LQ
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                    Join the growing community of learners and educators who trust Bikolpo LQ for their educational success
                 </p>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-                <div class="group bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20 hover:bg-white/20 transition-all duration-300">
-                    <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-users text-2xl"></i>
+            <!-- Main Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+                <!-- Stat Card 1 -->
+                <div class="group relative">
+                    <div class="absolute inset-0 bg-gradient-to-br from-primaryGreen/20 to-green-600/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500"></div>
+                    <div class="relative bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 hover:border-primaryGreen/30 transition-all duration-500 group-hover:bg-white/10">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="w-14 h-14 bg-gradient-to-br from-primaryGreen to-green-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                                <i class="fas fa-users text-white text-xl"></i>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-4xl md:text-5xl font-black mb-1 group-hover:scale-110 transition-transform duration-300 bg-gradient-to-r from-primaryGreen to-green-400 bg-clip-text text-transparent">
+                                    <span class="counter" data-target="2500">0</span>+
+                                </div>
+                                <p class="text-sm text-gray-400 font-medium">Active Students</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-300 text-sm">Growing daily</span>
+                            <div class="flex items-center text-primaryGreen text-sm">
+                                <i class="fas fa-arrow-up mr-1"></i>
+                                <span>+12%</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="text-4xl md:text-5xl font-bold mb-2 group-hover:scale-110 transition-transform duration-300">
-                        <span class="counter" data-target="2500">0</span>+
-                    </div>
-                    <p class="text-green-100 text-lg font-medium">Active Students</p>
-                    <p class="text-green-200 text-sm mt-1">Growing daily</p>
                 </div>
                 
-                <div class="group bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20 hover:bg-white/20 transition-all duration-300">
-                    <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-graduation-cap text-2xl"></i>
+                <!-- Stat Card 2 -->
+                <div class="group relative">
+                    <div class="absolute inset-0 bg-gradient-to-br from-primaryBlue/20 to-blue-600/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500"></div>
+                    <div class="relative bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 hover:border-primaryBlue/30 transition-all duration-500 group-hover:bg-white/10">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="w-14 h-14 bg-gradient-to-br from-primaryBlue to-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                                <i class="fas fa-graduation-cap text-white text-xl"></i>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-4xl md:text-5xl font-black mb-1 group-hover:scale-110 transition-transform duration-300 bg-gradient-to-r from-primaryBlue to-blue-400 bg-clip-text text-transparent">
+                                    <span class="counter" data-target="1500">0</span>+
+                                </div>
+                                <p class="text-sm text-gray-400 font-medium">Exams Completed</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-300 text-sm">This month</span>
+                            <div class="flex items-center text-primaryBlue text-sm">
+                                <i class="fas fa-arrow-up mr-1"></i>
+                                <span>+8%</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="text-4xl md:text-5xl font-bold mb-2 group-hover:scale-110 transition-transform duration-300">
-                        <span class="counter" data-target="1500">0</span>+
-                    </div>
-                    <p class="text-green-100 text-lg font-medium">Exams Completed</p>
-                    <p class="text-green-200 text-sm mt-1">This month</p>
                 </div>
                 
-                <div class="group bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20 hover:bg-white/20 transition-all duration-300">
-                    <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-building text-2xl"></i>
+                <!-- Stat Card 3 -->
+                <div class="group relative">
+                    <div class="absolute inset-0 bg-gradient-to-br from-primaryPurple/20 to-purple-600/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500"></div>
+                    <div class="relative bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 hover:border-primaryPurple/30 transition-all duration-500 group-hover:bg-white/10">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="w-14 h-14 bg-gradient-to-br from-primaryPurple to-purple-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                                <i class="fas fa-building text-white text-xl"></i>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-4xl md:text-5xl font-black mb-1 group-hover:scale-110 transition-transform duration-300 bg-gradient-to-r from-primaryPurple to-purple-400 bg-clip-text text-transparent">
+                                    <span class="counter" data-target="75">0</span>+
+                                </div>
+                                <p class="text-sm text-gray-400 font-medium">Partner Institutions</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-300 text-sm">Across Bangladesh</span>
+                            <div class="flex items-center text-primaryPurple text-sm">
+                                <i class="fas fa-arrow-up mr-1"></i>
+                                <span>+5%</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="text-4xl md:text-5xl font-bold mb-2 group-hover:scale-110 transition-transform duration-300">
-                        <span class="counter" data-target="75">0</span>+
-                    </div>
-                    <p class="text-green-100 text-lg font-medium">Partner Institutions</p>
-                    <p class="text-green-200 text-sm mt-1">Across Bangladesh</p>
                 </div>
                 
-                <div class="group bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20 hover:bg-white/20 transition-all duration-300">
-                    <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-clock text-2xl"></i>
+                <!-- Stat Card 4 -->
+                <div class="group relative">
+                    <div class="absolute inset-0 bg-gradient-to-br from-primaryOrange/20 to-orange-600/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500"></div>
+                    <div class="relative bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 hover:border-primaryOrange/30 transition-all duration-500 group-hover:bg-white/10">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="w-14 h-14 bg-gradient-to-br from-primaryOrange to-orange-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                                <i class="fas fa-clock text-white text-xl"></i>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-4xl md:text-5xl font-black mb-1 group-hover:scale-110 transition-transform duration-300 bg-gradient-to-r from-primaryOrange to-orange-400 bg-clip-text text-transparent">
+                                    <span class="counter" data-target="99">0</span>.<span class="counter" data-target="9">0</span>%
+                                </div>
+                                <p class="text-sm text-gray-400 font-medium">Uptime</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-300 text-sm">Reliable service</span>
+                            <div class="flex items-center text-primaryOrange text-sm">
+                                <i class="fas fa-check mr-1"></i>
+                                <span>99.9%</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="text-4xl md:text-5xl font-bold mb-2 group-hover:scale-110 transition-transform duration-300">
-                        <span class="counter" data-target="99">0</span>.<span class="counter" data-target="9">0</span>%
-                    </div>
-                    <p class="text-green-100 text-lg font-medium">Uptime</p>
-                    <p class="text-green-200 text-sm mt-1">Reliable service</p>
                 </div>
             </div>
             
             <!-- Additional Stats Row -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center mt-12">
-                <div class="group">
-                    <div class="text-3xl md:text-4xl font-bold mb-2 group-hover:scale-110 transition-transform duration-300">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="group bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300 text-center">
+                    <div class="text-3xl md:text-4xl font-black mb-2 group-hover:scale-110 transition-transform duration-300 bg-gradient-to-r from-emerald-400 to-emerald-600 bg-clip-text text-transparent">
                         <span class="counter" data-target="50000">0</span>+
                     </div>
-                    <p class="text-green-100 text-lg">Questions Answered</p>
+                    <p class="text-gray-300 text-lg font-medium">Questions Answered</p>
+                    <p class="text-gray-500 text-sm mt-1">And counting...</p>
                 </div>
-                <div class="group">
-                    <div class="text-3xl md:text-4xl font-bold mb-2 group-hover:scale-110 transition-transform duration-300">
+                <div class="group bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300 text-center">
+                    <div class="text-3xl md:text-4xl font-black mb-2 group-hover:scale-110 transition-transform duration-300 bg-gradient-to-r from-cyan-400 to-cyan-600 bg-clip-text text-transparent">
                         <span class="counter" data-target="24">0</span>/7
                     </div>
-                    <p class="text-green-100 text-lg">Support Available</p>
+                    <p class="text-gray-300 text-lg font-medium">Support Available</p>
+                    <p class="text-gray-500 text-sm mt-1">Always here for you</p>
                 </div>
-                <div class="group">
-                    <div class="text-3xl md:text-4xl font-bold mb-2 group-hover:scale-110 transition-transform duration-300">
+                <div class="group bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300 text-center">
+                    <div class="text-3xl md:text-4xl font-black mb-2 group-hover:scale-110 transition-transform duration-300 bg-gradient-to-r from-rose-400 to-rose-600 bg-clip-text text-transparent">
                         <span class="counter" data-target="15">0</span>+
                     </div>
-                    <p class="text-green-100 text-lg">Subjects Covered</p>
+                    <p class="text-gray-300 text-lg font-medium">Subjects Covered</p>
+                    <p class="text-gray-500 text-sm mt-1">Comprehensive learning</p>
                 </div>
             </div>
         </div>
@@ -501,53 +572,123 @@
         </div>
     </section>
 
-    <!-- About Section -->
-    <section id="about" class="py-20 bg-gray-50 dark:bg-gray-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div class="animate-slide-up">
-                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6">
-                        Why Choose Bikolpo LQ?
-                    </h2>
-                    <p class="text-lg text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
-                        Bikolpo LQ is designed to revolutionize online education and testing. Our platform combines cutting-edge technology with user-friendly design to provide the best learning experience.
-                    </p>
-                    <div class="space-y-4">
-                        <div class="flex items-start space-x-3">
-                            <div class="w-6 h-6 bg-primaryGreen rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                                <i class="fas fa-check text-white text-xs"></i>
+    <!-- Why Choose Bikolpo LQ? -->
+    <section id="about" class="py-24 bg-gradient-to-br from-white via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 relative overflow-hidden">
+        <!-- Background Elements -->
+        <div class="absolute inset-0">
+            <div class="absolute top-0 right-0 w-96 h-96 bg-primaryGreen/5 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 w-80 h-80 bg-primaryBlue/5 rounded-full blur-3xl"></div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primaryPurple/5 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Header -->
+            <div class="text-center mb-20">
+                <div class="inline-flex items-center px-6 py-3 rounded-full bg-primaryGreen/10 border border-primaryGreen/20 mb-8">
+                    <i class="fas fa-star text-primaryGreen mr-3 text-lg"></i>
+                    <span class="text-sm font-medium text-primaryGreen">Why Choose Us</span>
+                </div>
+                <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-primaryGreen to-primaryBlue dark:from-white dark:via-primaryGreen dark:to-primaryBlue bg-clip-text text-transparent">
+                    Why Choose Bikolpo LQ?
+                </h2>
+                <p class="text-xl text-gray-600 dark:text-gray-400 max-w-4xl mx-auto leading-relaxed">
+                    Experience the future of online education with our cutting-edge platform designed to transform how you learn, test, and succeed.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <!-- Left Content -->
+                <div class="space-y-8">
+                    <!-- Feature Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Feature 1 -->
+                        <div class="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 hover:border-primaryGreen/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                            <div class="w-12 h-12 bg-gradient-to-br from-primaryGreen to-green-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-cogs text-white text-lg"></i>
                             </div>
-                            <p class="text-gray-700 dark:text-gray-300">Advanced question management system</p>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Advanced Question Management</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Smart question categorization, auto-grading, and comprehensive analytics for optimal learning outcomes.</p>
                         </div>
-                        <div class="flex items-start space-x-3">
-                            <div class="w-6 h-6 bg-primaryGreen rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                                <i class="fas fa-check text-white text-xs"></i>
+
+                        <!-- Feature 2 -->
+                        <div class="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 hover:border-primaryBlue/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                            <div class="w-12 h-12 bg-gradient-to-br from-primaryBlue to-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-chart-line text-white text-lg"></i>
                             </div>
-                            <p class="text-gray-700 dark:text-gray-300">Real-time analytics and reporting</p>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Real-time Analytics</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Instant performance insights, detailed reports, and personalized learning recommendations.</p>
                         </div>
-                        <div class="flex items-start space-x-3">
-                            <div class="w-6 h-6 bg-primaryGreen rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                                <i class="fas fa-check text-white text-xs"></i>
+
+                        <!-- Feature 3 -->
+                        <div class="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 hover:border-primaryPurple/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                            <div class="w-12 h-12 bg-gradient-to-br from-primaryPurple to-purple-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-globe text-white text-lg"></i>
                             </div>
-                            <p class="text-gray-700 dark:text-gray-300">Multi-language support</p>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Multi-language Support</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Seamless experience in Bengali, English, and other languages for inclusive learning.</p>
                         </div>
-                        <div class="flex items-start space-x-3">
-                            <div class="w-6 h-6 bg-primaryGreen rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                                <i class="fas fa-check text-white text-xs"></i>
+
+                        <!-- Feature 4 -->
+                        <div class="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 hover:border-primaryOrange/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                            <div class="w-12 h-12 bg-gradient-to-br from-primaryOrange to-orange-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-headset text-white text-lg"></i>
                             </div>
-                            <p class="text-gray-700 dark:text-gray-300">24/7 customer support</p>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">24/7 Support</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Round-the-clock customer support to ensure your learning journey is never interrupted.</p>
+                        </div>
+                    </div>
+
+                    <!-- Additional Benefits -->
+                    <div class="bg-gradient-to-r from-primaryGreen/10 to-primaryBlue/10 rounded-2xl p-6 border border-primaryGreen/20">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+                            <i class="fas fa-trophy text-primaryGreen mr-3"></i>
+                            Proven Results
+                        </h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-primaryGreen">95%</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400">Success Rate</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-primaryBlue">40%</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400">Performance Boost</div>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Right Content - CTA Card -->
                 <div class="relative">
-                    <div class="bg-gradient-to-br from-primaryGreen to-green-600 rounded-3xl p-8 shadow-2xl">
+                    <div class="absolute inset-0 bg-gradient-to-br from-primaryGreen/20 to-primaryBlue/20 rounded-3xl blur-xl"></div>
+                    <div class="relative bg-gradient-to-br from-primaryGreen via-green-600 to-emerald-600 rounded-3xl p-10 shadow-2xl border border-white/20">
                         <div class="text-center text-white">
-                            <i class="fas fa-rocket text-6xl mb-6"></i>
-                            <h3 class="text-2xl font-bold mb-4">Ready to Get Started?</h3>
-                            <p class="text-green-100 mb-6">Join thousands of users who trust Bikolpo LQ for their online testing needs.</p>
-                                                <a href="{{ route('register') }}" class="bg-white text-primaryGreen px-8 py-3 rounded-full font-bold hover:bg-gray-100 transition-colors duration-200 inline-block">
-                        Start Free Trial
-                    </a>
+                            <div class="w-20 h-20 bg-white/20 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                                <i class="fas fa-rocket text-white text-3xl"></i>
+                            </div>
+                            <h3 class="text-3xl font-bold mb-4">Ready to Transform Your Learning?</h3>
+                            <p class="text-green-100 mb-8 text-lg leading-relaxed">
+                                Join thousands of students and educators who have already revolutionized their learning experience with Bikolpo LQ.
+                            </p>
+                            <div class="space-y-4">
+                                <a href="{{ route('register') }}" class="block w-full bg-white text-primaryGreen px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                                    <i class="fas fa-user-plus mr-2"></i>
+                                    Start Free Trial
+                                </a>
+                                <a href="{{ route('typing.test') }}" class="block w-full border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-primaryGreen transition-all duration-300 transform hover:scale-105">
+                                    <i class="fas fa-keyboard mr-2"></i>
+                                    Try Demo Test
+                                </a>
+                            </div>
+                            <div class="mt-6 flex items-center justify-center space-x-6 text-green-100 text-sm">
+                                <div class="flex items-center">
+                                    <i class="fas fa-check mr-2"></i>
+                                    <span>No Credit Card</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-check mr-2"></i>
+                                    <span>Instant Access</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -619,105 +760,7 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-200 py-16 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Main Footer Content -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-                <!-- Company Info -->
-                <div class="lg:col-span-2">
-                    <div class="flex items-center space-x-4 mb-6">
-                        <x-brand-logo 
-                            size="xl" 
-                            variant="footer" 
-                            :href="route('landing')" 
-                            :show-tagline="true" 
-                        />
-                    </div>
-                    <p class="text-gray-400 mb-6 leading-relaxed max-w-md">
-                        Revolutionizing education in Bangladesh with cutting-edge online testing technology. 
-                        Empowering students and educators with smart, secure, and comprehensive learning solutions.
-                    </p>
-                    <div class="flex space-x-4">
-                        <a href="https://facebook.com/bikolpocomputer.rangpur" target="_blank" aria-label="Facebook" class="w-10 h-10 bg-gray-800 hover:bg-primaryBlue rounded-lg flex items-center justify-center transition-colors duration-200">
-                            <i class="fab fa-facebook-f text-white"></i>
-                        </a>
-                        <a href="https://wa.me/8801610800060" target="_blank" aria-label="WhatsApp" class="w-10 h-10 bg-gray-800 hover:bg-green-600 rounded-lg flex items-center justify-center transition-colors duration-200">
-                            <i class="fab fa-whatsapp text-white"></i>
-                        </a>
-                        <a href="mailto:bikolpo247@gmail.com" aria-label="Email" class="w-10 h-10 bg-gray-800 hover:bg-primaryOrange rounded-lg flex items-center justify-center transition-colors duration-200">
-                            <i class="fas fa-envelope text-white"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Quick Links -->
-                <div>
-                    <h3 class="text-white text-lg font-bold mb-6">Quick Links</h3>
-                    <ul class="space-y-3">
-                        <li><a href="{{ route('landing') }}" class="text-gray-400 hover:text-white transition-colors duration-200">Home</a></li>
-                        <li><a href="#about" class="text-gray-400 hover:text-white transition-colors duration-200">About Us</a></li>
-                        <li><a href="#features" class="text-gray-400 hover:text-white transition-colors duration-200">Features</a></li>
-                        <li><a href="{{ route('contact') }}" class="text-gray-400 hover:text-white transition-colors duration-200">Contact</a></li>
-                        <li><a href="{{ route('partner.features') }}" class="text-gray-400 hover:text-white transition-colors duration-200">For Partners</a></li>
-                        <li><a href="{{ route('student.features') }}" class="text-gray-400 hover:text-white transition-colors duration-200">For Students</a></li>
-                    </ul>
-                </div>
-
-                <!-- Contact Info -->
-                <div>
-                    <h3 class="text-white text-lg font-bold mb-6">Contact Info</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-start space-x-3">
-                            <i class="fas fa-map-marker-alt text-primaryGreen mt-1"></i>
-                            <div>
-                                <p class="text-gray-400 text-sm leading-relaxed">
-                                    উদ্ভাস কোচিং এর নিচ তলা<br>
-                                    কলেজ রোড, আলমনগর<br>
-                                    রংপুর, বাংলাদেশ
-                                </p>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <i class="fas fa-phone text-primaryGreen"></i>
-                            <a href="https://wa.me/8801610800060" class="text-gray-400 hover:text-white transition-colors duration-200">
-                                +880 1610800060
-                            </a>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <i class="fas fa-envelope text-primaryGreen"></i>
-                            <a href="mailto:bikolpo247@gmail.com" class="text-gray-400 hover:text-white transition-colors duration-200">
-                                bikolpo247@gmail.com
-              </a>
-            </div>
-                        <div class="flex items-center space-x-3">
-                            <i class="fas fa-clock text-primaryGreen"></i>
-                            <p class="text-gray-400 text-sm">24/7 Online Support</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bottom Footer -->
-            <div class="border-t border-gray-800 pt-8">
-                <div class="flex flex-col md:flex-row justify-between items-center">
-                    <div class="text-gray-400 text-sm mb-4 md:mb-0">
-                        © 2025 Bikolpo LQ. All rights reserved.
-                    </div>
-                    <div class="flex space-x-6 text-sm">
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Privacy Policy</a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Terms of Service</a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200">Cookie Policy</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Back to Top Button -->
-    <button id="backToTop" class="fixed bottom-8 right-8 w-12 h-12 bg-primaryGreen hover:bg-green-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 opacity-0 invisible">
-        <i class="fas fa-arrow-up"></i>
-    </button>
+    <x-footer />
 
     <script>
         // Dark Mode Toggle
