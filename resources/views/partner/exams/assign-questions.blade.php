@@ -142,7 +142,7 @@
                                      data-type="{{ $question->question_type }}"
                                      data-subject="{{ $question->subject->name ?? '' }}"
                                      data-topic="{{ $question->topic->name ?? '' }}">
-                                    <label class="flex items-start space-x-2 cursor-pointer">
+                                    <div class="flex items-start space-x-2">
                                         <input type="checkbox" name="question_ids[]" value="{{ $question->id }}" 
                                                class="question-checkbox mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                                                {{ $assignedQuestions->contains($question->id) ? 'checked' : '' }}>
@@ -151,16 +151,29 @@
                                                 <span class="text-sm text-gray-900 dark:text-white">
                                                     {{ Str::limit($question->question_text, 60) }}
                                                 </span>
-                                                <span class="text-xs px-2 py-1 rounded
-                                                    {{ $question->question_type === 'mcq' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' }}">
-                                                    {{ strtoupper($question->question_type) }}
-                                                </span>
+                                                <div class="flex items-center space-x-2">
+                                                    <span class="text-xs px-2 py-1 rounded
+                                                        {{ $question->question_type === 'mcq' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' }}">
+                                                        {{ strtoupper($question->question_type) }}
+                                                    </span>
+                                                </div>
                                             </div>
                                             <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
                                                 {{ $question->subject->name ?? 'N/A' }} | {{ $question->topic->name ?? 'N/A' }}
                                             </div>
+                                            <!-- Mark Input Field -->
+                                            <div class="mt-2 flex items-center space-x-2 question-marks-container">
+                                                <label class="text-xs text-gray-600 dark:text-gray-400">Marks:</label>
+                                                <input type="number" 
+                                                       name="question_marks[{{ $question->id }}]" 
+                                                       value="{{ $assignedQuestionsWithMarks[$question->id] ?? 1 }}" 
+                                                       min="1" 
+                                                       max="100" 
+                                                       class="question-marks w-16 px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                                       placeholder="1">
+                                            </div>
                                         </div>
-                                    </label>
+                                    </div>
                                 </div>
                             @endforeach
                         </div>
@@ -405,6 +418,33 @@
     outline: 2px solid #3b82f6;
     outline-offset: 2px;
 }
+
+/* Mark input styling */
+.question-marks {
+    transition: all 0.2s ease;
+}
+
+.question-marks:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 1px;
+    transform: scale(1.05);
+}
+
+.question-marks.border-red-500 {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 1px #ef4444;
+}
+
+/* Mark input container */
+.question-marks-container {
+    transition: all 0.3s ease;
+}
+
+.question-card:hover .question-marks-container {
+    background-color: rgba(59, 130, 246, 0.05);
+    border-radius: 4px;
+    padding: 2px;
+}
 </style>
 @endpush
 
@@ -586,6 +626,27 @@ document.addEventListener('DOMContentLoaded', function() {
         if (questionIds.length === 0) {
             e.preventDefault();
             alert('Please select at least one question before submitting.');
+            return false;
+        }
+        
+        // Validate mark inputs for selected questions
+        let hasInvalidMarks = false;
+        questionIds.forEach(questionId => {
+            const markInput = document.querySelector(`input[name="question_marks[${questionId}]"]`);
+            if (markInput) {
+                const markValue = parseInt(markInput.value);
+                if (isNaN(markValue) || markValue < 1 || markValue > 100) {
+                    hasInvalidMarks = true;
+                    markInput.classList.add('border-red-500');
+                } else {
+                    markInput.classList.remove('border-red-500');
+                }
+            }
+        });
+        
+        if (hasInvalidMarks) {
+            e.preventDefault();
+            alert('Please enter valid marks (1-100) for all selected questions.');
             return false;
         }
     });

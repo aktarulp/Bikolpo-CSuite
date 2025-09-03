@@ -641,9 +641,13 @@ class ExamController extends Controller
             ->with(['topic', 'subject'])
             ->get();
             
-        // Get currently assigned questions for this exam
+        // Get currently assigned questions for this exam with their marks
         $assignedQuestions = \App\Models\ExamQuestion::where('exam_id', $exam->id)
             ->pluck('question_id');
+            
+        // Get assigned questions with marks for display
+        $assignedQuestionsWithMarks = \App\Models\ExamQuestion::where('exam_id', $exam->id)
+            ->pluck('marks', 'question_id');
         
         // Get subjects and topics for filters
         $subjects = \App\Models\Subject::where('status', 'active')->get();
@@ -659,7 +663,7 @@ class ExamController extends Controller
             'partner_id' => $partnerId
         ]);
         
-        return view('partner.exams.assign-questions', compact('exam', 'questions', 'assignedQuestions', 'subjects', 'topics'));
+        return view('partner.exams.assign-questions', compact('exam', 'questions', 'assignedQuestions', 'assignedQuestionsWithMarks', 'subjects', 'topics'));
     }
 
     public function storeAssignedQuestions(Request $request, Exam $exam)
@@ -674,7 +678,9 @@ class ExamController extends Controller
 
             $request->validate([
                 'question_ids' => 'required|array',
-                'question_ids.*' => 'exists:questions,id'
+                'question_ids.*' => 'exists:questions,id',
+                'question_marks' => 'required|array',
+                'question_marks.*' => 'integer|min:1|max:100'
             ]);
 
             $partnerId = $this->getPartnerId();
@@ -690,15 +696,18 @@ class ExamController extends Controller
 
             // Store new assigned questions
             $questionIds = $request->question_ids;
+            $questionMarks = $request->question_marks;
             $examQuestions = [];
             
             foreach ($questionIds as $index => $questionId) {
                 $question = \App\Models\Question::find($questionId);
+                $marks = isset($questionMarks[$questionId]) ? (int)$questionMarks[$questionId] : 1;
+                
                 $examQuestions[] = [
                     'exam_id' => $exam->id,
                     'question_id' => $questionId,
                     'order' => $index + 1,
-                    'marks' => 1, // Default marks, can be updated later
+                    'marks' => $marks,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
