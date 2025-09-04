@@ -237,36 +237,85 @@
             <!-- Featured Partners -->
             <div class="mt-12 text-center">
                 <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-8">Admission Test Available For</h3>
-                <div class="grid grid-cols-2 md:grid-cols-10 lg:grid-cols-10 gap-2 items-center opacity-60">
-                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                        <div class="text-gray-600 dark:text-gray-400 font-semibold">BUET</div>
+                <div class="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-5 gap-4 items-center">
+                    <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                        <div class="text-white font-bold text-lg">BUET</div>
+                        <div class="text-blue-100 text-sm">Engineering</div>
                     </div>
-                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                        <div class="text-gray-600 dark:text-gray-400 font-semibold">RUET</div>
+                    <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                        <div class="text-white font-bold text-lg">RUET</div>
+                        <div class="text-green-100 text-sm">Engineering</div>
                     </div>
-                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                        <div class="text-gray-600 dark:text-gray-400 font-semibold">KUET</div>
+                    <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                        <div class="text-white font-bold text-lg">KUET</div>
+                        <div class="text-purple-100 text-sm">Engineering</div>
                     </div>
-                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                        <div class="text-gray-600 dark:text-gray-400 font-semibold">CUET</div>
+                    <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                        <div class="text-white font-bold text-lg">CUET</div>
+                        <div class="text-orange-100 text-sm">Engineering</div>
                     </div>
-                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                        <div class="text-gray-600 dark:text-gray-400 font-semibold">DU</div>
+                    <div class="bg-gradient-to-br from-red-500 to-red-600 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                        <div class="text-white font-bold text-lg">DU</div>
+                        <div class="text-red-100 text-sm">University</div>
                     </div>
-                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                        <div class="text-gray-600 dark:text-gray-400 font-semibold">JU</div>  
+                    <div class="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                        <div class="text-white font-bold text-lg">JU</div>
+                        <div class="text-indigo-100 text-sm">University</div>
                     </div>
-                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                        <div class="text-gray-600 dark:text-gray-400 font-semibold">RU</div>  
+                    <div class="bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                        <div class="text-white font-bold text-lg">RU</div>
+                        <div class="text-teal-100 text-sm">University</div>
                     </div>
-                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                        <div class="text-gray-600 dark:text-gray-400 font-semibold">JU</div>  
+                    <div class="bg-gradient-to-br from-pink-500 to-pink-600 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                        <div class="text-white font-bold text-lg">CU</div>
+                        <div class="text-pink-100 text-sm">University</div>
                     </div>
-                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                        <div class="text-gray-600 dark:text-gray-400 font-semibold">CU</div>  
+                    <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                        <div class="text-white font-bold text-lg">KU</div>
+                        <div class="text-yellow-100 text-sm">University</div>
                     </div>
-                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
-                        <div class="text-gray-600 dark:text-gray-400 font-semibold">KU</div>  
+                    <div class="bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                        <div class="text-white font-bold text-lg">SUST</div>
+                        <div class="text-cyan-100 text-sm">University</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Government & Bank Job Tests -->
+            <div class="mt-12 text-center">
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-8">Govt. & Bank Job Test Available for</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4 items-center">
+                    <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                        <div class="text-white font-bold text-lg">BCS</div>
+                        <div class="text-emerald-100 text-sm">Civil Service</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                        <div class="text-white font-bold text-lg">Bank Job</div>
+                        <div class="text-amber-100 text-sm">Banking</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-rose-500 to-rose-600 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                        <div class="text-white font-bold text-lg">NTRCA</div>
+                        <div class="text-rose-100 text-sm">Teacher</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-violet-500 to-violet-600 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                        <div class="text-white font-bold text-lg">PSC</div>
+                        <div class="text-violet-100 text-sm">Public Service</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-sky-500 to-sky-600 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                        <div class="text-white font-bold text-lg">UPSC</div>
+                        <div class="text-sky-100 text-sm">Union Service</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-lime-500 to-lime-600 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                        <div class="text-white font-bold text-lg">Railway</div>
+                        <div class="text-lime-100 text-sm">Railway Job</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-fuchsia-500 to-fuchsia-600 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                        <div class="text-white font-bold text-lg">Police</div>
+                        <div class="text-fuchsia-100 text-sm">Police Job</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-stone-500 to-stone-600 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                        <div class="text-white font-bold text-lg">Defense</div>
+                        <div class="text-stone-100 text-sm">Military</div>
                     </div>
                 </div>
             </div>
