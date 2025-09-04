@@ -170,6 +170,102 @@
             </div>
         </div>
 
+        <!-- Typing Test Feature Section -->
+        <div class="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 dark:from-orange-900/30 dark:via-amber-900/30 dark:to-yellow-900/30 rounded-3xl p-8 lg:p-12 mb-16 border border-orange-200 dark:border-orange-700">
+            <div class="text-center mb-12">
+                <div class="w-20 h-20 bg-gradient-to-br from-orange-500 to-amber-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                    <i class="fas fa-keyboard text-white text-3xl"></i>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                    Advanced Typing Test System
+                </h2>
+                <p class="text-xl text-gray-600 dark:text-gray-400 max-w-4xl mx-auto">
+                    Master your typing skills with our comprehensive typing test platform featuring real-time feedback, speed tracking, and accuracy measurement
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Real-time Speed Tracking -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-tachometer-alt text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white">Real-time Speed Tracking</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">Monitor your typing speed in real-time with instant WPM calculations</p>
+                    <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                        <li class="flex items-center"><i class="fas fa-check text-orange-500 mr-2"></i>Live WPM display</li>
+                        <li class="flex items-center"><i class="fas fa-check text-orange-500 mr-2"></i>Instant feedback</li>
+                        <li class="flex items-center"><i class="fas fa-check text-orange-500 mr-2"></i>Progress tracking</li>
+                    </ul>
+                </div>
+
+                <!-- Accuracy Measurement -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-amber-500 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-bullseye text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white">Accuracy Measurement</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">Track your typing accuracy with detailed error analysis and correction suggestions</p>
+                    <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                        <li class="flex items-center"><i class="fas fa-check text-amber-500 mr-2"></i>Error highlighting</li>
+                        <li class="flex items-center"><i class="fas fa-check text-amber-500 mr-2"></i>Accuracy percentage</li>
+                        <li class="flex items-center"><i class="fas fa-check text-amber-500 mr-2"></i>Mistake analysis</li>
+                    </ul>
+                </div>
+
+                <!-- Skill Improvement -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-yellow-500 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-chart-line text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white">Skill Improvement</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">Personalized recommendations and practice exercises to enhance your typing skills</p>
+                    <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                        <li class="flex items-center"><i class="fas fa-check text-yellow-500 mr-2"></i>Personalized tips</li>
+                        <li class="flex items-center"><i class="fas fa-check text-yellow-500 mr-2"></i>Practice exercises</li>
+                        <li class="flex items-center"><i class="fas fa-check text-yellow-500 mr-2"></i>Progress reports</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Typing Test Features -->
+            <div class="mt-12 text-center">
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-8">Typing Test Features</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 items-center">
+                    <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                        <div class="text-white font-bold text-lg">Bengali</div>
+                        <div class="text-orange-100 text-sm">Typing</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                        <div class="text-white font-bold text-lg">English</div>
+                        <div class="text-amber-100 text-sm">Typing</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                        <div class="text-white font-bold text-lg">Numbers</div>
+                        <div class="text-yellow-100 text-sm">Typing</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-orange-600 to-red-600 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                        <div class="text-white font-bold text-lg">Symbols</div>
+                        <div class="text-orange-100 text-sm">Typing</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-amber-600 to-orange-600 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                        <div class="text-white font-bold text-lg">Mixed</div>
+                        <div class="text-amber-100 text-sm">Typing</div>
+                    </div>
+                    <div class="bg-gradient-to-br from-yellow-600 to-amber-600 rounded-xl p-4 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                        <div class="text-white font-bold text-lg">Custom</div>
+                        <div class="text-yellow-100 text-sm">Text</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Public Tests from Renowned Institutes Section -->
         <div class="bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 dark:from-indigo-900/30 dark:via-blue-900/30 dark:to-cyan-900/30 rounded-3xl p-8 lg:p-12 mb-16 border border-indigo-200 dark:border-indigo-700">
             <div class="text-center mb-12">
@@ -496,6 +592,10 @@
                 <a href="{{ route('student.dashboard') }}" class="bg-white text-primaryBlue px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors duration-200 transform hover:scale-105 shadow-lg">
                     <i class="fas fa-graduation-cap mr-2"></i>
                     Start Learning Now
+                </a>
+                <a href="{{ route('typing.test') }}" class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-full font-bold text-lg transition-colors duration-200 transform hover:scale-105 shadow-lg">
+                    <i class="fas fa-keyboard mr-2"></i>
+                    Try Typing Test
                 </a>
                 <a href="{{ route('contact') }}" class="border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-primaryBlue transition-all duration-200">
                     <i class="fas fa-phone mr-2"></i>

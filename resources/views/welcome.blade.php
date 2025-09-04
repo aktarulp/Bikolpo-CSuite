@@ -46,33 +46,33 @@
     @include('navigation-layout')
 
     <!-- Hero Section -->
-    <section class="relative overflow-hidden bg-gradient-to-br from-white via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pt-8 pb-16 lg:pt-12 lg:pb-24">
+    <section class="relative overflow-hidden bg-gradient-to-br from-white via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pt-6 pb-12 lg:pt-8 lg:pb-16">
         <div class="absolute inset-0 bg-grid-pattern opacity-5"></div>
         <div class="absolute inset-0 bg-gradient-to-r from-primaryGreen/5 via-transparent to-primaryBlue/5"></div>
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div class="animate-fade-in">
                 <!-- Badge -->
-                <div class="inline-flex items-center px-4 py-2 rounded-full bg-primaryGreen/10 text-primaryGreen text-sm font-medium mb-6 border border-primaryGreen/20">
+                <div class="inline-flex items-center px-4 py-0 rounded-full bg-primaryGreen/10 text-primaryGreen text-sm font-medium mb-4 border border-primaryGreen/20">
                     <i class="fas fa-star mr-2"></i>
                     Trusted by 1000+ Students & 50+ Partners
                 </div>
                 
-                <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-gray-900 dark:text-white mb-6 leading-tight">
+                <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-gray-900 dark:text-white mb-4 leading-tight">
                     <div class="brand-visible font-brand tracking-wide flex flex-col items-center">
-                        <img src="{{ asset('images/Bikolpo_LQ_Transparent.png') }}" alt="Bikolpo LQ" class="h-24 md:h-32 lg:h-40 mb-2">
+                        <img src="{{ asset('images/Bikolpo_LQ_Transparent.png') }}" alt="Bikolpo LQ" class="h-48 md:h-32 lg:h-40 mb-1">
                         <span class="text-4xl md:text-5xl lg:text-6xl font-black font-brand tracking-wider bg-gradient-to-r from-primaryGreen via-primaryBlue to-primaryPurple bg-clip-text text-transparent drop-shadow-lg">Bikolpo LQ</span>
                         <span class="text-4xl md:text-5xl lg:text-6xl text-gray-700 dark:text-gray-300 font-light font-modern mt-2">
                             Your Smart Exam Partner
                         </span>
                     </div>
                 </h1>
-                <p class="text-xl md:text-2xl lg:text-3xl text-gray-600 dark:text-gray-400 mb-10 max-w-4xl mx-auto leading-relaxed font-light">
+                <p class="text-xl md:text-2xl lg:text-3xl text-gray-600 dark:text-gray-400 mb-6 max-w-4xl mx-auto leading-relaxed font-light">
                     Revolutionize your learning journey with our AI-powered online testing platform. 
                     <span class="text-primaryGreen font-semibold">Practice smarter, perform better, achieve more.</span>
                 </p>
                 
                 <!-- Key Benefits -->
-                <div class="flex flex-wrap justify-center gap-6 mb-10 text-sm md:text-base">
+                <div class="flex flex-wrap justify-center gap-6 mb-6 text-sm md:text-base">
                     <div class="flex items-center text-gray-600 dark:text-gray-400">
                         <i class="fas fa-check-circle text-primaryGreen mr-2"></i>
                         Instant Results & Analytics
@@ -87,19 +87,15 @@
                     </div>
                 </div>
                 
-                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <div class="flex justify-center">
                     <a href="{{ route('register') }}" class="group bg-gradient-to-r from-primaryGreen to-green-600 hover:from-green-600 hover:to-green-700 text-white px-10 py-5 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl">
-                        Start Learning Free
+                        Start your partner journey
                         <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-200"></i>
-                    </a>
-                    <a href="{{ route('typing.test') }}" class="group bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-primaryOrange border-2 border-primaryOrange px-10 py-5 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
-                        Try Typing Test
-                        <i class="fas fa-keyboard ml-2 group-hover:scale-110 transition-transform duration-200"></i>
                     </a>
                 </div>
                 
                 <!-- Trust Indicators -->
-                <div class="mt-12 flex flex-wrap justify-center items-center gap-8 opacity-60">
+                <div class="mt-8 flex flex-wrap justify-center items-center gap-8 opacity-60">
                     <div class="text-sm text-gray-500 dark:text-gray-400">
                         <i class="fas fa-shield-alt text-primaryGreen mr-1"></i>
                         Secure & Reliable
@@ -124,7 +120,7 @@
     </section>
 
     <!-- Features Section -->
-    <section id="features" class="py-24 bg-white dark:bg-gray-900">
+    <section id="features" class="py-16 bg-white dark:bg-gray-900">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-20">
                 <div class="inline-flex items-center px-4 py-2 rounded-full bg-primaryBlue/10 text-primaryBlue text-sm font-medium mb-6 border border-primaryBlue/20">
@@ -165,16 +161,16 @@
                     <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primaryOrange/10 to-transparent rounded-full -translate-y-16 translate-x-16"></div>
                     <div class="relative">
                         <div class="w-20 h-20 bg-gradient-to-br from-primaryOrange to-orange-600 rounded-3xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                            <i class="fas fa-keyboard text-white text-3xl"></i>
+                            <i class="fas fa-database text-white text-3xl"></i>
                         </div>
-                        <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Typing Mastery</h3>
+                        <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Advanced Question Bank</h3>
                         <p class="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
-                            Comprehensive typing tests with real-time speed tracking, accuracy measurement, and skill improvement.
+                            Comprehensive question database with multiple difficulty levels, subject categorization, and detailed explanations.
                         </p>
                         <ul class="text-sm text-gray-500 dark:text-gray-400 space-y-1">
-                            <li>• Real-time speed tracking</li>
-                            <li>• Accuracy measurement</li>
-                            <li>• Skill improvement tips</li>
+                            <li>• Multiple difficulty levels</li>
+                            <li>• Subject-wise categorization</li>
+                            <li>• Detailed explanations</li>
                         </ul>
                     </div>
                 </div>
@@ -259,7 +255,7 @@
     </section>
 
     <!-- Stats Section -->
-    <section class="py-24 bg-gradient-to-br from-slate-900 via-gray-900 to-black text-white relative overflow-hidden">
+    <section class="py-16 bg-gradient-to-br from-slate-900 via-gray-900 to-black text-white relative overflow-hidden">
         <!-- Animated Background Elements -->
         <div class="absolute inset-0">
             <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primaryGreen/5 via-transparent to-primaryBlue/5"></div>
@@ -268,7 +264,7 @@
             <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primaryPurple/10 rounded-full blur-3xl animate-pulse animation-delay-2000"></div>
         </div>
         
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-white/10 to-gray-100/20 backdrop-blur-sm rounded-3xl p-8">
             <!-- Header -->
             <div class="text-center mb-20">
                 <div class="inline-flex items-center px-6 py-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-8">
@@ -413,8 +409,158 @@
         </div>
     </section>
 
+
+    <!-- Why Choose Bikolpo LQ? -->
+    <section id="about" class="py-16 bg-gradient-to-br from-white via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 relative overflow-hidden">
+        <!-- Background Elements -->
+        <div class="absolute inset-0">
+            <div class="absolute top-0 right-0 w-96 h-96 bg-primaryGreen/5 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 w-80 h-80 bg-primaryBlue/5 rounded-full blur-3xl"></div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primaryPurple/5 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Header -->
+            <div class="text-center mb-20">
+                <div class="inline-flex items-center px-6 py-3 rounded-full bg-primaryGreen/10 border border-primaryGreen/20 mb-8">
+                    <i class="fas fa-star text-primaryGreen mr-3 text-lg"></i>
+                    <span class="text-sm font-medium text-primaryGreen">Why Choose Us</span>
+                </div>
+                <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-primaryGreen to-primaryBlue dark:from-white dark:via-primaryGreen dark:to-primaryBlue bg-clip-text text-transparent">
+                    Why Choose Bikolpo LQ?
+                </h2>
+                <p class="text-xl text-gray-600 dark:text-gray-400 max-w-4xl mx-auto leading-relaxed">
+                    Experience the future of online education with our cutting-edge platform designed to transform how you learn, test, and succeed.
+                </p>
+            </div>
+
+            <div class="max-w-4xl mx-auto">
+                <!-- Left Content -->
+                <div class="space-y-8">
+                    <!-- Feature Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Feature 1 -->
+                        <div class="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 hover:border-primaryGreen/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                            <div class="w-12 h-12 bg-gradient-to-br from-primaryGreen to-green-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-cogs text-white text-lg"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Advanced Question Management</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Smart question categorization, auto-grading, and comprehensive analytics for optimal learning outcomes.</p>
+                        </div>
+
+                        <!-- Feature 2 -->
+                        <div class="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 hover:border-primaryBlue/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                            <div class="w-12 h-12 bg-gradient-to-br from-primaryBlue to-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-chart-line text-white text-lg"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Real-time Analytics</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Instant performance insights, detailed reports, and personalized learning recommendations.</p>
+                        </div>
+
+                        <!-- Feature 3 -->
+                        <div class="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 hover:border-primaryPurple/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                            <div class="w-12 h-12 bg-gradient-to-br from-primaryPurple to-purple-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-globe text-white text-lg"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Multi-language Support</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Seamless experience in Bengali, English, and other languages for inclusive learning.</p>
+                        </div>
+
+                        <!-- Feature 4 -->
+                        <div class="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 hover:border-primaryOrange/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                            <div class="w-12 h-12 bg-gradient-to-br from-primaryOrange to-orange-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-headset text-white text-lg"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">24/7 Support</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Round-the-clock customer support to ensure your learning journey is never interrupted.</p>
+                        </div>
+                    </div>
+
+                    <!-- Additional Benefits -->
+                    <div class="bg-gradient-to-r from-primaryGreen/10 to-primaryBlue/10 rounded-2xl p-6 border border-primaryGreen/20">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+                            <i class="fas fa-trophy text-primaryGreen mr-3"></i>
+                            Proven Results
+                        </h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-primaryGreen">95%</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400">Success Rate</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-primaryBlue">40%</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400">Performance Boost</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 bg-gradient-to-br from-primaryBlue via-indigo-600 to-purple-600 text-white relative overflow-hidden">
+        <div class="absolute inset-0 bg-black/10"></div>
+        <div class="absolute inset-0 bg-grid-pattern opacity-5"></div>
+        <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="mb-12">
+                <div class="inline-flex items-center px-4 py-2 rounded-full bg-white/20 text-white text-sm font-medium mb-6 border border-white/30">
+                    <i class="fas fa-star mr-2"></i>
+                    Join the Revolution
+                </div>
+                <h2 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+                    Ready to Transform Your 
+                    <span class="bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">Learning Journey?</span>
+            </h2>
+                <p class="text-xl md:text-2xl text-blue-100 mb-10 leading-relaxed max-w-4xl mx-auto">
+                    Join over 2,500 students and 75+ institutions who trust Bikolpo LQ for their educational success. 
+                    <span class="text-yellow-300 font-semibold">Start your transformation today!</span>
+                </p>
+            </div>
+            
+            <div class="flex justify-center mb-10">
+                <a href="{{ route('register') }}" class="group bg-white text-primaryBlue px-10 py-5 rounded-full font-bold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl">
+                    <i class="fas fa-rocket mr-2 group-hover:translate-x-1 transition-transform duration-200"></i>
+                    Start your partner journey
+                </a>
+            </div>
+            
+            <!-- Trust Indicators -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                    <i class="fas fa-shield-alt text-3xl mb-3 text-yellow-300"></i>
+                    <h4 class="font-bold mb-2">100% Secure</h4>
+                    <p class="text-blue-100 text-sm">Bank-grade security for all your data</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                    <i class="fas fa-clock text-3xl mb-3 text-yellow-300"></i>
+                    <h4 class="font-bold mb-2">Instant Results</h4>
+                    <p class="text-blue-100 text-sm">Get immediate feedback and analytics</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                    <i class="fas fa-mobile-alt text-3xl mb-3 text-yellow-300"></i>
+                    <h4 class="font-bold mb-2">Mobile Ready</h4>
+                    <p class="text-blue-100 text-sm">Access from any device, anywhere</p>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <p class="text-blue-100 text-lg mb-4">
+                        Already have an account? 
+                    <a href="{{ route('login') }}" class="text-yellow-300 hover:text-yellow-200 underline font-semibold transition-colors duration-200">
+                            Sign In here
+                        </a>
+                    </p>
+                <p class="text-blue-200 text-sm">
+                    No credit card required • Free forever plan available • 24/7 support
+                    </p>
+                </div>
+        </div>
+    </section>
+
     <!-- Testimonials Section -->
-    <section class="py-24 bg-gray-50 dark:bg-gray-800">
+    <section class="py-12 bg-gray-50 dark:bg-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <div class="inline-flex items-center px-4 py-2 rounded-full bg-primaryPurple/10 text-primaryPurple text-sm font-medium mb-6 border border-primaryPurple/20">
@@ -496,7 +642,7 @@
                         <i class="fas fa-star"></i>
                     </div>
                     <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
-                        "The typing test feature is amazing! I've improved my typing speed by 40% in just 2 months. The real-time feedback makes learning so much more effective."
+                        "The comprehensive question bank is incredible! I've improved my exam performance by 40% in just 2 months. The detailed explanations make learning so much more effective."
                     </p>
                 </div>
 
@@ -569,194 +715,6 @@
                     </p>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- Why Choose Bikolpo LQ? -->
-    <section id="about" class="py-24 bg-gradient-to-br from-white via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 relative overflow-hidden">
-        <!-- Background Elements -->
-        <div class="absolute inset-0">
-            <div class="absolute top-0 right-0 w-96 h-96 bg-primaryGreen/5 rounded-full blur-3xl"></div>
-            <div class="absolute bottom-0 left-0 w-80 h-80 bg-primaryBlue/5 rounded-full blur-3xl"></div>
-            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primaryPurple/5 rounded-full blur-3xl"></div>
-        </div>
-        
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Header -->
-            <div class="text-center mb-20">
-                <div class="inline-flex items-center px-6 py-3 rounded-full bg-primaryGreen/10 border border-primaryGreen/20 mb-8">
-                    <i class="fas fa-star text-primaryGreen mr-3 text-lg"></i>
-                    <span class="text-sm font-medium text-primaryGreen">Why Choose Us</span>
-                </div>
-                <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-primaryGreen to-primaryBlue dark:from-white dark:via-primaryGreen dark:to-primaryBlue bg-clip-text text-transparent">
-                    Why Choose Bikolpo LQ?
-                </h2>
-                <p class="text-xl text-gray-600 dark:text-gray-400 max-w-4xl mx-auto leading-relaxed">
-                    Experience the future of online education with our cutting-edge platform designed to transform how you learn, test, and succeed.
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                <!-- Left Content -->
-                <div class="space-y-8">
-                    <!-- Feature Cards -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Feature 1 -->
-                        <div class="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 hover:border-primaryGreen/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                            <div class="w-12 h-12 bg-gradient-to-br from-primaryGreen to-green-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                                <i class="fas fa-cogs text-white text-lg"></i>
-                            </div>
-                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Advanced Question Management</h3>
-                            <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Smart question categorization, auto-grading, and comprehensive analytics for optimal learning outcomes.</p>
-                        </div>
-
-                        <!-- Feature 2 -->
-                        <div class="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 hover:border-primaryBlue/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                            <div class="w-12 h-12 bg-gradient-to-br from-primaryBlue to-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                                <i class="fas fa-chart-line text-white text-lg"></i>
-                            </div>
-                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Real-time Analytics</h3>
-                            <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Instant performance insights, detailed reports, and personalized learning recommendations.</p>
-                        </div>
-
-                        <!-- Feature 3 -->
-                        <div class="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 hover:border-primaryPurple/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                            <div class="w-12 h-12 bg-gradient-to-br from-primaryPurple to-purple-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                                <i class="fas fa-globe text-white text-lg"></i>
-                            </div>
-                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Multi-language Support</h3>
-                            <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Seamless experience in Bengali, English, and other languages for inclusive learning.</p>
-                        </div>
-
-                        <!-- Feature 4 -->
-                        <div class="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 hover:border-primaryOrange/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-                            <div class="w-12 h-12 bg-gradient-to-br from-primaryOrange to-orange-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                                <i class="fas fa-headset text-white text-lg"></i>
-                            </div>
-                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">24/7 Support</h3>
-                            <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Round-the-clock customer support to ensure your learning journey is never interrupted.</p>
-                        </div>
-                    </div>
-
-                    <!-- Additional Benefits -->
-                    <div class="bg-gradient-to-r from-primaryGreen/10 to-primaryBlue/10 rounded-2xl p-6 border border-primaryGreen/20">
-                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-                            <i class="fas fa-trophy text-primaryGreen mr-3"></i>
-                            Proven Results
-                        </h3>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="text-center">
-                                <div class="text-2xl font-bold text-primaryGreen">95%</div>
-                                <div class="text-sm text-gray-600 dark:text-gray-400">Success Rate</div>
-                            </div>
-                            <div class="text-center">
-                                <div class="text-2xl font-bold text-primaryBlue">40%</div>
-                                <div class="text-sm text-gray-600 dark:text-gray-400">Performance Boost</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Content - CTA Card -->
-                <div class="relative">
-                    <div class="absolute inset-0 bg-gradient-to-br from-primaryGreen/20 to-primaryBlue/20 rounded-3xl blur-xl"></div>
-                    <div class="relative bg-gradient-to-br from-primaryGreen via-green-600 to-emerald-600 rounded-3xl p-10 shadow-2xl border border-white/20">
-                        <div class="text-center text-white">
-                            <div class="w-20 h-20 bg-white/20 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                                <i class="fas fa-rocket text-white text-3xl"></i>
-                            </div>
-                            <h3 class="text-3xl font-bold mb-4">Ready to Transform Your Learning?</h3>
-                            <p class="text-green-100 mb-8 text-lg leading-relaxed">
-                                Join thousands of students and educators who have already revolutionized their learning experience with Bikolpo LQ.
-                            </p>
-                            <div class="space-y-4">
-                                <a href="{{ route('register') }}" class="block w-full bg-white text-primaryGreen px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg">
-                                    <i class="fas fa-user-plus mr-2"></i>
-                                    Start Free Trial
-                                </a>
-                                <a href="{{ route('typing.test') }}" class="block w-full border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-primaryGreen transition-all duration-300 transform hover:scale-105">
-                                    <i class="fas fa-keyboard mr-2"></i>
-                                    Try Demo Test
-                                </a>
-                            </div>
-                            <div class="mt-6 flex items-center justify-center space-x-6 text-green-100 text-sm">
-                                <div class="flex items-center">
-                                    <i class="fas fa-check mr-2"></i>
-                                    <span>No Credit Card</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <i class="fas fa-check mr-2"></i>
-                                    <span>Instant Access</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="py-24 bg-gradient-to-br from-primaryBlue via-indigo-600 to-purple-600 text-white relative overflow-hidden">
-        <div class="absolute inset-0 bg-black/10"></div>
-        <div class="absolute inset-0 bg-grid-pattern opacity-5"></div>
-        <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="mb-12">
-                <div class="inline-flex items-center px-4 py-2 rounded-full bg-white/20 text-white text-sm font-medium mb-6 border border-white/30">
-                    <i class="fas fa-star mr-2"></i>
-                    Join the Revolution
-                </div>
-                <h2 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-                    Ready to Transform Your 
-                    <span class="bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">Learning Journey?</span>
-            </h2>
-                <p class="text-xl md:text-2xl text-blue-100 mb-10 leading-relaxed max-w-4xl mx-auto">
-                    Join over 2,500 students and 75+ institutions who trust Bikolpo LQ for their educational success. 
-                    <span class="text-yellow-300 font-semibold">Start your transformation today!</span>
-                </p>
-            </div>
-            
-            <div class="flex flex-col sm:flex-row gap-6 justify-center items-center mb-10">
-                <a href="{{ route('register') }}" class="group bg-white text-primaryBlue px-10 py-5 rounded-full font-bold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl">
-                    <i class="fas fa-rocket mr-2 group-hover:translate-x-1 transition-transform duration-200"></i>
-                    Start Learning Free
-                </a>
-                <a href="{{ route('typing.test') }}" class="group border-2 border-white text-white px-10 py-5 rounded-full font-bold text-lg hover:bg-white hover:text-primaryBlue transition-all duration-300 transform hover:scale-105">
-                    <i class="fas fa-keyboard mr-2 group-hover:scale-110 transition-transform duration-200"></i>
-                    Try Demo Test
-                </a>
-            </div>
-            
-            <!-- Trust Indicators -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
-                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                    <i class="fas fa-shield-alt text-3xl mb-3 text-yellow-300"></i>
-                    <h4 class="font-bold mb-2">100% Secure</h4>
-                    <p class="text-blue-100 text-sm">Bank-grade security for all your data</p>
-                </div>
-                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                    <i class="fas fa-clock text-3xl mb-3 text-yellow-300"></i>
-                    <h4 class="font-bold mb-2">Instant Results</h4>
-                    <p class="text-blue-100 text-sm">Get immediate feedback and analytics</p>
-                </div>
-                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                    <i class="fas fa-mobile-alt text-3xl mb-3 text-yellow-300"></i>
-                    <h4 class="font-bold mb-2">Mobile Ready</h4>
-                    <p class="text-blue-100 text-sm">Access from any device, anywhere</p>
-                </div>
-            </div>
-            
-            <div class="text-center">
-                <p class="text-blue-100 text-lg mb-4">
-                        Already have an account? 
-                    <a href="{{ route('login') }}" class="text-yellow-300 hover:text-yellow-200 underline font-semibold transition-colors duration-200">
-                            Sign In here
-                        </a>
-                    </p>
-                <p class="text-blue-200 text-sm">
-                    No credit card required • Free forever plan available • 24/7 support
-                    </p>
-                </div>
         </div>
     </section>
 

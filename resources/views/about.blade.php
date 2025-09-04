@@ -44,7 +44,7 @@
     @include('navigation-layout')
 
     <!-- Hero Section -->
-    <section class="relative overflow-hidden bg-gradient-to-br from-white via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-16 lg:py-20">
+    <section class="relative overflow-hidden bg-gradient-to-br from-white via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-12 lg:py-16">
         <div class="absolute inset-0 bg-grid-pattern opacity-5"></div>
         <div class="absolute inset-0 bg-gradient-to-r from-primaryGreen/5 via-transparent to-primaryBlue/5"></div>
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -60,6 +60,67 @@
                 <p class="text-xl text-gray-600 dark:text-gray-400 max-w-4xl mx-auto leading-relaxed">
                     Discover the story behind Bikolpo LQ and our mission to revolutionize education in Bangladesh through innovative online testing technology.
                 </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Born in Rangpur Section -->
+    <section class="py-20 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 dark:from-gray-800 dark:via-gray-700 dark:to-gray-600">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div class="relative">
+                    <div class="absolute inset-0 bg-gradient-to-br from-primaryOrange/20 to-amber-400/20 rounded-3xl blur-xl"></div>
+                    <div class="relative bg-gradient-to-br from-primaryOrange via-orange-500 to-amber-500 rounded-3xl p-10 shadow-2xl border border-white/20">
+                        <div class="text-center text-white">
+                            <div class="w-20 h-20 bg-white/20 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                                <i class="fas fa-map-marker-alt text-white text-3xl"></i>
+                            </div>
+                            <h3 class="text-3xl font-bold mb-4">Born in Rangpur</h3>
+                            <p class="text-orange-100 mb-6 text-lg leading-relaxed">
+                                Our roots run deep in the heart of Rangpur, where our journey began with a vision to transform education across Bangladesh.
+                            </p>
+                            <div class="grid grid-cols-2 gap-4 text-center">
+                                <div class="bg-white/20 rounded-2xl p-4">
+                                    <div class="text-2xl font-bold">2019</div>
+                                    <div class="text-orange-100 text-sm">Founded</div>
+                                </div>
+                                <div class="bg-white/20 rounded-2xl p-4">
+                                    <div class="text-2xl font-bold">Rangpur</div>
+                                    <div class="text-orange-100 text-sm">Origin</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="animate-slide-up">
+                    <div class="inline-flex items-center px-4 py-2 rounded-full bg-primaryOrange/10 text-primaryOrange text-sm font-medium mb-6 border border-primaryOrange/20">
+                        <i class="fas fa-heart mr-2"></i>
+                        Our Heritage
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6">
+                        Proudly Rangpur Born
+                    </h2>
+                    <p class="text-lg text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
+                        Bikolpo LQ was conceived and born in the vibrant city of Rangpur, a place known for its rich cultural heritage and commitment to education. This northern city of Bangladesh has always been a hub of learning and innovation, making it the perfect birthplace for our educational technology revolution.
+                    </p>
+                    <p class="text-lg text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
+                        From our humble beginnings in Rangpur, we have grown to serve students and institutions across the entire country. Our connection to this historic city reminds us of our mission to bring quality education to every corner of Bangladesh, starting from the north and reaching every student nationwide.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <div class="bg-primaryOrange/10 rounded-lg px-4 py-2">
+                            <span class="text-primaryOrange font-semibold">Northern Roots</span>
+                            <span class="text-gray-600 dark:text-gray-400 ml-2">Rangpur Heritage</span>
+                        </div>
+                        <div class="bg-amber-500/10 rounded-lg px-4 py-2">
+                            <span class="text-amber-600 font-semibold">Cultural Pride</span>
+                            <span class="text-gray-600 dark:text-gray-400 ml-2">Local Values</span>
+                        </div>
+                        <div class="bg-yellow-500/10 rounded-lg px-4 py-2">
+                            <span class="text-yellow-600 font-semibold">National Reach</span>
+                            <span class="text-gray-600 dark:text-gray-400 ml-2">Countrywide Impact</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
