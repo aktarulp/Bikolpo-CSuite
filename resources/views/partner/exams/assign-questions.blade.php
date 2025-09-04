@@ -168,7 +168,7 @@
                                                                max="100" 
                                                                class="question-marks w-12 px-1 py-1 text-xs border-2 border-blue-400 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-600 dark:bg-gray-700 dark:border-blue-500 dark:text-white font-semibold text-center"
                                                                placeholder="1"
-                                                               style="border: 2px solid #60a5fa; box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.3);">
+                                                               style="border: 2px solid #60a5fa; box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.3); -moz-appearance: textfield; -webkit-appearance: none; appearance: none;">
                                                     </div>
                                                     <span class="text-xs px-2 py-1 rounded
                                                         {{ $question->question_type === 'mcq' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' }}">
@@ -432,6 +432,34 @@
     font-weight: 600;
     color: #1e293b;
     text-align: center;
+    /* Remove spinner arrows */
+    -moz-appearance: textfield;
+}
+
+/* Remove spinner arrows for webkit browsers */
+.question-marks::-webkit-outer-spin-button,
+.question-marks::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    display: none;
+}
+
+/* Additional spinner removal for all browsers */
+.question-marks {
+    -moz-appearance: textfield !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+}
+
+/* Ensure no spinner arrows in any browser */
+.question-marks::-webkit-outer-spin-button,
+.question-marks::-webkit-inner-spin-button,
+.question-marks::-ms-clear,
+.question-marks::-ms-reveal {
+    display: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
 }
 
 .question-marks:hover {

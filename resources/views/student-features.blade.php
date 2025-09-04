@@ -47,7 +47,7 @@
                     </span>
                 </h1>
                 <p class="text-xl md:text-2xl text-gray-600 dark:text-gray-400 mb-8 max-w-3xl mx-auto leading-relaxed">
-                    Experience seamless online exams with powerful tools designed to enhance your learning journey and assessment experience.
+                    Access thousands of online tests from renowned academic institutions. Practice with real exam questions and excel in your studies.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <a href="{{ route('student.dashboard') }}" class="bg-gradient-to-r from-primaryBlue to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl">
@@ -63,57 +63,211 @@
         </div>
     </section>
 
+    <!-- Statistics Section -->
+    <section class="bg-white dark:bg-gray-800 py-16 border-b border-gray-200 dark:border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                    Join the Largest Online Test Community
+                </h2>
+                <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+                    Access thousands of tests from top academic institutions and educational partners
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Total Tests -->
+                <div class="text-center p-6 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 rounded-2xl border border-blue-200 dark:border-blue-700">
+                    <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-file-alt text-white text-2xl"></i>
+                    </div>
+                    <div class="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">10,000+</div>
+                    <div class="text-gray-600 dark:text-gray-300 font-medium">Online Tests</div>
+                </div>
+
+                <!-- Partner Institutions -->
+                <div class="text-center p-6 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/30 rounded-2xl border border-green-200 dark:border-green-700">
+                    <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-university text-white text-2xl"></i>
+                    </div>
+                    <div class="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">500+</div>
+                    <div class="text-gray-600 dark:text-gray-300 font-medium">Partner Institutions</div>
+                </div>
+
+                <!-- Active Students -->
+                <div class="text-center p-6 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/30 dark:to-purple-800/30 rounded-2xl border border-purple-200 dark:border-purple-700">
+                    <div class="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-users text-white text-2xl"></i>
+                    </div>
+                    <div class="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">50,000+</div>
+                    <div class="text-gray-600 dark:text-gray-300 font-medium">Active Students</div>
+                </div>
+
+                <!-- Test Categories -->
+                <div class="text-center p-6 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/30 dark:to-orange-800/30 rounded-2xl border border-orange-200 dark:border-orange-700">
+                    <div class="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-layer-group text-white text-2xl"></i>
+                    </div>
+                    <div class="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">25+</div>
+                    <div class="text-gray-600 dark:text-gray-300 font-medium">Subject Categories</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         
         <!-- Core Features Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
             
-            <!-- Online Exams -->
+            <!-- Thousands of Tests -->
             <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 p-8 rounded-3xl shadow-lg border border-blue-200 dark:border-blue-700 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
                 <div class="text-center">
                     <div class="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                        <i class="fas fa-laptop text-white text-3xl"></i>
+                        <i class="fas fa-database text-white text-3xl"></i>
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Online Exams</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-6">Take exams from anywhere with our secure online platform</p>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">10,000+ Online Tests</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6">Access thousands of tests across multiple subjects and difficulty levels</p>
                     <ul class="text-left text-gray-600 dark:text-gray-300 space-y-2">
-                        <li class="flex items-center"><i class="fas fa-check text-blue-500 mr-2"></i>24/7 accessibility</li>
-                        <li class="flex items-center"><i class="fas fa-check text-blue-500 mr-2"></i>Auto-save progress</li>
-                        <li class="flex items-center"><i class="fas fa-check text-blue-500 mr-2"></i>Instant results</li>
+                        <li class="flex items-center"><i class="fas fa-check text-blue-500 mr-2"></i>Multiple choice questions</li>
+                        <li class="flex items-center"><i class="fas fa-check text-blue-500 mr-2"></i>Descriptive questions</li>
+                        <li class="flex items-center"><i class="fas fa-check text-blue-500 mr-2"></i>Subject-wise categorization</li>
                     </ul>
                 </div>
             </div>
 
-            <!-- Practice Tests -->
+            <!-- Public Tests from Renowned Institutes -->
             <div class="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/30 p-8 rounded-3xl shadow-lg border border-green-200 dark:border-green-700 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
                 <div class="text-center">
                     <div class="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                        <i class="fas fa-dumbbell text-white text-3xl"></i>
+                        <i class="fas fa-university text-white text-3xl"></i>
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Practice Tests</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-6">Improve your skills with unlimited practice opportunities</p>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Public Tests from Renowned Institutes</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6">Access real exam questions from top universities and educational institutions</p>
                     <ul class="text-left text-gray-600 dark:text-gray-300 space-y-2">
-                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Unlimited attempts</li>
-                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Performance feedback</li>
-                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Topic-wise practice</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>University-level questions</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Professional exam patterns</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Real exam experience</li>
                     </ul>
                 </div>
             </div>
 
-            <!-- Progress Tracking -->
+            <!-- Diverse Test Categories -->
             <div class="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/30 dark:to-purple-800/30 p-8 rounded-3xl shadow-lg border border-purple-200 dark:border-purple-700 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
                 <div class="text-center">
                     <div class="w-20 h-20 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                        <i class="fas fa-chart-line text-white text-3xl"></i>
+                        <i class="fas fa-layer-group text-white text-3xl"></i>
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Progress Tracking</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-6">Monitor your learning progress with detailed analytics</p>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">25+ Subject Categories</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-6">Comprehensive coverage across all major academic and professional subjects</p>
                     <ul class="text-left text-gray-600 dark:text-gray-300 space-y-2">
-                        <li class="flex items-center"><i class="fas fa-check text-purple-500 mr-2"></i>Performance graphs</li>
-                        <li class="flex items-center"><i class="fas fa-check text-purple-500 mr-2"></i>Weak area identification</li>
-                        <li class="flex items-center"><i class="fas fa-check text-purple-500 mr-2"></i>Learning milestones</li>
+                        <li class="flex items-center"><i class="fas fa-check text-purple-500 mr-2"></i>Science & Technology</li>
+                        <li class="flex items-center"><i class="fas fa-check text-purple-500 mr-2"></i>Business & Economics</li>
+                        <li class="flex items-center"><i class="fas fa-check text-purple-500 mr-2"></i>Arts & Humanities</li>
                     </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Public Tests from Renowned Institutes Section -->
+        <div class="bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 dark:from-indigo-900/30 dark:via-blue-900/30 dark:to-cyan-900/30 rounded-3xl p-8 lg:p-12 mb-16 border border-indigo-200 dark:border-indigo-700">
+            <div class="text-center mb-12">
+                <div class="w-20 h-20 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                    <i class="fas fa-graduation-cap text-white text-3xl"></i>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                    Public Tests from Renowned Academic Institutions
+                </h2>
+                <p class="text-xl text-gray-600 dark:text-gray-400 max-w-4xl mx-auto">
+                    Access real exam questions and test patterns from top universities, colleges, and educational institutions across the country
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- University Tests -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-university text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white">University Tests</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">Access entrance and semester exam questions from leading universities</p>
+                    <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                        <li class="flex items-center"><i class="fas fa-check text-blue-500 mr-2"></i>Admission tests</li>
+                        <li class="flex items-center"><i class="fas fa-check text-blue-500 mr-2"></i>Semester exams</li>
+                        <li class="flex items-center"><i class="fas fa-check text-blue-500 mr-2"></i>Research methodology</li>
+                    </ul>
+                </div>
+
+                <!-- College Tests -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-school text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white">College Tests</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">Practice with questions from prestigious colleges and institutions</p>
+                    <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>HSC level tests</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Honors programs</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Professional courses</li>
+                    </ul>
+                </div>
+
+                <!-- Coaching Center Tests -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-chalkboard-teacher text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white">Coaching Center Tests</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">Access tests from renowned coaching centers and training institutes</p>
+                    <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                        <li class="flex items-center"><i class="fas fa-check text-purple-500 mr-2"></i>Competitive exams</li>
+                        <li class="flex items-center"><i class="fas fa-check text-purple-500 mr-2"></i>Job preparation</li>
+                        <li class="flex items-center"><i class="fas fa-check text-purple-500 mr-2"></i>Skill assessments</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Featured Partners -->
+            <div class="mt-12 text-center">
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-8">Admission Test Available For</h3>
+                <div class="grid grid-cols-2 md:grid-cols-10 lg:grid-cols-10 gap-2 items-center opacity-60">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                        <div class="text-gray-600 dark:text-gray-400 font-semibold">BUET</div>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                        <div class="text-gray-600 dark:text-gray-400 font-semibold">RUET</div>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                        <div class="text-gray-600 dark:text-gray-400 font-semibold">KUET</div>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                        <div class="text-gray-600 dark:text-gray-400 font-semibold">CUET</div>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                        <div class="text-gray-600 dark:text-gray-400 font-semibold">DU</div>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                        <div class="text-gray-600 dark:text-gray-400 font-semibold">JU</div>  
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                        <div class="text-gray-600 dark:text-gray-400 font-semibold">RU</div>  
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                        <div class="text-gray-600 dark:text-gray-400 font-semibold">JU</div>  
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                        <div class="text-gray-600 dark:text-gray-400 font-semibold">CU</div>  
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+                        <div class="text-gray-600 dark:text-gray-400 font-semibold">KU</div>  
+                    </div>
                 </div>
             </div>
         </div>

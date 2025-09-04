@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bikolpo Pathshala - Partner Registration</title>
+  <title>Bikolpo LQ - Partner Registration</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -108,29 +108,43 @@
         <div class="grid lg:grid-cols-2 min-h-[600px]">
           
           <!-- Left Side - Benefits & Features -->
-          <div class="bg-gradient-to-br from-primaryGreen via-green-600 to-primaryBlue p-8 lg:p-12 text-white relative overflow-hidden">
-            <!-- Background Pattern -->
-            <div class="absolute inset-0 opacity-10">
-              <div class="absolute top-8 left-8 w-24 h-24 bg-white rounded-full"></div>
-              <div class="absolute bottom-12 right-12 w-16 h-16 bg-white rounded-full"></div>
-              <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-white rounded-full"></div>
+          <div class="bg-gradient-to-br from-teal-500 via-cyan-500 to-blue-500 p-8 lg:p-12 text-white relative overflow-hidden">
+            <!-- Animated Background Pattern -->
+            <div class="absolute inset-0 opacity-20">
+              <!-- Animated Triangle -->
+              <div class="absolute top-8 left-8 w-0 h-0 border-l-[12px] border-r-[12px] border-b-[20px] border-l-transparent border-r-transparent border-b-white animate-bounce"></div>
+              
+              <!-- Animated Square -->
+              <div class="absolute bottom-12 right-12 w-16 h-16 bg-white rotate-45 animate-spin"></div>
+              
+              <!-- Animated Hexagon -->
+              <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-white animate-pulse" style="clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);"></div>
+              
+              <!-- Floating Circles -->
+              <div class="absolute top-1/4 right-1/4 w-8 h-8 bg-white rounded-full animate-ping"></div>
+              <div class="absolute bottom-1/4 left-1/4 w-6 h-6 bg-white rounded-full animate-bounce"></div>
+              
+              <!-- Animated Diamond -->
+              <div class="absolute top-3/4 right-1/3 w-0 h-0 border-l-[8px] border-r-[8px] border-t-[12px] border-b-[12px] border-l-transparent border-r-transparent border-t-white border-b-white animate-pulse"></div>
             </div>
             
             <div class="relative z-10 h-full flex flex-col justify-center">
               <!-- Page Header moved here -->
               <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-2xl shadow-lg mb-4">
-                  <i class="fas fa-building text-white text-2xl"></i>
+                <div class="flex justify-center mb-4">
+                  <div class="w-32 h-32 bg-white/20 rounded-2xl shadow-lg flex items-center justify-center">
+                    <img src="{{ asset('images/Bikolpo_LQ_Transparent.png') }}" alt="Bikolpo LQ Logo" class="w-64 h-64 object-contain">
+                  </div>
                 </div>
                 <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">
-                  Join Bikolpo Pathshala
+                  Join Bikolpo LQ
                 </h1>
                 <p class="text-lg text-green-100 max-w-2xl mx-auto">
                   Transform your educational institution with our comprehensive online testing platform
                 </p>
               </div>
 
-              <h2 class="text-2xl lg:text-3xl font-bold mb-6">Why Choose Bikolpo Pathshala?</h2>
+              <h2 class="text-2xl lg:text-3xl font-bold mb-6">Why Choose Bikolpo LQ?</h2>
               
               <div class="space-y-6">
                 <!-- Benefit 1 -->
