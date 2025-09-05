@@ -26,7 +26,7 @@
 
         <!-- Main Form Container -->
         <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-            <form action="{{ route('partner.questions.mcq.update', $question) }}" method="POST" id="mcqForm" class="p-8">
+            <form action="{{ route('partner.questions.mcq.update', $question) }}" method="POST" id="mcqForm" class="p-8" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 <input type="hidden" name="question_type" value="mcq">
@@ -1005,6 +1005,7 @@ function initializeTagsAutoCompletion() {
     // Function to update hidden input with all tags
     function updateHiddenInput() {
         hiddenTagsInput.value = allTags.join(', ');
+        console.log('Updated hidden input with tags:', hiddenTagsInput.value);
     }
     
     // Function to create a tag element
@@ -1027,12 +1028,17 @@ function initializeTagsAutoCompletion() {
         if (tagText.trim() === '') return;
         
         const trimmedTag = tagText.trim();
+        console.log('Adding tag:', trimmedTag);
         
         // Check if tag already exists
-        if (allTags.includes(trimmedTag)) return;
+        if (allTags.includes(trimmedTag)) {
+            console.log('Tag already exists:', trimmedTag);
+            return;
+        }
         
         // Add to tags array
         allTags.push(trimmedTag);
+        console.log('Current tags array:', allTags);
         
         // Create and add tag element to upper line
         const tagElement = createTagElement(trimmedTag);
@@ -1163,6 +1169,7 @@ function initializeTagsAutoCompletion() {
     
     // Initialize tags from existing question data
     const existingTags = @json(old('tags', $question->tags ?? []));
+    console.log('Existing tags from server:', existingTags);
     if (existingTags && existingTags.length > 0) {
         if (Array.isArray(existingTags)) {
             existingTags.forEach(tag => {
@@ -1364,6 +1371,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!validateForm()) {
             return;
         }
+        
+        // Debug: Check tags before submission
+        const hiddenTagsInput = document.getElementById('tags-hidden');
+        console.log('Tags being submitted:', hiddenTagsInput ? hiddenTagsInput.value : 'No hidden input found');
         
         // Update hidden textarea with current editor content
         const editor = document.getElementById('richTextEditor');

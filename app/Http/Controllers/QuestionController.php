@@ -1020,13 +1020,13 @@ class QuestionController extends Controller
             $data['topic_id'] = null;
         }
 
-        // Process tags from comma-separated string to JSON array
+        // Process tags from comma-separated string to array
         if (!empty($data['tags'])) {
             $tagsArray = array_map('trim', explode(',', $data['tags']));
             $tagsArray = array_filter($tagsArray); // Remove empty tags
-            $data['tags'] = json_encode($tagsArray);
+            $data['tags'] = $tagsArray;
         } else {
-            $data['tags'] = json_encode([]);
+            $data['tags'] = [];
         }
 
         try {

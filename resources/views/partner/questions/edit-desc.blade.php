@@ -1046,6 +1046,7 @@ function initializeTagsAutoCompletion() {
     
     // Initialize tags from existing question data
     const existingTags = @json(old('tags', $question->tags ?? []));
+    console.log('Existing tags from server:', existingTags);
     if (existingTags && existingTags.length > 0) {
         if (Array.isArray(existingTags)) {
             existingTags.forEach(tag => {
