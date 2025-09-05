@@ -3,6 +3,17 @@
 @section('title', 'Draft Questions - Review & Publish')
 
 @section('content')
+<style>
+.error-highlight {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+    background-color: #fef2f2 !important;
+}
+.error-highlight:focus {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
+}
+</style>
 <div class="space-y-6">
     <!-- Page Header -->
     <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
@@ -277,6 +288,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const subjectSelect = this.closest('tr').querySelector('.subject-select');
             const topicSelect = this.closest('tr').querySelector('.topic-select');
             
+            // Clear error highlights
+            this.classList.remove('error-highlight');
+            subjectSelect.classList.remove('error-highlight');
+            topicSelect.classList.remove('error-highlight');
+            
             // Reset subject and topic
             subjectSelect.innerHTML = '<option value="">Select Subject</option>';
             topicSelect.innerHTML = '<option value="">Select Topic</option>';
@@ -311,6 +327,10 @@ document.addEventListener('DOMContentLoaded', function() {
         subjectSelect.addEventListener('change', function() {
             const subjectId = this.value;
             const topicSelect = this.closest('tr').querySelector('.topic-select');
+            
+            // Clear error highlights
+            this.classList.remove('error-highlight');
+            topicSelect.classList.remove('error-highlight');
             
             // Reset topic
             topicSelect.innerHTML = '<option value="">Select Topic</option>';
@@ -416,10 +436,35 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
         
+        // Clear previous error highlights
+        document.querySelectorAll('.error-highlight').forEach(el => {
+            el.classList.remove('error-highlight');
+        });
+        
         // Validate required fields
         const invalidQuestions = questions.filter(q => !q.course_id || !q.subject_id);
         if (invalidQuestions.length > 0) {
-            alert('Please select course and subject for all selected questions.');
+            // Highlight invalid rows
+            invalidQuestions.forEach(q => {
+                const row = document.querySelector(`input[value="${q.id}"]`).closest('tr');
+                const courseSelect = row.querySelector('.course-select');
+                const subjectSelect = row.querySelector('.subject-select');
+                
+                if (!q.course_id) {
+                    courseSelect.classList.add('error-highlight');
+                }
+                if (!q.subject_id) {
+                    subjectSelect.classList.add('error-highlight');
+                }
+            });
+            
+            const questionNumbers = invalidQuestions.map((q, index) => {
+                const row = document.querySelector(`input[value="${q.id}"]`).closest('tr');
+                const questionText = row.querySelector('td:nth-child(2)').textContent.trim();
+                return `${index + 1}. "${questionText.substring(0, 50)}..."`;
+            }).join('\n');
+            
+            alert(`Please select course and subject for the following questions:\n\n${questionNumbers}\n\nCourse and Subject are required for publishing.`);
             return;
         }
 
@@ -508,7 +553,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const topicSelect = row.querySelector('.topic-select');
         
         if (!courseSelect.value || !subjectSelect.value) {
-            alert('Please select course and subject for this question.');
+            const questionText = row.querySelector('td:nth-child(2)').textContent.trim();
+            alert(`Please select course and subject for this question:\n\n"${questionText.substring(0, 100)}..."\n\nCourse and Subject are required for publishing.`);
             return;
         }
         

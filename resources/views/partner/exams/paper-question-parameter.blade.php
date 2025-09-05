@@ -348,7 +348,7 @@
                      data-total-questions="{{ $exam->questions->count() }}"
                      data-passing-marks="{{ $exam->passing_marks }}"
                      data-question-header="{{ addslashes($exam->question_header ?? "") }}"
-                                           data-questions="{{ $exam->questions->map(function($q) { 
+                                            data-questions="{{ $exam->questions->map(function($q) { 
                           return [
                               'question_text' => $q->question_text,
                               'question_header' => $q->question_header ?? '',

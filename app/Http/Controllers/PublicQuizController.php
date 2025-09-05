@@ -519,7 +519,7 @@ class PublicQuizController extends Controller
                 'answers' => $answers
             ]);
 
-            $scoreData = $this->calculateScore($exam, $answers);
+            $scoreData = $this->calculateScore($exam, $answers, $accessInfo['student_id'], $result->id);
             \Log::info('Quiz score calculated', [
                 'exam_id' => $exam->id,
                 'score_data' => $scoreData
@@ -544,8 +544,14 @@ class PublicQuizController extends Controller
                 'result_id' => $result->id
             ]);
 
-            // Clear session
-            session()->forget('quiz_access');
+            // Store result info in session for result page
+            session([
+                'quiz_result' => [
+                    'exam_id' => $exam->id,
+                    'student_id' => $accessInfo['student_id'],
+                    'result_id' => $result->id,
+                ]
+            ]);
 
             return redirect()->route('public.quiz.result', $exam->id);
         } catch (\Exception $e) {
@@ -570,37 +576,46 @@ class PublicQuizController extends Controller
                 ->with('info', 'Results are not available immediately. Please contact your instructor.');
         }
 
+        $resultInfo = session('quiz_result');
         $accessInfo = session('quiz_access');
         
-        // If no session data, try to find the most recent completed result for this exam
-        if (!$accessInfo || $accessInfo['exam_id'] != $exam->id) {
+        // Try to find the result using different methods
+        $result = null;
+        
+        if ($resultInfo && $resultInfo['exam_id'] == $exam->id) {
+            // Use result info from session
+            $result = ExamResult::where('id', $resultInfo['result_id'])
+                ->where('exam_id', $exam->id)
+                ->where('status', 'completed')
+                ->first();
+        } elseif ($accessInfo && $accessInfo['exam_id'] == $exam->id) {
+            // Use access info from session
+            $result = ExamResult::where('student_id', $accessInfo['student_id'])
+                ->where('exam_id', $exam->id)
+                ->where('status', 'completed')
+                ->first();
+        } else {
             // Look for the most recent completed result for this exam
             $result = ExamResult::where('exam_id', $exam->id)
                 ->where('status', 'completed')
                 ->latest('completed_at')
                 ->first();
-
-            if (!$result) {
-                return redirect()->route('public.quiz.access')->withErrors(['access' => 'No completed quiz found.']);
-            }
-        } else {
-            $result = ExamResult::where('student_id', $accessInfo['student_id'])
-                ->where('exam_id', $exam->id)
-                ->where('status', 'completed')
-                ->first();
-
-            if (!$result) {
-                return redirect()->route('public.quiz.access')->withErrors(['access' => 'No completed quiz found.']);
-            }
         }
+
+        if (!$result) {
+            return redirect()->route('public.quiz.access')->withErrors(['access' => 'No completed quiz found.']);
+        }
+
+        // Clear the result session after successful display
+        session()->forget('quiz_result');
 
         return view('public.quiz.result', compact('exam', 'result'));
     }
 
     /**
-     * Calculate quiz score
+     * Calculate quiz score and record individual question statistics
      */
-    private function calculateScore(Exam $exam, array $answers)
+    private function calculateScore(Exam $exam, array $answers, $studentId, $examResultId)
     {
         $score = 0;
         $correctAnswers = 0;
@@ -616,13 +631,21 @@ class PublicQuizController extends Controller
             $questionMarks = $question->pivot->marks ?? 1;
             $totalMarks += $questionMarks;
 
+            // Determine if the answer is correct, wrong, or unanswered
+            $isAnswered = !empty($studentAnswer);
+            $isCorrect = false;
+            $isSkipped = false;
+            $answerMetadata = null;
+
             if ($studentAnswer === null || $studentAnswer === '') {
                 $unanswered++;
+                $isSkipped = true;
             } else {
                 if ($question->question_type === 'mcq') {
                     if ($studentAnswer === $question->correct_answer) {
                         $score += $questionMarks;
                         $correctAnswers++;
+                        $isCorrect = true;
                     } else {
                         $wrongAnswers++;
                     }
@@ -632,15 +655,40 @@ class PublicQuizController extends Controller
                     $minWords = $question->min_words ?? 10;
                     $maxWords = $question->max_words ?? 100;
                     
+                    $answerMetadata = [
+                        'word_count' => $wordCount,
+                        'min_words_required' => $minWords,
+                        'max_words_expected' => $maxWords,
+                    ];
+                    
                     if ($wordCount >= $minWords) {
                         $partialScore = $questionMarks * min(1, $wordCount / $maxWords);
                         $score += $partialScore;
                         $correctAnswers++; // Count as correct if meets minimum word requirement
+                        $isCorrect = true;
                     } else {
                         $wrongAnswers++;
                     }
                 }
             }
+
+            // Record individual question statistics
+            \App\Models\QuestionStat::create([
+                'question_id' => $questionId,
+                'exam_id' => $exam->id,
+                'student_id' => $studentId,
+                'exam_result_id' => $examResultId,
+                'student_answer' => $studentAnswer,
+                'correct_answer' => $question->correct_answer,
+                'is_correct' => $isCorrect,
+                'is_answered' => $isAnswered,
+                'is_skipped' => $isSkipped,
+                'question_order' => $question->pivot->order ?? 0,
+                'marks' => $questionMarks,
+                'question_type' => $question->question_type,
+                'answer_metadata' => $answerMetadata,
+                'question_answered_at' => now(),
+            ]);
         }
 
         $percentage = $totalMarks > 0 ? ($score / $totalMarks) * 100 : 0;

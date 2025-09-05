@@ -8,9 +8,9 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h1 class="text-3xl font-bold text-gray-900 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                        Create Descriptive Question
+                        Edit Descriptive Question
                     </h1>
-                    <p class="mt-2 text-gray-600">Design engaging descriptive questions for your students</p>
+                    <p class="mt-2 text-gray-600">Modify your descriptive question content and settings</p>
                 </div>
                 <div class="flex items-center space-x-3">
                     <a href="{{ route('partner.questions.index') }}" 
@@ -26,10 +26,12 @@
 
         <!-- Main Form Container -->
         <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-            <form action="{{ route('partner.questions.descriptive.store') }}" method="POST" id="descriptiveForm" class="p-8" enctype="multipart/form-data">
+            <form action="{{ route('partner.questions.descriptive.update', $question->id) }}" method="POST" id="descriptiveEditForm" class="p-8" enctype="multipart/form-data">
                 @csrf
+                @method('PUT')
                 <input type="hidden" name="question_type" value="descriptive">
                 <input type="hidden" name="q_type_id" value="2">
+                <input type="hidden" name="question_id" value="{{ $question->id }}">
                 
                 <!-- Question Details Section -->
                 <div class="mb-8">
@@ -57,7 +59,7 @@
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white">
                                 <option value="">Select a course</option>
                                 @foreach($courses ?? [] as $course)
-                                    <option value="{{ $course->id }}">{{ $course->name }}</option>
+                                    <option value="{{ $course->id }}" {{ old('course_id', $question->course_id) == $course->id ? 'selected' : '' }}>{{ $course->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -67,9 +69,12 @@
                             <label for="subject_id" class="block text-sm font-medium text-gray-700">
                                 Subject <span class="text-red-500">*</span>
                             </label>
-                            <select name="subject_id" id="subject_id" required disabled
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-gray-100">
+                            <select name="subject_id" id="subject_id" required
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white">
                                 <option value="">Please select a course first</option>
+                                @foreach($subjects ?? [] as $subject)
+                                    <option value="{{ $subject->id }}" data-course-id="{{ $subject->course_id }}" {{ old('subject_id', $question->subject_id) == $subject->id ? 'selected' : '' }}>{{ $subject->name }}</option>
+                                @endforeach
                             </select>
                         </div>
 
@@ -78,9 +83,12 @@
                             <label for="topic_id" class="block text-sm font-medium text-gray-700">
                                 Topic <span class="text-gray-400">(Optional)</span>
                             </label>
-                            <select name="topic_id" id="topic_id" disabled
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-gray-100">
+                            <select name="topic_id" id="topic_id"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white">
                                 <option value="">Please select a subject first</option>
+                                @foreach($topics ?? [] as $topic)
+                                    <option value="{{ $topic->id }}" data-subject-id="{{ $topic->subject_id }}" {{ old('topic_id', $question->topic_id) == $topic->id ? 'selected' : '' }}>{{ $topic->name }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -169,7 +177,7 @@
                                  </div>
                                  
                                  <!-- Rich Text Editor Content -->
-                                 <div id="richTextEditor" class="border border-t-0 border-gray-300 rounded-b-lg min-h-[150px] p-4 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all duration-200" contenteditable="true" data-placeholder="Enter your question here... You can use formatting, images, and equations."></div>
+                                 <div id="richTextEditor" class="border border-t-0 border-gray-300 rounded-b-lg min-h-[150px] p-4 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all duration-200" contenteditable="true" data-placeholder="Enter your question here... You can use formatting, images, and equations.">{!! old('question_text', $question->question_text) !!}</div>
                                  
                                  <!-- Hidden textarea for form submission -->
                                  <textarea name="question_text" id="question_text" class="hidden" required></textarea>
@@ -212,7 +220,7 @@
                                 <!-- Upper line for completed tags -->
                                 <div id="tags-upper-line" class="flex flex-wrap gap-2 mb-2 min-h-[32px] items-center">
                                     <!-- Completed tags will appear here -->
-                        </div>
+                                </div>
                                 <!-- Lower line for current input -->
                                 <div id="tags-lower-line" class="flex items-center">
                                     <input type="text" id="tags-input" 
@@ -237,7 +245,7 @@
                         </button>
                         <button type="submit" id="submitBtn"
                             class="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-105">
-                        Create Question
+                        Update Question
                         </button>
                 </div>
             </form>
@@ -1037,7 +1045,7 @@ function initializeTagsAutoCompletion() {
     });
     
     // Initialize tags from existing question data
-    const existingTags = @json(old('tags', []));
+    const existingTags = @json(old('tags', $question->tags ?? []));
     if (existingTags && existingTags.length > 0) {
         if (Array.isArray(existingTags)) {
             existingTags.forEach(tag => {
@@ -1193,7 +1201,7 @@ courseSelect.addEventListener('change', function() {
     initializeDependentDropdowns();
     
     // Form validation and submission
-    const form = document.getElementById('descriptiveForm');
+    const form = document.getElementById('descriptiveEditForm');
     const resetBtn = document.getElementById('resetBtn');
     const submitBtn = document.getElementById('submitBtn');
     
@@ -1215,7 +1223,7 @@ courseSelect.addEventListener('change', function() {
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            Creating...
+            Updating...
         `;
         submitBtn.disabled = true;
         

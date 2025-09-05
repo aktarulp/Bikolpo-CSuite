@@ -124,6 +124,55 @@
         </div>
     </div>
 
+    <!-- Question Analytics Card -->
+    <div class="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-200 dark:border-purple-700 rounded-lg p-6">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <div class="p-3 rounded-full bg-purple-100 dark:bg-purple-900">
+                    <svg class="w-8 h-8 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-purple-900 dark:text-purple-100">Question Analytics</h3>
+                    <p class="text-purple-700 dark:text-purple-300 text-sm">Track question performance and student insights</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <div class="grid grid-cols-3 gap-4 text-center">
+                    <div>
+                        <p class="text-2xl font-bold text-purple-900 dark:text-purple-100">{{ number_format($stats['total_question_attempts']) }}</p>
+                        <p class="text-xs text-purple-600 dark:text-purple-400">Total Attempts</p>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-bold text-green-600 dark:text-green-400">{{ number_format($stats['total_correct_answers']) }}</p>
+                        <p class="text-xs text-purple-600 dark:text-purple-400">Correct Answers</p>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ $stats['overall_accuracy'] }}%</p>
+                        <p class="text-xs text-purple-600 dark:text-purple-400">Accuracy Rate</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 flex space-x-3">
+            <a href="{{ route('analytics.questions.index') }}" 
+               class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+                <span>View Analytics</span>
+            </a>
+            <a href="{{ route('partner.questions.index') }}" 
+               class="bg-white hover:bg-gray-50 text-purple-600 border border-purple-200 px-4 py-2 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span>Manage Questions</span>
+            </a>
+        </div>
+    </div>
+
     <!-- Demo Data Seeding -->
     @if($stats['total_students'] == 0)
     <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-6">
@@ -266,14 +315,14 @@
                     </div>
                 </a>
 
-                <a href="#" 
-                   class="flex items-center p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg hover:bg-indigo-100 dark:hover:bg-indigo-900/30 transition-colors duration-200">
-                    <svg class="w-8 h-8 text-indigo-600 dark:text-indigo-400 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                <a href="{{ route('analytics.questions.index') }}" 
+                   class="flex items-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors duration-200">
+                    <svg class="w-8 h-8 text-purple-600 dark:text-purple-400 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                     </svg>
                     <div>
-                        <h4 class="font-medium text-gray-900 dark:text-white">Typing Test</h4>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Create typing assessment</p>
+                        <h4 class="font-medium text-gray-900 dark:text-white">Question Analytics</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">View performance insights</p>
                     </div>
                 </a>
             </div>

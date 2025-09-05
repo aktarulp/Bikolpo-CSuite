@@ -79,4 +79,12 @@ class ExamResult extends Model
             default => 'F'
         };
     }
+
+    /**
+     * Get all question statistics for this exam result
+     */
+    public function questionStats()
+    {
+        return $this->hasMany(\App\Models\QuestionStat::class);
+    }
 }

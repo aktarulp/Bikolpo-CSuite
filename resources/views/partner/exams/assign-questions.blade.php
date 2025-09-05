@@ -115,6 +115,13 @@
                                 <option value="descriptive">Descriptive</option>
                             </select>
 
+                            <select id="course-filter" class="px-3 py-2 border border-gray-300 rounded text-sm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-1 focus:ring-blue-500">
+                                <option value="">All Courses</option>
+                                @foreach($courses ?? [] as $course)
+                                    <option value="{{ $course->id }}">{{ $course->name }}</option>
+                                @endforeach
+                            </select>
+
                             <select id="subject-filter" class="px-3 py-2 border border-gray-300 rounded text-sm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-1 focus:ring-blue-500">
                                 <option value="">All Subjects</option>
                                 @foreach($subjects ?? [] as $subject)
@@ -140,6 +147,7 @@
                             @foreach($questions as $question)
                                 <div class="question-card border border-gray-200 dark:border-gray-600 rounded p-3 hover:bg-gray-50 dark:hover:bg-gray-700"
                                      data-type="{{ $question->question_type }}"
+                                     data-course="{{ $question->course->id ?? '' }}"
                                      data-subject="{{ $question->subject->name ?? '' }}"
                                      data-topic="{{ $question->topic->name ?? '' }}">
                                     <div class="flex items-start space-x-2">
@@ -570,6 +578,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('search');
     const clearSearchBtn = document.getElementById('clear-search');
     const typeFilter = document.getElementById('type-filter');
+    const courseFilter = document.getElementById('course-filter');
     const subjectFilter = document.getElementById('subject-filter');
     const topicFilter = document.getElementById('topic-filter');
     const clearFiltersBtn = document.getElementById('clear-filters');
@@ -582,6 +591,7 @@ document.addEventListener('DOMContentLoaded', function() {
             element: questionDiv,
             text: questionDiv.textContent.toLowerCase(),
             type: questionDiv.dataset.type || '',
+            course: questionDiv.dataset.course || '',
             subject: questionDiv.dataset.subject || '',
             topic: questionDiv.dataset.topic || ''
         };
@@ -667,6 +677,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function applyFilters() {
         const searchTerm = searchInput.value.toLowerCase();
         const selectedType = typeFilter.value;
+        const selectedCourse = courseFilter.value;
         const selectedSubject = subjectFilter.value;
         const selectedTopic = topicFilter.value;
         
@@ -675,6 +686,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (searchTerm && !question.text.includes(searchTerm)) shouldShow = false;
             if (selectedType && question.type !== selectedType) shouldShow = false;
+            if (selectedCourse && question.course !== selectedCourse) shouldShow = false;
             if (selectedSubject && question.subject !== selectedSubject) shouldShow = false;
             if (selectedTopic && question.topic !== selectedTopic) shouldShow = false;
             
@@ -689,6 +701,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function clearAllFilters() {
         searchInput.value = '';
         typeFilter.value = '';
+        courseFilter.value = '';
         subjectFilter.value = '';
         topicFilter.value = '';
         allQuestions.forEach(question => {
@@ -721,6 +734,7 @@ document.addEventListener('DOMContentLoaded', function() {
         applyFilters();
     });
     typeFilter.addEventListener('change', applyFilters);
+    courseFilter.addEventListener('change', applyFilters);
     subjectFilter.addEventListener('change', applyFilters);
     topicFilter.addEventListener('change', applyFilters);
     clearFiltersBtn.addEventListener('click', clearAllFilters);

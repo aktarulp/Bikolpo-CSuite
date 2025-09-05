@@ -1,8 +1,58 @@
 @extends('layouts.partner-layout')
 
-@section('title', 'MCQ Questions')
+@section('title', 'All Questions')
 
 @section('content')
+<style>
+    /* Custom styles for the dropdown menu */
+    .dropdown-menu {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .dropdown-menu.show {
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: translateY(0) !important;
+    }
+    
+    /* Hover effects for menu items */
+    .menu-item {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .menu-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s;
+    }
+    
+    .menu-item:hover::before {
+        left: 100%;
+    }
+    
+    /* Icon animations */
+    .icon-bounce {
+        animation: bounce 0.6s ease-in-out;
+    }
+    
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+        }
+        40% {
+            transform: translateY(-3px);
+        }
+        60% {
+            transform: translateY(-2px);
+        }
+    }
+</style>
 <div class="space-y-6">
     <!-- Success/Error Messages -->
     @if (session('success'))
@@ -42,143 +92,171 @@
         </div>
     @endif
 
-    <!-- Search Bar -->
+    <!-- Page Header -->
     <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
-        <!-- Page Header -->
         <div class="flex justify-between items-center mb-6">
             <div class="text-left">
                 <h1 class="text-3xl font-bold text-gray-900">All Questions</h1>
-                <p class="text-gray-600">Manage your questions of all types</p>
+                <p class="mt-2 text-gray-600">Manage and filter your questions</p>
             </div>
-            
-            <!-- Action Buttons -->
-            <div class="flex gap-3">
-                <a href="{{ route('partner.questions.bulk-upload') }}"
-                   class="bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-lg transition-colors duration-200 flex items-center gap-2.5">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+            <!-- Decorative Add Question Menu -->
+            <div class="relative group">
+                <button type="button" class="group relative px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-3 font-medium">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-6 h-6 transition-transform duration-300 group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                        <span class="text-lg font-semibold">Add Question</span>
+                    </div>
+                    <svg class="w-4 h-4 transition-transform duration-300 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                     </svg>
-                    Bulk Upload
-                </a>
-                <a href="{{ route('partner.questions.drafts') }}"
-                   class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2.5 rounded-lg transition-colors duration-200 flex items-center gap-2.5">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                    </svg>
-                    Drafts
-                </a>
-                <a href="{{ route('partner.questions.mcq.create') }}" 
-                   class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg transition-colors duration-200 flex items-center gap-2.5">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
-                    </svg>
-                    <span>+ MCQ</span>
-                </a>
-                <a href="{{ route('partner.questions.descriptive.create') }}" 
-                   class="bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-lg transition-colors duration-200 flex items-center gap-2.5">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                    </svg>
-                    <span>+ CQ</span>
-                </a>
+                    <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 rounded-lg transition-opacity duration-300"></div>
+                </button>
+                
+                <!-- Dropdown Menu -->
+                <div class="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50">
+                    <div class="py-2">
+                        <!-- MCQ Option -->
+                        <a href="{{ route('partner.questions.mcq.create') }}" class="menu-item flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-200 group/item">
+                            <div class="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3 group-hover/item:bg-blue-200 transition-colors duration-200">
+                                <svg class="w-5 h-5 text-blue-600 icon-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-medium text-sm">Multiple Choice Question</div>
+                                <div class="text-xs text-gray-500">Create MCQ with 4 options</div>
+                            </div>
+                            <svg class="w-4 h-4 text-gray-400 group-hover/item:text-blue-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                        
+                        <!-- Descriptive Option -->
+                        <a href="{{ route('partner.questions.descriptive.create') }}" class="menu-item flex items-center px-4 py-3 text-gray-700 hover:bg-green-50 hover:text-green-700 transition-colors duration-200 group/item">
+                            <div class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3 group-hover/item:bg-green-200 transition-colors duration-200">
+                                <svg class="w-5 h-5 text-green-600 icon-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-medium text-sm">Descriptive Question</div>
+                                <div class="text-xs text-gray-500">Create open-ended questions</div>
+                            </div>
+                            <svg class="w-4 h-4 text-gray-400 group-hover/item:text-green-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                        
+                        <!-- True/False Option -->
+                        <a href="{{ route('partner.questions.tf.create') }}" class="menu-item flex items-center px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-700 transition-colors duration-200 group/item">
+                            <div class="flex-shrink-0 w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mr-3 group-hover/item:bg-orange-200 transition-colors duration-200">
+                                <svg class="w-5 h-5 text-orange-600 icon-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-medium text-sm">True/False Question</div>
+                                <div class="text-xs text-gray-500">Create binary choice questions</div>
+                            </div>
+                            <svg class="w-4 h-4 text-gray-400 group-hover/item:text-orange-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                        
+                        <!-- Divider -->
+                        <div class="border-t border-gray-100 my-2"></div>
+                        
+                        <!-- Bulk Upload Option -->
+                        <a href="{{ route('partner.questions.bulk-upload') }}" class="menu-item flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200 group/item">
+                            <div class="flex-shrink-0 w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center mr-3 group-hover/item:bg-gray-200 transition-colors duration-200">
+                                <svg class="w-5 h-5 text-gray-600 icon-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-medium text-sm">Bulk Upload</div>
+                                <div class="text-xs text-gray-500">Upload multiple questions via CSV/Excel</div>
+                            </div>
+                            <svg class="w-4 h-4 text-gray-400 group-hover/item:text-gray-600 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="relative">
-            <input type="text" 
-                   id="searchInput" 
-                   name="search" 
-                   value="{{ request('search') }}"
-                   placeholder="🔍 Type to search questions, options, explanations, courses, subjects, topics..." 
-                   class="block w-full pl-4 pr-14 py-3 border border-gray-300 rounded-lg leading-6 bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 text-base">
-            
-            <!-- Loading Indicator -->
-            <div id="searchLoading" class="absolute inset-y-0 right-0 pr-4 flex items-center hidden">
-                <svg class="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-            </div>
-            
-            <!-- Clear Search Button -->
-            @if(request('search'))
-                <button type="button" 
-                        id="clearSearch" 
-                        class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-red-500 transition-colors duration-200"
-                        title="Clear search">
-                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            @endif
-        </div>
-        
-        <!-- Search Results Info -->
-        @if(request('search'))
-            <div class="mt-4 p-3 bg-blue-100 rounded-lg border border-blue-200">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2 text-sm text-blue-800">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        <span class="font-medium">Search results for:</span> "<span class="font-bold">{{ request('search') }}</span>"
-                    </div>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-200 text-blue-800">
-                        {{ $questions->total() }} questions found
-                    </span>
-                </div>
-            </div>
-        @endif
-        
-        <!-- Filters -->
+        <!-- Search and Filters -->
         <div class="mt-6">
-            <form method="GET" id="filterForm" class="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <form method="GET" id="filterForm" class="space-y-4">
                 <input type="hidden" name="search" id="searchHidden" value="{{ request('search') }}">
-                <div>
-                    <select name="course_filter" class="w-full rounded-md border border-gray-300 p-2 bg-white text-gray-900">
-                        <option value="">All Courses</option>
-                        @foreach($courses ?? [] as $course)
-                            <option value="{{ $course->id }}" {{ request('course_filter') == $course->id ? 'selected' : '' }}>
-                                {{ $course->name }}
-                            </option>
-                        @endforeach
-                    </select>
+                
+                <!-- Search Bar -->
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                    <input type="text" 
+                           id="searchInput" 
+                           class="block w-full pl-10 pr-12 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500" 
+                           placeholder="Search questions..." 
+                           value="{{ request('search') }}">
+                    <div class="absolute inset-y-0 right-0 flex items-center">
+                        <div id="searchLoading" class="hidden pr-3">
+                            <svg class="animate-spin h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <select name="subject_filter" class="w-full rounded-md border border-gray-300 p-2 bg-white text-gray-900">
-                        <option value="">All Subjects</option>
-                        @foreach($subjects ?? [] as $subject)
-                            <option value="{{ $subject->id }}" {{ request('subject_filter') == $subject->id ? 'selected' : '' }}>
-                                {{ $subject->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <select name="topic_filter" class="w-full rounded-md border border-gray-300 p-2 bg-white text-gray-900">
-                        <option value="">All Topics</option>
-                        @foreach($topics ?? [] as $topic)
-                            <option value="{{ $topic->id }}" {{ request('topic_filter') == $topic->id ? 'selected' : '' }}>
-                                {{ $topic->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <select name="question_type_filter" class="w-full rounded-md border border-gray-300 p-2 bg-white text-gray-900">
-                        <option value="">All Types</option>
-                        @foreach($questionTypes ?? [] as $questionType)
-                            <option value="{{ $questionType->q_type_code }}" {{ request('question_type_filter') == $questionType->q_type_code ? 'selected' : '' }}>
-                                {{ $questionType->q_type_name }}
-                            </option>
-                        @endforeach
-                    </select>
+
+                <!-- Filters -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="filter-group">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Course</label>
+                        <select name="course_filter" id="course_filter" class="w-full rounded-md border border-gray-300 p-2 bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">All Courses</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+                        <select name="subject_filter" id="subject_filter" class="w-full rounded-md border border-gray-300 p-2 bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">All Subjects</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Topic</label>
+                        <select name="topic_filter" id="topic_filter" class="w-full rounded-md border border-gray-300 p-2 bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">All Topics</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Question Type</label>
+                        <select name="question_type_filter" id="question_type_filter" class="w-full rounded-md border border-gray-300 p-2 bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">All Types</option>
+                        </select>
+                    </div>
+                    
                 </div>
                 
-                <div class="flex items-end gap-2">
-                    <a href="{{ route('partner.questions.all') }}" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors duration-200 text-center">
+                <div class="flex items-center gap-2">
+                    <button type="button" id="refreshQuestions" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors duration-200 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        Refresh
+                    </button>
+                    <button type="button" id="clearAllFilters" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors duration-200">
                         Clear All
-                    </a>
+                    </button>
                 </div>
             </form>
         </div>
@@ -195,115 +273,78 @@
         @if($questions->count() > 0)
             <div class="divide-y divide-gray-200 questions-container">
                 @foreach($questions as $question)
-                    <div class="p-4 hover:bg-gray-50 transition-colors duration-200 border-l-4 border-transparent hover:border-green-500">
+                    <div class="p-4 hover:bg-gray-50 transition-colors duration-200 border-l-4 border-transparent hover:border-green-500" data-question-id="{{ $question->id }}">
                         <div class="flex items-start gap-4">
                             <div class="flex flex-col items-start gap-2 min-w-[120px]">
-                                <a href="{{ route('partner.questions.mcq.show', $question) }}" 
-                                   class="inline-flex items-center gap-2 px-3 py-2 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-md transition-colors duration-200">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                    </svg>
-                                    View
+                                @if($question->question_type === 'mcq')
+                                <a href="{{ route('partner.questions.mcq.show', $question) }}"
+                                   class="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors duration-200">
+                                    View Question
                                 </a>
-                                <a href="{{ route('partner.questions.mcq.edit', $question) }}" 
-                                   class="inline-flex items-center gap-2 px-3 py-2 text-sm text-green-600 hover:text-green-800 hover:bg-green-50 rounded-md transition-colors duration-200">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                    </svg>
-                                    Edit
-                                </a>
+                                @else
+                                    <a href="{{ route('partner.questions.show', $question) }}"
+                                       class="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors duration-200">
+                                        View Question
+                                    </a>
+                                @endif
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                    {{ $question->question_type === 'mcq' ? 'bg-blue-100 text-blue-800' : ($question->question_type === 'true_false' ? 'bg-orange-100 text-orange-800' : 'bg-green-100 text-green-800') }}">
+                                    {{ $question->question_type === 'mcq' ? 'MCQ' : ($question->question_type === 'true_false' ? 'True/False' : 'Descriptive') }}
+                                </span>
                             </div>
-                            <div class="flex-1">
-                                <div class="flex items-center gap-3 mb-3">
-                                    <span class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-bold bg-orange-500 text-white">
-                                        @if($question->questionType->q_type_name === 'Descriptive')
-                                            CQ
-                                        @else
-                                            {{ $question->questionType->q_type_name ?? 'N/A' }}
-                                        @endif
-                                    </span>
-                                    <span class="text-gray-400">→</span>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
-                                        {{ $question->course->name ?? 'N/A' }}
-                                    </span>
-                                    <span class="text-gray-400">→</span>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200">
-                                        {{ $question->subject->name ?? 'N/A' }}
-                                    </span>
-                                    <span class="text-gray-400">→</span>
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
-                                        {{ $question->topic->name ?? 'N/A' }}
-                                    </span>
+                            
+                            <div class="flex-1 min-w-0">
+                                <div class="text-sm text-gray-900 mb-2 prose prose-sm max-w-none">
+                                    {!! Str::limit(strip_tags($question->question_text, '<b><i><u><strong><em><br><p><span><div>'), 200) !!}
                                 </div>
                                 
-                                <!-- Question Text and Answer Options -->
-                                <div class="flex-1">
-                                    <h3 class="text-base font-medium text-gray-900 mb-3 leading-relaxed flex items-center gap-2">
-                                        {!! Str::limit($question->question_text, 150) !!}
-                                        @if($question->image)
-                                            <div class="relative group">
-                                                <svg class="w-4 h-4 text-blue-500 hover:text-blue-700 cursor-pointer transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="View Image">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                                </svg>
-                                                <!-- Image Preview Tooltip -->
-                                                <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 image-preview-tooltip">
-                                                    <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-3">
-                                                        <img src="{{ asset('storage/' . $question->image) }}" 
-                                                             alt="Question Image" 
-                                                             class="rounded">
-                                                    </div>
-                                                    <!-- Arrow -->
-                                                    <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-200"></div>
-                                                    <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-3 border-r-3 border-t-3 border-transparent border-t-white -mt-1"></div>
-                                                </div>
-                                            </div>
-                                        @endif
-                                        
-                                        <!-- Answer Options in One Line -->
-                                        <div class="flex items-center gap-2 text-sm ml-4">
-                                            <span class="inline-flex items-center px-2 py-1 rounded-lg {{ $question->correct_answer === 'a' ? 'bg-green-100 border-2 border-green-300 text-green-800 font-medium' : 'bg-white border border-gray-200 text-gray-700 hover:border-gray-300 transition-colors duration-200' }}">
-                                                <span class="font-bold mr-1 text-xs {{ $question->correct_answer === 'a' ? 'text-green-700' : 'text-gray-500' }}">A</span> 
-                                                {!! Str::limit($question->option_a, 25) !!}
-                                                @if($question->correct_answer === 'a')
-                                                    <svg class="w-3 h-3 ml-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                                    </svg>
-                                                @endif
-                                            </span>
-                                            <span class="text-gray-400">|</span>
-                                            <span class="inline-flex items-center px-2 py-1 rounded-lg {{ $question->correct_answer === 'b' ? 'bg-green-100 border-2 border-green-300 text-green-800 font-medium' : 'bg-white border border-gray-200 text-gray-700 hover:border-gray-300 transition-colors duration-200' }}">
-                                                <span class="font-bold mr-1 text-xs {{ $question->correct_answer === 'b' ? 'text-green-700' : 'text-gray-500' }}">B</span> 
-                                                {!! Str::limit($question->option_b, 25) !!}
-                                                @if($question->correct_answer === 'b')
-                                                    <svg class="w-3 h-3 ml-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                                    </svg>
-                                                @endif
-                                            </span>
-                                            <span class="text-gray-400">|</span>
-                                            <span class="inline-flex items-center px-2 py-1 rounded-lg {{ $question->correct_answer === 'c' ? 'bg-green-100 border-2 border-green-300 text-green-800 font-medium' : 'bg-white border border-gray-200 text-gray-700 hover:border-gray-300 transition-colors duration-200' }}">
-                                                <span class="font-bold mr-1 text-xs {{ $question->correct_answer === 'c' ? 'text-green-700' : 'text-gray-500' }}">C</span> 
-                                                {!! Str::limit($question->option_c, 25) !!}
-                                                @if($question->correct_answer === 'c')
-                                                    <svg class="w-3 h-3 ml-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                                    </svg>
-                                                @endif
-                                            </span>
-                                            <span class="text-gray-400">|</span>
-                                            <span class="inline-flex items-center px-2 py-1 rounded-lg {{ $question->correct_answer === 'd' ? 'bg-green-100 border-2 border-green-300 text-green-800 font-medium' : 'bg-white border border-gray-200 text-gray-700 hover:border-gray-300 transition-colors duration-200' }}">
-                                                <span class="font-bold mr-1 text-xs {{ $question->correct_answer === 'd' ? 'text-green-700' : 'text-gray-500' }}">D</span> 
-                                                {!! Str::limit($question->option_d, 25) !!}
-                                                @if($question->correct_answer === 'd')
-                                                    <svg class="w-3 h-3 ml-1 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                                    </svg>
-                                                @endif
-                                            </span>
-                                        </div>
-                                    </h3>
+                                <div class="flex flex-wrap gap-4 text-xs text-gray-500">
+                                    <span><strong>Course:</strong> {{ $question->course->name ?? 'N/A' }}</span>
+                                    <span><strong>Subject:</strong> {{ $question->subject->name ?? 'N/A' }}</span>
+                                    <span><strong>Topic:</strong> {{ $question->topic->name ?? 'N/A' }}</span>
+                                    @if($question->questionType)
+                                        <span><strong>Type:</strong> {{ $question->questionType->q_type_name }}</span>
+                                    @endif
+                                </div>
+                            </div>
+                            
+                            <div class="flex flex-col items-end gap-2">
+                                <div class="text-xs text-gray-500">
+                                    Created: {{ $question->created_at->format('M d, Y') }}
+                                </div>
+                                <div class="flex gap-2">
+                                    @if($question->question_type === 'mcq')
+                                    <a href="{{ route('partner.questions.mcq.show', $question) }}" 
+                                       class="text-green-600 hover:text-green-800 text-sm font-medium transition-colors duration-200">
+                                        View
+                                    </a>
+                                    @else
+                                        <a href="{{ route('partner.questions.show', $question) }}" 
+                                           class="text-green-600 hover:text-green-800 text-sm font-medium transition-colors duration-200">
+                                            View
+                                        </a>
+                                    @endif
+                                    @if($question->question_type === 'descriptive')
+                                        <a href="{{ route('partner.questions.descriptive.edit', $question) }}" 
+                                           class="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors duration-200">
+                                            Edit
+                                        </a>
+                                    @elseif($question->question_type === 'mcq')
+                                    <a href="{{ route('partner.questions.mcq.edit', $question) }}" 
+                                       class="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors duration-200">
+                                        Edit
+                                    </a>
+                                    @elseif($question->question_type === 'true_false')
+                                        <a href="{{ route('partner.questions.tf.edit', $question) }}" 
+                                           class="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors duration-200">
+                                            Edit
+                                        </a>
+                                    @else
+                                        <a href="{{ route('partner.questions.edit', $question) }}" 
+                                           class="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors duration-200">
+                                            Edit
+                                        </a>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -335,19 +376,18 @@
                     @endif
                 </p>
                 <div class="mt-6 flex gap-3">
-                    <a href="{{ route('partner.questions.mcq.create') }}" 
-                       class="inline-flex items-center gap-2.5 px-4 py-2.5 border border-transparent shadow text-sm font-bold rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
-                        </svg>
-                        + MCQ
+                    <a href="{{ route('partner.questions.mcq.create') }}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors duration-200">
+                        Create MCQ
                     </a>
-                    <a href="{{ route('partner.questions.descriptive.create') }}" 
-                       class="inline-flex items-center gap-2.5 px-4 py-2.5 border border-transparent shadow text-sm font-bold rounded-lg text-white bg-green-600 hover:bg-green-700 transition-colors duration-200">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    <a href="{{ route('partner.questions.descriptive.create') }}" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md transition-colors duration-200">
+                        Create Descriptive
+                    </a>
+                    <a href="{{ route('partner.questions.tf.create') }}" class="group relative px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2 font-medium">
+                        <svg class="w-5 h-5 transition-transform duration-300 group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
-                        + CQ
+                        Create True/False
+                        <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 rounded-lg transition-opacity duration-300"></div>
                     </a>
                 </div>
             </div>
@@ -356,52 +396,147 @@
 </div>
 
 <style>
-.image-preview-tooltip img {
-    max-width: 300px;
-    max-height: 200px;
-    object-fit: contain;
-}
-
 .questions-container.updating {
     opacity: 0.6;
+    pointer-events: none;
+}
+
+.filter-group select:disabled {
+    background-color: #f9fafb;
+    color: #6b7280;
+    cursor: not-allowed;
 }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Get all required elements
+    // Get elements
     const searchInput = document.getElementById('searchInput');
     const searchHidden = document.getElementById('searchHidden');
-    const filterForm = document.getElementById('filterForm');
     const searchLoading = document.getElementById('searchLoading');
+    const filterForm = document.getElementById('filterForm');
+    const questionsContainer = document.querySelector('.questions-container');
     
-    // Check if all required elements exist
+    const courseFilter = document.getElementById('course_filter');
+    const subjectFilter = document.getElementById('subject_filter');
+    const topicFilter = document.getElementById('topic_filter');
+    const questionTypeFilter = document.getElementById('question_type_filter');
+    const clearAllFiltersBtn = document.getElementById('clearAllFilters');
+    const refreshQuestionsBtn = document.getElementById('refreshQuestions');
+    
     if (!searchInput || !searchHidden || !filterForm) {
-        console.error('Required search elements not found');
+        console.error('Required elements not found');
         return;
     }
     
-    // Initialize clear button visibility on page load
-    updateClearButtonVisibility();
+    // Load initial filter data
+    loadFilterData();
     
-    // Get all filter select elements
-    const filterSelects = document.querySelectorAll('select[name="course_filter"], select[name="subject_filter"], select[name="topic_filter"], select[name="question_type_filter"]');
-    
-    // Add change event listener to each filter
-    filterSelects.forEach(select => {
-        select.addEventListener('change', function() {
-            // Perform AJAX search when filters change
-            performFilterSearch();
-        });
+    // Search functionality with debouncing
+    let searchTimeout;
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchHidden.value = this.value;
+        
+        if (searchLoading) searchLoading.classList.remove('hidden');
+        
+        searchTimeout = setTimeout(function() {
+            performAjaxSearch();
+        }, 300);
     });
-
+    
+    // Filter change handlers
+    if (courseFilter) {
+        courseFilter.addEventListener('change', function() {
+            const courseId = this.value;
+            console.log('Course filter changed to:', courseId);
+            
+            // Clear dependent filters
+            if (subjectFilter) subjectFilter.value = '';
+            if (topicFilter) topicFilter.value = '';
+            
+            // Update subjects for selected course
+            updateSubjectsForCourse(courseId);
+            
+            // Trigger search
+            performAjaxSearch();
+        });
+    }
+    
+    if (subjectFilter) {
+        subjectFilter.addEventListener('change', function() {
+            const subjectId = this.value;
+            console.log('Subject filter changed to:', subjectId);
+            
+            // Clear dependent filters
+            if (topicFilter) topicFilter.value = '';
+            
+            // Update topics for selected subject
+            updateTopicsForSubject(subjectId);
+            
+            // Trigger search
+            performAjaxSearch();
+        });
+    }
+    
+    if (topicFilter) {
+        topicFilter.addEventListener('change', function() {
+            console.log('Topic filter changed to:', this.value);
+            performAjaxSearch();
+        });
+    }
+    
+    if (questionTypeFilter) {
+        questionTypeFilter.addEventListener('change', function() {
+            console.log('Question type filter changed to:', this.value);
+            performAjaxSearch();
+        });
+    }
+    
+    
+    if (clearAllFiltersBtn) {
+        clearAllFiltersBtn.addEventListener('click', function() {
+            console.log('Clear all filters clicked');
+            
+            // Clear all filter values
+            if (courseFilter) courseFilter.value = '';
+            if (subjectFilter) subjectFilter.value = '';
+            if (topicFilter) topicFilter.value = '';
+            if (questionTypeFilter) questionTypeFilter.value = '';
+            if (searchInput) searchInput.value = '';
+            if (searchHidden) searchHidden.value = '';
+            
+            // Update subjects and topics for no course selection
+            updateSubjectsForCourse('');
+            updateTopicsForSubject('');
+            
+            // Trigger search
+            performAjaxSearch();
+        });
+    }
+    
+    // Refresh questions functionality
+    if (refreshQuestionsBtn) {
+        refreshQuestionsBtn.addEventListener('click', function() {
+            console.log('Refresh questions clicked');
+            
+            // Add loading state
+            const button = this;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Refreshing...';
+            button.disabled = true;
+            
+            // Reload the page
+            window.location.reload();
+        });
+    }
+    
     // AJAX Search Function
     function performAjaxSearch() {
         const searchValue = searchInput.value;
         const currentUrl = new URL(window.location);
         
         // Add updating class to questions container
-        const questionsContainer = document.querySelector('.questions-container');
         if (questionsContainer) {
             questionsContainer.classList.add('updating');
         }
@@ -416,16 +551,38 @@ document.addEventListener('DOMContentLoaded', function() {
             currentUrl.searchParams.delete('search');
         }
         
-        // Preserve existing filters
-        const courseFilter = document.querySelector('select[name="course_filter"]')?.value || '';
-        const subjectFilter = document.querySelector('select[name="subject_filter"]')?.value || '';
-        const topicFilter = document.querySelector('select[name="topic_filter"]')?.value || '';
-        const questionTypeFilter = document.querySelector('select[name="question_type_filter"]')?.value || '';
+        // Handle filter parameters
+        const courseFilterValue = courseFilter ? courseFilter.value : '';
+        const subjectFilterValue = subjectFilter ? subjectFilter.value : '';
+        const topicFilterValue = topicFilter ? topicFilter.value : '';
+        const questionTypeFilterValue = questionTypeFilter ? questionTypeFilter.value : '';
         
-        if (courseFilter) currentUrl.searchParams.set('course_filter', courseFilter);
-        if (subjectFilter) currentUrl.searchParams.set('subject_filter', subjectFilter);
-        if (topicFilter) currentUrl.searchParams.set('topic_filter', topicFilter);
-        if (questionTypeFilter) currentUrl.searchParams.set('question_type_filter', questionTypeFilter);
+        if (courseFilterValue) {
+            currentUrl.searchParams.set('course_filter', courseFilterValue);
+        } else {
+            currentUrl.searchParams.delete('course_filter');
+        }
+        
+        if (subjectFilterValue) {
+            currentUrl.searchParams.set('subject_filter', subjectFilterValue);
+        } else {
+            currentUrl.searchParams.delete('subject_filter');
+        }
+        
+        if (topicFilterValue) {
+            currentUrl.searchParams.set('topic_filter', topicFilterValue);
+        } else {
+            currentUrl.searchParams.delete('topic_filter');
+        }
+        
+        if (questionTypeFilterValue) {
+            currentUrl.searchParams.set('question_type_filter', questionTypeFilterValue);
+        } else {
+            currentUrl.searchParams.delete('question_type_filter');
+        }
+        
+        
+        console.log('Making AJAX request to:', currentUrl.toString());
         
         // Update browser URL without reloading
         window.history.pushState({}, '', currentUrl);
@@ -437,70 +594,70 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
         .then(response => {
+            console.log('AJAX response status:', response.status);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             return response.text();
         })
         .then(html => {
+            console.log('AJAX response received, HTML length:', html.length);
+            
             // Create a temporary div to parse the HTML
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = html;
             
             // Extract the questions list and pagination
-            const newQuestionsList = tempDiv.querySelector('.divide-y');
+            const newQuestionsList = tempDiv.querySelector('.divide-y.divide-gray-200');
+            const newEmptyState = tempDiv.querySelector('.p-12.text-center');
             const newPagination = tempDiv.querySelector('.p-6.border-t');
             const newQuestionsCount = tempDiv.querySelector('.text-lg.font-semibold');
-            const newSearchInfo = tempDiv.querySelector('.mt-4.p-3.bg-blue-100');
+            
+            console.log('Extracted elements:', {
+                questionsList: newQuestionsList ? 'found' : 'not found',
+                emptyState: newEmptyState ? 'found' : 'not found',
+                pagination: newPagination ? 'found' : 'not found',
+                questionsCount: newQuestionsCount ? newQuestionsCount.textContent : 'not found'
+            });
             
             // Update the page content
-            if (newQuestionsList) {
-                const existingQuestionsList = document.querySelector('.divide-y');
-                if (existingQuestionsList) {
-                    existingQuestionsList.innerHTML = newQuestionsList.innerHTML;
+            const existingQuestionsContainer = document.querySelector('.questions-container');
+            if (existingQuestionsContainer) {
+                if (newQuestionsList) {
+                    // There are questions - show the questions list
+                    console.log('Updating with questions list');
+                    existingQuestionsContainer.innerHTML = newQuestionsList.outerHTML;
+                    
+                    // Count questions in the new content
+                    const questionItems = newQuestionsList.querySelectorAll('[data-question-id]');
+                    console.log('Questions displayed after update:', questionItems.length);
+                } else if (newEmptyState) {
+                    // No questions - show empty state
+                    console.log('Updating with empty state');
+                    existingQuestionsContainer.innerHTML = newEmptyState.outerHTML;
+                    console.log('Empty state displayed');
                 }
             }
+            
             if (newPagination) {
                 const existingPagination = document.querySelector('.p-6.border-t');
                 if (existingPagination) {
                     existingPagination.innerHTML = newPagination.innerHTML;
                 }
             }
+            
             if (newQuestionsCount) {
                 const existingQuestionsCount = document.querySelector('.text-lg.font-semibold');
                 if (existingQuestionsCount) {
-                    existingQuestionsCount.innerHTML = newQuestionsCount.innerHTML;
+                    existingQuestionsCount.textContent = newQuestionsCount.textContent;
                 }
             }
             
-            // Update search info section
-            const existingSearchInfo = document.querySelector('.mt-4.p-3.bg-blue-100');
-            if (newSearchInfo) {
-                if (existingSearchInfo) {
-                    existingSearchInfo.innerHTML = newSearchInfo.innerHTML;
-                } else {
-                    // Insert search info if it doesn't exist
-                    const searchBar = document.querySelector('.bg-blue-50');
-                    const searchTips = document.querySelector('.mt-6');
-                    if (searchBar && searchTips) {
-                        searchBar.insertBefore(newSearchInfo.cloneNode(true), searchTips);
-                    }
-                }
-            } else {
-                // Remove search info if no search results
-                if (existingSearchInfo) {
-                    existingSearchInfo.remove();
-                }
-            }
-            
-            // Hide loading indicator and remove updating class
+            // Hide loading indicators
             if (searchLoading) searchLoading.classList.add('hidden');
             if (questionsContainer) {
                 questionsContainer.classList.remove('updating');
             }
-            
-            // Update clear button visibility
-            updateClearButtonVisibility();
         })
         .catch(error => {
             console.error('Search error:', error);
@@ -515,154 +672,272 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Update clear button visibility
-    function updateClearButtonVisibility() {
-        const clearBtn = document.getElementById('clearSearch');
-        if (searchInput.value.length > 0) {
-            if (!clearBtn) {
-                // Create clear button if it doesn't exist
-                const clearButton = document.createElement('button');
-                clearButton.type = 'button';
-                clearButton.id = 'clearSearch';
-                clearButton.className = 'absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-red-500 transition-colors duration-200';
-                clearButton.title = 'Clear search';
-                clearButton.innerHTML = '<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>';
-                
-                // Add click event
-                clearButton.addEventListener('click', function() {
-                    searchInput.value = '';
-                    searchHidden.value = '';
-                    performAjaxSearch();
+    // Function to load initial filter data
+    function loadFilterData() {
+        // Load courses first
+        loadCourses().then(() => {
+            // After courses are loaded, check if there's a selected course
+            const selectedCourseId = '{{ request("course_filter") }}';
+            
+            if (selectedCourseId) {
+                // Load subjects for the selected course
+                loadSubjects(selectedCourseId).then(() => {
+                    // After subjects are loaded, check if there's a selected subject
+                    const selectedSubjectId = '{{ request("subject_filter") }}';
+                    
+                    if (selectedSubjectId) {
+                        // Load topics for the selected subject
+                        loadTopics(selectedSubjectId);
+                    } else {
+                        // Load all topics if no subject is selected
+                        loadTopics();
+                    }
                 });
-                
-                // Insert before loading indicator
-                const loadingIndicator = document.getElementById('searchLoading');
-                if (loadingIndicator) {
-                    loadingIndicator.parentNode.insertBefore(clearButton, loadingIndicator);
-                }
+            } else {
+                // Load all subjects and topics if no course is selected
+                loadSubjects();
+                loadTopics();
             }
-        } else {
-            if (clearBtn) {
-                clearBtn.remove();
-            }
-        }
+        });
+        
+        // Load question types
+        loadQuestionTypes();
     }
     
-    // Function to handle filter changes with AJAX
-    function performFilterSearch() {
-        // Update hidden search field
-        if (searchHidden) {
-            searchHidden.value = searchInput.value;
-        }
-        // Perform AJAX search
-        performAjaxSearch();
-    }
-
-    // Search functionality with debouncing and AJAX
-    let searchTimeout;
-    
-    // Add input event listener for real-time search
-    searchInput.addEventListener('input', function() {
-        // Clear the previous timeout
-        clearTimeout(searchTimeout);
-        
-        // Update hidden field
-        if (searchHidden) {
-            searchHidden.value = this.value;
-        }
-        
-        // Show loading indicator
-        if (searchLoading) searchLoading.classList.remove('hidden');
-        
-        // Set a new timeout to perform AJAX search after 300ms of no typing
-        searchTimeout = setTimeout(function() {
-            performAjaxSearch();
-        }, 300);
-    });
-
-    // Handle Enter key press
-    searchInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            clearTimeout(searchTimeout);
-            if (searchHidden) {
-                searchHidden.value = this.value;
+    // Function to load courses
+    function loadCourses() {
+        return fetch('{{ route("partner.questions.courses-for-filter") }}', {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
             }
-            performAjaxSearch();
-        }
-    });
-
-    // Clear search functionality
-    const clearSearchBtn = document.getElementById('clearSearch');
-    if (clearSearchBtn) {
-        clearSearchBtn.addEventListener('click', function() {
-            searchInput.value = '';
-            if (searchHidden) {
-                searchHidden.value = '';
+        })
+        .then(response => response.json())
+        .then(data => {
+            courseFilter.innerHTML = '<option value="">All Courses</option>';
+            
+            if (data.courses && data.courses.length > 0) {
+                data.courses.forEach(course => {
+                    const option = document.createElement('option');
+                    option.value = course.id;
+                    option.textContent = course.name;
+                    
+                    // Check if this course was previously selected
+                    if (course.id == '{{ request("course_filter") }}') {
+                        option.selected = true;
+                    }
+                    
+                    courseFilter.appendChild(option);
+                });
             }
-            performAjaxSearch();
+        })
+        .catch(error => {
+            console.error('Error loading courses:', error);
+            courseFilter.innerHTML = '<option value="">Error loading courses</option>';
         });
     }
     
-    // Handle pagination clicks with AJAX
-    document.addEventListener('click', function(e) {
-        if (e.target.matches('.pagination a, .pagination button')) {
-            e.preventDefault();
-            const href = e.target.href || e.target.getAttribute('data-href');
-            if (href) {
-                // Update URL and perform AJAX request
-                const url = new URL(href);
-                window.history.pushState({}, '', url);
-                
-                fetch(url.toString(), {
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.text();
-                })
-                .then(html => {
-                    const tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = html;
+    // Function to load subjects
+    function loadSubjects(courseId = null) {
+        return fetch(`{{ route("partner.questions.subjects-for-filter") }}?course_id=${courseId || ''}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            subjectFilter.innerHTML = '<option value="">All Subjects</option>';
+            
+            if (data.subjects && data.subjects.length > 0) {
+                data.subjects.forEach(subject => {
+                    const option = document.createElement('option');
+                    option.value = subject.id;
+                    option.textContent = subject.name;
                     
-                    // Update questions list and pagination
-                    const newQuestionsList = tempDiv.querySelector('.divide-y');
-                    const newPagination = tempDiv.querySelector('.p-6.border-t');
-                    const newQuestionsCount = tempDiv.querySelector('.text-lg.font-semibold');
+                    // Check if this subject was previously selected
+                    if (subject.id == '{{ request("subject_filter") }}') {
+                        option.selected = true;
+                    }
                     
-                    if (newQuestionsList) {
-                        const existingQuestionsList = document.querySelector('.divide-y');
-                        if (existingQuestionsList) {
-                            existingQuestionsList.innerHTML = newQuestionsList.innerHTML;
-                        }
-                    }
-                    if (newPagination) {
-                        const existingPagination = document.querySelector('.p-6.border-t');
-                        if (existingPagination) {
-                            existingPagination.innerHTML = newPagination.innerHTML;
-                        }
-                    }
-                    if (newQuestionsCount) {
-                        const existingQuestionsCount = document.querySelector('.text-lg.font-semibold');
-                        if (existingQuestionsCount) {
-                            existingQuestionsCount.innerHTML = newQuestionsCount.innerHTML;
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Pagination error:', error);
-                    // Reload page on pagination error
-                    window.location.reload();
+                    subjectFilter.appendChild(option);
                 });
             }
+        })
+        .catch(error => {
+            console.error('Error loading subjects:', error);
+            subjectFilter.innerHTML = '<option value="">Error loading subjects</option>';
+        });
+    }
+    
+    // Function to load topics
+    function loadTopics(subjectId = null) {
+        return fetch(`{{ route("partner.questions.topics-for-filter") }}?subject_id=${subjectId || ''}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            topicFilter.innerHTML = '<option value="">All Topics</option>';
+            
+            if (data.topics && data.topics.length > 0) {
+                data.topics.forEach(topic => {
+                    const option = document.createElement('option');
+                    option.value = topic.id;
+                    option.textContent = topic.name;
+                    
+                    // Check if this topic was previously selected
+                    if (topic.id == '{{ request("topic_filter") }}') {
+                        option.selected = true;
+                    }
+                    
+                    topicFilter.appendChild(option);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error loading topics:', error);
+            topicFilter.innerHTML = '<option value="">Error loading topics</option>';
+        });
+    }
+    
+    // Function to load question types
+    function loadQuestionTypes() {
+        return fetch('{{ route("partner.questions.question-types-for-filter") }}', {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            questionTypeFilter.innerHTML = '<option value="">All Types</option>';
+            
+            if (data.questionTypes && data.questionTypes.length > 0) {
+                data.questionTypes.forEach(questionType => {
+                    const option = document.createElement('option');
+                    option.value = questionType.q_type_code;
+                    option.textContent = questionType.q_type_name;
+                    
+                    // Check if this question type was previously selected
+                    if (questionType.q_type_code == '{{ request("question_type_filter") }}') {
+                        option.selected = true;
+                    }
+                    
+                    questionTypeFilter.appendChild(option);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error loading question types:', error);
+            questionTypeFilter.innerHTML = '<option value="">Error loading question types</option>';
+        });
+    }
+    
+    // Function to update subjects based on selected course
+    function updateSubjectsForCourse(courseId) {
+        if (!subjectFilter) return;
+        
+        console.log('updateSubjectsForCourse called with courseId:', courseId);
+        
+        // Show loading state
+        subjectFilter.disabled = true;
+        subjectFilter.innerHTML = '<option value="">Loading subjects...</option>';
+        
+        // Load subjects for the selected course
+        loadSubjects(courseId);
+        
+        // Re-enable the dropdown after loading
+        setTimeout(() => {
+            subjectFilter.disabled = false;
+            console.log('Subjects updated for course:', courseId);
+        }, 500);
+    }
+    
+    // Function to update topics based on selected subject
+    function updateTopicsForSubject(subjectId) {
+        if (!topicFilter) return;
+        
+        console.log('updateTopicsForSubject called with subjectId:', subjectId);
+        
+        // Show loading state
+        topicFilter.disabled = true;
+        topicFilter.innerHTML = '<option value="">Loading topics...</option>';
+        
+        // Load topics for the selected subject
+        loadTopics(subjectId);
+        
+        // Re-enable the dropdown after loading
+        setTimeout(() => {
+            topicFilter.disabled = false;
+            console.log('Topics updated for subject:', subjectId);
+        }, 500);
+    }
+    
+    // Dropdown Menu Functionality
+    const dropdownButton = document.querySelector('.group button');
+    const dropdownMenu = document.querySelector('.group .absolute');
+    let isMenuOpen = false;
+    
+    // Toggle dropdown on click
+    dropdownButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        isMenuOpen = !isMenuOpen;
+        
+        if (isMenuOpen) {
+            dropdownMenu.classList.add('show');
+            dropdownMenu.style.opacity = '1';
+            dropdownMenu.style.visibility = 'visible';
+            dropdownMenu.style.transform = 'translateY(0)';
+        } else {
+            dropdownMenu.classList.remove('show');
+            dropdownMenu.style.opacity = '0';
+            dropdownMenu.style.visibility = 'hidden';
+            dropdownMenu.style.transform = 'translateY(8px)';
         }
     });
     
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!dropdownButton.contains(e.target) && !dropdownMenu.contains(e.target)) {
+            isMenuOpen = false;
+            dropdownMenu.classList.remove('show');
+            dropdownMenu.style.opacity = '0';
+            dropdownMenu.style.visibility = 'hidden';
+            dropdownMenu.style.transform = 'translateY(8px)';
+        }
+    });
+    
+    // Add click animation to menu items
+    const menuItems = document.querySelectorAll('.menu-item');
+    menuItems.forEach(item => {
+        item.addEventListener('click', function() {
+            // Add a small delay to show the click animation
+            this.style.transform = 'scale(0.98)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 150);
+        });
+    });
+    
+    // Add keyboard navigation
+    dropdownButton.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            dropdownButton.click();
+        }
+    });
+    
+    // Close dropdown on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && isMenuOpen) {
+            isMenuOpen = false;
+            dropdownMenu.classList.remove('show');
+            dropdownMenu.style.opacity = '0';
+            dropdownMenu.style.visibility = 'hidden';
+            dropdownMenu.style.transform = 'translateY(8px)';
+        }
+    });
 });
 </script>
-
 @endsection

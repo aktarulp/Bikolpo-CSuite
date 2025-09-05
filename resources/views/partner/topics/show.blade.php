@@ -8,10 +8,10 @@
         <div>
             <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ $topic->name }}</h1>
             <p class="text-gray-600 dark:text-gray-400">Code: {{ $topic->code }} • Subject: {{ $topic->subject->name }} • Course: 
-                @if($topic->subject->courses->count() > 0)
-                    {{ $topic->subject->courses->pluck('name')->join(', ') }}
+                @if($topic->subject->course)
+                    {{ $topic->subject->course->name }}
                 @else
-                    No courses
+                    No course assigned
                 @endif
             </p>
         </div>

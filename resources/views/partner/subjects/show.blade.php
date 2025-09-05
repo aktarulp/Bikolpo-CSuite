@@ -9,12 +9,14 @@
             <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ $subject->name }}</h1>
             <p class="text-gray-600 dark:text-gray-400">Code: {{ $subject->code }}</p>
             <div class="mt-2">
-                <span class="text-sm text-gray-600 dark:text-gray-400">Courses: </span>
-                @foreach($subject->courses as $course)
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 mr-2">
-                        {{ $course->name }}
+                <span class="text-sm text-gray-600 dark:text-gray-400">Course: </span>
+                @if($subject->course)
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                        {{ $subject->course->name }}
                     </span>
-                @endforeach
+                @else
+                    <span class="text-gray-400 text-sm">No course assigned</span>
+                @endif
             </div>
         </div>
         <div class="flex gap-2">

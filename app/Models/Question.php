@@ -18,7 +18,6 @@ class Question extends Model
         'partner_id',
         'created_by',
         'question_text',
-        'question_header',
         'option_a',
         'option_b',
         'option_c',
@@ -33,7 +32,6 @@ class Question extends Model
         'expected_answer_structure',
         'key_concepts',
         'time_allocation',
-        'image',
         'status',
         'tags',
         'appearance_history',
@@ -103,6 +101,11 @@ class Question extends Model
         return $this->question_type === 'descriptive';
     }
 
+    public function isTrueFalse()
+    {
+        return $this->question_type === 'true_false';
+    }
+
 
 
     public function getQuestionTypeTextAttribute()
@@ -110,6 +113,8 @@ class Question extends Model
         return match($this->question_type) {
             'mcq' => 'MCQ',
             'descriptive' => 'Descriptive',
+            'true_false' => 'True/False',
+            'fill_in_blank' => 'Fill in the Blanks',
             default => 'Unknown'
         };
     }
@@ -125,5 +130,25 @@ class Question extends Model
         return $query->where('question_type', 'descriptive');
     }
 
+    public function scopeTrueFalse($query)
+    {
+        return $query->where('question_type', 'true_false');
+    }
+
+    /**
+     * Get all question statistics for this question
+     */
+    public function questionStats()
+    {
+        return $this->hasMany(\App\Models\QuestionStat::class);
+    }
+
+    /**
+     * Get question analytics
+     */
+    public function getAnalyticsAttribute()
+    {
+        return \App\Models\QuestionStat::getQuestionAnalytics($this->id);
+    }
 
 }

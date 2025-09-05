@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $exam->title }} - Quiz</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
@@ -301,7 +306,7 @@
     };
 
     const QUIZ_DURATION = {{ $exam->duration * 60 }};
-    let timeRemaining = QUIZ_DURATION;
+    let timeRemaining = {{ $remainingTime }};
 
     // DOM elements
     const questionTextEl = document.getElementById('question-text');
@@ -353,7 +358,9 @@
                 optionBtn.appendChild(optionLabel);
                 optionBtn.appendChild(optionText);
                 
-                if (state.answers[state.currentQuestionIndex] === option) {
+                // Check if this option is selected by comparing with the stored option letter
+                const optionLetter = String.fromCharCode(65 + index).toLowerCase(); // A, B, C, D -> a, b, c, d
+                if (state.answers[state.currentQuestionIndex] === optionLetter) {
                     optionBtn.classList.add('selected');
                     optionLabel.classList.remove('bg-blue-100', 'text-blue-600', 'border-blue-200');
                     optionLabel.classList.add('bg-white', 'text-white', 'border-white');
@@ -372,7 +379,9 @@
 
                 optionBtn.addEventListener('click', () => {
                     if (!state.isSubmitted) {
-                        state.answers[state.currentQuestionIndex] = option;
+                        // Store the option letter (A, B, C, D) instead of the full text
+                        const optionLetter = String.fromCharCode(65 + index).toLowerCase(); // A, B, C, D -> a, b, c, d
+                        state.answers[state.currentQuestionIndex] = optionLetter;
                         state.skipped[state.currentQuestionIndex] = false;
                         render();
                     }
@@ -496,13 +505,21 @@
     function submitQuiz(timedOut = false) {
         if (state.isSubmitted) return;
         
-        // Prepare form data
-        const formData = new FormData();
-        formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
-        
+        // Add answers to the form as hidden inputs
         questions.forEach((question, index) => {
             if (state.answers[index] !== null) {
-                formData.append(`answers[${question.id}]`, state.answers[index]);
+                // Remove existing input if it exists
+                const existingInput = examForm.querySelector(`input[name="answers[${question.id}]"]`);
+                if (existingInput) {
+                    existingInput.remove();
+                }
+                
+                // Create new hidden input
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = `answers[${question.id}]`;
+                input.value = state.answers[index];
+                examForm.appendChild(input);
             }
         });
         

@@ -649,7 +649,10 @@ class ExamController extends Controller
         $assignedQuestionsWithMarks = \App\Models\ExamQuestion::where('exam_id', $exam->id)
             ->pluck('marks', 'question_id');
         
-        // Get subjects and topics for filters
+        // Get courses, subjects and topics for filters
+        $courses = \App\Models\Course::where('status', 'active')
+            ->where('partner_id', $partnerId)
+            ->get();
         $subjects = \App\Models\Subject::where('status', 'active')->get();
         $topics = \App\Models\Topic::where('status', 'active')->get();
         
@@ -658,12 +661,13 @@ class ExamController extends Controller
             'exam_id' => $exam->id,
             'questions_count' => $questions->count(),
             'assigned_questions_count' => $assignedQuestions->count(),
+            'courses_count' => $courses->count(),
             'subjects_count' => $subjects->count(),
             'topics_count' => $topics->count(),
             'partner_id' => $partnerId
         ]);
         
-        return view('partner.exams.assign-questions', compact('exam', 'questions', 'assignedQuestions', 'assignedQuestionsWithMarks', 'subjects', 'topics'));
+        return view('partner.exams.assign-questions', compact('exam', 'questions', 'assignedQuestions', 'assignedQuestionsWithMarks', 'courses', 'subjects', 'topics'));
     }
 
     public function storeAssignedQuestions(Request $request, Exam $exam)

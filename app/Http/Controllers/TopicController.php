@@ -17,7 +17,7 @@ class TopicController extends Controller
         $partnerId = $this->getPartnerId();
         
         // Only show topics for the logged-in partner
-        $topics = Topic::with(['subject.courses'])
+        $topics = Topic::with(['subject.course'])
             ->where('partner_id', $partnerId)
             ->latest()
             ->paginate(15);
@@ -29,10 +29,8 @@ class TopicController extends Controller
     {
         $partnerId = $this->getPartnerId();
         $subjects = Subject::where('status', 'active')
-            ->with('courses')
-            ->whereHas('courses', function($query) use ($partnerId) {
-                $query->where('courses.partner_id', $partnerId);
-            })
+            ->with('course')
+            ->where('partner_id', $partnerId)
             ->get();
         return view('partner.topics.create', compact('subjects'));
     }
@@ -69,7 +67,7 @@ class TopicController extends Controller
 
     public function show(Topic $topic)
     {
-        $topic->load(['subject.courses', 'questions']);
+        $topic->load(['subject.course', 'questions']);
         return view('partner.topics.show', compact('topic'));
     }
 
@@ -77,10 +75,8 @@ class TopicController extends Controller
     {
         $partnerId = $this->getPartnerId();
         $subjects = Subject::where('status', 'active')
-            ->with('courses')
-            ->whereHas('courses', function($query) use ($partnerId) {
-                $query->where('courses.partner_id', $partnerId);
-            })
+            ->with('course')
+            ->where('partner_id', $partnerId)
             ->get();
         return view('partner.topics.edit', compact('topic', 'subjects'));
     }

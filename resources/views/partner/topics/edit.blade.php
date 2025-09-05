@@ -26,8 +26,8 @@
                     <option value="">Select Subject</option>
                     @foreach($subjects as $subject)
                         <option value="{{ $subject->id }}" {{ old('subject_id', $topic->subject_id) == $subject->id ? 'selected' : '' }}>
-                            @if($subject->courses->count() > 0)
-                                {{ $subject->courses->pluck('name')->join(', ') }} > {{ $subject->name }}
+                            @if($subject->course)
+                                {{ $subject->course->name }} > {{ $subject->name }}
                             @else
                                 {{ $subject->name }}
                             @endif

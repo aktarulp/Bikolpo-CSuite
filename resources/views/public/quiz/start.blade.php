@@ -6,6 +6,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Quiz Start - {{ $exam->title }}</title>
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -349,14 +353,14 @@
                         </span>
                     </div>
                     
-                    <p class="text-lg opacity-90 max-w-2xl mx-auto leading-relaxed">
+                    <p class="text-lg opacity-90 max-w-2xl mx-auto leading-relaxed" id="hero-message">
                         Get ready to showcase your knowledge. The exam will begin shortly.
                     </p>
                 </div>
             </div>
 
             <!-- Countdown Section -->
-            <div class="timer-section rounded-2xl p-6 md:p-8 text-white text-center shadow-2xl hover-lift">
+            <div class="timer-section rounded-2xl p-6 md:p-8 text-white text-center shadow-2xl hover-lift" id="countdown-section">
                 <h2 class="text-2xl md:text-3xl font-bold mb-6 text-shadow">⏰ Exam Starts In</h2>
                 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
@@ -678,21 +682,17 @@
             const timeDiff = examStart - now;
             
             if (timeDiff <= 0) {
-                // Exam has started
-                document.querySelectorAll('.slide-up').forEach(item => {
-                    item.innerHTML = `
-                        <div class="info-card rounded-2xl p-4 md:p-6">
-                            <div class="countdown-digit text-3xl md:text-5xl mb-2">READY</div>
-                            <div class="text-sm md:text-lg font-medium opacity-90">To Start</div>
-                        </div>
-                    `;
-                });
+                // Exam is ready to start - hide the countdown section and update message
+                const countdownSection = document.getElementById('countdown-section');
+                if (countdownSection) {
+                    countdownSection.style.display = 'none';
+                }
                 
-                // Update circular progress
-                const circle = document.getElementById('progress-circle');
-                circle.style.strokeDasharray = '201';
-                circle.style.strokeDashoffset = '201';
-                document.getElementById('progress-percentage').textContent = '0%';
+                // Update hero message to indicate exam is ready to start
+                const heroMessage = document.getElementById('hero-message');
+                if (heroMessage) {
+                    heroMessage.textContent = 'The exam is ready to start! Click the "Start Exam Now" button below to begin.';
+                }
                 return;
             }
             
@@ -741,6 +741,22 @@
         setInterval(updateCurrentTime, 1000);
         updateCountdown();
         updateCurrentTime();
+        
+        // Check if exam is already ready to start on page load
+        const now = new Date();
+        const examStart = new Date('{{ $exam->start_time }}');
+        if (examStart <= now) {
+            // Exam is already ready to start
+            const countdownSection = document.getElementById('countdown-section');
+            if (countdownSection) {
+                countdownSection.style.display = 'none';
+            }
+            
+            const heroMessage = document.getElementById('hero-message');
+            if (heroMessage) {
+                heroMessage.textContent = 'The exam is ready to start! Click the "Start Exam Now" button below to begin.';
+            }
+        }
         
         // Add smooth scroll behavior
         document.documentElement.style.scrollBehavior = 'smooth';

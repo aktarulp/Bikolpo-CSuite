@@ -21,22 +21,17 @@
             @method('PUT')
 
             <div class="mb-6">
-                <label class="block text-sm font-medium mb-2">Courses</label>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Select one or more courses for this subject</p>
-                <div class="space-y-2 max-h-48 overflow-y-auto border rounded-md p-3">
+                <label class="block text-sm font-medium mb-2">Course</label>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Select a course for this subject</p>
+                <select name="course_id" required class="w-full rounded-md border p-2">
+                    <option value="">Select a course</option>
                     @foreach($courses as $course)
-                        <label class="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-2 rounded">
-                            <input type="checkbox" name="course_ids[]" value="{{ $course->id }}" 
-                                   {{ in_array($course->id, old('course_ids', $selectedCourseIds)) ? 'checked' : '' }}
-                                   class="rounded border-gray-300 text-primaryGreen focus:ring-primaryGreen">
-                            <span class="text-sm">{{ $course->name }} ({{ $course->code }})</span>
-                        </label>
+                        <option value="{{ $course->id }}" {{ old('course_id', $subject->course_id) == $course->id ? 'selected' : '' }}>
+                            {{ $course->name }} ({{ $course->code }})
+                        </option>
                     @endforeach
-                </div>
-                @error('course_ids')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                @enderror
-                @error('course_ids.*')
+                </select>
+                @error('course_id')
                     <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                 @enderror
             </div>

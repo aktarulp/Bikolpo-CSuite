@@ -12,6 +12,7 @@ use App\Models\Topic;
 use App\Models\ExamResult;
 use App\Models\Course;
 use App\Models\Batch;
+use App\Models\QuestionStat;
 use App\Traits\HasPartnerContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -55,12 +56,21 @@ class PartnerDashboardController extends Controller
             $directCount = \DB::table('students')->where('partner_id', $partnerId)->count();
             \Log::info('Direct DB Query Count: ' . $directCount);
             
+            // Get question analytics for this partner
+            $questionAnalytics = QuestionStat::whereHas('exam', function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId);
+            });
+            
             $stats = [
                 'total_questions' => Question::where('partner_id', $partnerId)->count(),
                 'total_exams' => Exam::where('partner_id', $partnerId)->count(),
                 'total_students' => $totalStudents,
                 'total_courses' => Course::where('partner_id', $partnerId)->count(),
                 'total_batches' => Batch::where('partner_id', $partnerId)->count(),
+                'total_question_attempts' => $questionAnalytics->count(),
+                'total_correct_answers' => $questionAnalytics->where('is_correct', true)->count(),
+                'overall_accuracy' => $questionAnalytics->count() > 0 ? 
+                    round(($questionAnalytics->where('is_correct', true)->count() / $questionAnalytics->count()) * 100, 1) : 0,
             ];
 
             $recent_exams = Exam::where('partner_id', $partnerId)

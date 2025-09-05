@@ -14,6 +14,7 @@ class Subject extends Model
         'code',
         'description',
         'status',
+        'course_id',
         'partner_id',
         'created_by',
     ];
@@ -33,12 +34,10 @@ class Subject extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    // Many-to-many relationship with courses
-    public function courses()
+    // Belongs to one course
+    public function course()
     {
-        return $this->belongsToMany(Course::class, 'subject_on_course')
-                    ->withPivot('partner_id')
-                    ->withTimestamps();
+        return $this->belongsTo(Course::class);
     }
 
 
@@ -50,6 +49,6 @@ class Subject extends Model
 
     public function questions()
     {
-        return $this->hasManyThrough(Question::class, Topic::class);
+        return $this->hasMany(Question::class);
     }
 }

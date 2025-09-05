@@ -419,6 +419,22 @@ class Exam extends Model
         return $this->exam_type === 'offline';
     }
 
+    /**
+     * Get all question statistics for this exam
+     */
+    public function questionStats()
+    {
+        return $this->hasMany(\App\Models\QuestionStat::class);
+    }
+
+    /**
+     * Get exam analytics
+     */
+    public function getAnalyticsAttribute()
+    {
+        return \App\Models\QuestionStat::getExamQuestionAnalytics($this->id);
+    }
+
     // Mutators to handle HTML datetime-local inputs (e.g., 2025-01-30T14:30)
     public function setStartTimeAttribute($value)
     {

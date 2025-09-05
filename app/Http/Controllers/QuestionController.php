@@ -20,7 +20,7 @@ class QuestionController extends Controller
         // Get the authenticated user's partner ID using the trait
         $partnerId = $this->getPartnerId();
         
-        $query = Question::with(['topic.subject.courses', 'partner', 'questionType'])
+        $query = Question::with(['course', 'partner', 'questionType'])
             ->where('partner_id', $partnerId);
 
         // Apply filters
@@ -41,7 +41,16 @@ class QuestionController extends Controller
         }
 
         if ($request->filled('question_type')) {
-            $query->where('q_type_id', $request->question_type);
+            // Map question type codes to question_type values
+            $questionTypeMapping = [
+                'MCQ' => 'mcq',
+                'DESC' => 'descriptive', 
+                'TF' => 'true_false',
+                'FIB' => 'fill_in_blank'
+            ];
+            
+            $questionType = $questionTypeMapping[$request->question_type] ?? $request->question_type;
+            $query->where('question_type', $questionType);
         }
 
         $questions = $query->latest()->paginate(15);
@@ -65,7 +74,7 @@ class QuestionController extends Controller
         }
 
         // For question set creation, show all available questions (not just partner's own)
-        $query = Question::with(['topic.subject.courses', 'questionType'])
+        $query = Question::with(['course', 'questionType'])
             ->where('status', 'active');
 
         // Apply filters
@@ -86,7 +95,16 @@ class QuestionController extends Controller
         }
 
         if ($request->filled('question_type')) {
-            $query->where('q_type_id', $request->question_type);
+            // Map question type codes to question_type values
+            $questionTypeMapping = [
+                'MCQ' => 'mcq',
+                'DESC' => 'descriptive', 
+                'TF' => 'true_false',
+                'FIB' => 'fill_in_blank'
+            ];
+            
+            $questionType = $questionTypeMapping[$request->question_type] ?? $request->question_type;
+            $query->where('question_type', $questionType);
         }
 
         if ($request->filled('search')) {
@@ -98,7 +116,7 @@ class QuestionController extends Controller
                   ->orWhere('option_c', 'like', "%{$search}%")
                   ->orWhere('option_d', 'like', "%{$search}%")
                   ->orWhere('explanation', 'like', "%{$search}%")
-                  ->orWhereHas('topic.subject.courses', function($q) use ($search) {
+                  ->orWhereHas('course', function($q) use ($search) {
                       $q->where('name', 'like', "%{$search}%");
                   })
                   ->orWhereHas('topic.subject', function($q) use ($search) {
@@ -160,8 +178,44 @@ class QuestionController extends Controller
         // Get the authenticated user's partner ID using the trait
         $partnerId = $this->getPartnerId();
         
+        // Additional security check: Verify the partner exists and is active
+        $partner = \App\Models\Partner::find($partnerId);
+        if (!$partner) {
+            \Log::error('SECURITY ISSUE: Partner not found for user', [
+                'user_id' => auth()->id(),
+                'user_name' => auth()->user()->name ?? 'Unknown',
+                'partner_id' => $partnerId
+            ]);
+            return redirect()->route('partner.questions.index')
+                ->with('error', 'Partner profile not found. Please contact administrator.');
+        }
+        
+        // Debug logging for partner context
+        \Log::info('All Questions Request', [
+            'user_id' => auth()->id(),
+            'user_name' => auth()->user()->name ?? 'Unknown',
+            'partner_id' => $partnerId,
+            'partner_name' => $partner->name,
+            'request_type' => $request->ajax() ? 'AJAX' : 'Regular',
+            'filters' => [
+                'course_filter' => $request->input('course_filter'),
+                'subject_filter' => $request->input('subject_filter'),
+                'topic_filter' => $request->input('topic_filter'),
+                'question_type_filter' => $request->input('question_type_filter'),
+                'search' => $request->input('search'),
+            ]
+        ]);
+        
         $query = Question::with(['course', 'subject', 'topic', 'partner', 'questionType'])
-            ->where('partner_id', $partnerId);
+            ->where('partner_id', $partnerId)
+            ->where('status', 'active'); // Only show published questions
+            
+        // Debug: Log the raw SQL query
+        \Log::info('All Questions SQL Query', [
+            'partner_id' => $partnerId,
+            'sql' => $query->toSql(),
+            'bindings' => $query->getBindings()
+        ]);
 
         // Apply search filter
         if ($request->filled('search')) {
@@ -173,7 +227,7 @@ class QuestionController extends Controller
                   ->orWhere('option_c', 'like', "%{$search}%")
                   ->orWhere('option_d', 'like', "%{$search}%")
                   ->orWhere('explanation', 'like', "%{$search}%")
-                  ->orWhereHas('topic.subject.courses', function($q) use ($search) {
+                  ->orWhereHas('course', function($q) use ($search) {
                       $q->where('name', 'like', "%{$search}%");
                   })
                   ->orWhereHas('topic.subject', function($q) use ($search) {
@@ -202,12 +256,55 @@ class QuestionController extends Controller
         }
 
         if ($request->filled('question_type_filter')) {
-            $query->whereHas('questionType', function($q) use ($request) {
-                $q->where('q_type_code', $request->question_type_filter);
-            });
+            // Map question type codes to question_type values
+            $questionTypeMapping = [
+                'MCQ' => 'mcq',
+                'DESC' => 'descriptive', 
+                'TF' => 'true_false',
+                'FIB' => 'fill_in_blank'
+            ];
+            
+            $questionType = $questionTypeMapping[$request->question_type_filter] ?? $request->question_type_filter;
+            $query->where('question_type', $questionType);
         }
 
+
         $questions = $query->latest()->paginate(15);
+        
+        // Debug logging for query results
+        \Log::info('All Questions Query Results', [
+            'partner_id' => $partnerId,
+            'total_questions' => $questions->total(),
+            'current_page_count' => $questions->count(),
+            'current_page' => $questions->currentPage(),
+            'per_page' => $questions->perPage(),
+            'question_partner_ids' => $questions->pluck('partner_id')->unique()->toArray(),
+            'question_ids' => $questions->pluck('id')->toArray()
+        ]);
+        
+        // Security check: Ensure all questions belong to the current partner
+        $invalidQuestions = $questions->filter(function($question) use ($partnerId) {
+            return $question->partner_id != $partnerId;
+        });
+        
+        if ($invalidQuestions->count() > 0) {
+            \Log::error('SECURITY ISSUE: Questions from other partners found!', [
+                'current_partner_id' => $partnerId,
+                'current_user_id' => auth()->id(),
+                'current_user_name' => auth()->user()->name ?? 'Unknown',
+                'invalid_questions' => $invalidQuestions->map(function($q) {
+                    return [
+                        'id' => $q->id,
+                        'partner_id' => $q->partner_id,
+                        'question_text' => substr($q->question_text, 0, 100)
+                    ];
+                })->toArray()
+            ]);
+            
+            // CRITICAL: Redirect with error instead of just filtering
+            return redirect()->route('partner.questions.index')
+                ->with('error', 'Security issue detected: Questions from other partners were found. Please contact administrator.');
+        }
         
         // Append search parameter to pagination links
         if ($request->filled('search')) {
@@ -225,19 +322,208 @@ class QuestionController extends Controller
         if ($request->filled('question_type_filter')) {
             $questions->appends(['question_type_filter' => $request->question_type_filter]);
         }
-        
-        $courses = Course::where('status', 'active')->get();
-        $subjects = Subject::where('status', 'active')->get();
-        $topics = Topic::where('status', 'active')->get();
-        $questionTypes = QuestionType::where('status', 'active')->orderBy('sort_order')->get();
 
-        return view('partner.questions.all-question-view', compact('questions', 'courses', 'subjects', 'topics', 'questionTypes'));
+        return view('partner.questions.all-question-view', compact('questions'));
+    }
+
+    /**
+     * Get all courses for filter dropdown via AJAX
+     */
+    public function getCoursesForFilter(Request $request)
+    {
+        try {
+            $partnerId = $this->getPartnerId();
+            
+            
+            // Get all courses that belong to this partner
+            $courses = Course::where('status', 'active')
+                ->where('partner_id', $partnerId)
+                ->select('id', 'name')
+                ->orderBy('name')
+                ->get();
+            
+            return response()->json(['courses' => $courses]);
+        } catch (\Exception $e) {
+            \Log::error('Error in getCoursesForFilter: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to load courses: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Get all subjects for filter dropdown via AJAX
+     */
+    public function getSubjectsForFilter(Request $request)
+    {
+        try {
+            $partnerId = $this->getPartnerId();
+            $courseId = $request->input('course_id');
+            
+            if ($courseId) {
+                // Get subjects that belong to this course for this partner
+                $subjects = Subject::where('status', 'active')
+                    ->where('partner_id', $partnerId)
+                    ->where('course_id', $courseId)
+                    ->select('id', 'name')
+                    ->orderBy('name')
+                    ->get();
+            } else {
+                // Get all subjects for this partner
+                $subjects = Subject::where('status', 'active')
+                    ->where('partner_id', $partnerId)
+                    ->select('id', 'name')
+                    ->orderBy('name')
+                    ->get();
+            }
+            
+            return response()->json(['subjects' => $subjects]);
+        } catch (\Exception $e) {
+            \Log::error('Error in getSubjectsForFilter: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to load subjects: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Get all topics for filter dropdown via AJAX
+     */
+    public function getTopicsForFilter(Request $request)
+    {
+        try {
+            $partnerId = $this->getPartnerId();
+            $subjectId = $request->input('subject_id');
+            
+            if ($subjectId) {
+                // Get topics that belong to this subject for this partner
+                $topics = Topic::where('status', 'active')
+                    ->where('partner_id', $partnerId)
+                    ->where('subject_id', $subjectId)
+                    ->select('id', 'name')
+                    ->orderBy('name')
+                    ->get();
+            } else {
+                // Get all topics for this partner
+                $topics = Topic::where('status', 'active')
+                    ->where('partner_id', $partnerId)
+                    ->select('id', 'name')
+                    ->orderBy('name')
+                    ->get();
+            }
+            
+            return response()->json(['topics' => $topics]);
+        } catch (\Exception $e) {
+            \Log::error('Error in getTopicsForFilter: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to load topics: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Get all question types for filter dropdown via AJAX
+     */
+    public function getQuestionTypesForFilter(Request $request)
+    {
+        try {
+            $partnerId = $this->getPartnerId();
+            
+            // Debug logging
+            \Log::info('getQuestionTypesForFilter called', [
+                'partner_id' => $partnerId,
+                'user_id' => auth()->id(),
+                'user_name' => auth()->user()->name ?? 'Unknown'
+            ]);
+            
+            // Get all active question types available to this partner
+            // This includes both global question types and partner-specific ones
+            $query = QuestionType::where('status', 'active')
+                ->where(function($query) use ($partnerId) {
+                    $query->where('partner_id', $partnerId)
+                          ->orWhereNull('partner_id'); // Global question types
+                })
+                ->select('q_type_code', 'q_type_name')
+                ->orderBy('sort_order');
+            
+            // Debug logging for the query
+            \Log::info('Question types query', [
+                'sql' => $query->toSql(),
+                'bindings' => $query->getBindings(),
+                'partner_id' => $partnerId
+            ]);
+            
+            $questionTypes = $query->get();
+            
+            // Debug logging for question types found
+            \Log::info('Question types found', [
+                'count' => $questionTypes->count(),
+                'types' => $questionTypes->toArray()
+            ]);
+            
+            // Transform the data to use custom display names
+            $transformedQuestionTypes = $questionTypes->map(function($type) {
+                $displayName = $type->q_type_name;
+                
+                // Custom display names for better UX
+                switch ($type->q_type_code) {
+                    case 'DESC':
+                        $displayName = 'Descriptive';
+                        break;
+                    case 'MCQ':
+                        $displayName = 'MCQ';
+                        break;
+                    case 'TF':
+                        $displayName = 'True/False';
+                        break;
+                    case 'FIB':
+                        $displayName = 'Fill in the Blanks';
+                        break;
+                    default:
+                        $displayName = $type->q_type_name;
+                        break;
+                }
+                
+                return [
+                    'q_type_code' => $type->q_type_code,
+                    'q_type_name' => $displayName
+                ];
+            });
+            
+            return response()->json(['questionTypes' => $transformedQuestionTypes]);
+        } catch (\Exception $e) {
+            \Log::error('Error in getQuestionTypesForFilter: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to load question types: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Get subjects for a specific course via AJAX
+     */
+    public function getSubjectsForCourse(Request $request)
+    {
+        try {
+            $courseId = $request->input('course_id');
+            
+            if (!$courseId) {
+                return response()->json(['subjects' => []]);
+            }
+            
+            $course = Course::find($courseId);
+            if (!$course) {
+                return response()->json(['subjects' => []]);
+            }
+            
+            $subjects = $course->subjects()
+                ->where('status', 'active')
+                ->orderBy('name')
+                ->get(['id', 'name']);
+                
+            return response()->json(['subjects' => $subjects]);
+        } catch (\Exception $e) {
+            \Log::error('Error fetching subjects for course: ' . $e->getMessage());
+            return response()->json(['subjects' => [], 'error' => 'Failed to fetch subjects'], 500);
+        }
     }
 
     public function create()
     {
         $courses = Course::where('status', 'active')->get();
-        $subjects = Subject::where('status', 'active')->with('courses')->get();
+        $subjects = Subject::where('status', 'active')->with('course')->get();
         $topics = Topic::where('status', 'active')->with('subject')->get();
 
         return view('partner.questions.create', compact('courses', 'subjects', 'topics'));
@@ -247,8 +533,7 @@ class QuestionController extends Controller
     {
         $request->validate([
             'topic_id' => 'required|exists:topics,id',
-            'question_text' => 'required|string|max:1000',
-            'question_header' => 'nullable|string|max:500',
+            'question_text' => 'required|string|max:5000',
             'option_a' => 'required|string|max:255',
             'option_b' => 'required|string|max:255',
             'option_c' => 'required|string|max:255',
@@ -256,7 +541,6 @@ class QuestionController extends Controller
             'correct_answer' => 'required|in:a,b,c,d',
             'explanation' => 'nullable|string',
             'marks' => 'required|integer|min:1',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $data = $request->all();
@@ -266,9 +550,6 @@ class QuestionController extends Controller
         // Set the authenticated user's ID as created_by
         $data['created_by'] = auth()->id();
 
-        if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('questions', 'public');
-        }
 
         Question::create($data);
 
@@ -278,7 +559,7 @@ class QuestionController extends Controller
 
     public function show(Question $question)
     {
-        $question->load(['topic.subject.courses', 'partner']);
+        $question->load(['course', 'partner']);
         return view('partner.questions.show', compact('question'));
     }
 
@@ -311,7 +592,7 @@ class QuestionController extends Controller
         /*
         $request->validate([
             'topic_id' => 'required|exists:topics,id',
-            'question_text' => 'required|string|max:1000',
+            'question_text' => 'required|string|max:5000',
             'option_a' => 'required|string|max:255',
             'option_b' => 'required|string|max:255',
             'option_c' => 'required|string|max:255',
@@ -320,18 +601,10 @@ class QuestionController extends Controller
             'explanation' => 'nullable|string',
             'difficulty_level' => 'required|in:1,2,3',
             'marks' => 'required|integer|min:1',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $data = $request->all();
 
-        if ($request->hasFile('image')) {
-            // Delete old image
-            if ($question->image) {
-                Storage::disk('public')->delete($question->image);
-            }
-            $data['image'] = $request->file('image')->store('questions', 'public');
-        }
 
         $question->update($data);
 
@@ -342,9 +615,6 @@ class QuestionController extends Controller
 
     public function destroy(Question $question)
     {
-        if ($question->image) {
-            Storage::disk('public')->delete($question->image);
-        }
 
         $question->delete();
 
@@ -374,7 +644,7 @@ class QuestionController extends Controller
 
         return response()->json([
             'duplicate' => $duplicate ? true : false,
-            'question' => $duplicate ? $duplicate->load('topic.subject.courses') : null,
+            'question' => $duplicate ? $duplicate->load('course') : null,
         ]);
     }
 
@@ -382,24 +652,11 @@ class QuestionController extends Controller
     {
         $partnerId = $this->getPartnerId();
         
-        // Add logging for debugging
-        \Log::info('getSubjects called', [
-            'course_id' => $request->course_id,
-            'partner_id' => $partnerId
-        ]);
-        
-        $subjects = Subject::whereHas('courses', function($query) use ($request) {
-                $query->where('course_id', $request->course_id);
-            })
+        $subjects = Subject::where('course_id', $request->course_id)
             ->where('partner_id', $partnerId)
             ->where('status', 'active')
             ->orderBy('name')
             ->get();
-
-        \Log::info('Subjects found', [
-            'count' => $subjects->count(),
-            'subjects' => $subjects->pluck('name', 'id')->toArray()
-        ]);
 
         return response()->json($subjects);
     }
@@ -408,22 +665,11 @@ class QuestionController extends Controller
     {
         $partnerId = $this->getPartnerId();
         
-        // Add logging for debugging
-        \Log::info('getTopics called', [
-            'subject_id' => $request->subject_id,
-            'partner_id' => $partnerId
-        ]);
-        
         $topics = Topic::where('subject_id', $request->subject_id)
             ->where('partner_id', $partnerId)
             ->where('status', 'active')
             ->orderBy('name')
             ->get();
-
-        \Log::info('Topics found', [
-            'count' => $topics->count(),
-            'topics' => $topics->pluck('name', 'id')->toArray()
-        ]);
 
         return response()->json($topics);
     }
@@ -478,11 +724,13 @@ class QuestionController extends Controller
             ->where('status', 'active')
             ->orderBy('name')
             ->get();
+
         $subjects = Subject::where('partner_id', $partnerId)
             ->where('status', 'active')
-            ->with('courses')
+            ->with('course')
             ->orderBy('name')
             ->get();
+
         $topics = Topic::where('partner_id', $partnerId)
             ->where('status', 'active')
             ->with('subject')
@@ -498,18 +746,37 @@ class QuestionController extends Controller
             'course_id' => 'required|exists:courses,id',
             'subject_id' => 'required|exists:subjects,id',
             'topic_id' => 'nullable|exists:topics,id',
-            'question_text' => 'required|string|max:1000',
-            'question_header' => 'nullable|string|max:500',
+            'question_text' => 'required|string|max:5000',
             'option_a' => 'required|string|max:255',
             'option_b' => 'required|string|max:255',
             'option_c' => 'required|string|max:255',
             'option_d' => 'required|string|max:255',
             'correct_answer' => 'required|in:a,b,c,d',
-            'explanation' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'tags' => 'nullable|json',
-            'appearance_history' => 'nullable|json',
+            'tags' => 'nullable|string',
         ]);
+
+        // Additional validation to ensure course-subject relationship
+        $courseId = $request->course_id;
+        $subjectId = $request->subject_id;
+        $topicId = $request->topic_id;
+        
+        // Check if subject belongs to the selected course
+        $subject = \App\Models\Subject::find($subjectId);
+        if (!$subject || $subject->course_id != $courseId) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'The selected subject does not belong to the selected course.');
+        }
+        
+        // Check if topic belongs to the selected subject (if topic is provided)
+        if ($topicId) {
+            $topic = \App\Models\Topic::find($topicId);
+            if (!$topic || $topic->subject_id != $subjectId) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'The selected topic does not belong to the selected subject.');
+            }
+        }
 
         try {
             \DB::beginTransaction();
@@ -517,14 +784,22 @@ class QuestionController extends Controller
             $data = $request->all();
             $data['question_type'] = 'mcq';
             
+            // Process tags from comma-separated string to JSON array
+            if (!empty($data['tags'])) {
+                $tagsArray = array_map('trim', explode(',', $data['tags']));
+                $tagsArray = array_filter($tagsArray); // Remove empty tags
+                $data['tags'] = json_encode($tagsArray);
+            } else {
+                $data['tags'] = json_encode([]);
+            }
+            
             // Get the authenticated user's partner ID using the trait
             $data['partner_id'] = $this->getPartnerId();
             
             if (!$data['partner_id']) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Partner profile not found. Please contact administrator.'
-                ], 400);
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'Partner profile not found. Please contact administrator.');
             }
             
             // Set the authenticated user's ID as created_by
@@ -547,43 +822,17 @@ class QuestionController extends Controller
             // Create the question
             $question = Question::create($data);
 
-            // Handle question history if available
-            if ($request->filled('appearance_history')) {
-                $appearanceHistory = json_decode($request->appearance_history, true);
-                
-                if (is_array($appearanceHistory) && !empty($appearanceHistory)) {
-                    foreach ($appearanceHistory as $history) {
-                        \App\Models\QuestionHistory::create([
-                            'question_id' => $question->id,
-                            'partner_id' => $data['partner_id'],
-                            'public_exam_name' => $history['exam_name'] ?? null,
-                            'private_exam_name' => $history['exam_name'] ?? null,
-                            'exam_month' => $history['exam_month'] ?? null,
-                            'exam_year' => $history['exam_year'] ?? null,
-                            'exam_board' => $history['exam_board'] ?? null,
-                            'subject_name' => $data['subject_id'] ? \App\Models\Subject::find($data['subject_id'])->name : null,
-                            'topic_name' => $data['topic_id'] ? \App\Models\Topic::find($data['topic_id'])->name : null,
-                            'is_verified' => false,
-                        ]);
-                    }
-                }
-            }
-
             \DB::commit();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'MCQ question created successfully!',
-                'question_id' => $question->id
-            ]);
+            return redirect()->route('partner.questions.index')
+                ->with('success', 'MCQ question created successfully!');
 
         } catch (\Exception $e) {
             \DB::rollback();
             
-            return response()->json([
-                'success' => false,
-                'message' => 'Error creating MCQ question: ' . $e->getMessage()
-            ], 500);
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Error creating MCQ question: ' . $e->getMessage());
         }
     }
 
@@ -614,7 +863,7 @@ class QuestionController extends Controller
             ->get();
         $subjects = Subject::where('partner_id', $partnerId)
             ->where('status', 'active')
-            ->with('courses')
+            ->with('course')
             ->orderBy('name')
             ->get();
         $topics = Topic::where('partner_id', $partnerId)
@@ -636,34 +885,44 @@ class QuestionController extends Controller
             'course_id' => 'required|exists:courses,id',
             'subject_id' => 'required|exists:subjects,id',
             'topic_id' => 'nullable|exists:topics,id',
-            'question_text' => 'required|string|max:1000',
+            'question_text' => 'required|string|max:5000',
             'option_a' => 'required|string|max:255',
             'option_b' => 'required|string|max:255',
             'option_c' => 'required|string|max:255',
             'option_d' => 'required|string|max:255',
             'correct_answer' => 'required|in:a,b,c,d',
-            'explanation' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'tags' => 'nullable|json',
+            'tags' => 'nullable|string',
             'appearance_history' => 'nullable|json',
         ]);
 
         $data = $request->all();
         $data['marks'] = $data['marks'] ?? 1; // Default marks to 1
+        $data['q_type_id'] = 1; // MCQ type
+        $data['partner_id'] = $this->getPartnerId();
+        $data['created_by'] = auth()->id();
 
-
-        if ($request->hasFile('image')) {
-            // Delete old image
-            if ($question->image) {
-                Storage::disk('public')->delete($question->image);
-            }
-            $data['image'] = $request->file('image')->store('questions', 'public');
+        // Process tags from comma-separated string to array
+        if (!empty($data['tags'])) {
+            $tagsArray = array_map('trim', explode(',', $data['tags']));
+            $tagsArray = array_filter($tagsArray);
+            $data['tags'] = $tagsArray;
+        } else {
+            $data['tags'] = [];
         }
 
-        $question->update($data);
+        try {
+            \DB::beginTransaction();
+            $question->update($data);
+            \DB::commit();
 
-        return redirect()->route('partner.questions.index')
-            ->with('success', 'MCQ question updated successfully.');
+            return redirect()->route('partner.questions.all')
+                ->with('success', 'MCQ question updated successfully.');
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Error updating MCQ question: ' . $e->getMessage());
+        }
     }
 
     public function mcqDestroy(Question $question)
@@ -672,9 +931,6 @@ class QuestionController extends Controller
             abort(404);
         }
 
-        if ($question->image) {
-            Storage::disk('public')->delete($question->image);
-        }
 
         $question->delete();
 
@@ -703,6 +959,113 @@ class QuestionController extends Controller
         return view('partner.questions.create-desc', compact('courses', 'subjects', 'topics'));
     }
 
+    public function descriptiveEdit(Question $question)
+    {
+        // Check if the question belongs to the current partner
+        $partnerId = $this->getPartnerId();
+        if ($question->partner_id !== $partnerId) {
+            abort(403, 'Unauthorized access to this question.');
+        }
+
+        // Check if it's a descriptive question
+        if ($question->question_type !== 'descriptive') {
+            abort(404, 'This is not a descriptive question.');
+        }
+
+        $courses = Course::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
+        $subjects = Subject::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
+        $topics = Topic::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
+
+        // Load question history
+        $questionHistory = $question->questionHistory()->get();
+
+        return view('partner.questions.edit-desc', compact('question', 'courses', 'subjects', 'topics', 'questionHistory'));
+    }
+
+    public function descriptiveUpdate(Request $request, Question $question)
+    {
+        // Check if the question belongs to the current partner
+        $partnerId = $this->getPartnerId();
+        if ($question->partner_id !== $partnerId) {
+            abort(403, 'Unauthorized access to this question.');
+        }
+
+        // Check if it's a descriptive question
+        if ($question->question_type !== 'descriptive') {
+            abort(404, 'This is not a descriptive question.');
+        }
+
+        $request->validate([
+            'course_id' => 'required|exists:courses,id',
+            'subject_id' => 'required|exists:subjects,id',
+            'topic_id' => 'nullable|exists:topics,id',
+            'question_text' => 'required|string|max:5000',
+            'tags' => 'nullable|string',
+            'appearance_history' => 'nullable|json',
+        ]);
+
+        $data = $request->all();
+        
+        // Handle empty topic_id
+        if (empty($data['topic_id'])) {
+            $data['topic_id'] = null;
+        }
+
+        // Process tags from comma-separated string to JSON array
+        if (!empty($data['tags'])) {
+            $tagsArray = array_map('trim', explode(',', $data['tags']));
+            $tagsArray = array_filter($tagsArray); // Remove empty tags
+            $data['tags'] = json_encode($tagsArray);
+        } else {
+            $data['tags'] = json_encode([]);
+        }
+
+        try {
+            \DB::beginTransaction();
+
+            // Update the question
+            $question->update($data);
+
+            // Handle question history if available
+            if ($request->filled('appearance_history')) {
+                $historyData = json_decode($request->appearance_history, true);
+                
+                // Delete existing history
+                $question->questionHistory()->delete();
+                
+                // Create new history entries
+                foreach ($historyData as $history) {
+                    $question->questionHistory()->create([
+                        'exam_name' => $history['exam_name'],
+                        'exam_board' => $history['exam_board'] ?? null,
+                        'exam_year' => $history['exam_year'],
+                        'exam_month' => $history['exam_month'] ?? null,
+                    ]);
+                }
+            }
+
+            \DB::commit();
+
+            return redirect()->route('partner.questions.index')
+                ->with('success', 'Descriptive question updated successfully!');
+
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Failed to update question: ' . $e->getMessage());
+        }
+    }
+
     public function descriptiveStore(Request $request)
     {
         $request->validate([
@@ -710,14 +1073,15 @@ class QuestionController extends Controller
             'subject_id' => 'required|exists:subjects,id',
             'topic_id' => 'nullable|exists:topics,id',
             'question_text' => 'required|string|max:5000',
-            'question_header' => 'nullable|string|max:500',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'tags' => 'nullable|json',
-            'appearance_history' => 'nullable|json',
+            'tags' => 'nullable|string',
         ]);
 
         $data = $request->all();
         $data['question_type'] = 'descriptive';
+        
+        // Set the descriptive question type ID
+        $data['q_type_id'] = 2; // Descriptive question type ID
+        
         // Get the authenticated user's partner ID using the trait
         $data['partner_id'] = $this->getPartnerId();
         
@@ -733,6 +1097,7 @@ class QuestionController extends Controller
         // Set default values for required fields
         $data['status'] = 'active';
         $data['marks'] = 5; // Default to 5 marks
+        $data['created_by'] = auth()->id();
         
         // Set MCQ fields to null for descriptive questions
         $data['option_a'] = null;
@@ -741,8 +1106,13 @@ class QuestionController extends Controller
         $data['option_d'] = null;
         $data['correct_answer'] = null;
 
-        if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('questions', 'public');
+        // Process tags from comma-separated string to JSON array
+        if (!empty($data['tags'])) {
+            $tagsArray = array_map('trim', explode(',', $data['tags']));
+            $tagsArray = array_filter($tagsArray); // Remove empty tags
+            $data['tags'] = json_encode($tagsArray);
+        } else {
+            $data['tags'] = json_encode([]);
         }
 
         try {
@@ -751,27 +1121,6 @@ class QuestionController extends Controller
             // Create the question
             $question = Question::create($data);
 
-            // Handle question history if available
-            if ($request->filled('appearance_history')) {
-                $appearanceHistory = json_decode($request->appearance_history, true);
-                
-                if (is_array($appearanceHistory) && !empty($appearanceHistory)) {
-                    foreach ($appearanceHistory as $history) {
-                        \App\Models\QuestionHistory::create([
-                            'question_id' => $question->id,
-                            'partner_id' => $data['partner_id'],
-                            'public_exam_name' => $history['exam_name'] ?? null,
-                            'private_exam_name' => $history['exam_name'] ?? null,
-                            'exam_month' => $history['exam_month'] ?? null,
-                            'exam_year' => $history['exam_year'] ?? null,
-                            'exam_board' => $history['exam_board'] ?? null,
-                            'subject_name' => $data['subject_id'] ? \App\Models\Subject::find($data['subject_id'])->name : null,
-                            'topic_name' => $data['topic_id'] ? \App\Models\Topic::find($data['topic_id'])->name : null,
-                            'is_verified' => false,
-                        ]);
-                    }
-                }
-            }
 
             \DB::commit();
         } catch (\Exception $e) {
@@ -1110,7 +1459,7 @@ class QuestionController extends Controller
                         'marks' => 1, // Default marks
                         'difficulty_level' => 2, // Default to Medium
                         'status' => 'draft', // Important: Set as draft
-                        'tags' => json_encode(['bulk_upload', 'draft']),
+                        'tags' => null, // No automatic tags - let users add their own
                     ]);
 
                     $successCount++;
@@ -1163,7 +1512,7 @@ class QuestionController extends Controller
         // Load subjects with their course relationships
         $subjects = Subject::where('partner_id', $partnerId)
             ->where('status', 'active')
-            ->with('courses')
+            ->with('course')
             ->orderBy('name')
             ->get();
             
@@ -1207,19 +1556,53 @@ class QuestionController extends Controller
                     continue; // Skip if question doesn't exist or doesn't belong to partner
                 }
 
+                // Validate that subject belongs to the selected course
+                $subject = Subject::where('id', $questionData['subject_id'])
+                    ->where('course_id', $questionData['course_id'])
+                    ->where('partner_id', $partnerId)
+                    ->first();
+
+                if (!$subject) {
+                    \DB::rollback();
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Invalid subject selection. Subject must belong to the selected course.'
+                    ], 400);
+                }
+
+                // Validate that topic belongs to the selected subject (if topic is provided)
+                if ($questionData['topic_id']) {
+                    $topic = Topic::where('id', $questionData['topic_id'])
+                        ->where('subject_id', $questionData['subject_id'])
+                        ->where('partner_id', $partnerId)
+                        ->first();
+
+                    if (!$topic) {
+                        \DB::rollback();
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Invalid topic selection. Topic must belong to the selected subject.'
+                        ], 400);
+                    }
+                }
+
                 // Update question with metadata
                 $question->update([
                     'course_id' => $questionData['course_id'],
                     'subject_id' => $questionData['subject_id'],
                     'topic_id' => $questionData['topic_id'] ?? null,
                     'status' => 'active', // Publish the question
-                    'tags' => json_encode(array_filter(['published', $questionData['topic_id'] ? 'topic_' . $questionData['topic_id'] : null])),
+                    'tags' => null, // No automatic tags - let users add their own
                 ]);
 
                 $updatedCount++;
             }
 
             \DB::commit();
+
+            // Clear any relevant caches
+            \Cache::forget('questions_count_' . $partnerId);
+            \Cache::forget('partner_questions_' . $partnerId);
 
             return response()->json([
                 'success' => true,
@@ -1269,5 +1652,229 @@ class QuestionController extends Controller
                 'message' => 'Error deleting questions: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    // True/False Questions Methods
+    public function tfIndex()
+    {
+        $partnerId = $this->getPartnerId();
+        
+        $questions = Question::where('partner_id', $partnerId)
+            ->where('question_type', 'true_false')
+            ->with(['course', 'subject', 'topic'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(20);
+            
+        return view('partner.questions.tf.index', compact('questions'));
+    }
+
+    public function tfCreate()
+    {
+        $partnerId = $this->getPartnerId();
+        
+        $courses = Course::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
+        $subjects = Subject::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->with('course')
+            ->orderBy('name')
+            ->get();
+        $topics = Topic::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->with('subject')
+            ->orderBy('name')
+            ->get();
+            
+        return view('partner.questions.create-tf', compact('courses', 'subjects', 'topics'));
+    }
+
+    public function tfStore(Request $request)
+    {
+        $request->validate([
+            'course_id' => 'required|exists:courses,id',
+            'subject_id' => 'required|exists:subjects,id',
+            'topic_id' => 'nullable|exists:topics,id',
+            'question_text' => 'required|string|max:5000',
+            'correct_answer' => 'required|in:true,false',
+            'tags' => 'nullable|string',
+        ]);
+
+        $data = $request->all();
+        $data['question_type'] = 'true_false';
+        $data['q_type_id'] = 3; // True/False question type ID
+        $data['partner_id'] = $this->getPartnerId();
+        
+        if (!$data['partner_id']) {
+            return redirect()->back()->with('error', 'Partner profile not found. Please contact administrator.');
+        }
+        
+        if (empty($data['topic_id'])) {
+            $data['topic_id'] = null;
+        }
+        
+        $data['status'] = 'active';
+        $data['marks'] = 2; // Default to 2 marks for True/False
+        $data['created_by'] = auth()->id();
+        
+        // Convert True/False values to ENUM values for correct_answer column
+        if ($data['correct_answer'] === 'true') {
+            $data['correct_answer'] = 'a'; // 'a' represents True
+        } elseif ($data['correct_answer'] === 'false') {
+            $data['correct_answer'] = 'b'; // 'b' represents False
+        }
+        
+        // Set MCQ fields to null for True/False questions
+        $data['option_a'] = null;
+        $data['option_b'] = null;
+        $data['option_c'] = null;
+        $data['option_d'] = null;
+
+        // Process tags from comma-separated string to array
+        if (!empty($data['tags'])) {
+            $tagsArray = array_map('trim', explode(',', $data['tags']));
+            $tagsArray = array_filter($tagsArray);
+            $data['tags'] = $tagsArray;
+        } else {
+            $data['tags'] = [];
+        }
+
+        try {
+            \DB::beginTransaction();
+            $question = Question::create($data);
+            \DB::commit();
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return redirect()->route('partner.questions.index')
+                ->with('error', 'Error creating True/False question: ' . $e->getMessage());
+        }
+
+        return redirect()->route('partner.questions.index')
+            ->with('success', 'True/False question created successfully!');
+    }
+
+    public function tfEdit(Question $question)
+    {
+        $partnerId = $this->getPartnerId();
+        if ($question->partner_id !== $partnerId) {
+            abort(403, 'Unauthorized access to this question.');
+        }
+
+        if ($question->question_type !== 'true_false') {
+            abort(404, 'This is not a True/False question.');
+        }
+
+        $courses = Course::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
+        $subjects = Subject::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
+        $topics = Topic::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
+
+        $questionHistory = $question->questionHistory()->get();
+
+        return view('partner.questions.edit-tf', compact('question', 'courses', 'subjects', 'topics', 'questionHistory'));
+    }
+
+    public function tfUpdate(Request $request, Question $question)
+    {
+        $partnerId = $this->getPartnerId();
+        if ($question->partner_id !== $partnerId) {
+            abort(403, 'Unauthorized access to this question.');
+        }
+
+        if ($question->question_type !== 'true_false') {
+            abort(404, 'This is not a True/False question.');
+        }
+
+        $request->validate([
+            'course_id' => 'required|exists:courses,id',
+            'subject_id' => 'required|exists:subjects,id',
+            'topic_id' => 'nullable|exists:topics,id',
+            'question_text' => 'required|string|max:5000',
+            'correct_answer' => 'required|in:a,b',
+            'tags' => 'nullable|string',
+            'appearance_history' => 'nullable|json',
+        ]);
+
+        $data = $request->all();
+        
+        if (empty($data['topic_id'])) {
+            $data['topic_id'] = null;
+        }
+
+        // correct_answer is already in the correct format (a/b) from the form
+
+        // Process tags from comma-separated string to array
+        if (!empty($data['tags'])) {
+            $tagsArray = array_map('trim', explode(',', $data['tags']));
+            $tagsArray = array_filter($tagsArray);
+            $data['tags'] = $tagsArray;
+        } else {
+            $data['tags'] = [];
+        }
+
+        try {
+            \DB::beginTransaction();
+            $question->update($data);
+
+            if ($request->filled('appearance_history')) {
+                $historyData = json_decode($request->appearance_history, true);
+                $question->questionHistory()->delete();
+                
+                foreach ($historyData as $history) {
+                    $question->questionHistory()->create([
+                        'exam_name' => $history['exam_name'],
+                        'exam_board' => $history['exam_board'] ?? null,
+                        'exam_year' => $history['exam_year'],
+                        'exam_month' => $history['exam_month'] ?? null,
+                        'exam_session' => $history['exam_session'] ?? null,
+                    ]);
+                }
+            }
+
+            \DB::commit();
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Failed to update question: ' . $e->getMessage());
+        }
+
+        return redirect()->route('partner.questions.index')
+            ->with('success', 'True/False question updated successfully!');
+    }
+
+    public function tfDestroy(Question $question)
+    {
+        $partnerId = $this->getPartnerId();
+        if ($question->partner_id !== $partnerId) {
+            abort(403, 'Unauthorized access to this question.');
+        }
+
+        if ($question->question_type !== 'true_false') {
+            abort(404, 'This is not a True/False question.');
+        }
+
+        try {
+            \DB::beginTransaction();
+            $question->questionHistory()->delete();
+            $question->delete();
+            \DB::commit();
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return redirect()->back()
+                ->with('error', 'Failed to delete question: ' . $e->getMessage());
+        }
+
+        return redirect()->route('partner.questions.index')
+            ->with('success', 'True/False question deleted successfully!');
     }
 }

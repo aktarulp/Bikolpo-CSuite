@@ -8,9 +8,9 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h1 class="text-3xl font-bold text-gray-900 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                        Create Descriptive Question
+                        Edit True/False Question
                     </h1>
-                    <p class="mt-2 text-gray-600">Design engaging descriptive questions for your students</p>
+                    <p class="mt-2 text-gray-600">Modify your true/false question content and settings</p>
                 </div>
                 <div class="flex items-center space-x-3">
                     <a href="{{ route('partner.questions.index') }}" 
@@ -26,10 +26,12 @@
 
         <!-- Main Form Container -->
         <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-            <form action="{{ route('partner.questions.descriptive.store') }}" method="POST" id="descriptiveForm" class="p-8" enctype="multipart/form-data">
+            <form action="{{ route('partner.questions.tf.update', $question->id) }}" method="POST" id="tfEditForm" class="p-8" enctype="multipart/form-data">
                 @csrf
-                <input type="hidden" name="question_type" value="descriptive">
-                <input type="hidden" name="q_type_id" value="2">
+                @method('PUT')
+                <input type="hidden" name="question_type" value="true_false">
+                <input type="hidden" name="q_type_id" value="3">
+                <input type="hidden" name="question_id" value="{{ $question->id }}">
                 
                 <!-- Question Details Section -->
                 <div class="mb-8">
@@ -57,7 +59,7 @@
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white">
                                 <option value="">Select a course</option>
                                 @foreach($courses ?? [] as $course)
-                                    <option value="{{ $course->id }}">{{ $course->name }}</option>
+                                    <option value="{{ $course->id }}" {{ old('course_id', $question->course_id) == $course->id ? 'selected' : '' }}>{{ $course->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -67,9 +69,12 @@
                             <label for="subject_id" class="block text-sm font-medium text-gray-700">
                                 Subject <span class="text-red-500">*</span>
                             </label>
-                            <select name="subject_id" id="subject_id" required disabled
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-gray-100">
+                            <select name="subject_id" id="subject_id" required
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white">
                                 <option value="">Please select a course first</option>
+                                @foreach($subjects ?? [] as $subject)
+                                    <option value="{{ $subject->id }}" data-course-id="{{ $subject->course_id }}" {{ old('subject_id', $question->subject_id) == $subject->id ? 'selected' : '' }}>{{ $subject->name }}</option>
+                                @endforeach
                             </select>
                         </div>
 
@@ -78,9 +83,12 @@
                             <label for="topic_id" class="block text-sm font-medium text-gray-700">
                                 Topic <span class="text-gray-400">(Optional)</span>
                             </label>
-                            <select name="topic_id" id="topic_id" disabled
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-gray-100">
+                            <select name="topic_id" id="topic_id"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white">
                                 <option value="">Please select a subject first</option>
+                                @foreach($topics ?? [] as $topic)
+                                    <option value="{{ $topic->id }}" data-subject-id="{{ $topic->subject_id }}" {{ old('topic_id', $question->topic_id) == $topic->id ? 'selected' : '' }}>{{ $topic->name }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -169,7 +177,7 @@
                                  </div>
                                  
                                  <!-- Rich Text Editor Content -->
-                                 <div id="richTextEditor" class="border border-t-0 border-gray-300 rounded-b-lg min-h-[150px] p-4 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all duration-200" contenteditable="true" data-placeholder="Enter your question here... You can use formatting, images, and equations."></div>
+                                 <div id="richTextEditor" class="border border-t-0 border-gray-300 rounded-b-lg min-h-[150px] p-4 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all duration-200" contenteditable="true" data-placeholder="Enter your question here... You can use formatting, images, and equations.">{!! old('question_text', $question->question_text) !!}</div>
                                  
                                  <!-- Hidden textarea for form submission -->
                                  <textarea name="question_text" id="question_text" class="hidden" required></textarea>
@@ -185,6 +193,66 @@
 
                 </div>
 
+                <!-- True/False Answer Options Section -->
+                <div class="mb-8">
+                    <div class="flex items-start gap-6">
+                        <!-- Question Text Area (Left) -->
+                        <div class="flex-1">
+                            <div class="flex items-center mb-4">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-lg font-semibold text-gray-900">Correct Answer</h3>
+                                    <p class="text-sm text-gray-600">Select the correct answer</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Answer Options (Right) -->
+                        <div class="w-80">
+                            <div class="space-y-3">
+                                <!-- True Option -->
+                                <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 group">
+                                    <input type="radio" name="correct_answer" value="a" 
+                                           class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2" required
+                                           {{ old('correct_answer', $question->correct_answer) == 'a' ? 'checked' : '' }}>
+                                    <div class="flex items-center space-x-2 ml-3">
+                                        <div class="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center group-hover:bg-green-200 transition-colors duration-200">
+                                            <svg class="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                        <span class="text-sm font-medium text-gray-900 group-hover:text-blue-600 transition-colors duration-200">
+                                            True
+                                        </span>
+                                    </div>
+                                </label>
+
+                                <!-- False Option -->
+                                <label class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-red-300 hover:bg-red-50 transition-all duration-200 group">
+                                    <input type="radio" name="correct_answer" value="b" 
+                                           class="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 focus:ring-red-500 focus:ring-2" required
+                                           {{ old('correct_answer', $question->correct_answer) == 'b' ? 'checked' : '' }}>
+                                    <div class="flex items-center space-x-2 ml-3">
+                                        <div class="w-5 h-5 bg-red-100 rounded-full flex items-center justify-center group-hover:bg-red-200 transition-colors duration-200">
+                                            <svg class="w-3 h-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                        </div>
+                                        <span class="text-sm font-medium text-gray-900 group-hover:text-red-600 transition-colors duration-200">
+                                            False
+                                        </span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Tags Section -->
                 <div class="mb-8">
@@ -212,7 +280,7 @@
                                 <!-- Upper line for completed tags -->
                                 <div id="tags-upper-line" class="flex flex-wrap gap-2 mb-2 min-h-[32px] items-center">
                                     <!-- Completed tags will appear here -->
-                        </div>
+                                </div>
                                 <!-- Lower line for current input -->
                                 <div id="tags-lower-line" class="flex items-center">
                                     <input type="text" id="tags-input" 
@@ -237,7 +305,7 @@
                         </button>
                         <button type="submit" id="submitBtn"
                             class="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-105">
-                        Create Question
+                        Update Question
                         </button>
                 </div>
             </form>
@@ -1037,7 +1105,7 @@ function initializeTagsAutoCompletion() {
     });
     
     // Initialize tags from existing question data
-    const existingTags = @json(old('tags', []));
+    const existingTags = @json(old('tags', $question->tags ?? []));
     if (existingTags && existingTags.length > 0) {
         if (Array.isArray(existingTags)) {
             existingTags.forEach(tag => {
@@ -1193,7 +1261,7 @@ courseSelect.addEventListener('change', function() {
     initializeDependentDropdowns();
     
     // Form validation and submission
-    const form = document.getElementById('descriptiveForm');
+    const form = document.getElementById('tfEditForm');
     const resetBtn = document.getElementById('resetBtn');
     const submitBtn = document.getElementById('submitBtn');
     
@@ -1215,7 +1283,7 @@ courseSelect.addEventListener('change', function() {
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            Creating...
+            Updating...
         `;
         submitBtn.disabled = true;
         
@@ -1225,7 +1293,7 @@ courseSelect.addEventListener('change', function() {
     // Form validation function
     function validateForm() {
         const requiredFields = [
-            'course_id', 'subject_id', 'question_text'
+            'course_id', 'subject_id', 'question_text', 'correct_answer'
         ];
         
         for (const fieldName of requiredFields) {

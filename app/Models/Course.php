@@ -37,17 +37,15 @@ class Course extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    // Many-to-many relationship with subjects
+    // One-to-many relationship with subjects
     public function subjects()
     {
-        return $this->belongsToMany(Subject::class, 'subject_on_course')
-                    ->withPivot('partner_id')
-                    ->withTimestamps();
+        return $this->hasMany(Subject::class);
     }
 
     public function questions()
     {
-        return $this->hasManyThrough(Question::class, Subject::class, 'course_id', 'topic_id');
+        return $this->hasMany(Question::class);
     }
 
     /**

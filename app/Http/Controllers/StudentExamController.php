@@ -115,56 +115,122 @@ class StudentExamController extends Controller
             ->firstOrFail();
 
         $answers = $request->input('answers', []);
-        $questions = $exam->questions()->orderBy('pivot_order')->get();
         
-        $correctAnswers = 0;
-        $wrongAnswers = 0;
-        $unanswered = 0;
-
-        foreach ($questions as $question) {
-            $studentAnswer = $answers[$question->id] ?? null;
-            
-            if ($studentAnswer === null) {
-                $unanswered++;
-            } elseif ($studentAnswer === $question->correct_answer) {
-                $correctAnswers++;
-            } else {
-                $wrongAnswers++;
-            }
-        }
-
-        $totalMarks = $questions->sum(function($q) { return $q->pivot->marks ?? 1; });
-        $earnedMarks = 0;
-        
-        // Calculate earned marks based on correct answers and their individual marks
-        foreach ($questions as $question) {
-            $studentAnswer = $answers[$question->id] ?? null;
-            if ($studentAnswer === $question->correct_answer) {
-                $earnedMarks += $question->pivot->marks ?? 1;
-            }
-        }
+        // Use the same scoring logic as PublicQuizController
+        $scoreData = $this->calculateScore($exam, $answers, $studentId, $result->id);
         
         // Apply negative marking if enabled
-        if ($exam->has_negative_marking && $wrongAnswers > 0) {
-            $deduction = $wrongAnswers * $exam->negative_marks_per_question;
-            $earnedMarks -= $deduction;
+        if ($exam->has_negative_marking && $scoreData['wrong_answers'] > 0) {
+            $deduction = $scoreData['wrong_answers'] * $exam->negative_marks_per_question;
+            $scoreData['score'] -= $deduction;
+            $scoreData['percentage'] = $scoreData['total_marks'] > 0 ? ($scoreData['score'] / $scoreData['total_marks']) * 100 : 0;
         }
-        
-        $percentage = $totalMarks > 0 ? ($earnedMarks / $totalMarks) * 100 : 0;
 
         $result->update([
             'completed_at' => now(),
-            'correct_answers' => $correctAnswers,
-            'wrong_answers' => $wrongAnswers,
-            'unanswered' => $unanswered,
-            'score' => $earnedMarks,
-            'percentage' => $percentage,
+            'correct_answers' => $scoreData['correct_answers'],
+            'wrong_answers' => $scoreData['wrong_answers'],
+            'unanswered' => $scoreData['unanswered'],
+            'score' => $scoreData['score'],
+            'percentage' => $scoreData['percentage'],
             'status' => 'completed',
             'answers' => $answers,
         ]);
 
         return redirect()->route('student.exams.result', $exam)
             ->with('success', 'Exam submitted successfully!');
+    }
+
+    /**
+     * Calculate quiz score and record individual question statistics
+     */
+    private function calculateScore(Exam $exam, array $answers, $studentId, $examResultId)
+    {
+        $score = 0;
+        $correctAnswers = 0;
+        $wrongAnswers = 0;
+        $unanswered = 0;
+        $totalMarks = 0;
+        
+        $questions = $exam->questions()->orderBy('pivot_order')->get();
+
+        foreach ($questions as $question) {
+            $questionId = $question->id;
+            $studentAnswer = $answers[$questionId] ?? null;
+            $questionMarks = $question->pivot->marks ?? 1;
+            $totalMarks += $questionMarks;
+
+            // Determine if the answer is correct, wrong, or unanswered
+            $isAnswered = !empty($studentAnswer);
+            $isCorrect = false;
+            $isSkipped = false;
+            $answerMetadata = null;
+
+            if ($studentAnswer === null || $studentAnswer === '') {
+                $unanswered++;
+                $isSkipped = true;
+            } else {
+                if ($question->question_type === 'mcq') {
+                    if ($studentAnswer === $question->correct_answer) {
+                        $score += $questionMarks;
+                        $correctAnswers++;
+                        $isCorrect = true;
+                    } else {
+                        $wrongAnswers++;
+                    }
+                } else {
+                    // For descriptive questions, give partial marks based on word count
+                    $wordCount = str_word_count($studentAnswer);
+                    $minWords = $question->min_words ?? 10;
+                    $maxWords = $question->max_words ?? 100;
+                    
+                    $answerMetadata = [
+                        'word_count' => $wordCount,
+                        'min_words_required' => $minWords,
+                        'max_words_expected' => $maxWords,
+                    ];
+                    
+                    if ($wordCount >= $minWords) {
+                        $partialScore = $questionMarks * min(1, $wordCount / $maxWords);
+                        $score += $partialScore;
+                        $correctAnswers++; // Count as correct if meets minimum word requirement
+                        $isCorrect = true;
+                    } else {
+                        $wrongAnswers++;
+                    }
+                }
+            }
+
+            // Record individual question statistics
+            \App\Models\QuestionStat::create([
+                'question_id' => $questionId,
+                'exam_id' => $exam->id,
+                'student_id' => $studentId,
+                'exam_result_id' => $examResultId,
+                'student_answer' => $studentAnswer,
+                'correct_answer' => $question->correct_answer,
+                'is_correct' => $isCorrect,
+                'is_answered' => $isAnswered,
+                'is_skipped' => $isSkipped,
+                'question_order' => $question->pivot->order ?? 0,
+                'marks' => $questionMarks,
+                'question_type' => $question->question_type,
+                'answer_metadata' => $answerMetadata,
+                'question_answered_at' => now(),
+            ]);
+        }
+
+        $percentage = $totalMarks > 0 ? ($score / $totalMarks) * 100 : 0;
+
+        return [
+            'score' => $score,
+            'percentage' => $percentage,
+            'correct_answers' => $correctAnswers,
+            'wrong_answers' => $wrongAnswers,
+            'unanswered' => $unanswered,
+            'total_marks' => $totalMarks,
+            'total_questions' => $questions->count(),
+        ];
     }
 
     public function showResult(Exam $exam)

@@ -78,6 +78,37 @@ Route::middleware('auth')->group(function () {
     Route::get('/partner-area', function () {
         return redirect()->route('partner.dashboard');
     })->name('partner.area');
+    
+    // Test analytics route outside partner middleware
+    Route::get('/test-analytics-simple', function() {
+        try {
+            $totalQuestions = \App\Models\Question::count();
+            $totalAttempts = \App\Models\QuestionStat::count();
+            $totalCorrect = \App\Models\QuestionStat::where('is_correct', true)->count();
+            $overallAccuracy = $totalAttempts > 0 ? round(($totalCorrect / $totalAttempts) * 100, 2) : 0;
+            
+            return "Simple Analytics Test:\n" .
+                   "Total Questions: {$totalQuestions}\n" .
+                   "Total Attempts: {$totalAttempts}\n" .
+                   "Total Correct: {$totalCorrect}\n" .
+                   "Overall Accuracy: {$overallAccuracy}%";
+        } catch (\Exception $e) {
+            return 'Error: ' . $e->getMessage();
+        }
+    })->name('test.analytics.simple');
+    
+    // Analytics routes outside partner middleware for testing
+    Route::prefix('analytics')->name('analytics.')->group(function () {
+        Route::get('/questions', [\App\Http\Controllers\QuestionAnalyticsController::class, 'index'])->name('questions.index');
+        Route::get('/questions/{question}', [\App\Http\Controllers\QuestionAnalyticsController::class, 'show'])->name('questions.show');
+        Route::get('/questions/{question}/export', [\App\Http\Controllers\QuestionAnalyticsController::class, 'exportQuestionAnalytics'])->name('questions.export');
+        Route::get('/exams/{exam}', [\App\Http\Controllers\QuestionAnalyticsController::class, 'examAnalytics'])->name('exams.show');
+        Route::get('/students/{student}', [\App\Http\Controllers\QuestionAnalyticsController::class, 'studentAnalytics'])->name('students.show');
+        
+        // API endpoints
+        Route::get('/api/question-stats', [\App\Http\Controllers\QuestionAnalyticsController::class, 'getQuestionStats'])->name('api.question-stats');
+        Route::get('/api/exam-stats', [\App\Http\Controllers\QuestionAnalyticsController::class, 'getExamStats'])->name('api.exam-stats');
+    });
 
     // Student Area Access Route
     Route::get('/student-area', function () {
@@ -117,6 +148,12 @@ Route::middleware('auth')->group(function () {
         Route::get('questions', [QuestionController::class, 'allQuestions'])->name('questions.index');
         Route::get('questions/all', [QuestionController::class, 'allQuestions'])->name('questions.all');
         Route::get('questions/list', [QuestionController::class, 'index'])->name('questions.list');
+        Route::get('questions/subjects-for-course', [QuestionController::class, 'getSubjectsForCourse'])->name('questions.subjects-for-course');
+        Route::get('questions/courses-for-filter', [QuestionController::class, 'getCoursesForFilter'])->name('questions.courses-for-filter');
+        Route::get('questions/subjects-for-filter', [QuestionController::class, 'getSubjectsForFilter'])->name('questions.subjects-for-filter');
+        Route::get('questions/topics-for-filter', [QuestionController::class, 'getTopicsForFilter'])->name('questions.topics-for-filter');
+        Route::get('questions/question-types-for-filter', [QuestionController::class, 'getQuestionTypesForFilter'])->name('questions.question-types-for-filter');
+        
         Route::get('questions/create', [QuestionController::class, 'create'])->name('questions.create');
         Route::post('questions', [QuestionController::class, 'store'])->name('questions.store');
         
@@ -176,7 +213,15 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{question}', [QuestionController::class, 'descriptiveDestroy'])->name('destroy');
         });
         
-
+        // True/False Questions Routes
+        Route::prefix('questions/tf')->name('questions.tf.')->group(function () {
+            Route::get('/', [QuestionController::class, 'tfIndex'])->name('index');
+            Route::get('/create', [QuestionController::class, 'tfCreate'])->name('create');
+            Route::post('/', [QuestionController::class, 'tfStore'])->name('store');
+            Route::get('/{question}/edit', [QuestionController::class, 'tfEdit'])->name('edit');
+            Route::put('/{question}', [QuestionController::class, 'tfUpdate'])->name('update');
+            Route::delete('/{question}', [QuestionController::class, 'tfDestroy'])->name('destroy');
+        });
         
 
         
@@ -304,6 +349,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/export', [\App\Http\Controllers\PermissionController::class, 'export'])->name('export');
             Route::post('/import', [\App\Http\Controllers\PermissionController::class, 'import'])->name('import');
         });
+        
+        // Analytics routes moved outside partner middleware for better access
     });
 
     // Student Routes
