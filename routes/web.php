@@ -183,6 +183,9 @@ Route::middleware('auth')->group(function () {
         Route::get('questions/subjects', [QuestionController::class, 'getSubjects'])->name('questions.subjects');
         Route::get('questions/topics', [QuestionController::class, 'getTopics'])->name('questions.topics');
         
+        // Common question view route (must come BEFORE individual question routes)
+        Route::get('questions/{question}/view', [QuestionController::class, 'commonView'])->name('questions.common-view');
+        
         // Individual question routes (must come AFTER specific routes to avoid conflicts)
         Route::get('questions/{question}', [QuestionController::class, 'show'])->name('questions.show');
         Route::get('questions/{question}/edit', [QuestionController::class, 'edit'])->name('questions.edit');

@@ -276,17 +276,10 @@
                     <div class="p-4 hover:bg-gray-50 transition-colors duration-200 border-l-4 border-transparent hover:border-green-500" data-question-id="{{ $question->id }}">
                         <div class="flex items-start gap-4">
                             <div class="flex flex-col items-start gap-2 min-w-[120px]">
-                                @if($question->question_type === 'mcq')
-                                <a href="{{ route('partner.questions.mcq.show', $question) }}"
+                                <a href="{{ route('partner.questions.common-view', $question) }}"
                                    class="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors duration-200">
                                     View Question
                                 </a>
-                                @else
-                                    <a href="{{ route('partner.questions.show', $question) }}"
-                                       class="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors duration-200">
-                                        View Question
-                                    </a>
-                                @endif
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
                                     {{ $question->question_type === 'mcq' ? 'bg-blue-100 text-blue-800' : ($question->question_type === 'true_false' ? 'bg-orange-100 text-orange-800' : 'bg-green-100 text-green-800') }}">
                                     {{ $question->question_type === 'mcq' ? 'MCQ' : ($question->question_type === 'true_false' ? 'True/False' : 'Descriptive') }}
@@ -313,17 +306,10 @@
                                     Created: {{ $question->created_at->format('M d, Y') }}
                                 </div>
                                 <div class="flex gap-2">
-                                    @if($question->question_type === 'mcq')
-                                    <a href="{{ route('partner.questions.mcq.show', $question) }}" 
+                                    <a href="{{ route('partner.questions.common-view', $question) }}" 
                                        class="text-green-600 hover:text-green-800 text-sm font-medium transition-colors duration-200">
                                         View
                                     </a>
-                                    @else
-                                        <a href="{{ route('partner.questions.show', $question) }}" 
-                                           class="text-green-600 hover:text-green-800 text-sm font-medium transition-colors duration-200">
-                                            View
-                                        </a>
-                                    @endif
                                     @if($question->question_type === 'descriptive')
                                         <a href="{{ route('partner.questions.descriptive.edit', $question) }}" 
                                            class="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors duration-200">

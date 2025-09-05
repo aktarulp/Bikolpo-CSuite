@@ -1877,4 +1877,23 @@ class QuestionController extends Controller
         return redirect()->route('partner.questions.index')
             ->with('success', 'True/False question deleted successfully!');
     }
+
+    /**
+     * Display a common view for any question type
+     */
+    public function commonView(Question $question)
+    {
+        // Get the authenticated user's partner ID using the trait
+        $partnerId = $this->getPartnerId();
+        
+        // Ensure the question belongs to the current partner
+        if ($question->partner_id !== $partnerId) {
+            abort(403, 'Unauthorized access to question.');
+        }
+        
+        // Load necessary relationships
+        $question->load(['course', 'subject', 'topic', 'questionType', 'partner']);
+        
+        return view('partner.questions.common-question-view', compact('question'));
+    }
 }
