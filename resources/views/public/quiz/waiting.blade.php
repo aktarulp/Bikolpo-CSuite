@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Bikolpo-LQ | {{ $exam->title }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
@@ -77,13 +77,14 @@
             </div>
 
             <!-- Countdown Section -->
-            <div class="bg-gradient-to-br from-indigo-800 to-purple-900 p-6 md:p-8 rounded-3xl shadow-2xl text-center border border-purple-700 hover-lift flex-1 max-w-sm h-80 flex flex-col justify-between">
+            <div class="bg-gradient-to-br from-indigo-800 to-purple-900 p-6 md:p-8 rounded-3xl shadow-2xl text-center border border-purple-700 hover-lift flex-1 max-w-sm h-80 flex flex-col justify-between relative">
                         <div>
-                    <h1 class="text-2xl md:text-3xl font-extrabold mb-6 tracking-wide leading-tight">
+                    <h1 id="countdownTitle" class="text-2xl md:text-3xl font-extrabold mb-6 tracking-wide leading-tight">
                         Exam Starts In
                     </h1>
 
-                    <div class="flex justify-center gap-4 mb-6">
+                    <!-- Countdown Display -->
+                    <div id="countdownDisplay" class="flex justify-center gap-4 mb-6">
                         <!-- Hours block -->
                         <div class="bg-white/10 backdrop-blur-sm shadow-lg rounded-full transition-transform transform hover:scale-105 duration-300 ease-in-out w-20 h-20 md:w-24 md:h-24 flex flex-col items-center justify-center">
                             <span id="hours" class="block text-2xl md:text-3xl font-bold mb-1 text-transparent bg-clip-text bg-gradient-to-br from-green-300 to-teal-400">00</span>
@@ -103,9 +104,22 @@
                         </div>
                     </div>
                     
-                    <p id="countdownMessage" class="text-sm md:text-base font-light text-gray-400 tracking-wide hidden">
-                        Countdown finished! The exam is ready to start.
-                    </p>
+                    <!-- Start Button (Hidden initially) -->
+                    <div id="startButtonDisplay" class="hidden flex flex-col items-center justify-center space-y-4">
+                        <img src="{{ asset('images/q-start.png') }}?v={{ time() }}" 
+                             alt="Start Exam" 
+                             class="w-36 h-36 md:w-44 md:h-44 object-contain shadow-2xl hover:scale-105 transition-all duration-300 cursor-pointer transform hover:shadow-3xl"
+                             onclick="document.getElementById('startForm').submit()"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="w-36 h-36 md:w-44 md:h-44 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center shadow-2xl hover:scale-105 transition-all duration-300 cursor-pointer transform hover:shadow-3xl" 
+                             onclick="document.getElementById('startForm').submit()"
+                             style="display: none;">
+                            <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                        
                         </div>
                         
                 <!-- Go Back Button at Bottom -->
@@ -193,7 +207,7 @@
                     
                     <div class="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
                         @if(isset($participants) && $participants->count() > 0)
-                            <div class="space-y-3 max-h-64 overflow-y-auto">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 @foreach($participants as $participant)
                                 <div class="flex items-center p-3 rounded-lg border hover:shadow-md transition-all duration-200 {{ $participant['status'] === 'completed' ? 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-100' : 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-100' }} {{ $participant['id'] == $accessInfo['student_id'] ? 'ring-2 ring-yellow-400 ring-opacity-50' : '' }}">
                                     <div class="relative w-10 h-10 rounded-full overflow-hidden mr-3 flex-shrink-0 border-2 {{ $participant['status'] === 'completed' ? 'border-blue-400' : 'border-green-400' }}">
@@ -261,23 +275,22 @@
                                     </svg>
                                 </div>
                                 <p class="text-gray-400 text-sm">No participants assigned to this exam</p>
-                            </div>
+                        </div>
                         @endif
-                    </div>
                         </div>
                     </div>
                     
-            <!-- Right Column: Action Buttons -->
-            <div class="space-y-6">
                 <!-- Action Buttons -->
-                <div class="space-y-4">
-                    <form method="POST" action="{{ route('public.quiz.start-quiz', $exam->id) }}" id="startForm" class="hidden">
-                        @csrf
-                        <button type="submit" 
-                                class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-8 rounded-2xl shadow-lg transform hover:scale-105 transition-all duration-300 w-full">
-                            🚀 Start Exam Now
-                        </button>
-                    </form>
+                <div class="glass-effect rounded-2xl p-6 shadow-2xl hover-lift">
+                    <div class="text-center">
+                        <form method="POST" action="{{ route('public.quiz.start-quiz', $exam->id) }}" id="startForm" class="hidden">
+                            @csrf
+                            <button type="submit" 
+                                    class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-4 px-8 rounded-2xl shadow-lg transform hover:scale-105 transition-all duration-300 w-full max-w-md mx-auto">
+                                🚀 Start Exam Now
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -286,34 +299,50 @@
     <script>
         // Set the date we're counting down to (exam start time)
         const countDownDate = new Date('{{ $exam->start_time }}').getTime();
+        const now = new Date();
+        const initialDistance = countDownDate - now.getTime();
 
-        // Update the countdown every 1 second
-        const x = setInterval(function() {
-            // Get today's date and time
-            const now = new Date();
-            const distance = countDownDate - now.getTime();
+        // Check if exam has already started when page loads
+        if (initialDistance <= 0) {
+            // Exam has already started, show start button immediately
+            document.getElementById("hours").innerHTML = "00";
+            document.getElementById("minutes").innerHTML = "00";
+            document.getElementById("seconds").innerHTML = "00";
+            document.getElementById("countdownTitle").classList.add("hidden");
+            document.getElementById("countdownDisplay").classList.add("hidden");
+            document.getElementById("startButtonDisplay").classList.remove("hidden");
+            document.getElementById("startForm").classList.remove("hidden");
+        } else {
+            // Exam hasn't started yet, start countdown
+            // Update the countdown every 1 second
+            const x = setInterval(function() {
+                // Get today's date and time
+                const now = new Date();
+                const distance = countDownDate - now.getTime();
 
-            // Time calculations for hours, minutes and seconds
-            const hours = Math.floor(distance / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                // Time calculations for hours, minutes and seconds
+                const hours = Math.floor(distance / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            // Display the result in the respective elements
-            document.getElementById("hours").innerHTML = String(hours).padStart(2, '0');
-            document.getElementById("minutes").innerHTML = String(minutes).padStart(2, '0');
-            document.getElementById("seconds").innerHTML = String(seconds).padStart(2, '0');
+                // Display the result in the respective elements
+                document.getElementById("hours").innerHTML = String(hours).padStart(2, '0');
+                document.getElementById("minutes").innerHTML = String(minutes).padStart(2, '0');
+                document.getElementById("seconds").innerHTML = String(seconds).padStart(2, '0');
 
-            // If the countdown is over, show the start button
-            if (distance < 0) {
-                clearInterval(x);
-                document.getElementById("hours").innerHTML = "00";
-                document.getElementById("minutes").innerHTML = "00";
-                document.getElementById("seconds").innerHTML = "00";
-                document.getElementById("countdownMessage").classList.remove("hidden");
-                document.querySelector('.flex').classList.add('hidden');
-                document.getElementById("startForm").classList.remove("hidden");
-            }
-        }, 1000);
+                // If the countdown is over, show the start button
+                if (distance <= 0) {
+                    clearInterval(x);
+                    document.getElementById("hours").innerHTML = "00";
+                    document.getElementById("minutes").innerHTML = "00";
+                    document.getElementById("seconds").innerHTML = "00";
+                    document.getElementById("countdownTitle").classList.add("hidden");
+                    document.getElementById("countdownDisplay").classList.add("hidden");
+                    document.getElementById("startButtonDisplay").classList.remove("hidden");
+                    document.getElementById("startForm").classList.remove("hidden");
+                }
+            }, 1000);
+        }
     </script>
 
 </body>

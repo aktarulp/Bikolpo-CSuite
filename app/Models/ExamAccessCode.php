@@ -60,12 +60,37 @@ class ExamAccessCode extends Model
 
     public function isExpired()
     {
-        return $this->expires_at && $this->expires_at->isPast();
+        // Check if exam end date has passed
+        return $this->exam && $this->exam->end_time && \Carbon\Carbon::parse($this->exam->end_time)->isPast();
     }
 
     public function isValid()
     {
-        return $this->status === 'active' && !$this->isExpired();
+        // Access code is valid if:
+        // 1. Status is active
+        // 2. Exam end date hasn't passed
+        // 3. Student hasn't submitted the exam yet
+        return $this->status === 'active' && 
+               !$this->isExpired() && 
+               !$this->hasSubmittedExam();
+    }
+
+    public function hasSubmittedExam()
+    {
+        // Check if student has already submitted this exam
+        return \App\Models\ExamResult::where('student_id', $this->student_id)
+            ->where('exam_id', $this->exam_id)
+            ->where('status', 'completed')
+            ->exists();
+    }
+
+    public function hasInProgressExam()
+    {
+        // Check if student has an in-progress exam
+        return \App\Models\ExamResult::where('student_id', $this->student_id)
+            ->where('exam_id', $this->exam_id)
+            ->where('status', 'in_progress')
+            ->exists();
     }
 
     // Generate unique 6-digit access code

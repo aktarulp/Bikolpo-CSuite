@@ -9,7 +9,7 @@
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body class="bg-gray-100 font-sans leading-relaxed text-gray-800 antialiased">
@@ -137,9 +137,14 @@
                 
                 <!-- Countdown Timer and Progress Bar -->
                 <div class="flex items-center justify-between mt-6">
-                    <div id="countdown-timer" class="w-20 h-20 rounded-full flex items-center justify-center p-2 watch-bezel">
-                        <div id="countdown-display" class="w-full h-full rounded-full flex items-center justify-center text-center font-bold text-sm text-gray-100 bg-gray-900 shadow-inner watch-face">
-                            --:--
+                    <div class="flex flex-col items-center">
+                        <div id="countdown-timer" class="w-20 h-20 rounded-full flex items-center justify-center p-2 watch-bezel">
+                            <div id="countdown-display" class="w-full h-full rounded-full flex items-center justify-center text-center font-bold text-sm text-gray-100 bg-gray-900 shadow-inner watch-face border-2 border-gray-600">
+                                --:--
+                            </div>
+                        </div>
+                        <div id="timer-status" class="text-xs font-medium text-gray-600 mt-2">
+                            Time Remaining
                         </div>
                     </div>
                     <div class="relative flex-1 mx-4">
@@ -173,8 +178,11 @@
                             <button type="button" id="prev-btn" class="px-6 py-3 rounded-full text-sm font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
                                 Previous
                             </button>
-                            <div class="flex-1 mx-4 text-center">
-                                <button type="button" id="skip-btn" class="px-8 py-3 rounded-full font-bold text-white bg-orange-500 hover:bg-orange-600 transition-colors duration-200 shadow-lg">Skip</button>
+                            <div class="flex items-center space-x-4">
+                                <button type="button" id="skip-btn" class="px-6 py-3 rounded-full text-sm font-semibold text-white bg-orange-500 hover:bg-orange-600 transition-colors duration-200 shadow-lg">Skip</button>
+                                <button type="button" id="submit-btn" class="px-6 py-3 rounded-full text-sm font-bold text-white bg-green-500 hover:bg-green-600 transition-colors duration-200 shadow-lg">
+                                    🚀 Submit Quiz
+                                </button>
                             </div>
                             <button type="button" id="next-btn" class="px-6 py-3 rounded-full text-sm font-semibold text-white bg-blue-500 hover:bg-blue-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
                                 Next
@@ -314,9 +322,11 @@
             const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
         const skipBtn = document.getElementById('skip-btn');
+        const submitBtn = document.getElementById('submit-btn');
     const progressBar = document.getElementById('progress-bar');
     const currentQuestionDisplay = document.getElementById('current-question-display');
     const countdownDisplayEl = document.getElementById('countdown-display');
+    const timerStatusEl = document.getElementById('timer-status');
     const navigatorContainer = document.getElementById('navigator-container');
     const resultModal = document.getElementById('result-modal');
     const modalTitle = document.getElementById('modal-title');
@@ -402,6 +412,7 @@
                     state.answers[state.currentQuestionIndex] = textarea.value;
                     state.skipped[state.currentQuestionIndex] = false;
                     updateProgress();
+                    updateNavigation();
                     renderNavigator();
                 }
             });
@@ -437,19 +448,18 @@
     }
 
     function updateNavigation() {
-        prevBtn.disabled = state.currentQuestionIndex === 0 || state.isSubmitted;
-        nextBtn.disabled = state.currentQuestionIndex === questions.length - 1 || state.isSubmitted;
-        skipBtn.style.display = state.isSubmitted ? 'none' : 'block';
+        const currentAnswer = state.answers[state.currentQuestionIndex];
+        const hasAnswer = currentAnswer !== null && currentAnswer.trim() !== '';
         
-        if (state.currentQuestionIndex === questions.length - 1) {
-            skipBtn.textContent = 'Submit';
-            skipBtn.classList.remove('bg-orange-500', 'hover:bg-orange-600');
-            skipBtn.classList.add('bg-green-500', 'hover:bg-green-600');
-        } else {
-            skipBtn.textContent = 'Skip';
-            skipBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
-            skipBtn.classList.add('bg-orange-500', 'hover:bg-orange-600');
-        }
+        prevBtn.disabled = state.currentQuestionIndex === 0 || state.isSubmitted;
+        nextBtn.disabled = state.currentQuestionIndex === questions.length - 1 || state.isSubmitted || !hasAnswer;
+        skipBtn.style.display = state.isSubmitted ? 'none' : 'block';
+        submitBtn.style.display = state.isSubmitted ? 'none' : 'block';
+        
+        // Skip button always shows "Skip"
+        skipBtn.textContent = 'Skip';
+        skipBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
+        skipBtn.classList.add('bg-orange-500', 'hover:bg-orange-600');
     }
 
     function updateProgress() {
@@ -466,14 +476,62 @@
 
     function updateTimer() {
         const minutes = Math.floor(timeRemaining / 60);
-        const seconds = timeRemaining % 60;
+        const seconds = Math.floor(timeRemaining % 60);
         countdownDisplayEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        // Update timer colors based on remaining time
+        updateTimerColors();
         
         if (timeRemaining <= 0) {
             clearInterval(state.timer);
             submitQuiz(true);
         } else {
             timeRemaining--;
+        }
+    }
+
+    function updateTimerColors() {
+        const totalDuration = QUIZ_DURATION;
+        const timePercentage = (timeRemaining / totalDuration) * 100;
+        
+        // Remove all color classes from timer display
+        countdownDisplayEl.classList.remove(
+            'text-green-500', 'text-yellow-500', 'text-orange-500', 'text-red-500', 'text-red-600', 
+            'animate-pulse', 'bg-green-100', 'bg-yellow-100', 'bg-orange-100', 'bg-red-100', 'bg-red-200',
+            'border-green-300', 'border-yellow-300', 'border-orange-300', 'border-red-300', 'border-red-400'
+        );
+        
+        // Remove all color classes from status text
+        timerStatusEl.classList.remove(
+            'text-green-600', 'text-yellow-600', 'text-orange-600', 'text-red-600', 'text-red-700',
+            'animate-pulse'
+        );
+        
+        if (timePercentage > 50) {
+            // Green: More than 50% time remaining
+            countdownDisplayEl.classList.add('text-green-500', 'bg-green-100', 'border-green-300');
+            timerStatusEl.classList.add('text-green-600');
+            timerStatusEl.textContent = 'Plenty of Time';
+        } else if (timePercentage > 25) {
+            // Yellow: 25-50% time remaining
+            countdownDisplayEl.classList.add('text-yellow-500', 'bg-yellow-100', 'border-yellow-300');
+            timerStatusEl.classList.add('text-yellow-600');
+            timerStatusEl.textContent = 'Time Running Out';
+        } else if (timePercentage > 10) {
+            // Orange: 10-25% time remaining
+            countdownDisplayEl.classList.add('text-orange-500', 'bg-orange-100', 'border-orange-300');
+            timerStatusEl.classList.add('text-orange-600');
+            timerStatusEl.textContent = 'Hurry Up!';
+        } else if (timeRemaining > 180) {
+            // Red: Less than 10% but more than 3 minutes
+            countdownDisplayEl.classList.add('text-red-500', 'bg-red-100', 'border-red-300');
+            timerStatusEl.classList.add('text-red-600');
+            timerStatusEl.textContent = 'Almost Over!';
+        } else {
+            // Blinking Red: Less than 3 minutes remaining
+            countdownDisplayEl.classList.add('text-red-600', 'bg-red-200', 'border-red-400', 'animate-pulse');
+            timerStatusEl.classList.add('text-red-700', 'animate-pulse');
+            timerStatusEl.textContent = 'FINAL 3 MINUTES!';
         }
     }
 
@@ -493,12 +551,15 @@
     }
 
     function handleSkip() {
-        if (state.currentQuestionIndex === questions.length - 1) {
+        state.skipped[state.currentQuestionIndex] = true;
+        state.answers[state.currentQuestionIndex] = null;
+        handleNext();
+    }
+
+    function handleSubmit() {
+        // Show confirmation modal before submitting
+        if (confirm('Are you sure you want to submit your quiz? You can still answer more questions if you continue.')) {
             submitQuiz();
-        } else {
-            state.skipped[state.currentQuestionIndex] = true;
-            state.answers[state.currentQuestionIndex] = null;
-            handleNext();
         }
     }
 
@@ -555,10 +616,14 @@
         prevBtn.addEventListener('click', handlePrev);
         nextBtn.addEventListener('click', handleNext);
         skipBtn.addEventListener('click', handleSkip);
+        submitBtn.addEventListener('click', handleSubmit);
         closeModalBtn.addEventListener('click', hideResult);
         
         state.timer = setInterval(updateTimer, 1000);
         render();
+        
+        // Initialize timer colors
+        updateTimerColors();
         
         // Prevent accidental navigation
         window.addEventListener('beforeunload', function(e) {

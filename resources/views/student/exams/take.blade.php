@@ -285,6 +285,7 @@ function renderQuestion() {
                 state.answers[state.currentQuestionIndex] = textarea.value;
                 state.skipped[state.currentQuestionIndex] = false;
                 updateProgress();
+                updateNavigation();
                 renderNavigator();
             }
         });
@@ -320,8 +321,11 @@ function renderNavigator() {
 }
 
 function updateNavigation() {
+    const currentAnswer = state.answers[state.currentQuestionIndex];
+    const hasAnswer = currentAnswer !== null && currentAnswer.trim() !== '';
+    
     prevBtn.disabled = state.currentQuestionIndex === 0 || state.isSubmitted;
-    nextBtn.disabled = state.currentQuestionIndex === questions.length - 1 || state.isSubmitted;
+    nextBtn.disabled = state.currentQuestionIndex === questions.length - 1 || state.isSubmitted || !hasAnswer;
     skipBtn.style.display = state.isSubmitted ? 'none' : 'block';
     submitBtn.style.display = state.isSubmitted ? 'none' : 'block';
     

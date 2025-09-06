@@ -16,8 +16,6 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    
     <!-- MathJax for mathematical equations -->
     <script>
         window.MathJax = {
@@ -38,24 +36,6 @@
     
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        bangla: ['"Hind Siliguri"', 'sans-serif']
-                    },
-                    colors: {
-                        primaryGreen: '#16a34a',
-                        primaryOrange: '#f97316',
-                        darkBlue: '#1a202c',
-                    }
-                }
-            }
-        }
-    </script>
 
     <style>
         .custom-shadow {

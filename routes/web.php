@@ -33,6 +33,47 @@ Route::get('/', function () {
     return view('welcome');
 })->name('landing');
 
+// Debug route for access code testing
+Route::get('/debug-access/{accessCode}/{phone}', function($accessCode, $phone) {
+    $normalizedPhone = preg_replace('/[^0-9]/', '', $phone);
+    if (strlen($normalizedPhone) === 11 && str_starts_with($normalizedPhone, '01')) {
+        $normalizedPhone = '0' . substr($normalizedPhone, 1);
+    }
+    
+    $accessCodeRecord = \App\Models\ExamAccessCode::where('access_code', $accessCode)
+        ->whereHas('student', function ($query) use ($normalizedPhone) {
+            $query->where('phone', $normalizedPhone);
+        })
+        ->with(['student', 'exam'])
+        ->first();
+    
+    if ($accessCodeRecord) {
+        $exam = $accessCodeRecord->exam;
+        return response()->json([
+            'found' => true,
+            'access_code' => $accessCodeRecord->access_code,
+            'student' => $accessCodeRecord->student->full_name,
+            'student_phone' => $accessCodeRecord->student->phone,
+            'exam_id' => $exam->id,
+            'exam_title' => $exam->title,
+            'exam_status' => $exam->status,
+            'exam_start_time' => $exam->start_time,
+            'exam_end_time' => $exam->end_time,
+            'is_active' => $exam->isActive,
+            'is_scheduled' => $exam->isScheduled(),
+            'has_submitted' => $accessCodeRecord->hasSubmittedExam(),
+            'current_time' => now()->toDateTimeString()
+        ]);
+    } else {
+        return response()->json([
+            'found' => false,
+            'access_code' => $accessCode,
+            'phone_searched' => $normalizedPhone,
+            'original_phone' => $phone
+        ]);
+    }
+});
+
 // Bulk Upload Route (accessible without authentication)
 Route::get('/upload-questions', [App\Http\Controllers\QuestionController::class, 'showBulkUploadForm'])->name('questions.bulk-upload.public');
 Route::post('/upload-questions', [App\Http\Controllers\QuestionController::class, 'bulkUpload'])->name('questions.bulk-upload.public.store');

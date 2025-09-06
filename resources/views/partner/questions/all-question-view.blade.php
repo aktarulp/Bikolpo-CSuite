@@ -99,8 +99,19 @@
                 <h1 class="text-3xl font-bold text-gray-900">All Questions</h1>
                 <p class="mt-2 text-gray-600">Manage and filter your questions</p>
             </div>
-            <!-- Decorative Add Question Menu -->
-            <div class="relative group">
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-3">
+                <!-- View Drafts Button -->
+                <a href="{{ route('partner.questions.drafts') }}"
+                   class="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-md transition-colors duration-200 flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    View Drafts
+                </a>
+                
+                <!-- Decorative Add Question Menu -->
+                <div class="relative group">
                 <button type="button" class="group relative px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center gap-3 font-medium">
                     <div class="flex items-center gap-2">
                         <svg class="w-6 h-6 transition-transform duration-300 group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">

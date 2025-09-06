@@ -9,14 +9,40 @@ export default {
         './resources/views/**/*.blade.php',
     ],
 
+    darkMode: 'class',
+
     theme: {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                bangla: ['"Hind Siliguri"', 'sans-serif'],
+                brand: ['"Poppins"', 'sans-serif'],
+                modern: ['"Inter"', 'sans-serif'],
+                display: ['"Space Grotesk"', 'sans-serif']
             },
             colors: {
-                primaryGreen: '#10B981',
+                primaryGreen: '#16a34a',
+                primaryOrange: '#f97316',
+                primaryBlue: '#3b82f6',
+                primaryPurple: '#8b5cf6',
+                darkBlue: '#1a202c',
             },
+            animation: {
+                'fade-in': 'fadeIn 0.5s ease-in-out',
+                'slide-up': 'slideUp 0.6s ease-out',
+                'bounce-slow': 'bounce 2s infinite',
+                'pulse-slow': 'pulse 3s infinite'
+            },
+            keyframes: {
+                fadeIn: {
+                    'from': { opacity: '0', transform: 'translateY(20px)' },
+                    'to': { opacity: '1', transform: 'translateY(0)' }
+                },
+                slideUp: {
+                    'from': { opacity: '0', transform: 'translateY(40px)' },
+                    'to': { opacity: '1', transform: 'translateY(0)' }
+                }
+            }
         },
     },
 

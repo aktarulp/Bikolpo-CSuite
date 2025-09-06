@@ -58,14 +58,16 @@ class PublicQuizController extends Controller
         \Log::info('Quiz access attempt', [
             'original_phone' => $request->phone,
             'normalized_phone' => $phone,
-            'access_code' => $request->access_code
+            'access_code' => $request->access_code,
+            'target_exam_id' => 22
         ]);
         
         $validator = Validator::make(['phone' => $phone, 'access_code' => $request->access_code], [
-            'phone' => 'required|string|regex:/^01[3-9][0-9]{8}$/|max:15',
+            'phone' => 'required|string|regex:/^01[3-9][0-9]{8}$/|size:11',
             'access_code' => 'required|string|size:6',
         ], [
             'phone.regex' => 'Please enter a valid Bangladeshi phone number starting with 01 (e.g., 01712345678). Do not include +880 or country code.',
+            'phone.size' => 'Phone number must be exactly 11 digits.',
         ]);
 
         if ($validator->fails()) {
@@ -74,6 +76,18 @@ class PublicQuizController extends Controller
                 'access_code' => $request->access_code,
                 'errors' => $validator->errors()->toArray()
             ]);
+            
+            // For debugging, let's see what the actual validation errors are
+            if ($request->access_code === '302184') {
+                \Log::error('Validation failed for 302184', [
+                    'phone' => $phone,
+                    'original_phone' => $request->phone,
+                    'validation_errors' => $validator->errors()->toArray(),
+                    'phone_regex_test' => preg_match('/^01[3-9][0-9]{8}$/', $phone),
+                    'access_code_length' => strlen($request->access_code)
+                ]);
+            }
+            
             return back()->withErrors($validator)->withInput();
         }
 
@@ -87,6 +101,29 @@ class PublicQuizController extends Controller
             ->with(['exam', 'student'])
             ->first();
 
+        // Debug: Check if access code exists for exam 22
+        if ($request->access_code === '302184') {
+            $exam22AccessCodes = ExamAccessCode::where('exam_id', 22)->with('student')->get();
+            \Log::info('Debug for access code 302184', [
+                'exam_22_access_codes' => $exam22AccessCodes->map(function($ac) {
+                    return [
+                        'id' => $ac->id,
+                        'access_code' => $ac->access_code,
+                        'student_phone' => $ac->student->phone,
+                        'student_name' => $ac->student->full_name,
+                        'status' => $ac->status
+                    ];
+                })->toArray(),
+                'search_phone' => $phone,
+                'found_access_code' => $accessCode ? [
+                    'id' => $accessCode->id,
+                    'exam_id' => $accessCode->exam_id,
+                    'student_phone' => $accessCode->student->phone,
+                    'status' => $accessCode->status
+                ] : null
+            ]);
+        }
+
         // Debug: Log what we're searching for
         \Log::info('Phone number search details', [
             'normalized_phone' => $phone,
@@ -97,12 +134,10 @@ class PublicQuizController extends Controller
             ]
         ]);
 
-        if (!$accessCode || !$accessCode->isValid()) {
-            \Log::warning('Quiz access failed - invalid access code or phone', [
+        if (!$accessCode) {
+            \Log::warning('Quiz access failed - access code not found', [
                 'phone' => $phone,
-                'access_code' => $request->access_code,
-                'access_code_found' => $accessCode ? true : false,
-                'is_valid' => $accessCode ? $accessCode->isValid() : false
+                'access_code' => $request->access_code
             ]);
             
             // Additional debugging: Check what students exist with similar phone numbers
@@ -114,26 +149,36 @@ class PublicQuizController extends Controller
                 })->toArray()
             ]);
             
-            // Provide more specific error messages
-            if (!$accessCode) {
-                return back()->withErrors(['access' => 'Invalid access code. Please check your code and try again.'])->withInput();
-            }
-            
-            if ($accessCode->status === 'used') {
-                return back()->withErrors(['access' => 'This access code has already been used. Contact your teacher if you need to retake the exam.'])->withInput();
-            }
-            
-            if ($accessCode->isExpired()) {
-                return back()->withErrors(['access' => 'This access code has expired. Please contact your teacher for a new code.'])->withInput();
-            }
-            
-            return back()->withErrors(['access' => 'Access code is not valid. Please check your code and try again.'])->withInput();
+            return back()->withErrors(['access' => 'Invalid access code. Please check your code and try again.'])->withInput();
+        }
+
+        // Check if access code is active
+        if ($accessCode->status !== 'active') {
+            \Log::warning('Quiz access failed - access code not active', [
+                'phone' => $phone,
+                'access_code' => $request->access_code,
+                'status' => $accessCode->status
+            ]);
+            return back()->withErrors(['access' => 'This access code is not active. Please contact your teacher.'])->withInput();
+        }
+
+        // Check if exam has ended
+        if ($accessCode->isExpired()) {
+            \Log::warning('Quiz access failed - exam time expired', [
+                'phone' => $phone,
+                'access_code' => $request->access_code,
+                'exam_end_time' => $accessCode->exam->end_time
+            ]);
+            return back()->withErrors(['access' => 'Exam time has expired.'])->withInput();
         }
 
         \Log::info('Quiz access successful', [
             'student_id' => $accessCode->student_id,
             'exam_id' => $accessCode->exam_id,
-            'student_name' => $accessCode->student->full_name
+            'student_name' => $accessCode->student->full_name,
+            'exam_title' => $accessCode->exam->title,
+            'exam_status' => $accessCode->exam->isActive ? 'active' : 'scheduled',
+            'has_submitted' => $accessCode->hasSubmittedExam()
         ]);
 
         // Check if student has already attempted this exam
@@ -143,9 +188,43 @@ class PublicQuizController extends Controller
 
         if ($existingResult) {
             if ($existingResult->status === 'completed') {
-                return back()->withErrors(['access' => 'You have already completed this exam.'])->withInput();
+                // If exam is completed, redirect to results page instead of showing error
+                \Log::info('Student has completed exam, redirecting to results', [
+                    'student_id' => $accessCode->student_id,
+                    'exam_id' => $accessCode->exam_id,
+                    'result_id' => $existingResult->id
+                ]);
+                
+                // Store access info in session for results page
+                session([
+                    'quiz_access' => [
+                        'access_code_id' => $accessCode->id,
+                        'student_id' => $accessCode->student_id,
+                        'exam_id' => $accessCode->exam_id,
+                        'student_name' => $accessCode->student->full_name,
+                    ]
+                ]);
+                
+                return redirect()->route('public.quiz.result', $accessCode->exam_id);
             } elseif ($existingResult->status === 'in_progress') {
-                return back()->withErrors(['access' => 'You have an exam in progress. Please complete it first or contact your teacher to reset it.'])->withInput();
+                // If exam is in progress, redirect to take page to continue
+                \Log::info('Student has exam in progress, redirecting to continue', [
+                    'student_id' => $accessCode->student_id,
+                    'exam_id' => $accessCode->exam_id,
+                    'result_id' => $existingResult->id
+                ]);
+                
+                // Store access info in session for the quiz
+                session([
+                    'quiz_access' => [
+                        'access_code_id' => $accessCode->id,
+                        'student_id' => $accessCode->student_id,
+                        'exam_id' => $accessCode->exam_id,
+                        'student_name' => $accessCode->student->full_name,
+                    ]
+                ]);
+                
+                return redirect()->route('public.quiz.take', $accessCode->exam_id);
             }
         }
 
@@ -161,13 +240,50 @@ class PublicQuizController extends Controller
 
         // Handle AJAX requests differently
         if ($request->ajax() && $request->header('X-Requested-With') === 'XMLHttpRequest') {
+            // Always redirect to waiting view for all exam statuses
+            $exam = $accessCode->exam;
+            if ($exam->status === 'published' && !$accessCode->isExpired()) {
+                $redirectUrl = route('public.quiz.start', $exam->id);
+            } else {
+                $redirectUrl = route('public.quiz.access');
+            }
+            
             return response()->json([
                 'success' => true,
-                'redirect' => route('public.quiz.start', $accessCode->exam_id)
+                'redirect' => $redirectUrl
             ]);
         }
         
-        return redirect()->route('public.quiz.start', $accessCode->exam_id);
+        // Always redirect to waiting view for all exam statuses
+        $exam = $accessCode->exam;
+        
+        \Log::info('Redirecting to waiting view', [
+            'exam_id' => $exam->id,
+            'exam_title' => $exam->title,
+            'status' => $exam->status,
+            'is_active' => $exam->isActive,
+            'is_scheduled' => $exam->isScheduled(),
+            'start_time' => $exam->start_time,
+            'end_time' => $exam->end_time,
+            'current_time' => now()->toDateTimeString()
+        ]);
+        
+        // Check if exam is available (published and not expired)
+        if ($exam->status === 'published' && !$accessCode->isExpired()) {
+            \Log::info('Redirecting to waiting view', ['exam_id' => $exam->id]);
+            return redirect()->route('public.quiz.start', $exam->id);
+        } else {
+            \Log::warning('Exam not available', [
+                'exam_id' => $exam->id,
+                'status' => $exam->status,
+                'is_expired' => $accessCode->isExpired(),
+                'current_time' => now()->toDateTimeString(),
+                'start_time' => $exam->start_time,
+                'end_time' => $exam->end_time
+            ]);
+            
+            return redirect()->route('public.quiz.access')->withErrors(['access' => 'This exam is not currently available.']);
+        }
     }
 
     /**
@@ -209,9 +325,13 @@ class PublicQuizController extends Controller
             return back()->withErrors(['access' => 'Invalid access code for this phone number.'])->withInput();
         }
 
-        // Check if any access code is valid
+        // Check if any access code is valid (using same logic as processAccess)
         $validAccessCodes = $accessCodes->filter(function ($accessCode) {
-            return $accessCode->isValid();
+            // Access code is valid if:
+            // 1. Status is active
+            // 2. Exam end date hasn't passed
+            // (We don't check hasSubmittedExam here to allow second-time access)
+            return $accessCode->status === 'active' && !$accessCode->isExpired();
         });
 
         if ($validAccessCodes->isEmpty()) {
@@ -271,10 +391,9 @@ class PublicQuizController extends Controller
             ]
         ]);
 
-        if ($exam->isActive) {
+        // Always redirect to waiting view for all exam statuses
+        if ($exam->status === 'published') {
             return redirect()->route('public.quiz.start', $exam);
-        } elseif ($exam->isScheduled()) {
-            return redirect()->route('public.quiz.waiting', $exam);
         } else {
             return redirect()->route('public.quiz.access')->withErrors(['access' => 'This exam is not currently available.']);
         }
@@ -292,27 +411,24 @@ class PublicQuizController extends Controller
         }
 
         $accessCode = ExamAccessCode::find($accessInfo['access_code_id']);
-        if (!$accessCode || !$accessCode->isValid()) {
-            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Access code is no longer valid.']);
+        if (!$accessCode) {
+            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Access code not found.']);
         }
 
-        // Check if exam is active
-        if (!$exam->isActive) {
-            // Check if exam is scheduled for the future
-            if ($exam->isScheduled()) {
-                // Get all participants for the waiting room
-                $participants = $this->getAllParticipants($exam);
-                return view('public.quiz.waiting', compact('exam', 'accessInfo', 'participants'));
-            } else {
-                // Exam is not available (cancelled, completed, etc.)
-                return redirect()->route('public.quiz.access')->withErrors(['access' => 'This exam is not currently available.']);
-            }
+        // Check if exam has ended
+        if ($accessCode->isExpired()) {
+            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Exam time has expired.']);
         }
 
-        // Get other students who are waiting to join this exam
-        $waitingStudents = $this->getWaitingStudents($exam, $accessInfo['student_id']);
+        // Check if student has already submitted the exam
+        if ($accessCode->hasSubmittedExam()) {
+            return redirect()->route('public.quiz.result', $exam->id);
+        }
 
-        return view('public.quiz.start', compact('exam', 'accessInfo', 'waitingStudents'));
+        // Always show waiting view regardless of exam status
+        // Get all participants for the waiting room
+        $participants = $this->getAllParticipants($exam);
+        return view('public.quiz.waiting', compact('exam', 'accessInfo', 'participants'));
     }
 
     /**
@@ -343,60 +459,7 @@ class PublicQuizController extends Controller
             ->values();
     }
 
-    /**
-     * Get students who are waiting to join the exam
-     */
-    private function getWaitingStudents(Exam $exam, $currentStudentId)
-    {
-        // Get students who have access codes for this exam but haven't started yet
-        $waitingStudents = ExamAccessCode::where('exam_id', $exam->id)
-            ->where('status', 'active')
-            ->where('used_at', null)
-            ->with('student')
-            ->get()
-            ->map(function ($accessCode) {
-                return [
-                    'id' => $accessCode->student->id,
-                    'name' => $accessCode->student->full_name,
-                    'joined_at' => $accessCode->created_at,
-                ];
-            })
-            ->filter(function ($student) use ($currentStudentId) {
-                return $student['id'] != $currentStudentId;
-            })
-            ->sortBy('joined_at')
-            ->values();
 
-        return $waitingStudents;
-    }
-
-    /**
-     * API endpoint to get waiting students for real-time updates
-     */
-    public function getWaitingStudentsApi(Exam $exam)
-    {
-        $accessInfo = session('quiz_access');
-        
-        if (!$accessInfo || $accessInfo['exam_id'] != $exam->id) {
-            return response()->json(['success' => false, 'message' => 'Invalid access'], 403);
-        }
-
-        $waitingStudents = $this->getWaitingStudents($exam, $accessInfo['student_id']);
-        
-        // Format the data for JSON response
-        $formattedStudents = $waitingStudents->map(function ($student) {
-            return [
-                'id' => $student['id'],
-                'name' => $student['name'],
-                'joined_at' => $student['joined_at']->diffForHumans(),
-            ];
-        });
-
-        return response()->json([
-            'success' => true,
-            'waitingStudents' => $formattedStudents
-        ]);
-    }
 
     /**
      * Start the quiz
@@ -412,11 +475,22 @@ class PublicQuizController extends Controller
         // Check if already started
         $existingResult = ExamResult::where('student_id', $accessInfo['student_id'])
             ->where('exam_id', $exam->id)
+            ->where('status', 'in_progress')
             ->first();
 
-        if ($existingResult && $existingResult->status === 'in_progress') {
+        if ($existingResult) {
             // Resume existing quiz
             return redirect()->route('public.quiz.take', $exam->id);
+        }
+
+        // Check if student has already submitted the exam
+        $completedResult = ExamResult::where('student_id', $accessInfo['student_id'])
+            ->where('exam_id', $exam->id)
+            ->where('status', 'completed')
+            ->first();
+
+        if ($completedResult) {
+            return redirect()->route('public.quiz.result', $exam->id);
         }
 
         // Create new exam result
@@ -428,9 +502,8 @@ class PublicQuizController extends Controller
             'status' => 'in_progress',
         ]);
 
-        // Mark access code as used
-        $accessCode = ExamAccessCode::find($accessInfo['access_code_id']);
-        $accessCode->markAsUsed();
+        // Don't mark access code as used yet - only when exam is submitted
+        // The access code will remain valid until exam is completed or exam time expires
 
         return redirect()->route('public.quiz.take', $exam->id);
     }
@@ -452,36 +525,32 @@ class PublicQuizController extends Controller
             ->first();
 
         if (!$result) {
-            return redirect()->route('public.quiz.start', $exam->id);
+            // Check if student has already submitted the exam
+            $completedResult = ExamResult::where('student_id', $accessInfo['student_id'])
+                ->where('exam_id', $exam->id)
+                ->where('status', 'completed')
+                ->first();
+
+            if ($completedResult) {
+                return redirect()->route('public.quiz.result', $exam->id);
+            }
+
+            // If no active quiz, create a new one directly
+            $result = ExamResult::create([
+                'student_id' => $accessInfo['student_id'],
+                'exam_id' => $exam->id,
+                'started_at' => now(),
+                'total_questions' => $exam->total_questions ?? 0,
+                'status' => 'in_progress',
+            ]);
         }
 
         // Check if time has expired - ONLY based on exam end_time, not duration
         $examEndTime = \Carbon\Carbon::parse($exam->end_time)->setTimezone(config('app.timezone'));
         $currentTime = \Carbon\Carbon::now(config('app.timezone'));
         
-        // Debug logging for time calculations
-        \Log::info('Quiz Time Debug', [
-            'exam_id' => $exam->id,
-            'exam_title' => $exam->title,
-            'exam_start_time' => $exam->start_time,
-            'exam_end_time' => $exam->end_time,
-            'exam_duration' => $exam->duration,
-            'current_time' => $currentTime->toDateTimeString(),
-            'exam_end_time_parsed' => $examEndTime->toDateTimeString(),
-            'timezone' => config('app.timezone'),
-            'is_exam_ended' => $currentTime->gt($examEndTime),
-            'remaining_seconds' => $examEndTime->diffInSeconds($currentTime),
-            'remaining_minutes' => $examEndTime->diffInMinutes($currentTime),
-            'remaining_hours' => $examEndTime->diffInHours($currentTime),
-        ]);
-        
         if ($currentTime->gt($examEndTime)) {
             // Auto-submit exam - exam has ended
-            \Log::info('Auto-submitting quiz due to exam end time', [
-                'exam_id' => $exam->id,
-                'exam_end_time' => $examEndTime->toDateTimeString(),
-                'current_time' => $currentTime->toDateTimeString(),
-            ]);
             $this->autoSubmitExam($result);
             return redirect()->route('public.quiz.result', $exam->id);
         }
@@ -489,19 +558,28 @@ class PublicQuizController extends Controller
         // Load questions from exam_questions table
         $questions = $exam->questions()->orderBy('pivot_order')->get();
         
-        // Remaining time is based on exam end time, not quiz duration
-        $remainingTime = $currentTime->diffInSeconds($examEndTime);
+        // Calculate remaining time based on exam duration
+        $examDurationSeconds = $exam->duration * 60; // Convert minutes to seconds
         
-        // Ensure remaining time is not negative
-        if ($remainingTime < 0) {
-            $remainingTime = 0;
-        }
+        // For quiz, use the full duration regardless of when student started
+        // This ensures the timer always shows the correct exam duration
+        $remainingTime = $examDurationSeconds;
+        
+        // Also check if exam end time has passed
+        $timeUntilExamEnds = $currentTime->diffInSeconds($examEndTime);
+        $remainingTime = min($remainingTime, $timeUntilExamEnds);
         
         \Log::info('Quiz Timer Set', [
             'exam_id' => $exam->id,
+            'exam_duration_minutes' => $exam->duration,
+            'exam_duration_seconds' => $examDurationSeconds,
             'remaining_time_seconds' => $remainingTime,
             'remaining_time_minutes' => floor($remainingTime / 60),
             'remaining_time_hours' => floor($remainingTime / 3600),
+            'current_time' => $currentTime->toDateTimeString(),
+            'exam_end_time' => $examEndTime->toDateTimeString(),
+            'time_until_exam_ends' => $timeUntilExamEnds,
+            'calculation_method' => 'full_duration'
         ]);
 
         // Get participants (students who are currently taking or have taken this exam)
@@ -606,6 +684,12 @@ class PublicQuizController extends Controller
                 'student_id' => $accessInfo['student_id'],
                 'result_id' => $result->id
             ]);
+
+            // Mark access code as used now that exam is completed
+            $accessCode = ExamAccessCode::find($accessInfo['access_code_id']);
+            if ($accessCode) {
+                $accessCode->markAsUsed();
+            }
 
             // Store result info in session for result page
             session([
@@ -847,15 +931,8 @@ class PublicQuizController extends Controller
      */
     private function canTakeExam($exam, $studentId)
     {
-        // Check if already completed
-        $existingResult = ExamResult::where('student_id', $studentId)
-            ->where('exam_id', $exam->id)
-            ->first();
-
-        if ($existingResult && $existingResult->status === 'completed') {
-            return false;
-        }
-
+        // Allow access to exam regardless of completion status
+        // The actual redirect logic will be handled in processAccess/selectExam
         return true;
     }
 
@@ -866,8 +943,18 @@ class PublicQuizController extends Controller
     {
         $accessCode = ExamAccessCode::find($accessCodeId);
         
-        if (!$accessCode || !$accessCode->isValid()) {
-            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Access code is no longer valid.']);
+        if (!$accessCode) {
+            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Access code not found.']);
+        }
+
+        // Check if exam has ended
+        if ($accessCode->isExpired()) {
+            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Exam time has expired.']);
+        }
+
+        // Check if student has already submitted the exam
+        if ($accessCode->hasSubmittedExam()) {
+            return redirect()->route('public.quiz.result', $accessCode->exam_id);
         }
 
         // Verify student info
@@ -888,11 +975,9 @@ class PublicQuizController extends Controller
 
         $exam = $accessCode->exam;
 
-        // Redirect based on exam status
-        if ($exam->isActive) {
-            return redirect()->route('public.quiz.start', $exam);
-        } elseif ($exam->isScheduled()) {
-            return redirect()->route('public.quiz.waiting', $exam);
+        // Always redirect to waiting view for all exam statuses
+        if ($exam->status === 'published' && !$accessCode->isExpired()) {
+            return redirect()->route('public.quiz.start', $exam->id);
         } else {
             return redirect()->route('public.quiz.access')->withErrors(['access' => 'This exam is not currently available.']);
         }

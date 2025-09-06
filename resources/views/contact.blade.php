@@ -9,7 +9,7 @@
   <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
   <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
   
-  <script src="https://cdn.tailwindcss.com"></script>
+  @vite(['resources/css/app.css', 'resources/js/app.js'])
      <script>
          tailwind.config = {
              darkMode: 'class',
