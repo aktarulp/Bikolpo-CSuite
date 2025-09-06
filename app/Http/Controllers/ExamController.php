@@ -84,7 +84,6 @@ class ExamController extends Controller
             'show_results_immediately' => 'boolean',
             'has_negative_marking' => 'boolean',
             'negative_marks_per_question' => 'required_if:has_negative_marking,1|nullable|numeric|min:0|max:5',
-            'question_head' => 'nullable|string',
             'question_header' => 'nullable|string',
         ]);
 
@@ -125,7 +124,6 @@ class ExamController extends Controller
             'duration',
             'total_questions',
             'passing_marks',
-            'question_head',
             'question_header',
         ]);
 
@@ -210,7 +208,6 @@ class ExamController extends Controller
             'show_results_immediately' => 'boolean',
             'has_negative_marking' => 'boolean',
             'negative_marks_per_question' => 'required_if:has_negative_marking,1|nullable|numeric|min:0|max:5',
-            'question_head' => 'nullable|string',
             'question_header' => 'nullable|string',
             'exam_question_id' => 'nullable|exists:exam_questions,id',
         ]);
@@ -251,7 +248,6 @@ class ExamController extends Controller
             'duration',
             'total_questions',
             'passing_marks',
-            'question_head',
             'question_header',
             'exam_question_id',
         ]);

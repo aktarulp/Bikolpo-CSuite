@@ -404,7 +404,16 @@ Route::middleware('auth')->group(function () {
 // Public Quiz Routes (No Authentication Required)
 Route::prefix('LiveExam')->name('public.quiz.')->group(function () {
     Route::get('/', [\App\Http\Controllers\PublicQuizController::class, 'showAccessPage'])->name('access');
-    Route::post('/access', [\App\Http\Controllers\PublicQuizController::class, 'processAccess'])->name('process-access');
+    Route::post('/access', [\App\Http\Controllers\PublicQuizController::class, 'processAccess'])->middleware('refresh.csrf')->name('process-access');
+    
+    // Debug route for CSRF token
+    Route::get('/debug-csrf', function() {
+        return response()->json([
+            'csrf_token' => csrf_token(),
+            'session_id' => session()->getId(),
+            'session_lifetime' => config('session.lifetime')
+        ]);
+    })->name('debug-csrf');
     Route::post('/multiple-exams', [\App\Http\Controllers\PublicQuizController::class, 'handleMultipleExams'])->name('multiple-exams');
     Route::get('/available', [\App\Http\Controllers\PublicQuizController::class, 'showAvailableExams'])->name('available');
     Route::get('/select/{accessCode}', [\App\Http\Controllers\PublicQuizController::class, 'selectExam'])->name('select');

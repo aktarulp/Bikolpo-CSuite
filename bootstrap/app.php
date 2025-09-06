@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\CheckRole::class,
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+            'refresh.csrf' => \App\Http\Middleware\RefreshCSRFToken::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

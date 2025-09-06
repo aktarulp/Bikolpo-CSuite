@@ -148,7 +148,7 @@
             @endif
 
             <!-- Enhanced Form -->
-            <form method="POST" action="{{ route('public.quiz.process-access') }}" class="relative space-y-4">
+            <form method="POST" action="{{ route('public.quiz.process-access') }}" class="relative space-y-4" id="accessForm">
               @csrf
               
               <!-- Phone Number with enhanced styling -->
@@ -200,6 +200,16 @@
                 <span class="relative flex items-center justify-center">
                   Start Live Exam
                   <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-200"></i>
+                </span>
+              </button>
+
+              <!-- Fallback Submit Button (Hidden by default) -->
+              <button type="button" 
+                id="fallbackSubmit"
+                class="hidden relative w-full py-3 px-6 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 overflow-hidden group">
+                <span class="relative flex items-center justify-center">
+                  <i class="fas fa-refresh mr-2"></i>
+                  Retry with Fallback
                 </span>
               </button>
 
@@ -403,6 +413,121 @@
         e.target.value = value;
     });
 
+    // CSRF token refresh function
+    function refreshCSRFToken() {
+        return fetch('{{ route("public.quiz.access") }}', {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newToken = doc.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            document.querySelector('meta[name="csrf-token"]').setAttribute('content', newToken);
+            document.querySelector('input[name="_token"]').value = newToken;
+            return newToken;
+        })
+        .catch(error => {
+            console.error('Error refreshing CSRF token:', error);
+            return null;
+        });
+    }
+
+    // Form submission with CSRF token refresh
+    document.getElementById('accessForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const form = this;
+        const submitButton = form.querySelector('button[type="submit"]');
+        const originalText = submitButton.innerHTML;
+        
+        // Show loading state
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
+        submitButton.disabled = true;
+        
+        const submitForm = () => {
+            const formData = new FormData(form);
+            
+            return fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            });
+        };
+        
+        const handleResponse = (response) => {
+            if (response.status === 419) {
+                // CSRF token mismatch, refresh and retry
+                console.log('CSRF token mismatch, refreshing...');
+                return refreshCSRFToken().then(() => {
+                    return submitForm();
+                }).then(handleResponse);
+            }
+            
+            if (response.ok) {
+                // Check if response is a redirect
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else {
+                    // Try to parse as JSON for AJAX response
+                    return response.json().then(data => {
+                        if (data.success && data.redirect) {
+                            window.location.href = data.redirect;
+                        } else {
+                            window.location.href = response.url;
+                        }
+                    }).catch(() => {
+                        // If not JSON, redirect to response URL
+                        window.location.href = response.url;
+                    });
+                }
+            } else {
+                // Handle error response
+                return response.text().then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const errorElement = doc.querySelector('.text-red-700, .text-red-600, .alert-danger');
+                    if (errorElement) {
+                        alert('Error: ' + errorElement.textContent.trim());
+                    } else {
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            }
+        };
+        
+        // Initial submission
+        submitForm()
+        .then(handleResponse)
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+            // Show fallback button
+            document.getElementById('fallbackSubmit').classList.remove('hidden');
+        })
+        .finally(() => {
+            // Reset button state
+            submitButton.innerHTML = originalText;
+            submitButton.disabled = false;
+        });
+    });
+
+    // Fallback submit handler
+    document.getElementById('fallbackSubmit').addEventListener('click', function() {
+        // Show fallback button and hide main button
+        document.querySelector('button[type="submit"]').classList.add('hidden');
+        this.classList.remove('hidden');
+        
+        // Submit form normally (without AJAX)
+        document.getElementById('accessForm').submit();
+    });
+
     // Multiple exams handling
     function handleMultipleExams() {
         const phone = document.getElementById('phone').value;
@@ -431,7 +556,7 @@
         const csrfToken = document.createElement('input');
         csrfToken.type = 'hidden';
         csrfToken.name = '_token';
-        csrfToken.value = '{{ csrf_token() }}';
+        csrfToken.value = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         form.appendChild(csrfToken);
         
         const phoneInput = document.createElement('input');

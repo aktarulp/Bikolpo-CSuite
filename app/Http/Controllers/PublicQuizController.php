@@ -21,10 +21,36 @@ class PublicQuizController extends Controller
     }
 
     /**
+     * Validate access request
+     */
+    private function validateAccessRequest(Request $request)
+    {
+        $request->validate([
+            'phone' => 'required|string|min:11|max:11',
+            'access_code' => 'required|string|size:6',
+        ]);
+    }
+
+    /**
      * Process quiz access request
      */
     public function processAccess(Request $request)
     {
+        // Handle CSRF token mismatch gracefully
+        try {
+            // Validate the request
+            $this->validateAccessRequest($request);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            if ($request->ajax() && $request->header('X-Requested-With') === 'XMLHttpRequest') {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $e->errors(),
+                    'message' => 'Validation failed'
+                ], 422);
+            }
+            return back()->withErrors($e->errors())->withInput();
+        }
+
         // Normalize phone number to handle both formats
         $phone = $this->normalizePhoneNumber($request->phone);
         
@@ -133,6 +159,14 @@ class PublicQuizController extends Controller
             ]
         ]);
 
+        // Handle AJAX requests differently
+        if ($request->ajax() && $request->header('X-Requested-With') === 'XMLHttpRequest') {
+            return response()->json([
+                'success' => true,
+                'redirect' => route('public.quiz.start', $accessCode->exam_id)
+            ]);
+        }
+        
         return redirect()->route('public.quiz.start', $accessCode->exam_id);
     }
 
@@ -266,8 +300,9 @@ class PublicQuizController extends Controller
         if (!$exam->isActive) {
             // Check if exam is scheduled for the future
             if ($exam->isScheduled()) {
-                // Show waiting room for scheduled exams
-                return view('public.quiz.waiting', compact('exam', 'accessInfo'));
+                // Get all participants for the waiting room
+                $participants = $this->getAllParticipants($exam);
+                return view('public.quiz.waiting', compact('exam', 'accessInfo', 'participants'));
             } else {
                 // Exam is not available (cancelled, completed, etc.)
                 return redirect()->route('public.quiz.access')->withErrors(['access' => 'This exam is not currently available.']);
@@ -278,6 +313,34 @@ class PublicQuizController extends Controller
         $waitingStudents = $this->getWaitingStudents($exam, $accessInfo['student_id']);
 
         return view('public.quiz.start', compact('exam', 'accessInfo', 'waitingStudents'));
+    }
+
+    /**
+     * Get all participants for the exam (waiting and completed)
+     */
+    private function getAllParticipants(Exam $exam)
+    {
+        return ExamAccessCode::where('exam_id', $exam->id)
+            ->with(['student', 'student.course', 'student.batch'])
+            ->get()
+            ->map(function ($accessCode) {
+                $student = $accessCode->student;
+                $status = $accessCode->used_at ? 'completed' : 'waiting';
+                
+                return [
+                    'id' => $student->id,
+                    'name' => $student->full_name,
+                    'photo' => $student->photo,
+                    'student_id' => $student->student_id ?? $student->id,
+                    'course_name' => $student->course->name ?? 'Course',
+                    'batch_name' => $student->batch->name ?? 'Batch',
+                    'status' => $status,
+                    'joined_at' => $accessCode->created_at,
+                    'completed_at' => $accessCode->used_at,
+                ];
+            })
+            ->sortBy('joined_at')
+            ->values();
     }
 
     /**
