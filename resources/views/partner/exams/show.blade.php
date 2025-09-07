@@ -148,12 +148,12 @@
                                                                     {{ $accessCode->access_code ?? 'No code' }}
                                                                 </span>
                                                                 @if($accessCode->status === 'active')
-                                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 mt-1">
-                                                                        Active
+                                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 mt-1">
+                                                                        Waiting
                                                                     </span>
                                                                 @elseif($accessCode->status === 'used')
-                                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mt-1">
-                                                                        Used
+                                                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 mt-1">
+                                                                        Submitted
                                                                     </span>
                                                                 @else
                                                                     <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 mt-1">
@@ -169,8 +169,8 @@
                                             <!-- Summary Stats -->
                                             <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">
                                                 <span class="font-medium">Total Students:</span> {{ $exam->accessCodes->count() }} | 
-                                                <span class="font-medium">Active Codes:</span> {{ $exam->accessCodes->where('status', 'active')->count() }} | 
-                                                <span class="font-medium">Used Codes:</span> {{ $exam->accessCodes->where('status', 'used')->count() }}
+                                                <span class="font-medium">Waiting:</span> {{ $exam->accessCodes->where('status', 'active')->count() }} | 
+                                                <span class="font-medium">Submitted:</span> {{ $exam->accessCodes->where('status', 'used')->count() }}
                                             </div>
                                         @else
                                             <div class="text-center py-8">
