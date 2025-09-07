@@ -74,6 +74,166 @@ Route::get('/debug-access/{accessCode}/{phone}', function($accessCode, $phone) {
     }
 });
 
+// Test route to check available students and access codes
+Route::get('/test-quiz-data', function() {
+    $students = \App\Models\Student::with('accessCodes.exam')->take(5)->get();
+    $accessCodes = \App\Models\ExamAccessCode::with(['student', 'exam'])->take(5)->get();
+    
+    return response()->json([
+        'students' => $students->map(function($student) {
+            return [
+                'id' => $student->id,
+                'name' => $student->full_name,
+                'phone' => $student->phone,
+                'access_codes' => $student->accessCodes->map(function($ac) {
+                    return [
+                        'code' => $ac->access_code,
+                        'exam_title' => $ac->exam->title,
+                        'status' => $ac->status
+                    ];
+                })
+            ];
+        }),
+        'access_codes' => $accessCodes->map(function($ac) {
+            return [
+                'code' => $ac->access_code,
+                'student_name' => $ac->student->full_name,
+                'student_phone' => $ac->student->phone,
+                'exam_title' => $ac->exam->title,
+                'status' => $ac->status
+            ];
+        })
+    ]);
+});
+
+// Test route to simulate submitted exam access
+Route::get('/test-submitted-exam/{accessCode}/{phone}', function($accessCode, $phone) {
+    $normalizedPhone = preg_replace('/[^0-9]/', '', $phone);
+    if (strlen($normalizedPhone) === 11 && str_starts_with($normalizedPhone, '01')) {
+        $normalizedPhone = '0' . substr($normalizedPhone, 1);
+    }
+    
+    $accessCodeRecord = \App\Models\ExamAccessCode::where('access_code', $accessCode)
+        ->whereHas('student', function ($query) use ($normalizedPhone) {
+            $query->where('phone', $normalizedPhone);
+        })
+        ->with(['student', 'exam'])
+        ->first();
+    
+    if ($accessCodeRecord) {
+        // Simulate the processAccess logic
+        if ($accessCodeRecord->status === 'used') {
+            return response()->json([
+                'message' => 'Access code is submitted - should redirect to results',
+                'access_code' => $accessCodeRecord->access_code,
+                'student' => $accessCodeRecord->student->full_name,
+                'exam_title' => $accessCodeRecord->exam->title,
+                'status' => $accessCodeRecord->status,
+                'redirect_to' => route('public.quiz.result', $accessCodeRecord->exam_id)
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Access code is active - should allow normal access',
+                'access_code' => $accessCodeRecord->access_code,
+                'student' => $accessCodeRecord->student->full_name,
+                'exam_title' => $accessCodeRecord->exam->title,
+                'status' => $accessCodeRecord->status
+            ]);
+        }
+    } else {
+        return response()->json([
+            'message' => 'Access code not found',
+            'access_code' => $accessCode,
+            'phone_searched' => $normalizedPhone
+        ]);
+    }
+});
+
+// Comprehensive test route for multi-time exam access
+Route::get('/test-multi-access/{accessCode}/{phone}', function($accessCode, $phone) {
+    $normalizedPhone = preg_replace('/[^0-9]/', '', $phone);
+    if (strlen($normalizedPhone) === 11 && str_starts_with($normalizedPhone, '01')) {
+        $normalizedPhone = '0' . substr($normalizedPhone, 1);
+    }
+    
+    $accessCodeRecord = \App\Models\ExamAccessCode::where('access_code', $accessCode)
+        ->whereHas('student', function ($query) use ($normalizedPhone) {
+            $query->where('phone', $normalizedPhone);
+        })
+        ->with(['student', 'exam'])
+        ->first();
+    
+    if (!$accessCodeRecord) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Access code not found',
+            'access_code' => $accessCode,
+            'phone_searched' => $normalizedPhone
+        ]);
+    }
+
+    $exam = $accessCodeRecord->exam;
+    $student = $accessCodeRecord->student;
+    
+    // Check exam results
+    $results = \App\Models\ExamResult::where('student_id', $student->id)
+        ->where('exam_id', $exam->id)
+        ->orderBy('created_at', 'desc')
+        ->get();
+    
+    // Check if exam is expired
+    $isExpired = $accessCodeRecord->isExpired();
+    
+    // Check exam status
+    $examStatus = $exam->status;
+    $isActive = $exam->isActive;
+    
+    return response()->json([
+        'status' => 'success',
+        'access_code' => [
+            'code' => $accessCodeRecord->access_code,
+            'status' => $accessCodeRecord->status,
+            'is_expired' => $isExpired,
+            'used_at' => $accessCodeRecord->used_at
+        ],
+        'student' => [
+            'id' => $student->id,
+            'name' => $student->full_name,
+            'phone' => $student->phone
+        ],
+        'exam' => [
+            'id' => $exam->id,
+            'title' => $exam->title,
+            'status' => $examStatus,
+            'is_active' => $isActive,
+            'start_time' => $exam->start_time,
+            'end_time' => $exam->end_time,
+            'show_results_immediately' => $exam->show_results_immediately
+        ],
+        'results' => $results->map(function($result) {
+            return [
+                'id' => $result->id,
+                'status' => $result->status,
+                'score' => $result->score,
+                'percentage' => $result->percentage,
+                'started_at' => $result->started_at,
+                'completed_at' => $result->completed_at
+            ];
+        }),
+        'expected_behavior' => [
+            'if_status_used' => 'Should redirect to results page',
+            'if_status_active' => 'Should allow normal exam access',
+            'if_expired' => 'Should show exam expired message',
+            'if_exam_not_published' => 'Should show exam not available message'
+        ],
+        'test_urls' => [
+            'access_page' => route('public.quiz.access'),
+            'result_page' => route('public.quiz.result', $exam->id),
+            'direct_result' => route('public.quiz.result.direct', $exam->id) . '?access_code_id=' . $accessCodeRecord->id
+        ]
+    ]);
+});
+
 // Bulk Upload Route (accessible without authentication)
 Route::get('/upload-questions', [App\Http\Controllers\QuestionController::class, 'showBulkUploadForm'])->name('questions.bulk-upload.public');
 Route::post('/upload-questions', [App\Http\Controllers\QuestionController::class, 'bulkUpload'])->name('questions.bulk-upload.public.store');
@@ -463,6 +623,8 @@ Route::prefix('LiveExam')->name('public.quiz.')->group(function () {
     Route::get('/{exam}/take', [\App\Http\Controllers\PublicQuizController::class, 'takeQuiz'])->name('take');
     Route::post('/{exam}/submit', [\App\Http\Controllers\PublicQuizController::class, 'submitQuiz'])->name('submit');
     Route::get('/{exam}/result', [\App\Http\Controllers\PublicQuizController::class, 'showResult'])->name('result');
+    Route::get('/{exam}/result/direct', [\App\Http\Controllers\PublicQuizController::class, 'directResultAccess'])->name('result.direct');
+    
 });
 
 // API Routes for Public Quiz (No Authentication Required)
