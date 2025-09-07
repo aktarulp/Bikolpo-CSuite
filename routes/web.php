@@ -442,6 +442,7 @@ Route::middleware('auth')->group(function () {
         Route::get('exams/deleted', [ExamController::class, 'deleted'])->name('exams.deleted');
         Route::post('exams/{exam}/restore', [ExamController::class, 'restore'])->name('exams.restore');
         Route::get('exams/{exam}/results', [ExamController::class, 'results'])->name('exams.results');
+        Route::get('exams/{exam}/results/{result}/details', [ExamController::class, 'getResultDetails'])->name('exams.results.details');
         Route::get('exams/{exam}/export', [ExamController::class, 'export'])->name('exams.export');
         Route::get('exams/{exam}/paper-parameters', [ExamController::class, 'paperParameters'])->name('exams.paper-parameters');
         Route::post('exams/{exam}/download-paper', [ExamController::class, 'downloadPaper'])->name('exams.download-paper');
@@ -624,10 +625,34 @@ Route::prefix('LiveExam')->name('public.quiz.')->group(function () {
     Route::post('/{exam}/submit', [\App\Http\Controllers\PublicQuizController::class, 'submitQuiz'])->name('submit');
     Route::get('/{exam}/result', [\App\Http\Controllers\PublicQuizController::class, 'showResult'])->name('result');
     Route::get('/{exam}/result/direct', [\App\Http\Controllers\PublicQuizController::class, 'directResultAccess'])->name('result.direct');
+    Route::get('/{exam}/review/{result}', [\App\Http\Controllers\ExamReviewController::class, 'showReview'])->name('review');
     
 });
 
 // API Routes for Public Quiz (No Authentication Required)
 Route::prefix('api/exam')->group(function () {
     Route::get('/{exam}/waiting-students', [\App\Http\Controllers\PublicQuizController::class, 'getWaitingStudentsApi'])->name('api.exam.waiting-students');
+});
+
+// API Routes for Analytics and Review
+Route::prefix('api')->group(function () {
+    // Analytics routes
+    Route::get('/analytics/question/{questionId}', [\App\Http\Controllers\AnalyticsController::class, 'getQuestionAnalytics'])->name('api.analytics.question');
+    Route::get('/analytics/student/{studentId}', [\App\Http\Controllers\AnalyticsController::class, 'getStudentAnalytics'])->name('api.analytics.student');
+    Route::get('/analytics/exam/{examId}', [\App\Http\Controllers\AnalyticsController::class, 'getExamAnalytics'])->name('api.analytics.exam');
+    Route::get('/analytics/student/{studentId}/exam/{examId}', [\App\Http\Controllers\AnalyticsController::class, 'getStudentExamPerformance'])->name('api.analytics.student-exam');
+    Route::get('/analytics/difficulty', [\App\Http\Controllers\AnalyticsController::class, 'getDifficultyAnalytics'])->name('api.analytics.difficulty');
+    Route::get('/analytics/question-types', [\App\Http\Controllers\AnalyticsController::class, 'getQuestionTypeAnalytics'])->name('api.analytics.question-types');
+    Route::get('/analytics/top-students', [\App\Http\Controllers\AnalyticsController::class, 'getTopPerformingStudents'])->name('api.analytics.top-students');
+    Route::get('/analytics/difficult-questions', [\App\Http\Controllers\AnalyticsController::class, 'getMostDifficultQuestions'])->name('api.analytics.difficult-questions');
+    Route::get('/analytics/answer-distribution/{questionId}', [\App\Http\Controllers\AnalyticsController::class, 'getAnswerDistribution'])->name('api.analytics.answer-distribution');
+    Route::get('/analytics/correct-students/{questionId}', [\App\Http\Controllers\AnalyticsController::class, 'getStudentsWhoAnsweredCorrectly'])->name('api.analytics.correct-students');
+    Route::get('/analytics/incorrect-students/{questionId}', [\App\Http\Controllers\AnalyticsController::class, 'getStudentsWhoAnsweredIncorrectly'])->name('api.analytics.incorrect-students');
+    
+    // Review routes
+    Route::get('/exam-review/{examId}/{resultId}/data', [\App\Http\Controllers\ExamReviewController::class, 'getReviewData'])->name('api.exam-review.data');
+    Route::get('/exam-review/{examId}/{resultId}/question/{questionId}', [\App\Http\Controllers\ExamReviewController::class, 'getQuestionReview'])->name('api.exam-review.question');
+    Route::get('/exam-review/{examId}/{resultId}/comparison', [\App\Http\Controllers\ExamReviewController::class, 'getPerformanceComparison'])->name('api.exam-review.comparison');
+    Route::get('/exam-review/{examId}/{resultId}/analytics', [\App\Http\Controllers\ExamReviewController::class, 'getExamAnalytics'])->name('api.exam-review.analytics');
+    Route::get('/exam-review/{examId}/{resultId}/suggestions', [\App\Http\Controllers\ExamReviewController::class, 'getImprovementSuggestions'])->name('api.exam-review.suggestions');
 });

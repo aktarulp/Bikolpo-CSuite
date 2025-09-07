@@ -170,4 +170,156 @@ class QuestionStat extends Model
             'average_time_per_question' => $stats->whereNotNull('time_spent_seconds')->avg('time_spent_seconds'),
         ];
     }
+
+    /**
+     * Get detailed analytics for a specific question across all students
+     */
+    public static function getQuestionDetailedAnalytics($questionId)
+    {
+        $stats = self::forQuestion($questionId);
+        
+        $analytics = [
+            'question_id' => $questionId,
+            'total_attempts' => $stats->count(),
+            'total_answered' => $stats->answered()->count(),
+            'total_correct' => $stats->correct()->count(),
+            'total_incorrect' => $stats->incorrect()->count(),
+            'total_skipped' => $stats->skipped()->count(),
+            'correct_percentage' => $stats->count() > 0 ? round(($stats->correct()->count() / $stats->count()) * 100, 2) : 0,
+            'answer_rate' => $stats->count() > 0 ? round(($stats->answered()->count() / $stats->count()) * 100, 2) : 0,
+            'average_time_spent' => $stats->whereNotNull('time_spent_seconds')->avg('time_spent_seconds'),
+            'difficulty_level' => self::calculateQuestionDifficulty($stats),
+            'answer_distribution' => self::getAnswerDistribution($questionId),
+            'students_who_got_correct' => $stats->correct()->with('student')->get()->pluck('student'),
+            'students_who_got_incorrect' => $stats->incorrect()->with('student')->get()->pluck('student'),
+        ];
+        
+        return $analytics;
+    }
+
+    /**
+     * Get answer distribution for a question
+     */
+    public static function getAnswerDistribution($questionId)
+    {
+        $stats = self::forQuestion($questionId)->answered();
+        
+        $distribution = [];
+        foreach ($stats as $stat) {
+            $answer = $stat->student_answer;
+            if (!isset($distribution[$answer])) {
+                $distribution[$answer] = 0;
+            }
+            $distribution[$answer]++;
+        }
+        
+        return $distribution;
+    }
+
+    /**
+     * Calculate question difficulty based on correct percentage
+     */
+    public static function calculateQuestionDifficulty($stats)
+    {
+        $totalAttempts = $stats->count();
+        if ($totalAttempts === 0) return 'unknown';
+        
+        $correctPercentage = ($stats->correct()->count() / $totalAttempts) * 100;
+        
+        if ($correctPercentage >= 80) return 'easy';
+        if ($correctPercentage >= 60) return 'medium';
+        return 'hard';
+    }
+
+    /**
+     * Get student performance analytics for a specific exam
+     */
+    public static function getStudentExamAnalytics($studentId, $examId)
+    {
+        $stats = self::where('student_id', $studentId)->where('exam_id', $examId);
+        
+        return [
+            'student_id' => $studentId,
+            'exam_id' => $examId,
+            'total_questions' => $stats->count(),
+            'correct_answers' => $stats->correct()->count(),
+            'incorrect_answers' => $stats->incorrect()->count(),
+            'skipped_questions' => $stats->skipped()->count(),
+            'accuracy_percentage' => $stats->count() > 0 ? round(($stats->correct()->count() / $stats->count()) * 100, 2) : 0,
+            'average_time_per_question' => $stats->whereNotNull('time_spent_seconds')->avg('time_spent_seconds'),
+            'difficulty_performance' => self::getStudentDifficultyPerformance($studentId, $examId),
+            'question_type_performance' => self::getStudentQuestionTypePerformance($studentId, $examId),
+        ];
+    }
+
+    /**
+     * Get student performance by difficulty level
+     */
+    public static function getStudentDifficultyPerformance($studentId, $examId)
+    {
+        $stats = self::where('student_id', $studentId)->where('exam_id', $examId)->with('question')->get();
+        $difficultyStats = [];
+        
+        foreach ($stats as $stat) {
+            if ($stat->question) {
+                $questionAnalytics = $stat->question->analytics;
+                $difficulty = self::calculateQuestionDifficulty(
+                    self::forQuestion($stat->question_id)
+                );
+                
+                if (!isset($difficultyStats[$difficulty])) {
+                    $difficultyStats[$difficulty] = [
+                        'total' => 0,
+                        'correct' => 0,
+                        'incorrect' => 0,
+                        'skipped' => 0,
+                    ];
+                }
+                
+                $difficultyStats[$difficulty]['total']++;
+                if ($stat->is_correct) {
+                    $difficultyStats[$difficulty]['correct']++;
+                } elseif ($stat->is_answered) {
+                    $difficultyStats[$difficulty]['incorrect']++;
+                } else {
+                    $difficultyStats[$difficulty]['skipped']++;
+                }
+            }
+        }
+        
+        return $difficultyStats;
+    }
+
+    /**
+     * Get student performance by question type
+     */
+    public static function getStudentQuestionTypePerformance($studentId, $examId)
+    {
+        $stats = self::where('student_id', $studentId)->where('exam_id', $examId);
+        $typeStats = [];
+        
+        foreach ($stats->get() as $stat) {
+            $type = $stat->question_type;
+            
+            if (!isset($typeStats[$type])) {
+                $typeStats[$type] = [
+                    'total' => 0,
+                    'correct' => 0,
+                    'incorrect' => 0,
+                    'skipped' => 0,
+                ];
+            }
+            
+            $typeStats[$type]['total']++;
+            if ($stat->is_correct) {
+                $typeStats[$type]['correct']++;
+            } elseif ($stat->is_answered) {
+                $typeStats[$type]['incorrect']++;
+            } else {
+                $typeStats[$type]['skipped']++;
+            }
+        }
+        
+        return $typeStats;
+    }
 }

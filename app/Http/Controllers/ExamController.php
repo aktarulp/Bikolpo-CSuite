@@ -430,12 +430,177 @@ class ExamController extends Controller
 
     public function results(Exam $exam)
     {
-        $results = ExamResult::where('exam_id', $exam->id)
-            ->with('student')
-            ->latest()
-            ->paginate(20);
+        // Get all assigned students for this exam
+        $assignedStudents = $exam->assignedStudents()
+            ->with(['course', 'batch'])
+            ->get();
 
-        return view('partner.exams.results', compact('exam', 'results'));
+        // Get all exam results for this exam
+        $examResults = ExamResult::where('exam_id', $exam->id)
+            ->with('student')
+            ->get()
+            ->keyBy('student_id');
+
+        // Create a combined list showing all assigned students
+        $results = collect();
+        
+        foreach ($assignedStudents as $student) {
+            $result = $examResults->get($student->id);
+            
+            if ($result) {
+                // Student has taken the exam - use actual result data
+                $results->push($result);
+            } else {
+                // Student hasn't taken the exam - create a mock result with "Absent" status
+                $mockResult = new ExamResult([
+                    'id' => 'absent_' . $student->id, // Unique ID for absent students
+                    'student_id' => $student->id,
+                    'exam_id' => $exam->id,
+                    'started_at' => null,
+                    'completed_at' => null,
+                    'total_questions' => $exam->total_questions,
+                    'correct_answers' => 0,
+                    'wrong_answers' => 0,
+                    'unanswered' => $exam->total_questions,
+                    'score' => 0,
+                    'percentage' => 0,
+                    'status' => 'absent',
+                    'answers' => [],
+                ]);
+                
+                // Set the student relationship
+                $mockResult->setRelation('student', $student);
+                $results->push($mockResult);
+            }
+        }
+
+        // Sort results: completed exams first, then absent students
+        $results = $results->sortByDesc(function ($result) {
+            return $result->status === 'absent' ? 0 : 1;
+        });
+
+        // Paginate the results
+        $perPage = 20;
+        $currentPage = request()->get('page', 1);
+        $offset = ($currentPage - 1) * $perPage;
+        $paginatedResults = $results->slice($offset, $perPage);
+        
+        // Create pagination data
+        $total = $results->count();
+        $lastPage = ceil($total / $perPage);
+        
+        $pagination = new \Illuminate\Pagination\LengthAwarePaginator(
+            $paginatedResults,
+            $total,
+            $perPage,
+            $currentPage,
+            [
+                'path' => request()->url(),
+                'pageName' => 'page',
+            ]
+        );
+
+        return view('partner.exams.results', compact('exam') + ['results' => $pagination]);
+    }
+
+    public function getResultDetails(Exam $exam, ExamResult $result)
+    {
+        // Verify the result belongs to this exam
+        if ($result->exam_id !== $exam->id) {
+            return response()->json(['error' => 'Result not found for this exam'], 404);
+        }
+
+        // Load the result with all necessary relationships
+        $result->load(['student', 'exam']);
+
+        // Get detailed analytics for this result
+        $analytics = $result->detailed_analytics;
+
+        // Get exam questions with their details
+        $questions = $exam->questions()
+            ->with(['topic', 'subject'])
+            ->orderBy('exam_questions.order')
+            ->get();
+
+        // Get the student's answers
+        $studentAnswers = $result->answers ?? [];
+
+        // Process each question with student's answer and result
+        $processedQuestions = $questions->map(function ($question, $index) use ($studentAnswers, $result) {
+            $questionAnswer = $studentAnswers[$question->id] ?? null;
+            $isCorrect = false;
+            $isSkipped = false;
+            $score = 0;
+            $timeTaken = null;
+
+            // Determine if the answer is correct, wrong, or skipped
+            if ($questionAnswer === null || $questionAnswer === '') {
+                $isSkipped = true;
+            } else {
+                if ($question->question_type === 'mcq') {
+                    $isCorrect = $questionAnswer === $question->correct_answer;
+                } else {
+                    // For descriptive questions, check if it meets minimum requirements
+                    $wordCount = str_word_count($questionAnswer);
+                    $minWords = $question->min_words ?? 10;
+                    $isCorrect = $wordCount >= $minWords;
+                }
+            }
+
+            // Calculate score for this question
+            if ($isCorrect) {
+                $score = $question->marks ?? 1;
+            }
+
+            // Parse options for MCQ questions
+            $options = null;
+            if ($question->question_type === 'mcq' && $question->options) {
+                $options = is_string($question->options) ? json_decode($question->options, true) : $question->options;
+            }
+
+            return [
+                'id' => $question->id,
+                'question_text' => $question->question_text,
+                'question_type' => $question->question_type,
+                'marks' => $question->marks ?? 1,
+                'correct_answer' => $question->correct_answer,
+                'submitted_answer' => $questionAnswer,
+                'is_correct' => $isCorrect,
+                'is_skipped' => $isSkipped,
+                'score' => $score,
+                'options' => $options,
+                'time_taken' => $timeTaken,
+                'topic' => $question->topic?->name,
+                'subject' => $question->subject?->name,
+            ];
+        });
+
+        // Prepare the response data
+        $data = [
+            'result' => [
+                'id' => $result->id,
+                'student_name' => $result->student->full_name,
+                'student_id' => $result->student->student_id,
+                'exam_title' => $result->exam->title,
+                'started_at' => $result->started_at?->format('M d, Y H:i:s'),
+                'completed_at' => $result->completed_at?->format('M d, Y H:i:s'),
+                'time_taken' => $result->time_taken,
+                'total_questions' => $result->total_questions,
+                'correct_answers' => $result->correct_answers,
+                'wrong_answers' => $result->wrong_answers,
+                'unanswered' => $result->unanswered,
+                'score' => $result->score,
+                'percentage' => $result->percentage,
+                'status' => $result->status,
+                'passing_marks' => $result->exam->passing_marks,
+                'is_passed' => $result->percentage >= $result->exam->passing_marks,
+            ],
+            'questions' => $processedQuestions,
+            'analytics' => $analytics,
+            'answers' => $studentAnswers,
+        ];
+
+        return response()->json($data);
     }
 
     public function export(Exam $exam)

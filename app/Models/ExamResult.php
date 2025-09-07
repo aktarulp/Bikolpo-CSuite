@@ -87,4 +87,128 @@ class ExamResult extends Model
     {
         return $this->hasMany(\App\Models\QuestionStat::class);
     }
+
+    /**
+     * Get detailed analytics for this exam result
+     */
+    public function getDetailedAnalyticsAttribute()
+    {
+        $questionStats = $this->questionStats;
+        
+        return [
+            'total_questions' => $questionStats->count(),
+            'correct_answers' => $questionStats->where('is_correct', true)->count(),
+            'incorrect_answers' => $questionStats->where('is_correct', false)->where('is_answered', true)->count(),
+            'skipped_questions' => $questionStats->where('is_skipped', true)->count(),
+            'unanswered_questions' => $questionStats->where('is_answered', false)->where('is_skipped', false)->count(),
+            'accuracy_percentage' => $questionStats->count() > 0 ? round(($questionStats->where('is_correct', true)->count() / $questionStats->count()) * 100, 2) : 0,
+            'average_time_per_question' => $questionStats->whereNotNull('time_spent_seconds')->avg('time_spent_seconds'),
+            'difficulty_breakdown' => $this->getDifficultyBreakdown(),
+            'question_type_breakdown' => $this->getQuestionTypeBreakdown(),
+        ];
+    }
+
+    /**
+     * Get difficulty breakdown for this exam result
+     */
+    public function getDifficultyBreakdown()
+    {
+        $questionStats = $this->questionStats;
+        $difficultyStats = [];
+        
+        foreach ($questionStats as $stat) {
+            $question = $stat->question;
+            if ($question) {
+                $analytics = $question->analytics;
+                $difficulty = $this->calculateDifficultyLevel($analytics['correct_percentage'] ?? 0);
+                
+                if (!isset($difficultyStats[$difficulty])) {
+                    $difficultyStats[$difficulty] = [
+                        'total' => 0,
+                        'correct' => 0,
+                        'incorrect' => 0,
+                        'skipped' => 0,
+                    ];
+                }
+                
+                $difficultyStats[$difficulty]['total']++;
+                if ($stat->is_correct) {
+                    $difficultyStats[$difficulty]['correct']++;
+                } elseif ($stat->is_answered) {
+                    $difficultyStats[$difficulty]['incorrect']++;
+                } else {
+                    $difficultyStats[$difficulty]['skipped']++;
+                }
+            }
+        }
+        
+        return $difficultyStats;
+    }
+
+    /**
+     * Get question type breakdown for this exam result
+     */
+    public function getQuestionTypeBreakdown()
+    {
+        $questionStats = $this->questionStats;
+        $typeStats = [];
+        
+        foreach ($questionStats as $stat) {
+            $type = $stat->question_type;
+            
+            if (!isset($typeStats[$type])) {
+                $typeStats[$type] = [
+                    'total' => 0,
+                    'correct' => 0,
+                    'incorrect' => 0,
+                    'skipped' => 0,
+                ];
+            }
+            
+            $typeStats[$type]['total']++;
+            if ($stat->is_correct) {
+                $typeStats[$type]['correct']++;
+            } elseif ($stat->is_answered) {
+                $typeStats[$type]['incorrect']++;
+            } else {
+                $typeStats[$type]['skipped']++;
+            }
+        }
+        
+        return $typeStats;
+    }
+
+    /**
+     * Calculate difficulty level based on correct percentage
+     */
+    private function calculateDifficultyLevel($correctPercentage)
+    {
+        if ($correctPercentage >= 80) return 'easy';
+        if ($correctPercentage >= 60) return 'medium';
+        return 'hard';
+    }
+
+    /**
+     * Get questions that were answered correctly
+     */
+    public function getCorrectQuestions()
+    {
+        return $this->questionStats()->where('is_correct', true)->with('question')->get();
+    }
+
+    /**
+     * Get questions that were answered incorrectly
+     */
+    public function getIncorrectQuestions()
+    {
+        return $this->questionStats()->where('is_correct', false)->where('is_answered', true)->with('question')->get();
+    }
+
+    /**
+     * Get questions that were skipped
+     */
+    public function getSkippedQuestions()
+    {
+        return $this->questionStats()->where('is_skipped', true)->with('question')->get();
+    }
 }
