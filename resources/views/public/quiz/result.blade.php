@@ -39,12 +39,43 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-inter antialiased bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 min-h-screen overflow-x-hidden">
-    <!-- Animated Background Elements -->
+<body class="font-inter antialiased bg-gradient-to-br from-slate-50 via-blue-50 via-indigo-50 to-purple-100 min-h-screen overflow-x-hidden">
+    <!-- Enhanced Geometric Background Elements -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none">
-        <div class="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-200/30 to-indigo-200/30 rounded-full blur-3xl animate-pulse"></div>
-        <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-purple-200/30 to-pink-200/30 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-cyan-200/20 to-blue-200/20 rounded-full blur-3xl animate-pulse delay-500"></div>
+        <!-- Large Geometric Shapes -->
+        <div class="absolute top-0 left-0 w-full h-full">
+            <!-- Hexagon Pattern -->
+            <div class="absolute top-20 left-10 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-indigo-500/20 transform rotate-12 animate-pulse"></div>
+            <div class="absolute top-40 right-20 w-24 h-24 bg-gradient-to-br from-purple-400/25 to-pink-500/25 transform -rotate-12 animate-pulse delay-1000"></div>
+            <div class="absolute bottom-32 left-1/4 w-40 h-40 bg-gradient-to-br from-emerald-400/20 to-teal-500/20 transform rotate-45 animate-pulse delay-500"></div>
+            
+            <!-- Triangle Shapes -->
+            <div class="absolute top-1/3 right-1/3 w-0 h-0 border-l-[30px] border-r-[30px] border-b-[52px] border-l-transparent border-r-transparent border-b-gradient-to-b from-cyan-400/30 to-blue-500/30 transform rotate-45 animate-pulse delay-700"></div>
+            <div class="absolute bottom-20 right-10 w-0 h-0 border-l-[20px] border-r-[20px] border-b-[35px] border-l-transparent border-r-transparent border-b-gradient-to-b from-rose-400/25 to-pink-500/25 transform -rotate-45 animate-pulse delay-1200"></div>
+            
+            <!-- Diamond Shapes -->
+            <div class="absolute top-1/4 left-1/3 w-16 h-16 bg-gradient-to-br from-amber-400/20 to-orange-500/20 transform rotate-45 animate-pulse delay-300"></div>
+            <div class="absolute bottom-1/3 right-1/4 w-20 h-20 bg-gradient-to-br from-violet-400/25 to-purple-500/25 transform -rotate-45 animate-pulse delay-900"></div>
+            
+            <!-- Circular Elements -->
+            <div class="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-200/30 to-indigo-200/30 rounded-full blur-3xl animate-pulse"></div>
+            <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-purple-200/30 to-pink-200/30 rounded-full blur-3xl animate-pulse delay-1000"></div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-cyan-200/20 to-blue-200/20 rounded-full blur-3xl animate-pulse delay-500"></div>
+            
+            <!-- Abstract Wave Shapes -->
+            <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-emerald-300/15 to-teal-400/15 transform rotate-12 skew-x-12 animate-pulse delay-400"></div>
+            <div class="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-rose-300/20 to-pink-400/20 transform -rotate-12 skew-y-12 animate-pulse delay-800"></div>
+            
+            <!-- Floating Geometric Elements -->
+            <div class="absolute top-1/2 left-10 w-8 h-8 bg-gradient-to-br from-yellow-400/30 to-amber-500/30 transform rotate-45 animate-bounce delay-600"></div>
+            <div class="absolute top-1/3 right-10 w-6 h-6 bg-gradient-to-br from-green-400/35 to-emerald-500/35 transform rotate-12 animate-bounce delay-1100"></div>
+            <div class="absolute bottom-1/4 left-1/2 w-10 h-10 bg-gradient-to-br from-indigo-400/25 to-purple-500/25 transform -rotate-12 animate-bounce delay-1300"></div>
+        </div>
+        
+        <!-- Subtle Grid Pattern -->
+        <div class="absolute inset-0 opacity-5">
+            <div class="w-full h-full" style="background-image: radial-gradient(circle at 1px 1px, rgba(59, 130, 246, 0.3) 1px, transparent 0); background-size: 20px 20px;"></div>
+        </div>
     </div>
 
     <div class="relative min-h-screen py-2 sm:py-4 lg:py-8">
@@ -55,9 +86,8 @@
                     <i class="fas fa-trophy text-xl sm:text-2xl lg:text-3xl text-white"></i>
                 </div>
                 <h1 class="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black text-gray-800 mb-2 sm:mb-3 px-2">
-                    Online Test Completed!
+                    Congratulations on completing Bikolpo LQ Online Test!
                 </h1>
-                <p class="text-base sm:text-lg lg:text-xl text-gray-600 font-medium px-2">Congratulations on completing {{ $exam->title }}</p>
                 <div class="mt-3 sm:mt-4 inline-flex items-center px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full shadow-lg">
                     <i class="fas fa-star text-yellow-300 mr-2 text-sm sm:text-base"></i>
                     <span class="text-white font-bold text-sm sm:text-base">Powered by Bikolpo LQ</span>
@@ -66,28 +96,70 @@
 
             <!-- Student Information Section -->
             @if($result->student)
-            <div class="relative bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-gray-100 overflow-hidden mb-4 sm:mb-6 lg:mb-8">
-                <div class="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-                    <div class="text-center">
-                        <div class="inline-flex items-center justify-center w-16 h-16 sm:w-18 sm:h-18 lg:w-20 lg:h-20 bg-white/20 backdrop-blur-sm rounded-full shadow-lg mb-3 sm:mb-4 overflow-hidden">
+            <div class="relative bg-white rounded-3xl sm:rounded-[2rem] shadow-2xl border border-gray-100 overflow-hidden mb-4 sm:mb-6 lg:mb-8 transform hover:scale-[1.02] transition-all duration-500 group">
+                <!-- Advanced Decorative Elements -->
+                <div class="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-emerald-300/25 to-teal-400/25 rounded-full -translate-y-20 translate-x-20 animate-pulse"></div>
+                <div class="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-green-300/20 to-emerald-400/20 rounded-full translate-y-16 -translate-x-16 animate-pulse delay-1000"></div>
+                <div class="absolute top-1/2 left-0 w-24 h-24 bg-gradient-to-r from-cyan-300/15 to-blue-400/15 rounded-full -translate-x-12 animate-pulse delay-500"></div>
+                <div class="absolute top-1/4 right-0 w-20 h-20 bg-gradient-to-l from-teal-300/20 to-green-400/20 rounded-full translate-x-10 animate-pulse delay-700"></div>
+                
+                <!-- Geometric Shapes Overlay -->
+                <div class="absolute inset-0 opacity-5">
+                    <div class="absolute top-8 left-8 w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 transform rotate-45 animate-spin" style="animation-duration: 20s;"></div>
+                    <div class="absolute bottom-8 right-8 w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 transform -rotate-45 animate-spin" style="animation-duration: 25s;"></div>
+                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-600 transform rotate-12 animate-pulse"></div>
+                </div>
+                
+                <div class="relative bg-gradient-to-br from-emerald-600 via-green-600 to-teal-700 px-4 sm:px-6 lg:px-8 py-6 sm:py-8 overflow-hidden">
+                    <!-- Animated Background Pattern -->
+                    <div class="absolute inset-0 opacity-15">
+                        <div class="absolute top-6 left-6 w-3 h-3 bg-white rounded-full animate-pulse"></div>
+                        <div class="absolute top-12 right-12 w-2 h-2 bg-white rounded-full animate-pulse delay-1000"></div>
+                        <div class="absolute bottom-8 left-12 w-2.5 h-2.5 bg-white rounded-full animate-pulse delay-500"></div>
+                        <div class="absolute bottom-6 right-6 w-3 h-3 bg-white rounded-full animate-pulse delay-1500"></div>
+                        <div class="absolute top-1/2 left-6 w-1.5 h-1.5 bg-white rounded-full animate-pulse delay-300"></div>
+                        <div class="absolute top-1/3 right-8 w-2 h-2 bg-white rounded-full animate-pulse delay-800"></div>
+                    </div>
+                    
+                    <!-- Floating Elements -->
+                    <div class="absolute top-4 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-yellow-300/40 rounded-full animate-bounce delay-200"></div>
+                    <div class="absolute bottom-4 right-1/4 w-1.5 h-1.5 bg-amber-300/50 rounded-full animate-bounce delay-600"></div>
+                    
+                    <div class="relative text-center">
+                        <!-- Enhanced Photo Container -->
+                        <div class="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-md rounded-full shadow-2xl mb-4 sm:mb-6 overflow-hidden border-4 border-white/40 transform hover:scale-110 hover:rotate-6 transition-all duration-500 group-hover:shadow-3xl">
+                            <div class="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-full"></div>
                             @if($result->student->photo)
                                 <img src="{{ asset('storage/' . $result->student->photo) }}" 
                                      alt="{{ $result->student->full_name ?? 'Student' }}" 
-                                     class="w-full h-full object-cover rounded-full">
+                                     class="relative w-full h-full object-cover rounded-full z-10">
                             @else
-                                <i class="fas fa-user text-xl sm:text-2xl lg:text-3xl text-white"></i>
+                                <i class="fas fa-user text-2xl sm:text-3xl lg:text-4xl text-white relative z-10"></i>
                             @endif
+                            <!-- Glow Effect -->
+                            <div class="absolute inset-0 bg-gradient-to-br from-emerald-400/30 to-teal-500/30 rounded-full blur-xl group-hover:blur-2xl transition-all duration-500"></div>
                         </div>
-                        <h2 class="text-lg sm:text-xl lg:text-2xl font-bold text-white mb-1 sm:mb-2">{{ $result->student->full_name ?? 'Student Information' }}</h2>
-                        <p class="text-green-100 text-xs sm:text-sm px-2">
-                            {{ $result->student->student_id ?? 'N/A' }}
-                            @if($result->student->phone)
-                                | {{ $result->student->phone }}
-                            @endif
-                            @if($result->student->email)
-                                | {{ $result->student->email }}
-                            @endif
-                        </p>
+                        
+                        <!-- Enhanced Name -->
+                        <h2 class="text-xl sm:text-2xl lg:text-3xl font-black text-white mb-2 sm:mb-3 drop-shadow-2xl bg-gradient-to-r from-white to-emerald-100 bg-clip-text text-transparent">
+                            {{ $result->student->full_name ?? 'Student Information' }}
+                        </h2>
+                        
+                        <!-- Enhanced Contact Info -->
+                        <div class="inline-flex items-center px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 shadow-lg">
+                            <i class="fas fa-id-card text-white/80 mr-2 text-sm"></i>
+                            <span class="text-white/90 text-xs sm:text-sm font-semibold">
+                                {{ $result->student->student_id ?? 'N/A' }}
+                                @if($result->student->phone)
+                                    <span class="mx-2 text-white/60">•</span>
+                                    <i class="fas fa-phone mr-1"></i>{{ $result->student->phone }}
+                                @endif
+                                @if($result->student->email)
+                                    <span class="mx-2 text-white/60">•</span>
+                                    <i class="fas fa-envelope mr-1"></i>{{ $result->student->email }}
+                                @endif
+                            </span>
+                        </div>
                     </div>
                 </div>
                 
@@ -97,22 +169,26 @@
                     <div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                             @if($result->student->partner)
-                            <div class="bg-purple-50 rounded-lg sm:rounded-xl p-4 border border-purple-200">
-                                <div class="flex items-center mb-2">
-                                    <i class="fas fa-building text-purple-600 mr-2 text-sm"></i>
+                            <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg sm:rounded-xl p-4 border border-purple-200 shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center mr-3">
+                                        <i class="fas fa-building text-white text-sm"></i>
+                                    </div>
                                     <span class="text-xs font-semibold text-purple-600 uppercase tracking-wide">Institution</span>
                                 </div>
-                                <div class="text-sm sm:text-base font-bold text-purple-800">{{ $result->student->partner->name ?? 'N/A' }}</div>
+                                <div class="text-sm sm:text-base font-bold text-purple-800 leading-tight">{{ $result->student->partner->name ?? 'N/A' }}</div>
                             </div>
                             @endif
                             
                             @if($result->student->course)
-                            <div class="bg-blue-50 rounded-lg sm:rounded-xl p-4 border border-blue-200">
-                                <div class="flex items-center mb-2">
-                                    <i class="fas fa-book text-blue-600 mr-2 text-sm"></i>
+                            <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg sm:rounded-xl p-4 border border-blue-200 shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+                                <div class="flex items-center mb-3">
+                                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mr-3">
+                                        <i class="fas fa-book text-white text-sm"></i>
+                                    </div>
                                     <span class="text-xs font-semibold text-blue-600 uppercase tracking-wide">Course</span>
                                 </div>
-                                <div class="text-sm sm:text-base font-bold text-blue-800">{{ $result->student->course->name ?? 'N/A' }}</div>
+                                <div class="text-sm sm:text-base font-bold text-blue-800 leading-tight">{{ $result->student->course->name ?? 'N/A' }}</div>
                             </div>
                             @endif
                         </div>
@@ -130,8 +206,16 @@
                         <div class="inline-flex items-center justify-center w-16 h-16 sm:w-18 sm:h-18 lg:w-20 lg:h-20 bg-white/20 backdrop-blur-sm rounded-full shadow-lg mb-3 sm:mb-4">
                             <i class="fas fa-trophy text-xl sm:text-2xl lg:text-3xl text-white"></i>
                         </div>
-                        <h1 class="text-lg sm:text-xl lg:text-2xl font-bold text-white mb-1 sm:mb-2">Online Test Completed!</h1>
-                        <p class="text-blue-100 text-xs sm:text-sm px-2">{{ $exam->title }}</p>
+                        <h1 class="text-lg sm:text-xl lg:text-2xl font-bold text-white mb-1 sm:mb-2">Exam Results</h1>
+                        <p class="text-blue-100 text-xs sm:text-sm px-2">
+                            <span class="inline-flex items-center px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-semibold text-white mr-2">
+                                <i class="fas fa-bookmark mr-1"></i>
+                                Exam:
+                            </span>
+                            <span class="inline-flex items-center px-3 py-1 bg-gradient-to-r from-yellow-400/30 to-amber-500/30 backdrop-blur-sm rounded-full text-xs sm:text-sm font-bold text-white border border-yellow-300/50 shadow-lg">
+                                {{ $exam->title }}
+                            </span>
+                        </p>
                     </div>
                 </div>
                 
@@ -141,9 +225,9 @@
                     <div class="text-center mb-6 sm:mb-8">
                         <div class="inline-flex items-center justify-center w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-full shadow-xl mb-4 sm:mb-6 relative">
                             <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-full"></div>
-                            <div class="relative text-center">
-                                <div class="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-1">{{ number_format($result->percentage ?? 0, 1) }}%</div>
-                                <div class="text-xs text-white font-medium">SCORE</div>
+                            <div class="relative text-center px-2">
+                                <div class="text-lg sm:text-xl lg:text-2xl font-bold text-white leading-tight">{{ number_format($result->percentage ?? 0, 1) }}%</div>
+                                <div class="text-xs text-white font-medium leading-none">SCORE</div>
                             </div>
                         </div>
                         
