@@ -401,30 +401,83 @@
                     </div>
 
                     <!-- Time Information -->
-                    <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg sm:rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8 border border-slate-200 shadow-lg">
-                        <h3 class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800 mb-4 sm:mb-6 text-center flex items-center justify-center">
-                            <i class="fas fa-clock text-blue-600 mr-2 sm:mr-3 text-sm sm:text-base"></i>
-                            Time Information
-                        </h3>
-                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4">
-                            <div class="text-center p-3 sm:p-4 bg-white rounded-lg sm:rounded-xl border border-slate-200 shadow-md">
-                                <div class="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2 font-semibold">Started At</div>
-                                <div class="text-xs sm:text-sm font-bold text-gray-800">{{ $result->started_at ? $result->started_at->format('M d, g:i A') : 'N/A' }}</div>
-                            </div>
-                            
-                            <div class="text-center p-3 sm:p-4 bg-white rounded-lg sm:rounded-xl border border-slate-200 shadow-md">
-                                <div class="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2 font-semibold">Completed At</div>
-                                <div class="text-xs sm:text-sm font-bold text-gray-800">{{ $result->completed_at ? $result->completed_at->format('M d, g:i A') : 'N/A' }}</div>
-                            </div>
-                            
-                            <div class="text-center p-3 sm:p-4 bg-white rounded-lg sm:rounded-xl border border-slate-200 shadow-md">
-                                <div class="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2 font-semibold">Time Taken</div>
-                                <div class="text-xs sm:text-sm font-bold text-gray-800">{{ ($result->started_at && $result->completed_at) ? $result->started_at->diffInMinutes($result->completed_at) : 'N/A' }} min</div>
-                            </div>
-                            
-                            <div class="text-center p-3 sm:p-4 bg-white rounded-lg sm:rounded-xl border border-slate-200 shadow-md">
-                                <div class="text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2 font-semibold">Time Limit</div>
-                                <div class="text-xs sm:text-sm font-bold text-gray-800">{{ $exam->duration ?? 'N/A' }} min</div>
+                    <div class="relative bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-100 rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8 border border-indigo-200/50 shadow-xl overflow-hidden">
+                        <!-- Decorative Elements -->
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-200/20 to-blue-300/20 rounded-full -translate-y-12 translate-x-12"></div>
+                        <div class="absolute bottom-0 left-0 w-20 h-20 bg-gradient-to-tr from-cyan-200/20 to-blue-300/20 rounded-full translate-y-10 -translate-x-10"></div>
+                        
+                        <div class="relative">
+                            <h3 class="text-lg sm:text-xl font-black text-gray-800 mb-4 sm:mb-5 text-center bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                                <i class="fas fa-clock text-indigo-500 mr-2"></i>
+                                Time Information
+                            </h3>
+                            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                                <!-- Started At Card -->
+                                <div class="group relative bg-gradient-to-br from-green-50 to-emerald-100 rounded-xl p-3 sm:p-4 border border-green-200/50 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 overflow-hidden">
+                                    <div class="absolute top-0 right-0 w-12 h-12 bg-gradient-to-br from-green-400/20 to-emerald-500/20 rounded-full -translate-y-6 translate-x-6"></div>
+                                    <div class="relative text-center">
+                                        <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center mb-2 shadow-lg mx-auto">
+                                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="text-xs font-semibold text-green-600 uppercase tracking-wide mb-1">Started At</div>
+                                        <div class="text-xs sm:text-sm font-bold text-green-800 leading-tight">{{ $result->started_at ? $result->started_at->format('M d, g:i A') : 'N/A' }}</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Completed At Card -->
+                                <div class="group relative bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-3 sm:p-4 border border-blue-200/50 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 overflow-hidden">
+                                    <div class="absolute top-0 right-0 w-12 h-12 bg-gradient-to-br from-blue-400/20 to-indigo-500/20 rounded-full -translate-y-6 translate-x-6"></div>
+                                    <div class="relative text-center">
+                                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center mb-2 shadow-lg mx-auto">
+                                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="text-xs font-semibold text-blue-600 uppercase tracking-wide mb-1">Completed At</div>
+                                        <div class="text-xs sm:text-sm font-bold text-blue-800 leading-tight">{{ $result->completed_at ? $result->completed_at->format('M d, g:i A') : 'N/A' }}</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Time Taken Card -->
+                                <div class="group relative bg-gradient-to-br from-purple-50 to-violet-100 rounded-xl p-3 sm:p-4 border border-purple-200/50 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 overflow-hidden">
+                                    <div class="absolute top-0 right-0 w-12 h-12 bg-gradient-to-br from-purple-400/20 to-violet-500/20 rounded-full -translate-y-6 translate-x-6"></div>
+                                    <div class="relative text-center">
+                                        <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-violet-600 rounded-lg flex items-center justify-center mb-2 shadow-lg mx-auto">
+                                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="text-xs font-semibold text-purple-600 uppercase tracking-wide mb-1">Time Taken</div>
+                                        <div class="text-xs sm:text-sm font-bold text-purple-800 leading-tight">
+                                            @if($result->started_at && $result->completed_at)
+                                                @php
+                                                    $totalSeconds = $result->started_at->diffInSeconds($result->completed_at);
+                                                    $minutes = floor($totalSeconds / 60);
+                                                    $seconds = $totalSeconds % 60;
+                                                @endphp
+                                                {{ $minutes }}m {{ $seconds }}s
+                                            @else
+                                                N/A
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Time Limit Card -->
+                                <div class="group relative bg-gradient-to-br from-amber-50 to-orange-100 rounded-xl p-3 sm:p-4 border border-amber-200/50 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 overflow-hidden">
+                                    <div class="absolute top-0 right-0 w-12 h-12 bg-gradient-to-br from-amber-400/20 to-orange-500/20 rounded-full -translate-y-6 translate-x-6"></div>
+                                    <div class="relative text-center">
+                                        <div class="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-600 rounded-lg flex items-center justify-center mb-2 shadow-lg mx-auto">
+                                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="text-xs font-semibold text-amber-600 uppercase tracking-wide mb-1">Time Limit</div>
+                                        <div class="text-xs sm:text-sm font-bold text-amber-800 leading-tight">{{ $exam->duration ?? 'N/A' }} min</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

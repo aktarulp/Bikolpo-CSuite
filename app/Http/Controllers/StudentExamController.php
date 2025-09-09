@@ -177,6 +177,11 @@ class StudentExamController extends Controller
                         $isCorrect = true;
                     } else {
                         $wrongAnswers++;
+                        // Apply negative marking for wrong answers if enabled
+                        if ($exam->has_negative_marking) {
+                            $negativeMarks = $exam->negative_marks_per_question ?? 0;
+                            $score -= $negativeMarks;
+                        }
                     }
                 } else {
                     // For descriptive questions, give partial marks based on word count
@@ -197,6 +202,11 @@ class StudentExamController extends Controller
                         $isCorrect = true;
                     } else {
                         $wrongAnswers++;
+                        // Apply negative marking for descriptive questions that don't meet word requirements
+                        if ($exam->has_negative_marking) {
+                            $negativeMarks = $exam->negative_marks_per_question ?? 0;
+                            $score -= $negativeMarks;
+                        }
                     }
                 }
             }
@@ -220,6 +230,9 @@ class StudentExamController extends Controller
             ]);
         }
 
+        // Ensure score doesn't go below 0
+        $score = max(0, $score);
+        
         $percentage = $totalMarks > 0 ? ($score / $totalMarks) * 100 : 0;
 
         return [

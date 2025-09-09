@@ -965,7 +965,44 @@ class PublicQuizController extends Controller
         // Don't clear quiz_result session - allow re-access to results
         // session()->forget('quiz_result');
 
-        return view('public.quiz.result', compact('exam', 'result'));
+        // Get question statistics for enhanced analytics
+        $questionStats = [];
+        $examQuestions = $exam->questions()->orderBy('pivot_order')->get();
+        
+        foreach ($examQuestions as $question) {
+            $questionAnalytics = \App\Models\QuestionStat::getQuestionDetailedAnalytics($question->id);
+            $questionStats[] = [
+                'question' => $question,
+                'analytics' => $questionAnalytics,
+                'student_answer' => $result->answers[$question->id] ?? null,
+                'is_correct' => $this->isAnswerCorrect($question, $result->answers[$question->id] ?? null),
+            ];
+        }
+
+        // Get overall exam analytics
+        $examAnalytics = \App\Models\QuestionStat::getExamQuestionAnalytics($exam->id);
+        
+        // Get student performance for this specific exam
+        $studentAnalytics = \App\Models\QuestionStat::getStudentExamAnalytics($result->student_id, $exam->id);
+
+        return view('public.quiz.result', compact('exam', 'result', 'questionStats', 'examAnalytics', 'studentAnalytics'));
+    }
+
+    /**
+     * Check if student answer is correct
+     */
+    private function isAnswerCorrect($question, $studentAnswer)
+    {
+        if (empty($studentAnswer)) {
+            return false;
+        }
+
+        if ($question->question_type === 'mcq') {
+            return $studentAnswer === $question->correct_answer;
+        }
+
+        // For other question types, you might need different logic
+        return false;
     }
 
     /**
@@ -1004,6 +1041,11 @@ class PublicQuizController extends Controller
                         $isCorrect = true;
                     } else {
                         $wrongAnswers++;
+                        // Apply negative marking for wrong answers if enabled
+                        if ($exam->has_negative_marking) {
+                            $negativeMarks = $exam->negative_marks_per_question ?? 0;
+                            $score -= $negativeMarks;
+                        }
                     }
                 } else {
                     // For descriptive questions, give partial marks based on word count
@@ -1024,6 +1066,11 @@ class PublicQuizController extends Controller
                         $isCorrect = true;
                     } else {
                         $wrongAnswers++;
+                        // Apply negative marking for descriptive questions that don't meet word requirements
+                        if ($exam->has_negative_marking) {
+                            $negativeMarks = $exam->negative_marks_per_question ?? 0;
+                            $score -= $negativeMarks;
+                        }
                     }
                 }
             }
@@ -1047,6 +1094,9 @@ class PublicQuizController extends Controller
             ]);
         }
 
+        // Ensure score doesn't go below 0
+        $score = max(0, $score);
+        
         $percentage = $totalMarks > 0 ? ($score / $totalMarks) * 100 : 0;
 
         return [
