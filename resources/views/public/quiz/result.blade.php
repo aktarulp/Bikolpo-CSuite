@@ -202,46 +202,51 @@
             <div class="relative bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-gray-100 overflow-hidden mb-4 sm:mb-6 lg:mb-8 transform hover:scale-[1.01] transition-all duration-300">
                 <!-- Professional Header -->
                 <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-                    <div class="text-center">
-                        <div class="inline-flex items-center justify-center w-16 h-16 sm:w-18 sm:h-18 lg:w-20 lg:h-20 bg-white/20 backdrop-blur-sm rounded-full shadow-lg mb-3 sm:mb-4">
-                            <i class="fas fa-trophy text-xl sm:text-2xl lg:text-3xl text-white"></i>
+                    <div class="flex flex-col lg:flex-row items-center justify-between gap-4 lg:gap-6">
+                        <!-- Left Side - Title and Exam Info -->
+                        <div class="text-center lg:text-left flex-1">
+                            <div class="inline-flex items-center justify-center w-16 h-16 sm:w-18 sm:h-18 lg:w-20 lg:h-20 bg-white/20 backdrop-blur-sm rounded-full shadow-lg mb-3 sm:mb-4">
+                                <i class="fas fa-trophy text-xl sm:text-2xl lg:text-3xl text-white"></i>
+                            </div>
+                            <h1 class="text-lg sm:text-xl lg:text-2xl font-bold text-white mb-1 sm:mb-2">Exam Results</h1>
+                            <p class="text-blue-100 text-xs sm:text-sm px-2">
+                                <span class="inline-flex items-center px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-semibold text-white mr-2">
+                                    <i class="fas fa-bookmark mr-1"></i>
+                                    Exam:
+                                </span>
+                                <span class="inline-flex items-center px-3 py-1 bg-gradient-to-r from-yellow-400/30 to-amber-500/30 backdrop-blur-sm rounded-full text-xs sm:text-sm font-bold text-white border border-yellow-300/50 shadow-lg">
+                                    {{ $exam->title }}
+                                </span>
+                            </p>
                         </div>
-                        <h1 class="text-lg sm:text-xl lg:text-2xl font-bold text-white mb-1 sm:mb-2">Exam Results</h1>
-                        <p class="text-blue-100 text-xs sm:text-sm px-2">
-                            <span class="inline-flex items-center px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs font-semibold text-white mr-2">
-                                <i class="fas fa-bookmark mr-1"></i>
-                                Exam:
-                            </span>
-                            <span class="inline-flex items-center px-3 py-1 bg-gradient-to-r from-yellow-400/30 to-amber-500/30 backdrop-blur-sm rounded-full text-xs sm:text-sm font-bold text-white border border-yellow-300/50 shadow-lg">
-                                {{ $exam->title }}
-                            </span>
-                        </p>
+                        
+                        <!-- Right Side - Score Card -->
+                        <div class="flex flex-col items-center lg:items-end">
+                            <!-- Score Circle -->
+                            <div class="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 bg-gradient-to-br from-white/25 to-white/10 backdrop-blur-md rounded-full shadow-2xl mb-3 relative border-2 border-white/30">
+                                <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-full"></div>
+                                <div class="relative text-center px-2">
+                                    <div class="text-lg sm:text-xl lg:text-2xl font-bold text-white leading-tight">{{ number_format($result->percentage ?? 0, 1) }}%</div>
+                                    <div class="text-xs text-white font-medium leading-none">SCORE</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Status Badge -->
+                            <div class="inline-flex items-center px-4 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-semibold shadow-lg
+                                @if(($result->percentage ?? 0) >= ($exam->passing_marks ?? 50))
+                                    bg-gradient-to-r from-green-500 to-emerald-600 text-white border border-green-400/50
+                                @else
+                                    bg-gradient-to-r from-red-500 to-rose-600 text-white border border-red-400/50
+                                @endif">
+                                <i class="fas fa-{{ ($result->percentage ?? 0) >= ($exam->passing_marks ?? 50) ? 'check-circle' : 'times-circle' }} mr-2"></i>
+                                {{ ($result->percentage ?? 0) >= ($exam->passing_marks ?? 50) ? 'PASSED' : 'FAILED' }}
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
                 <!-- Main Content -->
                 <div class="relative p-4 sm:p-6 lg:p-8">
-                    <!-- Score Section -->
-                    <div class="text-center mb-6 sm:mb-8">
-                        <div class="inline-flex items-center justify-center w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-full shadow-xl mb-4 sm:mb-6 relative">
-                            <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-full"></div>
-                            <div class="relative text-center px-2">
-                                <div class="text-lg sm:text-xl lg:text-2xl font-bold text-white leading-tight">{{ number_format($result->percentage ?? 0, 1) }}%</div>
-                                <div class="text-xs text-white font-medium leading-none">SCORE</div>
-                            </div>
-                        </div>
-                        
-                        <!-- Status Badge -->
-                        <div class="inline-flex items-center px-4 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-semibold shadow-md mb-3 sm:mb-4
-                            @if(($result->percentage ?? 0) >= ($exam->passing_marks ?? 50))
-                                bg-green-100 text-green-800 border border-green-200
-                            @else
-                                bg-red-100 text-red-800 border border-red-200
-                            @endif">
-                            <i class="fas fa-{{ ($result->percentage ?? 0) >= ($exam->passing_marks ?? 50) ? 'check-circle' : 'times-circle' }} mr-2"></i>
-                            {{ ($result->percentage ?? 0) >= ($exam->passing_marks ?? 50) ? 'PASSED' : 'FAILED' }}
-                        </div>
-                    </div>
 
                     <!-- Performance Stats Grid -->
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4 mb-6 sm:mb-8">
