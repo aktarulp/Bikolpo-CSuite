@@ -206,11 +206,15 @@ class QuestionStat extends Model
         
         $distribution = [];
         foreach ($stats as $stat) {
-            $answer = $stat->student_answer;
-            if (!isset($distribution[$answer])) {
-                $distribution[$answer] = 0;
+            // Handle both model objects and arrays
+            $answer = is_array($stat) ? ($stat['student_answer'] ?? null) : ($stat->student_answer ?? null);
+            
+            if ($answer !== null) {
+                if (!isset($distribution[$answer])) {
+                    $distribution[$answer] = 0;
+                }
+                $distribution[$answer]++;
             }
-            $distribution[$answer]++;
         }
         
         return $distribution;

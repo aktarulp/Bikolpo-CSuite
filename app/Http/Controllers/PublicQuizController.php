@@ -965,44 +965,7 @@ class PublicQuizController extends Controller
         // Don't clear quiz_result session - allow re-access to results
         // session()->forget('quiz_result');
 
-        // Get question statistics for enhanced analytics
-        $questionStats = [];
-        $examQuestions = $exam->questions()->orderBy('pivot_order')->get();
-        
-        foreach ($examQuestions as $question) {
-            $questionAnalytics = \App\Models\QuestionStat::getQuestionDetailedAnalytics($question->id);
-            $questionStats[] = [
-                'question' => $question,
-                'analytics' => $questionAnalytics,
-                'student_answer' => $result->answers[$question->id] ?? null,
-                'is_correct' => $this->isAnswerCorrect($question, $result->answers[$question->id] ?? null),
-            ];
-        }
-
-        // Get overall exam analytics
-        $examAnalytics = \App\Models\QuestionStat::getExamQuestionAnalytics($exam->id);
-        
-        // Get student performance for this specific exam
-        $studentAnalytics = \App\Models\QuestionStat::getStudentExamAnalytics($result->student_id, $exam->id);
-
-        return view('public.quiz.result', compact('exam', 'result', 'questionStats', 'examAnalytics', 'studentAnalytics'));
-    }
-
-    /**
-     * Check if student answer is correct
-     */
-    private function isAnswerCorrect($question, $studentAnswer)
-    {
-        if (empty($studentAnswer)) {
-            return false;
-        }
-
-        if ($question->question_type === 'mcq') {
-            return $studentAnswer === $question->correct_answer;
-        }
-
-        // For other question types, you might need different logic
-        return false;
+        return view('public.quiz.result', compact('exam', 'result'));
     }
 
     /**
