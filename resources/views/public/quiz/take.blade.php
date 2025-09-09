@@ -178,18 +178,22 @@
                         </div>
 
                         <!-- Navigation Buttons -->
-                        <div class="flex flex-col sm:flex-row justify-between items-center mt-4 sm:mt-6 md:mt-8 lg:mt-10 gap-2 sm:gap-3 md:gap-0">
-                            <button type="button" id="prev-btn" class="w-full sm:w-auto px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-full text-xs sm:text-sm font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] sm:min-h-[40px]">
-                                ← Previous
+                        <div class="nav-buttons flex flex-row justify-between items-center mt-4 sm:mt-6 md:mt-8 lg:mt-10 gap-1 sm:gap-2 md:gap-3">
+                            <button type="button" id="prev-btn" class="flex-1 sm:flex-none px-2 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-full text-xs sm:text-sm font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] sm:min-h-[40px]">
+                                <span class="hidden sm:inline">← Previous</span>
+                                <span class="sm:hidden">← Prev</span>
                             </button>
-                            <div class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 md:space-x-4 w-full sm:w-auto">
-                                <button type="button" id="skip-btn" class="w-full sm:w-auto px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-full text-xs sm:text-sm font-semibold text-white bg-orange-500 hover:bg-orange-600 transition-colors duration-200 shadow-lg min-h-[44px] sm:min-h-[40px]">Skip</button>
-                                <button type="button" id="submit-btn" class="w-full sm:w-auto px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-full text-xs sm:text-sm font-bold text-white bg-green-500 hover:bg-green-600 transition-colors duration-200 shadow-lg min-h-[44px] sm:min-h-[40px]">
-                                    🚀 Submit
-                                </button>
-                            </div>
-                            <button type="button" id="next-btn" class="w-full sm:w-auto px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-full text-xs sm:text-sm font-semibold text-white bg-blue-500 hover:bg-blue-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] sm:min-h-[40px]">
-                                Next →
+                            <button type="button" id="skip-btn" class="flex-1 sm:flex-none px-2 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-full text-xs sm:text-sm font-semibold text-white bg-orange-500 hover:bg-orange-600 transition-colors duration-200 shadow-lg min-h-[44px] sm:min-h-[40px]">
+                                <span class="hidden sm:inline">Skip</span>
+                                <span class="sm:hidden">Skip</span>
+                            </button>
+                            <button type="button" id="submit-btn" class="flex-1 sm:flex-none px-2 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-full text-xs sm:text-sm font-bold text-white bg-green-500 hover:bg-green-600 transition-colors duration-200 shadow-lg min-h-[44px] sm:min-h-[40px]">
+                                <span class="hidden sm:inline">🚀 Submit</span>
+                                <span class="sm:hidden">Submit</span>
+                            </button>
+                            <button type="button" id="next-btn" class="flex-1 sm:flex-none px-2 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-full text-xs sm:text-sm font-semibold text-white bg-blue-500 hover:bg-blue-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] sm:min-h-[40px]">
+                                <span class="hidden sm:inline">Next →</span>
+                                <span class="sm:hidden">Next →</span>
                             </button>
                         </div>
                     </form>
@@ -198,7 +202,7 @@
                 <!-- Question Navigator and Legend -->
                 <div class="w-full lg:w-1/3 landscape:w-1/3 bg-gray-50 p-3 sm:p-4 md:p-6 landscape:p-4 rounded-xl shadow-inner">
                     <h3 class="text-sm sm:text-base md:text-lg font-semibold text-gray-800 mb-2 sm:mb-3 md:mb-4">Question Navigator</h3>
-                    <div id="navigator-container" class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-6 gap-1.5 sm:gap-2 mb-3 sm:mb-4 md:mb-6">
+                    <div id="navigator-container" class="grid grid-cols-6 sm:grid-cols-7 md:grid-cols-8 lg:grid-cols-6 gap-1 sm:gap-1.5 md:gap-2 mb-3 sm:mb-4 md:mb-6">
                         <!-- Navigator buttons dynamically added here -->
                     </div>
 
@@ -437,9 +441,9 @@
         }
         
         .navigator-btn {
-            min-height: 32px;
-            min-width: 32px;
-            font-size: 11px;
+            min-height: 24px;
+            min-width: 24px;
+            font-size: 9px;
         }
         
         /* Reduce padding on very small screens */
@@ -449,6 +453,40 @@
         
         .quiz-container {
             padding: 12px;
+        }
+        
+        /* More columns on very small screens */
+        #navigator-container {
+            grid-template-columns: repeat(auto-fit, minmax(24px, 1fr)) !important;
+            gap: 2px !important;
+        }
+    }
+    
+    /* Small mobile devices */
+    @media (min-width: 481px) and (max-width: 640px) {
+        #navigator-container {
+            grid-template-columns: repeat(auto-fit, minmax(32px, 1fr)) !important;
+            gap: 4px !important;
+        }
+        
+        .navigator-btn {
+            min-height: 32px !important;
+            min-width: 32px !important;
+            font-size: 11px !important;
+        }
+    }
+    
+    /* Medium mobile devices */
+    @media (min-width: 641px) and (max-width: 768px) {
+        #navigator-container {
+            grid-template-columns: repeat(auto-fit, minmax(36px, 1fr)) !important;
+            gap: 5px !important;
+        }
+        
+        .navigator-btn {
+            min-height: 36px !important;
+            min-width: 36px !important;
+            font-size: 12px !important;
         }
     }
     
@@ -482,6 +520,39 @@
         
         .navigator-btn:active {
             transform: scale(0.95);
+        }
+        
+        /* Navigation buttons in single row */
+        .nav-buttons {
+            gap: 4px;
+        }
+        
+        /* Ensure buttons fit well in single row */
+        #prev-btn, #skip-btn, #submit-btn, #next-btn {
+            font-size: 11px;
+            padding: 8px 4px;
+            min-height: 40px;
+        }
+        
+        /* Make sure text doesn't wrap */
+        .nav-buttons button {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* Responsive question navigator grid */
+        #navigator-container {
+            grid-template-columns: repeat(auto-fit, minmax(28px, 1fr)) !important;
+            gap: 3px !important;
+        }
+        
+        /* Smaller navigator buttons on mobile */
+        .navigator-btn {
+            min-height: 28px !important;
+            min-width: 28px !important;
+            font-size: 10px !important;
+            padding: 2px !important;
         }
     }
     

@@ -64,6 +64,64 @@
                 </div>
             </div>
 
+            <!-- Student Information Section -->
+            @if($result->student)
+            <div class="relative bg-white rounded-2xl sm:rounded-3xl shadow-xl border border-gray-100 overflow-hidden mb-4 sm:mb-6 lg:mb-8">
+                <div class="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+                    <div class="text-center">
+                        <div class="inline-flex items-center justify-center w-16 h-16 sm:w-18 sm:h-18 lg:w-20 lg:h-20 bg-white/20 backdrop-blur-sm rounded-full shadow-lg mb-3 sm:mb-4 overflow-hidden">
+                            @if($result->student->photo)
+                                <img src="{{ asset('storage/' . $result->student->photo) }}" 
+                                     alt="{{ $result->student->full_name ?? 'Student' }}" 
+                                     class="w-full h-full object-cover rounded-full">
+                            @else
+                                <i class="fas fa-user text-xl sm:text-2xl lg:text-3xl text-white"></i>
+                            @endif
+                        </div>
+                        <h2 class="text-lg sm:text-xl lg:text-2xl font-bold text-white mb-1 sm:mb-2">{{ $result->student->full_name ?? 'Student Information' }}</h2>
+                        <p class="text-green-100 text-xs sm:text-sm px-2">
+                            {{ $result->student->student_id ?? 'N/A' }}
+                            @if($result->student->phone)
+                                | {{ $result->student->phone }}
+                            @endif
+                            @if($result->student->email)
+                                | {{ $result->student->email }}
+                            @endif
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="p-4 sm:p-6 lg:p-8">
+                    
+                    @if($result->student->course || $result->student->partner)
+                    <div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                            @if($result->student->partner)
+                            <div class="bg-purple-50 rounded-lg sm:rounded-xl p-4 border border-purple-200">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-building text-purple-600 mr-2 text-sm"></i>
+                                    <span class="text-xs font-semibold text-purple-600 uppercase tracking-wide">Institution</span>
+                                </div>
+                                <div class="text-sm sm:text-base font-bold text-purple-800">{{ $result->student->partner->name ?? 'N/A' }}</div>
+                            </div>
+                            @endif
+                            
+                            @if($result->student->course)
+                            <div class="bg-blue-50 rounded-lg sm:rounded-xl p-4 border border-blue-200">
+                                <div class="flex items-center mb-2">
+                                    <i class="fas fa-book text-blue-600 mr-2 text-sm"></i>
+                                    <span class="text-xs font-semibold text-blue-600 uppercase tracking-wide">Course</span>
+                                </div>
+                                <div class="text-sm sm:text-base font-bold text-blue-800">{{ $result->student->course->name ?? 'N/A' }}</div>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+                    @endif
+                </div>
+            </div>
+            @endif
+
             <!-- Professional Result Card -->
             <div class="relative bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-gray-100 overflow-hidden mb-4 sm:mb-6 lg:mb-8 transform hover:scale-[1.01] transition-all duration-300">
                 <!-- Professional Header -->

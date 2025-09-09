@@ -884,12 +884,12 @@ class PublicQuizController extends Controller
         
         if ($resultInfo && $resultInfo['exam_id'] == $exam->id) {
             // Use result info from session
-            $result = ExamResult::where('id', $resultInfo['result_id'])
+            $result = ExamResult::with(['student.course', 'student.partner'])->where('id', $resultInfo['result_id'])
                 ->where('exam_id', $exam->id)
                 ->first();
         } elseif ($accessInfo && $accessInfo['exam_id'] == $exam->id) {
             // Use access info from session - look for any result for this student and exam
-            $result = ExamResult::where('student_id', $accessInfo['student_id'])
+            $result = ExamResult::with(['student.course', 'student.partner'])->where('student_id', $accessInfo['student_id'])
                 ->where('exam_id', $exam->id)
                 ->where('status', 'completed')
                 ->latest('completed_at')
@@ -897,14 +897,14 @@ class PublicQuizController extends Controller
                 
             // If no completed result found, look for any result
             if (!$result) {
-                $result = ExamResult::where('student_id', $accessInfo['student_id'])
+                $result = ExamResult::with(['student.course', 'student.partner'])->where('student_id', $accessInfo['student_id'])
                     ->where('exam_id', $exam->id)
                     ->latest('created_at')
                     ->first();
             }
         } else {
             // Look for the most recent completed result for this exam
-            $result = ExamResult::where('exam_id', $exam->id)
+            $result = ExamResult::with(['student.course', 'student.partner'])->where('exam_id', $exam->id)
                 ->where('status', 'completed')
                 ->latest('completed_at')
                 ->first();
@@ -928,7 +928,7 @@ class PublicQuizController extends Controller
             // For submitted access codes, try to find any result or create a placeholder
             if ($accessInfo && $accessInfo['exam_id'] == $exam->id) {
                 // Look for any result for this student and exam, regardless of status
-                $result = ExamResult::where('student_id', $accessInfo['student_id'])
+                $result = ExamResult::with(['student.course', 'student.partner'])->where('student_id', $accessInfo['student_id'])
                     ->where('exam_id', $exam->id)
                     ->latest('created_at')
                     ->first();
