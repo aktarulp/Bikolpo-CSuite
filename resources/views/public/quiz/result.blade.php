@@ -248,41 +248,36 @@
                 <!-- Main Content -->
                 <div class="relative p-4 sm:p-6 lg:p-8">
 
-                    <!-- Performance Stats Grid -->
+                    <!-- Performance Stats Grid - Professional Slim Design -->
                     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
-                        <!-- Total Questions Card - New Design -->
-                        <div class="group relative bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-3 sm:p-4 border border-blue-200/50 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 overflow-hidden">
-                            <div class="absolute top-0 right-0 w-12 h-12 bg-gradient-to-br from-blue-400/20 to-indigo-500/20 rounded-full -translate-y-6 translate-x-6"></div>
-                            
+                        <!-- Total Questions Card -->
+                        <div class="group relative bg-white rounded-xl p-3 sm:p-4 border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
                             <div class="relative">
-                                <!-- Top Section - Icon and Main Info -->
-                                <div class="flex items-center justify-between mb-3">
-                                    <div class="flex items-center">
-                                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg">
-                                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                            </svg>
-                                        </div>
-                                        <span class="text-xs font-semibold text-blue-600 uppercase tracking-wide ml-2">Total Questions</span>
+                                <!-- Top Section - Icon and Label -->
+                                <div class="flex items-center mb-2">
+                                    <div class="w-6 h-6 bg-blue-500 rounded-md flex items-center justify-center mr-2">
+                                        <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
                                     </div>
+                                    <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Total Questions</span>
                                 </div>
                                 
                                 <!-- Center Section - Main Number -->
-                                <div class="text-center mb-3">
-                                    <div class="text-2xl sm:text-3xl font-black text-blue-800">{{ $result->total_questions ?? 0 }}</div>
+                                <div class="text-center mb-2">
+                                    <div class="text-xl sm:text-2xl font-bold text-gray-800">{{ $result->total_questions ?? 0 }}</div>
                                 </div>
                                 
                                 <!-- Bottom Section - Total Marks -->
-                                <div class="bg-gradient-to-r from-blue-100 to-indigo-100 rounded-lg p-2 border border-blue-200/50">
+                                <div class="bg-gray-50 rounded-md p-2 border border-gray-100">
                                     <div class="flex items-center justify-center">
-                                        <svg class="w-4 h-4 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-3 h-3 text-gray-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                                         </svg>
-                                        <span class="text-xs font-semibold text-blue-600 uppercase tracking-wide mr-2">Total Marks:</span>
-                                        <span class="text-sm font-bold text-blue-800">
+                                        <span class="text-xs font-medium text-gray-600 mr-1">Total Marks:</span>
+                                        <span class="text-xs font-bold text-gray-800">
                                             @php
                                                 $totalMarks = 0;
-                                                // Calculate total marks for this specific exam
                                                 $questions = $exam->questions()->get();
                                                 foreach ($questions as $question) {
                                                     $totalMarks += $question->pivot->marks ?? 1;
@@ -295,40 +290,35 @@
                             </div>
                         </div>
                         
-                        <!-- Correct Answers Card - New Design -->
-                        <div class="group relative bg-gradient-to-br from-green-50 to-emerald-100 rounded-xl p-3 sm:p-4 border border-green-200/50 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 overflow-hidden">
-                            <div class="absolute top-0 right-0 w-12 h-12 bg-gradient-to-br from-green-400/20 to-emerald-500/20 rounded-full -translate-y-6 translate-x-6"></div>
-                            
+                        <!-- Correct Answers Card -->
+                        <div class="group relative bg-white rounded-xl p-3 sm:p-4 border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
                             <div class="relative">
-                                <!-- Top Section - Icon and Main Info -->
-                                <div class="flex items-center justify-between mb-3">
-                                    <div class="flex items-center">
-                                        <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center shadow-lg">
-                                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                            </svg>
-                                        </div>
-                                        <span class="text-xs font-semibold text-green-600 uppercase tracking-wide ml-2">Correct</span>
-                        </div>
-                    </div>
-
+                                <!-- Top Section - Icon and Label -->
+                                <div class="flex items-center mb-2">
+                                    <div class="w-6 h-6 bg-green-500 rounded-md flex items-center justify-center mr-2">
+                                        <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Correct</span>
+                                </div>
+                                
                                 <!-- Center Section - Main Number -->
-                                <div class="text-center mb-3">
-                                    <div class="text-2xl sm:text-3xl font-black text-green-800">{{ $result->correct_answers ?? 0 }}</div>
+                                <div class="text-center mb-2">
+                                    <div class="text-xl sm:text-2xl font-bold text-gray-800">{{ $result->correct_answers ?? 0 }}</div>
                                 </div>
                                 
                                 <!-- Bottom Section - Marks Gained -->
-                                <div class="bg-gradient-to-r from-green-100 to-emerald-100 rounded-lg p-2 border border-green-200/50">
+                                <div class="bg-gray-50 rounded-md p-2 border border-gray-100">
                                     <div class="flex items-center justify-center">
-                                        <svg class="w-4 h-4 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-3 h-3 text-gray-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
                                         </svg>
-                                        <span class="text-xs font-semibold text-green-600 uppercase tracking-wide mr-2">Marks Gained:</span>
-                                        <span class="text-sm font-bold text-green-800">
+                                        <span class="text-xs font-medium text-gray-600 mr-1">Marks Gained:</span>
+                                        <span class="text-xs font-bold text-gray-800">
                                             @php
                                                 $correctMarks = 0;
                                                 if ($result->correct_answers > 0) {
-                                                    // Try to get from question stats first
                                                     $questionStats = \App\Models\QuestionStat::where('exam_result_id', $result->id)
                                                         ->where('is_correct', true)
                                                         ->get();
@@ -338,7 +328,6 @@
                                                             $correctMarks += $stat->marks ?? 1;
                                                         }
                                                     } else {
-                                                        // Fallback: estimate based on average marks per question
                                                         $avgMarksPerQuestion = ($result->total_marks ?? 0) / ($result->total_questions ?? 1);
                                                         $correctMarks = round($result->correct_answers * $avgMarksPerQuestion);
                                                     }
@@ -351,36 +340,32 @@
                             </div>
                         </div>
                         
-                        <!-- Wrong Answers Card - New Design -->
-                        <div class="group relative bg-gradient-to-br from-red-50 to-rose-100 rounded-xl p-3 sm:p-4 border border-red-200/50 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 overflow-hidden">
-                            <div class="absolute top-0 right-0 w-12 h-12 bg-gradient-to-br from-red-400/20 to-rose-500/20 rounded-full -translate-y-6 translate-x-6"></div>
-                            
+                        <!-- Wrong Answers Card -->
+                        <div class="group relative bg-white rounded-xl p-3 sm:p-4 border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
                             <div class="relative">
-                                <!-- Top Section - Icon and Main Info -->
-                                <div class="flex items-center justify-between mb-3">
-                                    <div class="flex items-center">
-                                        <div class="w-8 h-8 bg-gradient-to-br from-red-500 to-rose-600 rounded-lg flex items-center justify-center shadow-lg">
-                                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                            </svg>
-                                        </div>
-                                        <span class="text-xs font-semibold text-red-600 uppercase tracking-wide ml-2">Wrong</span>
+                                <!-- Top Section - Icon and Label -->
+                                <div class="flex items-center mb-2">
+                                    <div class="w-6 h-6 bg-red-500 rounded-md flex items-center justify-center mr-2">
+                                        <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
                                     </div>
+                                    <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Wrong</span>
                                 </div>
                                 
                                 <!-- Center Section - Main Number -->
-                                <div class="text-center mb-3">
-                                    <div class="text-2xl sm:text-3xl font-black text-red-800">{{ $result->wrong_answers ?? 0 }}</div>
+                                <div class="text-center mb-2">
+                                    <div class="text-xl sm:text-2xl font-bold text-gray-800">{{ $result->wrong_answers ?? 0 }}</div>
                                 </div>
                                 
-                                <!-- Bottom Section - Marks Deducted -->
-                                <div class="bg-gradient-to-r from-red-100 to-rose-100 rounded-lg p-2 border border-red-200/50">
+                                <!-- Bottom Section - Deduction -->
+                                <div class="bg-gray-50 rounded-md p-2 border border-gray-100">
                                     <div class="flex items-center justify-center">
-                                        <svg class="w-4 h-4 text-red-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-3 h-3 text-gray-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4m16 0l-4-4m4 4l-4 4M4 12l4-4m-4 4l4 4"></path>
                                         </svg>
-                                        <span class="text-xs font-semibold text-red-600 uppercase tracking-wide mr-2">Deduction:</span>
-                                        <span class="text-sm font-bold text-red-800">
+                                        <span class="text-xs font-medium text-gray-600 mr-1">Deduction:</span>
+                                        <span class="text-xs font-bold text-gray-800">
                                             @php
                                                 $wrongMarks = 0;
                                                 if ($result->wrong_answers > 0 && $exam->has_negative_marking) {
@@ -394,40 +379,35 @@
                             </div>
                         </div>
                         
-                        <!-- Unanswered Card - New Design -->
-                        <div class="group relative bg-gradient-to-br from-orange-50 to-amber-100 rounded-xl p-3 sm:p-4 border border-orange-200/50 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 overflow-hidden">
-                            <div class="absolute top-0 right-0 w-12 h-12 bg-gradient-to-br from-orange-400/20 to-amber-500/20 rounded-full -translate-y-6 translate-x-6"></div>
-                            
+                        <!-- Skipped Card -->
+                        <div class="group relative bg-white rounded-xl p-3 sm:p-4 border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
                             <div class="relative">
-                                <!-- Top Section - Icon and Main Info -->
-                                <div class="flex items-center justify-between mb-3">
-                                    <div class="flex items-center">
-                                        <div class="w-8 h-8 bg-gradient-to-br from-orange-500 to-amber-600 rounded-lg flex items-center justify-center shadow-lg">
-                                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                            </svg>
-                                        </div>
-                                        <span class="text-xs font-semibold text-orange-600 uppercase tracking-wide ml-2">Skipped</span>
+                                <!-- Top Section - Icon and Label -->
+                                <div class="flex items-center mb-2">
+                                    <div class="w-6 h-6 bg-orange-500 rounded-md flex items-center justify-center mr-2">
+                                        <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
                                     </div>
+                                    <span class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Skipped</span>
                                 </div>
                                 
                                 <!-- Center Section - Main Number -->
-                                <div class="text-center mb-3">
-                                    <div class="text-2xl sm:text-3xl font-black text-orange-800">{{ $result->unanswered ?? 0 }}</div>
-                        </div>
-                        
-                                <!-- Bottom Section - Marks Missed -->
-                                <div class="bg-gradient-to-r from-orange-100 to-amber-100 rounded-lg p-2 border border-orange-200/50">
+                                <div class="text-center mb-2">
+                                    <div class="text-xl sm:text-2xl font-bold text-gray-800">{{ $result->unanswered ?? 0 }}</div>
+                                </div>
+                                
+                                <!-- Bottom Section - Missed -->
+                                <div class="bg-gray-50 rounded-md p-2 border border-gray-100">
                                     <div class="flex items-center justify-center">
-                                        <svg class="w-4 h-4 text-orange-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-3 h-3 text-gray-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                         </svg>
-                                        <span class="text-xs font-semibold text-orange-600 uppercase tracking-wide mr-2">Missed:</span>
-                                        <span class="text-sm font-bold text-orange-800">
+                                        <span class="text-xs font-medium text-gray-600 mr-1">Missed:</span>
+                                        <span class="text-xs font-bold text-gray-800">
                                             @php
                                                 $unansweredMarks = 0;
                                                 if ($result->unanswered > 0) {
-                                                    // Try to get from question stats first
                                                     $questionStats = \App\Models\QuestionStat::where('exam_result_id', $result->id)
                                                         ->where('is_skipped', true)
                                                         ->get();
@@ -437,7 +417,6 @@
                                                             $unansweredMarks += $stat->marks ?? 1;
                                                         }
                                                     } else {
-                                                        // Fallback: estimate based on average marks per question
                                                         $avgMarksPerQuestion = ($result->total_marks ?? 0) / ($result->total_questions ?? 1);
                                                         $unansweredMarks = round($result->unanswered * $avgMarksPerQuestion);
                                                     }
@@ -505,42 +484,6 @@
                             </div>
                             </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Social Media Sharing Section -->
-                    <div class="bg-blue-50 rounded-lg sm:rounded-xl p-4 sm:p-6 mb-6 sm:mb-8 border border-blue-200">
-                        <h3 class="text-base sm:text-lg font-semibold text-gray-800 mb-2 sm:mb-3 text-center">Share Your Achievement</h3>
-                        <p class="text-xs sm:text-sm text-gray-600 text-center mb-3 sm:mb-4 px-2">Let your friends know about your performance and inspire them to try Bikolpo LQ!</p>
-                        
-                        <div class="grid grid-cols-2 sm:flex sm:flex-wrap justify-center gap-2 sm:gap-3">
-                            <!-- Facebook Share -->
-                            <button onclick="shareOnFacebook()" class="flex items-center justify-center px-3 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
-                                <i class="fab fa-facebook-f mr-1 sm:mr-2"></i>
-                                <span class="hidden sm:inline">Facebook</span>
-                                <span class="sm:hidden">FB</span>
-                            </button>
-                            
-                            <!-- WhatsApp Share -->
-                            <button onclick="shareOnWhatsApp()" class="flex items-center justify-center px-3 sm:px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-xs sm:text-sm font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
-                                <i class="fab fa-whatsapp mr-1 sm:mr-2"></i>
-                                <span class="hidden sm:inline">WhatsApp</span>
-                                <span class="sm:hidden">WA</span>
-                            </button>
-                            
-                            <!-- X (Twitter) Share -->
-                            <button onclick="shareOnTwitter()" class="flex items-center justify-center px-3 sm:px-4 py-2 bg-black hover:bg-gray-800 text-white text-xs sm:text-sm font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
-                                <i class="fab fa-x-twitter mr-1 sm:mr-2"></i>
-                                <span class="hidden sm:inline">Share on X</span>
-                                <span class="sm:hidden">X</span>
-                            </button>
-                            
-                            <!-- Copy Link -->
-                            <button onclick="copyToClipboard()" class="flex items-center justify-center px-3 sm:px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-xs sm:text-sm font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
-                                <i class="fas fa-link mr-1 sm:mr-2"></i>
-                                <span class="hidden sm:inline">Copy Link</span>
-                                <span class="sm:hidden">Copy</span>
-                            </button>
                         </div>
                     </div>
 
@@ -623,6 +566,42 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Social Media Sharing Section -->
+                    <div class="bg-blue-50 rounded-lg sm:rounded-xl p-4 sm:p-6 mb-6 sm:mb-8 border border-blue-200">
+                        <h3 class="text-base sm:text-lg font-semibold text-gray-800 mb-2 sm:mb-3 text-center">Share Your Achievement</h3>
+                        <p class="text-xs sm:text-sm text-gray-600 text-center mb-3 sm:mb-4 px-2">Let your friends know about your performance and inspire them to try Bikolpo LQ!</p>
+                        
+                        <div class="grid grid-cols-2 sm:flex sm:flex-wrap justify-center gap-2 sm:gap-3">
+                            <!-- Facebook Share -->
+                            <button onclick="shareOnFacebook()" class="flex items-center justify-center px-3 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                                <i class="fab fa-facebook-f mr-1 sm:mr-2"></i>
+                                <span class="hidden sm:inline">Facebook</span>
+                                <span class="sm:hidden">FB</span>
+                            </button>
+                            
+                            <!-- WhatsApp Share -->
+                            <button onclick="shareOnWhatsApp()" class="flex items-center justify-center px-3 sm:px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-xs sm:text-sm font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                                <i class="fab fa-whatsapp mr-1 sm:mr-2"></i>
+                                <span class="hidden sm:inline">WhatsApp</span>
+                                <span class="sm:hidden">WA</span>
+                            </button>
+                            
+                            <!-- X (Twitter) Share -->
+                            <button onclick="shareOnTwitter()" class="flex items-center justify-center px-3 sm:px-4 py-2 bg-black hover:bg-gray-800 text-white text-xs sm:text-sm font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                                <i class="fab fa-x-twitter mr-1 sm:mr-2"></i>
+                                <span class="hidden sm:inline">Share on X</span>
+                                <span class="sm:hidden">X</span>
+                            </button>
+                            
+                            <!-- Copy Link -->
+                            <button onclick="copyToClipboard()" class="flex items-center justify-center px-3 sm:px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-xs sm:text-sm font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                                <i class="fas fa-link mr-1 sm:mr-2"></i>
+                                <span class="hidden sm:inline">Copy Link</span>
+                                <span class="sm:hidden">Copy</span>
+                            </button>
                         </div>
                     </div>
 
