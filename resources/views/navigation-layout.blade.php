@@ -44,7 +44,7 @@
                 <a href="{{ route('login') }}" class="bg-gradient-to-r from-primaryGreen to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl">
                     Sign In
                 </a>
-                <a href="{{ route('public.quiz.access') }}" class="bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-primaryBlue dark:text-primaryBlue font-bold px-4 py-2 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 border-2 border-primaryBlue">
+                <a href="{{ route('public.quiz.access') }}" target="_blank" class="bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-primaryBlue dark:text-primaryBlue font-bold px-4 py-2 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105 border-2 border-primaryBlue">
                     Live Exam
                 </a>
             </nav>
@@ -113,7 +113,7 @@
                             Sign In
                         </div>
                     </a>
-                    <a href="{{ route('public.quiz.access') }}" class="block text-primaryBlue dark:text-primaryBlue hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 font-medium py-3 px-4 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 active:bg-blue-100 dark:active:bg-blue-900/30 touch-manipulation">
+                    <a href="{{ route('public.quiz.access') }}" target="_blank" class="block text-primaryBlue dark:text-primaryBlue hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 font-medium py-3 px-4 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 active:bg-blue-100 dark:active:bg-blue-900/30 touch-manipulation">
                         <div class="flex items-center">
                             <svg class="w-4 h-4 mr-3 text-primaryBlue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>

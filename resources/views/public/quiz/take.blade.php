@@ -13,7 +13,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body class="bg-gray-100 font-sans leading-relaxed text-gray-800 antialiased">
-    <div class="flex items-start justify-center min-h-screen p-4 gap-6">
+    <div class="flex flex-col lg:flex-row items-start justify-center min-h-screen p-2 sm:p-4 gap-4 lg:gap-6">
         <!-- Participants Sidebar -->
         <div class="hidden lg:block w-80 bg-blue-50 p-6 rounded-xl shadow-inner sticky top-4">
             <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
@@ -81,7 +81,7 @@
         </div>
 
         <!-- Main Quiz Container -->
-        <div class="w-full max-w-4xl bg-white rounded-3xl shadow-2xl p-8 md:p-12">
+        <div class="w-full max-w-4xl bg-white rounded-3xl shadow-2xl p-4 sm:p-6 md:p-8 lg:p-12">
             <!-- Mobile Participants Section -->
             <div class="lg:hidden mb-6 bg-blue-50 p-4 rounded-xl">
                 <h3 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
@@ -131,15 +131,15 @@
             </div>
 
             <!-- Header and Progress -->
-            <header class="text-center mb-8">
-                <h1 class="text-4xl md:text-5xl font-extrabold text-blue-700 tracking-tight mb-2">{{ $exam->title }}</h1>
-                <p class="text-sm text-gray-500 font-medium">{{ $exam->description ?? 'Test your knowledge with our curated questions!' }}</p>
+            <header class="text-center mb-6 sm:mb-8">
+                <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-blue-700 tracking-tight mb-2">{{ $exam->title }}</h1>
+                <p class="text-xs sm:text-sm text-gray-500 font-medium">{{ $exam->description ?? 'Test your knowledge with our curated questions!' }}</p>
                 
                 <!-- Countdown Timer and Progress Bar -->
-                <div class="flex items-center justify-between mt-6">
-                    <div class="flex flex-col items-center">
-                        <div id="countdown-timer" class="w-20 h-20 rounded-full flex items-center justify-center p-2 watch-bezel">
-                            <div id="countdown-display" class="w-full h-full rounded-full flex items-center justify-center text-center font-bold text-sm text-gray-100 bg-gray-900 shadow-inner watch-face border-2 border-gray-600">
+                <div class="flex flex-col sm:flex-row items-center justify-between mt-4 sm:mt-6 gap-4">
+                    <div class="flex flex-col items-center order-1 sm:order-1">
+                        <div id="countdown-timer" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center p-2 watch-bezel">
+                            <div id="countdown-display" class="w-full h-full rounded-full flex items-center justify-center text-center font-bold text-xs sm:text-sm text-gray-100 bg-gray-900 shadow-inner watch-face border-2 border-gray-600">
                                 --:--
                             </div>
                         </div>
@@ -147,44 +147,44 @@
                             Time Remaining
                         </div>
                     </div>
-                    <div class="relative flex-1 mx-4">
+                    <div class="relative flex-1 w-full sm:w-auto order-2 sm:order-2">
                         <div class="overflow-hidden h-3 mb-2 text-xs flex rounded-full bg-gray-200 shadow-inner">
                             <div id="progress-bar" style="width:0%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500 transition-all duration-500 ease-in-out rounded-full shadow-lg"></div>
-                </div>
+                        </div>
                         <div class="flex justify-between text-xs font-semibold text-gray-500">
                             <span id="current-question-display">Question 1</span>
                             <span id="total-questions-display">of {{ $questions->count() }}</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </header>
+            </header>
 
             <!-- Main Quiz Section with Navigator -->
-        <div class="flex flex-col lg:flex-row gap-8">
+            <div class="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8">
                 <!-- Question Block -->
                 <main class="w-full lg:w-2/3">
                     <form id="examForm" action="{{ route('public.quiz.submit', $exam) }}" method="POST">
                         @csrf
                         
-                        <div class="mb-8">
-                            <h2 id="question-text" class="text-xl md:text-2xl font-bold mb-6"></h2>
-                            <div id="options-container" class="space-y-4">
+                        <div class="mb-6 sm:mb-8">
+                            <h2 id="question-text" class="text-lg sm:text-xl md:text-2xl font-bold mb-4 sm:mb-6"></h2>
+                            <div id="options-container" class="space-y-3 sm:space-y-4">
                                 <!-- Options will be dynamically added here -->
                             </div>
-                            </div>
+                        </div>
 
-                                                                        <!-- Navigation Buttons -->
-                        <div class="flex justify-between items-center mt-10">
-                            <button type="button" id="prev-btn" class="px-6 py-3 rounded-full text-sm font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <!-- Navigation Buttons -->
+                        <div class="flex flex-col sm:flex-row justify-between items-center mt-6 sm:mt-10 gap-3 sm:gap-0">
+                            <button type="button" id="prev-btn" class="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 rounded-full text-sm font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
                                 Previous
                             </button>
-                            <div class="flex items-center space-x-4">
-                                <button type="button" id="skip-btn" class="px-6 py-3 rounded-full text-sm font-semibold text-white bg-orange-500 hover:bg-orange-600 transition-colors duration-200 shadow-lg">Skip</button>
-                                <button type="button" id="submit-btn" class="px-6 py-3 rounded-full text-sm font-bold text-white bg-green-500 hover:bg-green-600 transition-colors duration-200 shadow-lg">
+                            <div class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
+                                <button type="button" id="skip-btn" class="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 rounded-full text-sm font-semibold text-white bg-orange-500 hover:bg-orange-600 transition-colors duration-200 shadow-lg">Skip</button>
+                                <button type="button" id="submit-btn" class="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 rounded-full text-sm font-bold text-white bg-green-500 hover:bg-green-600 transition-colors duration-200 shadow-lg">
                                     🚀 Submit Quiz
                                 </button>
                             </div>
-                            <button type="button" id="next-btn" class="px-6 py-3 rounded-full text-sm font-semibold text-white bg-blue-500 hover:bg-blue-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <button type="button" id="next-btn" class="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 rounded-full text-sm font-semibold text-white bg-blue-500 hover:bg-blue-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
                                 Next
                             </button>
                         </div>
@@ -192,11 +192,11 @@
                 </main>
                 
                 <!-- Question Navigator and Legend -->
-                <div class="w-full lg:w-1/3 bg-gray-50 p-6 rounded-xl shadow-inner">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Question Navigator</h3>
-                    <div id="navigator-container" class="grid grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 mb-6">
+                <div class="w-full lg:w-1/3 bg-gray-50 p-4 sm:p-6 rounded-xl shadow-inner">
+                    <h3 class="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4">Question Navigator</h3>
+                    <div id="navigator-container" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 mb-4 sm:mb-6">
                         <!-- Navigator buttons dynamically added here -->
-            </div>
+                    </div>
 
                     <!-- Legend -->
                     <div>
@@ -220,13 +220,13 @@
             </div>
 
             <!-- Result Modal -->
-            <div id="result-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center p-4 transition-opacity duration-300 hidden z-50">
-                <div class="bg-white rounded-xl p-8 md:p-10 text-center shadow-lg transform transition-transform duration-300 scale-95">
-                    <h3 id="modal-title" class="text-2xl font-bold mb-4"></h3>
-                    <p id="modal-message" class="text-lg text-gray-700 mb-6"></p>
-                    <button id="close-modal-btn" class="px-6 py-2 rounded-full font-semibold text-white bg-green-500 hover:bg-green-600 transition-colors duration-200">
+            <div id="result-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center p-2 sm:p-4 transition-opacity duration-300 hidden z-50">
+                <div class="bg-white rounded-xl p-4 sm:p-6 md:p-8 lg:p-10 text-center shadow-lg transform transition-transform duration-300 scale-95 w-full max-w-sm sm:max-w-md">
+                    <h3 id="modal-title" class="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4"></h3>
+                    <p id="modal-message" class="text-sm sm:text-base md:text-lg text-gray-700 mb-4 sm:mb-6"></p>
+                    <button id="close-modal-btn" class="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 rounded-full font-semibold text-white bg-green-500 hover:bg-green-600 transition-colors duration-200">
                         Okay
-                        </button>
+                    </button>
                 </div>
             </div>
         </div>
@@ -260,11 +260,18 @@
     }
     .selected-icon {
         position: absolute;
-        right: 1rem;
+        right: 0.75rem;
         top: 50%;
         transform: translateY(-50%);
-        width: 1.5rem;
-        height: 1.5rem;
+        width: 1rem;
+        height: 1rem;
+    }
+    @media (min-width: 640px) {
+        .selected-icon {
+            right: 1rem;
+            width: 1.5rem;
+            height: 1.5rem;
+        }
     }
     @keyframes pulse-once {
         0% { transform: scale(1); }
@@ -280,6 +287,29 @@
     }
     .watch-face {
         box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+    }
+    
+    /* Mobile-specific improvements */
+    @media (max-width: 640px) {
+        .option-btn {
+            min-height: 48px; /* Better touch target */
+        }
+        .navigator-btn {
+            min-height: 32px;
+            min-width: 32px;
+        }
+        .option-btn.selected .selected-icon {
+            right: 0.5rem;
+            width: 0.875rem;
+            height: 0.875rem;
+        }
+    }
+    
+    /* Prevent zoom on input focus on mobile */
+    @media screen and (max-width: 768px) {
+        input, textarea, select {
+            font-size: 16px !important;
+        }
     }
     </style>
 
@@ -353,11 +383,11 @@
             question.options.forEach((option, index) => {
                 const optionBtn = document.createElement('button');
                 optionBtn.type = 'button';
-                optionBtn.className = 'option-btn w-full text-left px-6 py-4 rounded-xl border-2 border-gray-200 text-lg font-medium transition-colors duration-200 hover:bg-gray-100 flex items-center gap-4';
+                optionBtn.className = 'option-btn w-full text-left px-4 sm:px-6 py-3 sm:py-4 rounded-xl border-2 border-gray-200 text-base sm:text-lg font-medium transition-colors duration-200 hover:bg-gray-100 flex items-center gap-3 sm:gap-4';
                 
                 // Create option label (A, B, C, D)
                 const optionLabel = document.createElement('div');
-                optionLabel.className = 'flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 text-blue-600 font-bold text-sm flex items-center justify-center border-2 border-blue-200';
+                optionLabel.className = 'flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-blue-100 text-blue-600 font-bold text-xs sm:text-sm flex items-center justify-center border-2 border-blue-200';
                 optionLabel.textContent = String.fromCharCode(65 + index); // A, B, C, D
                 
                 // Create option text
@@ -402,8 +432,8 @@
         } else if (question.type === 'descriptive') {
             const textarea = document.createElement('textarea');
             textarea.name = `answers[${question.id}]`;
-            textarea.rows = 6;
-            textarea.className = 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none';
+            textarea.rows = 4;
+            textarea.className = 'w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-sm sm:text-base';
             textarea.placeholder = 'Type your detailed answer here...';
             textarea.value = state.answers[state.currentQuestionIndex] || '';
             
@@ -427,7 +457,7 @@
             const navBtn = document.createElement('button');
             navBtn.type = 'button';
             navBtn.textContent = index + 1;
-            navBtn.className = 'navigator-btn w-8 h-8 rounded-full text-xs font-semibold flex items-center justify-center border-2 border-gray-300';
+            navBtn.className = 'navigator-btn w-6 h-6 sm:w-8 sm:h-8 rounded-full text-xs font-semibold flex items-center justify-center border-2 border-gray-300';
 
             if (index === state.currentQuestionIndex) {
                 navBtn.classList.add('current');

@@ -32,7 +32,20 @@ class ExamReviewController extends Controller
         // Get analytics for this result
         $analytics = $result->detailed_analytics;
         
-        return view('public.quiz.review', compact('exam', 'result', 'questionStats', 'analytics'));
+        // Calculate student's rank
+        $allResults = ExamResult::where('exam_id', $examId)
+            ->where('status', 'completed')
+            ->orderBy('percentage', 'desc')
+            ->get();
+        
+        $studentRank = $allResults->search(function($item) use ($result) {
+            return $item->id === $result->id;
+        }) + 1;
+        
+        $totalStudents = $allResults->count();
+        $percentile = $totalStudents > 0 ? round((($totalStudents - $studentRank + 1) / $totalStudents) * 100, 2) : 0;
+        
+        return view('public.quiz.review', compact('exam', 'result', 'questionStats', 'analytics', 'studentRank', 'totalStudents', 'percentile'));
     }
 
     /**

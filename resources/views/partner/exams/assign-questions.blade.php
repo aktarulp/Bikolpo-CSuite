@@ -108,64 +108,101 @@
                         </div>
 
                         <!-- Filters -->
-                        <div class="flex items-center space-x-3">
-                            <select id="type-filter" class="px-3 py-2 border border-gray-300 rounded text-sm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-1 focus:ring-blue-500">
-                                <option value="">All Types</option>
-                                <option value="mcq">MCQ</option>
-                                <option value="descriptive">Descriptive</option>
-                            </select>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <select id="type-filter" class="px-3 py-2 border border-gray-300 rounded text-sm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-1 focus:ring-blue-500">
+                                    <option value="">All Types</option>
+                                    <option value="mcq">MCQ</option>
+                                    <option value="descriptive">Descriptive</option>
+                                </select>
 
-                            <select id="course-filter" class="px-3 py-2 border border-gray-300 rounded text-sm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-1 focus:ring-blue-500">
-                                <option value="">All Courses</option>
-                                @foreach($courses ?? [] as $course)
-                                    <option value="{{ $course->id }}">{{ $course->name }}</option>
-                                @endforeach
-                            </select>
+                                <select id="course-filter" class="px-3 py-2 border border-gray-300 rounded text-sm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-1 focus:ring-blue-500">
+                                    <option value="">All Courses</option>
+                                    @foreach($courses ?? [] as $course)
+                                        <option value="{{ $course->id }}">{{ $course->name }}</option>
+                                    @endforeach
+                                </select>
 
-                            <select id="subject-filter" class="px-3 py-2 border border-gray-300 rounded text-sm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-1 focus:ring-blue-500">
-                                <option value="">All Subjects</option>
-                                @foreach($subjects ?? [] as $subject)
-                                    <option value="{{ $subject->id }}">{{ $subject->name }}</option>
-                                @endforeach
-                            </select>
+                                <select id="subject-filter" class="px-3 py-2 border border-gray-300 rounded text-sm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-1 focus:ring-blue-500">
+                                    <option value="">All Subjects</option>
+                                    @foreach($subjects ?? [] as $subject)
+                                        <option value="{{ $subject->id }}">{{ $subject->name }}</option>
+                                    @endforeach
+                                </select>
 
-                            <select id="topic-filter" class="px-3 py-2 border border-gray-300 rounded text-sm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-1 focus:ring-blue-500">
-                                <option value="">All Topics</option>
-                                @foreach($topics ?? [] as $topic)
-                                    <option value="{{ $topic->id }}">{{ $topic->name }}</option>
-                                @endforeach
-                            </select>
-
-                            <button type="button" id="clear-filters" class="px-3 py-2 text-sm text-red-600 hover:text-red-800 dark:text-red-400">
-                                Clear Filters
-                            </button>
+                                <select id="topic-filter" class="px-3 py-2 border border-gray-300 rounded text-sm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-1 focus:ring-blue-500">
+                                    <option value="">All Topics</option>
+                                    @foreach($topics ?? [] as $topic)
+                                        <option value="{{ $topic->id }}">{{ $topic->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            
+                            <div class="flex items-center space-x-2">
+                                <button type="button" id="refresh-filters" class="px-3 py-2 text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 border border-blue-300 rounded hover:bg-blue-50 dark:border-blue-600 dark:hover:bg-blue-900/20">
+                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                    </svg>
+                                    Refresh
+                                </button>
+                                <button type="button" id="clear-filters" class="px-3 py-2 text-sm text-red-600 hover:text-red-800 dark:text-red-400 border border-red-300 rounded hover:bg-red-50 dark:border-red-600 dark:hover:bg-red-900/20">
+                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                    Clear Filters
+                                </button>
+                            </div>
                         </div>
                     </div>
 
                     @if($questions->count() > 0)
                         <div class="grid grid-cols-1 gap-3 max-h-80 overflow-y-auto">
                             @foreach($questions as $question)
-                                <div class="question-card border border-gray-200 dark:border-gray-600 rounded p-3 hover:bg-gray-50 dark:hover:bg-gray-700"
+                                <div class="question-card border border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700 draggable-question shadow-sm hover:shadow-md transition-all duration-200"
                                      data-type="{{ $question->question_type }}"
                                      data-course="{{ $question->course->id ?? '' }}"
                                      data-subject="{{ $question->subject->name ?? '' }}"
-                                     data-topic="{{ $question->topic->name ?? '' }}">
-                                    <div class="flex items-start space-x-2">
+                                     data-topic="{{ $question->topic->name ?? '' }}"
+                                     data-question-id="{{ $question->id }}"
+                                     draggable="true">
+                                    <div class="flex items-start space-x-3">
+                                        <!-- Question Number Input Field (Readonly) -->
+                                        <div class="flex items-center space-x-2 question-number-container">
+                                            <div class="flex items-center space-x-1">
+                                                <label class="text-xs text-green-500 dark:text-green-400 font-semibold">Q#:</label>
+                                                <input type="number" 
+                                                       name="question_numbers[{{ $question->id }}]" 
+                                                       value="{{ $assignedQuestionsWithOrder[$question->id] ?? '' }}" 
+                                                       min="1" 
+                                                       max="999" 
+                                                       readonly
+                                                       class="question-number w-12 px-1 py-1 text-xs border-2 border-green-400 rounded-md bg-gray-100 dark:bg-gray-600 dark:border-green-500 dark:text-white font-semibold text-center"
+                                                       placeholder=""
+                                                       style="border: 2px solid #4ade80; box-shadow: 0 0 0 1px rgba(74, 222, 128, 0.3); -moz-appearance: textfield; -webkit-appearance: none; appearance: none;">
+                                            </div>
+                                            <!-- Drag handle icon -->
+                                            <div class="drag-handle text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-move p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path>
+                                                </svg>
+                                            </div>
+                                        </div>
                                         <input type="checkbox" name="question_ids[]" value="{{ $question->id }}" 
                                                class="question-checkbox mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                                                {{ $assignedQuestions->contains($question->id) ? 'checked' : '' }}>
                                         <div class="flex-1 min-w-0">
-                                            <div class="flex items-center justify-between">
-                                                <div class="flex items-center space-x-3 flex-1">
-                                                    <span class="text-sm text-gray-900 dark:text-white">
-                                                        {{ Str::limit($question->question_text, 50) }}
-                                                    </span>
+                                            <div class="flex items-start justify-between">
+                                                <div class="flex-1 min-w-0">
+                                                    <div class="text-sm text-gray-900 dark:text-white font-medium mb-1">
+                                                        {{ Str::limit($question->question_text, 60) }}
+                                                    </div>
                                                     <div class="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
-                                                        <span class="text-gray-300 dark:text-gray-600">|</span>
-                                                        <span>{{ $question->course->name ?? 'N/A' }} | {{ $question->subject->name ?? 'N/A' }} | {{ $question->topic->name ?? 'N/A' }}</span>
+                                                        <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs">{{ $question->course->name ?? 'N/A' }}</span>
+                                                        <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs">{{ $question->subject->name ?? 'N/A' }}</span>
+                                                        <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs">{{ $question->topic->name ?? 'N/A' }}</span>
                                                     </div>
                                                 </div>
-                                                <div class="flex items-center space-x-2">
+                                                <div class="flex items-center space-x-3">
                                                     <!-- Mark Input Field -->
                                                     <div class="flex items-center space-x-1 question-marks-container">
                                                         <label class="text-xs text-blue-500 dark:text-blue-400 font-semibold">Marks:</label>
@@ -174,12 +211,12 @@
                                                                value="{{ $assignedQuestionsWithMarks[$question->id] ?? 1 }}" 
                                                                min="1" 
                                                                max="100" 
-                                                               class="question-marks w-12 px-1 py-1 text-xs border-2 border-blue-400 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-600 dark:bg-gray-700 dark:border-blue-500 dark:text-white font-semibold text-center"
+                                                               class="question-marks w-14 px-2 py-1 text-xs border-2 border-blue-400 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-600 dark:bg-gray-700 dark:border-blue-500 dark:text-white font-semibold text-center"
                                                                placeholder="1"
                                                                style="border: 2px solid #60a5fa; box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.3); -moz-appearance: textfield; -webkit-appearance: none; appearance: none;">
                                                     </div>
-                                                    <span class="text-xs px-2 py-1 rounded
-                                                        {{ $question->question_type === 'mcq' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800' }}">
+                                                    <span class="text-xs px-3 py-1 rounded-full font-medium
+                                                        {{ $question->question_type === 'mcq' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' }}">
                                                         {{ strtoupper($question->question_type) }}
                                                     </span>
                                                 </div>
@@ -264,12 +301,84 @@
 .question-card {
     transition: all 0.3s ease;
     border: 2px solid transparent;
+    cursor: move;
+    position: relative;
 }
 
-.question-card:hover:not(.disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+.question-card.dragging {
+    opacity: 0.8;
+    transform: scale(1.02);
+    z-index: 1000;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    transition: none;
+}
+
+.question-card.drag-over {
+    border-color: #22c55e;
+    background-color: rgba(34, 197, 94, 0.1);
+    transform: scale(1.02);
+}
+
+/* Drop indicator styling */
+.drop-indicator {
+    height: 3px;
+    background: linear-gradient(90deg, #22c55e, #16a34a);
+    border-radius: 2px;
+    margin: 8px 0;
+    opacity: 0;
+    transform: scaleX(0);
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+}
+
+.drop-indicator.show {
+    opacity: 1;
+    transform: scaleX(1);
+}
+
+.drop-indicator::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: -4px;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid #22c55e;
+}
+
+.drop-indicator::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -4px;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #22c55e;
+}
+
+.question-card:hover:not(.disabled):not(.dragging) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     border-color: #3b82f6;
+    background-color: rgba(59, 130, 246, 0.02);
+}
+
+.question-card:hover:not(.disabled):not(.dragging) .question-number-container {
+    background-color: rgba(34, 197, 94, 0.05);
+    border-radius: 6px;
+    padding: 2px;
+}
+
+.question-card:hover:not(.disabled):not(.dragging) .question-marks-container {
+    background-color: rgba(59, 130, 246, 0.05);
+    border-radius: 6px;
+    padding: 2px;
 }
 
 .question-card.disabled {
@@ -431,6 +540,26 @@
     outline-offset: 2px;
 }
 
+/* Question number input styling */
+.question-number {
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    border: 2px solid #bbf7d0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-weight: 600;
+    color: #166534;
+    text-align: center;
+    cursor: default;
+    /* Remove spinner arrows */
+    -moz-appearance: textfield;
+}
+
+.question-number:read-only {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    color: #166534;
+    cursor: default;
+}
+
 /* Mark input styling */
 .question-marks {
     transition: all 0.3s ease;
@@ -445,6 +574,8 @@
 }
 
 /* Remove spinner arrows for webkit browsers */
+.question-number::-webkit-outer-spin-button,
+.question-number::-webkit-inner-spin-button,
 .question-marks::-webkit-outer-spin-button,
 .question-marks::-webkit-inner-spin-button {
     -webkit-appearance: none;
@@ -453,6 +584,7 @@
 }
 
 /* Additional spinner removal for all browsers */
+.question-number,
 .question-marks {
     -moz-appearance: textfield !important;
     -webkit-appearance: none !important;
@@ -460,6 +592,10 @@
 }
 
 /* Ensure no spinner arrows in any browser */
+.question-number::-webkit-outer-spin-button,
+.question-number::-webkit-inner-spin-button,
+.question-number::-ms-clear,
+.question-number::-ms-reveal,
 .question-marks::-webkit-outer-spin-button,
 .question-marks::-webkit-inner-spin-button,
 .question-marks::-ms-clear,
@@ -468,6 +604,21 @@
     -webkit-appearance: none !important;
     -moz-appearance: none !important;
     appearance: none !important;
+}
+
+.question-number:hover {
+    border-color: #22c55e;
+    box-shadow: 0 4px 8px rgba(34, 197, 94, 0.2);
+    transform: translateY(-1px);
+    background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+}
+
+.question-number:focus {
+    outline: none;
+    border-color: #22c55e;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.3), 0 4px 12px rgba(34, 197, 94, 0.2);
+    transform: scale(1.1);
+    background: linear-gradient(135deg, #bbf7d0 0%, #86efac 100%);
 }
 
 .question-marks:hover {
@@ -485,6 +636,7 @@
     background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
 }
 
+.question-number.border-red-500,
 .question-marks.border-red-500 {
     border-color: #ef4444 !important;
     box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3), 0 4px 12px rgba(239, 68, 68, 0.2);
@@ -492,10 +644,52 @@
     animation: shake 0.5s ease-in-out;
 }
 
+/* Question number input container */
+.question-number-container {
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/* Drag handle styling */
+.drag-handle {
+    transition: all 0.2s ease;
+    opacity: 0.4;
+    border-radius: 4px;
+}
+
+.question-card:hover .drag-handle {
+    opacity: 0.8;
+    background-color: rgba(156, 163, 175, 0.1);
+}
+
+.question-card.dragging .drag-handle {
+    opacity: 1;
+    background-color: rgba(156, 163, 175, 0.2);
+}
+
+.drag-handle:hover {
+    opacity: 1 !important;
+    background-color: rgba(156, 163, 175, 0.15) !important;
+}
+
 /* Mark input container */
 .question-marks-container {
     transition: all 0.3s ease;
     position: relative;
+}
+
+.question-number-container::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #22c55e, #16a34a, #15803d, #166534);
+    border-radius: 6px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: -1;
 }
 
 .question-marks-container::before {
@@ -512,6 +706,17 @@
     z-index: -1;
 }
 
+.question-card:hover .question-number-container::before {
+    opacity: 0.3;
+}
+
+.question-card:hover .question-number-container {
+    background-color: rgba(34, 197, 94, 0.05);
+    border-radius: 6px;
+    padding: 2px;
+    transform: translateY(-1px);
+}
+
 .question-card:hover .question-marks-container::before {
     opacity: 0.3;
 }
@@ -523,6 +728,14 @@
     transform: translateY(-1px);
 }
 
+/* Question number label styling */
+.question-number-container label {
+    font-weight: 600;
+    color: #166534;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    transition: color 0.3s ease;
+}
+
 /* Mark label styling */
 .question-marks-container label {
     font-weight: 600;
@@ -531,15 +744,40 @@
     transition: color 0.3s ease;
 }
 
+.question-card:hover .question-number-container label {
+    color: #22c55e;
+}
+
 .question-card:hover .question-marks-container label {
     color: #3b82f6;
 }
 
 /* Dark mode adjustments */
+.dark .question-number {
+    background: linear-gradient(135deg, #14532d 0%, #166534 100%);
+    border-color: #22c55e;
+    color: #f0fdf4;
+}
+
+.dark .question-number:read-only {
+    background: linear-gradient(135deg, #14532d 0%, #166534 100%);
+    color: #f0fdf4;
+    cursor: default;
+}
+
 .dark .question-marks {
     background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
     border-color: #6b7280;
     color: #f9fafb;
+}
+
+.dark .question-number:hover {
+    background: linear-gradient(135deg, #166534 0%, #15803d 100%);
+    border-color: #4ade80;
+}
+
+.dark .question-number:focus {
+    background: linear-gradient(135deg, #15803d 0%, #16a34a 100%);
 }
 
 .dark .question-marks:hover {
@@ -551,8 +789,16 @@
     background: linear-gradient(135deg, #1e3a8a 0%, #312e81 100%);
 }
 
+.dark .question-number-container label {
+    color: #bbf7d0;
+}
+
 .dark .question-marks-container label {
     color: #d1d5db;
+}
+
+.dark .question-card:hover .question-number-container label {
+    color: #4ade80;
 }
 
 .dark .question-card:hover .question-marks-container label {
@@ -582,6 +828,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const subjectFilter = document.getElementById('subject-filter');
     const topicFilter = document.getElementById('topic-filter');
     const clearFiltersBtn = document.getElementById('clear-filters');
+    const refreshFiltersBtn = document.getElementById('refresh-filters');
     
     // Store all questions for filtering
     const allQuestions = Array.from(document.querySelectorAll('.question-checkbox')).map(checkbox => {
@@ -650,6 +897,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Update button states
         selectAllBtn.disabled = isAtLimit;
+        
+        // Sort questions: selected questions on top, sorted by Q# order
+        sortQuestionsBySelection();
     }
     
     function selectAll() {
@@ -664,12 +914,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 selected++;
             }
         });
+        
+        // Renumber all checked questions sequentially
+        const checkedQuestions = document.querySelectorAll('.question-checkbox:checked');
+        checkedQuestions.forEach((checkbox, index) => {
+            const questionId = checkbox.value;
+            const numberInput = document.querySelector(`input[name="question_numbers[${questionId}]"]`);
+            if (numberInput) {
+                numberInput.value = index + 1;
+            }
+        });
+        
         updateSelectedCount();
     }
     
     function clearAll() {
         questionCheckboxes.forEach(checkbox => {
             checkbox.checked = false;
+        });
+        // Clear all question numbers
+        document.querySelectorAll('.question-number').forEach(input => {
+            input.value = '';
         });
         updateSelectedCount();
     }
@@ -696,6 +961,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 question.element.classList.add('hidden');
             }
         });
+        
+        // Sort questions after filtering
+        sortQuestionsBySelection();
     }
     
     function clearAllFilters() {
@@ -706,6 +974,66 @@ document.addEventListener('DOMContentLoaded', function() {
         topicFilter.value = '';
         allQuestions.forEach(question => {
             question.element.classList.remove('hidden');
+        });
+        
+        // Sort questions after clearing filters
+        sortQuestionsBySelection();
+    }
+    
+    function refreshFilters() {
+        // Reapply current filters to refresh the view
+        applyFilters();
+    }
+    
+    function sortQuestionsBySelection() {
+        const questionsContainer = document.querySelector('.grid.grid-cols-1.gap-3.max-h-80.overflow-y-auto');
+        if (!questionsContainer) return;
+        
+        const questionCards = Array.from(questionsContainer.querySelectorAll('.question-card'));
+        
+        // Separate selected and unselected questions
+        const selectedQuestions = [];
+        const unselectedQuestions = [];
+        
+        questionCards.forEach(card => {
+            const checkbox = card.querySelector('.question-checkbox');
+            if (checkbox && checkbox.checked) {
+                selectedQuestions.push(card);
+            } else {
+                unselectedQuestions.push(card);
+            }
+        });
+        
+        // Sort selected questions by their Q# number
+        selectedQuestions.sort((a, b) => {
+            const numberA = parseInt(a.querySelector('.question-number')?.value || '0');
+            const numberB = parseInt(b.querySelector('.question-number')?.value || '0');
+            return numberA - numberB;
+        });
+        
+        // Clear the container
+        questionsContainer.innerHTML = '';
+        
+        // Add selected questions first (sorted by Q#)
+        selectedQuestions.forEach(card => {
+            questionsContainer.appendChild(card);
+        });
+        
+        // Add unselected questions after
+        unselectedQuestions.forEach(card => {
+            questionsContainer.appendChild(card);
+        });
+        
+        // Update allQuestions array to reflect new order
+        const newOrder = [...selectedQuestions, ...unselectedQuestions];
+        allQuestions.forEach((question, index) => {
+            const newIndex = newOrder.findIndex(card => card === question.element);
+            if (newIndex !== -1) {
+                allQuestions[index] = {
+                    ...question,
+                    element: newOrder[newIndex]
+                };
+            }
         });
     }
     
@@ -720,6 +1048,32 @@ document.addEventListener('DOMContentLoaded', function() {
                     alert(`Maximum ${maxQuestions} questions allowed`);
                     return;
                 }
+                
+                // Auto-assign sequential question number
+                const questionId = e.target.value;
+                const numberInput = document.querySelector(`input[name="question_numbers[${questionId}]"]`);
+                if (numberInput) {
+                    // Count currently checked questions to get the next sequential number
+                    const checkedQuestions = document.querySelectorAll('.question-checkbox:checked');
+                    numberInput.value = checkedQuestions.length;
+                }
+            } else {
+                // Clear question number when deselected and renumber remaining questions
+                const questionId = e.target.value;
+                const numberInput = document.querySelector(`input[name="question_numbers[${questionId}]"]`);
+                if (numberInput) {
+                    numberInput.value = '';
+                }
+                
+                // Renumber all remaining checked questions sequentially
+                const checkedQuestions = document.querySelectorAll('.question-checkbox:checked');
+                checkedQuestions.forEach((checkbox, index) => {
+                    const qId = checkbox.value;
+                    const qNumberInput = document.querySelector(`input[name="question_numbers[${qId}]"]`);
+                    if (qNumberInput) {
+                        qNumberInput.value = index + 1;
+                    }
+                });
             }
             // Always update the count and UI state
             updateSelectedCount();
@@ -738,6 +1092,7 @@ document.addEventListener('DOMContentLoaded', function() {
     subjectFilter.addEventListener('change', applyFilters);
     topicFilter.addEventListener('change', applyFilters);
     clearFiltersBtn.addEventListener('click', clearAllFilters);
+    refreshFiltersBtn.addEventListener('click', refreshFilters);
     
     // Form validation
     form.addEventListener('submit', function(e) {
@@ -748,10 +1103,23 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         }
         
+        // Clear question numbers for unchecked questions before submission
+        const allQuestionNumbers = document.querySelectorAll('input[name^="question_numbers["]');
+        allQuestionNumbers.forEach(input => {
+            const questionId = input.name.match(/\[(\d+)\]/)[1];
+            const checkbox = document.querySelector(`input[name="question_ids[]"][value="${questionId}"]`);
+            if (!checkbox || !checkbox.checked) {
+                input.value = '';
+            }
+        });
+        
         // Validate mark inputs for selected questions
         let hasInvalidMarks = false;
+        
         questionIds.forEach(questionId => {
             const markInput = document.querySelector(`input[name="question_marks[${questionId}]"]`);
+            
+            // Validate marks
             if (markInput) {
                 const markValue = parseInt(markInput.value);
                 if (isNaN(markValue) || markValue < 1 || markValue > 100) {
@@ -769,6 +1137,197 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         }
     });
+    
+    // Drag and Drop functionality
+    function initializeDragAndDrop() {
+        const questionsContainer = document.querySelector('.grid.grid-cols-1.gap-3.max-h-80.overflow-y-auto');
+        if (!questionsContainer) return;
+        
+        let draggedElement = null;
+        let draggedIndex = -1;
+        let indicatorTimeout = null;
+        
+        // Add drag event listeners to all question cards
+        function addDragListeners() {
+            const questionCards = document.querySelectorAll('.question-card');
+            questionCards.forEach((card, index) => {
+                card.addEventListener('dragstart', handleDragStart);
+                card.addEventListener('dragend', handleDragEnd);
+                card.addEventListener('dragover', handleDragOver);
+                card.addEventListener('drop', handleDrop);
+                card.addEventListener('dragenter', handleDragEnter);
+                card.addEventListener('dragleave', handleDragLeave);
+            });
+        }
+        
+        function handleDragStart(e) {
+            // Only allow dragging if the question is selected
+            const checkbox = e.target.querySelector('.question-checkbox');
+            if (!checkbox || !checkbox.checked) {
+                e.preventDefault();
+                return;
+            }
+            
+            draggedElement = e.target;
+            draggedIndex = Array.from(questionsContainer.children).indexOf(draggedElement);
+            e.target.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', e.target.outerHTML);
+        }
+        
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+            hideDropIndicator();
+            clearTimeout(indicatorTimeout);
+            draggedElement = null;
+            draggedIndex = -1;
+        }
+        
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+        
+        function handleDragEnter(e) {
+            e.preventDefault();
+            const targetCard = e.target.closest('.question-card');
+            if (targetCard && targetCard !== draggedElement && targetCard.querySelector('.question-checkbox').checked) {
+                targetCard.classList.add('drag-over');
+                
+                // Debounce indicator showing to prevent rapid changes
+                clearTimeout(indicatorTimeout);
+                indicatorTimeout = setTimeout(() => {
+                    showDropIndicator(targetCard);
+                }, 50);
+            }
+        }
+        
+        function handleDragLeave(e) {
+            const targetCard = e.target.closest('.question-card');
+            if (targetCard && !targetCard.contains(e.relatedTarget)) {
+                targetCard.classList.remove('drag-over');
+                hideDropIndicator();
+            }
+        }
+        
+        function showDropIndicator(targetCard) {
+            // Don't show indicator if already showing for the same target
+            const existingIndicator = document.querySelector('.drop-indicator');
+            if (existingIndicator && existingIndicator.getAttribute('data-drop-target') === targetCard.dataset.questionId) {
+                return;
+            }
+            
+            hideDropIndicator(); // Remove any existing indicator
+            
+            const indicator = document.createElement('div');
+            indicator.className = 'drop-indicator show';
+            indicator.setAttribute('data-drop-target', targetCard.dataset.questionId);
+            
+            // Add event listeners to the indicator
+            indicator.addEventListener('dragover', handleDragOver);
+            indicator.addEventListener('drop', handleDrop);
+            indicator.addEventListener('dragenter', (e) => e.preventDefault());
+            
+            // Insert the indicator before the target card
+            targetCard.parentNode.insertBefore(indicator, targetCard);
+        }
+        
+        function hideDropIndicator() {
+            const existingIndicator = document.querySelector('.drop-indicator');
+            if (existingIndicator) {
+                existingIndicator.remove();
+            }
+        }
+        
+        function handleDrop(e) {
+            e.preventDefault();
+            hideDropIndicator();
+            
+            if (!draggedElement) return;
+            
+            // Clean up all drag-over states
+            document.querySelectorAll('.question-card.drag-over').forEach(card => {
+                card.classList.remove('drag-over');
+            });
+            
+            // Check if we're dropping on a drop indicator
+            const dropIndicator = e.target.closest('.drop-indicator');
+            let dropTarget;
+            
+            if (dropIndicator) {
+                // Find the question card that comes after the indicator
+                const nextSibling = dropIndicator.nextSibling;
+                dropTarget = nextSibling && nextSibling.classList.contains('question-card') ? nextSibling : null;
+            } else {
+                // Fallback to dropping on the question card itself
+                dropTarget = e.target.closest('.question-card');
+            }
+            
+            if (!dropTarget || dropTarget === draggedElement) return;
+            
+            // Only allow dropping on selected questions
+            const dropCheckbox = dropTarget.querySelector('.question-checkbox');
+            if (!dropCheckbox || !dropCheckbox.checked) return;
+            
+            const currentIndex = Array.from(questionsContainer.children).indexOf(draggedElement);
+            const dropIndex = Array.from(questionsContainer.children).indexOf(dropTarget);
+            
+            // Only move if the position actually changed
+            if (currentIndex !== dropIndex) {
+                // Move the dragged element to the new position
+                if (currentIndex < dropIndex) {
+                    questionsContainer.insertBefore(draggedElement, dropTarget.nextSibling);
+                } else {
+                    questionsContainer.insertBefore(draggedElement, dropTarget);
+                }
+                
+                // Update question numbers based on new order
+                updateQuestionNumbersAfterDrag();
+            }
+        }
+        
+        function updateQuestionNumbersAfterDrag() {
+            const selectedQuestions = Array.from(questionsContainer.querySelectorAll('.question-card'))
+                .filter(card => {
+                    const checkbox = card.querySelector('.question-checkbox');
+                    return checkbox && checkbox.checked;
+                });
+            
+            selectedQuestions.forEach((card, index) => {
+                const numberInput = card.querySelector('.question-number');
+                if (numberInput) {
+                    numberInput.value = index + 1;
+                }
+            });
+            
+            // Update the allQuestions array to reflect new order
+            updateAllQuestionsArray();
+        }
+        
+        function updateAllQuestionsArray() {
+            const questionCards = Array.from(questionsContainer.querySelectorAll('.question-card'));
+            const newOrder = questionCards.map(card => {
+                const questionId = card.dataset.questionId;
+                return allQuestions.find(q => q.element === card);
+            }).filter(Boolean);
+            
+            // Update allQuestions array
+            allQuestions.splice(0, allQuestions.length, ...newOrder);
+        }
+        
+        // Initialize drag and drop
+        addDragListeners();
+        
+        // Re-initialize when questions are filtered or sorted
+        const originalSortQuestions = sortQuestionsBySelection;
+        sortQuestionsBySelection = function() {
+            originalSortQuestions();
+            addDragListeners();
+        };
+    }
+    
+    // Initialize drag and drop
+    initializeDragAndDrop();
     
     // Initial setup
     updateSelectedCount();

@@ -4,289 +4,336 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Quiz Result - {{ $exam->title }}</title>
+    <title>Online Test Result - {{ $exam->title }} | Bikolpo LQ</title>
+    
+    <!-- SEO Meta Tags for Social Sharing -->
+    <meta name="description" content="I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo LQ.">
+    <meta name="keywords" content="online test, exam, result, {{ $exam->title }}, Bikolpo LQ, education, learning">
+    
+    <!-- Open Graph Meta Tags for Social Media -->
+    <meta property="og:title" content="Online Test Result - {{ $exam->title }} | Bikolpo LQ">
+    <meta property="og:description" content="I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo LQ.">
+    <meta property="og:image" content="{{ asset('images/online-test-result-share.png') }}">
+    <meta property="og:url" content="{{ request()->url() }}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Bikolpo LQ">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Online Test Result - {{ $exam->title }} | Bikolpo LQ">
+    <meta name="twitter:description" content="I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo LQ.">
+    <meta name="twitter:image" content="{{ asset('images/online-test-result-share.png') }}">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     
     <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans antialiased bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen">
-    <div class="min-h-screen py-8">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Header -->
+<body class="font-inter antialiased bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 min-h-screen overflow-x-hidden">
+    <!-- Animated Background Elements -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-200/30 to-indigo-200/30 rounded-full blur-3xl animate-pulse"></div>
+        <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-purple-200/30 to-pink-200/30 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-cyan-200/20 to-blue-200/20 rounded-full blur-3xl animate-pulse delay-500"></div>
+    </div>
+
+    <div class="relative min-h-screen py-4 sm:py-8">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Header with Branding -->
             <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-primaryGreen to-emerald-500 rounded-full shadow-lg mb-4">
-                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
+                <div class="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-full shadow-2xl mb-6 transform hover:scale-105 transition-all duration-300">
+                    <i class="fas fa-trophy text-3xl text-white"></i>
                 </div>
-                <h1 class="text-4xl font-bold text-gray-900 mb-2">Quiz Completed!</h1>
-                <p class="text-xl text-gray-600">Congratulations on completing {{ $exam->title }}</p>
+                <h1 class="text-4xl sm:text-5xl font-black text-gray-800 mb-3">
+                    Online Test Completed!
+                </h1>
+                <p class="text-xl text-gray-600 font-medium">Congratulations on completing {{ $exam->title }}</p>
+                <div class="mt-4 inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full shadow-lg">
+                    <i class="fas fa-star text-yellow-300 mr-2"></i>
+                    <span class="text-white font-bold">Powered by Bikolpo LQ</span>
+                </div>
             </div>
 
-            <!-- Main Report Card -->
-            <div class="bg-white rounded-2xl shadow-2xl overflow-hidden mb-8">
-                <!-- Report Card Header -->
-                <div class="bg-gradient-to-r from-primaryGreen to-emerald-600 text-white p-8">
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
-                        <div class="text-center lg:text-left">
-                            <h2 class="text-3xl font-bold mb-2">{{ $exam->title }}</h2>
-                            <p class="text-emerald-100 text-lg">{{ $exam->description ?? 'Online Quiz' }}</p>
+            <!-- Professional Result Card -->
+            <div class="relative bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden mb-8 transform hover:scale-[1.01] transition-all duration-300">
+                <!-- Professional Header -->
+                <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 px-8 py-6">
+                    <div class="text-center">
+                        <div class="inline-flex items-center justify-center w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full shadow-lg mb-4">
+                            <i class="fas fa-trophy text-3xl text-white"></i>
                         </div>
-                        
-                        <div class="text-center">
-                            <div class="inline-flex items-center justify-center w-32 h-32 bg-white/20 rounded-full backdrop-blur-sm">
-                                <div class="text-center">
-                                    <div class="text-4xl font-bold">{{ number_format($result->percentage ?? 0, 1) }}%</div>
-                                    <div class="text-sm text-emerald-100">Score</div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="text-center lg:text-right">
-                            <div class="text-2xl font-bold mb-2">{{ $result->grade ?? 'N/A' }}</div>
-                            <div class="text-emerald-100">
-                                @if(($result->percentage ?? 0) >= ($exam->passing_marks ?? 50))
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-500 text-white">
-                                        PASSED
-                                    </span>
-                                @else
-                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-500 text-white">
-                                        FAILED
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
+                        <h1 class="text-2xl font-bold text-white mb-2">Online Test Completed!</h1>
+                        <p class="text-blue-100 text-sm">{{ $exam->title }}</p>
                     </div>
                 </div>
+                
+                <!-- Main Content -->
+                <div class="relative p-8">
+                    <!-- Score Section -->
+                    <div class="text-center mb-8">
+                        <div class="inline-flex items-center justify-center w-32 h-32 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-full shadow-xl mb-6 relative">
+                            <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-full"></div>
+                            <div class="relative text-center">
+                                <div class="text-4xl font-bold text-white mb-1">{{ number_format($result->percentage ?? 0, 1) }}%</div>
+                                <div class="text-xs text-white font-medium">SCORE</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Status Badge -->
+                        <div class="inline-flex items-center px-6 py-2 rounded-full text-sm font-semibold shadow-md mb-4
+                            @if(($result->percentage ?? 0) >= ($exam->passing_marks ?? 50))
+                                bg-green-100 text-green-800 border border-green-200
+                            @else
+                                bg-red-100 text-red-800 border border-red-200
+                            @endif">
+                            <i class="fas fa-{{ ($result->percentage ?? 0) >= ($exam->passing_marks ?? 50) ? 'check-circle' : 'times-circle' }} mr-2"></i>
+                            {{ ($result->percentage ?? 0) >= ($exam->passing_marks ?? 50) ? 'PASSED' : 'FAILED' }}
+                        </div>
+                    </div>
 
-                <!-- Report Card Body -->
-                <div class="p-8">
-                    <!-- Quiz Performance Summary -->
-                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-8">
-                        <h3 class="text-xl font-semibold text-gray-900 mb-6 text-center">Quiz Performance Summary</h3>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                            <div class="text-center">
-                                <div class="bg-white rounded-lg p-4 shadow-sm">
-                                    <div class="text-3xl font-bold text-blue-600 mb-2">{{ $result->total_questions ?? 0 }}</div>
-                                    <div class="text-sm text-gray-600 font-medium">Total Questions</div>
-                                </div>
-                            </div>
+                    <!-- Performance Stats Grid -->
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                        <div class="bg-white rounded-xl p-4 border border-gray-200 text-center shadow-sm hover:shadow-md transition-all duration-200">
+                            <div class="text-2xl font-bold text-gray-800 mb-1">{{ $result->total_questions ?? 0 }}</div>
+                            <div class="text-xs text-gray-600 font-medium">Total Questions</div>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl p-4 border border-gray-200 text-center shadow-sm hover:shadow-md transition-all duration-200">
+                            <div class="text-2xl font-bold text-green-600 mb-1">{{ $result->correct_answers ?? 0 }}</div>
+                            <div class="text-xs text-gray-600 font-medium">Correct</div>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl p-4 border border-gray-200 text-center shadow-sm hover:shadow-md transition-all duration-200">
+                            <div class="text-2xl font-bold text-red-600 mb-1">{{ $result->wrong_answers ?? 0 }}</div>
+                            <div class="text-xs text-gray-600 font-medium">Wrong</div>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl p-4 border border-gray-200 text-center shadow-sm hover:shadow-md transition-all duration-200">
+                            <div class="text-2xl font-bold text-orange-600 mb-1">{{ $result->unanswered ?? 0 }}</div>
+                            <div class="text-xs text-gray-600 font-medium">Unanswered</div>
+                        </div>
+                    </div>
                             
-                            <div class="text-center">
-                                <div class="bg-white rounded-lg p-4 shadow-sm">
-                                    <div class="text-3xl font-bold text-green-600 mb-2">{{ $result->correct_answers ?? 0 }}</div>
-                                    <div class="text-sm text-gray-600 font-medium">Correct Answers</div>
-                                </div>
+                    <!-- Score Details -->
+                    <div class="bg-gray-50 rounded-xl p-6 mb-8 border border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4 text-center">Score Details</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="text-center p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+                                <div class="text-xl font-bold text-gray-800 mb-1">{{ $result->score ?? 0 }}</div>
+                                <div class="text-xs text-gray-600 font-medium">Final Score</div>
                             </div>
-                            
-                            <div class="text-center">
-                                <div class="bg-white rounded-lg p-4 shadow-sm">
-                                    <div class="text-3xl font-bold text-red-600 mb-2">{{ $result->wrong_answers ?? 0 }}</div>
-                                    <div class="text-sm text-gray-600 font-medium">Wrong Answers</div>
-                                </div>
+                            <div class="text-center p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+                                <div class="text-xl font-bold text-gray-800 mb-1">{{ $result->grade ?? 'N/A' }}</div>
+                                <div class="text-xs text-gray-600 font-medium">Grade</div>
                             </div>
-                            
-                            <div class="text-center">
-                                <div class="bg-white rounded-lg p-4 shadow-sm">
-                                    <div class="text-3xl font-bold text-orange-600 mb-2">{{ $result->unanswered ?? 0 }}</div>
-                                    <div class="text-sm text-gray-600 font-medium">Unanswered</div>
-                                </div>
+                            <div class="text-center p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+                                <div class="text-xl font-bold text-gray-800 mb-1">{{ $exam->passing_marks ?? 50 }}%</div>
+                                <div class="text-xs text-gray-600 font-medium">Passing Marks</div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Detailed Scoring -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-                            <h3 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                                <svg class="w-6 h-6 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                Marks Earned
-                            </h3>
-                            <div class="space-y-4">
-                                <div class="flex justify-between items-center p-3 bg-green-50 rounded-lg">
-                                    <span class="text-gray-700 font-medium">Correct Answers:</span>
-                                    <span class="text-green-600 font-bold">{{ $result->correct_answers ?? 0 }} × {{ (($result->correct_answers ?? 0) > 0 && ($result->score ?? 0) > 0) ? round(($result->score ?? 0) / ($result->correct_answers ?? 1), 2) : 1 }} = {{ $result->score ?? 0 }}</span>
-                                </div>
-                                @if(isset($exam->has_negative_marking) && $exam->has_negative_marking && $result->wrong_answers > 0)
-                                <div class="flex justify-between items-center p-3 bg-red-50 rounded-lg">
-                                    <span class="text-gray-700 font-medium">Wrong Answers (Deduction):</span>
-                                    <span class="text-red-600 font-bold">-{{ $result->wrong_answers }} × {{ $exam->negative_marks_per_question ?? 0.25 }} = -{{ number_format($result->wrong_answers * ($exam->negative_marks_per_question ?? 0.25), 2) }}</span>
-                                </div>
-                                @endif
-                                <div class="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
-                                    <span class="text-gray-700 font-medium">Final Score:</span>
-                                    <span class="text-blue-600 font-bold text-xl">{{ $result->score ?? 0 }}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-                            <h3 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                                <svg class="w-6 h-6 text-purple-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                </svg>
-                                Performance Metrics
-                            </h3>
-                            <div class="space-y-4">
-                                <div class="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
-                                    <span class="text-gray-700 font-medium">Score Percentage:</span>
-                                    <span class="text-purple-600 font-bold text-xl">{{ number_format($result->percentage ?? 0, 1) }}%</span>
-                                </div>
-                                <div class="flex justify-between items-center p-3 bg-indigo-50 rounded-lg">
-                                    <span class="text-gray-700 font-medium">Grade:</span>
-                                    <span class="text-indigo-600 font-bold text-xl">{{ $result->grade ?? 'N/A' }}</span>
-                                </div>
-                                <div class="flex justify-between items-center p-3 bg-yellow-50 rounded-lg">
-                                    <span class="text-gray-700 font-medium">Passing Marks:</span>
-                                    <span class="text-yellow-600 font-bold">{{ $exam->passing_marks ?? 50 }}%</span>
-                                </div>
-                            </div>
+                    <!-- Social Media Sharing Section -->
+                    <div class="bg-blue-50 rounded-xl p-6 mb-8 border border-blue-200">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3 text-center">Share Your Achievement</h3>
+                        <p class="text-sm text-gray-600 text-center mb-4">Let your friends know about your performance and inspire them to try Bikolpo LQ!</p>
+                        
+                        <div class="flex flex-wrap justify-center gap-3">
+                            <!-- Facebook Share -->
+                            <button onclick="shareOnFacebook()" class="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                                <i class="fab fa-facebook-f mr-2"></i>
+                                Facebook
+                            </button>
+                            
+                            <!-- WhatsApp Share -->
+                            <button onclick="shareOnWhatsApp()" class="flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                                <i class="fab fa-whatsapp mr-2"></i>
+                                WhatsApp
+                            </button>
+                            
+                            <!-- X (Twitter) Share -->
+                            <button onclick="shareOnTwitter()" class="flex items-center px-4 py-2 bg-black hover:bg-gray-800 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                                <i class="fab fa-x-twitter mr-2"></i>
+                                Share on X
+                            </button>
+                            
+                            <!-- Copy Link -->
+                            <button onclick="copyToClipboard()" class="flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                                <i class="fas fa-link mr-2"></i>
+                                Copy Link
+                            </button>
                         </div>
                     </div>
 
                     <!-- Time Information -->
-                    <div class="bg-gray-50 rounded-xl p-6 mb-8">
-                        <h3 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                            <svg class="w-6 h-6 text-gray-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
+                    <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-6 mb-8 border border-slate-200 shadow-lg">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center flex items-center justify-center">
+                            <i class="fas fa-clock text-blue-600 mr-3"></i>
                             Time Information
                         </h3>
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                            <div class="text-center">
-                                <div class="bg-white rounded-lg p-4 shadow-sm">
-                                    <div class="text-sm text-gray-600 mb-2">Started At</div>
-                                    <div class="text-lg font-semibold text-gray-900">{{ $result->started_at ? $result->started_at->format('M d, Y g:i A') : 'N/A' }}</div>
-                                </div>
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="text-center p-4 bg-white rounded-xl border border-slate-200 shadow-md">
+                                <div class="text-sm text-gray-600 mb-2 font-semibold">Started At</div>
+                                <div class="text-sm font-bold text-gray-800">{{ $result->started_at ? $result->started_at->format('M d, g:i A') : 'N/A' }}</div>
                             </div>
                             
-                            <div class="text-center">
-                                <div class="bg-white rounded-lg p-4 shadow-sm">
-                                    <div class="text-sm text-gray-600 mb-2">Completed At</div>
-                                    <div class="text-lg font-semibold text-gray-900">{{ $result->completed_at ? $result->completed_at->format('M d, Y g:i A') : 'N/A' }}</div>
-                                </div>
+                            <div class="text-center p-4 bg-white rounded-xl border border-slate-200 shadow-md">
+                                <div class="text-sm text-gray-600 mb-2 font-semibold">Completed At</div>
+                                <div class="text-sm font-bold text-gray-800">{{ $result->completed_at ? $result->completed_at->format('M d, g:i A') : 'N/A' }}</div>
                             </div>
                             
-                            <div class="text-center">
-                                <div class="bg-white rounded-lg p-4 shadow-sm">
-                                    <div class="text-sm text-gray-600 mb-2">Time Taken</div>
-                                    <div class="text-lg font-semibold text-gray-900">{{ ($result->started_at && $result->completed_at) ? $result->started_at->diffInMinutes($result->completed_at) : 'N/A' }} min</div>
-                                </div>
+                            <div class="text-center p-4 bg-white rounded-xl border border-slate-200 shadow-md">
+                                <div class="text-sm text-gray-600 mb-2 font-semibold">Time Taken</div>
+                                <div class="text-sm font-bold text-gray-800">{{ ($result->started_at && $result->completed_at) ? $result->started_at->diffInMinutes($result->completed_at) : 'N/A' }} min</div>
                             </div>
                             
-                            <div class="text-center">
-                                <div class="bg-white rounded-lg p-4 shadow-sm">
-                                    <div class="text-sm text-gray-600 mb-2">Time Limit</div>
-                                    <div class="text-lg font-semibold text-gray-900">{{ $exam->duration ?? 'N/A' }} min</div>
-                                </div>
+                            <div class="text-center p-4 bg-white rounded-xl border border-slate-200 shadow-md">
+                                <div class="text-sm text-gray-600 mb-2 font-semibold">Time Limit</div>
+                                <div class="text-sm font-bold text-gray-800">{{ $exam->duration ?? 'N/A' }} min</div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Performance Insights -->
-                    <div class="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 mb-8">
-                        <h3 class="text-xl font-semibold text-gray-900 mb-4 text-center">Performance Insights</h3>
-                        <div class="space-y-3">
+                    <div class="bg-gradient-to-r from-amber-50 via-orange-50 to-red-50 rounded-2xl p-6 mb-8 border border-amber-200 shadow-lg">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center flex items-center justify-center">
+                            <i class="fas fa-lightbulb text-amber-600 mr-3"></i>
+                            Performance Insights
+                        </h3>
+                        <div class="space-y-4">
                             @if(($result->percentage ?? 0) >= 90)
-                                <div class="flex items-center p-4 bg-green-100 rounded-lg border border-green-200">
-                                    <svg class="w-6 h-6 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                    </svg>
-                                    <span class="text-green-800 font-medium">Outstanding performance! You've mastered this material with exceptional understanding.</span>
+                                <div class="flex items-center p-4 bg-gradient-to-r from-green-50 to-green-100 rounded-xl border border-green-200 shadow-md">
+                                    <i class="fas fa-star text-green-600 text-2xl mr-4"></i>
+                                    <span class="text-green-800 font-semibold text-lg">Outstanding performance! You've mastered this material with exceptional understanding.</span>
                                 </div>
                             @elseif(($result->percentage ?? 0) >= 80)
-                                <div class="flex items-center p-4 bg-blue-100 rounded-lg border border-blue-200">
-                                    <svg class="w-6 h-6 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                    </svg>
-                                    <span class="text-blue-800 font-medium">Excellent work! You have a solid understanding of the subject matter.</span>
+                                <div class="flex items-center p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl border border-blue-200 shadow-md">
+                                    <i class="fas fa-thumbs-up text-blue-600 text-2xl mr-4"></i>
+                                    <span class="text-blue-800 font-semibold text-lg">Excellent work! You have a solid understanding of the subject matter.</span>
                                 </div>
                             @elseif(($result->percentage ?? 0) >= 70)
-                                <div class="flex items-center p-4 bg-yellow-100 rounded-lg border border-yellow-200">
-                                    <svg class="w-6 h-6 text-yellow-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                    </svg>
-                                    <span class="text-yellow-800 font-medium">Good job! Consider reviewing areas where you struggled for improvement.</span>
+                                <div class="flex items-center p-4 bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-xl border border-yellow-200 shadow-md">
+                                    <i class="fas fa-check-circle text-yellow-600 text-2xl mr-4"></i>
+                                    <span class="text-yellow-800 font-semibold text-lg">Good job! Consider reviewing areas where you struggled for improvement.</span>
                                 </div>
                             @else
-                                <div class="flex items-center p-4 bg-red-100 rounded-lg border border-red-200">
-                                    <svg class="w-6 h-6 text-red-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                                    </svg>
-                                    <span class="text-red-800 font-medium">Keep practicing! Review the material thoroughly and try again for better results.</span>
+                                <div class="flex items-center p-4 bg-gradient-to-r from-red-50 to-red-100 rounded-xl border border-red-200 shadow-md">
+                                    <i class="fas fa-exclamation-triangle text-red-600 text-2xl mr-4"></i>
+                                    <span class="text-red-800 font-semibold text-lg">Keep practicing! Review the material thoroughly and try again for better results.</span>
                                 </div>
                             @endif
                             
                             @if(isset($result->unanswered) && $result->unanswered > 0)
-                                <div class="flex items-center p-4 bg-orange-100 rounded-lg border border-orange-200">
-                                    <svg class="w-6 h-6 text-orange-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                    <span class="text-orange-800 font-medium">You left {{ $result->unanswered }} question(s) unanswered. Try to answer all questions next time for maximum points.</span>
+                                <div class="flex items-center p-4 bg-gradient-to-r from-orange-50 to-orange-100 rounded-xl border border-orange-200 shadow-md">
+                                    <i class="fas fa-clock text-orange-600 text-2xl mr-4"></i>
+                                    <span class="text-orange-800 font-semibold text-lg">You left {{ $result->unanswered }} question(s) unanswered. Try to answer all questions next time for maximum points.</span>
                                 </div>
                             @endif
 
                             @if(isset($exam->has_negative_marking) && $exam->has_negative_marking && $result->wrong_answers > 0)
-                                <div class="flex items-center p-4 bg-purple-100 rounded-lg border border-purple-200">
-                                    <svg class="w-6 h-6 text-purple-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                                    </svg>
-                                    <span class="text-purple-800 font-medium">This quiz has negative marking. Each wrong answer deducts {{ $exam->negative_marks_per_question ?? 0.25 }} marks.</span>
+                                <div class="flex items-center p-4 bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl border border-purple-200 shadow-md">
+                                    <i class="fas fa-info-circle text-purple-600 text-2xl mr-4"></i>
+                                    <span class="text-purple-800 font-semibold text-lg">This quiz has negative marking. Each wrong answer deducts {{ $exam->negative_marks_per_question ?? 0.25 }} marks.</span>
                                 </div>
                             @endif
                         </div>
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <div class="flex flex-col sm:flex-row gap-3 justify-center">
                         <a href="{{ route('public.quiz.review', ['exam' => $exam->id, 'result' => $result->id]) }}" 
-                           class="flex-1 sm:flex-none flex justify-center items-center py-3 px-8 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-1">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
+                           class="flex-1 sm:flex-none flex justify-center items-center py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                            <i class="fas fa-file-alt mr-2"></i>
                             Review Answers
                         </a>
                         
                         <a href="{{ route('public.quiz.access') }}" 
-                           class="flex-1 sm:flex-none flex justify-center items-center py-3 px-8 bg-primaryGreen hover:bg-green-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-1">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                            </svg>
-                            Take Another Quiz
+                           class="flex-1 sm:flex-none flex justify-center items-center py-3 px-6 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                            <i class="fas fa-play-circle mr-2"></i>
+                            Take Another Test
                         </a>
                         
                         <button onclick="window.print()" 
-                                class="flex-1 sm:flex-none flex justify-center items-center py-3 px-8 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-1">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
-                            </svg>
-                            Print Result
+                                class="flex-1 sm:flex-none flex justify-center items-center py-3 px-6 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                            <i class="fas fa-download mr-2"></i>
+                            Download Result
                         </button>
                     </div>
                 </div>
             </div>
 
             <!-- Footer -->
-            <div class="text-center text-gray-500">
-                <p class="text-sm">
-                    &copy; {{ date('Y') }} CSuite. All rights reserved. | 
+            <div class="text-center text-gray-600 mb-8">
+                <div class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full shadow-lg">
+                    <i class="fas fa-star text-yellow-300 mr-2"></i>
+                    <span class="text-white font-semibold">Powered by Bikolpo LQ</span>
+                </div>
+                <p class="text-sm mt-4 text-gray-500">
                     Report generated on {{ now()->format('M d, Y g:i A') }}
                 </p>
             </div>
         </div>
     </div>
 
+    <!-- Custom Styles -->
     <style>
+        .font-inter {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .font-poppins {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        /* Custom animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.8); }
+        }
+        
+        .animate-glow {
+            animation: glow 2s ease-in-out infinite;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(59, 130, 246, 0.5);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(59, 130, 246, 0.7);
+        }
+        
+        /* Print styles */
         @media print {
             body { 
                 background: white !important; 
@@ -303,139 +350,10 @@
             .bg-gradient-to-r { 
                 background: #f8fafc !important; 
             }
-            .bg-primaryGreen { 
-                background: #10b981 !important; 
-            }
-            .text-primaryGreen { 
-                color: #10b981 !important; 
-            }
-            .bg-emerald-600 { 
-                background: #059669 !important; 
-            }
-            .text-emerald-600 { 
-                color: #059669 !important; 
-            }
-            .bg-emerald-100 { 
-                background: #d1fae5 !important; 
-            }
-            .text-emerald-100 { 
-                color: #059669 !important; 
-            }
-            .bg-blue-50 { 
-                background: #eff6ff !important; 
-            }
-            .bg-indigo-50 { 
-                background: #eef2ff !important; 
-            }
-            .bg-yellow-50 { 
-                background: #fffbeb !important; 
-            }
-            .bg-orange-50 { 
-                background: #fff7ed !important; 
-            }
-            .bg-purple-50 { 
-                background: #faf5ff !important; 
-            }
-            .bg-gray-50 { 
-                background: #f9fafb !important; 
-            }
-            .bg-green-100 { 
-                background: #dcfce7 !important; 
-            }
-            .bg-blue-100 { 
-                background: #dbeafe !important; 
-            }
-            .bg-yellow-100 { 
-                background: #fef3c7 !important; 
-            }
-            .bg-red-100 { 
-                background: #fee2e2 !important; 
-            }
-            .bg-orange-100 { 
-                background: #fed7aa !important; 
-            }
-            .bg-purple-100 { 
-                background: #f3e8ff !important; 
-            }
-            .border-green-200 { 
-                border-color: #bbf7d0 !important; 
-            }
-            .border-blue-200 { 
-                border-color: #bfdbfe !important; 
-            }
-            .border-yellow-200 { 
-                border-color: #fde68a !important; 
-            }
-            .border-red-200 { 
-                border-color: #fecaca !important; 
-            }
-            .border-orange-200 { 
-                border-color: #fed7aa !important; 
-            }
-            .border-purple-200 { 
-                border-color: #e9d5ff !important; 
-            }
-            .text-green-800 { 
-                color: #166534 !important; 
-            }
-            .text-blue-800 { 
-                color: #1e40af !important; 
-            }
-            .text-yellow-800 { 
-                color: #92400e !important; 
-            }
-            .text-red-800 { 
-                color: #991b1b !important; 
-            }
-            .text-orange-800 { 
-                color: #9a3412 !important; 
-            }
-            .text-purple-800 { 
-                color: #6b21a8 !important; 
-            }
-            .text-green-600 { 
-                color: #059669 !important; 
-            }
-            .text-blue-600 { 
-                color: #2563eb !important; 
-            }
-            .text-yellow-600 { 
-                color: #d97706 !important; 
-            }
-            .text-red-600 { 
-                color: #dc2626 !important; 
-            }
-            .text-orange-600 { 
-                color: #ea580c !important; 
-            }
-            .text-purple-600 { 
-                color: #9333ea !important; 
-            }
-            .text-indigo-600 { 
-                color: #4f46e5 !important; 
-            }
-            .text-gray-600 { 
-                color: #4b5563 !important; 
-            }
-            .text-gray-700 { 
-                color: #374151 !important; 
-            }
-            .text-gray-900 { 
-                color: #111827 !important; 
-            }
             .text-white { 
                 color: #000000 !important; 
             }
-            .text-emerald-100 { 
-                color: #000000 !important; 
-            }
-            .text-emerald-600 { 
-                color: #000000 !important; 
-            }
-            .text-primaryGreen { 
-                color: #000000 !important; 
-            }
-            .bg-white\/20 { 
+            .bg-white\/10 { 
                 background: #ffffff !important; 
             }
             .backdrop-blur-sm { 
@@ -443,5 +361,99 @@
             }
         }
     </style>
+
+    <!-- JavaScript for Social Media Sharing -->
+    <script>
+        // Social Media Sharing Functions
+        function shareOnFacebook() {
+            const url = encodeURIComponent(window.location.href);
+            const text = encodeURIComponent(`I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo LQ.`);
+            const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`;
+            window.open(facebookUrl, '_blank', 'width=600,height=400');
+        }
+        
+        function shareOnWhatsApp() {
+            const text = `I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo LQ. ${window.location.href}`;
+            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+        
+        function shareOnTwitter() {
+            const text = `I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo LQ.`;
+            const url = window.location.href;
+            const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+            window.open(twitterUrl, '_blank', 'width=600,height=400');
+        }
+        
+        function copyToClipboard() {
+            const text = `I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo LQ. ${window.location.href}`;
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showNotification('Link copied to clipboard!', 'success');
+                });
+            } else {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showNotification('Link copied to clipboard!', 'success');
+            }
+        }
+        
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transform transition-all duration-300 ${
+                type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+            }`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+        
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add floating animation to the main score circle
+            const scoreCircle = document.querySelector('.inline-flex.items-center.justify-center.w-32.h-32');
+            if (scoreCircle) {
+                scoreCircle.classList.add('animate-float');
+            }
+            
+            // Add glow effect to the main card
+            const mainCard = document.querySelector('.relative.bg-white\\/10');
+            if (mainCard) {
+                mainCard.classList.add('animate-glow');
+            }
+            
+            // Add hover effects to stat cards
+            const statCards = document.querySelectorAll('.bg-white\\/20.backdrop-blur-sm');
+            statCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.05) translateY(-5px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1) translateY(0)';
+                });
+            });
+        });
+    </script>
 </body>
 </html>

@@ -809,6 +809,10 @@ class ExamController extends Controller
         // Get assigned questions with marks for display
         $assignedQuestionsWithMarks = \App\Models\ExamQuestion::where('exam_id', $exam->id)
             ->pluck('marks', 'question_id');
+            
+        // Get assigned questions with order numbers for display
+        $assignedQuestionsWithOrder = \App\Models\ExamQuestion::where('exam_id', $exam->id)
+            ->pluck('order', 'question_id');
         
         // Get courses, subjects and topics for filters
         $courses = \App\Models\Course::where('status', 'active')
@@ -828,7 +832,7 @@ class ExamController extends Controller
             'partner_id' => $partnerId
         ]);
         
-        return view('partner.exams.assign-questions', compact('exam', 'questions', 'assignedQuestions', 'assignedQuestionsWithMarks', 'courses', 'subjects', 'topics'));
+        return view('partner.exams.assign-questions', compact('exam', 'questions', 'assignedQuestions', 'assignedQuestionsWithMarks', 'assignedQuestionsWithOrder', 'courses', 'subjects', 'topics'));
     }
 
     public function storeAssignedQuestions(Request $request, Exam $exam)
@@ -845,7 +849,9 @@ class ExamController extends Controller
                 'question_ids' => 'required|array',
                 'question_ids.*' => 'exists:questions,id',
                 'question_marks' => 'required|array',
-                'question_marks.*' => 'integer|min:1|max:100'
+                'question_marks.*' => 'integer|min:1|max:100',
+                'question_numbers' => 'array',
+                'question_numbers.*' => 'nullable|integer|min:1|max:999'
             ]);
 
             $partnerId = $this->getPartnerId();
@@ -862,16 +868,23 @@ class ExamController extends Controller
             // Store new assigned questions
             $questionIds = $request->question_ids;
             $questionMarks = $request->question_marks;
+            $questionNumbers = $request->question_numbers ?? [];
             $examQuestions = [];
             
             foreach ($questionIds as $index => $questionId) {
                 $question = \App\Models\Question::find($questionId);
                 $marks = isset($questionMarks[$questionId]) ? (int)$questionMarks[$questionId] : 1;
                 
+                // Only use question number if it's not empty, otherwise use sequential order
+                $order = $index + 1;
+                if (isset($questionNumbers[$questionId]) && !empty($questionNumbers[$questionId])) {
+                    $order = (int)$questionNumbers[$questionId];
+                }
+                
                 $examQuestions[] = [
                     'exam_id' => $exam->id,
                     'question_id' => $questionId,
-                    'order' => $index + 1,
+                    'order' => $order,
                     'marks' => $marks,
                     'created_at' => now(),
                     'updated_at' => now(),

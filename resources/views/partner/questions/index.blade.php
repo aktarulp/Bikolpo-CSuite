@@ -7,91 +7,139 @@
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 text-gray-900 dark:text-gray-100">
-                <div class="flex justify-between items-center mb-6">
-                    <div class="flex items-center space-x-4">
-                        <h2 class="text-2xl font-bold">Questions Management</h2>
-                        <a href="{{ route('partner.questions.index') }}" 
-                           class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md transition-colors duration-200 text-sm">
-                            ← Back to Dashboard
-                        </a>
-                    </div>
-                    <div class="flex space-x-3">
-                        <a href="{{ route('partner.questions.drafts') }}" 
-                           class="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-md transition-colors duration-200 flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                            View Drafts
-                        </a>
-                        <a href="{{ route('partner.questions.mcq.create') }}" 
-                           class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors duration-200">
-                            Create MCQ
-                        </a>
-                        <a href="{{ route('partner.questions.descriptive.create') }}" 
-                           class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md transition-colors duration-200">
-                            Create Descriptive
-                        </a>
-                        <a href="{{ route('partner.check-session') }}" 
-                           class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md transition-colors duration-200">
-                            Session & Seed MCQ
-                        </a>
+                <!-- Header Section -->
+                <div class="mb-6">
+                    <div class="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4">
+                        <!-- Title Section -->
+                        <div class="flex-1">
+                            <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">All Questions</h1>
+                            <p class="text-gray-600 dark:text-gray-400">Manage and filter your questions</p>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="flex flex-wrap gap-3">
+                            <a href="{{ route('partner.questions.drafts') }}" 
+                               class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors duration-200 flex items-center gap-2 text-sm font-medium">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                View Drafts
+                            </a>
+                            <div class="relative group">
+                                <button class="px-4 py-2 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white rounded-lg transition-all duration-200 flex items-center gap-2 text-sm font-medium">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                    </svg>
+                                    Add Question
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                    </svg>
+                                </button>
+                                <!-- Dropdown Menu -->
+                                <div class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
+                                    <div class="py-1">
+                                        <a href="{{ route('partner.questions.mcq.create') }}" 
+                                           class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                                            Create MCQ Question
+                                        </a>
+                                        <a href="{{ route('partner.questions.descriptive.create') }}" 
+                                           class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                                            Create Descriptive Question
+                                        </a>
+                                        <hr class="my-1 border-gray-200 dark:border-gray-600">
+                                        <a href="{{ route('partner.check-session') }}" 
+                                           class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+                                            Session & Seed MCQ
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-    <!-- Filters -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-        <form method="GET" class="grid grid-cols-1 md:grid-cols-6 gap-3">
-            <div>
-                <label class="block text-xs font-medium mb-1">Course</label>
-                <select name="course" class="w-full rounded-md border p-1.5 text-sm">
-                    <option value="">All Courses</option>
-                    @foreach($courses ?? [] as $course)
-                        <option value="{{ $course->id }}" {{ request('course') == $course->id ? 'selected' : '' }}>
-                            {{ $course->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <div>
-                <label class="block text-xs font-medium mb-1">Subject</label>
-                <select name="subject" class="w-full rounded-md border p-1.5 text-sm">
-                    <option value="">All Subjects</option>
-                    @foreach($subjects ?? [] as $subject)
-                        <option value="{{ $subject->id }}" {{ request('subject') == $subject->id ? 'selected' : '' }}>
-                            {{ $subject->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <div>
-                <label class="block text-xs font-medium mb-1">Topic</label>
-                <select name="topic" class="w-full rounded-md border p-1.5 text-sm">
-                    <option value="">All Topics</option>
-                    @foreach($topics ?? [] as $topic)
-                        <option value="{{ $topic->id }}" {{ request('topic') == $topic->id ? 'selected' : '' }}>
-                            {{ $topic->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <div>
-                <label class="block text-xs font-medium mb-1">Question Type</label>
-                <select name="question_type" class="w-full rounded-md border p-1.5 text-sm">
-                    <option value="">All Types</option>
-                    @foreach($questionTypes ?? [] as $questionType)
-                        <option value="{{ $questionType->q_type_id }}" {{ request('question_type') == $questionType->q_type_id ? 'selected' : '' }}>
-                            {{ $questionType->q_type_name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="flex items-end">
-                <a href="{{ route('partner.questions.index') }}" class="w-full px-3 py-1.5 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition-colors duration-200 text-center text-sm">
-                    Clear Filters
-                </a>
-            </div>
-        </form>
-    </div>
+                <!-- Search and Filters Section -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
+                    <form method="GET" class="space-y-4">
+                        <!-- Search Bar -->
+                        <div class="relative">
+                            <input type="text" 
+                                   name="search" 
+                                   value="{{ request('search') }}"
+                                   placeholder="Search questions..."
+                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Filters -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div>
+                                <select name="course" class="w-full rounded-lg border border-gray-300 dark:border-gray-600 p-3 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200">
+                                    <option value="">All Courses</option>
+                                    @foreach($courses ?? [] as $course)
+                                        <option value="{{ $course->id }}" {{ request('course') == $course->id ? 'selected' : '' }}>
+                                            {{ $course->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <select name="subject" class="w-full rounded-lg border border-gray-300 dark:border-gray-600 p-3 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200">
+                                    <option value="">All Subjects</option>
+                                    @foreach($subjects ?? [] as $subject)
+                                        <option value="{{ $subject->id }}" {{ request('subject') == $subject->id ? 'selected' : '' }}>
+                                            {{ $subject->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <select name="topic" class="w-full rounded-lg border border-gray-300 dark:border-gray-600 p-3 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200">
+                                    <option value="">All Topics</option>
+                                    @foreach($topics ?? [] as $topic)
+                                        <option value="{{ $topic->id }}" {{ request('topic') == $topic->id ? 'selected' : '' }}>
+                                            {{ $topic->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <select name="question_type" class="w-full rounded-lg border border-gray-300 dark:border-gray-600 p-3 text-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200">
+                                    <option value="">All Types</option>
+                                    @foreach($questionTypes ?? [] as $questionType)
+                                        <option value="{{ $questionType->q_type_id }}" {{ request('question_type') == $questionType->q_type_id ? 'selected' : '' }}>
+                                            {{ $questionType->q_type_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex justify-end gap-3">
+                            <button type="submit" 
+                                    class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 text-sm flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                </svg>
+                                Refresh
+                            </button>
+                            @if(request()->hasAny(['search', 'course', 'subject', 'topic', 'question_type']))
+                                <a href="{{ route('partner.questions.index') }}" 
+                                   class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors duration-200 text-sm flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                    Clear All
+                                </a>
+                            @endif
+                        </div>
+                    </form>
+                </div>
 
     <!-- Questions List -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
@@ -263,14 +311,85 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Get all filter select elements
     const filterSelects = document.querySelectorAll('select[name="course"], select[name="subject"], select[name="topic"], select[name="question_type"]');
+    const searchInput = document.querySelector('input[name="search"]');
+    const form = document.querySelector('form');
     
     // Add change event listener to each filter
     filterSelects.forEach(select => {
         select.addEventListener('change', function() {
             // Submit the form automatically when any filter changes
-            this.closest('form').submit();
+            form.submit();
         });
     });
+    
+    // Handle search input with debouncing
+    let searchTimeout;
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                // Only search if input has 2+ characters or is empty
+                if (this.value.length >= 2 || this.value.length === 0) {
+                    form.submit();
+                }
+            }, 500);
+        });
+    }
+    
+    // Add loading indicator when form is submitted
+    form.addEventListener('submit', function() {
+        const submitBtn = this.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.innerHTML = `
+                <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Searching...
+            `;
+            submitBtn.disabled = true;
+        }
+    });
+    
+    // Show active filters count
+    function updateActiveFiltersCount() {
+        const activeFilters = [];
+        
+        if (searchInput && searchInput.value.trim()) {
+            activeFilters.push('Search');
+        }
+        
+        filterSelects.forEach(select => {
+            if (select.value) {
+                activeFilters.push(select.previousElementSibling.textContent.trim());
+            }
+        });
+        
+        // Update or create filter count badge
+        let badge = document.querySelector('.filter-count-badge');
+        if (activeFilters.length > 0) {
+            if (!badge) {
+                badge = document.createElement('span');
+                badge.className = 'filter-count-badge ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+                document.querySelector('h2').appendChild(badge);
+            }
+            badge.textContent = `${activeFilters.length} filter${activeFilters.length > 1 ? 's' : ''} active`;
+        } else if (badge) {
+            badge.remove();
+        }
+    }
+    
+    // Initialize filter count
+    updateActiveFiltersCount();
+    
+    // Update count when filters change
+    filterSelects.forEach(select => {
+        select.addEventListener('change', updateActiveFiltersCount);
+    });
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', updateActiveFiltersCount);
+    }
 });
 </script>
 
