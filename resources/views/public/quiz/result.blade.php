@@ -225,8 +225,8 @@
                             <!-- Score Circle -->
                             <div class="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 bg-gradient-to-br from-white/25 to-white/10 backdrop-blur-md rounded-full shadow-2xl mb-3 relative border-2 border-white/30">
                                 <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-full"></div>
-                                <div class="relative text-center px-2">
-                                    <div class="text-lg sm:text-xl lg:text-2xl font-bold text-white leading-tight">{{ number_format($result->percentage ?? 0, 1) }}%</div>
+                                <div class="relative text-center px-1">
+                                    <div class="text-sm sm:text-base lg:text-lg font-bold text-white leading-tight">{{ number_format($result->percentage ?? 0, 1) }}%</div>
                                     <div class="text-xs text-white font-medium leading-none">SCORE</div>
                                 </div>
                             </div>
@@ -249,43 +249,117 @@
                 <div class="relative p-4 sm:p-6 lg:p-8">
 
                     <!-- Performance Stats Grid -->
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:gap-4 mb-6 sm:mb-8">
-                        <div class="bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 border border-gray-200 text-center shadow-sm hover:shadow-md transition-all duration-200">
-                            <div class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800 mb-1">{{ $result->total_questions ?? 0 }}</div>
-                            <div class="text-xs text-gray-600 font-medium">Total Questions</div>
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+                        <!-- Total Questions Card -->
+                        <div class="group relative bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-3 sm:p-4 border border-blue-200/50 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 overflow-hidden">
+                            <div class="absolute top-0 right-0 w-12 h-12 bg-gradient-to-br from-blue-400/20 to-indigo-500/20 rounded-full -translate-y-6 translate-x-6"></div>
+                            <div class="relative">
+                                <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center mb-2 shadow-lg">
+                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                </div>
+                                <div class="text-xl sm:text-2xl font-black text-blue-800 mb-0.5">{{ $result->total_questions ?? 0 }}</div>
+                                <div class="text-xs font-semibold text-blue-600 uppercase tracking-wide">Total Questions</div>
+                            </div>
                         </div>
                         
-                        <div class="bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 border border-gray-200 text-center shadow-sm hover:shadow-md transition-all duration-200">
-                            <div class="text-lg sm:text-xl lg:text-2xl font-bold text-green-600 mb-1">{{ $result->correct_answers ?? 0 }}</div>
-                            <div class="text-xs text-gray-600 font-medium">Correct</div>
+                        <!-- Correct Answers Card -->
+                        <div class="group relative bg-gradient-to-br from-green-50 to-emerald-100 rounded-xl p-3 sm:p-4 border border-green-200/50 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 overflow-hidden">
+                            <div class="absolute top-0 right-0 w-12 h-12 bg-gradient-to-br from-green-400/20 to-emerald-500/20 rounded-full -translate-y-6 translate-x-6"></div>
+                            <div class="relative">
+                                <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center mb-2 shadow-lg">
+                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div class="text-xl sm:text-2xl font-black text-green-800 mb-0.5">{{ $result->correct_answers ?? 0 }}</div>
+                                <div class="text-xs font-semibold text-green-600 uppercase tracking-wide">Correct</div>
+                            </div>
                         </div>
                         
-                        <div class="bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 border border-gray-200 text-center shadow-sm hover:shadow-md transition-all duration-200">
-                            <div class="text-lg sm:text-xl lg:text-2xl font-bold text-red-600 mb-1">{{ $result->wrong_answers ?? 0 }}</div>
-                            <div class="text-xs text-gray-600 font-medium">Wrong</div>
+                        <!-- Wrong Answers Card -->
+                        <div class="group relative bg-gradient-to-br from-red-50 to-rose-100 rounded-xl p-3 sm:p-4 border border-red-200/50 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 overflow-hidden">
+                            <div class="absolute top-0 right-0 w-12 h-12 bg-gradient-to-br from-red-400/20 to-rose-500/20 rounded-full -translate-y-6 translate-x-6"></div>
+                            <div class="relative">
+                                <div class="w-8 h-8 bg-gradient-to-br from-red-500 to-rose-600 rounded-lg flex items-center justify-center mb-2 shadow-lg">
+                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div class="text-xl sm:text-2xl font-black text-red-800 mb-0.5">{{ $result->wrong_answers ?? 0 }}</div>
+                                <div class="text-xs font-semibold text-red-600 uppercase tracking-wide">Wrong</div>
+                            </div>
                         </div>
                         
-                        <div class="bg-white rounded-lg sm:rounded-xl p-3 sm:p-4 border border-gray-200 text-center shadow-sm hover:shadow-md transition-all duration-200">
-                            <div class="text-lg sm:text-xl lg:text-2xl font-bold text-orange-600 mb-1">{{ $result->unanswered ?? 0 }}</div>
-                            <div class="text-xs text-gray-600 font-medium">Unanswered</div>
+                        <!-- Unanswered Card -->
+                        <div class="group relative bg-gradient-to-br from-orange-50 to-amber-100 rounded-xl p-3 sm:p-4 border border-orange-200/50 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 overflow-hidden">
+                            <div class="absolute top-0 right-0 w-12 h-12 bg-gradient-to-br from-orange-400/20 to-amber-500/20 rounded-full -translate-y-6 translate-x-6"></div>
+                            <div class="relative">
+                                <div class="w-8 h-8 bg-gradient-to-br from-orange-500 to-amber-600 rounded-lg flex items-center justify-center mb-2 shadow-lg">
+                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div class="text-xl sm:text-2xl font-black text-orange-800 mb-0.5">{{ $result->unanswered ?? 0 }}</div>
+                                <div class="text-xs font-semibold text-orange-600 uppercase tracking-wide">Unanswered</div>
+                            </div>
                         </div>
                     </div>
                             
                     <!-- Score Details -->
-                    <div class="bg-gray-50 rounded-lg sm:rounded-xl p-4 sm:p-6 mb-6 sm:mb-8 border border-gray-200">
-                        <h3 class="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 text-center">Score Details</h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-                            <div class="text-center p-3 sm:p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
-                                <div class="text-lg sm:text-xl font-bold text-gray-800 mb-1">{{ $result->score ?? 0 }}</div>
-                                <div class="text-xs text-gray-600 font-medium">Final Score</div>
-                            </div>
-                            <div class="text-center p-3 sm:p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
-                                <div class="text-lg sm:text-xl font-bold text-gray-800 mb-1">{{ $result->grade ?? 'N/A' }}</div>
-                                <div class="text-xs text-gray-600 font-medium">Grade</div>
-                            </div>
-                            <div class="text-center p-3 sm:p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
-                                <div class="text-lg sm:text-xl font-bold text-gray-800 mb-1">{{ $exam->passing_marks ?? 50 }}%</div>
-                                <div class="text-xs text-gray-600 font-medium">Passing Marks</div>
+                    <div class="relative bg-gradient-to-br from-slate-50 to-gray-100 rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8 border border-gray-200/50 shadow-xl overflow-hidden">
+                        <!-- Decorative Elements -->
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-purple-200/20 to-indigo-300/20 rounded-full -translate-y-12 translate-x-12"></div>
+                        <div class="absolute bottom-0 left-0 w-20 h-20 bg-gradient-to-tr from-blue-200/20 to-cyan-300/20 rounded-full translate-y-10 -translate-x-10"></div>
+                        
+                        <div class="relative">
+                            <h3 class="text-lg sm:text-xl font-black text-gray-800 mb-4 sm:mb-5 text-center bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                                <i class="fas fa-trophy text-yellow-500 mr-2"></i>
+                                Score Details
+                            </h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                                <!-- Final Score Card -->
+                                <div class="group relative bg-gradient-to-br from-purple-50 to-indigo-100 rounded-xl p-3 sm:p-4 border border-purple-200/50 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 overflow-hidden">
+                                    <div class="absolute top-0 right-0 w-12 h-12 bg-gradient-to-br from-purple-400/20 to-indigo-500/20 rounded-full -translate-y-6 translate-x-6"></div>
+                                    <div class="relative text-center">
+                                        <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg flex items-center justify-center mb-2 shadow-lg mx-auto">
+                                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="text-xl sm:text-2xl font-black text-purple-800 mb-0.5">{{ $result->score ?? 0 }}</div>
+                                        <div class="text-xs font-semibold text-purple-600 uppercase tracking-wide">Final Score</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Grade Card -->
+                                <div class="group relative bg-gradient-to-br from-emerald-50 to-teal-100 rounded-xl p-3 sm:p-4 border border-emerald-200/50 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 overflow-hidden">
+                                    <div class="absolute top-0 right-0 w-12 h-12 bg-gradient-to-br from-emerald-400/20 to-teal-500/20 rounded-full -translate-y-6 translate-x-6"></div>
+                                    <div class="relative text-center">
+                                        <div class="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center mb-2 shadow-lg mx-auto">
+                                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="text-xl sm:text-2xl font-black text-emerald-800 mb-0.5">{{ $result->grade ?? 'N/A' }}</div>
+                                        <div class="text-xs font-semibold text-emerald-600 uppercase tracking-wide">Grade</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Passing Marks Card -->
+                                <div class="group relative bg-gradient-to-br from-amber-50 to-yellow-100 rounded-xl p-3 sm:p-4 border border-amber-200/50 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 overflow-hidden">
+                                    <div class="absolute top-0 right-0 w-12 h-12 bg-gradient-to-br from-amber-400/20 to-yellow-500/20 rounded-full -translate-y-6 translate-x-6"></div>
+                                    <div class="relative text-center">
+                                        <div class="w-8 h-8 bg-gradient-to-br from-amber-500 to-yellow-600 rounded-lg flex items-center justify-center mb-2 shadow-lg mx-auto">
+                                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                            </svg>
+                                        </div>
+                                        <div class="text-xl sm:text-2xl font-black text-amber-800 mb-0.5">{{ $exam->passing_marks ?? 50 }}%</div>
+                                        <div class="text-xs font-semibold text-amber-600 uppercase tracking-wide">Passing Marks</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
