@@ -173,6 +173,14 @@ class ExamController extends Controller
             'question_header',
         ]);
 
+        // For draft saves, provide default values for required fields that might be empty
+        if ($isDraft) {
+            $data['exam_type'] = $data['exam_type'] ?? 'online';
+            $data['duration'] = $data['duration'] ?? 60; // Default 60 minutes
+            $data['total_questions'] = $data['total_questions'] ?? 10; // Default 10 questions
+            $data['passing_marks'] = $data['passing_marks'] ?? 50; // Default 50% passing marks
+        }
+
         // Add the combined datetime values (only if they exist)
         if ($startDateTime) {
             $data['start_time'] = $startDateTime->format('Y-m-d H:i:s');
