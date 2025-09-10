@@ -105,7 +105,7 @@
     @endif
 
     <!-- Main Container -->
-    <div class="container mx-auto px-4 py-6 space-y-6">
+    <div class="container mx-auto px-4 py-4 space-y-2">
         <!-- Header Section -->
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
             <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-8">
@@ -187,7 +187,7 @@
             </div>
             
             <!-- Stats Section -->
-            <div class="p-6">
+            <div class="py-2 px-6">
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div class="stats-card rounded-lg p-4">
                         <div class="flex items-center gap-3">
@@ -246,32 +246,10 @@
 
         <!-- Search and Filters Section -->
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <div class="p-6">
+            <div class="py-2 px-4">
                 <form method="GET" id="filterForm" class="space-y-6">
                     <input type="hidden" name="search" id="searchHidden" value="{{ request('search') }}">
                     
-                    <!-- Search Bar -->
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                            </svg>
-                        </div>
-                        <input type="text" 
-                               id="searchInput" 
-                               class="block w-full pl-12 pr-16 py-4 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-lg" 
-                               placeholder="Search questions by text, course, subject, or topic..." 
-                               value="{{ request('search') }}">
-                        <div class="absolute inset-y-0 right-0 flex items-center pr-4">
-                            <div id="searchLoading" class="hidden">
-                                <svg class="animate-spin h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Filters Grid -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                         <div class="space-y-2">
@@ -312,17 +290,44 @@
                         </div>
                     </div>
                     
-                    <!-- Action Buttons -->
-                    <div class="flex flex-wrap gap-3 justify-end">
-                        <button type="button" id="refreshQuestions" class="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 flex items-center gap-2 font-medium">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                            </svg>
-                            Refresh
-                        </button>
-                        <button type="button" id="clearAllFilters" class="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-all duration-200 font-medium">
-                            Clear Filters
-                        </button>
+                    <!-- Search Bar with Action Buttons -->
+                    <div class="flex flex-col lg:flex-row gap-4">
+                        <!-- Search Bar -->
+                        <div class="flex-1">
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                    </svg>
+                                </div>
+                                <input type="text" 
+                                       id="searchInput" 
+                                       class="block w-full pl-12 pr-16 py-4 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-lg" 
+                                       placeholder="Search questions by text, course, subject, or topic..." 
+                                       value="{{ request('search') }}">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-4">
+                                    <div id="searchLoading" class="hidden">
+                                        <svg class="animate-spin h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="flex gap-3 flex-shrink-0">
+                            <button type="button" id="refreshQuestions" class="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 flex items-center gap-2 font-medium">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                                Refresh
+                            </button>
+                            <button type="button" id="clearAllFilters" class="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-all duration-200 font-medium">
+                                Clear Filters
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>
