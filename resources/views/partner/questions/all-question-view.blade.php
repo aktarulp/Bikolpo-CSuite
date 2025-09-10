@@ -3,8 +3,6 @@
 @section('title', 'All Questions - Bikolpo LQ')
 
 @section('content')
-<!-- Flatpickr CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <style>
     .question-card {
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -306,23 +304,11 @@
                         
                         <div class="space-y-2">
                             <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Date Created</label>
-                            <div class="relative">
-                                <input type="text" 
-                                       name="date_filter" 
-                                       id="date_filter" 
-                                       class="w-full rounded-lg border border-gray-300 dark:border-gray-600 p-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 cursor-pointer"
-                                       placeholder="Select date"
-                                       value="{{ request('date_filter') }}"
-                                       readonly>
-                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                            <button type="button" id="highlightDates" class="mt-2 px-3 py-1 text-xs bg-blue-100 hover:bg-blue-200 text-blue-800 rounded">
-                                Highlight Dates
-                            </button>
+                            <select name="date_filter" 
+                                    id="date_filter" 
+                                    class="w-full rounded-lg border border-gray-300 dark:border-gray-600 p-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+                                <option value="">All Dates</option>
+                            </select>
                         </div>
                     </div>
                     
@@ -365,7 +351,7 @@
                 <div class="p-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 questions-container">
                         @foreach($questions as $question)
-                            <div class="question-card bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700" data-question-id="{{ $question->id }}" data-created-at="{{ $question->created_at->toISOString() }}">
+                            <div class="question-card bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700" data-question-id="{{ $question->id }}">
                                 <!-- Question Header -->
                                 <div class="flex items-start justify-between mb-4">
                                     <div class="flex items-center gap-3">
@@ -469,12 +455,6 @@
                     </div>
                 </div>
                 
-                <!-- Pagination -->
-                <div class="bg-gray-50 dark:bg-gray-700 px-6 py-4 border-t border-gray-200 dark:border-gray-600">
-                    <div class="flex justify-center">
-                        {{ $questions->links() }}
-                    </div>
-                </div>
             @else
                 <!-- Empty State -->
                 <div class="p-12 text-center questions-container">
@@ -670,8 +650,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Date filter event handlers
     if (dateFilter) {
         dateFilter.addEventListener('change', function() {
-            console.log('Date filter changed to:', this.value);
-            performAjaxSearch();
+            console.log('Date filter CHANGE event triggered, value:', this.value);
+            console.log('Triggering AJAX search from change event...');
+            performAjaxSearchWithDate(this.value);
+        });
+        
+        // Also add input event for immediate feedback
+        dateFilter.addEventListener('input', function() {
+            console.log('Date filter INPUT event triggered, value:', this.value);
         });
     }
     
@@ -715,7 +701,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // AJAX Search Function
-    function performAjaxSearch() {
+    function performAjaxSearchWithDate(selectedDate) {
         const searchValue = searchInput.value;
         const currentUrl = new URL(window.location);
         
@@ -739,7 +725,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const subjectFilterValue = subjectFilter ? subjectFilter.value : '';
         const topicFilterValue = topicFilter ? topicFilter.value : '';
         const questionTypeFilterValue = questionTypeFilter ? questionTypeFilter.value : '';
-        const dateFilterValue = dateFilter ? dateFilter.value : '';
+        const dateFilterValue = selectedDate || '';
         
         console.log('Filter values:', {
             course: courseFilterValue,
@@ -807,16 +793,29 @@ document.addEventListener('DOMContentLoaded', function() {
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = html;
             
-            // Extract the questions grid and pagination
-            const newQuestionsGrid = tempDiv.querySelector('.questions-container .grid');
-            const newEmptyState = tempDiv.querySelector('.p-12.text-center');
-            const newPagination = tempDiv.querySelector('.bg-gray-50.dark\\:bg-gray-700');
-            const newQuestionsCount = tempDiv.querySelector('.text-sm.text-gray-600.dark\\:text-gray-400');
+            // Debug: Log what we found in the response
+            console.log('Available elements in response:', {
+                questionsContainer: tempDiv.querySelector('.questions-container') ? 'found' : 'not found',
+                gridElements: tempDiv.querySelectorAll('.grid').length,
+                questionCards: tempDiv.querySelectorAll('[data-question-id]').length,
+                allElements: Array.from(tempDiv.querySelectorAll('*')).map(el => el.className).filter(c => c)
+            });
+            
+            // Debug: Check if there are any questions in the response
+            const questionCards = tempDiv.querySelectorAll('[data-question-id]');
+            console.log('Question cards found in response:', questionCards.length);
+            if (questionCards.length > 0) {
+                console.log('First question card:', questionCards[0].outerHTML.substring(0, 200));
+            }
+            
+            // Extract the questions grid with better selectors
+            const newQuestionsGrid = tempDiv.querySelector('.questions-container') || tempDiv.querySelector('.grid.grid-cols-1');
+            const newEmptyState = tempDiv.querySelector('.p-12.text-center') || tempDiv.querySelector('.text-center');
+            const newQuestionsCount = tempDiv.querySelector('.text-sm.text-gray-600.dark\\:text-gray-400') || tempDiv.querySelector('.questions-count');
             
             console.log('Extracted elements:', {
                 questionsGrid: newQuestionsGrid ? 'found' : 'not found',
                 emptyState: newEmptyState ? 'found' : 'not found',
-                pagination: newPagination ? 'found' : 'not found',
                 questionsCount: newQuestionsCount ? newQuestionsCount.textContent : 'not found'
             });
             
@@ -826,25 +825,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (newQuestionsGrid) {
                     // There are questions - show the questions grid
                     console.log('Updating with questions grid');
-                    existingQuestionsContainer.innerHTML = newQuestionsGrid.outerHTML;
+                    existingQuestionsContainer.innerHTML = newQuestionsGrid.innerHTML;
                     
                     // Count questions in the new content
-                    const questionItems = newQuestionsGrid.querySelectorAll('[data-question-id]');
+                    const questionItems = existingQuestionsContainer.querySelectorAll('[data-question-id]');
                     console.log('Questions displayed after update:', questionItems.length);
                 } else if (newEmptyState) {
                     // No questions - show empty state
                     console.log('Updating with empty state');
                     existingQuestionsContainer.innerHTML = newEmptyState.outerHTML;
                     console.log('Empty state displayed');
+                } else {
+                    // Fallback: try to find any content with questions
+                    const fallbackContent = tempDiv.querySelector('.grid') || tempDiv.querySelector('[class*="grid"]');
+                    if (fallbackContent) {
+                        console.log('Using fallback content');
+                        existingQuestionsContainer.innerHTML = fallbackContent.innerHTML;
+                    }
                 }
             }
             
-            if (newPagination) {
-                const existingPagination = document.querySelector('.bg-gray-50.dark\\:bg-gray-700');
-                if (existingPagination) {
-                    existingPagination.innerHTML = newPagination.innerHTML;
-                }
-            }
+            // No pagination to update
             
             if (newQuestionsCount) {
                 const existingQuestionsCount = document.querySelector('.text-sm.text-gray-600.dark\\:text-gray-400');
@@ -859,12 +860,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 questionsContainer.classList.remove('updating');
             }
             
-            // Re-highlight dates after search completes
-            if (window.flatpickrInstance) {
-                setTimeout(() => {
-                    highlightDates(window.flatpickrInstance);
-                }, 100);
-            }
+            // Note: No need to reload available dates after search
+            // The available dates don't change during a single session
         })
         .catch(error => {
             console.error('Search error:', error);
@@ -1146,201 +1143,223 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Initialize Flatpickr with date highlighting
-    let availableDates = [];
-    
-    // Simple function to get available dates from current page
-    function getAvailableDatesFromPage() {
-        const questionElements = document.querySelectorAll('[data-created-at]');
-        const dates = new Set();
+    // Original AJAX Search Function (for non-date filters)
+    function performAjaxSearch() {
+        const searchValue = searchInput.value;
+        const currentUrl = new URL(window.location);
         
-        questionElements.forEach(el => {
-            const dateStr = el.getAttribute('data-created-at');
-            if (dateStr) {
-                const date = new Date(dateStr);
-                dates.add(date.toISOString().split('T')[0]);
+        // Add updating class to questions container
+        if (questionsContainer) {
+            questionsContainer.classList.add('updating');
+        }
+        
+        // Show loading indicators
+        if (searchLoading) searchLoading.classList.remove('hidden');
+        
+        // Update URL parameters
+        if (searchValue) {
+            currentUrl.searchParams.set('search', searchValue);
+        } else {
+            currentUrl.searchParams.delete('search');
+        }
+        
+        // Handle filter parameters
+        const courseFilterValue = courseFilter ? courseFilter.value : '';
+        const subjectFilterValue = subjectFilter ? subjectFilter.value : '';
+        const topicFilterValue = topicFilter ? topicFilter.value : '';
+        const questionTypeFilterValue = questionTypeFilter ? questionTypeFilter.value : '';
+        const dateFilterValue = dateFilter ? dateFilter.value : '';
+        
+        console.log('Filter values:', {
+            course: courseFilterValue,
+            subject: subjectFilterValue,
+            topic: topicFilterValue,
+            questionType: questionTypeFilterValue,
+            date: dateFilterValue,
+            dateType: typeof dateFilterValue,
+            dateLength: dateFilterValue ? dateFilterValue.length : 0
+        });
+        
+        if (courseFilterValue) {
+            currentUrl.searchParams.set('course_filter', courseFilterValue);
+        } else {
+            currentUrl.searchParams.delete('course_filter');
+        }
+        
+        if (subjectFilterValue) {
+            currentUrl.searchParams.set('subject_filter', subjectFilterValue);
+        } else {
+            currentUrl.searchParams.delete('subject_filter');
+        }
+        
+        if (topicFilterValue) {
+            currentUrl.searchParams.set('topic_filter', topicFilterValue);
+        } else {
+            currentUrl.searchParams.delete('topic_filter');
+        }
+        
+        if (questionTypeFilterValue) {
+            currentUrl.searchParams.set('question_type_filter', questionTypeFilterValue);
+        } else {
+            currentUrl.searchParams.delete('question_type_filter');
+        }
+        
+        if (dateFilterValue) {
+            currentUrl.searchParams.set('date_filter', dateFilterValue);
+        } else {
+            currentUrl.searchParams.delete('date_filter');
+        }
+        
+        
+        console.log('Making AJAX request to:', currentUrl.toString());
+        
+        // Update browser URL without reloading
+        window.history.pushState({}, '', currentUrl);
+        
+        // Perform AJAX request
+        fetch(currentUrl.toString(), {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
             }
-        });
-        
-        return Array.from(dates).sort();
-    }
-    
-    // Initialize date picker
-    if (dateFilter) {
-        window.flatpickrInstance = flatpickr(dateFilter, {
-            dateFormat: "Y-m-d",
-            allowInput: false,
-            clickOpens: true,
-            onReady: function(selectedDates, dateStr, instance) {
-                // Highlight dates when calendar is ready
-                setTimeout(() => {
-                    highlightDates(instance);
-                }, 100);
-            },
-            onOpen: function(selectedDates, dateStr, instance) {
-                // Re-highlight dates when calendar opens
-                console.log('Calendar opened, highlighting dates...');
-                
-                // Use multiple attempts to ensure highlighting works
-                setTimeout(() => {
-                    highlightDates(instance);
-                }, 100);
-                
-                setTimeout(() => {
-                    highlightDates(instance);
-                }, 300);
-                
-                setTimeout(() => {
-                    highlightDates(instance);
-                }, 500);
-            },
-            onMonthChange: function(selectedDates, dateStr, instance) {
-                // Re-highlight dates when month changes
-                setTimeout(() => {
-                    highlightDates(instance);
-                }, 100);
-            },
-            onYearChange: function(selectedDates, dateStr, instance) {
-                // Re-highlight dates when year changes
-                setTimeout(() => {
-                    highlightDates(instance);
-                }, 100);
-            },
-            onChange: function(selectedDates, dateStr, instance) {
-                console.log('Date selected:', dateStr);
-                performAjaxSearch();
-            }
-        });
-    }
-    
-    // Simple function to highlight dates
-    function highlightDates(instance) {
-        if (!instance || !instance.calendarContainer) {
-            console.log('No calendar instance found');
-            return;
-        }
-        
-        console.log('Starting date highlighting...');
-        
-        // Clear all existing highlights
-        const allDays = instance.calendarContainer.querySelectorAll('.flatpickr-day');
-        console.log(`Found ${allDays.length} day elements`);
-        
-        // If no day elements found, the calendar might not be fully rendered
-        if (allDays.length === 0) {
-            console.log('No day elements found, calendar might not be fully rendered');
-            return;
-        }
-        
-        allDays.forEach(day => {
-            day.classList.remove('has-questions');
-            day.title = '';
-        });
-        
-        // Get available dates
-        availableDates = getAvailableDatesFromPage();
-        console.log('Available dates:', availableDates);
-        
-        if (availableDates.length === 0) {
-            console.log('No available dates found');
-            return;
-        }
-        
-        // Highlight each available date
-        let highlightedCount = 0;
-        availableDates.forEach(dateStr => {
-            const date = new Date(dateStr);
-            const day = date.getDate();
+        })
+        .then(response => {
+            console.log('AJAX response status:', response.status);
+            return response.text();
+        })
+        .then(html => {
+            console.log('AJAX response received, HTML length:', html.length);
             
-            // Find the day element
-            const dayElement = Array.from(allDays).find(el => {
-                const dayText = parseInt(el.textContent.trim());
-                const isCurrentMonth = !el.classList.contains('nextMonthDay') && 
-                                     !el.classList.contains('prevMonthDay') &&
-                                     !el.classList.contains('flatpickr-disabled');
-                return dayText === day && isCurrentMonth;
+            // Parse the response HTML
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            
+            // Extract the questions grid
+            const questionsGrid = doc.querySelector('.questions-container');
+            const emptyState = doc.querySelector('.empty-state');
+            const questionsCount = doc.querySelector('.questions-count');
+            
+            console.log('Extracted elements:', {
+                questionsGrid: questionsGrid ? 'found' : 'not found',
+                emptyState: emptyState ? 'found' : 'not found',
+                questionsCount: questionsCount ? questionsCount.textContent.trim() : 'not found'
             });
             
-            if (dayElement) {
-                dayElement.classList.add('has-questions');
-                dayElement.title = 'Has questions created on this date';
-                highlightedCount++;
-                console.log(`Highlighted date: ${day}`);
-            } else {
-                console.log(`Could not find day element for date: ${day}`);
+            // Update the questions grid
+            if (questionsContainer) {
+                if (questionsGrid) {
+                    questionsContainer.innerHTML = questionsGrid.innerHTML;
+                } else if (emptyState) {
+                    questionsContainer.innerHTML = emptyState.outerHTML;
+                }
             }
+            
+            // No pagination to update
+            
+            // Update questions count
+            if (questionsCountElement && questionsCount) {
+                questionsCountElement.textContent = questionsCount.textContent;
+            }
+            
+            // Hide loading indicators
+            if (searchLoading) searchLoading.classList.add('hidden');
+            if (questionsContainer) {
+                questionsContainer.classList.remove('updating');
+            }
+            
+            // Note: No need to reload available dates after search
+            // The available dates don't change during a single session
+        })
+        .catch(error => {
+            console.error('Search error:', error);
+            // Hide loading indicators on error
+            if (searchLoading) searchLoading.classList.add('hidden');
+            if (questionsContainer) {
+                questionsContainer.classList.remove('updating');
+            }
+        });
+    }
+    
+    // Load available dates for dropdown
+    function loadAvailableDates() {
+        console.log('Loading available dates...');
+        fetch('/partner/questions/available-dates', {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => {
+            console.log('Response status:', response.status);
+            console.log('Response headers:', response.headers);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Available dates response:', data);
+            if (data.dates && data.dates.length > 0) {
+                populateDateDropdown(data.dates);
+            } else if (data.error) {
+                console.error('API Error:', data.error);
+                // Show error message to user
+                if (dateFilter) {
+                    dateFilter.innerHTML = '<option value="">Error loading dates</option>';
+                }
+            } else {
+                console.log('No available dates found');
+                if (dateFilter) {
+                    dateFilter.innerHTML = '<option value="">No dates available</option>';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error loading available dates:', error);
+            if (dateFilter) {
+                dateFilter.innerHTML = '<option value="">Error loading dates</option>';
+            }
+        });
+    }
+    
+    // Populate date dropdown with available dates
+    function populateDateDropdown(dates) {
+        if (!dateFilter) return;
+        
+        // Clear existing options except "All Dates"
+        dateFilter.innerHTML = '<option value="">All Dates</option>';
+        
+        // Add available dates
+        dates.forEach(dateStr => {
+            const option = document.createElement('option');
+            option.value = dateStr;
+            
+            // Format date for display as 'DD-Mmm-YYYY' (e.g., "2025-08-30" -> "30-Aug-2025")
+            const date = new Date(dateStr);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = date.toLocaleDateString('en-US', { month: 'short' });
+            const year = date.getFullYear();
+            const formattedDate = `${day}-${month}-${year}`;
+            
+            option.textContent = formattedDate;
+            dateFilter.appendChild(option);
         });
         
-        console.log(`Highlighting complete. Highlighted ${highlightedCount} dates.`);
+        console.log(`Populated date dropdown with ${dates.length} dates`);
     }
     
-    // Highlight dates button
-    const highlightDatesBtn = document.getElementById('highlightDates');
-    if (highlightDatesBtn) {
-        highlightDatesBtn.addEventListener('click', function() {
-            console.log('Highlighting dates...');
-            if (window.flatpickrInstance) {
-                highlightDates(window.flatpickrInstance);
-            }
-        });
-    }
-    
-    // Add click event listener to date input for re-highlighting
+    // Initialize date dropdown
     if (dateFilter) {
-        dateFilter.addEventListener('click', function() {
-            console.log('Date input clicked, re-highlighting...');
-            setTimeout(() => {
-                if (window.flatpickrInstance) {
-                    highlightDates(window.flatpickrInstance);
-                }
-            }, 200);
+        // Load available dates on page load
+        loadAvailableDates();
+        
+        // Add change event listener for auto-search
+        dateFilter.addEventListener('change', function() {
+            console.log('Date filter changed to:', this.value);
+            // Trigger search with the selected date value
+            performAjaxSearchWithDate(this.value);
         });
     }
+    
 });
 </script>
 
-<!-- Flatpickr JavaScript -->
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-<style>
-/* Custom styles for highlighted dates */
-.flatpickr-calendar .has-questions {
-    position: relative !important;
-    border: 2px solid #3b82f6 !important;
-    border-radius: 50% !important;
-    background-color: rgba(59, 130, 246, 0.1) !important;
-}
-
-.flatpickr-calendar .has-questions:hover {
-    background-color: rgba(59, 130, 246, 0.2) !important;
-    border-color: #2563eb !important;
-}
-
-.flatpickr-calendar .has-questions.selected {
-    background-color: #3b82f6 !important;
-    color: white !important;
-    border-color: #1d4ed8 !important;
-}
-
-/* Removed question-indicator styles - using only has-questions class */
-
-/* Dark mode support */
-.dark .flatpickr-calendar .has-questions {
-    border-color: #1e40af !important;
-    background-color: rgba(30, 64, 175, 0.1) !important;
-}
-
-.dark .flatpickr-calendar .has-questions:hover {
-    background-color: rgba(30, 64, 175, 0.2) !important;
-    border-color: #1e3a8a !important;
-}
-
-.dark .flatpickr-calendar .has-questions.selected {
-    background-color: #1e40af !important;
-    color: white !important;
-    border-color: #1e3a8a !important;
-}
-
-/* Removed question-indicator dark mode styles */
-</style>
 @endsection

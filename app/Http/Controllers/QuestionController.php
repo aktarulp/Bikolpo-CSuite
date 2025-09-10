@@ -22,7 +22,10 @@ class QuestionController extends Controller
         $partnerId = $this->getPartnerId();
         
         $query = Question::with(['course', 'partner', 'questionType'])
-            ->where('partner_id', $partnerId);
+            ->where('partner_id', $partnerId)
+            ->whereHas('course', function($q) use ($partnerId) {
+                $q->where('partner_id', $partnerId); // Ensure course belongs to the same partner
+            });
 
         // Apply filters
         if ($request->filled('course')) {
@@ -210,7 +213,10 @@ class QuestionController extends Controller
         
         $query = Question::with(['course', 'subject', 'topic', 'partner', 'questionType'])
             ->where('partner_id', $partnerId)
-            ->where('status', 'active'); // Only show published questions
+            ->where('status', 'active') // Only show published questions
+            ->whereHas('course', function($q) use ($partnerId) {
+                $q->where('partner_id', $partnerId); // Ensure course belongs to the same partner
+            });
             
 
         // Apply search filter
@@ -310,15 +316,12 @@ class QuestionController extends Controller
             'date_filter' => $request->input('date_filter')
         ]);
 
-        $questions = $query->latest()->paginate(15);
+        $questions = $query->latest()->get();
         
         // Debug logging for query results
         \Log::info('All Questions Query Results', [
             'partner_id' => $partnerId,
-            'total_questions' => $questions->total(),
-            'current_page_count' => $questions->count(),
-            'current_page' => $questions->currentPage(),
-            'per_page' => $questions->perPage(),
+            'total_questions' => $questions->count(),
             'question_partner_ids' => $questions->pluck('partner_id')->unique()->toArray(),
             'question_ids' => $questions->pluck('id')->toArray()
         ]);
@@ -347,25 +350,7 @@ class QuestionController extends Controller
                 ->with('error', 'Security issue detected: Questions from other partners were found. Please contact administrator.');
         }
         
-        // Append search parameter to pagination links
-        if ($request->filled('search')) {
-            $questions->appends(['search' => $request->search]);
-        }
-        if ($request->filled('course_filter')) {
-            $questions->appends(['course_filter' => $request->course_filter]);
-        }
-        if ($request->filled('subject_filter')) {
-            $questions->appends(['subject_filter' => $request->subject_filter]);
-        }
-        if ($request->filled('topic_filter')) {
-            $questions->appends(['topic_filter' => $request->topic_filter]);
-        }
-        if ($request->filled('question_type_filter')) {
-            $questions->appends(['question_type_filter' => $request->question_type_filter]);
-        }
-        if ($request->filled('date_filter')) {
-            $questions->appends(['date_filter' => $request->date_filter]);
-        }
+        // No pagination appends needed since we're loading all questions
 
         return view('partner.questions.all-question-view', compact('questions'));
     }
@@ -2088,8 +2073,12 @@ class QuestionController extends Controller
             ]);
             
             // Get all unique creation dates for this partner's questions
+            // Use the same validation as allQuestions method
             $dates = Question::where('partner_id', $partnerId)
                 ->where('status', 'active')
+                ->whereHas('course', function($q) use ($partnerId) {
+                    $q->where('partner_id', $partnerId); // Ensure course belongs to the same partner
+                })
                 ->selectRaw('DATE(created_at) as date')
                 ->distinct()
                 ->orderBy('date')
