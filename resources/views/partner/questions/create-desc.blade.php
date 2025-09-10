@@ -21,11 +21,13 @@
                         View Drafts
                     </a>
                     <a href="{{ route('partner.questions.index') }}" 
-                       class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                        </svg>
-                        Back to Questions
+                       class="group inline-flex items-center px-6 py-3 bg-gradient-to-r from-slate-100 to-gray-100 hover:from-slate-200 hover:to-gray-200 border border-gray-300 rounded-xl text-sm font-semibold text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-300 transform hover:scale-105 shadow-sm hover:shadow-md">
+                        <div class="flex items-center justify-center w-8 h-8 mr-3 bg-white rounded-lg shadow-sm group-hover:shadow-md transition-all duration-300">
+                            <svg class="w-4 h-4 text-gray-600 group-hover:text-gray-800 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                            </svg>
+                        </div>
+                        <span class="font-medium">Back to Questions</span>
                     </a>
                 </div>
             </div>
@@ -193,48 +195,6 @@
                 </div>
 
 
-                <!-- Tags Section -->
-                <div class="mb-8">
-                    <div class="flex items-center mb-6">
-                        <div class="flex-shrink-0">
-                            <div class="w-10 h-10 bg-gradient-to-r from-pink-500 to-rose-600 rounded-full flex items-center justify-center">
-                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="ml-4">
-                            <h2 class="text-xl font-semibold text-gray-900">Tags</h2>
-                            <p class="text-gray-600">Add relevant tags for easy categorization</p>
-                        </div>
-                    </div>
-                    
-                    <div class="space-y-2">
-                        <label for="tags" class="block text-sm font-medium text-gray-700">
-                            Tags
-                        </label>
-                        <div class="relative">
-                            <!-- Two-line tag display -->
-                            <div id="tags-container" class="w-full min-h-[80px] px-4 py-3 border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all duration-200 bg-white cursor-text">
-                                <!-- Upper line for completed tags -->
-                                <div id="tags-upper-line" class="flex flex-wrap gap-2 mb-2 min-h-[32px] items-center">
-                                    <!-- Completed tags will appear here -->
-                        </div>
-                                <!-- Lower line for current input -->
-                                <div id="tags-lower-line" class="flex items-center">
-                                    <input type="text" id="tags-input" 
-                                           placeholder="Type a tag and press comma to complete"
-                                           class="flex-1 border-none outline-none bg-transparent text-sm placeholder-gray-400"
-                                           autocomplete="off">
-                                </div>
-                            </div>
-                            <div id="tag-suggestions" class="absolute z-10 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto hidden mt-1">
-                                <!-- Tag suggestions will appear here -->
-                            </div>
-                        </div>
-                        <p class="text-sm text-gray-500">Tags help organize and search questions. Press comma to complete each tag and move it to the upper line.</p>
-                    </div>
-                </div>
 
                 <!-- Form Actions -->
                 <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200">
@@ -842,231 +802,6 @@ function initializeRichTextEditor() {
 }
 
 
-// Two-Line Tags Management Function
-function initializeTagsAutoCompletion() {
-    const tagsInput = document.getElementById('tags-input');
-    const tagsUpperLine = document.getElementById('tags-upper-line');
-    const tagsContainer = document.getElementById('tags-container');
-    const suggestionsContainer = document.getElementById('tag-suggestions');
-    const hiddenTagsInput = document.createElement('input');
-    hiddenTagsInput.type = 'hidden';
-    hiddenTagsInput.name = 'tags';
-    hiddenTagsInput.id = 'tags-hidden';
-    tagsContainer.parentNode.appendChild(hiddenTagsInput);
-    
-    console.log('Initializing two-line tag auto-completion:', {
-        tagsInput: !!tagsInput,
-        tagsUpperLine: !!tagsUpperLine,
-        suggestionsContainer: !!suggestionsContainer
-    });
-    
-    if (!tagsInput || !tagsUpperLine || !suggestionsContainer) {
-        console.log('Two-line tag auto-completion initialization failed - missing elements');
-        return;
-    }
-    
-    // Sample tags for auto-completion
-    const commonTags = [
-        'algebra', 'geometry', 'calculus', 'trigonometry', 'statistics', 'probability',
-        'equations', 'inequalities', 'functions', 'graphs', 'derivatives', 'integrals',
-        'matrices', 'vectors', 'complex numbers', 'sequences', 'series', 'limits',
-        'continuity', 'differentiation', 'integration', 'applications', 'word problems',
-        'proofs', 'theorems', 'definitions', 'examples', 'exercises', 'practice',
-        'basic', 'intermediate', 'advanced', 'fundamental', 'conceptual', 'procedural'
-    ];
-    
-    // Store all tags
-    let allTags = [];
-    
-    // Function to update hidden input with all tags
-    function updateHiddenInput() {
-        hiddenTagsInput.value = allTags.join(', ');
-        console.log('Updated hidden input with tags:', hiddenTagsInput.value);
-    }
-    
-    // Function to create a tag element
-    function createTagElement(tagText) {
-        const tagElement = document.createElement('span');
-        tagElement.className = 'inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800 border border-blue-200 hover:bg-blue-200 transition-colors duration-200';
-        tagElement.innerHTML = `
-            <span class="mr-1">${tagText}</span>
-            <button type="button" class="ml-1 text-blue-600 hover:text-blue-800 focus:outline-none" onclick="removeTag('${tagText}')">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-        `;
-        return tagElement;
-    }
-    
-    // Function to add a tag to the upper line
-    function addTag(tagText) {
-        if (tagText.trim() === '') return;
-        
-        const trimmedTag = tagText.trim();
-        console.log('Adding tag:', trimmedTag);
-        
-        // Check if tag already exists
-        if (allTags.includes(trimmedTag)) {
-            console.log('Tag already exists:', trimmedTag);
-            return;
-        }
-        
-        // Add to tags array
-        allTags.push(trimmedTag);
-        console.log('Current tags array:', allTags);
-        
-        // Create and add tag element to upper line
-        const tagElement = createTagElement(trimmedTag);
-        tagsUpperLine.appendChild(tagElement);
-        
-        // Clear input
-        tagsInput.value = '';
-        
-        // Update hidden input
-        updateHiddenInput();
-        
-        // Hide suggestions
-        suggestionsContainer.classList.add('hidden');
-    }
-    
-    // Function to remove a tag
-    window.removeTag = function(tagText) {
-        // Remove from array
-        allTags = allTags.filter(tag => tag !== tagText);
-        
-        // Remove from DOM
-        const tagElements = tagsUpperLine.querySelectorAll('span');
-        tagElements.forEach(element => {
-            if (element.textContent.includes(tagText)) {
-                element.remove();
-            }
-        });
-        
-        // Update hidden input
-        updateHiddenInput();
-    }
-    
-    // Function to show suggestions
-    function showSuggestions(filteredTags) {
-        if (filteredTags.length === 0) {
-            suggestionsContainer.classList.add('hidden');
-            return;
-        }
-        
-        suggestionsContainer.innerHTML = '';
-        filteredTags.forEach(tag => {
-            const suggestionItem = document.createElement('div');
-            suggestionItem.className = 'px-4 py-2 hover:bg-blue-50 cursor-pointer text-sm text-gray-700 border-b border-gray-100 last:border-b-0';
-            suggestionItem.textContent = tag;
-            
-            suggestionItem.addEventListener('click', function() {
-                addTag(tag);
-                suggestionsContainer.classList.add('hidden');
-            });
-            
-            suggestionsContainer.appendChild(suggestionItem);
-        });
-        
-        suggestionsContainer.classList.remove('hidden');
-    }
-    
-    // Handle input events for auto-completion
-    tagsInput.addEventListener('input', function(e) {
-        const value = this.value.trim();
-        
-        if (value.length > 1) {
-            const filteredTags = commonTags.filter(tag => 
-                tag.toLowerCase().startsWith(value.toLowerCase()) && 
-                tag.toLowerCase() !== value.toLowerCase() &&
-                !allTags.includes(tag)
-            );
-            showSuggestions(filteredTags);
-        } else {
-            suggestionsContainer.classList.add('hidden');
-        }
-    });
-    
-    // Handle keydown events
-    tagsInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            const value = this.value.trim();
-            if (value) {
-                addTag(value);
-            }
-            suggestionsContainer.classList.add('hidden');
-        } else if (e.key === 'Escape') {
-            suggestionsContainer.classList.add('hidden');
-        } else if (e.key === ',') {
-            e.preventDefault();
-            const value = this.value.trim();
-            if (value) {
-                addTag(value);
-            }
-        } else if (e.key === 'Backspace' && this.value === '') {
-            // If input is empty and backspace is pressed, focus on the last tag for removal
-            const lastTag = tagsUpperLine.lastElementChild;
-            if (lastTag) {
-                const removeButton = lastTag.querySelector('button');
-                if (removeButton) {
-                    removeButton.focus();
-                }
-            }
-        }
-    });
-    
-    // Handle focus events
-    tagsInput.addEventListener('focus', function() {
-        const value = this.value.trim();
-        if (value.length > 1) {
-            const filteredTags = commonTags.filter(tag => 
-                tag.toLowerCase().startsWith(value.toLowerCase()) && 
-                tag.toLowerCase() !== value.toLowerCase() &&
-                !allTags.includes(tag)
-            );
-            showSuggestions(filteredTags);
-        }
-    });
-    
-    // Handle container click to focus input
-    tagsContainer.addEventListener('click', function(e) {
-        if (e.target === tagsContainer || e.target === tagsUpperLine) {
-            tagsInput.focus();
-        }
-    });
-    
-    // Hide suggestions when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!tagsContainer.contains(e.target) && !suggestionsContainer.contains(e.target)) {
-            suggestionsContainer.classList.add('hidden');
-        }
-    });
-    
-    // Initialize tags from existing question data
-    const existingTags = @json(old('tags', []));
-    if (existingTags && existingTags.length > 0) {
-        if (Array.isArray(existingTags)) {
-            existingTags.forEach(tag => {
-                if (tag.trim()) {
-                    allTags.push(tag.trim());
-                    const tagElement = createTagElement(tag.trim());
-                    tagsUpperLine.appendChild(tagElement);
-                }
-            });
-        } else if (typeof existingTags === 'string') {
-            const tags = existingTags.split(',').map(tag => tag.trim()).filter(tag => tag);
-            tags.forEach(tag => {
-                allTags.push(tag);
-                const tagElement = createTagElement(tag);
-                tagsUpperLine.appendChild(tagElement);
-            });
-        }
-        updateHiddenInput();
-    }
-    
-    console.log('Two-line tag auto-completion initialized successfully');
-}
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM Content Loaded - Starting initialization');
@@ -1076,11 +811,6 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Initializing Rich Text Editor...');
         initializeRichTextEditor();
         console.log('Rich Text Editor initialized');
-        
-        // Initialize Tags Auto Completion
-        console.log('Initializing Tags Auto Completion...');
-        initializeTagsAutoCompletion();
-        console.log('Tags Auto Completion initialization completed');
     } catch (error) {
         console.error('Error during initialization:', error);
     }
@@ -1211,9 +941,6 @@ courseSelect.addEventListener('change', function() {
             return false;
         }
         
-        // Debug: Check tags before submission
-        const hiddenTagsInput = document.getElementById('tags-hidden');
-        console.log('Tags being submitted:', hiddenTagsInput ? hiddenTagsInput.value : 'No hidden input found');
         
         // Show loading state
         const originalText = submitBtn.innerHTML;
@@ -1276,15 +1003,6 @@ courseSelect.addEventListener('change', function() {
         topicSelect.disabled = true;
         topicSelect.className = 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-gray-100';
         
-        // Reset tags
-        const tagsUpperLine = document.getElementById('tags-upper-line');
-        const tagsInput = document.getElementById('tags-input');
-        if (tagsUpperLine) {
-            tagsUpperLine.innerHTML = '';
-        }
-        if (tagsInput) {
-            tagsInput.value = '';
-        }
         
         showNotification('Form reset successfully!', 'success');
     }

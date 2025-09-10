@@ -1,6 +1,116 @@
 @extends('layouts.partner-layout')
 
 @section('content')
+<style>
+/* Mobile-specific styles for MCQ create view */
+@media (max-width: 768px) {
+    /* Make rich text editor compact on mobile - max two lines height */
+    #richTextEditor {
+        min-height: 3rem !important;
+        height: 3rem !important;
+        max-height: 3rem !important;
+        overflow-y: auto;
+        line-height: 1.5 !important;
+    }
+    
+    /* Ensure the editor takes full width on mobile */
+    .mb-8:has(#richTextEditor) {
+        width: 100% !important;
+    }
+    
+    /* Make toolbar more compact on mobile */
+    .border.border-gray-300.rounded-t-lg.bg-gray-50 {
+        padding: 0.5rem !important;
+        gap: 0.25rem !important;
+    }
+    
+    /* Adjust toolbar buttons for mobile */
+    .border.border-gray-300.rounded-t-lg.bg-gray-50 button {
+        padding: 0.5rem !important;
+        min-width: 2rem !important;
+        min-height: 2rem !important;
+    }
+    
+    /* Make toolbar text smaller on mobile */
+    .border.border-gray-300.rounded-t-lg.bg-gray-50 .text-sm {
+        font-size: 0.75rem !important;
+    }
+    
+    /* Ensure answer options are properly spaced on mobile */
+    .space-y-1 > div {
+        margin-bottom: 0.75rem !important;
+    }
+    
+    /* Make option inputs more touch-friendly on mobile */
+    .option-item input[type="text"] {
+        padding: 0.75rem !important;
+        font-size: 1rem !important;
+        min-height: 2.5rem !important;
+    }
+    
+    /* Make radio buttons larger on mobile */
+    .option-item input[type="radio"] {
+        width: 1.25rem !important;
+        height: 1.25rem !important;
+    }
+    
+    /* Make option bullets larger on mobile */
+    .option-bullet {
+        width: 1.75rem !important;
+        height: 1.75rem !important;
+        font-size: 0.875rem !important;
+    }
+    
+    /* Ensure proper spacing between sections on mobile */
+    .mb-8 {
+        margin-bottom: 2rem !important;
+    }
+    
+    /* Make headers more compact on mobile */
+    .text-xl {
+        font-size: 1.125rem !important;
+    }
+    
+    /* Adjust padding for mobile */
+    .p-8 {
+        padding: 1rem !important;
+    }
+    
+    /* Make the main container more mobile-friendly */
+    .max-w-6xl {
+        max-width: 100% !important;
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+    
+}
+
+/* Additional mobile optimizations */
+@media (max-width: 640px) {
+    /* Even more compact on smaller screens - maintain two line height */
+    #richTextEditor {
+        min-height: 3rem !important;
+        height: 3rem !important;
+        max-height: 3rem !important;
+    }
+    
+    /* Make toolbar even more compact */
+    .border.border-gray-300.rounded-t-lg.bg-gray-50 {
+        flex-wrap: wrap !important;
+        gap: 0.125rem !important;
+    }
+    
+    /* Hide some toolbar buttons on very small screens */
+    .border.border-gray-300.rounded-t-lg.bg-gray-50 button:nth-child(n+8) {
+        display: none !important;
+    }
+    
+    /* Show essential buttons only */
+    .border.border-gray-300.rounded-t-lg.bg-gray-50 button:nth-child(-n+7) {
+        display: inline-flex !important;
+    }
+}
+</style>
 <div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header Section -->
@@ -14,11 +124,14 @@
                 </div>
                 <div class="flex items-center space-x-3">
                     <a href="{{ route('partner.questions.index') }}" 
-                       class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                       class="group inline-flex items-center px-6 py-3 bg-gradient-to-r from-slate-100 to-gray-100 hover:from-slate-200 hover:to-gray-200 border border-slate-300 hover:border-slate-400 rounded-xl text-sm font-semibold text-slate-700 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-all duration-300 transform hover:scale-105 hover:shadow-lg shadow-sm">
+                        <svg class="w-4 h-4 mr-2 transition-transform duration-300 group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                         </svg>
-                        Back to Questions
+                        <span class="relative">
+                            Back to Questions
+                            <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-slate-600 group-hover:w-full transition-all duration-300"></span>
+                        </span>
                     </a>
                 </div>
             </div>
@@ -88,237 +201,185 @@
 
                 <!-- Question Text and Answer Options Section -->
                  <div class="mb-8">
-                     <div class="flex items-center justify-between mb-6">
-                         <div class="flex items-center">
-                             <div class="flex-shrink-0">
-                                 <div class="w-10 h-10 bg-gradient-to-r from-green-500 to-teal-600 rounded-full flex items-center justify-center">
-                                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                     </svg>
-                                 </div>
-                             </div>
-                             <div class="ml-4">
-                                 <h2 class="text-xl font-semibold text-gray-900">Question Text</h2>
-                                 <p class="text-gray-600">Write your question clearly and concisely</p>
+                     <!-- Question Text Header -->
+                     <div class="flex items-center mb-6">
+                         <div class="flex-shrink-0">
+                             <div class="w-10 h-10 bg-gradient-to-r from-green-500 to-teal-600 rounded-full flex items-center justify-center">
+                                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                 </svg>
                              </div>
                          </div>
-                         
-                         <!-- Answer Options Header -->
-                         <div class="flex items-center">
-                             <div class="flex-shrink-0">
-                                 <div class="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center">
-                                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                                     </svg>
-                                 </div>
-                             </div>
-                             <div class="ml-4">
-                                 <h2 class="text-xl font-semibold text-gray-900">Answer Options</h2>
-                                 <p class="text-gray-600">Select the correct answer and provide options</p>
-                             </div>
+                         <div class="ml-4">
+                             <h2 class="text-xl font-semibold text-gray-900">Question Text</h2>
+                             <p class="text-gray-600">Write your question clearly and concisely</p>
                          </div>
                      </div>
 
-                     <div class="space-y-2">
+                     <!-- Rich Text Editor Section -->
+                     <div class="mb-8">
+                         <!-- Rich Text Editor Toolbar -->
+                         <div class="border border-gray-300 rounded-t-lg bg-gray-50 p-2 flex flex-wrap items-center gap-2">
+                             <!-- Text Formatting -->
+                             <button type="button" id="boldBtn" class="p-2 hover:bg-gray-200 rounded" title="Bold">
+                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12h8a4 4 0 100-8H6v8zm0 0h8a4 4 0 110 8H6v-8z"></path>
+                                 </svg>
+                             </button>
+                             <button type="button" id="italicBtn" class="p-2 hover:bg-gray-200 rounded" title="Italic">
+                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                                 </svg>
+                             </button>
+                             <button type="button" id="underlineBtn" class="p-2 hover:bg-gray-200 rounded" title="Underline">
+                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+                                 </svg>
+                             </button>
+                             
+                             <div class="w-px h-6 bg-gray-300"></div>
+                             
+                             <!-- Equation -->
+                             <button type="button" id="equationBtn" class="p-2 hover:bg-gray-200 rounded text-sm font-medium" title="Insert Equation">
+                                 ∑
+                             </button>
+                             
+                             <!-- Local Image Upload -->
+                             <button type="button" id="uploadImageBtn" class="p-2 hover:bg-gray-200 rounded" title="Upload Image with Caption">
+                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                                 </svg>
+                             </button>
+                             
+                             <!-- Hidden file input for image upload -->
+                             <input type="file" id="imageFileInput" accept="image/*" class="hidden">
+                             
+                             <!-- Image Resize -->
+                             <button type="button" id="resizeBtn" class="p-2 hover:bg-gray-200 rounded bg-blue-50 border border-blue-200" title="Resize Selected Image" style="display: inline-flex !important; visibility: visible !important;">
+                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                                 </svg>
+                                 <span class="ml-1 text-xs text-blue-600 font-medium">Resize</span>
+                             </button>
+                            
+                             <div class="w-px h-6 bg-gray-300"></div>
+                             
+                             <!-- Hyperlink -->
+                             <button type="button" id="linkBtn" class="p-2 hover:bg-gray-200 rounded" title="Insert Hyperlink">
+                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                                 </svg>
+                             </button>
+                            
+                             <div class="w-px h-6 bg-gray-300"></div>
+                             
+                             <!-- Clear Formatting -->
+                             <button type="button" id="clearFormatBtn" class="p-2 hover:bg-gray-200 rounded text-sm font-medium" title="Clear Formatting">
+                                 Clear
+                             </button>
+                         </div>
                          
-                         <div class="flex gap-3">
-                             <!-- Left Side: Rich Text Editor -->
-                             <div class="flex-1">
-                                 <!-- Rich Text Editor Toolbar -->
-                                 <div class="border border-gray-300 rounded-t-lg bg-gray-50 p-2 flex flex-wrap items-center gap-2">
-                                     <!-- Text Formatting -->
-                                     <button type="button" id="boldBtn" class="p-2 hover:bg-gray-200 rounded" title="Bold">
-                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12h8a4 4 0 100-8H6v8zm0 0h8a4 4 0 110 8H6v-8z"></path>
-                                         </svg>
-                                     </button>
-                                     <button type="button" id="italicBtn" class="p-2 hover:bg-gray-200 rounded" title="Italic">
-                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
-                                         </svg>
-                                     </button>
-                                     <button type="button" id="underlineBtn" class="p-2 hover:bg-gray-200 rounded" title="Underline">
-                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
-                                         </svg>
-                                     </button>
-                                     
-                                     <div class="w-px h-6 bg-gray-300"></div>
-                                     
-                                     <!-- Equation -->
-                                     <button type="button" id="equationBtn" class="p-2 hover:bg-gray-200 rounded text-sm font-medium" title="Insert Equation">
-                                         ∑
-                                     </button>
-                                     
-                                     <!-- Local Image Upload -->
-                                     <button type="button" id="uploadImageBtn" class="p-2 hover:bg-gray-200 rounded" title="Upload Image with Caption">
-                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                                         </svg>
-                                     </button>
-                                     
-                                     <!-- Hidden file input for image upload -->
-                                     <input type="file" id="imageFileInput" accept="image/*" class="hidden">
-                                     
-                                     <!-- Image Resize -->
-                                     <button type="button" id="resizeBtn" class="p-2 hover:bg-gray-200 rounded bg-blue-50 border border-blue-200" title="Resize Selected Image" style="display: inline-flex !important; visibility: visible !important;">
-                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
-                                         </svg>
-                                         <span class="ml-1 text-xs text-blue-600 font-medium">Resize</span>
-                                     </button>
-                                    
-                                     <div class="w-px h-6 bg-gray-300"></div>
-                                     
-                                     <!-- Hyperlink -->
-                                     <button type="button" id="linkBtn" class="p-2 hover:bg-gray-200 rounded" title="Insert Hyperlink">
-                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
-                                         </svg>
-                                     </button>
-                                    
-                                     <div class="w-px h-6 bg-gray-300"></div>
-                                     
-                                     <!-- Clear Formatting -->
-                                     <button type="button" id="clearFormatBtn" class="p-2 hover:bg-gray-200 rounded text-sm font-medium" title="Clear Formatting">
-                                         Clear
-                                     </button>
-                                 </div>
-                                 
-                                 <!-- Rich Text Editor Content -->
-                                 <div id="richTextEditor" class="border border-t-0 border-gray-300 rounded-b-lg min-h-[150px] p-4 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all duration-200" contenteditable="true" data-placeholder="Enter your question here... You can use formatting, images, and equations."></div>
-                                 
-                                 <!-- Hidden textarea for form submission -->
-                                 <textarea name="question_text" id="question_text" class="hidden" required></textarea>
-                                 <input type="hidden" name="q_type_id" value="1">
-                                 
-                                 <div class="flex justify-between items-center text-sm text-gray-500 mt-2">
-                                     <span>Use the toolbar above for formatting, equations, and images.</span>
-                                     <span id="charCount">0 characters</span>
-                                 </div>
-                             </div>
+                         <!-- Rich Text Editor Content -->
+                         <div id="richTextEditor" class="border border-t-0 border-gray-300 rounded-b-lg min-h-[150px] md:min-h-[200px] p-4 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all duration-200" contenteditable="true" data-placeholder="Enter your question here... You can use formatting, images, and equations."></div>
+                         
+                         <!-- Hidden textarea for form submission -->
+                         <textarea name="question_text" id="question_text" class="hidden" required></textarea>
+                         <input type="hidden" name="q_type_id" value="1">
+                         
+                         <div class="flex justify-between items-center text-sm text-gray-500 mt-2">
+                             <span>Use the toolbar above for formatting, equations, and images.</span>
+                             <span id="charCount">0 characters</span>
+                         </div>
+                     </div>
 
-                             <!-- Right Side: Answer Options -->
-                             <div class="w-72">
-                                 <div class="space-y-1">
-                                     <!-- Option A -->
-                                     <div class="option-item bg-gray-50 rounded-lg p-2 border-2 border-transparent hover:border-blue-200 transition-all duration-200">
-                                         <div class="flex items-center space-x-2">
-                                             <div class="flex-shrink-0">
-                                                 <input type="radio" name="correct_answer" value="a" id="correct_A" required
-                                                        class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 focus:ring-2">
-                                             </div>
-                                             <label for="correct_A" class="flex-1">
-                                                 <div class="flex items-center space-x-2">
-                                                     <span class="option-bullet w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center text-xs font-semibold">A</span>
-                                                     <input type="text" name="option_a" placeholder="Option A" required
-                                                            class="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
-                                                 </div>
-                                             </label>
-                                         </div>
-                                     </div>
-                                     
-                                     <!-- Option B -->
-                                     <div class="option-item bg-gray-50 rounded-lg p-2 border-2 border-transparent hover:border-blue-200 transition-all duration-200">
-                                         <div class="flex items-center space-x-2">
-                                             <div class="flex-shrink-0">
-                                                 <input type="radio" name="correct_answer" value="b" id="correct_B" required
-                                                        class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 focus:ring-2">
-                                             </div>
-                                             <label for="correct_B" class="flex-1">
-                                                 <div class="flex items-center space-x-2">
-                                                     <span class="option-bullet w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center text-xs font-semibold">B</span>
-                                                     <input type="text" name="option_b" placeholder="Option B" required
-                                                            class="flex-1 px-2 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
-                                                 </div>
-                                             </label>
-                                         </div>
-                                     </div>
-                                     
-                                     <!-- Option C -->
-                                     <div class="option-item bg-gray-50 rounded-lg p-2 border-2 border-transparent hover:border-blue-200 transition-all duration-200">
-                                         <div class="flex items-center space-x-2">
-                                             <div class="flex-shrink-0">
-                                                 <input type="radio" name="correct_answer" value="c" id="correct_C" required
-                                                        class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 focus:ring-2">
-                                             </div>
-                                             <label for="correct_C" class="flex-1">
-                                                 <div class="flex items-center space-x-2">
-                                                     <span class="option-bullet w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center text-xs font-semibold">C</span>
-                                                     <input type="text" name="option_c" placeholder="Option C" required
-                                                            class="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
-                                                 </div>
-                                             </label>
-                                         </div>
-                                     </div>
-                                     
-                                     <!-- Option D -->
-                                     <div class="option-item bg-gray-50 rounded-lg p-2 border-2 border-transparent hover:border-blue-200 transition-all duration-200">
-                                         <div class="flex items-center space-x-2">
-                                             <div class="flex-shrink-0">
-                                                 <input type="radio" name="correct_answer" value="d" id="correct_D" required
-                                                        class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 focus:ring-2">
-                                             </div>
-                                             <label for="correct_D" class="flex-1">
-                                                 <div class="flex items-center space-x-2">
-                                                     <span class="option-bullet w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center text-xs font-semibold">D</span>
-                                                     <input type="text" name="option_d" placeholder="Option D" required
-                                                            class="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
-                                                 </div>
-                                             </label>
-                                         </div>
-                                     </div>
+                     <!-- Answer Options Header -->
+                     <div class="flex items-center mb-6">
+                         <div class="flex-shrink-0">
+                             <div class="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center">
+                                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                 </svg>
+                             </div>
+                         </div>
+                         <div class="ml-4">
+                             <h2 class="text-xl font-semibold text-gray-900">Answer Options</h2>
+                             <p class="text-gray-600">Select the correct answer and provide options</p>
+                         </div>
+                     </div>
+
+                     <!-- Answer Options Section -->
+                     <div class="space-y-1">
+                         <!-- Option A -->
+                         <div class="option-item bg-gray-50 rounded-lg p-2 border-2 border-transparent hover:border-blue-200 transition-all duration-200">
+                             <div class="flex items-center space-x-2">
+                                 <div class="flex-shrink-0">
+                                     <input type="radio" name="correct_answer" value="a" id="correct_A" required
+                                            class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 focus:ring-2">
                                  </div>
+                                 <label for="correct_A" class="flex-1">
+                                     <div class="flex items-center space-x-2">
+                                         <span class="option-bullet w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center text-xs font-semibold">A</span>
+                                         <input type="text" name="option_a" placeholder="Option A" required
+                                                class="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+                                     </div>
+                                 </label>
+                             </div>
+                         </div>
+                         
+                         <!-- Option B -->
+                         <div class="option-item bg-gray-50 rounded-lg p-2 border-2 border-transparent hover:border-blue-200 transition-all duration-200">
+                             <div class="flex items-center space-x-2">
+                                 <div class="flex-shrink-0">
+                                     <input type="radio" name="correct_answer" value="b" id="correct_B" required
+                                            class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 focus:ring-2">
+                                 </div>
+                                 <label for="correct_B" class="flex-1">
+                                     <div class="flex items-center space-x-2">
+                                         <span class="option-bullet w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center text-xs font-semibold">B</span>
+                                         <input type="text" name="option_b" placeholder="Option B" required
+                                                class="flex-1 px-2 py-2 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+                                     </div>
+                                 </label>
+                             </div>
+                         </div>
+                         
+                         <!-- Option C -->
+                         <div class="option-item bg-gray-50 rounded-lg p-2 border-2 border-transparent hover:border-blue-200 transition-all duration-200">
+                             <div class="flex items-center space-x-2">
+                                 <div class="flex-shrink-0">
+                                     <input type="radio" name="correct_answer" value="c" id="correct_C" required
+                                            class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 focus:ring-2">
+                                 </div>
+                                 <label for="correct_C" class="flex-1">
+                                     <div class="flex items-center space-x-2">
+                                         <span class="option-bullet w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center text-xs font-semibold">C</span>
+                                         <input type="text" name="option_c" placeholder="Option C" required
+                                                class="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+                                     </div>
+                                 </label>
+                             </div>
+                         </div>
+                         
+                         <!-- Option D -->
+                         <div class="option-item bg-gray-50 rounded-lg p-2 border-2 border-transparent hover:border-blue-200 transition-all duration-200">
+                             <div class="flex items-center space-x-2">
+                                 <div class="flex-shrink-0">
+                                     <input type="radio" name="correct_answer" value="d" id="correct_D" required
+                                            class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 focus:ring-2">
+                                 </div>
+                                 <label for="correct_D" class="flex-1">
+                                     <div class="flex items-center space-x-2">
+                                         <span class="option-bullet w-6 h-6 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center text-xs font-semibold">D</span>
+                                         <input type="text" name="option_d" placeholder="Option D" required
+                                                class="flex-1 px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+                                     </div>
+                                 </label>
                              </div>
                          </div>
                      </div>
-                     
-
                 </div>
 
 
-                <!-- Tags Section -->
-                <div class="mb-8">
-                    <div class="flex items-center mb-6">
-                        <div class="flex-shrink-0">
-                            <div class="w-10 h-10 bg-gradient-to-r from-pink-500 to-rose-600 rounded-full flex items-center justify-center">
-                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="ml-4">
-                            <h2 class="text-xl font-semibold text-gray-900">Tags</h2>
-                            <p class="text-gray-600">Add relevant tags for easy categorization</p>
-                        </div>
-                    </div>
-
-                    <div class="space-y-2">
-                        <label for="tags" class="block text-sm font-medium text-gray-700">
-                            Tags
-                        </label>
-                        <div class="relative">
-                            <!-- Two-line tag display -->
-                            <div id="tags-container" class="w-full min-h-[80px] px-4 py-3 border border-gray-300 rounded-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all duration-200 bg-white cursor-text">
-                                <!-- Upper line for completed tags -->
-                                <div id="tags-upper-line" class="flex flex-wrap gap-2 mb-2 min-h-[32px] items-center">
-                                    <!-- Completed tags will appear here -->
-                                </div>
-                                <!-- Lower line for current input -->
-                                <div id="tags-lower-line" class="flex items-center">
-                                    <input type="text" id="tags-input" 
-                                           placeholder="Type a tag and press comma to complete"
-                                           class="flex-1 border-none outline-none bg-transparent text-sm placeholder-gray-400"
-                                           autocomplete="off">
-                                </div>
-                            </div>
-                            <div id="tag-suggestions" class="absolute z-10 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto hidden mt-1">
-                                <!-- Tag suggestions will appear here -->
-                            </div>
-                        </div>
-                        <p class="text-sm text-gray-500">Tags help organize and search questions. Press comma to complete each tag and move it to the upper line.</p>
-                    </div>
-                </div>
 
                 <!-- Form Actions -->
                 <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200">
@@ -926,231 +987,6 @@ function initializeRichTextEditor() {
 }
 
 
-// Two-Line Tags Management Function
-function initializeTagsAutoCompletion() {
-    const tagsInput = document.getElementById('tags-input');
-    const tagsUpperLine = document.getElementById('tags-upper-line');
-    const tagsContainer = document.getElementById('tags-container');
-    const suggestionsContainer = document.getElementById('tag-suggestions');
-    const hiddenTagsInput = document.createElement('input');
-    hiddenTagsInput.type = 'hidden';
-    hiddenTagsInput.name = 'tags';
-    hiddenTagsInput.id = 'tags-hidden';
-    tagsContainer.parentNode.appendChild(hiddenTagsInput);
-    
-    console.log('Initializing two-line tag auto-completion:', {
-        tagsInput: !!tagsInput,
-        tagsUpperLine: !!tagsUpperLine,
-        suggestionsContainer: !!suggestionsContainer
-    });
-    
-    if (!tagsInput || !tagsUpperLine || !suggestionsContainer) {
-        console.log('Two-line tag auto-completion initialization failed - missing elements');
-        return;
-    }
-    
-    // Sample tags for auto-completion
-    const commonTags = [
-        'algebra', 'geometry', 'calculus', 'trigonometry', 'statistics', 'probability',
-        'equations', 'inequalities', 'functions', 'graphs', 'derivatives', 'integrals',
-        'matrices', 'vectors', 'complex numbers', 'sequences', 'series', 'limits',
-        'continuity', 'differentiation', 'integration', 'applications', 'word problems',
-        'proofs', 'theorems', 'definitions', 'examples', 'exercises', 'practice',
-        'basic', 'intermediate', 'advanced', 'fundamental', 'conceptual', 'procedural'
-    ];
-    
-    // Store all tags
-    let allTags = [];
-    
-    // Function to update hidden input with all tags
-    function updateHiddenInput() {
-        hiddenTagsInput.value = allTags.join(', ');
-        console.log('Updated hidden input with tags:', hiddenTagsInput.value);
-    }
-    
-    // Function to create a tag element
-    function createTagElement(tagText) {
-        const tagElement = document.createElement('span');
-        tagElement.className = 'inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800 border border-blue-200 hover:bg-blue-200 transition-colors duration-200';
-        tagElement.innerHTML = `
-            <span class="mr-1">${tagText}</span>
-            <button type="button" class="ml-1 text-blue-600 hover:text-blue-800 focus:outline-none" onclick="removeTag('${tagText}')">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-        `;
-        return tagElement;
-    }
-    
-    // Function to add a tag to the upper line
-    function addTag(tagText) {
-        if (tagText.trim() === '') return;
-        
-        const trimmedTag = tagText.trim();
-        console.log('Adding tag:', trimmedTag);
-        
-        // Check if tag already exists
-        if (allTags.includes(trimmedTag)) {
-            console.log('Tag already exists:', trimmedTag);
-            return;
-        }
-        
-        // Add to tags array
-        allTags.push(trimmedTag);
-        console.log('Current tags array:', allTags);
-        
-        // Create and add tag element to upper line
-        const tagElement = createTagElement(trimmedTag);
-        tagsUpperLine.appendChild(tagElement);
-        
-        // Clear input
-        tagsInput.value = '';
-        
-        // Update hidden input
-        updateHiddenInput();
-        
-        // Hide suggestions
-        suggestionsContainer.classList.add('hidden');
-    }
-    
-    // Function to remove a tag
-    window.removeTag = function(tagText) {
-        // Remove from array
-        allTags = allTags.filter(tag => tag !== tagText);
-        
-        // Remove from DOM
-        const tagElements = tagsUpperLine.querySelectorAll('span');
-        tagElements.forEach(element => {
-            if (element.textContent.includes(tagText)) {
-                element.remove();
-            }
-        });
-        
-        // Update hidden input
-        updateHiddenInput();
-    }
-    
-    // Function to show suggestions
-    function showSuggestions(filteredTags) {
-        if (filteredTags.length === 0) {
-            suggestionsContainer.classList.add('hidden');
-            return;
-        }
-        
-        suggestionsContainer.innerHTML = '';
-        filteredTags.forEach(tag => {
-            const suggestionItem = document.createElement('div');
-            suggestionItem.className = 'px-4 py-2 hover:bg-blue-50 cursor-pointer text-sm text-gray-700 border-b border-gray-100 last:border-b-0';
-            suggestionItem.textContent = tag;
-            
-            suggestionItem.addEventListener('click', function() {
-                addTag(tag);
-                suggestionsContainer.classList.add('hidden');
-            });
-            
-            suggestionsContainer.appendChild(suggestionItem);
-        });
-        
-        suggestionsContainer.classList.remove('hidden');
-    }
-    
-    // Handle input events for auto-completion
-    tagsInput.addEventListener('input', function(e) {
-        const value = this.value.trim();
-        
-        if (value.length > 1) {
-            const filteredTags = commonTags.filter(tag => 
-                tag.toLowerCase().startsWith(value.toLowerCase()) && 
-                tag.toLowerCase() !== value.toLowerCase() &&
-                !allTags.includes(tag)
-            );
-            showSuggestions(filteredTags);
-        } else {
-            suggestionsContainer.classList.add('hidden');
-        }
-    });
-    
-    // Handle keydown events
-    tagsInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            const value = this.value.trim();
-            if (value) {
-                addTag(value);
-            }
-            suggestionsContainer.classList.add('hidden');
-        } else if (e.key === 'Escape') {
-            suggestionsContainer.classList.add('hidden');
-        } else if (e.key === ',') {
-            e.preventDefault();
-            const value = this.value.trim();
-            if (value) {
-                addTag(value);
-            }
-        } else if (e.key === 'Backspace' && this.value === '') {
-            // If input is empty and backspace is pressed, focus on the last tag for removal
-            const lastTag = tagsUpperLine.lastElementChild;
-            if (lastTag) {
-                const removeButton = lastTag.querySelector('button');
-                if (removeButton) {
-                    removeButton.focus();
-                }
-            }
-        }
-    });
-    
-    // Handle focus events
-    tagsInput.addEventListener('focus', function() {
-        const value = this.value.trim();
-        if (value.length > 1) {
-            const filteredTags = commonTags.filter(tag => 
-                tag.toLowerCase().startsWith(value.toLowerCase()) && 
-                tag.toLowerCase() !== value.toLowerCase() &&
-                !allTags.includes(tag)
-            );
-            showSuggestions(filteredTags);
-        }
-    });
-    
-    // Handle container click to focus input
-    tagsContainer.addEventListener('click', function(e) {
-        if (e.target === tagsContainer || e.target === tagsUpperLine) {
-            tagsInput.focus();
-        }
-    });
-    
-    // Hide suggestions when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!tagsContainer.contains(e.target) && !suggestionsContainer.contains(e.target)) {
-            suggestionsContainer.classList.add('hidden');
-        }
-    });
-    
-    // Initialize tags from existing question data
-    const existingTags = @json(old('tags', []));
-    if (existingTags && existingTags.length > 0) {
-        if (Array.isArray(existingTags)) {
-            existingTags.forEach(tag => {
-                if (tag.trim()) {
-                    allTags.push(tag.trim());
-                    const tagElement = createTagElement(tag.trim());
-                    tagsUpperLine.appendChild(tagElement);
-                }
-            });
-        } else if (typeof existingTags === 'string') {
-            const tags = existingTags.split(',').map(tag => tag.trim()).filter(tag => tag);
-            tags.forEach(tag => {
-                allTags.push(tag);
-                const tagElement = createTagElement(tag);
-                tagsUpperLine.appendChild(tagElement);
-            });
-        }
-        updateHiddenInput();
-    }
-    
-    console.log('Two-line tag auto-completion initialized successfully');
-}
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM Content Loaded - Starting initialization');

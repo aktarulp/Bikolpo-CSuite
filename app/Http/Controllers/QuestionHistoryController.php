@@ -66,7 +66,7 @@ class QuestionHistoryController extends Controller
      */
     public function create(): View
     {
-        $questions = Question::where('status', 'active')->get();
+        $questions = Question::where('status', 'active')->with(['subject', 'topic', 'questionType'])->get();
         $partners = \App\Models\Partner::all();
         return view('partner.question-history.create', compact('questions', 'partners'));
     }
@@ -118,7 +118,7 @@ class QuestionHistoryController extends Controller
      */
     public function edit(QuestionHistory $questionHistory): View
     {
-        $questions = Question::where('status', 'active')->get();
+        $questions = Question::where('status', 'active')->with(['subject', 'topic', 'questionType'])->get();
         $partners = \App\Models\Partner::all();
         return view('partner.question-history.edit', compact('questionHistory', 'questions', 'partners'));
     }
