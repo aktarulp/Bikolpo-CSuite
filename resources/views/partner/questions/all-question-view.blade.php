@@ -412,10 +412,10 @@
                     @foreach($questions as $question)
                         <div class="question-card border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200" data-question-id="{{ $question->id }}">
                             <div class="px-4 py-3">
-                                <!-- Compact Question Row -->
-                                <div class="flex items-start justify-between mb-2">
-                                    <!-- Left: Type Badge, ID, and Question Text -->
-                                    <div class="flex items-start gap-3 flex-1 min-w-0">
+                                <!-- Mobile-First Question Layout -->
+                                <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-2">
+                                    <!-- Top Row: Type Badge, ID, and Actions (Mobile) / Left Side (Desktop) -->
+                                    <div class="flex items-center justify-between sm:justify-start gap-3 flex-1 min-w-0">
                                         <div class="flex items-center gap-2 flex-shrink-0">
                                             <div class="w-6 h-6 rounded-md flex items-center justify-center
                                                 {{ $question->question_type === 'mcq' ? 'bg-blue-100 dark:bg-blue-900/30' : ($question->question_type === 'true_false' ? 'bg-orange-100 dark:bg-orange-900/30' : 'bg-green-100 dark:bg-green-900/30') }}">
@@ -429,7 +429,7 @@
                                                     </svg>
                                                 @endif
                                             </div>
-                                            <span class="text-xs font-semibold text-gray-500 dark:text-black">#{{ $question->id }}</span>
+                                            <span class="text-xs font-semibold text-gray-500 dark:text-gray-400">#{{ $question->id }}</span>
                                         </div>
                                         
                                         <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium flex-shrink-0
@@ -437,76 +437,187 @@
                                             {{ $question->question_type === 'mcq' ? 'MCQ' : ($question->question_type === 'true_false' ? 'T/F' : 'Descriptive') }}
                                         </span>
                                         
-                                        <!-- Question Text with Answer Options -->
-                                        <div class="text-gray-900 dark:text-white text-sm leading-relaxed line-clamp-2 flex-1 min-w-0">
+                                        <!-- Question Text with Answer Options - Right after type badge on desktop -->
+                                        <div class="hidden sm:block text-gray-900 dark:text-white text-sm leading-relaxed flex-1 min-w-0">
                                             <span class="text-gray-900 dark:text-white">
-                                                {!! Str::limit(strip_tags($question->question_text, '<b><i><u><strong><em><br><p><span><div>'), 120) !!}
+                                                {!! Str::limit(strip_tags($question->question_text, '<b><i><u><strong><em><br><p><span><div>'), 200) !!}
                                             </span>
                                             
                                             @if($question->question_type === 'mcq' && ($question->option_a || $question->option_b || $question->option_c || $question->option_d))
-                                                <span class="text-gray-500 dark:text-gray-400"> | </span>
-                                                <span class="text-gray-600 dark:text-gray-300">
+                                                <span class="text-gray-500 dark:text-gray-400 ml-2">|</span>
+                                                <span class="text-gray-600 dark:text-gray-300 text-xs ml-1">
                                                     @if($question->option_a)
-                                                        <span class="inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold mr-1 border-2
-                                                            {{ $question->correct_answer === 'A' || $question->correct_answer === 'a' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-2 border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                        <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2
+                                                            {{ $question->correct_answer === 'A' || $question->correct_answer === 'a' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
                                                             A
                                                         </span>
-                                                        <span class="text-sm">{{ Str::limit(strip_tags($question->option_a), 18) }}</span>
+                                                        <span class="text-xs">{{ Str::limit(strip_tags($question->option_a), 18) }}</span>
                                                     @endif
                                                     @if($question->option_b)
                                                         <span class="text-gray-400 mx-1">•</span>
-                                                        <span class="inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold mr-1 border-2
-                                                            {{ $question->correct_answer === 'B' || $question->correct_answer === 'b' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-2 border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                        <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2
+                                                            {{ $question->correct_answer === 'B' || $question->correct_answer === 'b' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
                                                             B
                                                         </span>
-                                                        <span class="text-sm">{{ Str::limit(strip_tags($question->option_b), 18) }}</span>
+                                                        <span class="text-xs">{{ Str::limit(strip_tags($question->option_b), 18) }}</span>
                                                     @endif
                                                     @if($question->option_c)
                                                         <span class="text-gray-400 mx-1">•</span>
-                                                        <span class="inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold mr-1 border-2
-                                                            {{ $question->correct_answer === 'C' || $question->correct_answer === 'c' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-2 border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                        <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2
+                                                            {{ $question->correct_answer === 'C' || $question->correct_answer === 'c' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
                                                             C
                                                         </span>
-                                                        <span class="text-sm">{{ Str::limit(strip_tags($question->option_c), 18) }}</span>
+                                                        <span class="text-xs">{{ Str::limit(strip_tags($question->option_c), 18) }}</span>
                                                     @endif
                                                     @if($question->option_d)
                                                         <span class="text-gray-400 mx-1">•</span>
-                                                        <span class="inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold mr-1 border-2
-                                                            {{ $question->correct_answer === 'D' || $question->correct_answer === 'd' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-2 border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                        <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2
+                                                            {{ $question->correct_answer === 'D' || $question->correct_answer === 'd' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
                                                             D
                                                         </span>
-                                                        <span class="text-sm">{{ Str::limit(strip_tags($question->option_d), 18) }}</span>
+                                                        <span class="text-xs">{{ Str::limit(strip_tags($question->option_d), 18) }}</span>
                                                     @endif
                                                 </span>
                                             @elseif($question->question_type === 'true_false')
-                                                <span class="text-gray-500 dark:text-gray-400"> | </span>
-                                                <span class="text-gray-600 dark:text-gray-300">
-                                                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold mr-1 border-2
-                                                        {{ $question->correct_answer === 'A' || $question->correct_answer === 'a' || $question->correct_answer === 'true' || $question->correct_answer === 'True' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-2 border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                <span class="text-gray-500 dark:text-gray-400 ml-2">|</span>
+                                                <span class="text-gray-600 dark:text-gray-300 text-xs ml-1">
+                                                    <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2
+                                                        {{ $question->correct_answer === 'A' || $question->correct_answer === 'a' || $question->correct_answer === 'true' || $question->correct_answer === 'True' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
                                                         A
                                                     </span>
-                                                    <span class="text-sm">{{ $question->option_a ? Str::limit(strip_tags($question->option_a), 28) : 'True' }}</span>
+                                                    <span class="text-xs">{{ $question->option_a ? Str::limit(strip_tags($question->option_a), 28) : 'True' }}</span>
                                                     <span class="text-gray-400 mx-1">•</span>
-                                                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold mr-1 border-2
-                                                        {{ $question->correct_answer === 'B' || $question->correct_answer === 'b' || $question->correct_answer === 'false' || $question->correct_answer === 'False' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-2 border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                    <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2
+                                                        {{ $question->correct_answer === 'B' || $question->correct_answer === 'b' || $question->correct_answer === 'false' || $question->correct_answer === 'False' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
                                                         B
                                                     </span>
-                                                    <span class="text-sm">{{ $question->option_b ? Str::limit(strip_tags($question->option_b), 28) : 'False' }}</span>
+                                                    <span class="text-xs">{{ $question->option_b ? Str::limit(strip_tags($question->option_b), 28) : 'False' }}</span>
                                                 </span>
                                             @elseif($question->question_type === 'fill_in_blank' && $question->option_a)
-                                                <span class="text-gray-500 dark:text-gray-400"> | </span>
-                                                <span class="text-gray-600 dark:text-gray-300">
-                                                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold mr-1 border-2 bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400">
+                                                <span class="text-gray-500 dark:text-gray-400 ml-2">|</span>
+                                                <span class="text-gray-600 dark:text-gray-300 text-xs ml-1">
+                                                    <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2 bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400">
                                                         ✓
                                                     </span>
-                                                    <span class="text-sm">{{ Str::limit(strip_tags($question->option_a), 38) }}</span>
+                                                    <span class="text-xs">{{ Str::limit(strip_tags($question->option_a), 38) }}</span>
                                                 </span>
+                                            @endif
+                                        </div>
+                                        
+                                        <!-- Actions - Mobile -->
+                                        <div class="flex items-center gap-1 sm:hidden">
+                                            <a href="{{ route('partner.questions.common-view', $question) }}" 
+                                               class="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded transition-all duration-200" 
+                                               title="View">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                                </svg>
+                                            </a>
+                                            @if($question->question_type === 'descriptive')
+                                                <a href="{{ route('partner.questions.descriptive.edit', $question) }}" 
+                                                   class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-all duration-200" 
+                                                   title="Edit">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                    </svg>
+                                                </a>
+                                            @elseif($question->question_type === 'mcq')
+                                                <a href="{{ route('partner.questions.mcq.edit', $question) }}" 
+                                                   class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-all duration-200" 
+                                                   title="Edit">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                    </svg>
+                                                </a>
+                                            @elseif($question->question_type === 'true_false')
+                                                <a href="{{ route('partner.questions.tf.edit', $question) }}" 
+                                                   class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-all duration-200" 
+                                                   title="Edit">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                    </svg>
+                                                </a>
                                             @endif
                                         </div>
                                     </div>
                                     
-                                    <!-- Right: Actions -->
-                                    <div class="flex items-center gap-1 flex-shrink-0 ml-3">
+                                    <!-- Question Text - Full Width on Mobile -->
+                                    <div class="w-full sm:hidden">
+                                        <div class="text-gray-900 dark:text-white text-sm leading-relaxed mb-2">
+                                            {!! Str::limit(strip_tags($question->question_text, '<b><i><u><strong><em><br><p><span><div>'), 200) !!}
+                                        </div>
+                                        
+                                        <!-- Answer Options - Stacked on Mobile -->
+                                        @if($question->question_type === 'mcq' && ($question->option_a || $question->option_b || $question->option_c || $question->option_d))
+                                            <div class="flex flex-wrap gap-2 text-xs">
+                                                @if($question->option_a)
+                                                    <div class="flex items-center gap-1">
+                                                        <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border-2
+                                                            {{ $question->correct_answer === 'A' || $question->correct_answer === 'a' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                            A
+                                                        </span>
+                                                        <span class="text-gray-600 dark:text-gray-300">{{ Str::limit(strip_tags($question->option_a), 25) }}</span>
+                                                    </div>
+                                                @endif
+                                                @if($question->option_b)
+                                                    <div class="flex items-center gap-1">
+                                                        <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border-2
+                                                            {{ $question->correct_answer === 'B' || $question->correct_answer === 'b' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                            B
+                                                        </span>
+                                                        <span class="text-gray-600 dark:text-gray-300">{{ Str::limit(strip_tags($question->option_b), 25) }}</span>
+                                                    </div>
+                                                @endif
+                                                @if($question->option_c)
+                                                    <div class="flex items-center gap-1">
+                                                        <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border-2
+                                                            {{ $question->correct_answer === 'C' || $question->correct_answer === 'c' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                            C
+                                                        </span>
+                                                        <span class="text-gray-600 dark:text-gray-300">{{ Str::limit(strip_tags($question->option_c), 25) }}</span>
+                                                    </div>
+                                                @endif
+                                                @if($question->option_d)
+                                                    <div class="flex items-center gap-1">
+                                                        <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border-2
+                                                            {{ $question->correct_answer === 'D' || $question->correct_answer === 'd' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                            D
+                                                        </span>
+                                                        <span class="text-gray-600 dark:text-gray-300">{{ Str::limit(strip_tags($question->option_d), 25) }}</span>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        @elseif($question->question_type === 'true_false')
+                                            <div class="flex flex-wrap gap-3 text-xs">
+                                                <div class="flex items-center gap-1">
+                                                    <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border-2
+                                                        {{ $question->correct_answer === 'A' || $question->correct_answer === 'a' || $question->correct_answer === 'true' || $question->correct_answer === 'True' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                        A
+                                                    </span>
+                                                    <span class="text-gray-600 dark:text-gray-300">{{ $question->option_a ? Str::limit(strip_tags($question->option_a), 30) : 'True' }}</span>
+                                                </div>
+                                                <div class="flex items-center gap-1">
+                                                    <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border-2
+                                                        {{ $question->correct_answer === 'B' || $question->correct_answer === 'b' || $question->correct_answer === 'false' || $question->correct_answer === 'False' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                        B
+                                                    </span>
+                                                    <span class="text-gray-600 dark:text-gray-300">{{ $question->option_b ? Str::limit(strip_tags($question->option_b), 30) : 'False' }}</span>
+                                                </div>
+                                            </div>
+                                        @elseif($question->question_type === 'fill_in_blank' && $question->option_a)
+                                            <div class="flex items-center gap-1 text-xs">
+                                                <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border-2 bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400">
+                                                    ✓
+                                                </span>
+                                                <span class="text-gray-600 dark:text-gray-300">{{ Str::limit(strip_tags($question->option_a), 40) }}</span>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    
+                                    
+                                    <!-- Actions - Desktop -->
+                                    <div class="hidden sm:flex items-center gap-1 flex-shrink-0 ml-3">
                                         <a href="{{ route('partner.questions.common-view', $question) }}" 
                                            class="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded transition-all duration-200" 
                                            title="View">
@@ -658,12 +769,12 @@
 /* Mobile optimizations */
 @media (max-width: 640px) {
     .questions-container .question-card {
-        padding: 0.75rem;
+        padding: 0.5rem;
     }
     
     .questions-container .question-card .px-4 {
-        padding-left: 0.75rem;
-        padding-right: 0.75rem;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
     }
     
     .questions-container .question-card .py-3 {
@@ -671,30 +782,40 @@
         padding-bottom: 0.5rem;
     }
     
-    /* Stack question text below type badge on very small screens */
-    .questions-container .question-card .flex.items-start {
-        flex-direction: column;
-        align-items: flex-start;
+    /* Ensure proper spacing on mobile */
+    .questions-container .question-card .gap-3 {
+        gap: 0.75rem;
+    }
+    
+    /* Make answer options more compact on mobile */
+    .questions-container .question-card .flex.flex-wrap.gap-2 {
         gap: 0.5rem;
     }
     
-    .questions-container .question-card .flex.items-start > div:first-child {
-        width: 100%;
+    .questions-container .question-card .flex.flex-wrap.gap-3 {
+        gap: 0.75rem;
     }
     
-    .questions-container .question-card .flex.items-start > div:last-child {
-        align-self: flex-end;
+    /* Smaller circles for mobile */
+    .questions-container .question-card .w-4.h-4 {
+        width: 0.875rem;
+        height: 0.875rem;
     }
     
-    /* Allow answer options to wrap on mobile */
-    .questions-container .question-card .text-gray-600 {
-        white-space: normal;
-        font-size: 0.75rem;
+    /* Better text sizing for mobile */
+    .questions-container .question-card .text-xs {
+        font-size: 0.6875rem;
     }
     
-    /* Reduce character limits on mobile for better fit */
-    .questions-container .question-card .line-clamp-2 {
-        -webkit-line-clamp: 3;
+    /* Ensure question text is readable on mobile */
+    .questions-container .question-card .text-sm {
+        font-size: 0.8125rem;
+        line-height: 1.4;
+    }
+    
+    /* Better spacing for metadata */
+    .questions-container .question-card .gap-4 {
+        gap: 0.75rem;
     }
 }
 
