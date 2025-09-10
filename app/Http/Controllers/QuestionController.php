@@ -202,6 +202,7 @@ class QuestionController extends Controller
                 'subject_filter' => $request->input('subject_filter'),
                 'topic_filter' => $request->input('topic_filter'),
                 'question_type_filter' => $request->input('question_type_filter'),
+                'date_filter' => $request->input('date_filter'),
                 'search' => $request->input('search'),
             ]
         ]);
@@ -210,12 +211,6 @@ class QuestionController extends Controller
             ->where('partner_id', $partnerId)
             ->where('status', 'active'); // Only show published questions
             
-        // Debug: Log the raw SQL query
-        \Log::info('All Questions SQL Query', [
-            'partner_id' => $partnerId,
-            'sql' => $query->toSql(),
-            'bindings' => $query->getBindings()
-        ]);
 
         // Apply search filter
         if ($request->filled('search')) {
@@ -268,6 +263,27 @@ class QuestionController extends Controller
             $query->where('question_type', $questionType);
         }
 
+        // Apply date filter
+        if ($request->filled('date_filter')) {
+            $dateFilter = $request->input('date_filter');
+            
+            \Log::info('Date filter applied', [
+                'date_filter' => $dateFilter,
+                'current_time' => now()->toDateTimeString()
+            ]);
+            
+            // Filter for questions created on the selected date
+            $query->whereDate('created_at', $dateFilter);
+            \Log::info('Date filter applied', ['date' => $dateFilter]);
+        }
+
+        // Debug: Log the raw SQL query after all filters
+        \Log::info('All Questions SQL Query', [
+            'partner_id' => $partnerId,
+            'sql' => $query->toSql(),
+            'bindings' => $query->getBindings(),
+            'date_filter' => $request->input('date_filter')
+        ]);
 
         $questions = $query->latest()->paginate(15);
         
@@ -321,6 +337,9 @@ class QuestionController extends Controller
         }
         if ($request->filled('question_type_filter')) {
             $questions->appends(['question_type_filter' => $request->question_type_filter]);
+        }
+        if ($request->filled('date_filter')) {
+            $questions->appends(['date_filter' => $request->date_filter]);
         }
 
         return view('partner.questions.all-question-view', compact('questions'));

@@ -273,7 +273,7 @@
                     </div>
 
                     <!-- Filters Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                         <div class="space-y-2">
                             <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Course</label>
                             <select name="course_filter" id="course_filter" class="w-full rounded-lg border border-gray-300 dark:border-gray-600 p-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
@@ -300,6 +300,15 @@
                             <select name="question_type_filter" id="question_type_filter" class="w-full rounded-lg border border-gray-300 dark:border-gray-600 p-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
                                 <option value="">All Types</option>
                             </select>
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Date Created</label>
+                            <input type="date" 
+                                   name="date_filter" 
+                                   id="date_filter" 
+                                   class="w-full rounded-lg border border-gray-300 dark:border-gray-600 p-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                                   value="{{ request('date_filter') }}">
                         </div>
                     </div>
                     
@@ -571,6 +580,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const subjectFilter = document.getElementById('subject_filter');
     const topicFilter = document.getElementById('topic_filter');
     const questionTypeFilter = document.getElementById('question_type_filter');
+    const dateFilter = document.getElementById('date_filter');
     const clearAllFiltersBtn = document.getElementById('clearAllFilters');
     const refreshQuestionsBtn = document.getElementById('refreshQuestions');
     
@@ -643,6 +653,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // Date filter event handlers
+    if (dateFilter) {
+        dateFilter.addEventListener('change', function() {
+            console.log('Date filter changed to:', this.value);
+            performAjaxSearch();
+        });
+    }
+    
     
     if (clearAllFiltersBtn) {
         clearAllFiltersBtn.addEventListener('click', function() {
@@ -653,6 +671,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (subjectFilter) subjectFilter.value = '';
             if (topicFilter) topicFilter.value = '';
             if (questionTypeFilter) questionTypeFilter.value = '';
+            if (dateFilter) dateFilter.value = '';
             if (searchInput) searchInput.value = '';
             if (searchHidden) searchHidden.value = '';
             
@@ -706,6 +725,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const subjectFilterValue = subjectFilter ? subjectFilter.value : '';
         const topicFilterValue = topicFilter ? topicFilter.value : '';
         const questionTypeFilterValue = questionTypeFilter ? questionTypeFilter.value : '';
+        const dateFilterValue = dateFilter ? dateFilter.value : '';
+        
+        console.log('Filter values:', {
+            course: courseFilterValue,
+            subject: subjectFilterValue,
+            topic: topicFilterValue,
+            questionType: questionTypeFilterValue,
+            date: dateFilterValue
+        });
         
         if (courseFilterValue) {
             currentUrl.searchParams.set('course_filter', courseFilterValue);
@@ -729,6 +757,12 @@ document.addEventListener('DOMContentLoaded', function() {
             currentUrl.searchParams.set('question_type_filter', questionTypeFilterValue);
         } else {
             currentUrl.searchParams.delete('question_type_filter');
+        }
+        
+        if (dateFilterValue) {
+            currentUrl.searchParams.set('date_filter', dateFilterValue);
+        } else {
+            currentUrl.searchParams.delete('date_filter');
         }
         
         

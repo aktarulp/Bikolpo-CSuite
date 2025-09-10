@@ -814,12 +814,35 @@ class ExamController extends Controller
         $assignedQuestionsWithOrder = \App\Models\ExamQuestion::where('exam_id', $exam->id)
             ->pluck('order', 'question_id');
         
-        // Get courses, subjects and topics for filters
+        // Get courses, subjects and topics for filters (partner-specific)
         $courses = \App\Models\Course::where('status', 'active')
             ->where('partner_id', $partnerId)
             ->get();
-        $subjects = \App\Models\Subject::where('status', 'active')->get();
-        $topics = \App\Models\Topic::where('status', 'active')->get();
+        $subjects = \App\Models\Subject::where('status', 'active')
+            ->where('partner_id', $partnerId)
+            ->get();
+        $topics = \App\Models\Topic::where('status', 'active')
+            ->where('partner_id', $partnerId)
+            ->get();
+            
+        // Get question types from actual questions for this partner
+        $questionTypes = \App\Models\Question::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->select('question_type')
+            ->distinct()
+            ->pluck('question_type')
+            ->map(function($type) {
+                return [
+                    'value' => $type,
+                    'label' => match($type) {
+                        'mcq' => 'MCQ',
+                        'descriptive' => 'Descriptive',
+                        'true_false' => 'True/False',
+                        'fill_in_blank' => 'Fill in the Blanks',
+                        default => ucfirst(str_replace('_', ' ', $type))
+                    }
+                ];
+            });
         
         // Debug: Log the data being passed to the view
         \Log::info('Assign Questions View Data', [
@@ -829,10 +852,12 @@ class ExamController extends Controller
             'courses_count' => $courses->count(),
             'subjects_count' => $subjects->count(),
             'topics_count' => $topics->count(),
+            'question_types_count' => $questionTypes->count(),
+            'question_types' => $questionTypes->toArray(),
             'partner_id' => $partnerId
         ]);
         
-        return view('partner.exams.assign-questions', compact('exam', 'questions', 'assignedQuestions', 'assignedQuestionsWithMarks', 'assignedQuestionsWithOrder', 'courses', 'subjects', 'topics'));
+        return view('partner.exams.assign-questions', compact('exam', 'questions', 'assignedQuestions', 'assignedQuestionsWithMarks', 'assignedQuestionsWithOrder', 'courses', 'subjects', 'topics', 'questionTypes'));
     }
 
     public function storeAssignedQuestions(Request $request, Exam $exam)

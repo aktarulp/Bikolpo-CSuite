@@ -3,82 +3,155 @@
 @section('title', 'Assign Questions to Exam')
 
 @section('content')
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <!-- Header Section -->
+    <div class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Page Header -->
-        <div class="mb-4">
-            <div class="flex items-center justify-between">
+            <div class="py-6">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                    <!-- Title Section -->
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-3 mb-2">
+                            <div class="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                                <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                </svg>
+                            </div>
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Assign Questions</h1>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ $exam->title }}</p>
+                                <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Assign Questions</h1>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ $exam->title }}</p>
                 </div>
-                <div class="flex space-x-2">
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row gap-3">
                     <a href="{{ route('partner.exams.show', $exam) }}" 
-                       class="px-3 py-1 text-sm border border-gray-300 rounded text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300">
+                           class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 transition-colors">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
                         View Exam
                     </a>
                     <a href="{{ route('partner.exams.index') }}" 
-                       class="px-3 py-1 text-sm border border-gray-300 rounded text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300">
+                           class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 transition-colors">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                            </svg>
                         Back
                     </a>
+                    </div>
+                </div>
                 </div>
             </div>
         </div>
 
         <!-- Main Content -->
-        <div class="bg-white dark:bg-gray-800 shadow-xl rounded-lg overflow-hidden">
-            <form action="{{ route('partner.exams.store-assigned-questions', $exam) }}" method="POST">
-                @csrf
-                
-                <!-- Exam Info -->
-                <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700">
-                    <div class="flex items-center justify-between text-sm">
-                        <div class="flex items-center space-x-4">
-                            <span class="text-gray-700 dark:text-gray-300">Max: <strong>{{ $exam->total_questions }}</strong></span>
-                            <span class="text-gray-700 dark:text-gray-300">Duration: <strong>{{ $exam->duration }}min</strong></span>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="space-y-6">
+            <!-- Exam Info Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center gap-3">
+                        <div class="p-3 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                            <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
                         </div>
-                        <span class="px-2 py-1 text-xs font-medium rounded-full 
-                            {{ $exam->status === 'published' ? 'bg-green-100 text-green-800' : 
-                               ($exam->status === 'draft' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800') }}">
+                        <div>
+                            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Max Questions</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $exam->total_questions }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center gap-3">
+                        <div class="p-3 bg-green-100 dark:bg-green-900 rounded-lg">
+                            <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Duration</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $exam->duration }} min</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center gap-3">
+                        <div class="p-3 bg-purple-100 dark:bg-purple-900 rounded-lg">
+                            <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Status</p>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-sm font-medium
+                                {{ $exam->status === 'published' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 
+                                   ($exam->status === 'draft' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200') }}">
+                                <div class="w-2 h-2 rounded-full mr-2 {{ $exam->status === 'published' ? 'bg-green-500' : ($exam->status === 'draft' ? 'bg-yellow-500' : 'bg-gray-500') }}"></div>
                             {{ ucfirst($exam->status) }}
                         </span>
+                        </div>
+                    </div>
                     </div>
                 </div>
 
-                <!-- Questions Selection -->
-                <div class="px-4 py-4">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Select Questions</h2>
-                        <div class="flex items-center space-x-3">
-                            <div class="flex flex-col items-end">
-                                <span class="text-sm text-gray-600 dark:text-gray-400">
-                                    <span id="selected-count">0</span>/<span id="total-allowed">{{ $exam->total_questions }}</span>
-                                    <span class="ml-2 text-xs text-gray-500 dark:text-gray-400">
-                                        (<span id="remaining-count">{{ $exam->total_questions }}</span> remaining)
-                                    </span>
-                                </span>
-                                <div class="selection-progress w-32 mt-1">
-                                    <div class="selection-progress-bar" id="progress-bar" style="width: 0%"></div>
+            <!-- Main Form Card -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                <form action="{{ route('partner.exams.store-assigned-questions', $exam) }}" method="POST">
+                    @csrf
+
+                    <!-- Header Section -->
+                    <div class="px-6 py-6 border-b border-gray-200 dark:border-gray-700">
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                            <div class="flex-1">
+                                <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Select Questions</h2>
+                                <p class="text-gray-600 dark:text-gray-400">Choose questions to assign to this exam</p>
+                                </div>
+                            
+                            <!-- Progress Display -->
+                            <div class="flex items-center gap-6">
+                                <div class="text-center">
+                                    <div class="text-3xl font-bold text-blue-600 dark:text-blue-400" id="selected-count">0</div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-400">Selected</div>
+                            </div>
+                                <div class="text-gray-400 dark:text-gray-500 text-2xl">/</div>
+                                <div class="text-center">
+                                    <div class="text-3xl font-bold text-gray-700 dark:text-gray-300" id="total-allowed">{{ $exam->total_questions }}</div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-400">Max</div>
                                 </div>
                             </div>
-                            <button type="button" id="select-all" class="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400">
-                                Select All
-                            </button>
-                            <button type="button" id="clear-all" class="text-sm text-red-600 hover:text-red-800 dark:text-red-400">
-                                Clear
-                            </button>
-                            @if($questions->count() > 0)
-                                <div class="flex space-x-2">
-                                    <a href="{{ route('partner.exams.show', $exam) }}" 
-                                       class="px-3 py-1 text-sm border border-gray-300 rounded text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300">
-                                        Cancel
-                                    </a>
-                                    <button type="submit" 
-                                            class="px-3 py-1 text-sm border border-transparent rounded text-white bg-blue-600 hover:bg-blue-700">
-                                        Assign Questions
-                                    </button>
+                        </div>
+                        
+                        <!-- Enhanced Progress Bar -->
+                        <div class="mt-6">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Progress</span>
+                                <span class="text-sm font-semibold text-blue-600 dark:text-blue-400" id="progress-percentage">0%</span>
+                            </div>
+                            <div class="relative w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden shadow-inner">
+                                <div class="absolute inset-0 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-600 dark:to-gray-700 rounded-full"></div>
+                                <div class="relative h-full bg-gradient-to-r from-blue-500 via-blue-600 to-indigo-600 rounded-full transition-all duration-700 ease-out shadow-lg" 
+                                     id="progress-bar" 
+                                     style="width: 0%">
+                                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-shimmer"></div>
                                 </div>
-                            @endif
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div class="w-2 h-2 bg-white rounded-full shadow-lg opacity-0 transition-opacity duration-300" id="progress-dot"></div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between mt-3">
+                                <div class="text-sm text-gray-600 dark:text-gray-400">
+                                    <span id="selected-count-display">0</span> of <span id="total-allowed-display">{{ $exam->total_questions }}</span> selected
+                                </div>
+                                <div class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                                    <span id="remaining-count">{{ $exam->total_questions }}</span> remaining
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -94,60 +167,147 @@
                         </div>
                     </div>
 
+                    <!-- Action Buttons -->
+                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+                        <div class="flex flex-col sm:flex-row gap-4 sm:justify-end">
+                            <a href="{{ route('partner.exams.show', $exam) }}" 
+                               class="inline-flex items-center justify-center px-6 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                                Cancel
+                            </a>
+                            @if($questions->count() > 0)
+                                <button type="submit" 
+                                        class="inline-flex items-center justify-center px-8 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    Assign
+                                </button>
+                            @else
+                                <button type="button" 
+                                        class="inline-flex items-center justify-center px-8 py-2 text-sm font-medium text-gray-400 bg-gray-200 border border-transparent rounded-lg cursor-not-allowed dark:bg-gray-700 dark:text-gray-500">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    No Questions Available
+                                </button>
+                            @endif
+                        </div>
+                    </div>
+
                     <!-- Search and Filters -->
-                    <div class="mb-4 space-y-3">
-                        <!-- Search Bar -->
-                        <div class="flex items-center space-x-2">
-                            <div class="flex-1">
-                                <input type="text" id="search" name="search" placeholder="Search questions..."
-                                       class="block w-full px-3 py-2 border border-gray-300 rounded text-sm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                    <div class="px-6 py-6 space-y-6">
+                        <!-- Enhanced Search Bar -->
+                        <div class="search-container">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
                             </div>
-                            <button type="button" id="clear-search" class="px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300">
-                                Clear
+                            <input type="text" 
+                                   id="search" 
+                                   name="search" 
+                                   placeholder="Search questions by text, course, subject, or topic..."
+                                   class="search-input block w-full"
+                                   autocomplete="off">
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                <button type="button" 
+                                        id="clear-search" 
+                                        class="clear-button">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
                             </button>
+                                <div id="search-loading" class="search-loading">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Search Results Info -->
+                        <div id="search-results-info" class="search-results-info">
+                            <span id="search-results-count">0</span> questions found
                         </div>
 
                         <!-- Filters -->
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-3">
-                                <select id="type-filter" class="px-3 py-2 border border-gray-300 rounded text-sm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-1 focus:ring-blue-500">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Question Type</label>
+                                <select id="type-filter" class="block w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
                                     <option value="">All Types</option>
-                                    <option value="mcq">MCQ</option>
-                                    <option value="descriptive">Descriptive</option>
+                                    @foreach($questionTypes as $questionType)
+                                        <option value="{{ $questionType['value'] }}">{{ $questionType['label'] }}</option>
+                                    @endforeach
                                 </select>
+                            </div>
 
-                                <select id="course-filter" class="px-3 py-2 border border-gray-300 rounded text-sm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-1 focus:ring-blue-500">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Course</label>
+                                <select id="course-filter" class="block w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
                                     <option value="">All Courses</option>
-                                    @foreach($courses ?? [] as $course)
+                                    @foreach($courses as $course)
                                         <option value="{{ $course->id }}">{{ $course->name }}</option>
                                     @endforeach
                                 </select>
+                            </div>
 
-                                <select id="subject-filter" class="px-3 py-2 border border-gray-300 rounded text-sm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-1 focus:ring-blue-500">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Subject</label>
+                                <select id="subject-filter" class="block w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
                                     <option value="">All Subjects</option>
-                                    @foreach($subjects ?? [] as $subject)
+                                    @foreach($subjects as $subject)
                                         <option value="{{ $subject->id }}">{{ $subject->name }}</option>
                                     @endforeach
                                 </select>
+                            </div>
 
-                                <select id="topic-filter" class="px-3 py-2 border border-gray-300 rounded text-sm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-1 focus:ring-blue-500">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Topic</label>
+                                <select id="topic-filter" class="block w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
                                     <option value="">All Topics</option>
-                                    @foreach($topics ?? [] as $topic)
+                                    @foreach($topics as $topic)
                                         <option value="{{ $topic->id }}">{{ $topic->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
+                            </div>
                             
-                            <div class="flex items-center space-x-2">
-                                <button type="button" id="refresh-filters" class="px-3 py-2 text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 border border-blue-300 rounded hover:bg-blue-50 dark:border-blue-600 dark:hover:bg-blue-900/20">
-                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        <!-- Action Buttons -->
+                        <div class="flex flex-col sm:flex-row gap-3 sm:justify-between">
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <button type="button" id="select-all" 
+                                        class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-900/30 transition-colors">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    Select All
+                                </button>
+                                <button type="button" id="clear-all" 
+                                        class="inline-flex items-center px-4 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/30 transition-colors">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                    Clear All
+                                </button>
+                            </div>
+                            
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <button type="button" id="refresh-filters" 
+                                        class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-900/30 transition-colors">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                                     </svg>
                                     Refresh
                                 </button>
-                                <button type="button" id="clear-filters" class="px-3 py-2 text-sm text-red-600 hover:text-red-800 dark:text-red-400 border border-red-300 rounded hover:bg-red-50 dark:border-red-600 dark:hover:bg-red-900/20">
-                                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                <button type="button" id="clear-filters" 
+                                        class="inline-flex items-center px-4 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/30 transition-colors">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                     </svg>
                                     Clear Filters
                                 </button>
@@ -155,93 +315,240 @@
                         </div>
                     </div>
 
+                    <!-- Questions List -->
                     @if($questions->count() > 0)
-                        <div class="grid grid-cols-1 gap-3">
+                        <div class="px-4 py-4 border-t border-gray-200 dark:border-gray-700">
+                            <div class="grid grid-cols-1 gap-2">
                             @foreach($questions as $question)
-                                <div class="question-card border border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700 draggable-question shadow-sm hover:shadow-md transition-all duration-200"
+                                    <div class="question-card group bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-md p-3 hover:shadow-sm transition-all duration-200 draggable-question"
                                      data-type="{{ $question->question_type }}"
                                      data-course="{{ $question->course->id ?? '' }}"
                                      data-subject="{{ $question->subject->name ?? '' }}"
                                      data-topic="{{ $question->topic->name ?? '' }}"
                                      data-question-id="{{ $question->id }}"
                                      draggable="true">
-                                    <div class="flex items-start space-x-3">
-                                        <!-- Question Number Input Field (Readonly) -->
-                                        <div class="flex items-center space-x-2 question-number-container">
-                                            <div class="flex items-center space-x-1">
-                                                <label class="text-xs text-green-500 dark:text-green-400 font-semibold">Q#:</label>
-                                                <input type="number" 
-                                                       name="question_numbers[{{ $question->id }}]" 
-                                                       value="{{ $assignedQuestionsWithOrder[$question->id] ?? '' }}" 
-                                                       min="1" 
-                                                       max="999" 
-                                                       readonly
-                                                       class="question-number w-12 px-1 py-1 text-xs border-2 border-green-400 rounded-md bg-gray-100 dark:bg-gray-600 dark:border-green-500 dark:text-white font-semibold text-center"
-                                                       placeholder=""
-                                                       style="border: 2px solid #4ade80; box-shadow: 0 0 0 1px rgba(74, 222, 128, 0.3); -moz-appearance: textfield; -webkit-appearance: none; appearance: none;">
+                                    
+                                    <!-- Mobile Layout -->
+                                    <div class="block sm:hidden">
+                                        <!-- Top Row: Checkbox, Question Number, Type Badge, Drag Handle -->
+                                        <div class="mobile-controls">
+                                            <div class="mobile-controls-left">
+                                                <input type="checkbox" name="question_ids[]" value="{{ $question->id }}" 
+                                                       class="question-checkbox mobile-touch-target h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded transition-all duration-200"
+                                                       {{ $assignedQuestions->contains($question->id) ? 'checked' : '' }}>
+                                                
+                                                <div class="flex items-center space-x-1 question-number-container">
+                                                    <label class="text-xs text-green-600 dark:text-green-400 font-semibold">Q#:</label>
+                                                    <input type="number" 
+                                                           name="question_numbers[{{ $question->id }}]" 
+                                                           value="{{ $assignedQuestionsWithOrder[$question->id] ?? '' }}" 
+                                                           min="1" 
+                                                           max="999" 
+                                                           class="question-number mobile-input w-12 border border-green-400 rounded bg-gray-100 dark:bg-gray-600 dark:border-green-500 dark:text-white font-semibold text-center"
+                                                           style="-moz-appearance: textfield; -webkit-appearance: none; appearance: none;"
+                                                           readonly>
+                                                </div>
+                                                
+                                                <span class="mobile-badge
+                                                    {{ $question->question_type === 'mcq' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 
+                                                       ($question->question_type === 'descriptive' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200') }}">
+                                                    {{ strtoupper($question->question_type) }}
+                                                </span>
                                             </div>
-                                            <!-- Drag handle icon -->
-                                            <div class="drag-handle text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-move p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path>
-                                                </svg>
+                                            
+                                            <div class="mobile-controls-right">
+                                                <!-- Marks Input -->
+                                                <div class="flex items-center space-x-1 question-marks-container">
+                                                    <label class="text-xs text-blue-600 dark:text-blue-400 font-semibold">Marks:</label>
+                                                    <input type="number" 
+                                                           name="question_marks[{{ $question->id }}]" 
+                                                           value="{{ $assignedQuestionsWithMarks[$question->id] ?? 1 }}" 
+                                                           min="1" 
+                                                           max="100" 
+                                                           class="question-marks mobile-input w-14 border border-blue-400 rounded bg-gray-100 dark:bg-gray-600 dark:border-blue-500 dark:text-white font-semibold text-center"
+                                                           style="-moz-appearance: textfield; -webkit-appearance: none; appearance: none;">
+                                                </div>
+                                                
+                                                <!-- Drag Handle -->
+                                                <div class="drag-handle mobile-drag-handle mobile-touch-target text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-move transition-colors">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path>
+                                                    </svg>
+                                                </div>
                                             </div>
                                         </div>
-                                        <input type="checkbox" name="question_ids[]" value="{{ $question->id }}" 
-                                               class="question-checkbox mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                                               {{ $assignedQuestions->contains($question->id) ? 'checked' : '' }}>
-                                        <div class="flex-1 min-w-0">
-                                            <div class="flex items-start justify-between">
-                                                <div class="flex-1 min-w-0">
-                                                    <div class="text-sm text-gray-900 dark:text-white font-medium mb-1">
-                                                        {{ Str::limit($question->question_text, 60) }}
-                                                    </div>
-                                                    <div class="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
-                                                        <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs">{{ $question->course->name ?? 'N/A' }}</span>
-                                                        <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs">{{ $question->subject->name ?? 'N/A' }}</span>
-                                                        <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs">{{ $question->topic->name ?? 'N/A' }}</span>
-                                                    </div>
-                                                </div>
-                                                <div class="flex items-center space-x-3">
-                                                    <!-- Mark Input Field -->
-                                                    <div class="flex items-center space-x-1 question-marks-container">
-                                                        <label class="text-xs text-blue-500 dark:text-blue-400 font-semibold">Marks:</label>
-                                                        <input type="number" 
-                                                               name="question_marks[{{ $question->id }}]" 
-                                                               value="{{ $assignedQuestionsWithMarks[$question->id] ?? 1 }}" 
-                                                               min="1" 
-                                                               max="100" 
-                                                               class="question-marks w-14 px-2 py-1 text-xs border-2 border-blue-400 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-600 dark:bg-gray-700 dark:border-blue-500 dark:text-white font-semibold text-center"
-                                                               placeholder="1"
-                                                               style="border: 2px solid #60a5fa; box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.3); -moz-appearance: textfield; -webkit-appearance: none; appearance: none;">
-                                                    </div>
-                                                    <span class="text-xs px-3 py-1 rounded-full font-medium
-                                                        {{ $question->question_type === 'mcq' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' }}">
-                                                        {{ strtoupper($question->question_type) }}
-                                                    </span>
+                                        
+                                        <!-- Question Text -->
+                                        <div class="mb-3">
+                                            <div class="mobile-question-text text-gray-900 dark:text-white font-medium">
+                                                {{ Str::limit($question->question_text, 120) }}
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Answer Options (Mobile) -->
+                                        @if($question->question_type === 'mcq' || $question->question_type === 'true_false')
+                                            <div class="mb-3">
+                                                <div class="text-xs text-gray-600 dark:text-gray-400 font-medium mb-2">Answer Options:</div>
+                                                <div class="mobile-answer-grid">
+                                                    @if($question->option_a)
+                                                        <div class="mobile-answer-option">
+                                                            <div class="flex items-center space-x-2">
+                                                                <span class="compact-answer-option bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 font-bold rounded-full flex items-center justify-center {{ $question->correct_answer === 'a' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' : '' }}">{{ $question->correct_answer === 'a' ? '✓' : 'A' }}</span>
+                                                                <span class="text-xs text-gray-700 dark:text-gray-300 flex-1">{{ Str::limit($question->option_a, 40) }}</span>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                    @if($question->option_b)
+                                                        <div class="mobile-answer-option">
+                                                            <div class="flex items-center space-x-2">
+                                                                <span class="compact-answer-option bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 font-bold rounded-full flex items-center justify-center {{ $question->correct_answer === 'b' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' : '' }}">{{ $question->correct_answer === 'b' ? '✓' : 'B' }}</span>
+                                                                <span class="text-xs text-gray-700 dark:text-gray-300 flex-1">{{ Str::limit($question->option_b, 40) }}</span>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                    @if($question->option_c)
+                                                        <div class="mobile-answer-option">
+                                                            <div class="flex items-center space-x-2">
+                                                                <span class="compact-answer-option bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 font-bold rounded-full flex items-center justify-center {{ $question->correct_answer === 'c' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' : '' }}">{{ $question->correct_answer === 'c' ? '✓' : 'C' }}</span>
+                                                                <span class="text-xs text-gray-700 dark:text-gray-300 flex-1">{{ Str::limit($question->option_c, 40) }}</span>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                    @if($question->option_d)
+                                                        <div class="mobile-answer-option">
+                                                            <div class="flex items-center space-x-2">
+                                                                <span class="compact-answer-option bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 font-bold rounded-full flex items-center justify-center {{ $question->correct_answer === 'd' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' : '' }}">{{ $question->correct_answer === 'd' ? '✓' : 'D' }}</span>
+                                                                <span class="text-xs text-gray-700 dark:text-gray-300 flex-1">{{ Str::limit($question->option_d, 40) }}</span>
+                                                            </div>
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             </div>
+                                        @endif
+                                        
+                                        <!-- Tags Row -->
+                                        <div class="mobile-tags">
+                                            <span class="mobile-tag">
+                                                {{ $question->course->name ?? 'N/A' }}
+                                            </span>
+                                            <span class="mobile-tag">
+                                                {{ $question->subject->name ?? 'N/A' }}
+                                            </span>
+                                            <span class="mobile-tag">
+                                                {{ $question->topic->name ?? 'N/A' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Desktop Layout -->
+                                    <div class="hidden sm:flex items-center gap-3">
+                                        <!-- Checkbox -->
+                                        <input type="checkbox" name="question_ids[]" value="{{ $question->id }}" 
+                                               class="question-checkbox h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded transition-all duration-200"
+                                               {{ $assignedQuestions->contains($question->id) ? 'checked' : '' }}>
+                                        
+                                        <!-- Question Number -->
+                                        <div class="flex items-center space-x-1 question-number-container">
+                                            <label class="text-xs text-green-600 dark:text-green-400 font-semibold">Q#:</label>
+                                            <input type="number" 
+                                                   name="question_numbers[{{ $question->id }}]" 
+                                                   value="{{ $assignedQuestionsWithOrder[$question->id] ?? '' }}" 
+                                                   min="1" 
+                                                   max="999" 
+                                                   class="question-number slim-input w-10 border border-green-400 rounded bg-gray-100 dark:bg-gray-600 dark:border-green-500 dark:text-white font-semibold text-center"
+                                                   style="-moz-appearance: textfield; -webkit-appearance: none; appearance: none;"
+                                                   readonly>
+                                        </div>
+                                        
+                                        <!-- Question Type Badge -->
+                                        <span class="compact-badge
+                                            {{ $question->question_type === 'mcq' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 
+                                               ($question->question_type === 'descriptive' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200') }}">
+                                            {{ strtoupper($question->question_type) }}
+                                        </span>
+                                        
+                                        <!-- Question Text -->
+                                        <div class="flex-1 min-w-0">
+                                            <div class="text-sm text-gray-900 dark:text-white font-medium question-text-slim">
+                                                {{ Str::limit($question->question_text, 80) }}
+                                            </div>
+                                            <div class="tags-slim mt-1">
+                                                {{ $question->course->name ?? 'N/A' }} • {{ $question->subject->name ?? 'N/A' }} • {{ $question->topic->name ?? 'N/A' }}
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Answer Options (Compact) -->
+                                        @if($question->question_type === 'mcq' || $question->question_type === 'true_false')
+                                            <div class="flex-shrink-0">
+                                                <div class="flex items-center gap-1">
+                                                    @if($question->option_a)
+                                                        <span class="compact-answer-option bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 font-bold rounded-full flex items-center justify-center {{ $question->correct_answer === 'a' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' : '' }}">{{ $question->correct_answer === 'a' ? '✓' : 'A' }}</span>
+                                                    @endif
+                                                    @if($question->option_b)
+                                                        <span class="compact-answer-option bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 font-bold rounded-full flex items-center justify-center {{ $question->correct_answer === 'b' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' : '' }}">{{ $question->correct_answer === 'b' ? '✓' : 'B' }}</span>
+                                                    @endif
+                                                    @if($question->option_c)
+                                                        <span class="compact-answer-option bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 font-bold rounded-full flex items-center justify-center {{ $question->correct_answer === 'c' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' : '' }}">{{ $question->correct_answer === 'c' ? '✓' : 'C' }}</span>
+                                                    @endif
+                                                    @if($question->option_d)
+                                                        <span class="compact-answer-option bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 font-bold rounded-full flex items-center justify-center {{ $question->correct_answer === 'd' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' : '' }}">{{ $question->correct_answer === 'd' ? '✓' : 'D' }}</span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        @endif
+                                        
+                                        <!-- Marks Input -->
+                                        <div class="flex items-center space-x-1 question-marks-container">
+                                            <label class="text-xs text-blue-600 dark:text-blue-400 font-semibold">Marks:</label>
+                                            <input type="number" 
+                                                   name="question_marks[{{ $question->id }}]" 
+                                                   value="{{ $assignedQuestionsWithMarks[$question->id] ?? 1 }}" 
+                                                   min="1" 
+                                                   max="100" 
+                                                   class="question-marks slim-input w-12 border border-blue-400 rounded bg-gray-100 dark:bg-gray-600 dark:border-blue-500 dark:text-white font-semibold text-center"
+                                                   style="-moz-appearance: textfield; -webkit-appearance: none; appearance: none;">
+                                        </div>
+                                        
+                                        <!-- Drag Handle -->
+                                        <div class="drag-handle text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-move p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path>
+                                            </svg>
                                         </div>
                                     </div>
                                 </div>
                             @endforeach
                         </div>
                     @else
-                        <div class="text-center py-12">
-                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        <div class="text-center py-16">
+                            <div class="mx-auto w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-6">
+                                <svg class="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                             </svg>
-                            <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">No questions available</h3>
-                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Create some questions first before assigning them to exams.</p>
-                            <div class="mt-6">
-                                <a href="{{ route('partner.questions.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">No questions available</h3>
+                            <p class="text-gray-500 dark:text-gray-400 mb-8 max-w-md mx-auto">
+                                Create some questions first before assigning them to exams.
+                            </p>
+                            <div class="flex flex-col sm:flex-row gap-3 sm:justify-center">
+                                <a href="{{ route('partner.questions.create') }}" 
+                                   class="inline-flex items-center px-6 py-3 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                    </svg>
                                     Create Question
+                                </a>
+                                <a href="{{ route('partner.questions.all') }}" 
+                                   class="inline-flex items-center px-6 py-3 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+                                    </svg>
+                                    View All Questions
                                 </a>
                             </div>
                         </div>
                     @endif
                 </div>
-
 
             </form>
         </div>
@@ -251,6 +558,183 @@
 
 @push('styles')
 <style>
+/* Professional Mobile-First Design */
+
+/* Enhanced Search Bar Styling */
+.search-container {
+    position: relative;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 16px;
+    padding: 4px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.search-container:focus-within {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.1), 0 10px 10px -5px rgba(59, 130, 246, 0.04);
+    transform: translateY(-1px);
+}
+
+.dark .search-container {
+    background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+}
+
+.dark .search-container:focus-within {
+    background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+    box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.2), 0 10px 10px -5px rgba(59, 130, 246, 0.1);
+}
+
+.search-input {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    padding: 12px 48px 12px 48px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #1f2937;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.search-input:focus {
+    background: rgba(255, 255, 255, 1);
+    border-color: #3b82f6;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+.dark .search-input {
+    background: rgba(31, 41, 55, 0.9);
+    color: #f9fafb;
+}
+
+.dark .search-input:focus {
+    background: rgba(31, 41, 55, 1);
+    border-color: #60a5fa;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(96, 165, 250, 0.1);
+}
+
+.search-input::placeholder {
+    color: #9ca3af;
+    font-weight: 400;
+    transition: color 0.3s ease;
+}
+
+.search-input:focus::placeholder {
+    color: #6b7280;
+}
+
+.dark .search-input::placeholder {
+    color: #6b7280;
+}
+
+.dark .search-input:focus::placeholder {
+    color: #9ca3af;
+}
+
+/* Search Icon Styling */
+.search-icon {
+    color: #9ca3af;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: scale(1);
+}
+
+.search-container:focus-within .search-icon {
+    color: #3b82f6;
+    transform: scale(1.1);
+}
+
+.dark .search-icon {
+    color: #6b7280;
+}
+
+.dark .search-container:focus-within .search-icon {
+    color: #60a5fa;
+}
+
+/* Clear Button Styling */
+.clear-button {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 8px;
+    padding: 6px;
+    color: #ef4444;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    transform: scale(0.8);
+}
+
+.clear-button:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.3);
+    transform: scale(1);
+    color: #dc2626;
+}
+
+.clear-button.show {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.dark .clear-button {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #f87171;
+}
+
+.dark .clear-button:hover {
+    background: rgba(239, 68, 68, 0.3);
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #fca5a5;
+}
+
+/* Loading Spinner Styling */
+.search-loading {
+    animation: spin 1s linear infinite;
+    color: #3b82f6;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.search-loading.show {
+    opacity: 1;
+    transform: scale(1);
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Search Results Info Styling */
+.search-results-info {
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    padding: 8px 16px;
+    margin-top: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #1e40af;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.search-results-info.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.dark .search-results-info {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+    border-color: #3b82f6;
+    color: #dbeafe;
+}
+
 /* Question Selection Limit Styling */
 .question-limit-container {
     transition: all 0.3s ease-in-out;
@@ -299,24 +783,63 @@
 
 /* Question Card Styling */
 .question-card {
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: 2px solid transparent;
     cursor: move;
     position: relative;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    backdrop-filter: blur(10px);
+}
+
+.dark .question-card {
+    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
 }
 
 .question-card.dragging {
-    opacity: 0.8;
-    transform: scale(1.02);
+    opacity: 0.9;
+    transform: scale(1.05) rotate(2deg);
     z-index: 1000;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
     transition: none;
+    border-color: #3b82f6;
 }
 
 .question-card.drag-over {
     border-color: #22c55e;
-    background-color: rgba(34, 197, 94, 0.1);
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
     transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(34, 197, 94, 0.2);
+}
+
+.question-card.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: #f3f4f6;
+}
+
+.question-card:hover:not(.disabled):not(.dragging) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    border-color: #3b82f6;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(99, 102, 241, 0.05) 100%);
+}
+
+.dark .question-card:hover:not(.disabled):not(.dragging) {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
+}
+
+.question-card:hover:not(.disabled):not(.dragging) .question-number-container {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+    border-radius: 8px;
+    padding: 4px;
+    transform: scale(1.05);
+}
+
+.question-card:hover:not(.disabled):not(.dragging) .question-marks-container {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
+    border-radius: 8px;
+    padding: 4px;
+    transform: scale(1.05);
 }
 
 /* Drop indicator styling */
@@ -444,7 +967,7 @@
     box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
 }
 
-/* Progress Bar Styling */
+/* Enhanced Progress Bar Styling */
 .selection-progress {
     height: 4px;
     background-color: #e5e7eb;
@@ -467,6 +990,444 @@
 .selection-progress-bar.danger {
     background: linear-gradient(90deg, #ef4444, #dc2626);
     animation: pulse-progress 1s infinite;
+}
+
+/* Enhanced Progress Bar Container */
+.progress-container {
+    position: relative;
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    border-radius: 12px;
+    padding: 8px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dark .progress-container {
+    background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+}
+
+#progress-bar {
+    position: relative;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 50%, #7c3aed 100%);
+    border-radius: 8px;
+    transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+    overflow: hidden;
+}
+
+#progress-bar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+#progress-dot {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+#progress-dot.show {
+    opacity: 1;
+    transform: scale(1.2);
+}
+
+.progress-percentage {
+    font-weight: 600;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.dark .progress-percentage {
+    background: linear-gradient(135deg, #60a5fa, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Progress Bar States */
+.progress-bar-warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+.progress-bar-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%);
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.progress-bar-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+/* Progress Bar Animations */
+@keyframes progressPulse {
+    0%, 100% { 
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+    }
+    50% { 
+        box-shadow: 0 4px 16px rgba(59, 130, 246, 0.5);
+    }
+}
+
+.progress-bar-pulse {
+    animation: progressPulse 2s infinite;
+}
+
+/* Progress Bar Glow Effect */
+.progress-glow {
+    position: relative;
+}
+
+.progress-glow::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8, #7c3aed);
+    border-radius: 10px;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.progress-glow.active::after {
+    opacity: 0.3;
+}
+
+/* Answer Options Styling */
+.answer-options {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 8px;
+    transition: all 0.2s ease;
+}
+
+.dark .answer-options {
+    background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+    border-color: #4b5563;
+}
+
+.answer-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 6px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.dark .answer-option {
+    background: rgba(31, 41, 55, 0.5);
+}
+
+.answer-option:hover {
+    background: rgba(59, 130, 246, 0.1);
+    transform: translateX(2px);
+}
+
+.dark .answer-option:hover {
+    background: rgba(59, 130, 246, 0.2);
+}
+
+.answer-option-letter {
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+    flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+.answer-option-letter.correct {
+    background: linear-gradient(135deg, #10b981, #059669);
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+.dark .answer-option-letter {
+    background: linear-gradient(135deg, #60a5fa, #3b82f6);
+}
+
+.dark .answer-option-letter.correct {
+    background: linear-gradient(135deg, #34d399, #10b981);
+}
+
+.answer-option-text {
+    font-size: 11px;
+    line-height: 1.3;
+    color: #374151;
+    flex: 1;
+    min-width: 0;
+}
+
+.dark .answer-option-text {
+    color: #d1d5db;
+}
+
+/* Slim Question Card Styling */
+.question-card {
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+.question-card:hover {
+    border-left-color: #3b82f6;
+    transform: translateX(2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dark .question-card:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.question-card.dragging {
+    opacity: 0.5;
+    transform: rotate(2deg);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Compact Answer Options */
+.compact-answer-option {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+    transition: all 0.2s ease;
+}
+
+.compact-answer-option:hover {
+    transform: scale(1.1);
+}
+
+/* Slim Input Styling */
+.slim-input {
+    font-size: 11px;
+    padding: 2px 4px;
+    border-width: 1px;
+    transition: all 0.2s ease;
+}
+
+.slim-input:focus {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* Compact Badge Styling */
+.compact-badge {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Question Text Truncation */
+.question-text-slim {
+    line-height: 1.3;
+    max-height: 2.6em;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+/* Auto-Sort Animation */
+.question-card {
+    transition: all 0.3s ease;
+}
+
+.question-card.sorting {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    border-left-color: #3b82f6;
+}
+
+.question-card.newly-selected {
+    animation: highlightNew 0.6s ease-out;
+}
+
+@keyframes highlightNew {
+    0% {
+        background-color: rgba(59, 130, 246, 0.1);
+        transform: scale(1.05);
+    }
+    50% {
+        background-color: rgba(59, 130, 246, 0.2);
+        transform: scale(1.02);
+    }
+    100% {
+        background-color: transparent;
+        transform: scale(1);
+    }
+}
+
+/* Tags in Single Line */
+.tags-slim {
+    font-size: 10px;
+    color: #6b7280;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dark .tags-slim {
+    color: #9ca3af;
+}
+
+/* Mobile-Specific Styling */
+@media (max-width: 640px) {
+    .question-card {
+        padding: 12px;
+        margin-bottom: 8px;
+    }
+    
+    .question-card:hover {
+        transform: none;
+        border-left-color: #3b82f6;
+    }
+    
+    /* Mobile Answer Options Grid */
+    .mobile-answer-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+    
+    .mobile-answer-option {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 8px;
+        transition: all 0.2s ease;
+    }
+    
+    .dark .mobile-answer-option {
+        background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+        border-color: #4b5563;
+    }
+    
+    .mobile-answer-option:hover {
+        background: rgba(59, 130, 246, 0.1);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .dark .mobile-answer-option:hover {
+        background: rgba(59, 130, 246, 0.2);
+    }
+    
+    /* Mobile Touch Targets */
+    .mobile-touch-target {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Mobile Question Text */
+    .mobile-question-text {
+        font-size: 14px;
+        line-height: 1.4;
+        margin-bottom: 12px;
+    }
+    
+    /* Mobile Tags */
+    .mobile-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-top: 8px;
+    }
+    
+    .mobile-tag {
+        font-size: 10px;
+        padding: 4px 8px;
+        border-radius: 6px;
+        background: #f3f4f6;
+        color: #6b7280;
+        font-weight: 500;
+    }
+    
+    .dark .mobile-tag {
+        background: #374151;
+        color: #9ca3af;
+    }
+    
+    /* Mobile Controls Row */
+    .mobile-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+    
+    .mobile-controls-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .mobile-controls-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    /* Mobile Input Sizing */
+    .mobile-input {
+        font-size: 12px;
+        padding: 6px 8px;
+        min-height: 32px;
+    }
+    
+    /* Mobile Badge Sizing */
+    .mobile-badge {
+        font-size: 10px;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-weight: 600;
+    }
+    
+    /* Mobile Drag Handle */
+    .mobile-drag-handle {
+        padding: 8px;
+        border-radius: 6px;
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+    }
+    
+    .dark .mobile-drag-handle {
+        background: #374151;
+        border-color: #4b5563;
+    }
+    
+    .mobile-drag-handle:active {
+        background: #e5e7eb;
+        transform: scale(0.95);
+    }
+    
+    .dark .mobile-drag-handle:active {
+        background: #4b5563;
+    }
 }
 
 /* Animations */
@@ -516,15 +1477,107 @@
     background-color: #4b5563;
 }
 
-/* Responsive adjustments */
+/* Mobile-first responsive design */
+@media (max-width: 640px) {
+    .question-card {
+        margin-bottom: 1rem;
+        border-radius: 1rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .question-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .question-checkbox {
+        transform: scale(1.2);
+    }
+    
+    .question-number,
+    .question-marks {
+        font-size: 0.875rem;
+        padding: 0.5rem;
+    }
+    
+    .drag-handle {
+        padding: 0.75rem;
+        border-radius: 0.75rem;
+    }
+}
+
+/* Enhanced Mobile Responsive Design */
 @media (max-width: 768px) {
     .question-card:hover:not(.disabled) {
-        transform: none;
+        transform: translateY(-1px);
+    }
+    
+    .question-card:hover:not(.disabled) .question-number-container,
+    .question-card:hover:not(.disabled) .question-marks-container {
+        transform: scale(1.02);
     }
     
     #select-all:not(:disabled):hover,
     #clear-all:hover {
+        transform: translateY(-1px);
+    }
+    
+    .selection-progress {
+        height: 8px;
+        margin-top: 12px;
+    }
+    
+    .selection-progress-bar {
+        border-radius: 4px;
+    }
+}
+
+@media (max-width: 640px) {
+    .question-card {
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .question-checkbox {
+        transform: scale(1.3);
+        margin-right: 0.5rem;
+    }
+    
+    .question-number,
+    .question-marks {
+        font-size: 0.875rem;
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.5rem;
+    }
+    
+    .drag-handle {
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        background: rgba(156, 163, 175, 0.1);
+    }
+    
+    .question-card:hover .drag-handle {
+        background: rgba(156, 163, 175, 0.2);
+    }
+}
+
+/* Touch-friendly interactions */
+@media (hover: none) and (pointer: coarse) {
+    .question-card:hover {
         transform: none;
+    }
+    
+    .question-card:active {
+        transform: scale(0.98);
+    }
+    
+    .question-checkbox:active {
+        transform: scale(1.1);
+    }
+    
+    .drag-handle:active {
+        background: rgba(156, 163, 175, 0.3);
+        transform: scale(1.1);
     }
 }
 
@@ -814,6 +1867,34 @@ document.addEventListener('DOMContentLoaded', function() {
     const questionCheckboxes = document.querySelectorAll('.question-checkbox');
     const selectAllBtn = document.getElementById('select-all');
     const clearAllBtn = document.getElementById('clear-all');
+    
+    console.log('Found question checkboxes:', questionCheckboxes.length);
+    console.log('Question checkboxes:', questionCheckboxes);
+    
+    // Test Q# input finding
+    const testQuestionId = questionCheckboxes[0]?.value;
+    if (testQuestionId) {
+        const testNumberInput = document.querySelector(`input[name="question_numbers[${testQuestionId}]"]`);
+        console.log('Test Q# input for question', testQuestionId, ':', testNumberInput);
+    }
+    
+    // Add global test function for debugging
+    window.testQNumber = function(questionId, number) {
+        const input = document.querySelector(`input[name="question_numbers[${questionId}]"]`);
+        if (input) {
+            input.removeAttribute('readonly');
+            input.value = number;
+            input.setAttribute('readonly', 'readonly');
+            console.log('Set Q# for question', questionId, 'to', number);
+            return true;
+        } else {
+            console.error('Q# input not found for question', questionId);
+            return false;
+        }
+    };
+    
+    console.log('Test function available: window.testQNumber(questionId, number)');
+    
     const selectedCountSpan = document.getElementById('selected-count');
     const totalAllowedSpan = document.getElementById('total-allowed');
     const remainingCountSpan = document.getElementById('remaining-count');
@@ -862,16 +1943,40 @@ document.addEventListener('DOMContentLoaded', function() {
             remainingCountSpan.classList.add('text-gray-500');
         }
         
-        // Update progress bar
-        const progressPercentage = (selectedCount / maxQuestions) * 100;
-        progressBar.style.width = progressPercentage + '%';
+        // Update enhanced progress bar elements
+        const selectedCountDisplay = document.getElementById('selected-count-display');
+        const totalAllowedDisplay = document.getElementById('total-allowed-display');
+        const progressPercentage = document.getElementById('progress-percentage');
+        const progressDot = document.getElementById('progress-dot');
         
-        // Update progress bar color based on selection level
-        progressBar.className = 'selection-progress-bar';
-        if (progressPercentage >= 100) {
-            progressBar.classList.add('danger');
-        } else if (progressPercentage >= 80) {
-            progressBar.classList.add('warning');
+        if (selectedCountDisplay) selectedCountDisplay.textContent = selectedCount;
+        if (totalAllowedDisplay) totalAllowedDisplay.textContent = maxQuestions;
+        
+        const progressPercent = Math.min((selectedCount / maxQuestions) * 100, 100);
+        progressBar.style.width = progressPercent + '%';
+        
+        if (progressPercentage) {
+            progressPercentage.textContent = Math.round(progressPercent) + '%';
+        }
+        
+        // Show progress dot when there's progress
+        if (progressDot) {
+            if (progressPercent > 0) {
+                progressDot.classList.add('show');
+            } else {
+                progressDot.classList.remove('show');
+            }
+        }
+        
+        // Update progress bar color and effects based on selection level
+        progressBar.className = 'relative h-full bg-gradient-to-r from-blue-500 via-blue-600 to-indigo-600 rounded-full transition-all duration-700 ease-out shadow-lg';
+        
+        if (progressPercent >= 100) {
+            progressBar.className = 'relative h-full bg-gradient-to-r from-red-500 via-red-600 to-red-700 rounded-full transition-all duration-700 ease-out shadow-lg progress-bar-pulse';
+        } else if (progressPercent >= 80) {
+            progressBar.className = 'relative h-full bg-gradient-to-r from-yellow-500 via-yellow-600 to-orange-600 rounded-full transition-all duration-700 ease-out shadow-lg';
+        } else if (progressPercent >= 50) {
+            progressBar.className = 'relative h-full bg-gradient-to-r from-green-500 via-green-600 to-emerald-600 rounded-full transition-all duration-700 ease-out shadow-lg';
         }
         
         // Disable/enable checkboxes based on limit
@@ -908,35 +2013,66 @@ document.addEventListener('DOMContentLoaded', function() {
         const remaining = maxQuestions - selectedCount;
         
         let selected = 0;
-        visibleQuestions.forEach(checkbox => {
+        const currentTime = Date.now();
+        visibleQuestions.forEach((checkbox, index) => {
             if (!checkbox.checked && selected < remaining) {
                 checkbox.checked = true;
+                // Add timestamp with slight offset to maintain order
+                checkbox.setAttribute('data-check-time', currentTime + index);
                 selected++;
             }
         });
         
-        // Renumber all checked questions sequentially
-        const checkedQuestions = document.querySelectorAll('.question-checkbox:checked');
+        // Renumber all checked questions sequentially based on check order
+        const checkedQuestions = Array.from(document.querySelectorAll('.question-checkbox:checked'));
+        
+        // Sort by check time to maintain proper sequence
+        checkedQuestions.sort((a, b) => {
+            const timeA = parseInt(a.getAttribute('data-check-time') || '0');
+            const timeB = parseInt(b.getAttribute('data-check-time') || '0');
+            return timeA - timeB;
+        });
+        
         checkedQuestions.forEach((checkbox, index) => {
             const questionId = checkbox.value;
-            const numberInput = document.querySelector(`input[name="question_numbers[${questionId}]"]`);
+            let numberInput = document.querySelector(`input[name="question_numbers[${questionId}]"]`);
+            
+            // Fallback: try to find the input within the same question card
+            if (!numberInput) {
+                const questionCard = checkbox.closest('.question-card');
+                if (questionCard) {
+                    numberInput = questionCard.querySelector('.question-number');
+                }
+            }
+            
             if (numberInput) {
+                // Force value update by removing and re-adding readonly
+                numberInput.removeAttribute('readonly');
                 numberInput.value = index + 1;
+                numberInput.setAttribute('readonly', 'readonly');
             }
         });
         
         updateSelectedCount();
+        
+        // Auto-sort questions after selecting all
+        sortQuestionsBySelection();
     }
     
     function clearAll() {
         questionCheckboxes.forEach(checkbox => {
             checkbox.checked = false;
+            // Remove timestamps
+            checkbox.removeAttribute('data-check-time');
         });
         // Clear all question numbers
         document.querySelectorAll('.question-number').forEach(input => {
             input.value = '';
         });
         updateSelectedCount();
+        
+        // Auto-sort questions after clearing all
+        sortQuestionsBySelection();
     }
     
     function applyFilters() {
@@ -964,6 +2100,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Sort questions after filtering
         sortQuestionsBySelection();
+        
+        // Update search results info
+        updateSearchResultsInfo();
     }
     
     function clearAllFilters() {
@@ -986,10 +2125,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function sortQuestionsBySelection() {
-        const questionsContainer = document.querySelector('.grid.grid-cols-1.gap-3');
+        const questionsContainer = document.querySelector('.grid.grid-cols-1.gap-2');
         if (!questionsContainer) return;
         
         const questionCards = Array.from(questionsContainer.querySelectorAll('.question-card'));
+        
+        // Add sorting animation to all cards
+        questionCards.forEach(card => {
+            card.classList.add('sorting');
+        });
         
         // Separate selected and unselected questions
         const selectedQuestions = [];
@@ -1004,25 +2148,56 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        // Sort selected questions by their Q# number
+        // Sort selected questions by their check time (check sequence)
         selectedQuestions.sort((a, b) => {
-            const numberA = parseInt(a.querySelector('.question-number')?.value || '0');
-            const numberB = parseInt(b.querySelector('.question-number')?.value || '0');
-            return numberA - numberB;
+            const checkboxA = a.querySelector('.question-checkbox');
+            const checkboxB = b.querySelector('.question-checkbox');
+            const timeA = parseInt(checkboxA?.getAttribute('data-check-time') || '0');
+            const timeB = parseInt(checkboxB?.getAttribute('data-check-time') || '0');
+            return timeA - timeB;
+        });
+        
+        // Reassign Q# numbers based on check sequence order
+        selectedQuestions.forEach((card, index) => {
+            const numberInput = card.querySelector('.question-number');
+            if (numberInput) {
+                // Force value update by removing and re-adding readonly
+                numberInput.removeAttribute('readonly');
+                numberInput.value = index + 1;
+                numberInput.setAttribute('readonly', 'readonly');
+                console.log('Setting Q# for card', index + 1, ':', numberInput.value);
+            } else {
+                console.error('Q# input not found in card:', card);
+            }
         });
         
         // Clear the container
         questionsContainer.innerHTML = '';
         
         // Add selected questions first (sorted by Q#)
-        selectedQuestions.forEach(card => {
+        selectedQuestions.forEach((card, index) => {
             questionsContainer.appendChild(card);
+            
+            // Add highlight animation to newly selected questions
+            if (card.querySelector('.question-checkbox')?.checked) {
+                card.classList.add('newly-selected');
+                setTimeout(() => {
+                    card.classList.remove('newly-selected');
+                }, 600);
+            }
         });
         
         // Add unselected questions after
         unselectedQuestions.forEach(card => {
             questionsContainer.appendChild(card);
         });
+        
+        // Remove sorting animation after a short delay
+        setTimeout(() => {
+            questionCards.forEach(card => {
+                card.classList.remove('sorting');
+            });
+        }, 300);
         
         // Update allQuestions array to reflect new order
         const newOrder = [...selectedQuestions, ...unselectedQuestions];
@@ -1049,44 +2224,186 @@ document.addEventListener('DOMContentLoaded', function() {
                     return;
                 }
                 
-                // Auto-assign sequential question number
+                // Auto-assign sequential question number based on check sequence
                 const questionId = e.target.value;
-                const numberInput = document.querySelector(`input[name="question_numbers[${questionId}]"]`);
+                let numberInput = document.querySelector(`input[name="question_numbers[${questionId}]"]`);
+                
+                console.log('Checking question:', questionId);
+                console.log('Number input found:', numberInput);
+                
+                // Fallback: try to find the input within the same question card
+                if (!numberInput) {
+                    const questionCard = e.target.closest('.question-card');
+                    if (questionCard) {
+                        numberInput = questionCard.querySelector('.question-number');
+                        console.log('Found Q# input in card:', numberInput);
+                    }
+                }
+                
                 if (numberInput) {
                     // Count currently checked questions to get the next sequential number
                     const checkedQuestions = document.querySelectorAll('.question-checkbox:checked');
-                    numberInput.value = checkedQuestions.length;
+                    const newNumber = checkedQuestions.length;
+                    
+                    console.log('Setting Q# to:', newNumber);
+                    
+                    // Force value update by removing and re-adding readonly
+                    numberInput.removeAttribute('readonly');
+                    numberInput.value = newNumber;
+                    numberInput.setAttribute('readonly', 'readonly');
+                    
+                    // Add visual feedback
+                    numberInput.style.backgroundColor = '#dbeafe';
+                    numberInput.style.borderColor = '#3b82f6';
+                    numberInput.style.fontWeight = 'bold';
+                    numberInput.style.color = '#1e40af';
+                    setTimeout(() => {
+                        numberInput.style.backgroundColor = '';
+                        numberInput.style.borderColor = '';
+                        numberInput.style.fontWeight = '';
+                        numberInput.style.color = '';
+                    }, 1000);
+                    
+                    // Add timestamp to track check order
+                    e.target.setAttribute('data-check-time', Date.now());
+                    
+                    // Trigger change event to ensure the value is updated
+                    numberInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    
+                    console.log('Q# value after setting:', numberInput.value);
+                } else {
+                    console.error('Number input not found for question:', questionId);
+                    console.log('Available inputs:', document.querySelectorAll('input[type="number"]'));
                 }
             } else {
-                // Clear question number when deselected and renumber remaining questions
+                // Clear question number when deselected
                 const questionId = e.target.value;
-                const numberInput = document.querySelector(`input[name="question_numbers[${questionId}]"]`);
-                if (numberInput) {
-                    numberInput.value = '';
+                let numberInput = document.querySelector(`input[name="question_numbers[${questionId}]"]`);
+                
+                // Fallback: try to find the input within the same question card
+                if (!numberInput) {
+                    const questionCard = e.target.closest('.question-card');
+                    if (questionCard) {
+                        numberInput = questionCard.querySelector('.question-number');
+                    }
                 }
                 
-                // Renumber all remaining checked questions sequentially
-                const checkedQuestions = document.querySelectorAll('.question-checkbox:checked');
+                if (numberInput) {
+                    // Force value update by removing and re-adding readonly
+                    numberInput.removeAttribute('readonly');
+                    numberInput.value = '';
+                    numberInput.setAttribute('readonly', 'readonly');
+                }
+                
+                // Remove timestamp
+                e.target.removeAttribute('data-check-time');
+                
+                // Renumber all remaining checked questions sequentially based on check order
+                const checkedQuestions = Array.from(document.querySelectorAll('.question-checkbox:checked'));
+                
+                // Sort by check time to maintain original check sequence
+                checkedQuestions.sort((a, b) => {
+                    const timeA = parseInt(a.getAttribute('data-check-time') || '0');
+                    const timeB = parseInt(b.getAttribute('data-check-time') || '0');
+                    return timeA - timeB;
+                });
+                
+                // Assign sequential numbers based on check order
                 checkedQuestions.forEach((checkbox, index) => {
                     const qId = checkbox.value;
-                    const qNumberInput = document.querySelector(`input[name="question_numbers[${qId}]"]`);
+                    let qNumberInput = document.querySelector(`input[name="question_numbers[${qId}]"]`);
+                    
+                    // Fallback: try to find the input within the same question card
+                    if (!qNumberInput) {
+                        const questionCard = checkbox.closest('.question-card');
+                        if (questionCard) {
+                            qNumberInput = questionCard.querySelector('.question-number');
+                        }
+                    }
+                    
                     if (qNumberInput) {
+                        // Force value update by removing and re-adding readonly
+                        qNumberInput.removeAttribute('readonly');
                         qNumberInput.value = index + 1;
+                        qNumberInput.setAttribute('readonly', 'readonly');
                     }
                 });
             }
             // Always update the count and UI state
             updateSelectedCount();
+            
+            // Auto-sort questions when selection changes
+            sortQuestionsBySelection();
         });
     });
     
     selectAllBtn.addEventListener('click', selectAll);
     clearAllBtn.addEventListener('click', clearAll);
-    searchInput.addEventListener('input', applyFilters);
+    
+    // Enhanced Search functionality
+    const searchLoading = document.getElementById('search-loading');
+    const searchResultsInfo = document.getElementById('search-results-info');
+    const searchResultsCount = document.getElementById('search-results-count');
+    let searchTimeout;
+    
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.trim();
+        
+        // Clear previous timeout
+        clearTimeout(searchTimeout);
+        
+        // Show loading indicator for longer searches
+        if (searchTerm.length > 2) {
+            searchLoading.classList.add('show');
+            clearSearchBtn.classList.remove('show');
+        }
+        
+        // Debounce search to avoid excessive filtering
+        searchTimeout = setTimeout(() => {
+            applyFilters();
+            searchLoading.classList.remove('show');
+            
+            // Show/hide clear button and results info
+            if (searchTerm.length > 0) {
+                clearSearchBtn.classList.add('show');
+                searchResultsInfo.classList.add('show');
+                updateSearchResultsInfo();
+            } else {
+                clearSearchBtn.classList.remove('show');
+                searchResultsInfo.classList.remove('show');
+            }
+        }, searchTerm.length > 2 ? 300 : 100);
+    });
+    
     clearSearchBtn.addEventListener('click', () => {
         searchInput.value = '';
+        clearSearchBtn.classList.remove('show');
+        searchResultsInfo.classList.remove('show');
+        searchLoading.classList.remove('show');
+        clearTimeout(searchTimeout);
         applyFilters();
+        searchInput.focus();
     });
+    
+    // Focus search on Ctrl+K
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            searchInput.focus();
+        }
+    });
+    
+    function updateSearchResultsInfo() {
+        const visibleQuestions = document.querySelectorAll('.question-card:not(.hidden)');
+        const searchTerm = searchInput.value.trim();
+        
+        if (searchTerm.length > 0) {
+            searchResultsCount.textContent = visibleQuestions.length;
+            searchResultsInfo.classList.add('show');
+        } else {
+            searchResultsInfo.classList.remove('show');
+        }
+    }
     typeFilter.addEventListener('change', applyFilters);
     courseFilter.addEventListener('change', applyFilters);
     subjectFilter.addEventListener('change', applyFilters);
@@ -1140,7 +2457,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Drag and Drop functionality
     function initializeDragAndDrop() {
-        const questionsContainer = document.querySelector('.grid.grid-cols-1.gap-3');
+        const questionsContainer = document.querySelector('.grid.grid-cols-1.gap-4');
         if (!questionsContainer) return;
         
         let draggedElement = null;
@@ -1150,33 +2467,68 @@ document.addEventListener('DOMContentLoaded', function() {
         // Add drag event listeners to all question cards
         function addDragListeners() {
             const questionCards = document.querySelectorAll('.question-card');
+            console.log('Adding drag listeners to', questionCards.length, 'question cards');
+            
             questionCards.forEach((card, index) => {
+                // Remove existing listeners to prevent duplicates
+                card.removeEventListener('dragstart', handleDragStart);
+                card.removeEventListener('dragend', handleDragEnd);
+                card.removeEventListener('dragover', handleDragOver);
+                card.removeEventListener('drop', handleDrop);
+                card.removeEventListener('dragenter', handleDragEnter);
+                card.removeEventListener('dragleave', handleDragLeave);
+                
+                // Add new listeners
                 card.addEventListener('dragstart', handleDragStart);
                 card.addEventListener('dragend', handleDragEnd);
                 card.addEventListener('dragover', handleDragOver);
                 card.addEventListener('drop', handleDrop);
                 card.addEventListener('dragenter', handleDragEnter);
                 card.addEventListener('dragleave', handleDragLeave);
+                
+                // Ensure draggable attribute is set
+                card.setAttribute('draggable', 'true');
             });
         }
         
         function handleDragStart(e) {
-            // Only allow dragging if the question is selected
-            const checkbox = e.target.querySelector('.question-checkbox');
-            if (!checkbox || !checkbox.checked) {
+            console.log('Drag start triggered');
+            
+            // Find the question card (might be triggered by child elements)
+            const questionCard = e.target.closest('.question-card');
+            if (!questionCard) {
+                console.log('No question card found');
                 e.preventDefault();
                 return;
             }
             
-            draggedElement = e.target;
+            // Only allow dragging if the question is selected
+            const checkbox = questionCard.querySelector('.question-checkbox');
+            if (!checkbox) {
+                console.log('No checkbox found');
+                e.preventDefault();
+                return;
+            }
+            
+            if (!checkbox.checked) {
+                console.log('Question not selected, preventing drag');
+                e.preventDefault();
+                return;
+            }
+            
+            console.log('Drag allowed for selected question');
+            draggedElement = questionCard;
             draggedIndex = Array.from(questionsContainer.children).indexOf(draggedElement);
-            e.target.classList.add('dragging');
+            questionCard.classList.add('dragging');
             e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/html', e.target.outerHTML);
+            e.dataTransfer.setData('text/html', questionCard.outerHTML);
         }
         
         function handleDragEnd(e) {
-            e.target.classList.remove('dragging');
+            const questionCard = e.target.closest('.question-card');
+            if (questionCard) {
+                questionCard.classList.remove('dragging');
+            }
             hideDropIndicator();
             clearTimeout(indicatorTimeout);
             draggedElement = null;
