@@ -45,14 +45,70 @@
     }
     
     .stats-card {
-        background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    .dark .stats-card {
+        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+        border: 1px solid #374151;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+    }
+    
+    .dark .stats-card:hover {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Professional Filter Section Styling */
+    .filter-section {
+        background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(248,250,252,0.8));
         backdrop-filter: blur(10px);
         border: 1px solid rgba(255,255,255,0.2);
     }
     
-    .dark .stats-card {
-        background: linear-gradient(135deg, rgba(31,41,55,0.9), rgba(31,41,55,0.7));
+    .dark .filter-section {
+        background: linear-gradient(135deg, rgba(31,41,55,0.9), rgba(17,24,39,0.8));
         border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .filter-select {
+        background: linear-gradient(135deg, #ffffff, #f8fafc);
+        border: 2px solid #e2e8f0;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .filter-select:hover {
+        border-color: #3b82f6;
+        box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1);
+        transform: translateY(-1px);
+    }
+    
+    .filter-select:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 4px 6px -1px rgba(59, 130, 246, 0.1);
+        transform: translateY(-1px);
+    }
+    
+    .dark .filter-select {
+        background: linear-gradient(135deg, #1f2937, #111827);
+        border-color: #374151;
+    }
+    
+    .dark .filter-select:hover {
+        border-color: #60a5fa;
+        box-shadow: 0 4px 6px -1px rgba(96, 165, 250, 0.1);
+    }
+    
+    .dark .filter-select:focus {
+        border-color: #60a5fa;
+        box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1), 0 4px 6px -1px rgba(96, 165, 250, 0.1);
     }
     
     .loading-shimmer {
@@ -105,79 +161,78 @@
     @endif
 
     <!-- Main Container -->
-    <div class="container mx-auto px-4 py-4 space-y-2">
+    <div class="container mx-auto px-4 py-4 space-y-2 relative" style="padding-bottom: 200px;">
         <!-- Header Section -->
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-visible relative z-40">
             <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-8">
                 <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
                         <div>
-                            <h1 class="text-3xl font-bold text-white">Question Bank</h1>
-                            <p class="text-blue-100 mt-1">Manage and organize your questions efficiently</p>
+                            <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-white">Question Bank</h1>
+                            <p class="text-blue-100 mt-1 text-sm sm:text-base">Manage and organize your questions efficiently</p>
                         </div>
                     </div>
                     
                     <!-- Action Buttons -->
-                    <div class="flex flex-wrap gap-3">
+                    <div class="flex gap-2 sm:gap-3">
                         <a href="{{ route('partner.questions.drafts') }}" 
-                           class="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg transition-all duration-200 flex items-center gap-2 font-medium">
+                           class="px-3 py-2 sm:px-4 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg transition-all duration-200 flex items-center gap-1 sm:gap-2 font-medium text-sm sm:text-base">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                             </svg>
-                            Drafts
+                            <span class="hidden sm:inline">Drafts</span>
+                            <span class="sm:hidden">Drafts</span>
                         </a>
                         
                         <div class="relative group">
-                            <button class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-all duration-200 flex items-center gap-2 font-medium">
+                            <button class="px-3 py-2 sm:px-4 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-all duration-200 flex items-center gap-1 sm:gap-2 font-medium text-sm sm:text-base">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                                 </svg>
-                                Add Question
+                                <span class="hidden sm:inline">Add Question</span>
+                                <span class="sm:hidden">Add</span>
                                 <svg class="w-3 h-3 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                 </svg>
                             </button>
                             
-                            <!-- Dropdown Menu -->
-                            <div class="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50">
+                            <!-- New Dropdown Menu -->
+                            <div class="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50">
                                 <div class="py-2">
+                                    <!-- Multiple Choice -->
                                     <a href="{{ route('partner.questions.mcq.create') }}" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
                                         <img src="{{ asset('images/mcq.png') }}" alt="MCQ" class="w-5 h-5 mr-3">
-                                        <div>
-                                            <div class="font-medium">Multiple Choice</div>
-                                            <div class="text-xs text-gray-500">Create MCQ with options</div>
-                                        </div>
+                                        <span class="font-medium">Multiple Choice</span>
                                     </a>
+                                    
+                                    <!-- Descriptive -->
                                     <a href="{{ route('partner.questions.descriptive.create') }}" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors">
                                         <img src="{{ asset('images/cq.png') }}" alt="CQ" class="w-5 h-5 mr-3">
-                                        <div>
-                                            <div class="font-medium">Descriptive</div>
-                                            <div class="text-xs text-gray-500">Open-ended questions</div>
-                                        </div>
+                                        <span class="font-medium">Descriptive</span>
                                     </a>
+                                    
+                                    <!-- True/False -->
                                     <a href="{{ route('partner.questions.tf.create') }}" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors">
                                         <svg class="w-5 h-5 mr-3 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                         </svg>
-                                        <div>
-                                            <div class="font-medium">True/False</div>
-                                            <div class="text-xs text-gray-500">Binary choice questions</div>
-                                        </div>
+                                        <span class="font-medium">True/False</span>
                                     </a>
-                                    <div class="border-t border-gray-200 dark:border-gray-600 my-2"></div>
+                                    
+                                    <!-- Divider -->
+                                    <div class="border-t border-gray-200 dark:border-gray-600 my-1"></div>
+                                    
+                                    <!-- Bulk Upload -->
                                     <a href="{{ route('partner.questions.bulk-upload') }}" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700/20 transition-colors">
                                         <svg class="w-5 h-5 mr-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                                         </svg>
-                                        <div>
-                                            <div class="font-medium">Bulk Upload</div>
-                                            <div class="text-xs text-gray-500">Upload via CSV/Excel</div>
-                                        </div>
+                                        <span class="font-medium">Bulk Upload</span>
                                     </a>
                                 </div>
                             </div>
@@ -187,56 +242,60 @@
             </div>
             
             <!-- Stats Section -->
-            <div class="py-2 px-6">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="stats-card rounded-lg p-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-                                <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="py-2 px-4 sm:px-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+                    <!-- Total Questions Card -->
+                    <div class="stats-card rounded-xl p-3 sm:p-4">
+                        <div class="flex items-center justify-between">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 </svg>
                             </div>
-                            <div>
-                                <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ $questions->count() }}</div>
-                                <div class="text-sm text-gray-600 dark:text-gray-400">Total Questions</div>
+                            <div class="text-right">
+                                <div class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">{{ $questions->count() }}</div>
+                                <div class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Total Questions</div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="stats-card rounded-lg p-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-                                <img src="{{ asset('images/mcq.png') }}" alt="MCQ" class="w-5 h-5">
+                    <!-- MCQ Card -->
+                    <div class="stats-card rounded-xl p-3 sm:p-4">
+                        <div class="flex items-center justify-between">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                                <img src="{{ asset('images/mcq.png') }}" alt="MCQ" class="w-5 h-5 sm:w-6 sm:h-6">
                             </div>
-                            <div>
-                                <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ $questions->where('question_type', 'mcq')->count() }}</div>
-                                <div class="text-sm text-gray-600 dark:text-gray-400">MCQ</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="stats-card rounded-lg p-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
-                                <img src="{{ asset('images/cq.png') }}" alt="CQ" class="w-5 h-5">
-                            </div>
-                            <div>
-                                <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ $questions->where('question_type', 'descriptive')->count() }}</div>
-                                <div class="text-sm text-gray-600 dark:text-gray-400">Descriptive</div>
+                            <div class="text-right">
+                                <div class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">{{ $questions->where('question_type', 'mcq')->count() }}</div>
+                                <div class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">MCQ</div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="stats-card rounded-lg p-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
-                                <svg class="w-5 h-5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <!-- Descriptive Card -->
+                    <div class="stats-card rounded-xl p-3 sm:p-4">
+                        <div class="flex items-center justify-between">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
+                                <img src="{{ asset('images/cq.png') }}" alt="CQ" class="w-5 h-5 sm:w-6 sm:h-6">
+                            </div>
+                            <div class="text-right">
+                                <div class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">{{ $questions->where('question_type', 'descriptive')->count() }}</div>
+                                <div class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Descriptive</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- True/False Card -->
+                    <div class="stats-card rounded-xl p-3 sm:p-4">
+                        <div class="flex items-center justify-between">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
+                                <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                 </svg>
                             </div>
-                            <div>
-                                <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ $questions->where('question_type', 'true_false')->count() }}</div>
-                                <div class="text-sm text-gray-600 dark:text-gray-400">True/False</div>
+                            <div class="text-right">
+                                <div class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">{{ $questions->where('question_type', 'true_false')->count() }}</div>
+                                <div class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">True/False</div>
                             </div>
                         </div>
                     </div>
@@ -244,47 +303,48 @@
             </div>
         </div>
 
+
         <!-- Search and Filters Section -->
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <div class="py-2 px-4">
+        <div class="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-visible backdrop-blur-sm relative z-20">
+            <div class="py-4 px-4 sm:px-6">
                 <form method="GET" id="filterForm" class="space-y-6">
                     <input type="hidden" name="search" id="searchHidden" value="{{ request('search') }}">
                     
                     <!-- Filters Grid -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                         <div class="space-y-2">
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Course</label>
-                            <select name="course_filter" id="course_filter" class="w-full rounded-lg border border-gray-300 dark:border-gray-600 p-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Course</label>
+                            <select name="course_filter" id="course_filter" class="filter-select w-full rounded-xl p-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
                                 <option value="">All Courses</option>
                             </select>
                         </div>
                         
                         <div class="space-y-2">
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Subject</label>
-                            <select name="subject_filter" id="subject_filter" class="w-full rounded-lg border border-gray-300 dark:border-gray-600 p-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Subject</label>
+                            <select name="subject_filter" id="subject_filter" class="filter-select w-full rounded-xl p-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
                                 <option value="">All Subjects</option>
                             </select>
                         </div>
                         
                         <div class="space-y-2">
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Topic</label>
-                            <select name="topic_filter" id="topic_filter" class="w-full rounded-lg border border-gray-300 dark:border-gray-600 p-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Topic</label>
+                            <select name="topic_filter" id="topic_filter" class="filter-select w-full rounded-xl p-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
                                 <option value="">All Topics</option>
                             </select>
                         </div>
                         
                         <div class="space-y-2">
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Question Type</label>
-                            <select name="question_type_filter" id="question_type_filter" class="w-full rounded-lg border border-gray-300 dark:border-gray-600 p-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Question Type</label>
+                            <select name="question_type_filter" id="question_type_filter" class="filter-select w-full rounded-xl p-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
                                 <option value="">All Types</option>
                             </select>
                         </div>
                         
                         <div class="space-y-2">
-                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Date Created</label>
+                            <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Date Created</label>
                             <select name="date_filter" 
                                     id="date_filter" 
-                                    class="w-full rounded-lg border border-gray-300 dark:border-gray-600 p-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+                                    class="filter-select w-full rounded-xl p-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
                                 <option value="">All Dates</option>
                             </select>
                         </div>
@@ -312,14 +372,14 @@
                         </div>
                         
                         <!-- Action Buttons -->
-                        <div class="flex gap-2 flex-shrink-0">
-                            <button type="button" id="refreshQuestions" class="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 flex items-center gap-2 font-medium">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 20 20">
+                        <div class="flex gap-3 flex-shrink-0">
+                            <button type="button" id="refreshQuestions" class="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl transition-all duration-300 flex items-center gap-2 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                                 </svg>
                                 Refresh
                             </button>
-                            <button type="button" id="clearAllFilters" class="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-all duration-200 font-medium">
+                            <button type="button" id="clearAllFilters" class="px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white rounded-xl transition-all duration-300 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
                                 Clear Filters
                             </button>
                         </div>
@@ -712,6 +772,7 @@
     background-size: 200% 100%;
 }
 </style>
+
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
