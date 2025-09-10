@@ -1,6 +1,6 @@
 @extends('layouts.partner-layout')
 
-@section('title', 'Create New Exam')
+@section('title', 'Create New Exam Draft')
 
 @section('content')
 <style>
@@ -149,8 +149,8 @@
         <div class="mb-8">
             <div class="flex items-center justify-between">
                 <div>
-                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Create New Exam</h1>
-                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Set up your exam with all necessary details</p>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Create New Exam Draft</h1>
+                    <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Set up your exam draft with all necessary details</p>
                 </div>
                 <a href="{{ route('partner.exams.index') }}" 
                    class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
@@ -184,6 +184,7 @@
         <!-- Form -->
         <form id="examForm" action="{{ route('partner.exams.store') }}" method="POST" class="space-y-6">
             @csrf
+            <input type="hidden" name="status" value="draft">
 
             <!-- Basic Details Section -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
@@ -409,23 +410,18 @@
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
                 <div class="flex flex-col sm:flex-row items-center justify-between space-y-3 sm:space-y-0">
                     <div class="text-center sm:text-left">
-                        <h3 class="text-sm font-medium text-gray-900 dark:text-white">Ready to create your exam?</h3>
-                        <p class="text-xs text-gray-600 dark:text-gray-400">Review all details before proceeding</p>
+                        <h3 class="text-sm font-medium text-gray-900 dark:text-white">Ready to create your exam draft?</h3>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">All exams are created as drafts and can be edited later</p>
                     </div>
                     <div class="button-group flex space-x-3 w-full sm:w-auto">
                         <a href="{{ route('partner.exams.index') }}" 
                            class="flex-1 sm:flex-none px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors text-center">
                             Cancel
                         </a>
-                        <button type="button" id="saveDraftBtn" 
-                                class="flex-1 sm:flex-none px-4 py-2 text-sm font-medium text-white bg-amber-500 hover:bg-amber-600 rounded-lg transition-colors" 
-                                onclick="saveAsDraft()">
-                            💾 Save Draft
-                        </button>
                         <button type="submit" form="examForm" 
                                 class="flex-1 sm:flex-none px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors" 
                                 onclick="return validateFormBeforeSubmit()">
-                            🚀 Create Exam
+                            🚀 Create Draft
                         </button>
                     </div>
                 </div>
@@ -525,72 +521,6 @@
         return validateDateTime();
     }
 
-    // Save as Draft functionality
-    function saveAsDraft() {
-        const form = document.getElementById('examForm');
-        const formData = new FormData(form);
-        
-        // Add a flag to indicate this is a draft save
-        formData.append('is_draft', '1');
-        
-        // Ensure required fields have default values for draft saves
-        if (!formData.get('exam_type') || formData.get('exam_type') === '') {
-            formData.set('exam_type', 'online');
-        }
-        if (!formData.get('duration') || formData.get('duration') === '') {
-            formData.set('duration', '60');
-        }
-        if (!formData.get('total_questions') || formData.get('total_questions') === '') {
-            formData.set('total_questions', '10');
-        }
-        if (!formData.get('passing_marks') || formData.get('passing_marks') === '') {
-            formData.set('passing_marks', '50');
-        }
-        
-        // Show loading state
-        const saveDraftBtn = document.getElementById('saveDraftBtn');
-        const originalText = saveDraftBtn.innerHTML;
-        saveDraftBtn.innerHTML = '💾 Saving...';
-        saveDraftBtn.disabled = true;
-        
-        // Send AJAX request to save draft
-        fetch('{{ route("partner.exams.store") }}', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
-                'Accept': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Show success message
-                showNotification('Draft saved successfully!', 'success');
-                
-                // Optionally redirect to the exam edit page or index
-                setTimeout(() => {
-                    if (data.exam_id) {
-                        window.location.href = `{{ route('partner.exams.index') }}?draft_saved=1`;
-                    } else {
-                        window.location.href = '{{ route("partner.exams.index") }}';
-                    }
-                }, 1500);
-            } else {
-                showNotification('Error saving draft: ' + (data.message || 'Unknown error'), 'error');
-                // Restore button state
-                saveDraftBtn.innerHTML = originalText;
-                saveDraftBtn.disabled = false;
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showNotification('An error occurred while saving the draft.', 'error');
-            // Restore button state
-            saveDraftBtn.innerHTML = originalText;
-            saveDraftBtn.disabled = false;
-        });
-    }
 
     // Notification system
     function showNotification(message, type = 'info') {
