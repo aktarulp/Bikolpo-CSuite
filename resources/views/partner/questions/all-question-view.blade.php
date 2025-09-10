@@ -197,7 +197,7 @@
                                 </svg>
                             </div>
                             <div>
-                                <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ $questions->total() }}</div>
+                                <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ $questions->count() }}</div>
                                 <div class="text-sm text-gray-600 dark:text-gray-400">Total Questions</div>
                             </div>
                         </div>
@@ -335,50 +335,59 @@
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
                         <h2 class="text-xl font-bold text-gray-900 dark:text-white">Questions</h2>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Showing {{ $questions->count() }} of {{ $questions->total() }} questions</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Showing {{ $questions->count() }} questions</p>
                     </div>
                     <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1a3 3 0 01-3-3V6a3 3 0 013-3h1m-1 0v18m0 0h1a3 3 0 013 3v7a3 3 0 01-3 3h-1"></path>
                         </svg>
-                        <span>{{ $questions->total() }} total</span>
+                        <span>{{ $questions->count() }} total</span>
                     </div>
                 </div>
             </div>
 
             @if($questions->count() > 0)
-                <!-- Questions Grid -->
-                <div class="p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 questions-container">
-                        @foreach($questions as $question)
-                            <div class="question-card bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700" data-question-id="{{ $question->id }}">
-                                <!-- Question Header -->
-                                <div class="flex items-start justify-between mb-4">
-                                    <div class="flex items-center gap-3">
-                                        <div class="question-type-badge w-10 h-10 rounded-lg flex items-center justify-center
-                                            {{ $question->question_type === 'mcq' ? 'bg-blue-100 dark:bg-blue-900/30' : ($question->question_type === 'true_false' ? 'bg-orange-100 dark:bg-orange-900/30' : 'bg-green-100 dark:bg-green-900/30') }}">
-                                            @if($question->question_type === 'mcq')
-                                                <img src="{{ asset('images/mcq.png') }}" alt="MCQ" class="w-5 h-5">
-                                            @elseif($question->question_type === 'descriptive')
-                                                <img src="{{ asset('images/cq.png') }}" alt="CQ" class="w-5 h-5">
-                                            @else
-                                                <svg class="w-5 h-5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                                </svg>
-                                            @endif
+                <!-- Questions List - Compact Single Column -->
+                <div class="questions-container">
+                    @foreach($questions as $question)
+                        <div class="question-card border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200" data-question-id="{{ $question->id }}">
+                            <div class="px-4 py-3">
+                                <!-- Compact Question Row -->
+                                <div class="flex items-start justify-between mb-2">
+                                    <!-- Left: Type Badge, ID, and Question Text -->
+                                    <div class="flex items-start gap-3 flex-1 min-w-0">
+                                        <div class="flex items-center gap-2 flex-shrink-0">
+                                            <div class="w-6 h-6 rounded-md flex items-center justify-center
+                                                {{ $question->question_type === 'mcq' ? 'bg-blue-100 dark:bg-blue-900/30' : ($question->question_type === 'true_false' ? 'bg-orange-100 dark:bg-orange-900/30' : 'bg-green-100 dark:bg-green-900/30') }}">
+                                                @if($question->question_type === 'mcq')
+                                                    <img src="{{ asset('images/mcq.png') }}" alt="MCQ" class="w-4 h-4">
+                                                @elseif($question->question_type === 'descriptive')
+                                                    <img src="{{ asset('images/cq.png') }}" alt="CQ" class="w-4 h-4">
+                                                @else
+                                                    <svg class="w-4 h-4 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                    </svg>
+                                                @endif
+                                            </div>
+                                            <span class="text-xs font-semibold text-gray-500 dark:text-gray-400">#{{ $question->id }}</span>
                                         </div>
-                                        <div>
-                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
-                                                {{ $question->question_type === 'mcq' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' : ($question->question_type === 'true_false' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300' : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300') }}">
-                                                {{ $question->question_type === 'mcq' ? 'MCQ' : ($question->question_type === 'true_false' ? 'T/F' : 'Descriptive') }}
-                                            </span>
+                                        
+                                        <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium flex-shrink-0
+                                            {{ $question->question_type === 'mcq' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : ($question->question_type === 'true_false' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300' : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300') }}">
+                                            {{ $question->question_type === 'mcq' ? 'MCQ' : ($question->question_type === 'true_false' ? 'T/F' : 'Descriptive') }}
+                                        </span>
+                                        
+                                        <!-- Question Text -->
+                                        <div class="text-gray-900 dark:text-white text-sm leading-relaxed line-clamp-2 flex-1 min-w-0">
+                                            {!! Str::limit(strip_tags($question->question_text, '<b><i><u><strong><em><br><p><span><div>'), 150) !!}
                                         </div>
                                     </div>
                                     
-                                    <!-- Action Buttons -->
-                                    <div class="flex gap-2">
+                                    <!-- Right: Actions -->
+                                    <div class="flex items-center gap-1 flex-shrink-0 ml-3">
                                         <a href="{{ route('partner.questions.common-view', $question) }}" 
-                                           class="p-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-all duration-200 group">
+                                           class="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded transition-all duration-200" 
+                                           title="View">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
@@ -386,28 +395,32 @@
                                         </a>
                                         @if($question->question_type === 'descriptive')
                                             <a href="{{ route('partner.questions.descriptive.edit', $question) }}" 
-                                               class="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 group">
+                                               class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-all duration-200" 
+                                               title="Edit">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                                 </svg>
                                             </a>
                                         @elseif($question->question_type === 'mcq')
                                             <a href="{{ route('partner.questions.mcq.edit', $question) }}" 
-                                               class="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 group">
+                                               class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-all duration-200" 
+                                               title="Edit">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                                 </svg>
                                             </a>
                                         @elseif($question->question_type === 'true_false')
                                             <a href="{{ route('partner.questions.tf.edit', $question) }}" 
-                                               class="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 group">
+                                               class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-all duration-200" 
+                                               title="Edit">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                                 </svg>
                                             </a>
                                         @else
                                             <a href="{{ route('partner.questions.edit', $question) }}" 
-                                               class="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 group">
+                                               class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-all duration-200" 
+                                               title="Edit">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                                 </svg>
@@ -416,34 +429,27 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Question Content -->
-                                <div class="mb-4">
-                                    <div class="text-gray-900 dark:text-white text-sm leading-relaxed line-clamp-3">
-                                        {!! Str::limit(strip_tags($question->question_text, '<b><i><u><strong><em><br><p><span><div>'), 150) !!}
-                                    </div>
-                                </div>
-                                
-                                <!-- Question Metadata -->
-                                <div class="space-y-2 text-xs text-gray-600 dark:text-gray-400">
-                                    <div class="flex items-center gap-2">
+                                <!-- Metadata Row -->
+                                <div class="flex flex-wrap items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+                                    <div class="flex items-center gap-1">
                                         <svg class="w-3 h-3 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                                         </svg>
                                         <span class="font-medium">{{ $question->course->name ?? 'N/A' }}</span>
                                     </div>
-                                    <div class="flex items-center gap-2">
+                                    <div class="flex items-center gap-1">
                                         <svg class="w-3 h-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                         </svg>
                                         <span class="font-medium">{{ $question->subject->name ?? 'N/A' }}</span>
                                     </div>
-                                    <div class="flex items-center gap-2">
+                                    <div class="flex items-center gap-1">
                                         <svg class="w-3 h-3 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
                                         </svg>
                                         <span class="font-medium">{{ $question->topic->name ?? 'N/A' }}</span>
                                     </div>
-                                    <div class="flex items-center gap-2">
+                                    <div class="flex items-center gap-1">
                                         <svg class="w-3 h-3 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                         </svg>
@@ -451,8 +457,8 @@
                                     </div>
                                 </div>
                             </div>
-                        @endforeach
-                    </div>
+                        </div>
+                    @endforeach
                 </div>
                 
             @else
@@ -513,6 +519,13 @@
     cursor: not-allowed;
 }
 
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
 .line-clamp-3 {
     display: -webkit-box;
     -webkit-line-clamp: 3;
@@ -523,13 +536,43 @@
 /* Mobile optimizations */
 @media (max-width: 640px) {
     .questions-container .question-card {
-        padding: 1rem;
+        padding: 0.75rem;
     }
     
-    .questions-container .grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
+    .questions-container .question-card .px-4 {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
     }
+    
+    .questions-container .question-card .py-3 {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+    
+    /* Stack question text below type badge on very small screens */
+    .questions-container .question-card .flex.items-start {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .questions-container .question-card .flex.items-start > div:first-child {
+        width: 100%;
+    }
+    
+    .questions-container .question-card .flex.items-start > div:last-child {
+        align-self: flex-end;
+    }
+}
+
+/* Hover effects for better UX */
+.question-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.question-card {
+    transition: all 0.2s ease-in-out;
 }
 
 /* Animation for question cards */
@@ -809,7 +852,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             // Extract the questions grid with better selectors
-            const newQuestionsGrid = tempDiv.querySelector('.questions-container') || tempDiv.querySelector('.grid.grid-cols-1');
+            const newQuestionsGrid = tempDiv.querySelector('.questions-container');
             const newEmptyState = tempDiv.querySelector('.p-12.text-center') || tempDiv.querySelector('.text-center');
             const newQuestionsCount = tempDiv.querySelector('.text-sm.text-gray-600.dark\\:text-gray-400') || tempDiv.querySelector('.questions-count');
             
@@ -837,7 +880,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     console.log('Empty state displayed');
                 } else {
                     // Fallback: try to find any content with questions
-                    const fallbackContent = tempDiv.querySelector('.grid') || tempDiv.querySelector('[class*="grid"]');
+                    const fallbackContent = tempDiv.querySelector('.questions-container') || tempDiv.querySelector('[data-question-id]');
                     if (fallbackContent) {
                         console.log('Using fallback content');
                         existingQuestionsContainer.innerHTML = fallbackContent.innerHTML;
