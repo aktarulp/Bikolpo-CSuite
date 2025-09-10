@@ -3,6 +3,8 @@
 @section('title', 'All Questions - Bikolpo LQ')
 
 @section('content')
+<!-- Flatpickr CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <style>
     .question-card {
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -304,11 +306,23 @@
                         
                         <div class="space-y-2">
                             <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Date Created</label>
-                            <input type="date" 
-                                   name="date_filter" 
-                                   id="date_filter" 
-                                   class="w-full rounded-lg border border-gray-300 dark:border-gray-600 p-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                                   value="{{ request('date_filter') }}">
+                            <div class="relative">
+                                <input type="text" 
+                                       name="date_filter" 
+                                       id="date_filter" 
+                                       class="w-full rounded-lg border border-gray-300 dark:border-gray-600 p-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 cursor-pointer"
+                                       placeholder="Select date"
+                                       value="{{ request('date_filter') }}"
+                                       readonly>
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <button type="button" id="highlightDates" class="mt-2 px-3 py-1 text-xs bg-blue-100 hover:bg-blue-200 text-blue-800 rounded">
+                                Highlight Dates
+                            </button>
                         </div>
                     </div>
                     
@@ -351,7 +365,7 @@
                 <div class="p-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 questions-container">
                         @foreach($questions as $question)
-                            <div class="question-card bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700" data-question-id="{{ $question->id }}">
+                            <div class="question-card bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700" data-question-id="{{ $question->id }}" data-created-at="{{ $question->created_at->toISOString() }}">
                                 <!-- Question Header -->
                                 <div class="flex items-start justify-between mb-4">
                                     <div class="flex items-center gap-3">
@@ -732,7 +746,9 @@ document.addEventListener('DOMContentLoaded', function() {
             subject: subjectFilterValue,
             topic: topicFilterValue,
             questionType: questionTypeFilterValue,
-            date: dateFilterValue
+            date: dateFilterValue,
+            dateType: typeof dateFilterValue,
+            dateLength: dateFilterValue ? dateFilterValue.length : 0
         });
         
         if (courseFilterValue) {
@@ -841,6 +857,13 @@ document.addEventListener('DOMContentLoaded', function() {
             if (searchLoading) searchLoading.classList.add('hidden');
             if (questionsContainer) {
                 questionsContainer.classList.remove('updating');
+            }
+            
+            // Re-highlight dates after search completes
+            if (window.flatpickrInstance) {
+                setTimeout(() => {
+                    highlightDates(window.flatpickrInstance);
+                }, 100);
             }
         })
         .catch(error => {
@@ -1122,6 +1145,202 @@ document.addEventListener('DOMContentLoaded', function() {
             dropdownMenu.style.transform = 'translateY(8px)';
         }
     });
+    
+    // Initialize Flatpickr with date highlighting
+    let availableDates = [];
+    
+    // Simple function to get available dates from current page
+    function getAvailableDatesFromPage() {
+        const questionElements = document.querySelectorAll('[data-created-at]');
+        const dates = new Set();
+        
+        questionElements.forEach(el => {
+            const dateStr = el.getAttribute('data-created-at');
+            if (dateStr) {
+                const date = new Date(dateStr);
+                dates.add(date.toISOString().split('T')[0]);
+            }
+        });
+        
+        return Array.from(dates).sort();
+    }
+    
+    // Initialize date picker
+    if (dateFilter) {
+        window.flatpickrInstance = flatpickr(dateFilter, {
+            dateFormat: "Y-m-d",
+            allowInput: false,
+            clickOpens: true,
+            onReady: function(selectedDates, dateStr, instance) {
+                // Highlight dates when calendar is ready
+                setTimeout(() => {
+                    highlightDates(instance);
+                }, 100);
+            },
+            onOpen: function(selectedDates, dateStr, instance) {
+                // Re-highlight dates when calendar opens
+                console.log('Calendar opened, highlighting dates...');
+                
+                // Use multiple attempts to ensure highlighting works
+                setTimeout(() => {
+                    highlightDates(instance);
+                }, 100);
+                
+                setTimeout(() => {
+                    highlightDates(instance);
+                }, 300);
+                
+                setTimeout(() => {
+                    highlightDates(instance);
+                }, 500);
+            },
+            onMonthChange: function(selectedDates, dateStr, instance) {
+                // Re-highlight dates when month changes
+                setTimeout(() => {
+                    highlightDates(instance);
+                }, 100);
+            },
+            onYearChange: function(selectedDates, dateStr, instance) {
+                // Re-highlight dates when year changes
+                setTimeout(() => {
+                    highlightDates(instance);
+                }, 100);
+            },
+            onChange: function(selectedDates, dateStr, instance) {
+                console.log('Date selected:', dateStr);
+                performAjaxSearch();
+            }
+        });
+    }
+    
+    // Simple function to highlight dates
+    function highlightDates(instance) {
+        if (!instance || !instance.calendarContainer) {
+            console.log('No calendar instance found');
+            return;
+        }
+        
+        console.log('Starting date highlighting...');
+        
+        // Clear all existing highlights
+        const allDays = instance.calendarContainer.querySelectorAll('.flatpickr-day');
+        console.log(`Found ${allDays.length} day elements`);
+        
+        // If no day elements found, the calendar might not be fully rendered
+        if (allDays.length === 0) {
+            console.log('No day elements found, calendar might not be fully rendered');
+            return;
+        }
+        
+        allDays.forEach(day => {
+            day.classList.remove('has-questions');
+            day.title = '';
+        });
+        
+        // Get available dates
+        availableDates = getAvailableDatesFromPage();
+        console.log('Available dates:', availableDates);
+        
+        if (availableDates.length === 0) {
+            console.log('No available dates found');
+            return;
+        }
+        
+        // Highlight each available date
+        let highlightedCount = 0;
+        availableDates.forEach(dateStr => {
+            const date = new Date(dateStr);
+            const day = date.getDate();
+            
+            // Find the day element
+            const dayElement = Array.from(allDays).find(el => {
+                const dayText = parseInt(el.textContent.trim());
+                const isCurrentMonth = !el.classList.contains('nextMonthDay') && 
+                                     !el.classList.contains('prevMonthDay') &&
+                                     !el.classList.contains('flatpickr-disabled');
+                return dayText === day && isCurrentMonth;
+            });
+            
+            if (dayElement) {
+                dayElement.classList.add('has-questions');
+                dayElement.title = 'Has questions created on this date';
+                highlightedCount++;
+                console.log(`Highlighted date: ${day}`);
+            } else {
+                console.log(`Could not find day element for date: ${day}`);
+            }
+        });
+        
+        console.log(`Highlighting complete. Highlighted ${highlightedCount} dates.`);
+    }
+    
+    // Highlight dates button
+    const highlightDatesBtn = document.getElementById('highlightDates');
+    if (highlightDatesBtn) {
+        highlightDatesBtn.addEventListener('click', function() {
+            console.log('Highlighting dates...');
+            if (window.flatpickrInstance) {
+                highlightDates(window.flatpickrInstance);
+            }
+        });
+    }
+    
+    // Add click event listener to date input for re-highlighting
+    if (dateFilter) {
+        dateFilter.addEventListener('click', function() {
+            console.log('Date input clicked, re-highlighting...');
+            setTimeout(() => {
+                if (window.flatpickrInstance) {
+                    highlightDates(window.flatpickrInstance);
+                }
+            }, 200);
+        });
+    }
 });
 </script>
+
+<!-- Flatpickr JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<style>
+/* Custom styles for highlighted dates */
+.flatpickr-calendar .has-questions {
+    position: relative !important;
+    border: 2px solid #3b82f6 !important;
+    border-radius: 50% !important;
+    background-color: rgba(59, 130, 246, 0.1) !important;
+}
+
+.flatpickr-calendar .has-questions:hover {
+    background-color: rgba(59, 130, 246, 0.2) !important;
+    border-color: #2563eb !important;
+}
+
+.flatpickr-calendar .has-questions.selected {
+    background-color: #3b82f6 !important;
+    color: white !important;
+    border-color: #1d4ed8 !important;
+}
+
+/* Removed question-indicator styles - using only has-questions class */
+
+/* Dark mode support */
+.dark .flatpickr-calendar .has-questions {
+    border-color: #1e40af !important;
+    background-color: rgba(30, 64, 175, 0.1) !important;
+}
+
+.dark .flatpickr-calendar .has-questions:hover {
+    background-color: rgba(30, 64, 175, 0.2) !important;
+    border-color: #1e3a8a !important;
+}
+
+.dark .flatpickr-calendar .has-questions.selected {
+    background-color: #1e40af !important;
+    color: white !important;
+    border-color: #1e3a8a !important;
+}
+
+/* Removed question-indicator dark mode styles */
+</style>
 @endsection

@@ -354,6 +354,7 @@ Route::middleware('auth')->group(function () {
         Route::get('questions/subjects-for-filter', [QuestionController::class, 'getSubjectsForFilter'])->name('questions.subjects-for-filter');
         Route::get('questions/topics-for-filter', [QuestionController::class, 'getTopicsForFilter'])->name('questions.topics-for-filter');
         Route::get('questions/question-types-for-filter', [QuestionController::class, 'getQuestionTypesForFilter'])->name('questions.question-types-for-filter');
+        Route::get('questions/available-dates', [QuestionController::class, 'getAvailableDates'])->name('questions.available-dates');
         
         Route::get('questions/create', [QuestionController::class, 'create'])->name('questions.create');
         Route::post('questions', [QuestionController::class, 'store'])->name('questions.store');

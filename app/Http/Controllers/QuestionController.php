@@ -10,6 +10,7 @@ use App\Models\QuestionType;
 use App\Traits\HasPartnerContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class QuestionController extends Controller
 {
@@ -269,12 +270,36 @@ class QuestionController extends Controller
             
             \Log::info('Date filter applied', [
                 'date_filter' => $dateFilter,
-                'current_time' => now()->toDateTimeString()
+                'current_time' => now()->toDateTimeString(),
+                'date_filter_type' => gettype($dateFilter)
             ]);
             
             // Filter for questions created on the selected date
-            $query->whereDate('created_at', $dateFilter);
-            \Log::info('Date filter applied', ['date' => $dateFilter]);
+            // Use explicit date range to avoid timezone issues
+            $startDate = $dateFilter . ' 00:00:00';
+            $endDate = $dateFilter . ' 23:59:59';
+            
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+            
+            \Log::info('Date range filter applied', [
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'original_filter' => $dateFilter
+            ]);
+            
+            // Additional debugging - check what dates exist in the database
+            $sampleDates = Question::where('partner_id', $partnerId)
+                ->where('status', 'active')
+                ->selectRaw('DATE(created_at) as date')
+                ->distinct()
+                ->orderBy('date')
+                ->limit(10)
+                ->pluck('date');
+            
+            \Log::info('Sample dates in database', [
+                'sample_dates' => $sampleDates->toArray(),
+                'filtering_for' => $dateFilter
+            ]);
         }
 
         // Debug: Log the raw SQL query after all filters
@@ -2037,5 +2062,66 @@ class QuestionController extends Controller
             'performanceOverTime',
             'answerDistribution'
         ));
+    }
+
+    /**
+     * Get available dates for date picker highlighting
+     */
+    public function getAvailableDates(Request $request)
+    {
+        try {
+            $partnerId = $this->getPartnerId();
+            
+            \Log::info('getAvailableDates called', [
+                'partner_id' => $partnerId,
+                'user_id' => auth()->id(),
+                'user_name' => auth()->user()->name ?? 'Unknown'
+            ]);
+            
+            // First check total questions for this partner
+            $totalQuestions = Question::where('partner_id', $partnerId)->count();
+            $activeQuestions = Question::where('partner_id', $partnerId)->where('status', 'active')->count();
+            
+            \Log::info('Question counts', [
+                'total_questions' => $totalQuestions,
+                'active_questions' => $activeQuestions
+            ]);
+            
+            // Get all unique creation dates for this partner's questions
+            $dates = Question::where('partner_id', $partnerId)
+                ->where('status', 'active')
+                ->selectRaw('DATE(created_at) as date')
+                ->distinct()
+                ->orderBy('date')
+                ->pluck('date')
+                ->map(function($date) {
+                    // $date is already a string from selectRaw, so just return it
+                    return $date;
+                });
+            
+            \Log::info('Available dates found', [
+                'dates_count' => $dates->count(),
+                'dates' => $dates->toArray()
+            ]);
+            
+            // If no dates found, try without partner filter to see if there are any questions at all
+            if ($dates->count() === 0) {
+                $allDates = Question::where('status', 'active')
+                    ->selectRaw('DATE(created_at) as date')
+                    ->distinct()
+                    ->orderBy('date')
+                    ->pluck('date');
+                
+                \Log::info('All questions dates (no partner filter)', [
+                    'dates_count' => $allDates->count(),
+                    'dates' => $allDates->toArray()
+                ]);
+            }
+            
+            return response()->json(['dates' => $dates]);
+        } catch (\Exception $e) {
+            \Log::error('Error in getAvailableDates: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to load available dates: ' . $e->getMessage()], 500);
+        }
     }
 }
