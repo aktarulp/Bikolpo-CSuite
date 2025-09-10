@@ -390,6 +390,11 @@
                            class="px-8 py-4 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-2xl hover:bg-gray-50 dark:hover:bg-slate-700 transition-all duration-300">
                             Cancel
                         </a>
+                        <button type="button" id="saveDraftBtn" 
+                                class="px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold rounded-2xl hover:from-amber-600 hover:to-orange-600 transform hover:scale-105 transition-all duration-300 shadow-lg" 
+                                onclick="saveAsDraft()">
+                            💾 Save Draft
+                        </button>
                         <button type="submit" form="examForm" 
                                 class="px-8 py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-2xl hover:from-indigo-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg" 
                                 onclick="return validateFormBeforeSubmit()">
@@ -592,6 +597,106 @@
     function execCommand(command, value = null) {
         document.execCommand(command, false, value);
         document.getElementById('questionHeaderEditor').focus();
+    }
+
+    // Save as Draft functionality
+    function saveAsDraft() {
+        const form = document.getElementById('examForm');
+        const formData = new FormData(form);
+        
+        // Add a flag to indicate this is a draft save
+        formData.append('is_draft', '1');
+        
+        // Show loading state
+        const saveDraftBtn = document.getElementById('saveDraftBtn');
+        const originalText = saveDraftBtn.innerHTML;
+        saveDraftBtn.innerHTML = '💾 Saving...';
+        saveDraftBtn.disabled = true;
+        
+        // Send AJAX request to save draft
+        fetch('{{ route("partner.exams.store") }}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show success message
+                showNotification('Draft saved successfully!', 'success');
+                
+                // Optionally redirect to the exam edit page or index
+                setTimeout(() => {
+                    if (data.exam_id) {
+                        window.location.href = `{{ route('partner.exams.index') }}?draft_saved=1`;
+                    } else {
+                        window.location.href = '{{ route("partner.exams.index") }}';
+                    }
+                }, 1500);
+            } else {
+                showNotification('Error saving draft: ' + (data.message || 'Unknown error'), 'error');
+                // Restore button state
+                saveDraftBtn.innerHTML = originalText;
+                saveDraftBtn.disabled = false;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('An error occurred while saving the draft.', 'error');
+            // Restore button state
+            saveDraftBtn.innerHTML = originalText;
+            saveDraftBtn.disabled = false;
+        });
+    }
+
+    // Notification system
+    function showNotification(message, type = 'info') {
+        // Remove existing notifications
+        const existingNotifications = document.querySelectorAll('.notification');
+        existingNotifications.forEach(notification => notification.remove());
+        
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `notification fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm transform transition-all duration-300 translate-x-full`;
+        
+        // Set colors based on type
+        if (type === 'success') {
+            notification.classList.add('bg-green-500', 'text-white');
+        } else if (type === 'error') {
+            notification.classList.add('bg-red-500', 'text-white');
+        } else {
+            notification.classList.add('bg-blue-500', 'text-white');
+        }
+        
+        notification.innerHTML = `
+            <div class="flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span>${message}</span>
+                <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Animate in
+        setTimeout(() => {
+            notification.classList.remove('translate-x-full');
+        }, 100);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            notification.classList.add('translate-x-full');
+            setTimeout(() => notification.remove(), 300);
+        }, 5000);
     }
 </script>
 @endsection 

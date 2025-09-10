@@ -71,49 +71,95 @@ class ExamController extends Controller
             abort(403, 'Only partners can create exams.');
         }
 
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'exam_type' => 'required|in:online,offline',
-            'startDateTime' => 'required|date',
-            'endDateTime' => 'required|date',
-            'duration' => 'required|integer|min:15|max:480',
-            'total_questions' => 'required|integer|min:1|max:1000',
-            'passing_marks' => 'required|integer|min:0|max:100',
-            'allow_retake' => 'boolean',
-            'show_results_immediately' => 'boolean',
-            'has_negative_marking' => 'boolean',
-            'negative_marks_per_question' => 'required_if:has_negative_marking,1|nullable|numeric|min:0|max:5',
-            'question_header' => 'nullable|string',
-        ]);
+        // Check if this is a draft save
+        $isDraft = $request->boolean('is_draft', false);
+        
+        // Different validation rules for draft vs full save
+        if ($isDraft) {
+            // More lenient validation for drafts - only require title
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'exam_type' => 'nullable|in:online,offline',
+                'startDateTime' => 'nullable|date',
+                'endDateTime' => 'nullable|date',
+                'duration' => 'nullable|integer|min:1|max:480',
+                'total_questions' => 'nullable|integer|min:1|max:1000',
+                'passing_marks' => 'nullable|integer|min:0|max:100',
+                'allow_retake' => 'boolean',
+                'show_results_immediately' => 'boolean',
+                'has_negative_marking' => 'boolean',
+                'negative_marks_per_question' => 'nullable|numeric|min:0|max:5',
+                'question_header' => 'nullable|string',
+            ]);
+        } else {
+            // Full validation for complete exam creation
+            $request->validate([
+                'title' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'exam_type' => 'required|in:online,offline',
+                'startDateTime' => 'required|date',
+                'endDateTime' => 'required|date',
+                'duration' => 'required|integer|min:15|max:480',
+                'total_questions' => 'required|integer|min:1|max:1000',
+                'passing_marks' => 'required|integer|min:0|max:100',
+                'allow_retake' => 'boolean',
+                'show_results_immediately' => 'boolean',
+                'has_negative_marking' => 'boolean',
+                'negative_marks_per_question' => 'required_if:has_negative_marking,1|nullable|numeric|min:0|max:5',
+                'question_header' => 'nullable|string',
+            ]);
+        }
 
-        // Parse the datetime-local inputs directly
-        $startDateTime = \Carbon\Carbon::parse($request->startDateTime);
-        $endDateTime = \Carbon\Carbon::parse($request->endDateTime);
+        // Parse the datetime-local inputs directly (only if not draft or if values exist)
+        $startDateTime = null;
+        $endDateTime = null;
         $now = \Carbon\Carbon::now();
+        
+        if ($request->startDateTime) {
+            $startDateTime = \Carbon\Carbon::parse($request->startDateTime);
+        }
+        if ($request->endDateTime) {
+            $endDateTime = \Carbon\Carbon::parse($request->endDateTime);
+        }
 
-        // Comprehensive datetime validation
+        // Comprehensive datetime validation (only for non-draft saves or if dates are provided)
         $errors = [];
+        
+        if (!$isDraft && $startDateTime && $endDateTime) {
+            // Validate that start datetime is in the future
+            if ($startDateTime <= $now) {
+                $errors['startDateTime'] = 'Start date and time must be in the future. Current time is ' . $now->format('M d, Y H:i');
+            }
 
-        // Validate that start datetime is in the future
-        if ($startDateTime <= $now) {
-            $errors['startDateTime'] = 'Start date and time must be in the future. Current time is ' . $now->format('M d, Y H:i');
-        }
+            // Validate that end datetime is after start datetime
+            if ($endDateTime <= $startDateTime) {
+                $errors['endDateTime'] = 'End date and time must be after start date and time.';
+            }
 
-        // Validate that end datetime is after start datetime
-        if ($endDateTime <= $startDateTime) {
-            $errors['endDateTime'] = 'End date and time must be after start date and time.';
-        }
-
-        // Validate that end datetime is not too far in the future (optional: limit to 1 year)
-        $maxEndDate = $now->copy()->addYear();
-        if ($endDateTime > $maxEndDate) {
-            $errors['endDateTime'] = 'End date and time cannot be more than 1 year in the future.';
+            // Validate that end datetime is not too far in the future (optional: limit to 1 year)
+            $maxEndDate = $now->copy()->addYear();
+            if ($endDateTime > $maxEndDate) {
+                $errors['endDateTime'] = 'End date and time cannot be more than 1 year in the future.';
+            }
+        } elseif ($startDateTime && $endDateTime) {
+            // For drafts, only validate if both dates are provided and they make sense
+            if ($endDateTime <= $startDateTime) {
+                $errors['endDateTime'] = 'End date and time must be after start date and time.';
+            }
         }
 
         // If there are validation errors, return with errors
         if (!empty($errors)) {
-            return back()->withErrors($errors)->withInput();
+            if ($isDraft) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validation failed',
+                    'errors' => $errors
+                ], 422);
+            } else {
+                return back()->withErrors($errors)->withInput();
+            }
         }
 
         // Whitelist fields to avoid mass-assigning unexpected input
@@ -127,9 +173,13 @@ class ExamController extends Controller
             'question_header',
         ]);
 
-        // Add the combined datetime values
-        $data['start_time'] = $startDateTime->format('Y-m-d H:i:s');
-        $data['end_time'] = $endDateTime->format('Y-m-d H:i:s');
+        // Add the combined datetime values (only if they exist)
+        if ($startDateTime) {
+            $data['start_time'] = $startDateTime->format('Y-m-d H:i:s');
+        }
+        if ($endDateTime) {
+            $data['end_time'] = $endDateTime->format('Y-m-d H:i:s');
+        }
 
         $data['partner_id'] = $this->getPartnerId();
         
@@ -161,6 +211,7 @@ class ExamController extends Controller
             'created_by_value' => $exam->created_by,
             'auth_user_id' => auth()->id(),
             'partner_id' => $this->getPartnerId(),
+            'is_draft' => $isDraft,
             'user_info' => [
                 'user_id' => auth()->id(),
                 'user_name' => auth()->user()->name ?? 'Unknown',
@@ -168,8 +219,18 @@ class ExamController extends Controller
             ]
         ]);
 
-        return redirect()->route('partner.exams.index')
-            ->with('success', 'Exam created successfully.');
+        // Return appropriate response based on request type
+        if ($isDraft) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Draft saved successfully!',
+                'exam_id' => $exam->id,
+                'exam_title' => $exam->title
+            ]);
+        } else {
+            return redirect()->route('partner.exams.index')
+                ->with('success', 'Exam created successfully.');
+        }
     }
 
     public function show(Exam $exam)
