@@ -377,9 +377,44 @@
                                             {{ $question->question_type === 'mcq' ? 'MCQ' : ($question->question_type === 'true_false' ? 'T/F' : 'Descriptive') }}
                                         </span>
                                         
-                                        <!-- Question Text -->
+                                        <!-- Question Text with Answer Options -->
                                         <div class="text-gray-900 dark:text-white text-sm leading-relaxed line-clamp-2 flex-1 min-w-0">
-                                            {!! Str::limit(strip_tags($question->question_text, '<b><i><u><strong><em><br><p><span><div>'), 150) !!}
+                                            <span class="text-gray-900 dark:text-white">
+                                                {!! Str::limit(strip_tags($question->question_text, '<b><i><u><strong><em><br><p><span><div>'), 120) !!}
+                                            </span>
+                                            
+                                            @if($question->question_type === 'mcq' && ($question->option_a || $question->option_b || $question->option_c || $question->option_d))
+                                                <span class="text-gray-500 dark:text-gray-400"> | </span>
+                                                <span class="text-gray-600 dark:text-gray-300">
+                                                    @if($question->option_a)
+                                                        <span class="font-medium">A:</span> {{ Str::limit(strip_tags($question->option_a), 20) }}
+                                                    @endif
+                                                    @if($question->option_b)
+                                                        <span class="text-gray-400"> • </span>
+                                                        <span class="font-medium">B:</span> {{ Str::limit(strip_tags($question->option_b), 20) }}
+                                                    @endif
+                                                    @if($question->option_c)
+                                                        <span class="text-gray-400"> • </span>
+                                                        <span class="font-medium">C:</span> {{ Str::limit(strip_tags($question->option_c), 20) }}
+                                                    @endif
+                                                    @if($question->option_d)
+                                                        <span class="text-gray-400"> • </span>
+                                                        <span class="font-medium">D:</span> {{ Str::limit(strip_tags($question->option_d), 20) }}
+                                                    @endif
+                                                </span>
+                                            @elseif($question->question_type === 'true_false')
+                                                <span class="text-gray-500 dark:text-gray-400"> | </span>
+                                                <span class="text-gray-600 dark:text-gray-300">
+                                                    <span class="font-medium">A:</span> {{ $question->option_a ? Str::limit(strip_tags($question->option_a), 30) : 'True' }}
+                                                    <span class="text-gray-400"> • </span>
+                                                    <span class="font-medium">B:</span> {{ $question->option_b ? Str::limit(strip_tags($question->option_b), 30) : 'False' }}
+                                                </span>
+                                            @elseif($question->question_type === 'fill_in_blank' && $question->option_a)
+                                                <span class="text-gray-500 dark:text-gray-400"> | </span>
+                                                <span class="text-gray-600 dark:text-gray-300">
+                                                    <span class="font-medium">Answer:</span> {{ Str::limit(strip_tags($question->option_a), 40) }}
+                                                </span>
+                                            @endif
                                         </div>
                                     </div>
                                     
@@ -563,6 +598,17 @@
     .questions-container .question-card .flex.items-start > div:last-child {
         align-self: flex-end;
     }
+    
+    /* Allow answer options to wrap on mobile */
+    .questions-container .question-card .text-gray-600 {
+        white-space: normal;
+        font-size: 0.75rem;
+    }
+    
+    /* Reduce character limits on mobile for better fit */
+    .questions-container .question-card .line-clamp-2 {
+        -webkit-line-clamp: 3;
+    }
 }
 
 /* Hover effects for better UX */
@@ -573,6 +619,27 @@
 
 .question-card {
     transition: all 0.2s ease-in-out;
+}
+
+/* Answer options styling */
+.question-card .text-gray-600 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.question-card .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    white-space: normal;
+}
+
+/* Ensure answer options don't break the layout */
+.question-card .flex-1 {
+    min-width: 0;
+    overflow: hidden;
 }
 
 /* Animation for question cards */
