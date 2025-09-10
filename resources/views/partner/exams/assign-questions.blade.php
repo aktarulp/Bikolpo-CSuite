@@ -156,7 +156,7 @@
                     </div>
 
                     @if($questions->count() > 0)
-                        <div class="grid grid-cols-1 gap-3 max-h-80 overflow-y-auto">
+                        <div class="grid grid-cols-1 gap-3">
                             @foreach($questions as $question)
                                 <div class="question-card border border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:bg-gray-50 dark:hover:bg-gray-700 draggable-question shadow-sm hover:shadow-md transition-all duration-200"
                                      data-type="{{ $question->question_type }}"
@@ -986,7 +986,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function sortQuestionsBySelection() {
-        const questionsContainer = document.querySelector('.grid.grid-cols-1.gap-3.max-h-80.overflow-y-auto');
+        const questionsContainer = document.querySelector('.grid.grid-cols-1.gap-3');
         if (!questionsContainer) return;
         
         const questionCards = Array.from(questionsContainer.querySelectorAll('.question-card'));
@@ -1140,7 +1140,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Drag and Drop functionality
     function initializeDragAndDrop() {
-        const questionsContainer = document.querySelector('.grid.grid-cols-1.gap-3.max-h-80.overflow-y-auto');
+        const questionsContainer = document.querySelector('.grid.grid-cols-1.gap-3');
         if (!questionsContainer) return;
         
         let draggedElement = null;
