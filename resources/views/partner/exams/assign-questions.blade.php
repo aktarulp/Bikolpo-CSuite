@@ -245,8 +245,11 @@
                                     <span class="text-xs font-medium text-gray-600 dark:text-gray-400">Selected:</span>
                                     <div class="flex items-center space-x-2">
                                         <!-- Progress Bar -->
-                                        <div class="w-32 h-4 rounded-full overflow-hidden shadow-inner" style="background: linear-gradient(to right, #fecaca, #fca5a5);" data-bg-light="linear-gradient(to right, #fecaca, #fca5a5)" data-bg-dark="linear-gradient(to right, #991b1b, #7f1d1d)">
+                                        <div class="w-32 h-4 rounded-full overflow-hidden shadow-inner relative" style="background: linear-gradient(to right, #fecaca, #fca5a5);" data-bg-light="linear-gradient(to right, #fecaca, #fca5a5)" data-bg-dark="linear-gradient(to right, #991b1b, #7f1d1d)">
                                             <div id="progress-bar" class="h-full transition-all duration-500 ease-out shadow-lg" style="width: 0%; background: linear-gradient(to right, #8b5cf6, #ec4899, #ef4444);"></div>
+                                            <div class="absolute inset-0 flex items-center justify-center">
+                                                <span id="progress-percentage" class="text-xs font-bold text-gray-800 dark:text-gray-200" style="text-shadow: 1px 1px 2px rgba(255,255,255,0.8);">0%</span>
+                                            </div>
                                         </div>
                                         <!-- Progress Text -->
                                         <span class="text-xs font-medium text-gray-700 dark:text-gray-300">
@@ -712,9 +715,17 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Update progress bar
         const progressBar = document.getElementById('progress-bar');
+        const progressPercentageElement = document.getElementById('progress-percentage');
         if (progressBar && examQuestionCount > 0) {
             const progressPercentage = (selectedCount / examQuestionCount) * 100;
             progressBar.style.width = progressPercentage + '%';
+            
+            // Update percentage indicator
+            if (progressPercentageElement) {
+                progressPercentageElement.textContent = Math.round(progressPercentage) + '%';
+            }
+        } else if (progressPercentageElement) {
+            progressPercentageElement.textContent = '0%';
         }
         // Keep the total count as the exam's assigned questions count (already set in HTML)
     }
@@ -1207,6 +1218,40 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             alert('Search failed. Please try again. Error: ' + error.message);
         });
+    }
+    
+    // Initialize progress bar theme
+    updateProgressBarTheme();
+    
+    // Watch for theme changes
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                updateProgressBarTheme();
+            }
+        });
+    });
+    
+    // Start observing
+    observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class']
+    });
+    
+    // Function to update progress bar theme
+    function updateProgressBarTheme() {
+        const progressContainer = document.querySelector('.w-32.h-4.rounded-full');
+        if (progressContainer) {
+            const isDark = document.documentElement.classList.contains('dark');
+            const lightBg = progressContainer.getAttribute('data-bg-light');
+            const darkBg = progressContainer.getAttribute('data-bg-dark');
+            
+            if (isDark && darkBg) {
+                progressContainer.style.background = darkBg;
+            } else if (lightBg) {
+                progressContainer.style.background = lightBg;
+            }
+        }
     }
 });
 </script>
