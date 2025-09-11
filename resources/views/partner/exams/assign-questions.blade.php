@@ -157,6 +157,11 @@
                                                 id="date-filter" 
                                                 class="filter-select w-full rounded-xl p-2 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
                                             <option value="">All Dates</option>
+                                            @foreach($availableDates as $date)
+                                                <option value="{{ $date['value'] }}" {{ request('date_filter') == $date['value'] ? 'selected' : '' }}>
+                                                    {{ $date['label'] }}
+                                                </option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
@@ -378,11 +383,519 @@
     color: #1e40af;
     font-weight: bold;
 }
+
+/* Mobile drag and drop styles */
+@media (max-width: 768px) {
+    .question-card.dragging {
+        opacity: 0.8;
+        transform: scale(1.02);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        border: 2px solid #3b82f6;
+    }
+    
+    .drag-handle {
+        touch-action: none;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+    
+    .question-card {
+        touch-action: none;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+    }
+    
+    /* Improve touch target size for mobile */
+    .drag-handle {
+        min-height: 44px;
+        min-width: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
 </style>
 
 <script>
     // =========================================================================
-    //  AJAX Search and Filter Functions (Defined in the global scope)
+    //  Global Variables
+    // =========================================================================
+    
+    let draggedElement = null;
+    let dropIndicator = null;
+    
+    // =========================================================================
+    //  Function Definitions (Defined first to avoid hoisting issues)
+    // =========================================================================
+    
+    function attachCheckboxListeners() {
+        document.querySelectorAll('.question-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                console.log('Checkbox changed:', this.value, 'checked:', this.checked);
+                updateSelectedCount();
+                if (this.checked) {
+                    assignQuestionNumber(this);
+                } else {
+                    clearQuestionNumber(this);
+                }
+            });
+        });
+    }
+
+    function assignQuestionNumber(checkbox) {
+        const questionCard = checkbox.closest('.question-card');
+        const questionNumberInput = questionCard.querySelector('.question-number');
+        if (questionNumberInput) {
+            if (!questionNumberInput.value) {
+                questionNumberInput.value = getNextQuestionNumber();
+            }
+        }
+    }
+
+    function clearQuestionNumber(checkbox) {
+        const questionCard = checkbox.closest('.question-card');
+        const questionNumberInput = questionCard.querySelector('.question-number');
+        if (questionNumberInput) {
+            questionNumberInput.value = '';
+        }
+    }
+
+    function getNextQuestionNumber() {
+        const existingNumbers = Array.from(document.querySelectorAll('.question-number'))
+            .map(input => parseInt(input.value))
+            .filter(num => !isNaN(num) && num > 0);
+        
+        if (existingNumbers.length === 0) {
+            return 1;
+        }
+        
+        const maxNumber = Math.max(...existingNumbers);
+        return maxNumber + 1;
+    }
+
+    function updateSelectedCount() {
+        const checkboxes = document.querySelectorAll('.question-checkbox');
+        const checkedBoxes = document.querySelectorAll('.question-checkbox:checked');
+        const selectedCountElement = document.getElementById('selected-count');
+        const totalCountElement = document.getElementById('total-count');
+        const progressBar = document.getElementById('progress-bar');
+        const progressPercentageElement = document.getElementById('progress-percentage');
+
+        const selectedCount = checkedBoxes.length;
+        const totalCount = parseInt(totalCountElement?.textContent) || 0;
+        const percentage = totalCount > 0 ? Math.round((selectedCount / totalCount) * 100) : 0;
+
+        if (selectedCountElement) {
+            selectedCountElement.textContent = selectedCount;
+        }
+
+        if (progressBar) {
+            progressBar.style.width = percentage + '%';
+        }
+
+        if (progressPercentageElement) {
+            progressPercentageElement.textContent = percentage + '%';
+        } else if (progressPercentageElement) {
+            progressPercentageElement.textContent = '0%';
+        }
+    }
+
+    function updateProgressBarTheme() {
+        const progressContainer = document.querySelector('.w-32.h-4.rounded-full');
+        if (progressContainer) {
+            const isDark = document.documentElement.classList.contains('dark');
+            const bgStyle = progressContainer.getAttribute(isDark ? 'data-bg-dark' : 'data-bg-light');
+            if (bgStyle) {
+                progressContainer.style.background = bgStyle;
+            }
+        }
+    }
+
+    function initializeDragAndDrop() {
+        createDropIndicator();
+        attachDragListeners();
+    }
+
+    function createDropIndicator() {
+        if (dropIndicator) return;
+        
+        dropIndicator = document.createElement('div');
+        dropIndicator.className = 'drop-indicator';
+        dropIndicator.style.cssText = `
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            border-radius: 2px;
+            margin: 8px 0;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            position: relative;
+        `;
+        
+        const dots = document.createElement('div');
+        dots.style.cssText = `
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 3px;
+            background: repeating-linear-gradient(
+                90deg,
+                #ffffff 0px,
+                #ffffff 2px,
+                transparent 2px,
+                transparent 4px
+            );
+            border-radius: 1px;
+        `;
+        dropIndicator.appendChild(dots);
+    }
+
+    function attachDragListeners() {
+        document.querySelectorAll('.question-card').forEach((card) => {
+            // Desktop drag and drop events
+            card.addEventListener('dragover', handleDragOver);
+            card.addEventListener('drop', handleDrop);
+            card.addEventListener('dragenter', handleDragEnter);
+            card.addEventListener('dragleave', handleDragLeave);
+            
+            // Mobile touch events
+            card.addEventListener('touchmove', handleTouchMove, { passive: false });
+            card.addEventListener('touchend', handleTouchEnd);
+        });
+        
+        document.querySelectorAll('.drag-handle').forEach((handle) => {
+            // Desktop drag and drop events
+            handle.draggable = true;
+            handle.addEventListener('dragstart', handleDragStart);
+            handle.addEventListener('dragend', handleDragEnd);
+            
+            // Mobile touch events
+            handle.addEventListener('touchstart', handleTouchStart, { passive: false });
+        });
+    }
+
+    function handleDragStart(e) {
+        // Find the parent question card and set it as the element to drag
+        const questionCard = this.closest('.question-card');
+        if (questionCard) {
+            draggedElement = questionCard;
+            questionCard.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', 'moving'); // Required for Firefox
+        }
+    }
+
+    function handleDragEnd(e) {
+        // Find the parent question card and remove the dragging class
+        const questionCard = this.closest('.question-card');
+        if (questionCard) {
+            questionCard.classList.remove('dragging');
+        }
+        
+        if (dropIndicator && dropIndicator.parentNode) {
+            dropIndicator.parentNode.removeChild(dropIndicator);
+        }
+        draggedElement = null;
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (this === draggedElement) return;
+        
+        const rect = this.getBoundingClientRect();
+        const isAfter = e.clientY > (rect.top + rect.height / 2);
+        showDropIndicator(this, isAfter);
+    }
+
+    function handleDragEnter(e) {
+        e.preventDefault();
+        this.classList.add('drag-over');
+    }
+
+    function handleDragLeave() {
+        this.classList.remove('drag-over');
+    }
+
+    // =========================================================================
+    //  Mobile Touch Event Handlers
+    // =========================================================================
+    
+    let touchStartY = 0;
+    let touchStartElement = null;
+    let isDragging = false;
+    let touchOffset = { x: 0, y: 0 };
+
+    function handleTouchStart(e) {
+        e.preventDefault();
+        const touch = e.touches[0];
+        const questionCard = this.closest('.question-card');
+        
+        if (questionCard) {
+            touchStartY = touch.clientY;
+            touchStartElement = questionCard;
+            draggedElement = questionCard;
+            isDragging = true;
+            
+            // Get the position of the touch relative to the element
+            const rect = questionCard.getBoundingClientRect();
+            touchOffset.x = touch.clientX - rect.left;
+            touchOffset.y = touch.clientY - rect.top;
+            
+            // Add dragging class
+            questionCard.classList.add('dragging');
+            questionCard.style.position = 'relative';
+            questionCard.style.zIndex = '1000';
+            
+            console.log('Touch start - dragging element:', questionCard);
+        }
+    }
+
+    function handleTouchMove(e) {
+        if (!isDragging || !draggedElement) return;
+        
+        e.preventDefault();
+        const touch = e.touches[0];
+        const questionCard = this.closest('.question-card');
+        
+        // Move the dragged element
+        draggedElement.style.transform = `translateY(${touch.clientY - touchStartY}px)`;
+        
+        // Find the element under the touch point
+        const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+        const targetCard = elementBelow?.closest('.question-card');
+        
+        if (targetCard && targetCard !== draggedElement) {
+            // Remove drag-over class from all cards
+            document.querySelectorAll('.question-card').forEach(card => {
+                card.classList.remove('drag-over');
+            });
+            
+            // Add drag-over class to target
+            targetCard.classList.add('drag-over');
+            
+            // Show drop indicator
+            const rect = targetCard.getBoundingClientRect();
+            const isAfter = touch.clientY > (rect.top + rect.height / 2);
+            showDropIndicator(targetCard, isAfter);
+        }
+    }
+
+    function handleTouchEnd(e) {
+        if (!isDragging || !draggedElement) return;
+        
+        e.preventDefault();
+        const touch = e.changedTouches[0];
+        const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+        const targetCard = elementBelow?.closest('.question-card');
+        
+        if (targetCard && targetCard !== draggedElement) {
+            // Perform the drop
+            const rect = targetCard.getBoundingClientRect();
+            const isAfter = touch.clientY > (rect.top + rect.height / 2);
+            
+            moveElement(draggedElement, targetCard, isAfter);
+            updateQuestionNumbersAfterDrag();
+        }
+        
+        // Clean up
+        draggedElement.style.transform = '';
+        draggedElement.style.position = '';
+        draggedElement.style.zIndex = '';
+        draggedElement.classList.remove('dragging');
+        
+        // Remove drag-over classes
+        document.querySelectorAll('.question-card').forEach(card => {
+            card.classList.remove('drag-over');
+        });
+        
+        // Remove drop indicator
+        if (dropIndicator && dropIndicator.parentNode) {
+            dropIndicator.parentNode.removeChild(dropIndicator);
+        }
+        
+        // Reset variables
+        draggedElement = null;
+        touchStartElement = null;
+        isDragging = false;
+        touchStartY = 0;
+        touchOffset = { x: 0, y: 0 };
+        
+        console.log('Touch end - drag completed');
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        this.classList.remove('drag-over');
+        
+        if (!draggedElement || this === draggedElement) {
+            return;
+        }
+        
+        const isAfter = e.clientY > (this.getBoundingClientRect().top + this.offsetHeight / 2);
+        
+        moveElement(draggedElement, this, isAfter);
+        updateQuestionNumbersAfterDrag();
+        
+        // Remove drop indicator
+        if (dropIndicator && dropIndicator.parentNode) {
+            dropIndicator.parentNode.removeChild(dropIndicator);
+        }
+    }
+
+    function showDropIndicator(targetElement, isAfter) {
+        if (!dropIndicator) createDropIndicator();
+        if (dropIndicator.parentNode) {
+            dropIndicator.parentNode.removeChild(dropIndicator);
+        }
+        if (isAfter) {
+            targetElement.parentNode.insertBefore(dropIndicator, targetElement.nextSibling);
+        } else {
+            targetElement.parentNode.insertBefore(dropIndicator, targetElement);
+        }
+        setTimeout(() => dropIndicator.style.opacity = '1', 10);
+    }
+
+    function moveElement(draggedEl, targetEl, isAfter) {
+        const container = draggedEl.parentNode;
+        
+        if (isAfter) {
+            // Insert after the target element
+            container.insertBefore(draggedEl, targetEl.nextSibling);
+        } else {
+            // Insert before the target element
+            container.insertBefore(draggedEl, targetEl);
+        }
+    }
+
+    function updateQuestionNumbersAfterDrag() {
+        const questionCards = document.querySelectorAll('.question-card');
+        let questionNumber = 1;
+        
+        questionCards.forEach((card, index) => {
+            const checkbox = card.querySelector('.question-checkbox');
+            const questionNumberInput = card.querySelector('.question-number');
+            
+            if (checkbox && checkbox.checked && questionNumberInput) {
+                questionNumberInput.value = questionNumber;
+                questionNumber++;
+            }
+        });
+        
+        updateSelectedCount();
+    }
+
+    // =========================================================================
+    //  Cascading Dropdown Functions
+    // =========================================================================
+    
+    function updateSubjectsForCourse(courseId) {
+        const subjectFilter = document.getElementById('subject-filter');
+        if (!subjectFilter) return;
+        
+        // Show loading state
+        subjectFilter.disabled = true;
+        subjectFilter.innerHTML = '<option value="">Loading subjects...</option>';
+        
+        // Load subjects for the selected course
+        loadSubjects(courseId);
+        
+        // Re-enable the dropdown after loading
+        setTimeout(() => {
+            subjectFilter.disabled = false;
+        }, 500);
+    }
+    
+    function updateTopicsForSubject(subjectId) {
+        const topicFilter = document.getElementById('topic-filter');
+        if (!topicFilter) return;
+        
+        // Show loading state
+        topicFilter.disabled = true;
+        topicFilter.innerHTML = '<option value="">Loading topics...</option>';
+        
+        // Load topics for the selected subject
+        loadTopics(subjectId);
+        
+        // Re-enable the dropdown after loading
+        setTimeout(() => {
+            topicFilter.disabled = false;
+        }, 500);
+    }
+    
+    function loadSubjects(courseId = null) {
+        const subjectFilter = document.getElementById('subject-filter');
+        if (!subjectFilter) return Promise.resolve();
+        
+        return fetch(`{{ route("partner.questions.subjects-for-filter") }}?course_id=${courseId || ''}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            subjectFilter.innerHTML = '<option value="">All Subjects</option>';
+            
+            if (data.subjects && data.subjects.length > 0) {
+                data.subjects.forEach(subject => {
+                    const option = document.createElement('option');
+                    option.value = subject.id;
+                    option.textContent = subject.name;
+                    
+                    // Check if this subject was previously selected
+                    if (subject.id == '{{ request("subject_filter") }}') {
+                        option.selected = true;
+                    }
+                    
+                    subjectFilter.appendChild(option);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error loading subjects:', error);
+            subjectFilter.innerHTML = '<option value="">Error loading subjects</option>';
+        });
+    }
+    
+    function loadTopics(subjectId = null) {
+        const topicFilter = document.getElementById('topic-filter');
+        if (!topicFilter) return Promise.resolve();
+        
+        return fetch(`{{ route("partner.questions.topics-for-filter") }}?subject_id=${subjectId || ''}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            topicFilter.innerHTML = '<option value="">All Topics</option>';
+            
+            if (data.topics && data.topics.length > 0) {
+                data.topics.forEach(topic => {
+                    const option = document.createElement('option');
+                    option.value = topic.id;
+                    option.textContent = topic.name;
+                    
+                    // Check if this topic was previously selected
+                    if (topic.id == '{{ request("topic_filter") }}') {
+                        option.selected = true;
+                    }
+                    
+                    topicFilter.appendChild(option);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error loading topics:', error);
+            topicFilter.innerHTML = '<option value="">Error loading topics</option>';
+        });
+    }
+
+    // =========================================================================
+    //  AJAX Search and Filter Functions
     // =========================================================================
     function performAjaxSearch() {
         const searchInput = document.getElementById('searchInput');
@@ -597,10 +1110,21 @@
         if (form) {
             form.addEventListener('submit', function(e) {
                 const selectedQuestions = Array.from(document.querySelectorAll('.question-checkbox:checked'));
+                console.log('Form submission triggered');
+                console.log('Selected questions:', selectedQuestions.length);
+                console.log('Selected question IDs:', selectedQuestions.map(cb => cb.value));
+                
                 if (selectedQuestions.length === 0) {
                     e.preventDefault();
                     alert('Please select at least one question before assigning.');
                     return false;
+                }
+                
+                // Log form data for debugging
+                const formData = new FormData(this);
+                console.log('Form data being submitted:');
+                for (let [key, value] of formData.entries()) {
+                    console.log(key, value);
                 }
             });
         }
@@ -640,413 +1164,7 @@
             updateSelectedCount();
         }
         
-        function updateSelectedCount() {
-            const selectedCount = document.querySelectorAll('.question-checkbox:checked').length;
-            const totalCountElement = document.getElementById('total-count');
-            const examQuestionCount = totalCountElement ? parseInt(totalCountElement.textContent) : 0;
-            
-            const selectedCountElement = document.getElementById('selected-count');
-            if (selectedCountElement) {
-                selectedCountElement.textContent = selectedCount;
-            }
-            
-            const progressBar = document.getElementById('progress-bar');
-            const progressPercentageElement = document.getElementById('progress-percentage');
-            if (progressBar && examQuestionCount > 0) {
-                const progressPercentage = (selectedCount / examQuestionCount) * 100;
-                progressBar.style.width = progressPercentage + '%';
-                
-                if (progressPercentageElement) {
-                    progressPercentageElement.textContent = Math.round(progressPercentage) + '%';
-                }
-            } else if (progressPercentageElement) {
-                progressPercentageElement.textContent = '0%';
-            }
-        }
-        
-        function attachCheckboxListeners() {
-            document.querySelectorAll('.question-checkbox').forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    updateSelectedCount();
-                    if (this.checked) {
-                        assignQuestionNumber(this);
-                    } else {
-                        clearQuestionNumber(this);
-                    }
-                });
-            });
-        }
-
-        function assignQuestionNumber(checkbox) {
-            const questionCard = checkbox.closest('.question-card');
-            const questionNumberInput = questionCard.querySelector('.question-number');
-            if (questionNumberInput) {
-                const nextNumber = getNextQuestionNumber();
-                questionNumberInput.value = nextNumber;
-                sortQuestionsByNumber();
-            }
-        }
-
-        function clearQuestionNumber(checkbox) {
-            const questionCard = checkbox.closest('.question-card');
-            const questionNumberInput = questionCard.querySelector('.question-number');
-            if (questionNumberInput) {
-                questionNumberInput.value = '';
-                sortQuestionsByNumber();
-            }
-        }
-        
-        function getNextQuestionNumber() {
-            const questionNumbers = Array.from(document.querySelectorAll('.question-number'))
-                .map(input => parseInt(input.value) || 0)
-                .filter(num => num > 0)
-                .sort((a, b) => a - b);
-            
-            let nextNumber = 1;
-            for (let num of questionNumbers) {
-                if (nextNumber === num) {
-                    nextNumber++;
-                } else {
-                    break;
-                }
-            }
-            return nextNumber;
-        }
-        
-        function sortQuestionsByNumber() {
-            const questionsContainer = document.querySelector('.questions-container');
-            if (!questionsContainer) return;
-            
-            const questionCards = Array.from(questionsContainer.querySelectorAll('.question-card'));
-            
-            questionCards.sort((a, b) => {
-                const aNumber = parseInt(a.querySelector('.question-number')?.value) || 999999;
-                const bNumber = parseInt(b.querySelector('.question-number')?.value) || 999999;
-                return aNumber - bNumber;
-            });
-            
-            questionCards.forEach(card => {
-                questionsContainer.appendChild(card);
-            });
-        }
-        
-        // =========================================================================
-        //  Drag and Drop Functions
-        // =========================================================================
-
-        function initializeDragAndDrop() {
-            createDropIndicator();
-            attachDragListeners();
-        }
-        
-        function createDropIndicator() {
-            if (dropIndicator) return;
-            
-            dropIndicator = document.createElement('div');
-            dropIndicator.className = 'drop-indicator';
-            dropIndicator.style.cssText = `
-                height: 3px;
-                background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-                border-radius: 2px;
-                margin: 8px 0;
-                opacity: 0;
-                transition: opacity 0.2s ease;
-                position: relative;
-            `;
-            
-            const dots = document.createElement('div');
-            dots.style.cssText = `
-                position: absolute;
-                top: -2px;
-                left: 50%;
-                transform: translateX(-50%);
-                display: flex;
-                gap: 4px;
-            `;
-            
-            for (let i = 0; i < 3; i++) {
-                const dot = document.createElement('div');
-                dot.style.cssText = `
-                    width: 6px;
-                    height: 6px;
-                    background: #3b82f6;
-                    border-radius: 50%;
-                    animation: pulse 1.5s infinite;
-                    animation-delay: ${i * 0.2}s;
-                `;
-                dots.appendChild(dot);
-            }
-            
-            dropIndicator.appendChild(dots);
-        }
-        
-        function attachDragListeners() {
-            document.querySelectorAll('.question-card').forEach((card) => {
-                // Set the card as the drop target
-                card.addEventListener('dragover', handleDragOver);
-                card.addEventListener('drop', handleDrop);
-                card.addEventListener('dragenter', handleDragEnter);
-                card.addEventListener('dragleave', handleDragLeave);
-            });
-            
-            document.querySelectorAll('.drag-handle').forEach((handle) => {
-                // Set the handle as the drag source
-                handle.draggable = true;
-                handle.addEventListener('dragstart', handleDragStart);
-                handle.addEventListener('dragend', handleDragEnd);
-            });
-        }
-        
-        function handleDragStart(e) {
-            // Find the parent question card and set it as the element to drag
-            const questionCard = this.closest('.question-card');
-            if (questionCard) {
-                draggedElement = questionCard;
-                questionCard.classList.add('dragging');
-                e.dataTransfer.effectAllowed = 'move';
-                e.dataTransfer.setData('text/plain', 'moving'); // Required for Firefox
-            }
-        }
-        
-        function handleDragEnd(e) {
-            // Find the parent question card and remove the dragging class
-            const questionCard = this.closest('.question-card');
-            if (questionCard) {
-                questionCard.classList.remove('dragging');
-            }
-            
-            if (dropIndicator && dropIndicator.parentNode) {
-                dropIndicator.parentNode.removeChild(dropIndicator);
-            }
-            draggedElement = null;
-        }
-        
-        function handleDragOver(e) {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-            if (this === draggedElement) return;
-            
-            const rect = this.getBoundingClientRect();
-            const isAfter = e.clientY > (rect.top + rect.height / 2);
-            showDropIndicator(this, isAfter);
-        }
-        
-        function handleDragEnter(e) {
-            e.preventDefault();
-            this.classList.add('drag-over');
-        }
-        
-        function handleDragLeave() {
-            this.classList.remove('drag-over');
-        }
-        
-        function handleDrop(e) {
-            e.preventDefault();
-            this.classList.remove('drag-over');
-            
-            if (!draggedElement || this === draggedElement) {
-                return;
-            }
-            
-            const isAfter = e.clientY > (this.getBoundingClientRect().top + this.offsetHeight / 2);
-            
-            moveElement(draggedElement, this, isAfter);
-            updateQuestionNumbersAfterDrag();
-            
-            // Remove drop indicator
-            if (dropIndicator && dropIndicator.parentNode) {
-                dropIndicator.parentNode.removeChild(dropIndicator);
-            }
-        }
-        
-        function showDropIndicator(targetElement, isAfter) {
-            if (!dropIndicator) createDropIndicator();
-            if (dropIndicator.parentNode) {
-                dropIndicator.parentNode.removeChild(dropIndicator);
-            }
-            if (isAfter) {
-                targetElement.parentNode.insertBefore(dropIndicator, targetElement.nextSibling);
-            } else {
-                targetElement.parentNode.insertBefore(dropIndicator, targetElement);
-            }
-            setTimeout(() => dropIndicator.style.opacity = '1', 10);
-        }
-        
-        function moveElement(draggedEl, targetEl, isAfter) {
-            const container = draggedEl.parentNode;
-            
-            if (isAfter) {
-                // Insert after the target element
-                container.insertBefore(draggedEl, targetEl.nextSibling);
-            } else {
-                // Insert before the target element
-                container.insertBefore(draggedEl, targetEl);
-            }
-        }
-        
-        function updateQuestionNumbersAfterDrag() {
-            const questionCards = document.querySelectorAll('.question-card');
-            let questionNumber = 1;
-            
-            questionCards.forEach((card, index) => {
-                const checkbox = card.querySelector('.question-checkbox');
-                const questionNumberInput = card.querySelector('.question-number');
-                
-                if (checkbox && checkbox.checked && questionNumberInput) {
-                    questionNumberInput.value = questionNumber;
-                    questionNumber++;
-                }
-            });
-            
-            updateSelectedCount();
-        }
-        
-        // =========================================================================
-        //  Initial Setup and Theme Handling
-        // =========================================================================
-        
-        function updateProgressBarTheme() {
-            const progressContainer = document.querySelector('.w-32.h-4.rounded-full');
-            if (progressContainer) {
-                const isDark = document.documentElement.classList.contains('dark');
-                const lightBg = progressContainer.getAttribute('data-bg-light');
-                const darkBg = progressContainer.getAttribute('data-bg-dark');
-                
-                if (isDark && darkBg) {
-                    progressContainer.style.background = darkBg;
-                } else if (lightBg) {
-                    progressContainer.style.background = lightBg;
-                }
-            }
-        }
-
-        // Watch for theme changes
-        const observer = new MutationObserver(mutations => {
-            mutations.forEach(mutation => {
-                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                    updateProgressBarTheme();
-                }
-            });
-        });
-        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-
-        // Initial setup when the page loads
-        attachCheckboxListeners();
-        updateSelectedCount();
-        updateProgressBarTheme();
-        initializeDragAndDrop();
-        
-        // Initialize cascading dropdowns
-        const initialCourseId = courseFilter ? courseFilter.value : '';
-        const initialSubjectId = subjectFilter ? subjectFilter.value : '';
-        
-        // Update subjects based on initial course selection
-        if (initialCourseId) {
-            updateSubjectsForCourse(initialCourseId);
-        }
-        
-        // Update topics based on initial subject selection
-        if (initialSubjectId) {
-            updateTopicsForSubject(initialSubjectId);
-        }
-        
-        // Function to update subjects based on selected course
-        function updateSubjectsForCourse(courseId) {
-            if (!subjectFilter) return;
-            
-            // Show loading state
-            subjectFilter.disabled = true;
-            subjectFilter.innerHTML = '<option value="">Loading subjects...</option>';
-            
-            // Load subjects for the selected course
-            loadSubjects(courseId);
-            
-            // Re-enable the dropdown after loading
-            setTimeout(() => {
-                subjectFilter.disabled = false;
-            }, 500);
-        }
-        
-        // Function to update topics based on selected subject
-        function updateTopicsForSubject(subjectId) {
-            if (!topicFilter) return;
-            
-            // Show loading state
-            topicFilter.disabled = true;
-            topicFilter.innerHTML = '<option value="">Loading topics...</option>';
-            
-            // Load topics for the selected subject
-            loadTopics(subjectId);
-            
-            // Re-enable the dropdown after loading
-            setTimeout(() => {
-                topicFilter.disabled = false;
-            }, 500);
-        }
-        
-        // Function to load subjects for a specific course
-        function loadSubjects(courseId = null) {
-            return fetch(`{{ route("partner.questions.subjects-for-filter") }}?course_id=${courseId || ''}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                subjectFilter.innerHTML = '<option value="">All Subjects</option>';
-                
-                if (data.subjects && data.subjects.length > 0) {
-                    data.subjects.forEach(subject => {
-                        const option = document.createElement('option');
-                        option.value = subject.id;
-                        option.textContent = subject.name;
-                        
-                        // Check if this subject was previously selected
-                        if (subject.id == '{{ request("subject_filter") }}') {
-                            option.selected = true;
-                        }
-                        
-                        subjectFilter.appendChild(option);
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error loading subjects:', error);
-                subjectFilter.innerHTML = '<option value="">Error loading subjects</option>';
-            });
-        }
-        
-        // Function to load topics for a specific subject
-        function loadTopics(subjectId = null) {
-            return fetch(`{{ route("partner.questions.topics-for-filter") }}?subject_id=${subjectId || ''}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                topicFilter.innerHTML = '<option value="">All Topics</option>';
-                
-                if (data.topics && data.topics.length > 0) {
-                    data.topics.forEach(topic => {
-                        const option = document.createElement('option');
-                        option.value = topic.id;
-                        option.textContent = topic.name;
-                        
-                        // Check if this topic was previously selected
-                        if (topic.id == '{{ request("topic_filter") }}') {
-                            option.selected = true;
-                        }
-                        
-                        topicFilter.appendChild(option);
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Error loading topics:', error);
-                topicFilter.innerHTML = '<option value="">Error loading topics</option>';
-            });
-        }
+   
 
     });
 </script>

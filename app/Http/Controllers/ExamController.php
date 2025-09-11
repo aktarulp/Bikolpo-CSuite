@@ -964,6 +964,19 @@ class ExamController extends Controller
                         }
                     ];
                 }),
+            'availableDates' => \App\Models\Question::where('partner_id', $partnerId)
+                ->where('status', 'active')
+                ->selectRaw('DATE(created_at) as date')
+                ->groupBy('date')
+                ->orderBy('date', 'desc')
+                ->get()
+                ->map(function($question) {
+                    $date = \Carbon\Carbon::parse($question->date);
+                    return [
+                        'value' => $date->format('Y-m-d'),
+                        'label' => $date->format('d-M-Y')
+                    ];
+                }),
         ]);
     }
 
