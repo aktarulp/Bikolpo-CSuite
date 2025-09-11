@@ -217,7 +217,6 @@
                                     </td>
                                     
                                     <td class="px-3 py-3 whitespace-nowrap">
-                                        <div class="flex items-center gap-2">
                                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
                                             @if($exam->status === 'published') bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200
                                             @elseif($exam->status === 'draft') bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200
@@ -226,16 +225,6 @@
                                             @else bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 @endif">
                                             {{ ucfirst($exam->status) }}
                                         </span>
-                                            @if($exam->status === 'draft')
-                                                <a href="{{ route('partner.exams.edit', $exam) }}" 
-                                                   class="inline-flex items-center justify-center px-2 py-1 rounded-lg text-xs font-medium bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/50 transition-all duration-200 border border-amber-200 dark:border-amber-700"
-                                                   title="Edit Draft">
-                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                                    </svg>
-                                                </a>
-                                            @endif
-                                        </div>
                                     </td>
                                     <td class="px-3 py-3 whitespace-nowrap">
                                         <div class="relative" x-data="{ open: false }">

@@ -3,49 +3,67 @@
 @section('content')
 <div class="min-h-screen bg-gray-50">
     <div class="max-w-6xl mx-auto px-3 sm:px-4 lg:px-6">
-        <!-- Modern Header -->
+        <!-- Colorful Header -->
         <div class="mb-6">
-            <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
-                <div class="px-4 py-4">
-                    <div class="flex items-center justify-between">
+            <div class="bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 rounded-xl border border-blue-200 shadow-lg">
+                <div class="px-6 py-5">
+                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
                         <!-- Left Section -->
                         <div class="flex items-center space-x-4">
-                            <div>
-                                <h1 class="text-xl font-bold text-gray-900">{{ $exam->title }}</h1>
-                                <p class="text-sm text-gray-500 mt-1">Student Assignment Management</p>
+                            <div class="flex items-center space-x-3">
+                                <div class="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900">{{ $exam->title }}</h1>
+                                    <p class="text-sm text-gray-600 mt-1 flex items-center">
+                                        <svg class="w-4 h-4 mr-1 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                        </svg>
+                                        Student Assignment Management
+                                    </p>
+                                </div>
                             </div>
                         </div>
                         
-                        <!-- Right Section -->
-                        <div class="flex items-center space-x-3">
-                            <div class="text-right">
-                                <div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Total Students</div>
-                                <div class="text-lg font-bold text-gray-900">{{ $exam->accessCodes->count() + $availableStudents->count() }}</div>
+                        <!-- Right Section - Cards and Back Button -->
+                        <div class="flex flex-col space-y-3">
+                            <!-- Stats Cards -->
+                            <div class="flex flex-wrap gap-2 sm:gap-3">
+                                <!-- Total Students -->
+                                <div class="bg-white/60 backdrop-blur-sm rounded-lg px-3 py-1.5 border border-white/20">
+                                    <div class="text-sm font-semibold text-gray-800">
+                                        Total | <span class="text-xl font-bold">{{ $exam->accessCodes->count() + $availableStudents->count() }}</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Assigned Students -->
+                                <div class="bg-gradient-to-br from-green-100 to-emerald-100 rounded-lg px-3 py-1.5 border border-green-200">
+                                    <div class="text-sm font-semibold text-green-700">
+                                        Assigned | <span class="text-xl font-bold">{{ $exam->accessCodes->count() }}</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Available Students -->
+                                <div class="bg-gradient-to-br from-blue-100 to-cyan-100 rounded-lg px-3 py-1.5 border border-blue-200">
+                                    <div class="text-sm font-semibold text-blue-700">
+                                        Available | <span class="text-xl font-bold">{{ $availableStudents->count() }}</span>
+                                    </div>
+                                </div>
                             </div>
                             
-                            <div class="h-8 w-px bg-gray-300"></div>
-                            
-                            <div class="text-right">
-                                <div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Assigned</div>
-                                <div class="text-lg font-bold text-green-600">{{ $exam->accessCodes->count() }}</div>
+                            <!-- Back Button - Right aligned on mobile -->
+                            <div class="flex justify-end">
+                                <a href="{{ route('partner.exams.show', $exam) }}" 
+                                   class="inline-flex items-center px-3 py-1.5 bg-gradient-to-r from-gray-600 to-gray-700 text-white hover:from-gray-700 hover:to-gray-800 rounded transition-all duration-200 shadow hover:shadow-md">
+                                    <svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                                    </svg>
+                                    <span class="text-xs font-medium">Back to Exam</span>
+                                </a>
                             </div>
-                            
-                            <div class="h-8 w-px bg-gray-300"></div>
-                            
-                            <div class="text-right">
-                                <div class="text-xs text-gray-500 uppercase tracking-wide font-medium">Available</div>
-                                <div class="text-lg font-bold text-blue-600">{{ $availableStudents->count() }}</div>
-                            </div>
-                            
-                            <div class="h-8 w-px bg-gray-300"></div>
-                            
-                            <a href="{{ route('partner.exams.show', $exam) }}" 
-                               class="inline-flex items-center px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                                </svg>
-                                <span class="text-sm font-medium">Back to Exam</span>
-                            </a>
                         </div>
                     </div>
                 </div>
@@ -54,61 +72,68 @@
 
         <div class="space-y-4">
             <!-- Assigned Students -->
-            <div class="bg-white rounded-lg border border-gray-200">
-                <div class="px-4 py-3 border-b border-gray-200 bg-gray-50">
+            <div class="bg-white rounded border border-gray-200">
+                <div class="px-3 py-2 border-b border-gray-200 bg-gray-50">
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
-                            <div class="flex items-center space-x-2">
-                                <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-                                <h3 class="text-sm font-semibold text-gray-900">Assigned Students</h3>
-                            </div>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-5 h-5 bg-green-500 rounded-full"></div>
+                            <h3 class="text-xs font-semibold text-gray-900">Assigned Students</h3>
+                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
                                 {{ $exam->accessCodes->count() }}
                             </span>
                         </div>
-                        @if($exam->accessCodes->count() > 0)
-                            <div class="text-xs text-gray-500">
-                                {{ $exam->accessCodes->count() }} student{{ $exam->accessCodes->count() !== 1 ? 's' : '' }} assigned
-                            </div>
-                        @endif
                     </div>
                 </div>
                 
-                <div class="p-4">
+                <div class="p-3">
                     @if($exam->accessCodes->count() > 0)
-                        <!-- Bulk Actions -->
-                        <form method="POST" action="{{ route('partner.exams.bulk-operations', $exam) }}" class="mb-3">
-                            @csrf
-                            <div class="flex items-center space-x-2">
-                                <select name="action" class="flex-1 text-xs border border-gray-300 rounded px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-primaryGreen focus:border-primaryGreen">
-                                    <option value="">Bulk Actions</option>
-                                    <option value="remove">Remove</option>
-                                    <option value="regenerate">Regenerate Codes</option>
-                                </select>
-                                <button type="submit" class="px-3 py-1.5 bg-red-600 text-white text-xs font-medium rounded hover:bg-red-700 focus:outline-none focus:ring-1 focus:ring-red-500">
-                                    Apply
-                                </button>
-                            </div>
-                        </form>
+                        <!-- Select All / Deselect All / Bulk Actions -->
+                        <div class="flex items-center justify-end space-x-2 mb-2">
+                            <button type="button" 
+                                    onclick="selectAllAssigned()" 
+                                    class="px-2 py-1 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                Select All
+                            </button>
+                            <button type="button" 
+                                    onclick="deselectAllAssigned()" 
+                                    class="px-2 py-1 bg-gray-600 text-white text-xs font-medium rounded hover:bg-gray-700 focus:outline-none focus:ring-1 focus:ring-gray-500">
+                                Deselect All
+                            </button>
+                            
+                            <!-- Bulk Actions -->
+                            <form method="POST" action="{{ route('partner.exams.bulk-operations', $exam) }}" class="inline">
+                                @csrf
+                                <div class="flex items-center space-x-1">
+                                    <select name="action" class="text-xs border border-gray-300 rounded px-1.5 py-1 focus:outline-none focus:ring-1 focus:ring-primaryGreen focus:border-primaryGreen">
+                                        <option value="">Actions</option>
+                                        <option value="remove">Remove</option>
+                                        <option value="regenerate">Regenerate</option>
+                                    </select>
+                                    <button type="submit" class="px-1.5 py-1 bg-red-600 text-white text-xs font-medium rounded hover:bg-red-700 focus:outline-none focus:ring-1 focus:ring-red-500">
+                                        Apply
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                         
-                                                <!-- Assigned Students List -->
-                        <div class="space-y-1 max-h-80 overflow-y-auto">
+                        <!-- Assigned Students List -->
+                        <div class="space-y-0.5">
                             @foreach($exam->accessCodes as $accessCode)
-                            <div class="flex items-center justify-between p-2 border border-gray-200 rounded hover:bg-gray-50 transition-colors">
+                            <div class="flex items-center justify-between p-1.5 border border-gray-200 rounded hover:bg-gray-50 transition-colors">
                                 <!-- Student Info -->
-                                <div class="flex items-center space-x-3 flex-1 min-w-0">
+                                <div class="flex items-center space-x-2 flex-1 min-w-0">
                                     <input type="checkbox" 
                                            name="student_ids[]" 
                                            value="{{ $accessCode->student_id }}"
-                                           class="h-3 w-3 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+                                           class="h-5 w-5 text-red-600 focus:ring-red-500 border-gray-400 rounded">
                                     
                                     <div class="flex-shrink-0">
                                         @if($accessCode->student->photo)
-                                            <img class="h-8 w-8 rounded-full object-cover" 
+                                            <img class="h-10 w-10 rounded-full object-cover" 
                                                  src="{{ Storage::url($accessCode->student->photo) }}" 
                                                  alt="{{ $accessCode->student->full_name }}">
                                         @else
-                                            <div class="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center">
+                                            <div class="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center">
                                                 <span class="text-xs font-bold text-white">{{ substr($accessCode->student->full_name, 0, 1) }}</span>
                                             </div>
                                         @endif
@@ -116,41 +141,46 @@
                                     
                                     <div class="flex-1 min-w-0">
                                         <div class="flex items-center space-x-2">
-                                            <p class="text-sm font-medium text-gray-900 truncate">{{ $accessCode->student->full_name }}</p>
+                                            <p class="text-base font-medium text-gray-900 truncate">{{ $accessCode->student->full_name }}</p>
                                             @if($accessCode->used_at)
-                                                <span class="text-xs text-green-600 font-medium">✓</span>
+                                                <span class="text-base text-green-600 font-medium">✓</span>
                                             @endif
                                         </div>
-                                        <div class="flex items-center space-x-2 text-xs text-gray-500">
-                                            <span>{{ $accessCode->student->phone }}</span>
+                                        <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-1 space-y-1 sm:space-y-0 text-base text-gray-500">
                                             @if($accessCode->student->course)
-                                                <span class="px-1.5 py-0.5 bg-blue-100 text-blue-800 rounded">{{ $accessCode->student->course->name }}</span>
+                                                <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs w-fit">{{ $accessCode->student->course->name }}</span>
                                             @endif
                                             @if($accessCode->student->batch)
-                                                <span class="px-1.5 py-0.5 bg-green-100 text-green-800 rounded">{{ $accessCode->student->batch->name }}</span>
+                                                <span class="px-2 py-1 bg-green-100 text-green-800 rounded text-xs w-fit">{{ $accessCode->student->batch->name }}</span>
                                             @endif
                                         </div>
                                     </div>
                                 </div>
                                 
                                 <!-- Access Code -->
-                                <div class="flex items-center space-x-2">
-                                    <div class="text-right">
-                                        <div class="text-xs text-gray-500">Code</div>
-                                        <div class="font-mono text-xs font-bold text-gray-900 bg-gray-100 px-2 py-1 rounded">
-                                            {{ $accessCode->access_code }}
-                                        </div>
+                                <div class="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-1">
+                                    <div class="text-base text-gray-500">
+                                        <div class="mb-1 sm:mb-0">{{ $accessCode->student->phone }}</div>
+                                        <div>Code: <span class="font-mono font-bold text-gray-900 bg-gray-100 px-2 py-1 rounded text-base">{{ $accessCode->access_code }}</span></div>
                                     </div>
                                     
                                     <!-- Actions -->
-                                    <div class="flex space-x-1">
+                                    <div class="flex space-x-0.5">
                                         <form method="POST" action="{{ route('partner.exams.regenerate-code', $exam) }}" class="inline">
                                             @csrf
                                             <input type="hidden" name="student_id" value="{{ $accessCode->student_id }}">
                                             <button type="submit" 
-                                                    class="text-xs text-green-600 hover:text-green-800 px-1 py-0.5 rounded hover:bg-green-50"
-                                                    onclick="return confirm('Regenerate code for {{ $accessCode->student->full_name }}?')">
-                                                ↻
+                                                    class="text-green-600 hover:text-green-800 p-2 rounded hover:bg-green-500 transition-colors"
+                                                    onclick="return confirm('Regenerate code for {{ $accessCode->student->full_name }}?')"
+                                                    title="Regenerate Code">
+                                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 1024 1024">
+    <g>
+        <path d="M277.333333 277.333333c0-70.4 57.6-128 128-128h213.333334c70.4 0 128 57.6 128 128h85.333333c0-117.333333-96-213.333333-213.333333-213.333333H405.333333C288 64 192 160 192 277.333333v238.933334h85.333333V277.333333z"></path>
+        <path d="M98.133333 469.333333l136.533334 179.2 136.533333-179.2z"></path>
+        <path d="M746.666667 746.666667c0 70.4-57.6 128-128 128H405.333333c-70.4 0-128-57.6-128-128H192c0 117.333333 96 213.333333 213.333333 213.333333h213.333334c117.333333 0 213.333333-96 213.333333-213.333333V490.666667h-85.333333v256z"></path>
+        <path d="M652.8 554.666667l136.533333-179.2 136.533334 179.2z"></path>
+    </g>
+</svg>
                                             </button>
                                         </form>
                                         
@@ -159,9 +189,16 @@
                                             @method('DELETE')
                                             <input type="hidden" name="student_id" value="{{ $accessCode->student_id }}">
                                             <button type="submit" 
-                                                    class="text-xs text-red-600 hover:text-red-800 px-1 py-0.5 rounded hover:bg-red-50"
-                                                    onclick="return confirm('Remove {{ $accessCode->student->full_name }}?')">
-                                                ×
+                                                    class="text-red-600 hover:text-red-800 p-2 rounded hover:bg-red-500 transition-colors"
+                                                    onclick="return confirm('Remove {{ $accessCode->student->full_name }}?')"
+                                                    title="Remove Assignment">
+                                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                                    <g>
+                                                        <path d="M14,18.5A2.5,2.5,0,0,1,16.5,16a2.6,2.6,0,0,1,.74.12L18,7H6l.93,13.07a1,1,0,0,0,1,.93H11l1-2h2.05A2.73,2.73,0,0,1,14,18.5Z" style="fill: #2ca9bc; stroke-width: 2;"></path>
+                                                        <path d="M17.24,16.11,18,7H6l.93,13.07a1,1,0,0,0,1,.93H11l1-2h2" style="fill: none; stroke: #000000; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path>
+                                                        <path d="M7,7l.81-3.24a1,1,0,0,1,1-.76h6.44a1,1,0,0,1,1,.76L17,7ZM5,7H19m0,11.5A2.5,2.5,0,1,0,16.5,21,2.5,2.5,0,0,0,19,18.5Z" style="fill: none; stroke: #000000; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path>
+                                                    </g>
+                                                </svg>
                                             </button>
                                         </form>
                                     </div>
@@ -184,15 +221,13 @@
             </div>
 
             <!-- Available Students -->
-            <div class="bg-white rounded-lg border border-gray-200">
-                <div class="px-4 py-3 border-b border-gray-200 bg-gray-50">
+            <div class="bg-white rounded border border-gray-200">
+                <div class="px-3 py-2 border-b border-gray-200 bg-gray-50">
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
-                            <div class="flex items-center space-x-2">
-                                <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                <h3 class="text-sm font-semibold text-gray-900">Available Students</h3>
-                            </div>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-5 h-5 bg-blue-500 rounded-full"></div>
+                            <h3 class="text-xs font-semibold text-gray-900">Available Students</h3>
+                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
                                 {{ $availableStudents->count() }}
                             </span>
                         </div>
@@ -205,7 +240,7 @@
                             @if($availableStudents->count() > 0)
                                 <button type="submit" 
                                         form="assign-students-form"
-                                        class="px-3 py-1.5 bg-primaryGreen text-white text-xs font-medium rounded hover:bg-primaryGreen/90 focus:outline-none focus:ring-1 focus:ring-primaryGreen">
+                                        class="px-2 py-1 bg-primaryGreen text-white text-xs font-medium rounded hover:bg-primaryGreen/90 focus:outline-none focus:ring-1 focus:ring-primaryGreen">
                                     Assign Selected
                                 </button>
                             @endif
@@ -214,21 +249,21 @@
                 </div>
                 
                 <!-- Search and Filter Section -->
-                <div id="filters-content" class="px-4 py-3 border-b border-gray-200 bg-gray-50">
+                <div id="filters-content" class="px-3 py-2 border-b border-gray-200 bg-gray-50">
                     <form method="GET" action="{{ route('partner.exams.assign', $exam) }}">
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
                             <!-- Search -->
                             <div class="col-span-2">
                                 <input type="text" name="search" id="search" 
                                        value="{{ request('search') }}"
                                        placeholder="Search students..."
-                                       class="w-full px-2 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primaryGreen focus:border-primaryGreen">
+                                       class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primaryGreen focus:border-primaryGreen">
                             </div>
                             
                             <!-- Course -->
                             <div>
                                 <select name="course_id" id="course_id" 
-                                        class="w-full px-2 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primaryGreen focus:border-primaryGreen">
+                                        class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primaryGreen focus:border-primaryGreen">
                                     <option value="all" {{ request('course_id') == 'all' || !request('course_id') ? 'selected' : '' }}>All Courses</option>
                                     @foreach($courses ?? [] as $course)
                                         <option value="{{ $course->id }}" {{ request('course_id') == $course->id ? 'selected' : '' }}>{{ $course->name }}</option>
@@ -239,7 +274,7 @@
                             <!-- Batch -->
                             <div>
                                 <select name="batch_id" id="batch_id" 
-                                        class="w-full px-2 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primaryGreen focus:border-primaryGreen">
+                                        class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primaryGreen focus:border-primaryGreen">
                                     <option value="all" {{ request('batch_id') == 'all' || !request('batch_id') ? 'selected' : '' }}>All Batches</option>
                                     @foreach($batches ?? [] as $batch)
                                         <option value="{{ $batch->id }}" {{ request('batch_id') == $batch->id ? 'selected' : '' }}>{{ $batch->name }}</option>
@@ -250,7 +285,7 @@
                             <!-- Gender -->
                             <div>
                                 <select name="gender" id="gender" 
-                                        class="w-full px-2 py-1.5 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primaryGreen focus:border-primaryGreen">
+                                        class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primaryGreen focus:border-primaryGreen">
                                     <option value="all" {{ request('gender') == 'all' || !request('gender') ? 'selected' : '' }}>All Gender</option>
                                     <option value="male" {{ request('gender') == 'male' ? 'selected' : '' }}>Male</option>
                                     <option value="female" {{ request('gender') == 'female' ? 'selected' : '' }}>Female</option>
@@ -261,7 +296,7 @@
                             <!-- Clear Filters -->
                             <div>
                                 <a href="{{ route('partner.exams.assign', $exam) }}" 
-                                   class="w-full inline-flex items-center justify-center px-2 py-1.5 border border-gray-300 text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-primaryGreen">
+                                   class="w-full inline-flex items-center justify-center px-2 py-1 border border-gray-300 text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-primaryGreen">
                                     Clear
                                 </a>
                             </div>
@@ -269,22 +304,22 @@
                     </form>
                 </div>
                 
-                <div class="p-4">
+                <div class="p-3">
                     @if($availableStudents->count() > 0)
                         <form id="assign-students-form" method="POST" action="{{ route('partner.exams.assign-students', $exam) }}">
                             @csrf
                             
                             <!-- Bulk Actions -->
-                            <div class="flex items-center justify-between mb-3 p-2 bg-gray-50 rounded border">
-                                <div class="flex items-center space-x-3">
+                            <div class="flex items-center justify-between mb-2 p-1.5 bg-gray-50 rounded border">
+                                <div class="flex items-center space-x-2">
                                     <button type="button" 
                                             onclick="selectAll()"
-                                            class="text-xs text-primaryGreen hover:text-primaryGreen/80 font-medium">
+                                            class="text-xs text-primaryGreen hover:text-primaryGreen/80 font-medium px-1 py-0.5 rounded hover:bg-green-50">
                                         Select All
                                     </button>
                                     <button type="button" 
                                             onclick="deselectAll()"
-                                            class="text-xs text-gray-600 hover:text-gray-800 font-medium">
+                                            class="text-xs text-gray-600 hover:text-gray-800 font-medium px-1 py-0.5 rounded hover:bg-gray-100">
                                         Deselect All
                                     </button>
                                 </div>
@@ -294,23 +329,23 @@
                             </div>
                             
                             <!-- Student List -->
-                            <div class="space-y-1 max-h-80 overflow-y-auto">
+                            <div class="space-y-0.5">
                                 @foreach($availableStudents as $student)
-                                <label class="flex items-center justify-between p-2 border border-gray-200 rounded hover:bg-gray-50 transition-colors cursor-pointer">
-                                    <div class="flex items-center space-x-3 flex-1 min-w-0">
+                                <label class="flex items-center justify-between p-1.5 border border-gray-200 rounded hover:bg-gray-50 transition-colors cursor-pointer">
+                                    <div class="flex items-center space-x-2 flex-1 min-w-0">
                                         <input type="checkbox" 
                                                name="student_ids[]" 
                                                value="{{ $student->id }}"
-                                               class="h-3 w-3 text-primaryGreen focus:ring-primaryGreen border-gray-300 rounded student-checkbox"
+                                               class="h-5 w-5 text-primaryGreen focus:ring-primaryGreen border-gray-400 rounded student-checkbox"
                                                onchange="updateSelectedCount()">
                                         
                                         <div class="flex-shrink-0">
                                             @if($student->photo)
-                                                <img class="h-8 w-8 rounded-full object-cover" 
+                                                <img class="h-10 w-10 rounded-full object-cover" 
                                                      src="{{ Storage::url($student->photo) }}" 
                                                      alt="{{ $student->full_name }}">
                                             @else
-                                                <div class="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center">
+                                                <div class="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center">
                                                     <span class="text-xs font-bold text-white">{{ substr($student->full_name, 0, 1) }}</span>
                                                 </div>
                                             @endif
@@ -318,26 +353,32 @@
                                         
                                         <div class="flex-1 min-w-0">
                                             <div class="flex items-center space-x-2">
-                                                <p class="text-sm font-medium text-gray-900 truncate">{{ $student->full_name }}</p>
+                                                <p class="text-base font-medium text-gray-900 truncate">{{ $student->full_name }}</p>
                                             </div>
-                                            <div class="flex items-center space-x-2 text-xs text-gray-500">
-                                                <span>{{ $student->phone }}</span>
+                                            <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-1 space-y-1 sm:space-y-0 text-base text-gray-500">
                                                 @if($student->course)
-                                                    <span class="px-1.5 py-0.5 bg-blue-100 text-blue-800 rounded">{{ $student->course->name }}</span>
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs w-fit">{{ $student->course->name }}</span>
                                                 @endif
                                                 @if($student->batch)
-                                                    <span class="px-1.5 py-0.5 bg-green-100 text-green-800 rounded">{{ $student->batch->name }}</span>
+                                                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded text-xs w-fit">{{ $student->batch->name }}</span>
                                                 @endif
                                             </div>
                                         </div>
                                     </div>
                                     
-                                    <div class="text-right text-xs text-gray-500">
+                                    <div class="text-right text-base text-gray-500">
+                                        <div class="mb-1 sm:mb-0">
+                                            <p class="font-medium">{{ $student->phone }}</p>
+                                        </div>
                                         @if($student->class_grade)
-                                            <p class="font-medium">{{ $student->class_grade }}</p>
+                                            <div class="mb-1 sm:mb-0">
+                                                <p class="font-medium">{{ $student->class_grade }}</p>
+                                            </div>
                                         @endif
                                         @if($student->school_college)
-                                            <p class="truncate max-w-[150px]">{{ $student->school_college }}</p>
+                                            <div>
+                                                <p class="truncate max-w-[120px]">{{ $student->school_college }}</p>
+                                            </div>
                                         @endif
                                     </div>
                                 </label>
@@ -473,6 +514,19 @@ document.addEventListener('DOMContentLoaded', function() {
             checkbox.checked = false;
         });
         updateSelectedCount();
+    }
+    
+    // Assigned students selection functions
+    function selectAllAssigned() {
+        document.querySelectorAll('input[name="student_ids[]"]').forEach(checkbox => {
+            checkbox.checked = true;
+        });
+    }
+    
+    function deselectAllAssigned() {
+        document.querySelectorAll('input[name="student_ids[]"]').forEach(checkbox => {
+            checkbox.checked = false;
+        });
     }
     
     function updateSelectedCount() {
