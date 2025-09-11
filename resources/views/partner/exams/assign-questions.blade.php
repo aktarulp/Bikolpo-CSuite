@@ -76,6 +76,23 @@
     </div>
 
     <div class="container mx-auto px-4 py-4 space-y-2 relative" style="padding-bottom: 200px;">
+        <!-- Display validation errors if any -->
+        @if ($errors->any())
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 text-red-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                    <h3 class="text-sm font-medium text-red-800">Please fix the following errors:</h3>
+                </div>
+                <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <div class="space-y-6">
 
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
@@ -201,7 +218,6 @@
                                         </button>
                                     </div>
                                 </div>
-                            </form>
                         </div>
                     </div>
                                         
@@ -425,6 +441,53 @@
     
     let draggedElement = null;
     let dropIndicator = null;
+
+    // =========================================================================
+    //  Marks Field Validation
+    // =========================================================================
+    
+    function validateMarksField(input) {
+        const value = parseInt(input.value);
+        const questionId = input.getAttribute('data-question-id');
+        const errorElement = document.querySelector(`.marks-error[data-question-id="${questionId}"]`);
+        
+        // Remove any existing error styling
+        input.classList.remove('border-red-500', 'bg-red-50', 'dark:bg-red-900/20');
+        input.classList.add('border-blue-400', 'bg-gray-100', 'dark:bg-gray-600');
+        
+        // Hide error message
+        if (errorElement) {
+            errorElement.classList.add('hidden');
+        }
+        
+        // Validate marks
+        if (isNaN(value) || value < 1 || value > 100) {
+            // Show error
+            input.classList.remove('border-blue-400', 'bg-gray-100', 'dark:bg-gray-600');
+            input.classList.add('border-red-500', 'bg-red-50', 'dark:bg-red-900/20');
+            
+            if (errorElement) {
+                errorElement.classList.remove('hidden');
+            }
+            
+            return false;
+        }
+        
+        return true;
+    }
+    
+    function validateAllMarksFields() {
+        const marksInputs = document.querySelectorAll('.question-marks');
+        let isValid = true;
+        
+        marksInputs.forEach(input => {
+            if (!validateMarksField(input)) {
+                isValid = false;
+            }
+        });
+        
+        return isValid;
+    }
     
     // =========================================================================
     //  Function Definitions (Defined first to avoid hoisting issues)
@@ -1114,9 +1177,17 @@
                 console.log('Selected questions:', selectedQuestions.length);
                 console.log('Selected question IDs:', selectedQuestions.map(cb => cb.value));
                 
+                // Check if at least one question is selected
                 if (selectedQuestions.length === 0) {
                     e.preventDefault();
                     alert('Please select at least one question before assigning.');
+                    return false;
+                }
+                
+                // Validate all marks fields
+                if (!validateAllMarksFields()) {
+                    e.preventDefault();
+                    alert('Please fix the marks validation errors before submitting.');
                     return false;
                 }
                 
@@ -1127,6 +1198,20 @@
                     console.log(key, value);
                 }
             });
+        }
+
+        // Add click event listener to Assign button for debugging
+        const assignButton = document.querySelector('button[type="submit"]');
+        if (assignButton) {
+            assignButton.addEventListener('click', function(e) {
+                console.log('Assign button clicked');
+                console.log('Button type:', this.type);
+                console.log('Form element:', this.form);
+                console.log('Form action:', this.form?.action);
+                console.log('Form method:', this.form?.method);
+            });
+        } else {
+            console.log('Assign button not found');
         }
 
         // =========================================================================

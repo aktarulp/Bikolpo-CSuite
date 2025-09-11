@@ -123,13 +123,21 @@
                             <!-- Marks Input -->
                             <div class="flex items-center space-x-1 question-marks-container">
                                 <label class="text-xs text-blue-600 dark:text-blue-400 font-semibold">Marks:</label>
-                                <input type="number" 
-                                       name="question_marks[{{ $question->id }}]" 
-                                       value="{{ $assignedQuestionsWithMarks[$question->id] ?? 1 }}" 
-                                       min="0.25" 
-                                       max="99" 
-                                       class="appearance-none question-marks h-6 w-9 border border-blue-400 rounded bg-gray-100 dark:bg-gray-600 dark:border-blue-500 dark:text-white font-semibold text-center text-xs"
-                                       style="-moz-appearance: textfield; -webkit-appearance: none; appearance: none;">
+                                <div class="relative">
+                                    <input type="number" 
+                                           name="question_marks[{{ $question->id }}]" 
+                                           value="{{ $assignedQuestionsWithMarks[$question->id] ?? 1 }}" 
+                                           min="1" 
+                                           max="100" 
+                                           step="1"
+                                           class="appearance-none question-marks h-6 w-12 border border-blue-400 rounded bg-gray-100 dark:bg-gray-600 dark:border-blue-500 dark:text-white font-semibold text-center text-xs focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                           style="-moz-appearance: textfield; -webkit-appearance: none; appearance: none;"
+                                           data-question-id="{{ $question->id }}"
+                                           oninput="validateMarksField(this)">
+                                    <div class="marks-error absolute -bottom-5 left-0 text-xs text-red-500 hidden" data-question-id="{{ $question->id }}">
+                                        Marks must be 1-100
+                                    </div>
+                                </div>
                             </div>
                             
                             <!-- Drag Handle -->
