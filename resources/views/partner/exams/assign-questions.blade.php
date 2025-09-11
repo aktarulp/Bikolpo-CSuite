@@ -286,7 +286,6 @@
 /* Drag and Drop Styles */
 .question-card {
     transition: all 0.3s ease;
-    cursor: grab; /* The entire card is draggable */
 }
 
 .question-card.dragging {
@@ -783,28 +782,39 @@
         
         function attachDragListeners() {
             document.querySelectorAll('.question-card').forEach((card) => {
-                // The entire card is a drop target
+                // Set the card as the drop target
                 card.addEventListener('dragover', handleDragOver);
                 card.addEventListener('drop', handleDrop);
                 card.addEventListener('dragenter', handleDragEnter);
                 card.addEventListener('dragleave', handleDragLeave);
-                
-                // Add dragstart and dragend to the card itself, not the handle
-                card.draggable = true;
-                card.addEventListener('dragstart', handleDragStart);
-                card.addEventListener('dragend', handleDragEnd);
+            });
+            
+            document.querySelectorAll('.drag-handle').forEach((handle) => {
+                // Set the handle as the drag source
+                handle.draggable = true;
+                handle.addEventListener('dragstart', handleDragStart);
+                handle.addEventListener('dragend', handleDragEnd);
             });
         }
         
         function handleDragStart(e) {
-            draggedElement = this;
-            this.classList.add('dragging');
-            e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/plain', this.id); // Set the ID of the dragged element
+            // Find the parent question card and set it as the element to drag
+            const questionCard = this.closest('.question-card');
+            if (questionCard) {
+                draggedElement = questionCard;
+                questionCard.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', 'moving'); // Required for Firefox
+            }
         }
         
         function handleDragEnd(e) {
-            this.classList.remove('dragging');
+            // Find the parent question card and remove the dragging class
+            const questionCard = this.closest('.question-card');
+            if (questionCard) {
+                questionCard.classList.remove('dragging');
+            }
+            
             if (dropIndicator && dropIndicator.parentNode) {
                 dropIndicator.parentNode.removeChild(dropIndicator);
             }
