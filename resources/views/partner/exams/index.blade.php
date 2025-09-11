@@ -218,14 +218,14 @@
                                     
                                     <td class="px-3 py-3 whitespace-nowrap">
                                         <div class="flex items-center gap-2">
-                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
-                                                @if($exam->status === 'published') bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200
-                                                @elseif($exam->status === 'draft') bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200
-                                                @elseif($exam->status === 'ongoing') bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200
-                                                @elseif($exam->status === 'completed') bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200
-                                                @else bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 @endif">
-                                                {{ ucfirst($exam->status) }}
-                                            </span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
+                                            @if($exam->status === 'published') bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200
+                                            @elseif($exam->status === 'draft') bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200
+                                            @elseif($exam->status === 'ongoing') bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200
+                                            @elseif($exam->status === 'completed') bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200
+                                            @else bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 @endif">
+                                            {{ ucfirst($exam->status) }}
+                                        </span>
                                             @if($exam->status === 'draft')
                                                 <a href="{{ route('partner.exams.edit', $exam) }}" 
                                                    class="inline-flex items-center justify-center px-2 py-1 rounded-lg text-xs font-medium bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/50 transition-all duration-200 border border-amber-200 dark:border-amber-700"
@@ -240,12 +240,13 @@
                                     <td class="px-3 py-3 whitespace-nowrap">
                                         <div class="relative" x-data="{ open: false }">
                                             <button @click="open = !open" 
+                                                    x-ref="button"
                                                     class="inline-flex items-center justify-center px-3 py-2 rounded-lg text-xs font-medium bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-all duration-200 border border-blue-200 dark:border-blue-700"
                                                     title="Quick Actions">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                </svg>
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            </svg>
                                                 <svg class="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                                 </svg>
