@@ -3,7 +3,6 @@
 @section('title', 'Assign Questions to Exam')
 
 @section('content')
-<!-- Success/Error Messages -->
 @if (session('success'))
     <div class="fixed top-4 right-4 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 translate-x-0">
         <div class="flex items-center gap-2">
@@ -36,12 +35,10 @@
 @endif
 
 <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
-    <!-- Header Section -->
     <div class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="py-6">
                 <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                    <!-- Title Section -->
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center gap-3 mb-2">
                             <div class="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
@@ -56,7 +53,6 @@
                         </div>
                     </div>
                     
-                    <!-- Action Buttons -->
                     <div class="flex flex-col sm:flex-row gap-3">
                     <a href="{{ route('partner.exams.show', $exam) }}" 
                            class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 transition-colors">
@@ -79,16 +75,13 @@
             </div>
         </div>
 
-        <!-- Main Content -->
-    <div class="container mx-auto px-4 py-4 space-y-2 relative" style="padding-bottom: 200px;">
+        <div class="container mx-auto px-4 py-4 space-y-2 relative" style="padding-bottom: 200px;">
         <div class="space-y-6">
 
-            <!-- Main Form Card -->
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
                 <form id="filterForm" action="{{ route('partner.exams.store-assigned-questions', $exam) }}" method="POST">
                     @csrf
 
-                    <!-- Header Section -->
                     <div class="px-6 py-6 border-b border-gray-200 dark:border-gray-700">
                         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                             <div class="flex-1">
@@ -98,7 +91,6 @@
                         
                     </div>
 
-                    <!-- Limit Warning -->
                     <div id="limit-warning" class="hidden mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg dark:bg-yellow-900/20 dark:border-yellow-800">
                         <div class="flex items-center">
                             <svg class="w-5 h-5 text-yellow-600 dark:text-yellow-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -110,18 +102,15 @@
                         </div>
                     </div>
 
-                    <!-- Action Buttons -->
                     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
                     </div>
                     
 
-                    <!-- Search and Filters Section -->
                     <div class="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-visible backdrop-blur-sm relative z-20">
                         <div class="py-2 px-3">
-                            <form method="GET" id="filterForm" class="space-y-3">
+                            <form method="GET" id="searchFilterForm" class="space-y-3">
                                 <input type="hidden" name="search" id="searchHidden" value="{{ request('search') }}">
                                 
-                                <!-- Filters Grid -->
                                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
                                     <div class="space-y-1">
                                         <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Course</label>
@@ -152,7 +141,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                                    
+                            
                                     <div class="space-y-1">
                                         <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Question Type</label>
                                         <select name="question_type_filter" id="type-filter" class="filter-select w-full rounded-xl p-2 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
@@ -161,8 +150,8 @@
                                                 <option value="{{ $questionType['value'] }}">{{ $questionType['label'] }}</option>
                                             @endforeach
                                         </select>
-                                    </div>
-                                    
+                            </div>
+                            
                                     <div class="space-y-1">
                                         <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Date Created</label>
                                         <select name="date_filter" 
@@ -170,50 +159,50 @@
                                                 class="filter-select w-full rounded-xl p-2 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
                                             <option value="">All Dates</option>
                                         </select>
-                                    </div>
-                                </div>
-                                
-                                <!-- Search Bar with Action Buttons -->
+                        </div>
+                    </div>
+
                                 <div class="flex flex-col lg:flex-row gap-1 py-6">
-                                    <!-- Search Bar -->
                                     <div class="flex-1">
                                         <div class="flex items-center w-full bg-white dark:bg-gray-700 rounded-full shadow-lg p-1 border border-gray-200 dark:border-gray-600 h-10">
                                         
-                                            <!-- Input Field -->
                                             <input 
                                                 type="text" 
-                                                id="search"
+                                                id="searchInput"
                                                 name="search"
                                                 placeholder="Search by course, subject, topic, question, answer or tag" 
                                                 class="flex-grow py-2 px-3 text-gray-800 dark:text-white focus:outline-none placeholder-gray-400 dark:placeholder-gray-500 rounded-full bg-transparent text-sm h-full"
                                                 value="{{ request('search') }}"
                                             />
+                                            
+                                            <div id="searchLoading" class="hidden mr-2">
+                                                <svg class="animate-spin h-4 w-4 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                            </div>
                                                                   
-                                        </div>
-                                      
-                            </div>
-                            
-                        <!-- Action Buttons -->
-                                    <div class="flex gap-2 flex-shrink-0">
+                                                </div>
+                                                
+                                            </div>
+                                            
+                        <div class="flex gap-2 flex-shrink-0">
                                         <button type="button" id="refresh-filters" class="px-4 py-2 h-10 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl transition-all duration-300 flex items-center gap-2 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                                            </svg>
+                                                    </svg>
                                             Refresh
                                         </button>
                                         <button type="button" id="clear-filters" class="px-4 py-2 h-10 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white rounded-xl transition-all duration-300 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
                                             Clear Filters
                                         </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- Assign and Cancel Buttons -->
+                                                </div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        
                     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
                         <div class="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
-                    <!-- Total Questions Counter and Selection Buttons -->
                     <div class="flex items-center gap-3">
                         <div class="flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                             <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -221,11 +210,10 @@
                             </svg>
                             <span class="text-sm font-medium text-blue-700 dark:text-blue-300">
                                 Total Questions: <span id="total-questions-count">{{ $questions->count() }}</span>
-                            </span>
-                        </div>
-                        
+                                            </span>
+                                    </div>
+                                    
                                 
-                                <!-- Selection Buttons -->
                                 <div class="flex gap-2">
                                     <button type="button" id="select-all" class="px-3 py-2 h-8 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg transition-all duration-300 flex items-center gap-1.5 text-xs font-medium shadow-md hover:shadow-lg">
                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -240,33 +228,29 @@
                                     Clear All
                                 </button>
                                 
-                                <!-- Selection Progress Bar -->
                                 <div class="flex items-center space-x-2">
                                     <span class="text-xs font-medium text-gray-600 dark:text-gray-400">Selected:</span>
                                     <div class="flex items-center space-x-2">
-                                        <!-- Progress Bar -->
                                         <div class="w-32 h-4 rounded-full overflow-hidden shadow-inner relative" style="background: linear-gradient(to right, #fecaca, #fca5a5);" data-bg-light="linear-gradient(to right, #fecaca, #fca5a5)" data-bg-dark="linear-gradient(to right, #991b1b, #7f1d1d)">
                                             <div id="progress-bar" class="h-full transition-all duration-500 ease-out shadow-lg" style="width: 0%; background: linear-gradient(to right, #8b5cf6, #ec4899, #ef4444);"></div>
                                             <div class="absolute inset-0 flex items-center justify-center">
                                                 <span id="progress-percentage" class="text-xs font-bold text-gray-800 dark:text-gray-200" style="text-shadow: 1px 1px 2px rgba(255,255,255,0.8);">0%</span>
                                             </div>
-                                        </div>
-                                        <!-- Progress Text -->
+                                            </div>
                                         <span class="text-xs font-medium text-gray-700 dark:text-gray-300">
                                             <span id="selected-count">0</span>/<span id="total-count">{{ $exam->total_questions }}</span>
                                         </span>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Action Buttons -->
+                                        </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
                             <div class="flex flex-col sm:flex-row gap-4">
                                 <a href="{{ route('partner.exams.show', $exam) }}" 
                                    class="inline-flex items-center justify-center px-6 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                    </svg>
+                                            </svg>
                                     Cancel
                                 </a>
                                 @if($questions->count() > 0)
@@ -277,25 +261,26 @@
                                         </svg>
                                         Assign
                                 </button>
-                                @else
+                    @else
                                     <button type="button" 
                                             class="inline-flex items-center justify-center px-8 py-2 text-sm font-medium text-gray-400 bg-gray-200 border border-transparent rounded-lg cursor-not-allowed dark:bg-gray-700 dark:text-gray-500">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
+                            </svg>
                                         No Questions Available
                                 </button>
                                 @endif
                             </div>
-                        </div>
-                    </div>
+                            </div>
+                </div>
 
-                    <!-- Questions List -->
                     <div class="px-4 pt-10 border-t border-gray-200 dark:border-gray-700">
                         <div class="questions-container">
                             @include('partner.exams.partials.questions-grid', ['questions' => $questions, 'assignedQuestions' => $assignedQuestions, 'assignedQuestionsWithMarks' => $assignedQuestionsWithMarks, 'assignedQuestionsWithOrder' => $assignedQuestionsWithOrder])
                         </div>
                     </div>
+                </form>
+            </div>
 @endsection
 
 <style>
@@ -333,11 +318,11 @@
 }
 
 @keyframes pulse {
-    0%, 100% {
+    0%, 100% { 
         opacity: 0.4;
         transform: scale(0.8);
     }
-    50% {
+    50% { 
         opacity: 1;
         transform: scale(1.2);
     }
@@ -348,7 +333,28 @@
     transition: all 0.3s ease;
 }
 
-.question-card {
+/* Search feedback styles */
+.questions-container.searching {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.questions-container.searching::after {
+    content: 'Searching...';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(59, 130, 246, 0.9);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 10;
+}
+
+    .question-card {
     transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -358,7 +364,7 @@
 }
 
 .drag-handle:hover svg {
-    transform: scale(1.1);
+        transform: scale(1.1);
     color: #3b82f6;
 }
 
@@ -376,882 +382,645 @@
 </style>
 
 <script>
-
-// Move the main script here temporarily to test
-document.addEventListener('DOMContentLoaded', function() {
-    // Get filter elements
-    const searchInput = document.getElementById('search');
-    const searchHidden = document.getElementById('searchHidden');
-    const filterForm = document.getElementById('filterForm');
-    const questionsContainer = document.querySelector('.questions-container');
-    
-    const courseFilter = document.getElementById('course-filter');
-    const subjectFilter = document.getElementById('subject-filter');
-    const topicFilter = document.getElementById('topic-filter');
-    const questionTypeFilter = document.getElementById('type-filter');
-    const dateFilter = document.getElementById('date-filter');
-    const clearAllFiltersBtn = document.getElementById('clear-filters');
-    const refreshQuestionsBtn = document.getElementById('refresh-filters');
-    if (!searchInput || !searchHidden || !filterForm) {
-        return;
-    }
-    // Load initial filter data
-    loadFilterData();
-    
-    // Filter change handlers with parent-child relationships
-    if (courseFilter) {
-        courseFilter.addEventListener('change', function() {
-            const courseId = this.value;
-            
-            // Clear dependent filters
-            if (subjectFilter) {
-                subjectFilter.value = '';
-            }
-            if (topicFilter) {
-                topicFilter.value = '';
-            }
-            
-            // Update subjects for selected course
-            updateSubjectsForCourse(courseId);
-            
-            // Trigger search
-            performAjaxSearch();
-        });
-    } else {
-    }
-    
-    if (subjectFilter) {
-        subjectFilter.addEventListener('change', function() {
-            const subjectId = this.value;
-            
-            // Clear dependent filters
-            if (topicFilter) {
-                topicFilter.value = '';
-            }
-            
-            // Update topics for selected subject
-            updateTopicsForSubject(subjectId);
-            
-            // Trigger search
-            performAjaxSearch();
-        });
-    } else {
-    }
-    
-    if (topicFilter) {
-        topicFilter.addEventListener('change', function() {
-            performAjaxSearch();
-        });
-    } else {
-    }
-    
-    if (questionTypeFilter) {
-        questionTypeFilter.addEventListener('change', function() {
-            performAjaxSearch();
-        });
-    } else {
-    }
-    
-    if (dateFilter) {
-        dateFilter.addEventListener('change', function() {
-            performAjaxSearch();
-        });
-        } else {
-    }
-    
-    // Clear all filters button
-    if (clearAllFiltersBtn) {
-        clearAllFiltersBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            clearAllFilters();
-        });
-    }
-    
-    // Select All and Clear All buttons
-    const selectAllBtn = document.getElementById('select-all');
-    const clearAllBtn = document.getElementById('clear-all');
-    
-    if (selectAllBtn) {
-        selectAllBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            selectAllQuestions();
-        });
-    }
-    
-    if (clearAllBtn) {
-        clearAllBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            clearAllQuestions();
-        });
-    }
-    
-    // Function to load courses
-    function loadCourses() {
-        return fetch('{{ route("partner.questions.courses-for-filter") }}', {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            courseFilter.innerHTML = '<option value="">All Courses</option>';
-            
-            if (data.courses && data.courses.length > 0) {
-                data.courses.forEach(course => {
-                    const option = document.createElement('option');
-                    option.value = course.id;
-                    option.textContent = course.name;
-                    
-                    // Check if this course was previously selected
-                    if (course.id == '{{ request("course_filter") ?? "" }}') {
-                        option.selected = true;
-                    }
-                    
-                    courseFilter.appendChild(option);
-                });
-            }
-            
-            // Clear and reset subjects and topics dropdowns when courses change
-            if (subjectFilter) {
-                subjectFilter.innerHTML = '<option value="">All Subjects</option>';
-            }
-            if (topicFilter) {
-                topicFilter.innerHTML = '<option value="">All Topics</option>';
-            }
-        })
-        .catch(error => {
-            courseFilter.innerHTML = '<option value="">Error loading courses</option>';
-        });
-    }
-    
-    // Function to load subjects
-    function loadSubjects(courseId = null) {
-        const url = `{{ route("partner.questions.subjects-for-filter") }}?course_id=${courseId || ''}`;
-        
-        return fetch(url, {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => {
-            return response.json();
-        })
-        .then(data => {
-            subjectFilter.innerHTML = '<option value="">All Subjects</option>';
-            
-            if (data.subjects && data.subjects.length > 0) {
-                data.subjects.forEach(subject => {
-                    const option = document.createElement('option');
-                    option.value = subject.id;
-                    option.textContent = subject.name;
-                    
-                    // Check if this subject was previously selected
-                    if (subject.id == '{{ request("subject_filter") ?? "" }}') {
-                        option.selected = true;
-                    }
-                    
-                    subjectFilter.appendChild(option);
-                });
-            } else {
-            }
-            
-            // Clear and reset topics dropdown when subjects change
-            if (topicFilter) {
-                topicFilter.innerHTML = '<option value="">All Topics</option>';
-            }
-        })
-        .catch(error => {
-            subjectFilter.innerHTML = '<option value="">Error loading subjects</option>';
-        });
-    }
-    
-    // Function to load initial filter data
-    function loadFilterData() {
-        // Clear all filters on reload
-        
-        // Reset all filter dropdowns to default values
-        if (courseFilter) {
-            courseFilter.value = '';
-        }
-        if (subjectFilter) {
-            subjectFilter.value = '';
-        }
-        if (topicFilter) {
-            topicFilter.value = '';
-        }
-        if (questionTypeFilter) {
-            questionTypeFilter.value = '';
-        }
-        
-        // Clear search input
-        if (searchInput) {
-            searchInput.value = '';
-        }
-        
-        // Load courses first
-        loadCourses().then(() => {
-            // Load all subjects and topics (no specific selections)
-            loadSubjects();
-            loadTopics();
-        });
-        
-        // Load question types
-        loadQuestionTypes();
-        
-        // Load available dates
-        loadDates();
-        
-        // Trigger search to show all questions
-        performAjaxSearch();
-    }
-    
-    // Function to load topics
-    function loadTopics(subjectId = null) {
-        const url = `{{ route("partner.questions.topics-for-filter") }}?subject_id=${subjectId || ''}`;
-        
-        return fetch(url, {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => {
-            return response.json();
-        })
-        .then(data => {
-            topicFilter.innerHTML = '<option value="">All Topics</option>';
-            
-            if (data.topics && data.topics.length > 0) {
-                data.topics.forEach(topic => {
-                    const option = document.createElement('option');
-                    option.value = topic.id;
-                    option.textContent = topic.name;
-                    
-                    // Check if this topic was previously selected
-                    if (topic.id == '{{ request("topic_filter") ?? "" }}') {
-                        option.selected = true;
-                    }
-                    
-                    topicFilter.appendChild(option);
-                });
-            } else {
-            }
-        })
-        .catch(error => {
-            topicFilter.innerHTML = '<option value="">Error loading topics</option>';
-        });
-    }
-    
-    // Function to update subjects when course changes
-    function updateSubjectsForCourse(courseId) {
-        loadSubjects(courseId).then(() => {
-            // After subjects are loaded, clear topics
-            if (topicFilter) {
-                topicFilter.innerHTML = '<option value="">All Topics</option>';
-            }
-        });
-    }
-    
-    // Function to update topics when subject changes
-    function updateTopicsForSubject(subjectId) {
-        loadTopics(subjectId);
-    }
-    
-    // Function to clear all filters
-    function clearAllFilters() {
-        // Clear all filter dropdowns
-        if (courseFilter) courseFilter.value = '';
-        if (subjectFilter) subjectFilter.value = '';
-        if (topicFilter) topicFilter.value = '';
-        if (questionTypeFilter) questionTypeFilter.value = '';
-        if (dateFilter) dateFilter.value = '';
-        
-        // Clear search input
-        if (searchInput) searchInput.value = '';
-        
-        // Reset dependent filters
-        if (subjectFilter) {
-            subjectFilter.innerHTML = '<option value="">All Subjects</option>';
-        }
-        if (topicFilter) {
-            topicFilter.innerHTML = '<option value="">All Topics</option>';
-        }
-        
-        // Trigger search to reload all questions
-        performAjaxSearch();
-    }
-    
-    // Function to select all visible questions
-    function selectAllQuestions() {
-        const checkboxes = document.querySelectorAll('.question-checkbox');
-        checkboxes.forEach(checkbox => {
-            checkbox.checked = true;
-            assignQuestionNumber(checkbox);
-        });
-        updateSelectedCount();
-    }
-    
-    // Function to clear all selected questions
-    function clearAllQuestions() {
-        const checkboxes = document.querySelectorAll('.question-checkbox');
-        checkboxes.forEach(checkbox => {
-            checkbox.checked = false;
-            clearQuestionNumber(checkbox);
-        });
-        updateSelectedCount();
-    }
-    
-    // Function to update selected count display
-    function updateSelectedCount() {
-        const checkboxes = document.querySelectorAll('.question-checkbox');
-        const selectedCount = document.querySelectorAll('.question-checkbox:checked').length;
-        const totalCountElement = document.getElementById('total-count');
-        const examQuestionCount = totalCountElement ? parseInt(totalCountElement.textContent) : 0;
-        
-        // Update any selected count display if it exists
-        const selectedCountElement = document.getElementById('selected-count');
-        if (selectedCountElement) {
-            selectedCountElement.textContent = selectedCount;
-        }
-        
-        // Update progress bar
-        const progressBar = document.getElementById('progress-bar');
-        const progressPercentageElement = document.getElementById('progress-percentage');
-        if (progressBar && examQuestionCount > 0) {
-            const progressPercentage = (selectedCount / examQuestionCount) * 100;
-            progressBar.style.width = progressPercentage + '%';
-            
-            // Update percentage indicator
-            if (progressPercentageElement) {
-                progressPercentageElement.textContent = Math.round(progressPercentage) + '%';
-            }
-        } else if (progressPercentageElement) {
-            progressPercentageElement.textContent = '0%';
-        }
-        // Keep the total count as the exam's assigned questions count (already set in HTML)
-    }
-    
-    // Add event listeners to individual checkboxes for count updates
-    function attachCheckboxListeners() {
-        const checkboxes = document.querySelectorAll('.question-checkbox');
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                updateSelectedCount();
-                if (this.checked) {
-                    assignQuestionNumber(this);
-                } else {
-                    clearQuestionNumber(this);
-                }
-            });
-        });
-    }
-    
-    // Function to assign question number in order
-    function assignQuestionNumber(checkbox) {
-        const questionCard = checkbox.closest('.question-card');
-        const questionNumberInput = questionCard.querySelector('.question-number');
-        
-        if (questionNumberInput) {
-            // Get the next available question number
-            const nextNumber = getNextQuestionNumber();
-            questionNumberInput.value = nextNumber;
-            
-            // Scroll to top of questions grid
-            const questionsContainer = document.querySelector('.questions-container');
-            if (questionsContainer) {
-                questionsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-            
-            // Sort questions by question number
-            sortQuestionsByNumber();
-        }
-    }
-    
-    // Function to clear question number when unchecked
-    function clearQuestionNumber(checkbox) {
-        const questionCard = checkbox.closest('.question-card');
-        const questionNumberInput = questionCard.querySelector('.question-number');
-        
-        if (questionNumberInput) {
-            questionNumberInput.value = '';
-            // Re-sort questions after clearing
-            sortQuestionsByNumber();
-        }
-    }
-    
-    // Function to get the next available question number
-    function getNextQuestionNumber() {
-        const questionNumbers = Array.from(document.querySelectorAll('.question-number'))
-            .map(input => parseInt(input.value) || 0)
-            .filter(num => num > 0)
-            .sort((a, b) => a - b);
-        
-        let nextNumber = 1;
-        for (let num of questionNumbers) {
-            if (nextNumber === num) {
-                nextNumber++;
-            } else {
-                break;
-            }
-        }
-        return nextNumber;
-    }
-    
-    // Function to sort questions by question number
-    function sortQuestionsByNumber() {
-        const questionsContainer = document.querySelector('.questions-container');
-        if (!questionsContainer) return;
-        
-        const questionCards = Array.from(questionsContainer.querySelectorAll('.question-card'));
-        
-        questionCards.sort((a, b) => {
-            const aNumber = parseInt(a.querySelector('.question-number')?.value) || 999999;
-            const bNumber = parseInt(b.querySelector('.question-number')?.value) || 999999;
-            return aNumber - bNumber;
-        });
-        
-        // Re-append sorted questions
-        questionCards.forEach(card => {
-            questionsContainer.appendChild(card);
-        });
-    }
-    
-    // Call this function when questions are loaded/updated
-    attachCheckboxListeners();
-    
-    // Drag and Drop Variables
-    let draggedElement = null;
-    let draggedIndex = -1;
-    let dropIndicator = null;
-    
-    // Initialize drag and drop functionality
-    initializeDragAndDrop();
-    
-    // Function to initialize drag and drop
-    function initializeDragAndDrop() {
-        const questionsContainer = document.querySelector('.questions-container');
-        if (!questionsContainer) return;
-        
-        // Create drop indicator element
-        createDropIndicator();
-        
-        // Attach drag listeners to all question cards
-        attachDragListeners();
-    }
-    
-    // Function to create drop indicator
-    function createDropIndicator() {
-        if (dropIndicator) {
-            return; // Already created
-        }
-        
-        dropIndicator = document.createElement('div');
-        dropIndicator.className = 'drop-indicator';
-        dropIndicator.style.cssText = `
-            height: 3px;
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-            border-radius: 2px;
-            margin: 8px 0;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-            position: relative;
-        `;
-        
-        // Add animated dots
-        const dots = document.createElement('div');
-        dots.style.cssText = `
-            position: absolute;
-            top: -2px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 4px;
-        `;
-        
-        for (let i = 0; i < 3; i++) {
-            const dot = document.createElement('div');
-            dot.style.cssText = `
-                width: 6px;
-                height: 6px;
-                background: #3b82f6;
-                border-radius: 50%;
-                animation: pulse 1.5s infinite;
-                animation-delay: ${i * 0.2}s;
-            `;
-            dots.appendChild(dot);
-        }
-        
-        dropIndicator.appendChild(dots);
-    }
-    
-    // Function to attach drag listeners
-    function attachDragListeners() {
-        const questionCards = document.querySelectorAll('.question-card');
-        questionCards.forEach((card, index) => {
-            const dragHandle = card.querySelector('.drag-handle');
-            if (dragHandle) {
-                // Make the entire card draggable
-                card.draggable = true;
-                card.dataset.index = index;
-                
-                // Add drag event listeners
-                card.addEventListener('dragstart', handleDragStart);
-                card.addEventListener('dragend', handleDragEnd);
-                card.addEventListener('dragover', handleDragOver);
-                card.addEventListener('drop', handleDrop);
-                card.addEventListener('dragenter', handleDragEnter);
-                card.addEventListener('dragleave', handleDragLeave);
-                
-                // Add visual feedback to drag handle
-                dragHandle.addEventListener('mousedown', () => {
-                    card.style.cursor = 'grabbing';
-                });
-                
-                dragHandle.addEventListener('mouseup', () => {
-                    card.style.cursor = 'grab';
-                });
-            }
-        });
-    }
-    
-    // Drag start handler
-    function handleDragStart(e) {
-        draggedElement = this;
-        draggedIndex = parseInt(this.dataset.index);
-        
-        // Add dragging class for visual feedback
-        this.classList.add('dragging');
-        this.style.opacity = '0.5';
-        this.style.transform = 'rotate(2deg)';
-        
-        // Set drag effect
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/html', this.outerHTML);
-    }
-    
-    // Drag end handler
-    function handleDragEnd(e) {
-        // Remove dragging class
-        this.classList.remove('dragging');
-        this.style.opacity = '1';
-        this.style.transform = 'rotate(0deg)';
-        this.style.cursor = 'grab';
-        
-        // Hide drop indicator
-        if (dropIndicator && dropIndicator.parentNode) {
-            dropIndicator.parentNode.removeChild(dropIndicator);
-        }
-        
-        // Reset variables
-        draggedElement = null;
-        draggedIndex = -1;
-    }
-    
-    // Drag over handler
-    function handleDragOver(e) {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-        
-        if (this === draggedElement) return;
-        
-        const rect = this.getBoundingClientRect();
-        const midpoint = rect.top + rect.height / 2;
-        const isAfter = e.clientY > midpoint;
-        
-        // Show drop indicator
-        showDropIndicator(this, isAfter);
-    }
-    
-    // Drag enter handler
-    function handleDragEnter(e) {
-        e.preventDefault();
-        this.classList.add('drag-over');
-    }
-    
-    // Drag leave handler
-    function handleDragLeave(e) {
-        this.classList.remove('drag-over');
-    }
-    
-    // Drop handler
-    function handleDrop(e) {
-        e.preventDefault();
-        this.classList.remove('drag-over');
-        
-        if (this === draggedElement) return;
-        
-        const rect = this.getBoundingClientRect();
-        const midpoint = rect.top + rect.height / 2;
-        const isAfter = e.clientY > midpoint;
-        
-        // Move the element
-        moveElement(draggedElement, this, isAfter);
-        
-        // Update question numbers
-        updateQuestionNumbersAfterDrag();
-    }
-    
-    // Function to show drop indicator
-    function showDropIndicator(targetElement, isAfter) {
-        // Ensure drop indicator is created
-        if (!dropIndicator) {
-            createDropIndicator();
-        }
-        
-        if (!dropIndicator) return;
-        
-        // Remove existing indicator
-        if (dropIndicator.parentNode) {
-            dropIndicator.parentNode.removeChild(dropIndicator);
-        }
-        
-        // Insert indicator
-        if (isAfter) {
-            targetElement.parentNode.insertBefore(dropIndicator, targetElement.nextSibling);
-        } else {
-            targetElement.parentNode.insertBefore(dropIndicator, targetElement);
-        }
-        
-        // Show with animation
-        setTimeout(() => {
-            if (dropIndicator) {
-                dropIndicator.style.opacity = '1';
-            }
-        }, 10);
-    }
-    
-    // Function to move element
-    function moveElement(draggedEl, targetEl, isAfter) {
-        const container = draggedEl.parentNode;
-        
-        if (isAfter) {
-            container.insertBefore(draggedEl, targetEl.nextSibling);
-        } else {
-            container.insertBefore(draggedEl, targetEl);
-        }
-        
-        // Update indices
-        updateElementIndices();
-    }
-    
-    // Function to update element indices
-    function updateElementIndices() {
-        const questionCards = document.querySelectorAll('.question-card');
-        questionCards.forEach((card, index) => {
-            card.dataset.index = index;
-        });
-    }
-    
-    // Function to update question numbers after drag
-    function updateQuestionNumbersAfterDrag() {
-        const questionCards = document.querySelectorAll('.question-card');
-        let questionNumber = 1;
-        
-        questionCards.forEach(card => {
-            const checkbox = card.querySelector('.question-checkbox');
-            const questionNumberInput = card.querySelector('.question-number');
-            
-            if (checkbox && checkbox.checked && questionNumberInput) {
-                questionNumberInput.value = questionNumber;
-                questionNumber++;
-            }
-        });
-    }
-    
-    // Function to load available dates
-    function loadDates() {
-        return fetch('{{ route("partner.questions.available-dates") }}', {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.dates && data.dates.length > 0) {
-                const dateFilter = document.getElementById('date-filter');
-                if (dateFilter) {
-                    // Clear existing options except the first one
-                    dateFilter.innerHTML = '<option value="">All Dates</option>';
-                    
-                    // Add date options
-                    data.dates.forEach(date => {
-                        const option = document.createElement('option');
-                        option.value = date;
-                        // Format date as 'dd-Mon-YYYY'
-                        const dateObj = new Date(date);
-                        const day = dateObj.getDate().toString().padStart(2, '0');
-                        const month = dateObj.toLocaleDateString('en-US', { month: 'short' });
-                        const year = dateObj.getFullYear();
-                        option.textContent = `${day}-${month}-${year}`;
-                        dateFilter.appendChild(option);
-                    });
-                }
-            }
-        })
-        .catch(error => {
-            console.error('Error loading dates:', error);
-        });
-    }
-    
-    // Function to load question types
-    function loadQuestionTypes() {
-        return fetch('{{ route("partner.questions.question-types-for-filter") }}', {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            questionTypeFilter.innerHTML = '<option value="">All Types</option>';
-            
-            if (data.questionTypes && data.questionTypes.length > 0) {
-                data.questionTypes.forEach(questionType => {
-                    const option = document.createElement('option');
-                    option.value = questionType.q_type_code;
-                    option.textContent = questionType.q_type_name;
-                    
-                    // Check if this question type was previously selected
-                    if (questionType.q_type_code == '{{ request("question_type_filter") ?? "" }}') {
-                        option.selected = true;
-                    }
-                    
-                    questionTypeFilter.appendChild(option);
-                });
-            }
-        })
-        .catch(error => {
-            questionTypeFilter.innerHTML = '<option value="">Error loading question types</option>';
-        });
-    }
-    
-    // AJAX Search Function
+    // =========================================================================
+    //  AJAX Search and Filter Functions (Defined in the global scope)
+    // =========================================================================
     function performAjaxSearch() {
-        const searchValue = searchInput.value;
-        const currentUrl = new URL(window.location);
-        
-        // Add updating class to questions container
-        if (questionsContainer) {
-            questionsContainer.classList.add('updating');
+        const searchInput = document.getElementById('searchInput');
+        const questionsContainer = document.querySelector('.questions-container');
+        const searchLoading = document.getElementById('searchLoading');
+        const courseFilter = document.getElementById('course-filter');
+        const subjectFilter = document.getElementById('subject-filter');
+        const topicFilter = document.getElementById('topic-filter');
+        const questionTypeFilter = document.getElementById('type-filter');
+        const dateFilter = document.getElementById('date-filter');
+
+        if (!searchInput || !questionsContainer || !searchLoading) {
+            console.error('One or more search elements are missing.');
+            return;
         }
-        
+
+        const searchValue = searchInput.value;
+        const currentUrl = new URL(window.location.href);
+
+        // Add updating class to questions container
+        questionsContainer.classList.add('updating');
+        questionsContainer.classList.add('searching');
+        searchLoading.classList.remove('hidden');
+
         // Update URL parameters
         if (searchValue) {
             currentUrl.searchParams.set('search', searchValue);
         } else {
             currentUrl.searchParams.delete('search');
         }
-        
+
         // Handle filter parameters
-        const courseFilterValue = courseFilter ? courseFilter.value : '';
-        const subjectFilterValue = subjectFilter ? subjectFilter.value : '';
-        const topicFilterValue = topicFilter ? topicFilter.value : '';
-        const questionTypeFilterValue = questionTypeFilter ? questionTypeFilter.value : '';
-        const dateFilterValue = dateFilter ? dateFilter.value : '';
-        
-        if (courseFilterValue) {
-            currentUrl.searchParams.set('course_filter', courseFilterValue);
+        if (courseFilter && courseFilter.value) {
+            currentUrl.searchParams.set('course_filter', courseFilter.value);
         } else {
             currentUrl.searchParams.delete('course_filter');
         }
-        
-        if (subjectFilterValue) {
-            currentUrl.searchParams.set('subject_filter', subjectFilterValue);
+
+        // Repeat for other filters...
+        if (subjectFilter && subjectFilter.value) {
+            currentUrl.searchParams.set('subject_filter', subjectFilter.value);
         } else {
             currentUrl.searchParams.delete('subject_filter');
         }
         
-        if (topicFilterValue) {
-            currentUrl.searchParams.set('topic_filter', topicFilterValue);
+        if (topicFilter && topicFilter.value) {
+            currentUrl.searchParams.set('topic_filter', topicFilter.value);
         } else {
             currentUrl.searchParams.delete('topic_filter');
         }
-        
-        if (questionTypeFilterValue) {
-            currentUrl.searchParams.set('question_type_filter', questionTypeFilterValue);
+
+        if (questionTypeFilter && questionTypeFilter.value) {
+            currentUrl.searchParams.set('question_type_filter', questionTypeFilter.value);
         } else {
             currentUrl.searchParams.delete('question_type_filter');
         }
-        
-        if (dateFilterValue) {
-            currentUrl.searchParams.set('date_filter', dateFilterValue);
+
+        if (dateFilter && dateFilter.value) {
+            currentUrl.searchParams.set('date_filter', dateFilter.value);
         } else {
             currentUrl.searchParams.delete('date_filter');
         }
-        
-        
+
         // Update browser URL without reloading
         window.history.pushState({}, '', currentUrl);
-        
-        // Perform AJAX request
+
         fetch(currentUrl.toString(), {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }
         })
-        .then(response => {
-            return response.json();
-        })
-        .then(data => {
-            // Update questions container
-            if (data.questions_html && questionsContainer) {
-                questionsContainer.innerHTML = data.questions_html;
-                // Reattach checkbox listeners for new questions
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const questionsGrid = doc.querySelector('.questions-container');
+            const emptyState = doc.querySelector('.empty-state');
+
+            if (questionsGrid) {
+                questionsContainer.innerHTML = questionsGrid.innerHTML;
                 attachCheckboxListeners();
-                // Reinitialize drag and drop for new questions
                 initializeDragAndDrop();
+                updateSelectedCount();
+            } else if (emptyState) {
+                questionsContainer.innerHTML = emptyState.outerHTML;
             }
-            
-            // Update total questions count
-            const currentTotalCount = document.getElementById('total-questions-count');
-            if (data.total_count !== undefined && currentTotalCount) {
-                currentTotalCount.textContent = data.total_count;
-            }
-            
-            // Remove updating class
-            if (questionsContainer) {
-                questionsContainer.classList.remove('updating');
-            }
-            
+
+            // Hide loading indicator and remove classes
+            searchLoading.classList.add('hidden');
+            questionsContainer.classList.remove('updating', 'searching');
         })
         .catch(error => {
-            if (questionsContainer) {
-                questionsContainer.classList.remove('updating');
-            }
-            alert('Search failed. Please try again. Error: ' + error.message);
+            searchLoading.classList.add('hidden');
+            questionsContainer.classList.remove('updating', 'searching');
+            console.error('Search failed:', error);
         });
     }
-    
-    // Initialize progress bar theme
-    updateProgressBarTheme();
-    
-    // Watch for theme changes
-    const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                updateProgressBarTheme();
-            }
-        });
-    });
-    
-    // Start observing
-    observer.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ['class']
-    });
-    
-    // Function to update progress bar theme
-    function updateProgressBarTheme() {
-        const progressContainer = document.querySelector('.w-32.h-4.rounded-full');
-        if (progressContainer) {
-            const isDark = document.documentElement.classList.contains('dark');
-            const lightBg = progressContainer.getAttribute('data-bg-light');
-            const darkBg = progressContainer.getAttribute('data-bg-dark');
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const searchLoading = document.getElementById('searchLoading');
+        const questionsContainer = document.querySelector('.questions-container');
+        const courseFilter = document.getElementById('course-filter');
+        const subjectFilter = document.getElementById('subject-filter');
+        const topicFilter = document.getElementById('topic-filter');
+        const questionTypeFilter = document.getElementById('type-filter');
+        const dateFilter = document.getElementById('date-filter');
+        const clearAllFiltersBtn = document.getElementById('clear-filters');
+        const refreshQuestionsBtn = document.getElementById('refresh-filters');
+        const selectAllBtn = document.getElementById('select-all');
+        const clearAllBtn = document.getElementById('clear-all');
+        const form = document.getElementById('filterForm');
+
+        // Drag and Drop Variables
+        let draggedElement = null;
+        let dropIndicator = null;
+
+        // =========================================================================
+        //  Event Listeners
+        // =========================================================================
+
+        // Search input event listener with a debounce
+        if (searchInput) {
+            let searchTimeout;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(performAjaxSearch, 300);
+            });
+        }
+        
+        // Filter change handlers with cascading functionality
+        if (courseFilter) {
+            courseFilter.addEventListener('change', function() {
+                const courseId = this.value;
+                console.log('Course filter changed to:', courseId);
+                
+                // Clear dependent filters
+                if (subjectFilter) subjectFilter.value = '';
+                if (topicFilter) topicFilter.value = '';
+                
+                // Update subjects for selected course
+                updateSubjectsForCourse(courseId);
+                
+                // Trigger search
+                performAjaxSearch();
+            });
+        }
+        
+        if (subjectFilter) {
+            subjectFilter.addEventListener('change', function() {
+                const subjectId = this.value;
+                console.log('Subject filter changed to:', subjectId);
+                
+                // Clear dependent filters
+                if (topicFilter) topicFilter.value = '';
+                
+                // Update topics for selected subject
+                updateTopicsForSubject(subjectId);
+                
+                // Trigger search
+                performAjaxSearch();
+            });
+        }
+        
+        if (topicFilter) {
+            topicFilter.addEventListener('change', function() {
+                console.log('Topic filter changed to:', this.value);
+                performAjaxSearch();
+            });
+        }
+        
+        if (questionTypeFilter) {
+            questionTypeFilter.addEventListener('change', function() {
+                console.log('Question type filter changed to:', this.value);
+                performAjaxSearch();
+            });
+        }
+        
+        if (dateFilter) {
+            dateFilter.addEventListener('change', function() {
+                console.log('Date filter changed to:', this.value);
+                performAjaxSearch();
+            });
+        }
+
+        // Clear all filters button
+        if (clearAllFiltersBtn) {
+            clearAllFiltersBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                clearAllFilters();
+            });
+        }
+        
+        // Refresh button
+        if (refreshQuestionsBtn) {
+            refreshQuestionsBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                performAjaxSearch();
+            });
+        }
+
+        // Select All and Clear All buttons
+        if (selectAllBtn) {
+            selectAllBtn.addEventListener('click', selectAllQuestions);
+        }
+        
+        if (clearAllBtn) {
+            clearAllBtn.addEventListener('click', clearAllQuestions);
+        }
+        
+        // Form submit handler to add question IDs
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const selectedQuestions = Array.from(document.querySelectorAll('.question-checkbox:checked'));
+                if (selectedQuestions.length === 0) {
+                    e.preventDefault();
+                    alert('Please select at least one question before assigning.');
+                    return false;
+                }
+            });
+        }
+
+        // =========================================================================
+        //  Helper Functions
+        // =========================================================================
+
+        function clearAllFilters() {
+            if (searchInput) searchInput.value = '';
+            if (courseFilter) courseFilter.value = '';
+            if (subjectFilter) subjectFilter.value = '';
+            if (topicFilter) topicFilter.value = '';
+            if (questionTypeFilter) questionTypeFilter.value = '';
+            if (dateFilter) dateFilter.value = '';
             
-            if (isDark && darkBg) {
-                progressContainer.style.background = darkBg;
-            } else if (lightBg) {
-                progressContainer.style.background = lightBg;
+            // Update subjects and topics for no course selection
+            updateSubjectsForCourse('');
+            updateTopicsForSubject('');
+            
+            performAjaxSearch();
+        }
+        
+        function selectAllQuestions() {
+            document.querySelectorAll('.question-checkbox').forEach(checkbox => {
+                checkbox.checked = true;
+                assignQuestionNumber(checkbox);
+            });
+            updateSelectedCount();
+        }
+
+        function clearAllQuestions() {
+            document.querySelectorAll('.question-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+                clearQuestionNumber(checkbox);
+            });
+            updateSelectedCount();
+        }
+        
+        function updateSelectedCount() {
+            const selectedCount = document.querySelectorAll('.question-checkbox:checked').length;
+            const totalCountElement = document.getElementById('total-count');
+            const examQuestionCount = totalCountElement ? parseInt(totalCountElement.textContent) : 0;
+            
+            const selectedCountElement = document.getElementById('selected-count');
+            if (selectedCountElement) {
+                selectedCountElement.textContent = selectedCount;
+            }
+            
+            const progressBar = document.getElementById('progress-bar');
+            const progressPercentageElement = document.getElementById('progress-percentage');
+            if (progressBar && examQuestionCount > 0) {
+                const progressPercentage = (selectedCount / examQuestionCount) * 100;
+                progressBar.style.width = progressPercentage + '%';
+                
+                if (progressPercentageElement) {
+                    progressPercentageElement.textContent = Math.round(progressPercentage) + '%';
+                }
+            } else if (progressPercentageElement) {
+                progressPercentageElement.textContent = '0%';
             }
         }
-    }
-});
+        
+        function attachCheckboxListeners() {
+            document.querySelectorAll('.question-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    updateSelectedCount();
+                    if (this.checked) {
+                        assignQuestionNumber(this);
+                    } else {
+                        clearQuestionNumber(this);
+                    }
+                });
+            });
+        }
+
+        function assignQuestionNumber(checkbox) {
+            const questionCard = checkbox.closest('.question-card');
+            const questionNumberInput = questionCard.querySelector('.question-number');
+            if (questionNumberInput) {
+                const nextNumber = getNextQuestionNumber();
+                questionNumberInput.value = nextNumber;
+                sortQuestionsByNumber();
+            }
+        }
+
+        function clearQuestionNumber(checkbox) {
+            const questionCard = checkbox.closest('.question-card');
+            const questionNumberInput = questionCard.querySelector('.question-number');
+            if (questionNumberInput) {
+                questionNumberInput.value = '';
+                sortQuestionsByNumber();
+            }
+        }
+        
+        function getNextQuestionNumber() {
+            const questionNumbers = Array.from(document.querySelectorAll('.question-number'))
+                .map(input => parseInt(input.value) || 0)
+                .filter(num => num > 0)
+                .sort((a, b) => a - b);
+            
+            let nextNumber = 1;
+            for (let num of questionNumbers) {
+                if (nextNumber === num) {
+                    nextNumber++;
+                } else {
+                    break;
+                }
+            }
+            return nextNumber;
+        }
+        
+        function sortQuestionsByNumber() {
+            const questionsContainer = document.querySelector('.questions-container');
+            if (!questionsContainer) return;
+            
+            const questionCards = Array.from(questionsContainer.querySelectorAll('.question-card'));
+            
+            questionCards.sort((a, b) => {
+                const aNumber = parseInt(a.querySelector('.question-number')?.value) || 999999;
+                const bNumber = parseInt(b.querySelector('.question-number')?.value) || 999999;
+                return aNumber - bNumber;
+            });
+            
+            questionCards.forEach(card => {
+                questionsContainer.appendChild(card);
+            });
+        }
+        
+        // =========================================================================
+        //  Drag and Drop Functions
+        // =========================================================================
+
+        function initializeDragAndDrop() {
+            createDropIndicator();
+            attachDragListeners();
+        }
+        
+        function createDropIndicator() {
+            if (dropIndicator) return;
+            
+            dropIndicator = document.createElement('div');
+            dropIndicator.className = 'drop-indicator';
+            dropIndicator.style.cssText = `
+                height: 3px;
+                background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+                border-radius: 2px;
+                margin: 8px 0;
+                opacity: 0;
+                transition: opacity 0.2s ease;
+                position: relative;
+            `;
+            
+            const dots = document.createElement('div');
+            dots.style.cssText = `
+                position: absolute;
+                top: -2px;
+                left: 50%;
+                transform: translateX(-50%);
+                display: flex;
+                gap: 4px;
+            `;
+            
+            for (let i = 0; i < 3; i++) {
+                const dot = document.createElement('div');
+                dot.style.cssText = `
+                    width: 6px;
+                    height: 6px;
+                    background: #3b82f6;
+                    border-radius: 50%;
+                    animation: pulse 1.5s infinite;
+                    animation-delay: ${i * 0.2}s;
+                `;
+                dots.appendChild(dot);
+            }
+            
+            dropIndicator.appendChild(dots);
+        }
+        
+        function attachDragListeners() {
+            document.querySelectorAll('.question-card').forEach((card) => {
+                card.draggable = true;
+                card.addEventListener('dragstart', handleDragStart);
+                card.addEventListener('dragend', handleDragEnd);
+                card.addEventListener('dragover', handleDragOver);
+                card.addEventListener('drop', handleDrop);
+                card.addEventListener('dragenter', handleDragEnter);
+                card.addEventListener('dragleave', handleDragLeave);
+            });
+        }
+        
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.outerHTML);
+        }
+        
+        function handleDragEnd() {
+            this.classList.remove('dragging');
+            if (dropIndicator && dropIndicator.parentNode) {
+                dropIndicator.parentNode.removeChild(dropIndicator);
+            }
+            draggedElement = null;
+        }
+        
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            if (this === draggedElement) return;
+            const isAfter = e.clientY > (this.getBoundingClientRect().top + this.offsetHeight / 2);
+            showDropIndicator(this, isAfter);
+        }
+        
+        function handleDragEnter(e) {
+            e.preventDefault();
+            this.classList.add('drag-over');
+        }
+        
+        function handleDragLeave() {
+            this.classList.remove('drag-over');
+        }
+        
+        function handleDrop(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+            if (this === draggedElement) return;
+            const isAfter = e.clientY > (this.getBoundingClientRect().top + this.offsetHeight / 2);
+            moveElement(draggedElement, this, isAfter);
+            updateQuestionNumbersAfterDrag();
+        }
+        
+        function showDropIndicator(targetElement, isAfter) {
+            if (!dropIndicator) createDropIndicator();
+            if (dropIndicator.parentNode) {
+                dropIndicator.parentNode.removeChild(dropIndicator);
+            }
+            if (isAfter) {
+                targetElement.parentNode.insertBefore(dropIndicator, targetElement.nextSibling);
+            } else {
+                targetElement.parentNode.insertBefore(dropIndicator, targetElement);
+            }
+            setTimeout(() => dropIndicator.style.opacity = '1', 10);
+        }
+        
+        function moveElement(draggedEl, targetEl, isAfter) {
+            const container = draggedEl.parentNode;
+            if (isAfter) {
+                container.insertBefore(draggedEl, targetEl.nextSibling);
+            } else {
+                container.insertBefore(draggedEl, targetEl);
+            }
+        }
+        
+        function updateQuestionNumbersAfterDrag() {
+            const questionCards = document.querySelectorAll('.question-card');
+            let questionNumber = 1;
+            questionCards.forEach(card => {
+                const checkbox = card.querySelector('.question-checkbox');
+                const questionNumberInput = card.querySelector('.question-number');
+                if (checkbox && checkbox.checked && questionNumberInput) {
+                    questionNumberInput.value = questionNumber;
+                    questionNumber++;
+                }
+            });
+        }
+        
+        // =========================================================================
+        //  Initial Setup and Theme Handling
+        // =========================================================================
+        
+        function updateProgressBarTheme() {
+            const progressContainer = document.querySelector('.w-32.h-4.rounded-full');
+            if (progressContainer) {
+                const isDark = document.documentElement.classList.contains('dark');
+                const lightBg = progressContainer.getAttribute('data-bg-light');
+                const darkBg = progressContainer.getAttribute('data-bg-dark');
+                
+                if (isDark && darkBg) {
+                    progressContainer.style.background = darkBg;
+                } else if (lightBg) {
+                    progressContainer.style.background = lightBg;
+                }
+            }
+        }
+
+        // Watch for theme changes
+        const observer = new MutationObserver(mutations => {
+            mutations.forEach(mutation => {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    updateProgressBarTheme();
+                }
+            });
+        });
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+        // Initial setup when the page loads
+        attachCheckboxListeners();
+        updateSelectedCount();
+        updateProgressBarTheme();
+        initializeDragAndDrop();
+        
+        // Initialize cascading dropdowns
+        const initialCourseId = courseFilter ? courseFilter.value : '';
+        const initialSubjectId = subjectFilter ? subjectFilter.value : '';
+        
+        // Update subjects based on initial course selection
+        if (initialCourseId) {
+            updateSubjectsForCourse(initialCourseId);
+        }
+        
+        // Update topics based on initial subject selection
+        if (initialSubjectId) {
+            updateTopicsForSubject(initialSubjectId);
+        }
+        
+        // Function to update subjects based on selected course
+        function updateSubjectsForCourse(courseId) {
+            if (!subjectFilter) return;
+            
+            console.log('updateSubjectsForCourse called with courseId:', courseId);
+            
+            // Show loading state
+            subjectFilter.disabled = true;
+            subjectFilter.innerHTML = '<option value="">Loading subjects...</option>';
+            
+            // Load subjects for the selected course
+            loadSubjects(courseId);
+            
+            // Re-enable the dropdown after loading
+            setTimeout(() => {
+                subjectFilter.disabled = false;
+                console.log('Subjects updated for course:', courseId);
+            }, 500);
+        }
+        
+        // Function to update topics based on selected subject
+        function updateTopicsForSubject(subjectId) {
+            if (!topicFilter) return;
+            
+            console.log('updateTopicsForSubject called with subjectId:', subjectId);
+            
+            // Show loading state
+            topicFilter.disabled = true;
+            topicFilter.innerHTML = '<option value="">Loading topics...</option>';
+            
+            // Load topics for the selected subject
+            loadTopics(subjectId);
+            
+            // Re-enable the dropdown after loading
+            setTimeout(() => {
+                topicFilter.disabled = false;
+                console.log('Topics updated for subject:', subjectId);
+            }, 500);
+        }
+        
+        // Function to load subjects for a specific course
+        function loadSubjects(courseId = null) {
+            return fetch(`{{ route("partner.questions.subjects-for-filter") }}?course_id=${courseId || ''}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                subjectFilter.innerHTML = '<option value="">All Subjects</option>';
+                
+                if (data.subjects && data.subjects.length > 0) {
+                    data.subjects.forEach(subject => {
+                        const option = document.createElement('option');
+                        option.value = subject.id;
+                        option.textContent = subject.name;
+                        
+                        // Check if this subject was previously selected
+                        if (subject.id == '{{ request("subject_filter") }}') {
+                            option.selected = true;
+                        }
+                        
+                        subjectFilter.appendChild(option);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error loading subjects:', error);
+                subjectFilter.innerHTML = '<option value="">Error loading subjects</option>';
+            });
+        }
+        
+        // Function to load topics for a specific subject
+        function loadTopics(subjectId = null) {
+            return fetch(`{{ route("partner.questions.topics-for-filter") }}?subject_id=${subjectId || ''}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                topicFilter.innerHTML = '<option value="">All Topics</option>';
+                
+                if (data.topics && data.topics.length > 0) {
+                    data.topics.forEach(topic => {
+                        const option = document.createElement('option');
+                        option.value = topic.id;
+                        option.textContent = topic.name;
+                        
+                        // Check if this topic was previously selected
+                        if (topic.id == '{{ request("topic_filter") }}') {
+                            option.selected = true;
+                        }
+                        
+                        topicFilter.appendChild(option);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error loading topics:', error);
+                topicFilter.innerHTML = '<option value="">Error loading topics</option>';
+            });
+        }
+
+    });
 </script>

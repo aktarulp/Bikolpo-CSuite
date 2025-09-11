@@ -865,9 +865,11 @@ class ExamController extends Controller
     {
         $partnerId = $this->getPartnerId();
         
-        // Base query for questions
-        $query = \App\Models\Question::where('partner_id', $partnerId)
+        // Eager load relationships for the initial page load
+        $questionsQuery = \App\Models\Question::query()
+            ->where('partner_id', $partnerId)
             ->where('status', 'active')
+            ->with('course', 'subject', 'topic', 'questionType')
             ->whereHas('course', function($query) use ($partnerId) {
                 $query->where('partner_id', $partnerId)
                       ->where('status', 'active')
@@ -877,167 +879,92 @@ class ExamController extends Controller
                             ->orWhere('end_date', '>=', now());
                       });
             });
-        
-        // Apply filters if provided
-        if ($request->filled('course_filter')) {
-            $query->where('course_id', $request->course_filter);
-        }
-        
-        if ($request->filled('subject_filter')) {
-            $query->where('subject_id', $request->subject_filter);
-        }
-        
-        if ($request->filled('topic_filter')) {
-            $query->where('topic_id', $request->topic_filter);
-        }
-        
-        if ($request->filled('question_type_filter')) {
-            $query->where('question_type', $request->question_type_filter);
-        }
-        
-        if ($request->filled('date_filter')) {
-            $dateFilter = $request->date_filter;
-            $startDate = $dateFilter . ' 00:00:00';
-            $endDate = $dateFilter . ' 23:59:59';
-            $query->whereBetween('created_at', [$startDate, $endDate]);
-        }
-        
+
+        // Apply filters based on the request
         if ($request->filled('search')) {
-            $searchTerm = $request->search;
-            $query->where(function($q) use ($searchTerm) {
-                $q->where('question_text', 'like', "%{$searchTerm}%")
-                  ->orWhere('option_a', 'like', "%{$searchTerm}%")
-                  ->orWhere('option_b', 'like', "%{$searchTerm}%")
-                  ->orWhere('option_c', 'like', "%{$searchTerm}%")
-                  ->orWhere('option_d', 'like', "%{$searchTerm}%");
-            });
-        }
-        
-        $questions = $query->with(['topic', 'subject', 'course'])->get();
-            
-        // Debug: Let's also check the raw query
-        $rawQuery = \App\Models\Question::where('partner_id', $partnerId)
-            ->where('status', 'active')
-            ->whereHas('course', function($query) use ($partnerId) {
-                $query->where('partner_id', $partnerId)
-                      ->where('status', 'active')
-                      ->where(function($q) {
-                          $q->whereNull('start_date')
-                            ->orWhere('start_date', '<=', now())
-                            ->orWhere('end_date', '>=', now());
+            $search = $request->input('search');
+            $questionsQuery->where(function ($query) use ($search) {
+                $query->where('question_text', 'like', "%{$search}%")
+                      ->orWhere('option_a', 'like', "%{$search}%")
+                      ->orWhere('option_b', 'like', "%{$search}%")
+                      ->orWhere('option_c', 'like', "%{$search}%")
+                      ->orWhere('option_d', 'like', "%{$search}%")
+                      ->orWhere('explanation', 'like', "%{$search}%")
+                      ->orWhereHas('course', function ($q) use ($search) {
+                          $q->where('name', 'like', "%{$search}%");
+                      })
+                      ->orWhereHas('subject', function ($q) use ($search) {
+                          $q->where('name', 'like', "%{$search}%");
+                      })
+                      ->orWhereHas('topic', function ($q) use ($search) {
+                          $q->where('name', 'like', "%{$search}%");
                       });
-            })
-            ->toSql();
-            
-        \Log::info('Raw SQL Query with Course Filtering', [
-            'sql' => $rawQuery,
-            'partner_id' => $partnerId,
-            'current_date' => now()->toDateString()
-        ]);
-        
-        // Debug: Check if partner_id column exists and what values are in it
-        $allPartnerIds = \App\Models\Question::select('partner_id')->distinct()->pluck('partner_id');
-        \Log::info('All partner IDs in questions table', [
-            'partner_ids' => $allPartnerIds->toArray(),
-            'current_partner_id' => $partnerId,
-            'questions_with_null_partner_id' => \App\Models\Question::whereNull('partner_id')->count()
-        ]);
-            
-        // Debug: Log question count and verify partner filtering
-        \Log::info('Questions loaded for partner', [
-            'partner_id' => $partnerId,
-            'questions_count' => $questions->count(),
-            'question_ids' => $questions->pluck('id')->toArray(),
-            'questions_with_wrong_partner' => $questions->where('partner_id', '!=', $partnerId)->count(),
-            'all_questions_in_db' => \App\Models\Question::count(),
-            'questions_for_this_partner_in_db' => \App\Models\Question::where('partner_id', $partnerId)->count()
-        ]);
-            
-        // Get currently assigned questions for this exam with their marks
-        $assignedQuestions = \App\Models\ExamQuestion::where('exam_id', $exam->id)
-            ->pluck('question_id');
-            
-        // Get assigned questions with marks for display
-        $assignedQuestionsWithMarks = \App\Models\ExamQuestion::where('exam_id', $exam->id)
-            ->pluck('marks', 'question_id');
-            
-        // Get assigned questions with order numbers for display
-        $assignedQuestionsWithOrder = \App\Models\ExamQuestion::where('exam_id', $exam->id)
-            ->pluck('order', 'question_id');
-        
-        // Get courses, subjects and topics for filters (partner-specific)
-        $courses = \App\Models\Course::where('status', 'active')
-            ->where('partner_id', $partnerId)
-            ->get();
-        $subjects = \App\Models\Subject::where('status', 'active')
-            ->where('partner_id', $partnerId)
-            ->get();
-        $topics = \App\Models\Topic::where('status', 'active')
-            ->where('partner_id', $partnerId)
-            ->get();
-            
-        // Get question types from actual questions for this partner
-        $questionTypes = \App\Models\Question::where('partner_id', $partnerId)
-            ->where('status', 'active')
-            ->select('question_type')
-            ->distinct()
-            ->pluck('question_type')
-            ->map(function($type) {
-                return [
-                    'value' => $type,
-                    'label' => match($type) {
-                        'mcq' => 'MCQ',
-                        'descriptive' => 'Descriptive',
-                        'true_false' => 'True/False',
-                        'fill_in_blank' => 'Fill in the Blanks',
-                        default => ucfirst(str_replace('_', ' ', $type))
-                    }
-                ];
             });
-        
-        // Debug: Log the data being passed to the view
-        \Log::info('Assign Questions View Data', [
-            'exam_id' => $exam->id,
-            'questions_count' => $questions->count(),
-            'assigned_questions_count' => $assignedQuestions->count(),
-            'courses_count' => $courses->count(),
-            'subjects_count' => $subjects->count(),
-            'topics_count' => $topics->count(),
-            'question_types_count' => $questionTypes->count(),
-            'question_types' => $questionTypes->toArray(),
-            'partner_id' => $partnerId
-        ]);
-        
-        // Additional debugging - check courses and their status
-        $partnerCourses = \App\Models\Course::where('partner_id', $partnerId)->get();
-        $activeCourses = \App\Models\Course::where('partner_id', $partnerId)
-            ->where('status', 'active')
-            ->where(function($q) {
-                $q->whereNull('start_date')
-                  ->orWhere('start_date', '<=', now())
-                  ->orWhere('end_date', '>=', now());
-            })
-            ->get();
-            
-        \Log::info('Course Filtering Debug Info', [
-            'partner_id' => $partnerId,
-            'total_partner_courses' => $partnerCourses->count(),
-            'active_partner_courses' => $activeCourses->count(),
-            'course_ids' => $activeCourses->pluck('id')->toArray(),
-            'questions_before_course_filter' => \App\Models\Question::where('partner_id', $partnerId)->where('status', 'active')->count(),
-            'questions_after_course_filter' => $questions->count(),
-            'current_date' => now()->toDateString()
-        ]);
-        
-        // Handle AJAX requests
-        if ($request->ajax()) {
-            return response()->json([
-                'questions_html' => view('partner.exams.partials.questions-grid', compact('questions', 'assignedQuestions', 'assignedQuestionsWithMarks', 'assignedQuestionsWithOrder'))->render(),
-                'total_count' => $questions->count()
-            ]);
+        }
+
+        if ($request->filled('course_filter')) {
+            $questionsQuery->where('course_id', $request->input('course_filter'));
+        }
+
+        if ($request->filled('subject_filter')) {
+            $questionsQuery->where('subject_id', $request->input('subject_filter'));
+        }
+
+        if ($request->filled('topic_filter')) {
+            $questionsQuery->where('topic_id', $request->input('topic_filter'));
+        }
+
+        if ($request->filled('question_type_filter')) {
+            $questionsQuery->where('question_type', $request->input('question_type_filter'));
+        }
+
+        if ($request->filled('date_filter')) {
+            $questionsQuery->whereDate('created_at', $request->input('date_filter'));
         }
         
-        return view('partner.exams.assign-questions', compact('exam', 'questions', 'assignedQuestions', 'assignedQuestionsWithMarks', 'assignedQuestionsWithOrder', 'courses', 'subjects', 'topics', 'questionTypes'));
+        // Sort questions by drag and drop order if present
+        $assignedQuestionsWithOrder = $exam->questions->pluck('pivot.order', 'id')->toArray();
+        
+        $questions = $questionsQuery->get();
+        
+        // Check if the request is an AJAX call from the "search as you go" logic
+        if ($request->ajax()) {
+            return view('partner.exams.partials.questions-grid', [
+                'questions' => $questions,
+                'assignedQuestions' => $exam->questions->pluck('id'),
+                'assignedQuestionsWithMarks' => $exam->questions->pluck('pivot.marks', 'id'),
+                'assignedQuestionsWithOrder' => $assignedQuestionsWithOrder,
+            ])->render();
+        }
+        
+        // For the initial page load, return the full view
+        return view('partner.exams.assign-questions', [
+            'exam' => $exam,
+            'questions' => $questions,
+            'assignedQuestions' => $exam->questions->pluck('id'),
+            'assignedQuestionsWithMarks' => $exam->questions->pluck('pivot.marks', 'id'),
+            'assignedQuestionsWithOrder' => $assignedQuestionsWithOrder,
+            'courses' => \App\Models\Course::where('partner_id', $partnerId)->where('status', 'active')->get(),
+            'subjects' => \App\Models\Subject::where('partner_id', $partnerId)->where('status', 'active')->get(),
+            'topics' => \App\Models\Topic::where('partner_id', $partnerId)->where('status', 'active')->get(),
+            'questionTypes' => \App\Models\Question::where('partner_id', $partnerId)
+                ->where('status', 'active')
+                ->select('question_type')
+                ->distinct()
+                ->pluck('question_type')
+                ->map(function($type) {
+                    return [
+                        'value' => $type,
+                        'label' => match($type) {
+                            'mcq' => 'MCQ',
+                            'descriptive' => 'Descriptive',
+                            'true_false' => 'True/False',
+                            'fill_in_blank' => 'Fill in the Blanks',
+                            default => ucfirst(str_replace('_', ' ', $type))
+                        }
+                    ];
+                }),
+        ]);
     }
 
     public function storeAssignedQuestions(Request $request, Exam $exam)
