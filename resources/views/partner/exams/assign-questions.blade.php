@@ -36,7 +36,7 @@
 
 <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
     <div class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="py-6">
                 <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                     <div class="flex-1 min-w-0">
@@ -46,36 +46,36 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                                 </svg>
                             </div>
-                <div>
+                            <div>
                                 <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Assign Questions</h1>
                                 <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ $exam->title }}</p>
-                </div>
+                            </div>
                         </div>
                     </div>
                     
                     <div class="flex flex-col sm:flex-row gap-3">
-                    <a href="{{ route('partner.exams.show', $exam) }}" 
+                        <a href="{{ route('partner.exams.show', $exam) }}" 
                            class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 transition-colors">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                             </svg>
-                        View Exam
-                    </a>
-                    <a href="{{ route('partner.exams.index') }}" 
+                            View Exam
+                        </a>
+                        <a href="{{ route('partner.exams.index') }}" 
                            class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 transition-colors">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                             </svg>
-                        Back
-                    </a>
+                            Back
+                        </a>
                     </div>
-                </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="container mx-auto px-4 py-4 space-y-2 relative" style="padding-bottom: 200px;">
+    <div class="container mx-auto px-4 py-4 space-y-2 relative" style="padding-bottom: 200px;">
         <div class="space-y-6">
 
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
@@ -88,7 +88,6 @@
                                 <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Select Questions</h2>
                             </div>
                         </div>
-                        
                     </div>
 
                     <div id="limit-warning" class="hidden mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg dark:bg-yellow-900/20 dark:border-yellow-800">
@@ -115,32 +114,32 @@
                                     <div class="space-y-1">
                                         <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Course</label>
                                         <select name="course_filter" id="course-filter" class="filter-select w-full rounded-xl p-2 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
-                                    <option value="">All Courses</option>
-                                    @foreach($courses as $course)
-                                        <option value="{{ $course->id }}">{{ $course->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                                            <option value="">All Courses</option>
+                                            @foreach($courses as $course)
+                                                <option value="{{ $course->id }}">{{ $course->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
 
                                     <div class="space-y-1">
                                         <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Subject</label>
                                         <select name="subject_filter" id="subject-filter" class="filter-select w-full rounded-xl p-2 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
-                                    <option value="">All Subjects</option>
-                                    @foreach($subjects as $subject)
-                                        <option value="{{ $subject->id }}">{{ $subject->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                                            <option value="">All Subjects</option>
+                                            @foreach($subjects as $subject)
+                                                <option value="{{ $subject->id }}">{{ $subject->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
 
                                     <div class="space-y-1">
                                         <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Topic</label>
                                         <select name="topic_filter" id="topic-filter" class="filter-select w-full rounded-xl p-2 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
-                                    <option value="">All Topics</option>
-                                    @foreach($topics as $topic)
-                                        <option value="{{ $topic->id }}">{{ $topic->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                                            <option value="">All Topics</option>
+                                            @foreach($topics as $topic)
+                                                <option value="{{ $topic->id }}">{{ $topic->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                             
                                     <div class="space-y-1">
                                         <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Question Type</label>
@@ -150,7 +149,7 @@
                                                 <option value="{{ $questionType['value'] }}">{{ $questionType['label'] }}</option>
                                             @endforeach
                                         </select>
-                            </div>
+                                    </div>
                             
                                     <div class="space-y-1">
                                         <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Date Created</label>
@@ -159,8 +158,8 @@
                                                 class="filter-select w-full rounded-xl p-2 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
                                             <option value="">All Dates</option>
                                         </select>
-                        </div>
-                    </div>
+                                    </div>
+                                </div>
 
                                 <div class="flex flex-col lg:flex-row gap-1 py-6">
                                     <div class="flex-1">
@@ -182,75 +181,75 @@
                                                 </svg>
                                             </div>
                                                                   
-                                                </div>
-                                                
-                                            </div>
+                                        </div>
+                                    </div>
                                             
-                        <div class="flex gap-2 flex-shrink-0">
+                                    <div class="flex gap-2 flex-shrink-0">
                                         <button type="button" id="refresh-filters" class="px-4 py-2 h-10 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl transition-all duration-300 flex items-center gap-2 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                                                    </svg>
+                                            </svg>
                                             Refresh
                                         </button>
                                         <button type="button" id="clear-filters" class="px-4 py-2 h-10 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white rounded-xl transition-all duration-300 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
                                             Clear Filters
                                         </button>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                                         
                     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
                         <div class="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                            <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                            </svg>
-                            <span class="text-sm font-medium text-blue-700 dark:text-blue-300">
-                                Total Questions: <span id="total-questions-count">{{ $questions->count() }}</span>
-                                            </span>
-                                    </div>
+                            <div class="flex items-center gap-3">
+                                <div class="flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                                    <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    <span class="text-sm font-medium text-blue-700 dark:text-blue-300">
+                                        Total Questions: <span id="total-questions-count">{{ $questions->count() }}</span>
+                                    </span>
+                                </div>
                                     
                                 
                                 <div class="flex gap-2">
                                     <button type="button" id="select-all" class="px-3 py-2 h-8 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg transition-all duration-300 flex items-center gap-1.5 text-xs font-medium shadow-md hover:shadow-lg">
                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    Select All
-                                </button>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        Select All
+                                    </button>
                                     <button type="button" id="clear-all" class="px-3 py-2 h-8 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-lg transition-all duration-300 flex items-center gap-1.5 text-xs font-medium shadow-md hover:shadow-lg">
                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                    </svg>
-                                    Clear All
-                                </button>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                        </svg>
+                                        Clear All
+                                    </button>
                                 
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-xs font-medium text-gray-600 dark:text-gray-400">Selected:</span>
                                     <div class="flex items-center space-x-2">
-                                        <div class="w-32 h-4 rounded-full overflow-hidden shadow-inner relative" style="background: linear-gradient(to right, #fecaca, #fca5a5);" data-bg-light="linear-gradient(to right, #fecaca, #fca5a5)" data-bg-dark="linear-gradient(to right, #991b1b, #7f1d1d)">
-                                            <div id="progress-bar" class="h-full transition-all duration-500 ease-out shadow-lg" style="width: 0%; background: linear-gradient(to right, #8b5cf6, #ec4899, #ef4444);"></div>
-                                            <div class="absolute inset-0 flex items-center justify-center">
-                                                <span id="progress-percentage" class="text-xs font-bold text-gray-800 dark:text-gray-200" style="text-shadow: 1px 1px 2px rgba(255,255,255,0.8);">0%</span>
-                                            </div>
-                                            </div>
-                                        <span class="text-xs font-medium text-gray-700 dark:text-gray-300">
-                                            <span id="selected-count">0</span>/<span id="total-count">{{ $exam->total_questions }}</span>
-                                        </span>
-                                        </div>
+                                        <span class="text-xs font-medium text-gray-600 dark:text-gray-400">Selected:</span>
+                                        <div class="flex items-center space-x-2">
+                                            <div class="w-32 h-4 rounded-full overflow-hidden shadow-inner relative" style="background: linear-gradient(to right, #fecaca, #fca5a5);" data-bg-light="linear-gradient(to right, #fecaca, #fca5a5)" data-bg-dark="linear-gradient(to right, #991b1b, #7f1d1d)">
+                                                <div id="progress-bar" class="h-full transition-all duration-500 ease-out shadow-lg" style="width: 0%; background: linear-gradient(to right, #8b5cf6, #ec4899, #ef4444);"></div>
+                                                <div class="absolute inset-0 flex items-center justify-center">
+                                                    <span id="progress-percentage" class="text-xs font-bold text-gray-800 dark:text-gray-200" style="text-shadow: 1px 1px 2px rgba(255,255,255,0.8);">0%</span>
                                                 </div>
                                             </div>
+                                            <span class="text-xs font-medium text-gray-700 dark:text-gray-300">
+                                                <span id="selected-count">0</span>/<span id="total-count">{{ $exam->total_questions }}</span>
+                                            </span>
                                         </div>
-                                        
+                                    </div>
+                                </div>
+                            </div>
+                            
                             <div class="flex flex-col sm:flex-row gap-4">
                                 <a href="{{ route('partner.exams.show', $exam) }}" 
                                    class="inline-flex items-center justify-center px-6 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors">
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                            </svg>
+                                    </svg>
                                     Cancel
                                 </a>
                                 @if($questions->count() > 0)
@@ -260,19 +259,19 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                         </svg>
                                         Assign
-                                </button>
-                    @else
+                                    </button>
+                                @else
                                     <button type="button" 
                                             class="inline-flex items-center justify-center px-8 py-2 text-sm font-medium text-gray-400 bg-gray-200 border border-transparent rounded-lg cursor-not-allowed dark:bg-gray-700 dark:text-gray-500">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
+                                        </svg>
                                         No Questions Available
-                                </button>
+                                    </button>
                                 @endif
                             </div>
-                            </div>
-                </div>
+                        </div>
+                    </div>
 
                     <div class="px-4 pt-10 border-t border-gray-200 dark:border-gray-700">
                         <div class="questions-container">
@@ -287,6 +286,7 @@
 /* Drag and Drop Styles */
 .question-card {
     transition: all 0.3s ease;
+    cursor: grab; /* The entire card is draggable */
 }
 
 .question-card.dragging {
@@ -783,41 +783,28 @@
         
         function attachDragListeners() {
             document.querySelectorAll('.question-card').forEach((card) => {
-                // Make the entire card a drop target
+                // The entire card is a drop target
                 card.addEventListener('dragover', handleDragOver);
                 card.addEventListener('drop', handleDrop);
                 card.addEventListener('dragenter', handleDragEnter);
                 card.addEventListener('dragleave', handleDragLeave);
                 
-                // Only make the drag handle draggable
-                const dragHandle = card.querySelector('.drag-handle');
-                if (dragHandle) {
-                    dragHandle.addEventListener('mousedown', function(e) {
-                        card.draggable = true;
-                        card.style.cursor = 'grabbing';
-                    });
-                    
-                    dragHandle.addEventListener('dragstart', handleDragStart);
-                    dragHandle.addEventListener('dragend', handleDragEnd);
-                }
+                // Add dragstart and dragend to the card itself, not the handle
+                card.draggable = true;
+                card.addEventListener('dragstart', handleDragStart);
+                card.addEventListener('dragend', handleDragEnd);
             });
         }
         
         function handleDragStart(e) {
-            // Find the parent question card
-            const questionCard = e.target.closest('.question-card');
-            draggedElement = questionCard;
-            questionCard.classList.add('dragging');
+            draggedElement = this;
+            this.classList.add('dragging');
             e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/html', questionCard.outerHTML);
+            e.dataTransfer.setData('text/plain', this.id); // Set the ID of the dragged element
         }
         
         function handleDragEnd(e) {
-            // Find the parent question card
-            const questionCard = e.target.closest('.question-card');
-            questionCard.classList.remove('dragging');
-            questionCard.draggable = false;
-            questionCard.style.cursor = '';
+            this.classList.remove('dragging');
             if (dropIndicator && dropIndicator.parentNode) {
                 dropIndicator.parentNode.removeChild(dropIndicator);
             }
@@ -828,7 +815,9 @@
             e.preventDefault();
             e.dataTransfer.dropEffect = 'move';
             if (this === draggedElement) return;
-            const isAfter = e.clientY > (this.getBoundingClientRect().top + this.offsetHeight / 2);
+            
+            const rect = this.getBoundingClientRect();
+            const isAfter = e.clientY > (rect.top + rect.height / 2);
             showDropIndicator(this, isAfter);
         }
         
@@ -844,10 +833,20 @@
         function handleDrop(e) {
             e.preventDefault();
             this.classList.remove('drag-over');
-            if (this === draggedElement) return;
+            
+            if (!draggedElement || this === draggedElement) {
+                return;
+            }
+            
             const isAfter = e.clientY > (this.getBoundingClientRect().top + this.offsetHeight / 2);
+            
             moveElement(draggedElement, this, isAfter);
             updateQuestionNumbersAfterDrag();
+            
+            // Remove drop indicator
+            if (dropIndicator && dropIndicator.parentNode) {
+                dropIndicator.parentNode.removeChild(dropIndicator);
+            }
         }
         
         function showDropIndicator(targetElement, isAfter) {
@@ -865,9 +864,12 @@
         
         function moveElement(draggedEl, targetEl, isAfter) {
             const container = draggedEl.parentNode;
+            
             if (isAfter) {
+                // Insert after the target element
                 container.insertBefore(draggedEl, targetEl.nextSibling);
             } else {
+                // Insert before the target element
                 container.insertBefore(draggedEl, targetEl);
             }
         }
@@ -875,14 +877,18 @@
         function updateQuestionNumbersAfterDrag() {
             const questionCards = document.querySelectorAll('.question-card');
             let questionNumber = 1;
-            questionCards.forEach(card => {
+            
+            questionCards.forEach((card, index) => {
                 const checkbox = card.querySelector('.question-checkbox');
                 const questionNumberInput = card.querySelector('.question-number');
+                
                 if (checkbox && checkbox.checked && questionNumberInput) {
                     questionNumberInput.value = questionNumber;
                     questionNumber++;
                 }
             });
+            
+            updateSelectedCount();
         }
         
         // =========================================================================
@@ -938,8 +944,6 @@
         function updateSubjectsForCourse(courseId) {
             if (!subjectFilter) return;
             
-            console.log('updateSubjectsForCourse called with courseId:', courseId);
-            
             // Show loading state
             subjectFilter.disabled = true;
             subjectFilter.innerHTML = '<option value="">Loading subjects...</option>';
@@ -950,15 +954,12 @@
             // Re-enable the dropdown after loading
             setTimeout(() => {
                 subjectFilter.disabled = false;
-                console.log('Subjects updated for course:', courseId);
             }, 500);
         }
         
         // Function to update topics based on selected subject
         function updateTopicsForSubject(subjectId) {
             if (!topicFilter) return;
-            
-            console.log('updateTopicsForSubject called with subjectId:', subjectId);
             
             // Show loading state
             topicFilter.disabled = true;
@@ -970,7 +971,6 @@
             // Re-enable the dropdown after loading
             setTimeout(() => {
                 topicFilter.disabled = false;
-                console.log('Topics updated for subject:', subjectId);
             }, 500);
         }
         
