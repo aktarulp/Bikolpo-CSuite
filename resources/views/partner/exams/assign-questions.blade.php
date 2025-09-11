@@ -80,61 +80,12 @@
         </div>
 
         <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="container mx-auto px-4 py-4 space-y-2 relative" style="padding-bottom: 200px;">
         <div class="space-y-6">
-            <!-- Exam Info Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-                    <div class="flex items-center gap-3">
-                        <div class="p-3 bg-blue-100 dark:bg-blue-900 rounded-lg">
-                            <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Max Questions</p>
-                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $exam->total_questions }}</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-                    <div class="flex items-center gap-3">
-                        <div class="p-3 bg-green-100 dark:bg-green-900 rounded-lg">
-                            <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Duration</p>
-                            <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $exam->duration }} min</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-                    <div class="flex items-center gap-3">
-                        <div class="p-3 bg-purple-100 dark:bg-purple-900 rounded-lg">
-                            <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Status</p>
-                            <span class="inline-flex items-center px-2 py-1 rounded-full text-sm font-medium
-                                {{ $exam->status === 'published' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 
-                                   ($exam->status === 'draft' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200') }}">
-                                <div class="w-2 h-2 rounded-full mr-2 {{ $exam->status === 'published' ? 'bg-green-500' : ($exam->status === 'draft' ? 'bg-yellow-500' : 'bg-gray-500') }}"></div>
-                            {{ ucfirst($exam->status) }}
-                        </span>
-                        </div>
-                    </div>
-                    </div>
-                </div>
 
             <!-- Main Form Card -->
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
-                <form action="{{ route('partner.exams.store-assigned-questions', $exam) }}" method="POST">
+                <form id="filterForm" action="{{ route('partner.exams.store-assigned-questions', $exam) }}" method="POST">
                     @csrf
 
                     <!-- Header Section -->
@@ -142,49 +93,9 @@
                         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                             <div class="flex-1">
                                 <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Select Questions</h2>
-                                <p class="text-gray-600 dark:text-gray-400">Choose questions to assign to this exam</p>
                                 </div>
-                            
-                            <!-- Progress Display -->
-                            <div class="flex items-center gap-6">
-                                <div class="text-center">
-                                    <div class="text-3xl font-bold text-blue-600 dark:text-blue-400" id="selected-count">0</div>
-                                    <div class="text-sm text-gray-500 dark:text-gray-400">Selected</div>
-                            </div>
-                                <div class="text-gray-400 dark:text-gray-500 text-2xl">/</div>
-                                <div class="text-center">
-                                    <div class="text-3xl font-bold text-gray-700 dark:text-gray-300" id="total-allowed">{{ $exam->total_questions }}</div>
-                                    <div class="text-sm text-gray-500 dark:text-gray-400">Max</div>
-                                </div>
-                            </div>
                         </div>
                         
-                        <!-- Enhanced Progress Bar -->
-                        <div class="mt-6">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Progress</span>
-                                <span class="text-sm font-semibold text-blue-600 dark:text-blue-400" id="progress-percentage">0%</span>
-                            </div>
-                            <div class="relative w-full h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden shadow-inner">
-                                <div class="absolute inset-0 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-600 dark:to-gray-700 rounded-full"></div>
-                                <div class="relative h-full bg-gradient-to-r from-blue-500 via-blue-600 to-indigo-600 rounded-full transition-all duration-700 ease-out shadow-lg" 
-                                     id="progress-bar" 
-                                     style="width: 0%">
-                                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-shimmer"></div>
-                                </div>
-                                <div class="absolute inset-0 flex items-center justify-center">
-                                    <div class="w-2 h-2 bg-white rounded-full shadow-lg opacity-0 transition-opacity duration-300" id="progress-dot"></div>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between mt-3">
-                                <div class="text-sm text-gray-600 dark:text-gray-400">
-                                    <span id="selected-count-display">0</span> of <span id="total-allowed-display">{{ $exam->total_questions }}</span> selected
-                                </div>
-                                <div class="text-sm font-medium text-gray-500 dark:text-gray-400">
-                                    <span id="remaining-count">{{ $exam->total_questions }}</span> remaining
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     <!-- Limit Warning -->
@@ -229,191 +140,120 @@
                         </div>
                     </div>
                     
-                    <!-- Stats Section -->
-                    <div class="py-2 px-4 sm:px-6">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-                            <!-- Total Questions Card -->
-                            <div class="stats-card rounded-xl p-3 sm:p-4">
-                                <div class="flex items-center justify-between">
-                                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-                                        <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                        </svg>
+
+                    <!-- Search and Filters Section -->
+                    <div class="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-visible backdrop-blur-sm relative z-20">
+                        <div class="py-2 px-3">
+                            <form method="GET" id="filterForm" class="space-y-3">
+                                <input type="hidden" name="search" id="searchHidden" value="{{ request('search') }}">
+                                
+                                <!-- Filters Grid -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
+                                    <div class="space-y-1">
+                                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Course</label>
+                                        <select name="course_filter" id="course-filter" class="filter-select w-full rounded-xl p-2 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
+                                            <option value="">All Courses</option>
+                                            @foreach($courses as $course)
+                                                <option value="{{ $course->id }}">{{ $course->name }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
-                                    <div class="text-right">
-                                        <div class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">{{ $questions->count() }}</div>
-                                        <div class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Total Questions</div>
+                                    
+                                    <div class="space-y-1">
+                                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Subject</label>
+                                        <select name="subject_filter" id="subject-filter" class="filter-select w-full rounded-xl p-2 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
+                                            <option value="">All Subjects</option>
+                                            @foreach($subjects as $subject)
+                                                <option value="{{ $subject->id }}">{{ $subject->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="space-y-1">
+                                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Topic</label>
+                                        <select name="topic_filter" id="topic-filter" class="filter-select w-full rounded-xl p-2 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
+                                            <option value="">All Topics</option>
+                                            @foreach($topics as $topic)
+                                                <option value="{{ $topic->id }}">{{ $topic->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="space-y-1">
+                                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Question Type</label>
+                                        <select name="question_type_filter" id="type-filter" class="filter-select w-full rounded-xl p-2 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
+                                            <option value="">All Types</option>
+                                            @foreach($questionTypes as $questionType)
+                                                <option value="{{ $questionType['value'] }}">{{ $questionType['label'] }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="space-y-1">
+                                        <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Date Created</label>
+                                        <select name="date_filter" 
+                                                id="date-filter" 
+                                                class="filter-select w-full rounded-xl p-2 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
+                                            <option value="">All Dates</option>
+                                        </select>
                                     </div>
                                 </div>
-                            </div>
-                            
-                            <!-- MCQ Card -->
-                            <div class="stats-card rounded-xl p-3 sm:p-4">
-                                <div class="flex items-center justify-between">
-                                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-                                        <img src="{{ asset('images/mcq.png') }}" alt="MCQ" class="w-5 h-5 sm:w-6 sm:h-6">
+                                
+                                <!-- Search Bar with Action Buttons -->
+                                <div class="flex flex-col lg:flex-row gap-1 py-2">
+                                    <!-- Search Bar -->
+                                    <div class="flex-1">
+                                        <div class="flex items-center w-full bg-white dark:bg-gray-700 rounded-full shadow-lg p-1 border border-gray-200 dark:border-gray-600 h-10">
+                                        
+                                            <!-- Input Field -->
+                                            <input 
+                                                type="text" 
+                                                id="search"
+                                                name="search"
+                                                placeholder="Search by course, subject, topic, question, answer or tag" 
+                                                class="flex-grow py-2 px-3 text-gray-800 dark:text-white focus:outline-none placeholder-gray-400 dark:placeholder-gray-500 rounded-full bg-transparent text-sm h-full"
+                                                value="{{ request('search') }}"
+                                            />
+                                                                  
+                                        </div>
+                                      
                                     </div>
-                                    <div class="text-right">
-                                        <div class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">{{ $questions->where('question_type', 'mcq')->count() }}</div>
-                                        <div class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">MCQ</div>
+                                    
+                                    <!-- Action Buttons -->
+                                    <div class="flex gap-2 flex-shrink-0">
+                                        <button type="button" id="select-all" class="px-4 py-2 h-10 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl transition-all duration-300 flex items-center gap-2 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                            Select All
+                                        </button>
+                                        <button type="button" id="clear-all" class="px-4 py-2 h-10 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl transition-all duration-300 flex items-center gap-2 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                            Clear All
+                                        </button>
+                                        <button type="button" id="refresh-filters" class="px-4 py-2 h-10 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl transition-all duration-300 flex items-center gap-2 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                            </svg>
+                                            Refresh
+                                        </button>
+                                        <button type="button" id="clear-filters" class="px-4 py-2 h-10 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white rounded-xl transition-all duration-300 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                                            Clear Filters
+                                        </button>
                                     </div>
                                 </div>
-                            </div>
-                            
-                            <!-- Descriptive Card -->
-                            <div class="stats-card rounded-xl p-3 sm:p-4">
-                                <div class="flex items-center justify-between">
-                                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
-                                        <img src="{{ asset('images/cq.png') }}" alt="CQ" class="w-5 h-5 sm:w-6 sm:h-6">
-                                    </div>
-                                    <div class="text-right">
-                                        <div class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">{{ $questions->where('question_type', 'descriptive')->count() }}</div>
-                                        <div class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">Descriptive</div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- True/False Card -->
-                            <div class="stats-card rounded-xl p-3 sm:p-4">
-                                <div class="flex items-center justify-between">
-                                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
-                                        <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                        </svg>
-                                    </div>
-                                    <div class="text-right">
-                                        <div class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">{{ $questions->where('question_type', 'true_false')->count() }}</div>
-                                        <div class="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">True/False</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Search and Filters -->
-                    <div class="px-6 py-6 space-y-6">
-                        <!-- Enhanced Search Bar -->
-                        <div class="search-container">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <svg class="h-5 w-5 search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                                </svg>
-                            </div>
-                            <input type="text" 
-                                   id="search" 
-                                   name="search" 
-                                   placeholder="Search questions by text, course, subject, or topic..."
-                                   class="search-input block w-full"
-                                   autocomplete="off">
-                            <div class="absolute inset-y-0 right-0 flex items-center pr-3">
-                                <button type="button" 
-                                        id="clear-search" 
-                                        class="clear-button">
-                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                    </svg>
-                            </button>
-                                <div id="search-loading" class="search-loading">
-                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Search Results Info -->
-                        <div id="search-results-info" class="search-results-info">
-                            <span id="search-results-count">0</span> questions found
-                        </div>
-
-                        <!-- Filters -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Question Type</label>
-                                <select id="type-filter" class="block w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
-                                    <option value="">All Types</option>
-                                    @foreach($questionTypes as $questionType)
-                                        <option value="{{ $questionType['value'] }}">{{ $questionType['label'] }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Course</label>
-                                <select id="course-filter" class="block w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
-                                    <option value="">All Courses</option>
-                                    @foreach($courses as $course)
-                                        <option value="{{ $course->id }}">{{ $course->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Subject</label>
-                                <select id="subject-filter" class="block w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
-                                    <option value="">All Subjects</option>
-                                    @foreach($subjects as $subject)
-                                        <option value="{{ $subject->id }}">{{ $subject->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Topic</label>
-                                <select id="topic-filter" class="block w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
-                                    <option value="">All Topics</option>
-                                    @foreach($topics as $topic)
-                                        <option value="{{ $topic->id }}">{{ $topic->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            </div>
-                            
-                        <!-- Action Buttons -->
-                        <div class="flex flex-col sm:flex-row gap-3 sm:justify-between">
-                            <div class="flex flex-col sm:flex-row gap-3">
-                                <button type="button" id="select-all" 
-                                        class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-900/30 transition-colors">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    Select All
-                                </button>
-                                <button type="button" id="clear-all" 
-                                        class="inline-flex items-center px-4 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/30 transition-colors">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                    </svg>
-                                    Clear All
-                                </button>
-                            </div>
-                            
-                            <div class="flex flex-col sm:flex-row gap-3">
-                                <button type="button" id="refresh-filters" 
-                                        class="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-900/30 transition-colors">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                                    </svg>
-                                    Refresh
-                                </button>
-                                <button type="button" id="clear-filters" 
-                                        class="inline-flex items-center px-4 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/30 transition-colors">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                    </svg>
-                                    Clear Filters
-                                </button>
-                            </div>
+                            </form>
                         </div>
                     </div>
 
                     <!-- Questions List -->
                     @if($questions->count() > 0)
-                        <div class="px-4 py-4 border-t border-gray-200 dark:border-gray-700">
-                            <div class="grid grid-cols-1 gap-2">
+                        <div class="px-4 pt-10 border-t border-gray-200 dark:border-gray-700">
+                            <div class="questions-container grid grid-cols-1 gap-2">
                             @foreach($questions as $question)
-                                    <div class="question-card group bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-md p-3 hover:shadow-sm transition-all duration-200 draggable-question"
+                                    <div class="question-card border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200 draggable-question"
                                      data-type="{{ $question->question_type }}"
                                      data-course="{{ $question->course->id ?? '' }}"
                                      data-subject="{{ $question->subject->name ?? '' }}"
@@ -421,35 +261,218 @@
                                      data-question-id="{{ $question->id }}"
                                      draggable="true">
                                     
-                                    <!-- Mobile Layout -->
-                                    <div class="block sm:hidden">
-                                        <!-- Top Row: Checkbox, Question Number, Type Badge, Drag Handle -->
-                                        <div class="mobile-controls">
-                                            <div class="mobile-controls-left">
-                                                <input type="checkbox" name="question_ids[]" value="{{ $question->id }}" 
-                                                       class="question-checkbox mobile-touch-target h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded transition-all duration-200"
-                                                       {{ $assignedQuestions->contains($question->id) ? 'checked' : '' }}>
-                                                
-                                                <div class="flex items-center space-x-1 question-number-container">
-                                                    <label class="text-xs text-green-600 dark:text-green-400 font-semibold">Q#:</label>
-                                                    <input type="number" 
-                                                           name="question_numbers[{{ $question->id }}]" 
-                                                           value="{{ $assignedQuestionsWithOrder[$question->id] ?? '' }}" 
-                                                           min="1" 
-                                                           max="999" 
-                                                           class="question-number mobile-input w-12 border border-green-400 rounded bg-gray-100 dark:bg-gray-600 dark:border-green-500 dark:text-white font-semibold text-center"
-                                                           style="-moz-appearance: textfield; -webkit-appearance: none; appearance: none;"
-                                                           readonly>
+                                    <div class="px-4 py-3">
+                                        <!-- Mobile-First Question Layout -->
+                                        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-2">
+                                            <!-- Top Row: Checkbox, Type Badge, ID, and Actions (Mobile) / Left Side (Desktop) -->
+                                            <div class="flex items-center justify-between sm:justify-start gap-3 flex-1 min-w-0">
+                                                <div class="flex items-center gap-2 flex-shrink-0">
+                                                    <!-- Checkbox -->
+                                                    <input type="checkbox" name="question_ids[]" value="{{ $question->id }}" 
+                                                           class="question-checkbox h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded transition-all duration-200"
+                                                           {{ $assignedQuestions->contains($question->id) ? 'checked' : '' }}>
+                                                    
+                                                    <!-- Question Number -->
+                                                    <div class="flex items-center space-x-1 question-number-container">
+                                                        <label class="text-xs text-green-600 dark:text-green-400 font-semibold">Q#:</label>
+                                                        <input type="number" 
+                                                               name="question_numbers[{{ $question->id }}]" 
+                                                               value="{{ $assignedQuestionsWithOrder[$question->id] ?? '' }}" 
+                                                               min="1" 
+                                                               max="999" 
+                                                               class="question-number w-10 border border-green-400 rounded bg-gray-100 dark:bg-gray-600 dark:border-green-500 dark:text-white font-semibold text-center text-xs"
+                                                               style="-moz-appearance: textfield; -webkit-appearance: none; appearance: none;"
+                                                               readonly>
+                                                    </div>
+                                                    
+                                                    <!-- Question Type Icon -->
+                                                    <div class="w-6 h-6 rounded-md flex items-center justify-center
+                                                        {{ $question->question_type === 'mcq' ? 'bg-blue-100 dark:bg-blue-900/30' : ($question->question_type === 'true_false' ? 'bg-orange-100 dark:bg-orange-900/30' : 'bg-green-100 dark:bg-green-900/30') }}">
+                                                        @if($question->question_type === 'mcq')
+                                                            <img src="{{ asset('images/mcq.png') }}" alt="MCQ" class="w-4 h-4">
+                                                        @elseif($question->question_type === 'descriptive')
+                                                            <img src="{{ asset('images/cq.png') }}" alt="CQ" class="w-4 h-4">
+                                                        @else
+                                                            <svg class="w-4 h-4 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                            </svg>
+                                                        @endif
+                                                    </div>
+                                                    
+                                                    <span class="text-xs font-semibold text-gray-500 dark:text-gray-400">#{{ $question->id }}</span>
                                                 </div>
                                                 
-                                                <span class="mobile-badge
-                                                    {{ $question->question_type === 'mcq' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 
-                                                       ($question->question_type === 'descriptive' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200') }}">
-                                                    {{ strtoupper($question->question_type) }}
+                                                <!-- Question Type Badge -->
+                                                <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium flex-shrink-0
+                                                    {{ $question->question_type === 'mcq' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : ($question->question_type === 'true_false' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300' : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300') }}">
+                                                    {{ $question->question_type === 'mcq' ? 'MCQ' : ($question->question_type === 'true_false' ? 'T/F' : 'Descriptive') }}
                                                 </span>
+                                                
+                                                <!-- Question Text with Answer Options - Right after type badge on desktop -->
+                                                <div class="hidden sm:block text-gray-900 dark:text-white text-sm leading-relaxed flex-1 min-w-0">
+                                                    <span class="text-gray-900 dark:text-white">
+                                                        {!! Str::limit(strip_tags($question->question_text, '<b><i><u><strong><em><br><p><span><div>'), 200) !!}
+                                                    </span>
+                                                    
+                                                    @if($question->question_type === 'mcq' && ($question->option_a || $question->option_b || $question->option_c || $question->option_d))
+                                                        <span class="text-gray-500 dark:text-gray-400 ml-2">|</span>
+                                                        <span class="text-gray-600 dark:text-gray-300 text-xs ml-1">
+                                                            @if($question->option_a)
+                                                                <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2
+                                                                    {{ $question->correct_answer === 'A' || $question->correct_answer === 'a' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                                    A
+                                                                </span>
+                                                                <span class="text-xs">{{ Str::limit(strip_tags($question->option_a), 18) }}</span>
+                                                            @endif
+                                                            @if($question->option_b)
+                                                                <span class="text-gray-400 mx-1">•</span>
+                                                                <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2
+                                                                    {{ $question->correct_answer === 'B' || $question->correct_answer === 'b' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                                    B
+                                                                </span>
+                                                                <span class="text-xs">{{ Str::limit(strip_tags($question->option_b), 18) }}</span>
+                                                            @endif
+                                                            @if($question->option_c)
+                                                                <span class="text-gray-400 mx-1">•</span>
+                                                                <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2
+                                                                    {{ $question->correct_answer === 'C' || $question->correct_answer === 'c' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                                    C
+                                                                </span>
+                                                                <span class="text-xs">{{ Str::limit(strip_tags($question->option_c), 18) }}</span>
+                                                            @endif
+                                                            @if($question->option_d)
+                                                                <span class="text-gray-400 mx-1">•</span>
+                                                                <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2
+                                                                    {{ $question->correct_answer === 'D' || $question->correct_answer === 'd' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                                    D
+                                                                </span>
+                                                                <span class="text-xs">{{ Str::limit(strip_tags($question->option_d), 18) }}</span>
+                                                            @endif
+                                                        </span>
+                                                    @elseif($question->question_type === 'true_false')
+                                                        <span class="text-gray-500 dark:text-gray-400 ml-2">|</span>
+                                                        <span class="text-gray-600 dark:text-gray-300 text-xs ml-1">
+                                                            <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2
+                                                                {{ $question->correct_answer === 'A' || $question->correct_answer === 'a' || $question->correct_answer === 'true' || $question->correct_answer === 'True' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                                A
+                                                            </span>
+                                                            <span class="text-xs">{{ $question->option_a ? Str::limit(strip_tags($question->option_a), 28) : 'True' }}</span>
+                                                            <span class="text-gray-400 mx-1">•</span>
+                                                            <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2
+                                                                {{ $question->correct_answer === 'B' || $question->correct_answer === 'b' || $question->correct_answer === 'false' || $question->correct_answer === 'False' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                                B
+                                                            </span>
+                                                            <span class="text-xs">{{ $question->option_b ? Str::limit(strip_tags($question->option_b), 28) : 'False' }}</span>
+                                                        </span>
+                                                    @elseif($question->question_type === 'fill_in_blank' && $question->option_a)
+                                                        <span class="text-gray-500 dark:text-gray-400 ml-2">|</span>
+                                                        <span class="text-gray-600 dark:text-gray-300 text-xs ml-1">
+                                                            <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2 bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400">
+                                                                ✓
+                                                            </span>
+                                                            <span class="text-xs">{{ Str::limit(strip_tags($question->option_a), 38) }}</span>
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                                
+                                                <!-- Marks Input and Drag Handle - Mobile -->
+                                                <div class="flex items-center gap-2 sm:hidden">
+                                                    <!-- Marks Input -->
+                                                    <div class="flex items-center space-x-1 question-marks-container">
+                                                        <label class="text-xs text-blue-600 dark:text-blue-400 font-semibold">Marks:</label>
+                                                        <input type="number" 
+                                                               name="question_marks[{{ $question->id }}]" 
+                                                               value="{{ $assignedQuestionsWithMarks[$question->id] ?? 1 }}" 
+                                                               min="1" 
+                                                               max="100" 
+                                                               class="question-marks w-12 border border-blue-400 rounded bg-gray-100 dark:bg-gray-600 dark:border-blue-500 dark:text-white font-semibold text-center text-xs"
+                                                               style="-moz-appearance: textfield; -webkit-appearance: none; appearance: none;">
+                                                    </div>
+                                                    
+                                                    <!-- Drag Handle -->
+                                                    <div class="drag-handle text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-move p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path>
+                                                        </svg>
+                                                    </div>
+                                                </div>
                                             </div>
                                             
-                                            <div class="mobile-controls-right">
+                                            <!-- Question Text - Full Width on Mobile -->
+                                            <div class="w-full sm:hidden">
+                                                <div class="text-gray-900 dark:text-white text-sm leading-relaxed mb-2">
+                                                    {!! Str::limit(strip_tags($question->question_text, '<b><i><u><strong><em><br><p><span><div>'), 200) !!}
+                                                </div>
+                                                
+                                                <!-- Answer Options - Stacked on Mobile -->
+                                                @if($question->question_type === 'mcq' && ($question->option_a || $question->option_b || $question->option_c || $question->option_d))
+                                                    <div class="flex flex-wrap gap-2 text-xs">
+                                                        @if($question->option_a)
+                                                            <div class="flex items-center gap-1">
+                                                                <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border-2
+                                                                    {{ $question->correct_answer === 'A' || $question->correct_answer === 'a' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                                    A
+                                                                </span>
+                                                                <span class="text-gray-600 dark:text-gray-300">{{ Str::limit(strip_tags($question->option_a), 25) }}</span>
+                                                            </div>
+                                                        @endif
+                                                        @if($question->option_b)
+                                                            <div class="flex items-center gap-1">
+                                                                <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border-2
+                                                                    {{ $question->correct_answer === 'B' || $question->correct_answer === 'b' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                                    B
+                                                                </span>
+                                                                <span class="text-gray-600 dark:text-gray-300">{{ Str::limit(strip_tags($question->option_b), 25) }}</span>
+                                                            </div>
+                                                        @endif
+                                                        @if($question->option_c)
+                                                            <div class="flex items-center gap-1">
+                                                                <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border-2
+                                                                    {{ $question->correct_answer === 'C' || $question->correct_answer === 'c' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                                    C
+                                                                </span>
+                                                                <span class="text-gray-600 dark:text-gray-300">{{ Str::limit(strip_tags($question->option_c), 25) }}</span>
+                                                            </div>
+                                                        @endif
+                                                        @if($question->option_d)
+                                                            <div class="flex items-center gap-1">
+                                                                <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border-2
+                                                                    {{ $question->correct_answer === 'D' || $question->correct_answer === 'd' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                                    D
+                                                                </span>
+                                                                <span class="text-gray-600 dark:text-gray-300">{{ Str::limit(strip_tags($question->option_d), 25) }}</span>
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                @elseif($question->question_type === 'true_false')
+                                                    <div class="flex flex-wrap gap-3 text-xs">
+                                                        <div class="flex items-center gap-1">
+                                                            <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border-2
+                                                                {{ $question->correct_answer === 'A' || $question->correct_answer === 'a' || $question->correct_answer === 'true' || $question->correct_answer === 'True' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                                A
+                                                            </span>
+                                                            <span class="text-gray-600 dark:text-gray-300">{{ $question->option_a ? Str::limit(strip_tags($question->option_a), 30) : 'True' }}</span>
+                                                        </div>
+                                                        <div class="flex items-center gap-1">
+                                                            <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border-2
+                                                                {{ $question->correct_answer === 'B' || $question->correct_answer === 'b' || $question->correct_answer === 'false' || $question->correct_answer === 'False' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                                B
+                                                            </span>
+                                                            <span class="text-gray-600 dark:text-gray-300">{{ $question->option_b ? Str::limit(strip_tags($question->option_b), 30) : 'False' }}</span>
+                                                        </div>
+                                                    </div>
+                                                @elseif($question->question_type === 'fill_in_blank' && $question->option_a)
+                                                    <div class="flex items-center gap-1 text-xs">
+                                                        <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border-2 bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400">
+                                                            ✓
+                                                        </span>
+                                                        <span class="text-gray-600 dark:text-gray-300">{{ Str::limit(strip_tags($question->option_a), 40) }}</span>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            
+                                            <!-- Marks Input and Drag Handle - Desktop -->
+                                            <div class="hidden sm:flex items-center gap-2 flex-shrink-0 ml-3">
                                                 <!-- Marks Input -->
                                                 <div class="flex items-center space-x-1 question-marks-container">
                                                     <label class="text-xs text-blue-600 dark:text-blue-400 font-semibold">Marks:</label>
@@ -458,12 +481,12 @@
                                                            value="{{ $assignedQuestionsWithMarks[$question->id] ?? 1 }}" 
                                                            min="1" 
                                                            max="100" 
-                                                           class="question-marks mobile-input w-14 border border-blue-400 rounded bg-gray-100 dark:bg-gray-600 dark:border-blue-500 dark:text-white font-semibold text-center"
+                                                           class="question-marks w-12 border border-blue-400 rounded bg-gray-100 dark:bg-gray-600 dark:border-blue-500 dark:text-white font-semibold text-center text-xs"
                                                            style="-moz-appearance: textfield; -webkit-appearance: none; appearance: none;">
                                                 </div>
                                                 
                                                 <!-- Drag Handle -->
-                                                <div class="drag-handle mobile-drag-handle mobile-touch-target text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-move transition-colors">
+                                                <div class="drag-handle text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-move p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path>
                                                     </svg>
@@ -471,142 +494,32 @@
                                             </div>
                                         </div>
                                         
-                                        <!-- Question Text -->
-                                        <div class="mb-3">
-                                            <div class="mobile-question-text text-gray-900 dark:text-white font-medium">
-                                                {{ Str::limit($question->question_text, 120) }}
+                                        <!-- Metadata Row -->
+                                        <div class="flex flex-wrap items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+                                            <div class="flex items-center gap-1">
+                                                <svg class="w-3 h-3 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                                </svg>
+                                                <span class="font-medium">{{ $question->course->name ?? 'N/A' }}</span>
                                             </div>
-                                        </div>
-                                        
-                                        <!-- Answer Options (Mobile) -->
-                                        @if($question->question_type === 'mcq' || $question->question_type === 'true_false')
-                                            <div class="mb-3">
-                                                <div class="text-xs text-gray-600 dark:text-gray-400 font-medium mb-2">Answer Options:</div>
-                                                <div class="mobile-answer-grid">
-                                                    @if($question->option_a)
-                                                        <div class="mobile-answer-option">
-                                                            <div class="flex items-center space-x-2">
-                                                                <span class="compact-answer-option bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 font-bold rounded-full flex items-center justify-center {{ $question->correct_answer === 'a' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' : '' }}">{{ $question->correct_answer === 'a' ? '✓' : 'A' }}</span>
-                                                                <span class="text-xs text-gray-700 dark:text-gray-300 flex-1">{{ Str::limit($question->option_a, 40) }}</span>
-                                                            </div>
-                                                        </div>
-                                                    @endif
-                                                    @if($question->option_b)
-                                                        <div class="mobile-answer-option">
-                                                            <div class="flex items-center space-x-2">
-                                                                <span class="compact-answer-option bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 font-bold rounded-full flex items-center justify-center {{ $question->correct_answer === 'b' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' : '' }}">{{ $question->correct_answer === 'b' ? '✓' : 'B' }}</span>
-                                                                <span class="text-xs text-gray-700 dark:text-gray-300 flex-1">{{ Str::limit($question->option_b, 40) }}</span>
-                                                            </div>
-                                                        </div>
-                                                    @endif
-                                                    @if($question->option_c)
-                                                        <div class="mobile-answer-option">
-                                                            <div class="flex items-center space-x-2">
-                                                                <span class="compact-answer-option bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 font-bold rounded-full flex items-center justify-center {{ $question->correct_answer === 'c' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' : '' }}">{{ $question->correct_answer === 'c' ? '✓' : 'C' }}</span>
-                                                                <span class="text-xs text-gray-700 dark:text-gray-300 flex-1">{{ Str::limit($question->option_c, 40) }}</span>
-                                                            </div>
-                                                        </div>
-                                                    @endif
-                                                    @if($question->option_d)
-                                                        <div class="mobile-answer-option">
-                                                            <div class="flex items-center space-x-2">
-                                                                <span class="compact-answer-option bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 font-bold rounded-full flex items-center justify-center {{ $question->correct_answer === 'd' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' : '' }}">{{ $question->correct_answer === 'd' ? '✓' : 'D' }}</span>
-                                                                <span class="text-xs text-gray-700 dark:text-gray-300 flex-1">{{ Str::limit($question->option_d, 40) }}</span>
-                                                            </div>
-                                                        </div>
-                                                    @endif
-                                                </div>
+                                            <div class="flex items-center gap-1">
+                                                <svg class="w-3 h-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                                </svg>
+                                                <span class="font-medium">{{ $question->subject->name ?? 'N/A' }}</span>
                                             </div>
-                                        @endif
-                                        
-                                        <!-- Tags Row -->
-                                        <div class="mobile-tags">
-                                            <span class="mobile-tag">
-                                                {{ $question->course->name ?? 'N/A' }}
-                                            </span>
-                                            <span class="mobile-tag">
-                                                {{ $question->subject->name ?? 'N/A' }}
-                                            </span>
-                                            <span class="mobile-tag">
-                                                {{ $question->topic->name ?? 'N/A' }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Desktop Layout -->
-                                    <div class="hidden sm:flex items-center gap-3">
-                                        <!-- Checkbox -->
-                                        <input type="checkbox" name="question_ids[]" value="{{ $question->id }}" 
-                                               class="question-checkbox h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded transition-all duration-200"
-                                               {{ $assignedQuestions->contains($question->id) ? 'checked' : '' }}>
-                                        
-                                        <!-- Question Number -->
-                                        <div class="flex items-center space-x-1 question-number-container">
-                                            <label class="text-xs text-green-600 dark:text-green-400 font-semibold">Q#:</label>
-                                            <input type="number" 
-                                                   name="question_numbers[{{ $question->id }}]" 
-                                                   value="{{ $assignedQuestionsWithOrder[$question->id] ?? '' }}" 
-                                                   min="1" 
-                                                   max="999" 
-                                                   class="question-number slim-input w-10 border border-green-400 rounded bg-gray-100 dark:bg-gray-600 dark:border-green-500 dark:text-white font-semibold text-center"
-                                                   style="-moz-appearance: textfield; -webkit-appearance: none; appearance: none;"
-                                                   readonly>
-                                        </div>
-                                        
-                                        <!-- Question Type Badge -->
-                                        <span class="compact-badge
-                                            {{ $question->question_type === 'mcq' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 
-                                               ($question->question_type === 'descriptive' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200') }}">
-                                            {{ strtoupper($question->question_type) }}
-                                        </span>
-                                        
-                                        <!-- Question Text -->
-                                        <div class="flex-1 min-w-0">
-                                            <div class="text-sm text-gray-900 dark:text-white font-medium question-text-slim">
-                                                {{ Str::limit($question->question_text, 80) }}
+                                            <div class="flex items-center gap-1">
+                                                <svg class="w-3 h-3 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                                </svg>
+                                                <span class="font-medium">{{ $question->topic->name ?? 'N/A' }}</span>
                                             </div>
-                                            <div class="tags-slim mt-1">
-                                                {{ $question->course->name ?? 'N/A' }} • {{ $question->subject->name ?? 'N/A' }} • {{ $question->topic->name ?? 'N/A' }}
+                                            <div class="flex items-center gap-1">
+                                                <svg class="w-3 h-3 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                                <span class="font-medium">{{ $question->created_at->format('M d, Y') }}</span>
                                             </div>
-                                        </div>
-                                        
-                                        <!-- Answer Options (Compact) -->
-                                        @if($question->question_type === 'mcq' || $question->question_type === 'true_false')
-                                            <div class="flex-shrink-0">
-                                                <div class="flex items-center gap-1">
-                                                    @if($question->option_a)
-                                                        <span class="compact-answer-option bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 font-bold rounded-full flex items-center justify-center {{ $question->correct_answer === 'a' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' : '' }}">{{ $question->correct_answer === 'a' ? '✓' : 'A' }}</span>
-                                                    @endif
-                                                    @if($question->option_b)
-                                                        <span class="compact-answer-option bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 font-bold rounded-full flex items-center justify-center {{ $question->correct_answer === 'b' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' : '' }}">{{ $question->correct_answer === 'b' ? '✓' : 'B' }}</span>
-                                                    @endif
-                                                    @if($question->option_c)
-                                                        <span class="compact-answer-option bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 font-bold rounded-full flex items-center justify-center {{ $question->correct_answer === 'c' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' : '' }}">{{ $question->correct_answer === 'c' ? '✓' : 'C' }}</span>
-                                                    @endif
-                                                    @if($question->option_d)
-                                                        <span class="compact-answer-option bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 font-bold rounded-full flex items-center justify-center {{ $question->correct_answer === 'd' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' : '' }}">{{ $question->correct_answer === 'd' ? '✓' : 'D' }}</span>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        @endif
-                                        
-                                        <!-- Marks Input -->
-                                        <div class="flex items-center space-x-1 question-marks-container">
-                                            <label class="text-xs text-blue-600 dark:text-blue-400 font-semibold">Marks:</label>
-                                            <input type="number" 
-                                                   name="question_marks[{{ $question->id }}]" 
-                                                   value="{{ $assignedQuestionsWithMarks[$question->id] ?? 1 }}" 
-                                                   min="1" 
-                                                   max="100" 
-                                                   class="question-marks slim-input w-12 border border-blue-400 rounded bg-gray-100 dark:bg-gray-600 dark:border-blue-500 dark:text-white font-semibold text-center"
-                                                   style="-moz-appearance: textfield; -webkit-appearance: none; appearance: none;">
-                                        </div>
-                                        
-                                        <!-- Drag Handle -->
-                                        <div class="drag-handle text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-move p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path>
-                                            </svg>
                                         </div>
                                     </div>
                                 </div>
@@ -856,35 +769,7 @@
     transition: all 0.3s ease-in-out;
 }
 
-/* Selection Counter Styling */
-#selected-count {
-    font-weight: 700;
-    transition: color 0.3s ease;
-}
 
-#total-allowed {
-    font-weight: 600;
-    color: #6b7280;
-}
-
-/* Remaining Count Styling */
-#remaining-count {
-    transition: all 0.3s ease;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 12px;
-    background-color: rgba(34, 197, 94, 0.1);
-}
-
-#remaining-count.warning {
-    background-color: rgba(245, 158, 11, 0.1);
-    animation: pulse-warning 2s infinite;
-}
-
-#remaining-count.danger {
-    background-color: rgba(239, 68, 68, 0.1);
-    animation: pulse-danger 1.5s infinite;
-}
 
 /* Warning Banner Styling */
 #limit-warning {
@@ -1083,146 +968,6 @@
     box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
 }
 
-/* Enhanced Progress Bar Styling */
-.selection-progress {
-    height: 4px;
-    background-color: #e5e7eb;
-    border-radius: 2px;
-    overflow: hidden;
-    margin-top: 8px;
-}
-
-.selection-progress-bar {
-    height: 100%;
-    background: linear-gradient(90deg, #10b981, #3b82f6);
-    border-radius: 2px;
-    transition: width 0.3s ease;
-}
-
-.selection-progress-bar.warning {
-    background: linear-gradient(90deg, #f59e0b, #f97316);
-}
-
-.selection-progress-bar.danger {
-    background: linear-gradient(90deg, #ef4444, #dc2626);
-    animation: pulse-progress 1s infinite;
-}
-
-/* Enhanced Progress Bar Container */
-.progress-container {
-    position: relative;
-    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-    border-radius: 12px;
-    padding: 8px;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.dark .progress-container {
-    background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
-}
-
-#progress-bar {
-    position: relative;
-    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 50%, #7c3aed 100%);
-    border-radius: 8px;
-    transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
-    overflow: hidden;
-}
-
-#progress-bar::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-    animation: shimmer 2s infinite;
-}
-
-@keyframes shimmer {
-    0% { left: -100%; }
-    100% { left: 100%; }
-}
-
-#progress-dot {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-}
-
-#progress-dot.show {
-    opacity: 1;
-    transform: scale(1.2);
-}
-
-.progress-percentage {
-    font-weight: 600;
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.dark .progress-percentage {
-    background: linear-gradient(135deg, #60a5fa, #3b82f6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-/* Progress Bar States */
-.progress-bar-warning {
-    background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
-    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
-}
-
-.progress-bar-danger {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%);
-    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
-}
-
-.progress-bar-success {
-    background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
-    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-}
-
-/* Progress Bar Animations */
-@keyframes progressPulse {
-    0%, 100% { 
-        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
-    }
-    50% { 
-        box-shadow: 0 4px 16px rgba(59, 130, 246, 0.5);
-    }
-}
-
-.progress-bar-pulse {
-    animation: progressPulse 2s infinite;
-}
-
-/* Progress Bar Glow Effect */
-.progress-glow {
-    position: relative;
-}
-
-.progress-glow::after {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8, #7c3aed);
-    border-radius: 10px;
-    z-index: -1;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.progress-glow.active::after {
-    opacity: 0.3;
-}
 
 /* Answer Options Styling */
 .answer-options {
@@ -1589,9 +1334,6 @@
     border-color: #4b5563;
 }
 
-.dark .selection-progress {
-    background-color: #4b5563;
-}
 
 /* Mobile-first responsive design */
 @media (max-width: 640px) {
@@ -1638,14 +1380,6 @@
         transform: translateY(-1px);
     }
     
-    .selection-progress {
-        height: 8px;
-        margin-top: 12px;
-    }
-    
-    .selection-progress-bar {
-        border-radius: 4px;
-    }
 }
 
 @media (max-width: 640px) {
@@ -2698,19 +2432,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log('Test function available: window.testQNumber(questionId, number)');
     
-    const selectedCountSpan = document.getElementById('selected-count');
-    const totalAllowedSpan = document.getElementById('total-allowed');
-    const remainingCountSpan = document.getElementById('remaining-count');
-    const progressBar = document.getElementById('progress-bar');
-    const maxQuestions = parseInt(totalAllowedSpan.textContent);
+    const maxQuestions = 40; // Default max questions
     
-    // Filter elements
-    const searchInput = document.getElementById('search');
+    // Additional filter elements
     const clearSearchBtn = document.getElementById('clear-search');
-    const typeFilter = document.getElementById('type-filter');
-    const courseFilter = document.getElementById('course-filter');
-    const subjectFilter = document.getElementById('subject-filter');
-    const topicFilter = document.getElementById('topic-filter');
     const clearFiltersBtn = document.getElementById('clear-filters');
     const refreshFiltersBtn = document.getElementById('refresh-filters');
     
@@ -2730,57 +2455,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function updateSelectedCount() {
         const selectedCount = document.querySelectorAll('.question-checkbox:checked').length;
-        selectedCountSpan.textContent = selectedCount;
         
-        // Update the remaining count display
-        const remaining = maxQuestions - selectedCount;
-        remainingCountSpan.textContent = remaining;
         
-        // Update remaining count styling based on how many are left
-        remainingCountSpan.className = 'text-xs';
-        if (remaining <= 0) {
-            remainingCountSpan.classList.add('text-red-600', 'font-semibold');
-        } else if (remaining <= 2) {
-            remainingCountSpan.classList.add('text-yellow-600', 'font-semibold');
-        } else {
-            remainingCountSpan.classList.add('text-gray-500');
-        }
-        
-        // Update enhanced progress bar elements
-        const selectedCountDisplay = document.getElementById('selected-count-display');
-        const totalAllowedDisplay = document.getElementById('total-allowed-display');
-        const progressPercentage = document.getElementById('progress-percentage');
-        const progressDot = document.getElementById('progress-dot');
-        
-        if (selectedCountDisplay) selectedCountDisplay.textContent = selectedCount;
-        if (totalAllowedDisplay) totalAllowedDisplay.textContent = maxQuestions;
-        
-        const progressPercent = Math.min((selectedCount / maxQuestions) * 100, 100);
-        progressBar.style.width = progressPercent + '%';
-        
-        if (progressPercentage) {
-            progressPercentage.textContent = Math.round(progressPercent) + '%';
-        }
-        
-        // Show progress dot when there's progress
-        if (progressDot) {
-            if (progressPercent > 0) {
-                progressDot.classList.add('show');
-            } else {
-                progressDot.classList.remove('show');
-            }
-        }
-        
-        // Update progress bar color and effects based on selection level
-        progressBar.className = 'relative h-full bg-gradient-to-r from-blue-500 via-blue-600 to-indigo-600 rounded-full transition-all duration-700 ease-out shadow-lg';
-        
-        if (progressPercent >= 100) {
-            progressBar.className = 'relative h-full bg-gradient-to-r from-red-500 via-red-600 to-red-700 rounded-full transition-all duration-700 ease-out shadow-lg progress-bar-pulse';
-        } else if (progressPercent >= 80) {
-            progressBar.className = 'relative h-full bg-gradient-to-r from-yellow-500 via-yellow-600 to-orange-600 rounded-full transition-all duration-700 ease-out shadow-lg';
-        } else if (progressPercent >= 50) {
-            progressBar.className = 'relative h-full bg-gradient-to-r from-green-500 via-green-600 to-emerald-600 rounded-full transition-all duration-700 ease-out shadow-lg';
-        }
         
         // Disable/enable checkboxes based on limit
         const isAtLimit = selectedCount >= maxQuestions;
@@ -3147,7 +2823,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchLoading = document.getElementById('search-loading');
     const searchResultsInfo = document.getElementById('search-results-info');
     const searchResultsCount = document.getElementById('search-results-count');
-    let searchTimeout;
     
     searchInput.addEventListener('input', function() {
         const searchTerm = this.value.trim();
