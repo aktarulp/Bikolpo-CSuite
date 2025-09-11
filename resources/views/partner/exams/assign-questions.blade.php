@@ -240,11 +240,19 @@
                                     Clear All
                                 </button>
                                 
-                                <!-- Selection Counter -->
-                                <div class="flex items-center">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-700">
-                                        Selected: <span id="selected-count">0</span>/<span id="total-count">{{ $exam->total_questions }}</span>
-                                    </span>
+                                <!-- Selection Progress Bar -->
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs font-medium text-gray-600 dark:text-gray-400">Selected:</span>
+                                    <div class="flex items-center space-x-2">
+                                        <!-- Progress Bar -->
+                                        <div class="w-32 h-4 rounded-full overflow-hidden shadow-inner" style="background: linear-gradient(to right, #fecaca, #fca5a5);" data-bg-light="linear-gradient(to right, #fecaca, #fca5a5)" data-bg-dark="linear-gradient(to right, #991b1b, #7f1d1d)">
+                                            <div id="progress-bar" class="h-full transition-all duration-500 ease-out shadow-lg" style="width: 0%; background: linear-gradient(to right, #8b5cf6, #ec4899, #ef4444);"></div>
+                                        </div>
+                                        <!-- Progress Text -->
+                                        <span class="text-xs font-medium text-gray-700 dark:text-gray-300">
+                                            <span id="selected-count">0</span>/<span id="total-count">{{ $exam->total_questions }}</span>
+                                        </span>
+                                    </div>
                                 </div>
                                 </div>
                             </div>
@@ -700,6 +708,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const selectedCountElement = document.getElementById('selected-count');
         if (selectedCountElement) {
             selectedCountElement.textContent = selectedCount;
+        }
+        
+        // Update progress bar
+        const progressBar = document.getElementById('progress-bar');
+        if (progressBar && examQuestionCount > 0) {
+            const progressPercentage = (selectedCount / examQuestionCount) * 100;
+            progressBar.style.width = progressPercentage + '%';
         }
         // Keep the total count as the exam's assigned questions count (already set in HTML)
     }
