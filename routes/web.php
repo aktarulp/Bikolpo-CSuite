@@ -309,6 +309,7 @@ Route::middleware('auth')->group(function () {
         // API endpoints
         Route::get('/api/question-stats', [\App\Http\Controllers\QuestionAnalyticsController::class, 'getQuestionStats'])->name('api.question-stats');
         Route::get('/api/exam-stats', [\App\Http\Controllers\QuestionAnalyticsController::class, 'getExamStats'])->name('api.exam-stats');
+        Route::get('/api/students/{student}/exam-results/{examResult}', [\App\Http\Controllers\QuestionAnalyticsController::class, 'getExamResultDetails'])->name('api.student.exam-result-details');
     });
 
     // Student Area Access Route

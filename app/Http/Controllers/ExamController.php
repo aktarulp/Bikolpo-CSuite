@@ -861,15 +861,97 @@ class ExamController extends Controller
         return $html;
     }
 
-    public function assignQuestions(Exam $exam)
+    public function assignQuestions(Exam $exam, Request $request)
     {
         $partnerId = $this->getPartnerId();
         
-        // Get available questions for this partner
-        $questions = \App\Models\Question::where('partner_id', $partnerId)
+        // Base query for questions
+        $query = \App\Models\Question::where('partner_id', $partnerId)
             ->where('status', 'active')
-            ->with(['topic', 'subject', 'course'])
-            ->get();
+            ->whereHas('course', function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId)
+                      ->where('status', 'active')
+                      ->where(function($q) {
+                          $q->whereNull('start_date')
+                            ->orWhere('start_date', '<=', now())
+                            ->orWhere('end_date', '>=', now());
+                      });
+            });
+        
+        // Apply filters if provided
+        if ($request->filled('course_filter')) {
+            $query->where('course_id', $request->course_filter);
+        }
+        
+        if ($request->filled('subject_filter')) {
+            $query->where('subject_id', $request->subject_filter);
+        }
+        
+        if ($request->filled('topic_filter')) {
+            $query->where('topic_id', $request->topic_filter);
+        }
+        
+        if ($request->filled('question_type_filter')) {
+            $query->where('question_type', $request->question_type_filter);
+        }
+        
+        if ($request->filled('date_filter')) {
+            $dateFilter = $request->date_filter;
+            $startDate = $dateFilter . ' 00:00:00';
+            $endDate = $dateFilter . ' 23:59:59';
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
+        
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('question_text', 'like', "%{$searchTerm}%")
+                  ->orWhere('option_a', 'like', "%{$searchTerm}%")
+                  ->orWhere('option_b', 'like', "%{$searchTerm}%")
+                  ->orWhere('option_c', 'like', "%{$searchTerm}%")
+                  ->orWhere('option_d', 'like', "%{$searchTerm}%");
+            });
+        }
+        
+        $questions = $query->with(['topic', 'subject', 'course'])->get();
+            
+        // Debug: Let's also check the raw query
+        $rawQuery = \App\Models\Question::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->whereHas('course', function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId)
+                      ->where('status', 'active')
+                      ->where(function($q) {
+                          $q->whereNull('start_date')
+                            ->orWhere('start_date', '<=', now())
+                            ->orWhere('end_date', '>=', now());
+                      });
+            })
+            ->toSql();
+            
+        \Log::info('Raw SQL Query with Course Filtering', [
+            'sql' => $rawQuery,
+            'partner_id' => $partnerId,
+            'current_date' => now()->toDateString()
+        ]);
+        
+        // Debug: Check if partner_id column exists and what values are in it
+        $allPartnerIds = \App\Models\Question::select('partner_id')->distinct()->pluck('partner_id');
+        \Log::info('All partner IDs in questions table', [
+            'partner_ids' => $allPartnerIds->toArray(),
+            'current_partner_id' => $partnerId,
+            'questions_with_null_partner_id' => \App\Models\Question::whereNull('partner_id')->count()
+        ]);
+            
+        // Debug: Log question count and verify partner filtering
+        \Log::info('Questions loaded for partner', [
+            'partner_id' => $partnerId,
+            'questions_count' => $questions->count(),
+            'question_ids' => $questions->pluck('id')->toArray(),
+            'questions_with_wrong_partner' => $questions->where('partner_id', '!=', $partnerId)->count(),
+            'all_questions_in_db' => \App\Models\Question::count(),
+            'questions_for_this_partner_in_db' => \App\Models\Question::where('partner_id', $partnerId)->count()
+        ]);
             
         // Get currently assigned questions for this exam with their marks
         $assignedQuestions = \App\Models\ExamQuestion::where('exam_id', $exam->id)
@@ -925,6 +1007,35 @@ class ExamController extends Controller
             'question_types' => $questionTypes->toArray(),
             'partner_id' => $partnerId
         ]);
+        
+        // Additional debugging - check courses and their status
+        $partnerCourses = \App\Models\Course::where('partner_id', $partnerId)->get();
+        $activeCourses = \App\Models\Course::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->where(function($q) {
+                $q->whereNull('start_date')
+                  ->orWhere('start_date', '<=', now())
+                  ->orWhere('end_date', '>=', now());
+            })
+            ->get();
+            
+        \Log::info('Course Filtering Debug Info', [
+            'partner_id' => $partnerId,
+            'total_partner_courses' => $partnerCourses->count(),
+            'active_partner_courses' => $activeCourses->count(),
+            'course_ids' => $activeCourses->pluck('id')->toArray(),
+            'questions_before_course_filter' => \App\Models\Question::where('partner_id', $partnerId)->where('status', 'active')->count(),
+            'questions_after_course_filter' => $questions->count(),
+            'current_date' => now()->toDateString()
+        ]);
+        
+        // Handle AJAX requests
+        if ($request->ajax()) {
+            return response()->json([
+                'questions_html' => view('partner.exams.partials.questions-grid', compact('questions', 'assignedQuestions', 'assignedQuestionsWithMarks', 'assignedQuestionsWithOrder'))->render(),
+                'total_count' => $questions->count()
+            ]);
+        }
         
         return view('partner.exams.assign-questions', compact('exam', 'questions', 'assignedQuestions', 'assignedQuestionsWithMarks', 'assignedQuestionsWithOrder', 'courses', 'subjects', 'topics', 'questionTypes'));
     }
@@ -1063,22 +1174,23 @@ class ExamController extends Controller
 
     private function getPartnerId(): int
     {
-        // Prefer authenticated partner, fallback to first available partner for legacy/demo
         $userId = auth()->id();
-        if ($userId) {
-            $pid = Partner::where('user_id', $userId)->value('id');
-            if ($pid) {
-                return (int) $pid;
-            }
+        if (!$userId) {
+            throw new \Exception('User not authenticated.');
         }
         
-        // Fallback to first available partner
-        $firstPartnerId = Partner::value('id');
-        if ($firstPartnerId) {
-            return (int) $firstPartnerId;
+        $user = auth()->user();
+        if (!$user) {
+            throw new \Exception('User not found.');
         }
         
-        throw new \Exception('No partner found. Please create a partner first.');
+        // Get the partner for this specific user - no fallback to other partners
+        $partner = $user->partner;
+        if (!$partner) {
+            throw new \Exception('Partner profile not found for user ID: ' . $userId . '. Please contact administrator.');
+        }
+        
+        return (int) $partner->id;
     }
     
     private function generateQuestionPaperHTMLWithParameters($exam, $questions, $parameters)

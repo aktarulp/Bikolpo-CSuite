@@ -157,6 +157,9 @@ class QuestionAnalyticsController extends Controller
         $student = \App\Models\Student::findOrFail($studentId);
         $analytics = QuestionStat::getStudentQuestionAnalytics($studentId);
         
+        // Get comprehensive student analytics
+        $comprehensiveAnalytics = $student->getComprehensiveAnalytics();
+        
         // Get performance by question type
         $performanceByType = QuestionStat::where('student_id', $studentId)
             ->select('question_type')
@@ -173,12 +176,66 @@ class QuestionAnalyticsController extends Controller
             ->limit(20)
             ->get();
         
+        // Get detailed exam results with question breakdown
+        $examResults = $student->examResults()
+            ->with(['exam', 'questionStats.question'])
+            ->orderBy('completed_at', 'desc')
+            ->get();
+        
+        // Get performance trends over time
+        $performanceTrend = $this->getPerformanceTrend($studentId);
+        
+        // Get difficulty performance
+        $difficultyPerformance = $student->getDifficultyPerformance();
+        
+        // Get question type performance
+        $questionTypePerformance = $student->getQuestionTypePerformance();
+        
+        // Get exam performance
+        $examPerformance = $student->getExamPerformance();
+        
+        // Get improvement trend
+        $improvementTrend = $student->getImprovementTrend();
+        
+        // Get difficult questions
+        $difficultQuestions = $student->getDifficultQuestions(10);
+        
+        // Get easy questions
+        $easyQuestions = $student->getEasyQuestions(10);
+        
         return view('analytics.students.show', compact(
             'student',
             'analytics',
+            'comprehensiveAnalytics',
             'performanceByType',
-            'recentPerformance'
+            'recentPerformance',
+            'examResults',
+            'performanceTrend',
+            'difficultyPerformance',
+            'questionTypePerformance',
+            'examPerformance',
+            'improvementTrend',
+            'difficultQuestions',
+            'easyQuestions'
         ));
+    }
+    
+    /**
+     * Get performance trend over time
+     */
+    private function getPerformanceTrend($studentId)
+    {
+        $trends = QuestionStat::where('student_id', $studentId)
+            ->selectRaw('DATE(created_at) as date')
+            ->selectRaw('COUNT(*) as total_questions')
+            ->selectRaw('SUM(CASE WHEN is_correct = 1 THEN 1 ELSE 0 END) as correct_answers')
+            ->selectRaw('ROUND((SUM(CASE WHEN is_correct = 1 THEN 1 ELSE 0 END) / COUNT(*)) * 100, 2) as accuracy_percentage')
+            ->groupBy('date')
+            ->orderBy('date', 'asc')
+            ->limit(30)
+            ->get();
+        
+        return $trends;
     }
     
     /**
@@ -211,6 +268,25 @@ class QuestionAnalyticsController extends Controller
         $analytics = QuestionStat::getExamQuestionAnalytics($examId);
         
         return response()->json($analytics);
+    }
+    
+    /**
+     * Get detailed exam result for a student
+     */
+    public function getExamResultDetails($studentId, $examResultId)
+    {
+        $student = \App\Models\Student::findOrFail($studentId);
+        $examResult = $student->examResults()->with(['exam', 'questionStats.question'])->findOrFail($examResultId);
+        
+        $detailedAnalytics = $examResult->getDetailedAnalyticsAttribute();
+        
+        return response()->json([
+            'exam_result' => $examResult,
+            'detailed_analytics' => $detailedAnalytics,
+            'correct_questions' => $examResult->getCorrectQuestions(),
+            'incorrect_questions' => $examResult->getIncorrectQuestions(),
+            'skipped_questions' => $examResult->getSkippedQuestions(),
+        ]);
     }
     
     /**

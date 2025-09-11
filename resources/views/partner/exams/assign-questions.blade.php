@@ -93,7 +93,7 @@
                         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
                             <div class="flex-1">
                                 <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Select Questions</h2>
-                                </div>
+                            </div>
                         </div>
                         
                     </div>
@@ -112,32 +112,6 @@
 
                     <!-- Action Buttons -->
                     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
-                        <div class="flex flex-col sm:flex-row gap-4 sm:justify-end">
-                            <a href="{{ route('partner.exams.show', $exam) }}" 
-                               class="inline-flex items-center justify-center px-6 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                </svg>
-                                Cancel
-                            </a>
-                            @if($questions->count() > 0)
-                                <button type="submit" 
-                                        class="inline-flex items-center justify-center px-8 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    Assign
-                                </button>
-                            @else
-                                <button type="button" 
-                                        class="inline-flex items-center justify-center px-8 py-2 text-sm font-medium text-gray-400 bg-gray-200 border border-transparent rounded-lg cursor-not-allowed dark:bg-gray-700 dark:text-gray-500">
-                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                    No Questions Available
-                                </button>
-                            @endif
-                        </div>
                     </div>
                     
 
@@ -152,32 +126,32 @@
                                     <div class="space-y-1">
                                         <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Course</label>
                                         <select name="course_filter" id="course-filter" class="filter-select w-full rounded-xl p-2 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
-                                            <option value="">All Courses</option>
-                                            @foreach($courses as $course)
-                                                <option value="{{ $course->id }}">{{ $course->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    
+                                    <option value="">All Courses</option>
+                                    @foreach($courses as $course)
+                                        <option value="{{ $course->id }}">{{ $course->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
                                     <div class="space-y-1">
                                         <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Subject</label>
                                         <select name="subject_filter" id="subject-filter" class="filter-select w-full rounded-xl p-2 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
-                                            <option value="">All Subjects</option>
-                                            @foreach($subjects as $subject)
-                                                <option value="{{ $subject->id }}">{{ $subject->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    
+                                    <option value="">All Subjects</option>
+                                    @foreach($subjects as $subject)
+                                        <option value="{{ $subject->id }}">{{ $subject->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
                                     <div class="space-y-1">
                                         <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Topic</label>
                                         <select name="topic_filter" id="topic-filter" class="filter-select w-full rounded-xl p-2 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
-                                            <option value="">All Topics</option>
-                                            @foreach($topics as $topic)
-                                                <option value="{{ $topic->id }}">{{ $topic->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+                                    <option value="">All Topics</option>
+                                    @foreach($topics as $topic)
+                                        <option value="{{ $topic->id }}">{{ $topic->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                                     
                                     <div class="space-y-1">
                                         <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Question Type</label>
@@ -200,7 +174,7 @@
                                 </div>
                                 
                                 <!-- Search Bar with Action Buttons -->
-                                <div class="flex flex-col lg:flex-row gap-1 py-2">
+                                <div class="flex flex-col lg:flex-row gap-1 py-6">
                                     <!-- Search Bar -->
                                     <div class="flex-1">
                                         <div class="flex items-center w-full bg-white dark:bg-gray-700 rounded-full shadow-lg p-1 border border-gray-200 dark:border-gray-600 h-10">
@@ -217,22 +191,10 @@
                                                                   
                                         </div>
                                       
-                                    </div>
-                                    
-                                    <!-- Action Buttons -->
+                            </div>
+                            
+                        <!-- Action Buttons -->
                                     <div class="flex gap-2 flex-shrink-0">
-                                        <button type="button" id="select-all" class="px-4 py-2 h-10 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-xl transition-all duration-300 flex items-center gap-2 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                            </svg>
-                                            Select All
-                                        </button>
-                                        <button type="button" id="clear-all" class="px-4 py-2 h-10 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl transition-all duration-300 flex items-center gap-2 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                            </svg>
-                                            Clear All
-                                        </button>
                                         <button type="button" id="refresh-filters" class="px-4 py-2 h-10 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl transition-all duration-300 flex items-center gap-2 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
@@ -248,1470 +210,156 @@
                         </div>
                     </div>
 
-                    <!-- Questions List -->
-                    @if($questions->count() > 0)
-                        <div class="px-4 pt-10 border-t border-gray-200 dark:border-gray-700">
-                            <div class="questions-container grid grid-cols-1 gap-2">
-                            @foreach($questions as $question)
-                                    <div class="question-card border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200 draggable-question"
-                                     data-type="{{ $question->question_type }}"
-                                     data-course="{{ $question->course->id ?? '' }}"
-                                     data-subject="{{ $question->subject->name ?? '' }}"
-                                     data-topic="{{ $question->topic->name ?? '' }}"
-                                     data-question-id="{{ $question->id }}"
-                                     draggable="true">
-                                    
-                                    <div class="px-4 py-3">
-                                        <!-- Mobile-First Question Layout -->
-                                        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-2">
-                                            <!-- Top Row: Checkbox, Type Badge, ID, and Actions (Mobile) / Left Side (Desktop) -->
-                                            <div class="flex items-center justify-between sm:justify-start gap-3 flex-1 min-w-0">
-                                                <div class="flex items-center gap-2 flex-shrink-0">
-                                                    <!-- Checkbox -->
-                                                    <input type="checkbox" name="question_ids[]" value="{{ $question->id }}" 
-                                                           class="question-checkbox h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded transition-all duration-200"
-                                                           {{ $assignedQuestions->contains($question->id) ? 'checked' : '' }}>
-                                                    
-                                                    <!-- Question Number -->
-                                                    <div class="flex items-center space-x-1 question-number-container">
-                                                        <label class="text-xs text-green-600 dark:text-green-400 font-semibold">Q#:</label>
-                                                        <input type="number" 
-                                                               name="question_numbers[{{ $question->id }}]" 
-                                                               value="{{ $assignedQuestionsWithOrder[$question->id] ?? '' }}" 
-                                                               min="1" 
-                                                               max="999" 
-                                                               class="question-number w-10 border border-green-400 rounded bg-gray-100 dark:bg-gray-600 dark:border-green-500 dark:text-white font-semibold text-center text-xs"
-                                                               style="-moz-appearance: textfield; -webkit-appearance: none; appearance: none;"
-                                                               readonly>
-                                                    </div>
-                                                    
-                                                    <!-- Question Type Icon -->
-                                                    <div class="w-6 h-6 rounded-md flex items-center justify-center
-                                                        {{ $question->question_type === 'mcq' ? 'bg-blue-100 dark:bg-blue-900/30' : ($question->question_type === 'true_false' ? 'bg-orange-100 dark:bg-orange-900/30' : 'bg-green-100 dark:bg-green-900/30') }}">
-                                                        @if($question->question_type === 'mcq')
-                                                            <img src="{{ asset('images/mcq.png') }}" alt="MCQ" class="w-4 h-4">
-                                                        @elseif($question->question_type === 'descriptive')
-                                                            <img src="{{ asset('images/cq.png') }}" alt="CQ" class="w-4 h-4">
-                                                        @else
-                                                            <svg class="w-4 h-4 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                                            </svg>
-                                                        @endif
-                                                    </div>
-                                                    
-                                                    <span class="text-xs font-semibold text-gray-500 dark:text-gray-400">#{{ $question->id }}</span>
-                                                </div>
-                                                
-                                                <!-- Question Type Badge -->
-                                                <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium flex-shrink-0
-                                                    {{ $question->question_type === 'mcq' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : ($question->question_type === 'true_false' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300' : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300') }}">
-                                                    {{ $question->question_type === 'mcq' ? 'MCQ' : ($question->question_type === 'true_false' ? 'T/F' : 'Descriptive') }}
-                                                </span>
-                                                
-                                                <!-- Question Text with Answer Options - Right after type badge on desktop -->
-                                                <div class="hidden sm:block text-gray-900 dark:text-white text-sm leading-relaxed flex-1 min-w-0">
-                                                    <span class="text-gray-900 dark:text-white">
-                                                        {!! Str::limit(strip_tags($question->question_text, '<b><i><u><strong><em><br><p><span><div>'), 200) !!}
-                                                    </span>
-                                                    
-                                                    @if($question->question_type === 'mcq' && ($question->option_a || $question->option_b || $question->option_c || $question->option_d))
-                                                        <span class="text-gray-500 dark:text-gray-400 ml-2">|</span>
-                                                        <span class="text-gray-600 dark:text-gray-300 text-xs ml-1">
-                                                            @if($question->option_a)
-                                                                <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2
-                                                                    {{ $question->correct_answer === 'A' || $question->correct_answer === 'a' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
-                                                                    A
-                                                                </span>
-                                                                <span class="text-xs">{{ Str::limit(strip_tags($question->option_a), 18) }}</span>
-                                                            @endif
-                                                            @if($question->option_b)
-                                                                <span class="text-gray-400 mx-1">•</span>
-                                                                <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2
-                                                                    {{ $question->correct_answer === 'B' || $question->correct_answer === 'b' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
-                                                                    B
-                                                                </span>
-                                                                <span class="text-xs">{{ Str::limit(strip_tags($question->option_b), 18) }}</span>
-                                                            @endif
-                                                            @if($question->option_c)
-                                                                <span class="text-gray-400 mx-1">•</span>
-                                                                <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2
-                                                                    {{ $question->correct_answer === 'C' || $question->correct_answer === 'c' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
-                                                                    C
-                                                                </span>
-                                                                <span class="text-xs">{{ Str::limit(strip_tags($question->option_c), 18) }}</span>
-                                                            @endif
-                                                            @if($question->option_d)
-                                                                <span class="text-gray-400 mx-1">•</span>
-                                                                <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2
-                                                                    {{ $question->correct_answer === 'D' || $question->correct_answer === 'd' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
-                                                                    D
-                                                                </span>
-                                                                <span class="text-xs">{{ Str::limit(strip_tags($question->option_d), 18) }}</span>
-                                                            @endif
-                                                        </span>
-                                                    @elseif($question->question_type === 'true_false')
-                                                        <span class="text-gray-500 dark:text-gray-400 ml-2">|</span>
-                                                        <span class="text-gray-600 dark:text-gray-300 text-xs ml-1">
-                                                            <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2
-                                                                {{ $question->correct_answer === 'A' || $question->correct_answer === 'a' || $question->correct_answer === 'true' || $question->correct_answer === 'True' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
-                                                                A
-                                                            </span>
-                                                            <span class="text-xs">{{ $question->option_a ? Str::limit(strip_tags($question->option_a), 28) : 'True' }}</span>
-                                                            <span class="text-gray-400 mx-1">•</span>
-                                                            <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2
-                                                                {{ $question->correct_answer === 'B' || $question->correct_answer === 'b' || $question->correct_answer === 'false' || $question->correct_answer === 'False' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
-                                                                B
-                                                            </span>
-                                                            <span class="text-xs">{{ $question->option_b ? Str::limit(strip_tags($question->option_b), 28) : 'False' }}</span>
-                                                        </span>
-                                                    @elseif($question->question_type === 'fill_in_blank' && $question->option_a)
-                                                        <span class="text-gray-500 dark:text-gray-400 ml-2">|</span>
-                                                        <span class="text-gray-600 dark:text-gray-300 text-xs ml-1">
-                                                            <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2 bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400">
-                                                                ✓
-                                                            </span>
-                                                            <span class="text-xs">{{ Str::limit(strip_tags($question->option_a), 38) }}</span>
-                                                        </span>
-                                                    @endif
-                                                </div>
-                                                
-                                                <!-- Marks Input and Drag Handle - Mobile -->
-                                                <div class="flex items-center gap-2 sm:hidden">
-                                                    <!-- Marks Input -->
-                                                    <div class="flex items-center space-x-1 question-marks-container">
-                                                        <label class="text-xs text-blue-600 dark:text-blue-400 font-semibold">Marks:</label>
-                                                        <input type="number" 
-                                                               name="question_marks[{{ $question->id }}]" 
-                                                               value="{{ $assignedQuestionsWithMarks[$question->id] ?? 1 }}" 
-                                                               min="1" 
-                                                               max="100" 
-                                                               class="question-marks w-12 border border-blue-400 rounded bg-gray-100 dark:bg-gray-600 dark:border-blue-500 dark:text-white font-semibold text-center text-xs"
-                                                               style="-moz-appearance: textfield; -webkit-appearance: none; appearance: none;">
-                                                    </div>
-                                                    
-                                                    <!-- Drag Handle -->
-                                                    <div class="drag-handle text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-move p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path>
-                                                        </svg>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                            <!-- Question Text - Full Width on Mobile -->
-                                            <div class="w-full sm:hidden">
-                                                <div class="text-gray-900 dark:text-white text-sm leading-relaxed mb-2">
-                                                    {!! Str::limit(strip_tags($question->question_text, '<b><i><u><strong><em><br><p><span><div>'), 200) !!}
-                                                </div>
-                                                
-                                                <!-- Answer Options - Stacked on Mobile -->
-                                                @if($question->question_type === 'mcq' && ($question->option_a || $question->option_b || $question->option_c || $question->option_d))
-                                                    <div class="flex flex-wrap gap-2 text-xs">
-                                                        @if($question->option_a)
-                                                            <div class="flex items-center gap-1">
-                                                                <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border-2
-                                                                    {{ $question->correct_answer === 'A' || $question->correct_answer === 'a' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
-                                                                    A
-                                                                </span>
-                                                                <span class="text-gray-600 dark:text-gray-300">{{ Str::limit(strip_tags($question->option_a), 25) }}</span>
-                                                            </div>
-                                                        @endif
-                                                        @if($question->option_b)
-                                                            <div class="flex items-center gap-1">
-                                                                <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border-2
-                                                                    {{ $question->correct_answer === 'B' || $question->correct_answer === 'b' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
-                                                                    B
-                                                                </span>
-                                                                <span class="text-gray-600 dark:text-gray-300">{{ Str::limit(strip_tags($question->option_b), 25) }}</span>
-                                                            </div>
-                                                        @endif
-                                                        @if($question->option_c)
-                                                            <div class="flex items-center gap-1">
-                                                                <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border-2
-                                                                    {{ $question->correct_answer === 'C' || $question->correct_answer === 'c' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
-                                                                    C
-                                                                </span>
-                                                                <span class="text-gray-600 dark:text-gray-300">{{ Str::limit(strip_tags($question->option_c), 25) }}</span>
-                                                            </div>
-                                                        @endif
-                                                        @if($question->option_d)
-                                                            <div class="flex items-center gap-1">
-                                                                <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border-2
-                                                                    {{ $question->correct_answer === 'D' || $question->correct_answer === 'd' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
-                                                                    D
-                                                                </span>
-                                                                <span class="text-gray-600 dark:text-gray-300">{{ Str::limit(strip_tags($question->option_d), 25) }}</span>
-                                                            </div>
-                                                        @endif
-                                                    </div>
-                                                @elseif($question->question_type === 'true_false')
-                                                    <div class="flex flex-wrap gap-3 text-xs">
-                                                        <div class="flex items-center gap-1">
-                                                            <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border-2
-                                                                {{ $question->correct_answer === 'A' || $question->correct_answer === 'a' || $question->correct_answer === 'true' || $question->correct_answer === 'True' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
-                                                                A
-                                                            </span>
-                                                            <span class="text-gray-600 dark:text-gray-300">{{ $question->option_a ? Str::limit(strip_tags($question->option_a), 30) : 'True' }}</span>
-                                                        </div>
-                                                        <div class="flex items-center gap-1">
-                                                            <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border-2
-                                                                {{ $question->correct_answer === 'B' || $question->correct_answer === 'b' || $question->correct_answer === 'false' || $question->correct_answer === 'False' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
-                                                                B
-                                                            </span>
-                                                            <span class="text-gray-600 dark:text-gray-300">{{ $question->option_b ? Str::limit(strip_tags($question->option_b), 30) : 'False' }}</span>
-                                                        </div>
-                                                    </div>
-                                                @elseif($question->question_type === 'fill_in_blank' && $question->option_a)
-                                                    <div class="flex items-center gap-1 text-xs">
-                                                        <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border-2 bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400">
-                                                            ✓
-                                                        </span>
-                                                        <span class="text-gray-600 dark:text-gray-300">{{ Str::limit(strip_tags($question->option_a), 40) }}</span>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                            
-                                            <!-- Marks Input and Drag Handle - Desktop -->
-                                            <div class="hidden sm:flex items-center gap-2 flex-shrink-0 ml-3">
-                                                <!-- Marks Input -->
-                                                <div class="flex items-center space-x-1 question-marks-container">
-                                                    <label class="text-xs text-blue-600 dark:text-blue-400 font-semibold">Marks:</label>
-                                                    <input type="number" 
-                                                           name="question_marks[{{ $question->id }}]" 
-                                                           value="{{ $assignedQuestionsWithMarks[$question->id] ?? 1 }}" 
-                                                           min="1" 
-                                                           max="100" 
-                                                           class="question-marks w-12 border border-blue-400 rounded bg-gray-100 dark:bg-gray-600 dark:border-blue-500 dark:text-white font-semibold text-center text-xs"
-                                                           style="-moz-appearance: textfield; -webkit-appearance: none; appearance: none;">
-                                                </div>
-                                                
-                                                <!-- Drag Handle -->
-                                                <div class="drag-handle text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 cursor-move p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path>
-                                                    </svg>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Metadata Row -->
-                                        <div class="flex flex-wrap items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
-                                            <div class="flex items-center gap-1">
-                                                <svg class="w-3 h-3 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                                </svg>
-                                                <span class="font-medium">{{ $question->course->name ?? 'N/A' }}</span>
-                                            </div>
-                                            <div class="flex items-center gap-1">
-                                                <svg class="w-3 h-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                                </svg>
-                                                <span class="font-medium">{{ $question->subject->name ?? 'N/A' }}</span>
-                                            </div>
-                                            <div class="flex items-center gap-1">
-                                                <svg class="w-3 h-3 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-                                                </svg>
-                                                <span class="font-medium">{{ $question->topic->name ?? 'N/A' }}</span>
-                                            </div>
-                                            <div class="flex items-center gap-1">
-                                                <svg class="w-3 h-3 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                                </svg>
-                                                <span class="font-medium">{{ $question->created_at->format('M d, Y') }}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    @else
-                        <div class="text-center py-16">
-                            <div class="mx-auto w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-6">
-                                <svg class="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                    <!-- Assign and Cancel Buttons -->
+                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+                        <div class="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
+                    <!-- Total Questions Counter and Selection Buttons -->
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                            <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                             </svg>
+                            <span class="text-sm font-medium text-blue-700 dark:text-blue-300">
+                                Total Questions: <span id="total-questions-count">{{ $questions->count() }}</span>
+                            </span>
+                        </div>
+                        
+                                
+                                <!-- Selection Buttons -->
+                                <div class="flex gap-2">
+                                    <button type="button" id="select-all" class="px-3 py-2 h-8 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg transition-all duration-300 flex items-center gap-1.5 text-xs font-medium shadow-md hover:shadow-lg">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    Select All
+                                </button>
+                                    <button type="button" id="clear-all" class="px-3 py-2 h-8 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-lg transition-all duration-300 flex items-center gap-1.5 text-xs font-medium shadow-md hover:shadow-lg">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                    Clear All
+                                </button>
+                                </div>
                             </div>
-                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">No questions available</h3>
-                            <p class="text-gray-500 dark:text-gray-400 mb-8 max-w-md mx-auto">
-                                Create some questions first before assigning them to exams.
-                            </p>
-                            <div class="flex flex-col sm:flex-row gap-3 sm:justify-center">
-                                <a href="{{ route('partner.questions.create') }}" 
-                                   class="inline-flex items-center px-6 py-3 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
-                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                            
+                            <!-- Action Buttons -->
+                            <div class="flex flex-col sm:flex-row gap-4">
+                                <a href="{{ route('partner.exams.show', $exam) }}" 
+                                   class="inline-flex items-center justify-center px-6 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                     </svg>
-                                    Create Question
+                                    Cancel
                                 </a>
-                                <a href="{{ route('partner.questions.all') }}" 
-                                   class="inline-flex items-center px-6 py-3 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
-                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+                                @if($questions->count() > 0)
+                                    <button type="submit" 
+                                            class="inline-flex items-center justify-center px-8 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        Assign
+                                </button>
+                                @else
+                                    <button type="button" 
+                                            class="inline-flex items-center justify-center px-8 py-2 text-sm font-medium text-gray-400 bg-gray-200 border border-transparent rounded-lg cursor-not-allowed dark:bg-gray-700 dark:text-gray-500">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
-                                    View All Questions
-                                </a>
+                                        No Questions Available
+                                </button>
+                                @endif
                             </div>
                         </div>
-                    @endif
-                </div>
+                    </div>
 
-            </form>
-        </div>
-    </div>
-</div>
+                    <!-- Questions List -->
+                    <div class="px-4 pt-10 border-t border-gray-200 dark:border-gray-700">
+                        <div class="questions-container">
+                            @include('partner.exams.partials.questions-grid', ['questions' => $questions, 'assignedQuestions' => $assignedQuestions, 'assignedQuestionsWithMarks' => $assignedQuestionsWithMarks, 'assignedQuestionsWithOrder' => $assignedQuestionsWithOrder])
+                        </div>
+                    </div>
 @endsection
 
-@push('styles')
 <style>
-/* Professional Mobile-First Design */
-
-/* Stats Card Styling */
-.stats-card {
-    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    transition: all 0.3s ease;
-}
-
-.stats-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-.dark .stats-card {
-    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-    border: 1px solid #374151;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
-}
-
-.dark .stats-card:hover {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-}
-
-/* Enhanced Search Bar Styling */
-.search-container {
-    position: relative;
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    border-radius: 16px;
-    padding: 4px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.search-container:focus-within {
-    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-    box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.1), 0 10px 10px -5px rgba(59, 130, 246, 0.04);
-    transform: translateY(-1px);
-}
-
-.dark .search-container {
-    background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
-}
-
-.dark .search-container:focus-within {
-    background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
-    box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.2), 0 10px 10px -5px rgba(59, 130, 246, 0.1);
-}
-
-.search-input {
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(10px);
-    border: 2px solid transparent;
-    border-radius: 12px;
-    padding: 12px 48px 12px 48px;
-    font-size: 14px;
-    font-weight: 500;
-    color: #1f2937;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.search-input:focus {
-    background: rgba(255, 255, 255, 1);
-    border-color: #3b82f6;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(59, 130, 246, 0.1);
-    outline: none;
-}
-
-.dark .search-input {
-    background: rgba(31, 41, 55, 0.9);
-    color: #f9fafb;
-}
-
-.dark .search-input:focus {
-    background: rgba(31, 41, 55, 1);
-    border-color: #60a5fa;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 0 3px rgba(96, 165, 250, 0.1);
-}
-
-.search-input::placeholder {
-    color: #9ca3af;
-    font-weight: 400;
-    transition: color 0.3s ease;
-}
-
-.search-input:focus::placeholder {
-    color: #6b7280;
-}
-
-.dark .search-input::placeholder {
-    color: #6b7280;
-}
-
-.dark .search-input:focus::placeholder {
-    color: #9ca3af;
-}
-
-/* Search Icon Styling */
-.search-icon {
-    color: #9ca3af;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    transform: scale(1);
-}
-
-.search-container:focus-within .search-icon {
-    color: #3b82f6;
-    transform: scale(1.1);
-}
-
-.dark .search-icon {
-    color: #6b7280;
-}
-
-.dark .search-container:focus-within .search-icon {
-    color: #60a5fa;
-}
-
-/* Clear Button Styling */
-.clear-button {
-    background: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.2);
-    border-radius: 8px;
-    padding: 6px;
-    color: #ef4444;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    opacity: 0;
-    transform: scale(0.8);
-}
-
-.clear-button:hover {
-    background: rgba(239, 68, 68, 0.2);
-    border-color: rgba(239, 68, 68, 0.3);
-    transform: scale(1);
-    color: #dc2626;
-}
-
-.clear-button.show {
-    opacity: 1;
-    transform: scale(1);
-}
-
-.dark .clear-button {
-    background: rgba(239, 68, 68, 0.2);
-    border-color: rgba(239, 68, 68, 0.3);
-    color: #f87171;
-}
-
-.dark .clear-button:hover {
-    background: rgba(239, 68, 68, 0.3);
-    border-color: rgba(239, 68, 68, 0.4);
-    color: #fca5a5;
-}
-
-/* Loading Spinner Styling */
-.search-loading {
-    animation: spin 1s linear infinite;
-    color: #3b82f6;
-    opacity: 0;
-    transform: scale(0.8);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.search-loading.show {
-    opacity: 1;
-    transform: scale(1);
-}
-
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-/* Search Results Info Styling */
-.search-results-info {
-    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-    border: 1px solid #bfdbfe;
-    border-radius: 8px;
-    padding: 8px 16px;
-    margin-top: 8px;
-    font-size: 13px;
-    font-weight: 500;
-    color: #1e40af;
-    opacity: 0;
-    transform: translateY(-10px);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.search-results-info.show {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.dark .search-results-info {
-    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
-    border-color: #3b82f6;
-    color: #dbeafe;
-}
-
-/* Question Selection Limit Styling */
-.question-limit-container {
-    transition: all 0.3s ease-in-out;
-}
-
-
-
-/* Warning Banner Styling */
-#limit-warning {
-    transition: all 0.3s ease-in-out;
-    animation: slideDown 0.3s ease-out;
-}
-
-#limit-warning.show {
-    transform: translateY(0);
-    opacity: 1;
-}
-
-/* Question Card Styling */
+/* Drag and Drop Styles */
 .question-card {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 2px solid transparent;
-    cursor: move;
-    position: relative;
-    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-    backdrop-filter: blur(10px);
-}
-
-.dark .question-card {
-    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+    transition: all 0.3s ease;
+    cursor: grab;
 }
 
 .question-card.dragging {
-    opacity: 0.9;
-    transform: scale(1.05) rotate(2deg);
+    opacity: 0.5;
+    transform: rotate(2deg) scale(1.02);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
     z-index: 1000;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-    transition: none;
-    border-color: #3b82f6;
 }
 
 .question-card.drag-over {
-    border-color: #22c55e;
-    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
-    transform: scale(1.02);
-    box-shadow: 0 8px 25px rgba(34, 197, 94, 0.2);
-}
-
-.question-card.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    background-color: #f3f4f6;
-}
-
-.question-card:hover:not(.disabled):not(.dragging) {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    border-color: #3b82f6;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(99, 102, 241, 0.05) 100%);
-}
-
-.dark .question-card:hover:not(.disabled):not(.dragging) {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
-}
-
-.question-card:hover:not(.disabled):not(.dragging) .question-number-container {
-    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
-    border-radius: 8px;
-    padding: 4px;
-    transform: scale(1.05);
-}
-
-.question-card:hover:not(.disabled):not(.dragging) .question-marks-container {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(99, 102, 241, 0.05) 100%);
-    border-radius: 8px;
-    padding: 4px;
-    transform: scale(1.05);
-}
-
-/* Drop indicator styling */
-.drop-indicator {
-    height: 3px;
-    background: linear-gradient(90deg, #22c55e, #16a34a);
-    border-radius: 2px;
-    margin: 8px 0;
-    opacity: 0;
-    transform: scaleX(0);
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
-}
-
-.drop-indicator.show {
-    opacity: 1;
-    transform: scaleX(1);
-}
-
-.drop-indicator::before {
-    content: '';
-    position: absolute;
-    left: 50%;
-    top: -4px;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-bottom: 6px solid #22c55e;
-}
-
-.drop-indicator::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    bottom: -4px;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 6px solid #22c55e;
-}
-
-.question-card:hover:not(.disabled):not(.dragging) {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    border-color: #3b82f6;
-    background-color: rgba(59, 130, 246, 0.02);
-}
-
-.question-card:hover:not(.disabled):not(.dragging) .question-number-container {
-    background-color: rgba(34, 197, 94, 0.05);
-    border-radius: 6px;
-    padding: 2px;
-}
-
-.question-card:hover:not(.disabled):not(.dragging) .question-marks-container {
+    border: 2px dashed #3b82f6;
     background-color: rgba(59, 130, 246, 0.05);
-    border-radius: 6px;
-    padding: 2px;
+    transform: scale(1.01);
 }
 
-.question-card.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    background-color: #f9fafb;
-    border-color: #e5e7eb;
-}
-
-.question-card.disabled:hover {
-    transform: none;
-    box-shadow: none;
-    border-color: #e5e7eb;
-}
-
-.question-card.selected {
-    border-color: #10b981;
-    background-color: rgba(16, 185, 129, 0.05);
-}
-
-.question-card.selected:hover {
-    border-color: #059669;
-    background-color: rgba(16, 185, 129, 0.1);
-}
-
-/* Checkbox Styling */
-.question-checkbox {
-    transition: all 0.2s ease;
-}
-
-.question-checkbox:disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-}
-
-.question-checkbox:checked {
-    transform: scale(1.1);
-}
-
-/* Button Styling */
-#select-all {
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-#select-all:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
-}
-
-#select-all:not(:disabled):hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
-}
-
-#clear-all {
-    transition: all 0.3s ease;
-}
-
-#clear-all:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
-}
-
-
-/* Answer Options Styling */
-.answer-options {
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 8px;
-    transition: all 0.2s ease;
-}
-
-.dark .answer-options {
-    background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
-    border-color: #4b5563;
-}
-
-.answer-option {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 4px 6px;
-    border-radius: 6px;
-    transition: all 0.2s ease;
-    background: rgba(255, 255, 255, 0.5);
-}
-
-.dark .answer-option {
-    background: rgba(31, 41, 55, 0.5);
-}
-
-.answer-option:hover {
-    background: rgba(59, 130, 246, 0.1);
-    transform: translateX(2px);
-}
-
-.dark .answer-option:hover {
-    background: rgba(59, 130, 246, 0.2);
-}
-
-.answer-option-letter {
-    width: 20px;
-    height: 20px;
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    font-weight: bold;
-    flex-shrink: 0;
-    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
-}
-
-.answer-option-letter.correct {
-    background: linear-gradient(135deg, #10b981, #059669);
-    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
-}
-
-.dark .answer-option-letter {
-    background: linear-gradient(135deg, #60a5fa, #3b82f6);
-}
-
-.dark .answer-option-letter.correct {
-    background: linear-gradient(135deg, #34d399, #10b981);
-}
-
-.answer-option-text {
-    font-size: 11px;
-    line-height: 1.3;
-    color: #374151;
-    flex: 1;
-    min-width: 0;
-}
-
-.dark .answer-option-text {
-    color: #d1d5db;
-}
-
-/* Slim Question Card Styling */
-.question-card {
-    transition: all 0.2s ease;
-    border-left: 3px solid transparent;
-}
-
-.question-card:hover {
-    border-left-color: #3b82f6;
-    transform: translateX(2px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.dark .question-card:hover {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-.question-card.dragging {
-    opacity: 0.5;
-    transform: rotate(2deg);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-/* Compact Answer Options */
-.compact-answer-option {
-    width: 20px;
-    height: 20px;
-    font-size: 10px;
-    transition: all 0.2s ease;
-}
-
-.compact-answer-option:hover {
-    transform: scale(1.1);
-}
-
-/* Slim Input Styling */
-.slim-input {
-    font-size: 11px;
-    padding: 2px 4px;
-    border-width: 1px;
-    transition: all 0.2s ease;
-}
-
-.slim-input:focus {
-    transform: scale(1.05);
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-}
-
-/* Compact Badge Styling */
-.compact-badge {
-    font-size: 10px;
-    padding: 2px 6px;
-    border-radius: 6px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-/* Question Text Truncation */
-.question-text-slim {
-    line-height: 1.3;
-    max-height: 2.6em;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-}
-
-/* Auto-Sort Animation */
-.question-card {
-    transition: all 0.3s ease;
-}
-
-.question-card.sorting {
-    transform: scale(1.02);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-    border-left-color: #3b82f6;
-}
-
-.question-card.newly-selected {
-    animation: highlightNew 0.6s ease-out;
-}
-
-@keyframes highlightNew {
-    0% {
-        background-color: rgba(59, 130, 246, 0.1);
-        transform: scale(1.05);
-    }
-    50% {
-        background-color: rgba(59, 130, 246, 0.2);
-        transform: scale(1.02);
-    }
-    100% {
-        background-color: transparent;
-        transform: scale(1);
-    }
-}
-
-/* Tags in Single Line */
-.tags-slim {
-    font-size: 10px;
-    color: #6b7280;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.dark .tags-slim {
-    color: #9ca3af;
-}
-
-/* Mobile-Specific Styling */
-@media (max-width: 640px) {
-    .question-card {
-        padding: 12px;
-        margin-bottom: 8px;
-    }
-    
-    .question-card:hover {
-        transform: none;
-        border-left-color: #3b82f6;
-    }
-    
-    /* Mobile Answer Options Grid */
-    .mobile-answer-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-    }
-    
-    .mobile-answer-option {
-        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-        border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        padding: 8px;
-        transition: all 0.2s ease;
-    }
-    
-    .dark .mobile-answer-option {
-        background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
-        border-color: #4b5563;
-    }
-    
-    .mobile-answer-option:hover {
-        background: rgba(59, 130, 246, 0.1);
-        transform: translateY(-1px);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-    
-    .dark .mobile-answer-option:hover {
-        background: rgba(59, 130, 246, 0.2);
-    }
-    
-    /* Mobile Touch Targets */
-    .mobile-touch-target {
-        min-height: 44px;
-        min-width: 44px;
-    }
-    
-    /* Mobile Question Text */
-    .mobile-question-text {
-        font-size: 14px;
-        line-height: 1.4;
-        margin-bottom: 12px;
-    }
-    
-    /* Mobile Tags */
-    .mobile-tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 4px;
-        margin-top: 8px;
-    }
-    
-    .mobile-tag {
-        font-size: 10px;
-        padding: 4px 8px;
-        border-radius: 6px;
-        background: #f3f4f6;
-        color: #6b7280;
-        font-weight: 500;
-    }
-    
-    .dark .mobile-tag {
-        background: #374151;
-        color: #9ca3af;
-    }
-    
-    /* Mobile Controls Row */
-    .mobile-controls {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 12px;
-    }
-    
-    .mobile-controls-left {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    
-    .mobile-controls-right {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    
-    /* Mobile Input Sizing */
-    .mobile-input {
-        font-size: 12px;
-        padding: 6px 8px;
-        min-height: 32px;
-    }
-    
-    /* Mobile Badge Sizing */
-    .mobile-badge {
-        font-size: 10px;
-        padding: 4px 8px;
-        border-radius: 6px;
-        font-weight: 600;
-    }
-    
-    /* Mobile Drag Handle */
-    .mobile-drag-handle {
-        padding: 8px;
-        border-radius: 6px;
-        background: #f9fafb;
-        border: 1px solid #e5e7eb;
-    }
-    
-    .dark .mobile-drag-handle {
-        background: #374151;
-        border-color: #4b5563;
-    }
-    
-    .mobile-drag-handle:active {
-        background: #e5e7eb;
-        transform: scale(0.95);
-    }
-    
-    .dark .mobile-drag-handle:active {
-        background: #4b5563;
-    }
-}
-
-/* Animations */
-@keyframes pulse-warning {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
-}
-
-@keyframes pulse-danger {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.6; }
-}
-
-@keyframes pulse-progress {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.8; }
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
-}
-
-.shake {
-    animation: shake 0.5s ease-in-out;
-}
-
-/* Dark mode adjustments */
-.dark .question-card.disabled {
-    background-color: #374151;
-    border-color: #4b5563;
-}
-
-
-/* Mobile-first responsive design */
-@media (max-width: 640px) {
-    .question-card {
-        margin-bottom: 1rem;
-        border-radius: 1rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-    
-    .question-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    }
-    
-    .question-checkbox {
-        transform: scale(1.2);
-    }
-    
-    .question-number,
-    .question-marks {
-        font-size: 0.875rem;
-        padding: 0.5rem;
-    }
-    
-    .drag-handle {
-        padding: 0.75rem;
-        border-radius: 0.75rem;
-    }
-}
-
-/* Enhanced Mobile Responsive Design */
-@media (max-width: 768px) {
-    .question-card:hover:not(.disabled) {
-        transform: translateY(-1px);
-    }
-    
-    .question-card:hover:not(.disabled) .question-number-container,
-    .question-card:hover:not(.disabled) .question-marks-container {
-        transform: scale(1.02);
-    }
-    
-    #select-all:not(:disabled):hover,
-    #clear-all:hover {
-        transform: translateY(-1px);
-    }
-    
-}
-
-@media (max-width: 640px) {
-    .question-card {
-        padding: 1rem;
-        margin-bottom: 0.75rem;
-    }
-    
-    .question-checkbox {
-        transform: scale(1.3);
-        margin-right: 0.5rem;
-    }
-    
-    .question-number,
-    .question-marks {
-        font-size: 0.875rem;
-        padding: 0.5rem 0.75rem;
-        border-radius: 0.5rem;
-    }
-    
-    .drag-handle {
-        padding: 0.5rem;
-        border-radius: 0.5rem;
-        background: rgba(156, 163, 175, 0.1);
-    }
-    
-    .question-card:hover .drag-handle {
-        background: rgba(156, 163, 175, 0.2);
-    }
-}
-
-/* Touch-friendly interactions */
-@media (hover: none) and (pointer: coarse) {
-    .question-card:hover {
-        transform: none;
-    }
-    
-    .question-card:active {
-        transform: scale(0.98);
-    }
-    
-    .question-checkbox:active {
-        transform: scale(1.1);
-    }
-    
-    .drag-handle:active {
-        background: rgba(156, 163, 175, 0.3);
-        transform: scale(1.1);
-    }
-}
-
-/* Focus states for accessibility */
-.question-checkbox:focus {
-    outline: 2px solid #3b82f6;
-    outline-offset: 2px;
-}
-
-#select-all:focus,
-#clear-all:focus {
-    outline: 2px solid #3b82f6;
-    outline-offset: 2px;
-}
-
-/* Question number input styling */
-.question-number {
-    transition: all 0.3s ease;
-    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-    border: 2px solid #bbf7d0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    font-weight: 600;
-    color: #166534;
-    text-align: center;
-    cursor: default;
-    /* Remove spinner arrows */
-    -moz-appearance: textfield;
-}
-
-.question-number:read-only {
-    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-    color: #166534;
-    cursor: default;
-}
-
-/* Mark input styling */
-.question-marks {
-    transition: all 0.3s ease;
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-    border: 2px solid #cbd5e1;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    font-weight: 600;
-    color: #1e293b;
-    text-align: center;
-    /* Remove spinner arrows */
-    -moz-appearance: textfield;
-}
-
-/* Remove spinner arrows for webkit browsers */
-.question-number::-webkit-outer-spin-button,
-.question-number::-webkit-inner-spin-button,
-.question-marks::-webkit-outer-spin-button,
-.question-marks::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-    display: none;
-}
-
-/* Additional spinner removal for all browsers */
-.question-number,
-.question-marks {
-    -moz-appearance: textfield !important;
-    -webkit-appearance: none !important;
-    appearance: none !important;
-}
-
-/* Ensure no spinner arrows in any browser */
-.question-number::-webkit-outer-spin-button,
-.question-number::-webkit-inner-spin-button,
-.question-number::-ms-clear,
-.question-number::-ms-reveal,
-.question-marks::-webkit-outer-spin-button,
-.question-marks::-webkit-inner-spin-button,
-.question-marks::-ms-clear,
-.question-marks::-ms-reveal {
-    display: none !important;
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-    appearance: none !important;
-}
-
-.question-number:hover {
-    border-color: #22c55e;
-    box-shadow: 0 4px 8px rgba(34, 197, 94, 0.2);
-    transform: translateY(-1px);
-    background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
-}
-
-.question-number:focus {
-    outline: none;
-    border-color: #22c55e;
-    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.3), 0 4px 12px rgba(34, 197, 94, 0.2);
-    transform: scale(1.1);
-    background: linear-gradient(135deg, #bbf7d0 0%, #86efac 100%);
-}
-
-.question-marks:hover {
-    border-color: #3b82f6;
-    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2);
-    transform: translateY(-1px);
-    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-}
-
-.question-marks:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3), 0 4px 12px rgba(59, 130, 246, 0.2);
-    transform: scale(1.1);
-    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-}
-
-.question-number.border-red-500,
-.question-marks.border-red-500 {
-    border-color: #ef4444 !important;
-    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3), 0 4px 12px rgba(239, 68, 68, 0.2);
-    background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
-    animation: shake 0.5s ease-in-out;
-}
-
-/* Question number input container */
-.question-number-container {
-    transition: all 0.3s ease;
-    position: relative;
-}
-
-/* Drag handle styling */
 .drag-handle {
     transition: all 0.2s ease;
-    opacity: 0.4;
-    border-radius: 4px;
-}
-
-.question-card:hover .drag-handle {
-    opacity: 0.8;
-    background-color: rgba(156, 163, 175, 0.1);
-}
-
-.question-card.dragging .drag-handle {
-    opacity: 1;
-    background-color: rgba(156, 163, 175, 0.2);
 }
 
 .drag-handle:hover {
-    opacity: 1 !important;
-    background-color: rgba(156, 163, 175, 0.15) !important;
+    background-color: rgba(59, 130, 246, 0.1);
+    transform: scale(1.1);
 }
 
-/* Mark input container */
-.question-marks-container {
-    transition: all 0.3s ease;
+.drop-indicator {
     position: relative;
+    overflow: visible;
 }
 
-.question-number-container::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(45deg, #22c55e, #16a34a, #15803d, #166534);
-    border-radius: 6px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: -1;
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.4;
+        transform: scale(0.8);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
 }
 
-.question-marks-container::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(45deg, #3b82f6, #8b5cf6, #06b6d4, #10b981);
-    border-radius: 6px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: -1;
+/* Smooth transitions for question reordering */
+.questions-container {
+    transition: all 0.3s ease;
 }
 
-.question-card:hover .question-number-container::before {
-    opacity: 0.3;
+.question-card {
+    transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease;
 }
 
-.question-card:hover .question-number-container {
-    background-color: rgba(34, 197, 94, 0.05);
-    border-radius: 6px;
-    padding: 2px;
-    transform: translateY(-1px);
+/* Enhanced drag handle styling */
+.drag-handle svg {
+    transition: transform 0.2s ease;
 }
 
-.question-card:hover .question-marks-container::before {
-    opacity: 0.3;
-}
-
-.question-card:hover .question-marks-container {
-    background-color: rgba(59, 130, 246, 0.05);
-    border-radius: 6px;
-    padding: 2px;
-    transform: translateY(-1px);
-}
-
-/* Question number label styling */
-.question-number-container label {
-    font-weight: 600;
-    color: #166534;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    transition: color 0.3s ease;
-}
-
-/* Mark label styling */
-.question-marks-container label {
-    font-weight: 600;
-    color: #475569;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    transition: color 0.3s ease;
-}
-
-.question-card:hover .question-number-container label {
-    color: #22c55e;
-}
-
-.question-card:hover .question-marks-container label {
+.drag-handle:hover svg {
+    transform: scale(1.1);
     color: #3b82f6;
 }
 
-/* Dark mode adjustments */
-.dark .question-number {
-    background: linear-gradient(135deg, #14532d 0%, #166534 100%);
-    border-color: #22c55e;
-    color: #f0fdf4;
+/* Question number highlight during drag */
+.question-number {
+    transition: all 0.3s ease;
 }
 
-.dark .question-number:read-only {
-    background: linear-gradient(135deg, #14532d 0%, #166534 100%);
-    color: #f0fdf4;
-    cursor: default;
-}
-
-.dark .question-marks {
-    background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
-    border-color: #6b7280;
-    color: #f9fafb;
-}
-
-.dark .question-number:hover {
-    background: linear-gradient(135deg, #166534 0%, #15803d 100%);
-    border-color: #4ade80;
-}
-
-.dark .question-number:focus {
-    background: linear-gradient(135deg, #15803d 0%, #16a34a 100%);
-}
-
-.dark .question-marks:hover {
-    background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);
+.question-card.dragging .question-number {
+    background-color: #dbeafe;
     border-color: #3b82f6;
-}
-
-.dark .question-marks:focus {
-    background: linear-gradient(135deg, #1e3a8a 0%, #312e81 100%);
-}
-
-.dark .question-number-container label {
-    color: #bbf7d0;
-}
-
-.dark .question-marks-container label {
-    color: #d1d5db;
-}
-
-.dark .question-card:hover .question-number-container label {
-    color: #4ade80;
-}
-
-.dark .question-card:hover .question-marks-container label {
-    color: #60a5fa;
+    color: #1e40af;
+    font-weight: bold;
 }
 </style>
-@endpush
 
-@push('scripts')
 <script>
+
+// Move the main script here temporarily to test
 document.addEventListener('DOMContentLoaded', function() {
     // Get filter elements
     const searchInput = document.getElementById('search');
@@ -1726,35 +374,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const dateFilter = document.getElementById('date-filter');
     const clearAllFiltersBtn = document.getElementById('clear-filters');
     const refreshQuestionsBtn = document.getElementById('refresh-filters');
-    
     if (!searchInput || !searchHidden || !filterForm) {
-        console.error('Required elements not found');
         return;
     }
-    
     // Load initial filter data
     loadFilterData();
     
-    // Search functionality with debouncing
-    let searchTimeout;
-    searchInput.addEventListener('input', function() {
-        clearTimeout(searchTimeout);
-        searchHidden.value = this.value;
-        
-        searchTimeout = setTimeout(function() {
-            performAjaxSearch();
-        }, 300);
-    });
-    
-    // Filter change handlers
+    // Filter change handlers with parent-child relationships
     if (courseFilter) {
         courseFilter.addEventListener('change', function() {
             const courseId = this.value;
-            console.log('Course filter changed to:', courseId);
             
             // Clear dependent filters
-            if (subjectFilter) subjectFilter.value = '';
-            if (topicFilter) topicFilter.value = '';
+            if (subjectFilter) {
+                subjectFilter.value = '';
+            }
+            if (topicFilter) {
+                topicFilter.value = '';
+            }
             
             // Update subjects for selected course
             updateSubjectsForCourse(courseId);
@@ -1762,15 +399,17 @@ document.addEventListener('DOMContentLoaded', function() {
             // Trigger search
             performAjaxSearch();
         });
+    } else {
     }
     
     if (subjectFilter) {
         subjectFilter.addEventListener('change', function() {
             const subjectId = this.value;
-            console.log('Subject filter changed to:', subjectId);
             
             // Clear dependent filters
-            if (topicFilter) topicFilter.value = '';
+            if (topicFilter) {
+                topicFilter.value = '';
+            }
             
             // Update topics for selected subject
             updateTopicsForSubject(subjectId);
@@ -1778,254 +417,54 @@ document.addEventListener('DOMContentLoaded', function() {
             // Trigger search
             performAjaxSearch();
         });
+    } else {
     }
     
     if (topicFilter) {
         topicFilter.addEventListener('change', function() {
-            console.log('Topic filter changed to:', this.value);
             performAjaxSearch();
         });
+    } else {
     }
     
     if (questionTypeFilter) {
         questionTypeFilter.addEventListener('change', function() {
-            console.log('Question type filter changed to:', this.value);
             performAjaxSearch();
         });
+    } else {
     }
     
-    // Date filter event handlers
     if (dateFilter) {
         dateFilter.addEventListener('change', function() {
-            console.log('Date filter CHANGE event triggered, value:', this.value);
-            console.log('Triggering AJAX search from change event...');
-            performAjaxSearchWithDate(this.value);
-        });
-        
-        // Also add input event for immediate feedback
-        dateFilter.addEventListener('input', function() {
-            console.log('Date filter INPUT event triggered, value:', this.value);
-        });
-    }
-    
-    if (clearAllFiltersBtn) {
-        clearAllFiltersBtn.addEventListener('click', function() {
-            console.log('Clear all filters clicked');
-            
-            // Clear all filter values
-            if (courseFilter) courseFilter.value = '';
-            if (subjectFilter) subjectFilter.value = '';
-            if (topicFilter) topicFilter.value = '';
-            if (questionTypeFilter) questionTypeFilter.value = '';
-            if (dateFilter) dateFilter.value = '';
-            if (searchInput) searchInput.value = '';
-            if (searchHidden) searchHidden.value = '';
-            
-            // Update subjects and topics for no course selection
-            updateSubjectsForCourse('');
-            updateTopicsForSubject('');
-            
-            // Trigger search
             performAjaxSearch();
         });
+        } else {
     }
     
-    // Refresh questions functionality
-    if (refreshQuestionsBtn) {
-        refreshQuestionsBtn.addEventListener('click', function() {
-            console.log('Refresh questions clicked');
-            
-            // Add loading state
-            const button = this;
-            const originalText = button.innerHTML;
-            button.innerHTML = '<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Refreshing...';
-            button.disabled = true;
-            
-            // Reload the page
-            window.location.reload();
+    // Clear all filters button
+    if (clearAllFiltersBtn) {
+        clearAllFiltersBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            clearAllFilters();
         });
     }
     
-    // AJAX Search Function
-    function performAjaxSearchWithDate(selectedDate) {
-        const searchValue = searchInput.value;
-        const currentUrl = new URL(window.location);
-        
-        // Add updating class to questions container
-        if (questionsContainer) {
-            questionsContainer.classList.add('updating');
-        }
-        
-        // Update URL parameters
-        if (searchValue) {
-            currentUrl.searchParams.set('search', searchValue);
-        } else {
-            currentUrl.searchParams.delete('search');
-        }
-        
-        // Handle filter parameters
-        const courseFilterValue = courseFilter ? courseFilter.value : '';
-        const subjectFilterValue = subjectFilter ? subjectFilter.value : '';
-        const topicFilterValue = topicFilter ? topicFilter.value : '';
-        const questionTypeFilterValue = questionTypeFilter ? questionTypeFilter.value : '';
-        const dateFilterValue = selectedDate || '';
-        
-        console.log('Filter values:', {
-            course: courseFilterValue,
-            subject: subjectFilterValue,
-            topic: topicFilterValue,
-            questionType: questionTypeFilterValue,
-            date: dateFilterValue,
-            dateType: typeof dateFilterValue,
-            dateLength: dateFilterValue ? dateFilterValue.length : 0
-        });
-        
-        if (courseFilterValue) {
-            currentUrl.searchParams.set('course_filter', courseFilterValue);
-        } else {
-            currentUrl.searchParams.delete('course_filter');
-        }
-        
-        if (subjectFilterValue) {
-            currentUrl.searchParams.set('subject_filter', subjectFilterValue);
-        } else {
-            currentUrl.searchParams.delete('subject_filter');
-        }
-        
-        if (topicFilterValue) {
-            currentUrl.searchParams.set('topic_filter', topicFilterValue);
-        } else {
-            currentUrl.searchParams.delete('topic_filter');
-        }
-        
-        if (questionTypeFilterValue) {
-            currentUrl.searchParams.set('question_type_filter', questionTypeFilterValue);
-        } else {
-            currentUrl.searchParams.delete('question_type_filter');
-        }
-        
-        if (dateFilterValue) {
-            currentUrl.searchParams.set('date_filter', dateFilterValue);
-        } else {
-            currentUrl.searchParams.delete('date_filter');
-        }
-        
-        console.log('Making AJAX request to:', currentUrl.toString());
-        
-        // Update browser URL without reloading
-        window.history.pushState({}, '', currentUrl);
-        
-        // Perform AJAX request
-        fetch(currentUrl.toString(), {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => {
-            console.log('AJAX response status:', response.status);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.text();
-        })
-        .then(html => {
-            console.log('AJAX response received, HTML length:', html.length);
-            
-            // Create a temporary div to parse the HTML
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = html;
-            
-            // Extract the questions grid with better selectors
-            const newQuestionsGrid = tempDiv.querySelector('.questions-container');
-            const newEmptyState = tempDiv.querySelector('.p-12.text-center') || tempDiv.querySelector('.text-center');
-            const newQuestionsCount = tempDiv.querySelector('.text-sm.text-gray-600.dark\\:text-gray-400') || tempDiv.querySelector('.questions-count');
-            
-            console.log('Extracted elements:', {
-                questionsGrid: newQuestionsGrid ? 'found' : 'not found',
-                emptyState: newEmptyState ? 'found' : 'not found',
-                questionsCount: newQuestionsCount ? newQuestionsCount.textContent : 'not found'
-            });
-            
-            // Update the page content
-            const existingQuestionsContainer = document.querySelector('.questions-container');
-            if (existingQuestionsContainer) {
-                if (newQuestionsGrid) {
-                    // There are questions - show the questions grid
-                    console.log('Updating with questions grid');
-                    existingQuestionsContainer.innerHTML = newQuestionsGrid.innerHTML;
-                    
-                    // Count questions in the new content
-                    const questionItems = existingQuestionsContainer.querySelectorAll('[data-question-id]');
-                    console.log('Questions displayed after update:', questionItems.length);
-                } else if (newEmptyState) {
-                    // No questions - show empty state
-                    console.log('Updating with empty state');
-                    existingQuestionsContainer.innerHTML = newEmptyState.outerHTML;
-                    console.log('Empty state displayed');
-                } else {
-                    // Fallback: try to find any content with questions
-                    const fallbackContent = tempDiv.querySelector('.questions-container') || tempDiv.querySelector('[data-question-id]');
-                    if (fallbackContent) {
-                        console.log('Using fallback content');
-                        existingQuestionsContainer.innerHTML = fallbackContent.innerHTML;
-                    }
-                }
-            }
-            
-            if (newQuestionsCount) {
-                const existingQuestionsCount = document.querySelector('.text-sm.text-gray-600.dark\\:text-gray-400');
-                if (existingQuestionsCount) {
-                    existingQuestionsCount.textContent = newQuestionsCount.textContent;
-                }
-            }
-            
-            // Hide loading indicators
-            if (questionsContainer) {
-                questionsContainer.classList.remove('updating');
-            }
-        })
-        .catch(error => {
-            console.error('Search error:', error);
-            // Hide loading indicators on error
-            if (questionsContainer) {
-                questionsContainer.classList.remove('updating');
-            }
-            
-            // Show error message to user
-            alert('Search failed. Please try again. Error: ' + error.message);
+    // Select All and Clear All buttons
+    const selectAllBtn = document.getElementById('select-all');
+    const clearAllBtn = document.getElementById('clear-all');
+    
+    if (selectAllBtn) {
+        selectAllBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            selectAllQuestions();
         });
     }
     
-    // Function to load initial filter data
-    function loadFilterData() {
-        // Load courses first
-        loadCourses().then(() => {
-            // After courses are loaded, check if there's a selected course
-            const selectedCourseId = '{{ request("course_filter") }}';
-            
-            if (selectedCourseId) {
-                // Load subjects for the selected course
-                loadSubjects(selectedCourseId).then(() => {
-                    // After subjects are loaded, check if there's a selected subject
-                    const selectedSubjectId = '{{ request("subject_filter") }}';
-                    
-                    if (selectedSubjectId) {
-                        // Load topics for the selected subject
-                        loadTopics(selectedSubjectId);
-                    } else {
-                        // Load all topics if no subject is selected
-                        loadTopics();
-                    }
-                });
-            } else {
-                // Load all subjects and topics if no course is selected
-                loadSubjects();
-                loadTopics();
-            }
+    if (clearAllBtn) {
+        clearAllBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            clearAllQuestions();
         });
-        
-        // Load question types
-        loadQuestionTypes();
     }
     
     // Function to load courses
@@ -2046,28 +485,39 @@ document.addEventListener('DOMContentLoaded', function() {
                     option.textContent = course.name;
                     
                     // Check if this course was previously selected
-                    if (course.id == '{{ request("course_filter") }}') {
+                    if (course.id == '{{ request("course_filter") ?? "" }}') {
                         option.selected = true;
                     }
                     
                     courseFilter.appendChild(option);
                 });
             }
+            
+            // Clear and reset subjects and topics dropdowns when courses change
+            if (subjectFilter) {
+                subjectFilter.innerHTML = '<option value="">All Subjects</option>';
+            }
+            if (topicFilter) {
+                topicFilter.innerHTML = '<option value="">All Topics</option>';
+            }
         })
         .catch(error => {
-            console.error('Error loading courses:', error);
             courseFilter.innerHTML = '<option value="">Error loading courses</option>';
         });
     }
     
     // Function to load subjects
     function loadSubjects(courseId = null) {
-        return fetch(`{{ route("partner.questions.subjects-for-filter") }}?course_id=${courseId || ''}`, {
+        const url = `{{ route("partner.questions.subjects-for-filter") }}?course_id=${courseId || ''}`;
+        
+        return fetch(url, {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            return response.json();
+        })
         .then(data => {
             subjectFilter.innerHTML = '<option value="">All Subjects</option>';
             
@@ -2078,28 +528,77 @@ document.addEventListener('DOMContentLoaded', function() {
                     option.textContent = subject.name;
                     
                     // Check if this subject was previously selected
-                    if (subject.id == '{{ request("subject_filter") }}') {
+                    if (subject.id == '{{ request("subject_filter") ?? "" }}') {
                         option.selected = true;
                     }
                     
                     subjectFilter.appendChild(option);
                 });
+            } else {
+            }
+            
+            // Clear and reset topics dropdown when subjects change
+            if (topicFilter) {
+                topicFilter.innerHTML = '<option value="">All Topics</option>';
             }
         })
         .catch(error => {
-            console.error('Error loading subjects:', error);
             subjectFilter.innerHTML = '<option value="">Error loading subjects</option>';
         });
     }
     
+    // Function to load initial filter data
+    function loadFilterData() {
+        // Clear all filters on reload
+        
+        // Reset all filter dropdowns to default values
+        if (courseFilter) {
+            courseFilter.value = '';
+        }
+        if (subjectFilter) {
+            subjectFilter.value = '';
+        }
+        if (topicFilter) {
+            topicFilter.value = '';
+        }
+        if (questionTypeFilter) {
+            questionTypeFilter.value = '';
+        }
+        
+        // Clear search input
+        if (searchInput) {
+            searchInput.value = '';
+        }
+        
+        // Load courses first
+        loadCourses().then(() => {
+            // Load all subjects and topics (no specific selections)
+            loadSubjects();
+            loadTopics();
+        });
+        
+        // Load question types
+        loadQuestionTypes();
+        
+        // Load available dates
+        loadDates();
+        
+        // Trigger search to show all questions
+        performAjaxSearch();
+    }
+    
     // Function to load topics
     function loadTopics(subjectId = null) {
-        return fetch(`{{ route("partner.questions.topics-for-filter") }}?subject_id=${subjectId || ''}`, {
+        const url = `{{ route("partner.questions.topics-for-filter") }}?subject_id=${subjectId || ''}`;
+        
+        return fetch(url, {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            return response.json();
+        })
         .then(data => {
             topicFilter.innerHTML = '<option value="">All Topics</option>';
             
@@ -2110,17 +609,451 @@ document.addEventListener('DOMContentLoaded', function() {
                     option.textContent = topic.name;
                     
                     // Check if this topic was previously selected
-                    if (topic.id == '{{ request("topic_filter") }}') {
+                    if (topic.id == '{{ request("topic_filter") ?? "" }}') {
                         option.selected = true;
                     }
                     
                     topicFilter.appendChild(option);
                 });
+            } else {
             }
         })
         .catch(error => {
-            console.error('Error loading topics:', error);
             topicFilter.innerHTML = '<option value="">Error loading topics</option>';
+        });
+    }
+    
+    // Function to update subjects when course changes
+    function updateSubjectsForCourse(courseId) {
+        loadSubjects(courseId).then(() => {
+            // After subjects are loaded, clear topics
+            if (topicFilter) {
+                topicFilter.innerHTML = '<option value="">All Topics</option>';
+            }
+        });
+    }
+    
+    // Function to update topics when subject changes
+    function updateTopicsForSubject(subjectId) {
+        loadTopics(subjectId);
+    }
+    
+    // Function to clear all filters
+    function clearAllFilters() {
+        // Clear all filter dropdowns
+        if (courseFilter) courseFilter.value = '';
+        if (subjectFilter) subjectFilter.value = '';
+        if (topicFilter) topicFilter.value = '';
+        if (questionTypeFilter) questionTypeFilter.value = '';
+        if (dateFilter) dateFilter.value = '';
+        
+        // Clear search input
+        if (searchInput) searchInput.value = '';
+        
+        // Reset dependent filters
+        if (subjectFilter) {
+            subjectFilter.innerHTML = '<option value="">All Subjects</option>';
+        }
+        if (topicFilter) {
+            topicFilter.innerHTML = '<option value="">All Topics</option>';
+        }
+        
+        // Trigger search to reload all questions
+        performAjaxSearch();
+    }
+    
+    // Function to select all visible questions
+    function selectAllQuestions() {
+        const checkboxes = document.querySelectorAll('.question-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = true;
+            assignQuestionNumber(checkbox);
+        });
+        updateSelectedCount();
+    }
+    
+    // Function to clear all selected questions
+    function clearAllQuestions() {
+        const checkboxes = document.querySelectorAll('.question-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = false;
+            clearQuestionNumber(checkbox);
+        });
+        updateSelectedCount();
+    }
+    
+    // Function to update selected count display
+    function updateSelectedCount() {
+        const checkboxes = document.querySelectorAll('.question-checkbox');
+        const selectedCount = document.querySelectorAll('.question-checkbox:checked').length;
+        const totalCount = checkboxes.length;
+        
+        // Update any selected count display if it exists
+        const selectedCountElement = document.getElementById('selected-count');
+        if (selectedCountElement) {
+            selectedCountElement.textContent = `${selectedCount} Selected / ${totalCount}`;
+        }
+    }
+    
+    // Add event listeners to individual checkboxes for count updates
+    function attachCheckboxListeners() {
+        const checkboxes = document.querySelectorAll('.question-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                updateSelectedCount();
+                if (this.checked) {
+                    assignQuestionNumber(this);
+                } else {
+                    clearQuestionNumber(this);
+                }
+            });
+        });
+    }
+    
+    // Function to assign question number in order
+    function assignQuestionNumber(checkbox) {
+        const questionCard = checkbox.closest('.question-card');
+        const questionNumberInput = questionCard.querySelector('.question-number');
+        
+        if (questionNumberInput) {
+            // Get the next available question number
+            const nextNumber = getNextQuestionNumber();
+            questionNumberInput.value = nextNumber;
+            
+            // Scroll to top of questions grid
+            const questionsContainer = document.querySelector('.questions-container');
+            if (questionsContainer) {
+                questionsContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            
+            // Sort questions by question number
+            sortQuestionsByNumber();
+        }
+    }
+    
+    // Function to clear question number when unchecked
+    function clearQuestionNumber(checkbox) {
+        const questionCard = checkbox.closest('.question-card');
+        const questionNumberInput = questionCard.querySelector('.question-number');
+        
+        if (questionNumberInput) {
+            questionNumberInput.value = '';
+            // Re-sort questions after clearing
+            sortQuestionsByNumber();
+        }
+    }
+    
+    // Function to get the next available question number
+    function getNextQuestionNumber() {
+        const questionNumbers = Array.from(document.querySelectorAll('.question-number'))
+            .map(input => parseInt(input.value) || 0)
+            .filter(num => num > 0)
+            .sort((a, b) => a - b);
+        
+        let nextNumber = 1;
+        for (let num of questionNumbers) {
+            if (nextNumber === num) {
+                nextNumber++;
+            } else {
+                break;
+            }
+        }
+        return nextNumber;
+    }
+    
+    // Function to sort questions by question number
+    function sortQuestionsByNumber() {
+        const questionsContainer = document.querySelector('.questions-container');
+        if (!questionsContainer) return;
+        
+        const questionCards = Array.from(questionsContainer.querySelectorAll('.question-card'));
+        
+        questionCards.sort((a, b) => {
+            const aNumber = parseInt(a.querySelector('.question-number')?.value) || 999999;
+            const bNumber = parseInt(b.querySelector('.question-number')?.value) || 999999;
+            return aNumber - bNumber;
+        });
+        
+        // Re-append sorted questions
+        questionCards.forEach(card => {
+            questionsContainer.appendChild(card);
+        });
+    }
+    
+    // Call this function when questions are loaded/updated
+    attachCheckboxListeners();
+    
+    // Drag and Drop Variables
+    let draggedElement = null;
+    let draggedIndex = -1;
+    let dropIndicator = null;
+    
+    // Initialize drag and drop functionality
+    initializeDragAndDrop();
+    
+    // Function to initialize drag and drop
+    function initializeDragAndDrop() {
+        const questionsContainer = document.querySelector('.questions-container');
+        if (!questionsContainer) return;
+        
+        // Create drop indicator element
+        createDropIndicator();
+        
+        // Attach drag listeners to all question cards
+        attachDragListeners();
+    }
+    
+    // Function to create drop indicator
+    function createDropIndicator() {
+        if (dropIndicator) {
+            return; // Already created
+        }
+        
+        dropIndicator = document.createElement('div');
+        dropIndicator.className = 'drop-indicator';
+        dropIndicator.style.cssText = `
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            border-radius: 2px;
+            margin: 8px 0;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            position: relative;
+        `;
+        
+        // Add animated dots
+        const dots = document.createElement('div');
+        dots.style.cssText = `
+            position: absolute;
+            top: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 4px;
+        `;
+        
+        for (let i = 0; i < 3; i++) {
+            const dot = document.createElement('div');
+            dot.style.cssText = `
+                width: 6px;
+                height: 6px;
+                background: #3b82f6;
+                border-radius: 50%;
+                animation: pulse 1.5s infinite;
+                animation-delay: ${i * 0.2}s;
+            `;
+            dots.appendChild(dot);
+        }
+        
+        dropIndicator.appendChild(dots);
+    }
+    
+    // Function to attach drag listeners
+    function attachDragListeners() {
+        const questionCards = document.querySelectorAll('.question-card');
+        questionCards.forEach((card, index) => {
+            const dragHandle = card.querySelector('.drag-handle');
+            if (dragHandle) {
+                // Make the entire card draggable
+                card.draggable = true;
+                card.dataset.index = index;
+                
+                // Add drag event listeners
+                card.addEventListener('dragstart', handleDragStart);
+                card.addEventListener('dragend', handleDragEnd);
+                card.addEventListener('dragover', handleDragOver);
+                card.addEventListener('drop', handleDrop);
+                card.addEventListener('dragenter', handleDragEnter);
+                card.addEventListener('dragleave', handleDragLeave);
+                
+                // Add visual feedback to drag handle
+                dragHandle.addEventListener('mousedown', () => {
+                    card.style.cursor = 'grabbing';
+                });
+                
+                dragHandle.addEventListener('mouseup', () => {
+                    card.style.cursor = 'grab';
+                });
+            }
+        });
+    }
+    
+    // Drag start handler
+    function handleDragStart(e) {
+        draggedElement = this;
+        draggedIndex = parseInt(this.dataset.index);
+        
+        // Add dragging class for visual feedback
+        this.classList.add('dragging');
+        this.style.opacity = '0.5';
+        this.style.transform = 'rotate(2deg)';
+        
+        // Set drag effect
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/html', this.outerHTML);
+    }
+    
+    // Drag end handler
+    function handleDragEnd(e) {
+        // Remove dragging class
+        this.classList.remove('dragging');
+        this.style.opacity = '1';
+        this.style.transform = 'rotate(0deg)';
+        this.style.cursor = 'grab';
+        
+        // Hide drop indicator
+        if (dropIndicator && dropIndicator.parentNode) {
+            dropIndicator.parentNode.removeChild(dropIndicator);
+        }
+        
+        // Reset variables
+        draggedElement = null;
+        draggedIndex = -1;
+    }
+    
+    // Drag over handler
+    function handleDragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        
+        if (this === draggedElement) return;
+        
+        const rect = this.getBoundingClientRect();
+        const midpoint = rect.top + rect.height / 2;
+        const isAfter = e.clientY > midpoint;
+        
+        // Show drop indicator
+        showDropIndicator(this, isAfter);
+    }
+    
+    // Drag enter handler
+    function handleDragEnter(e) {
+        e.preventDefault();
+        this.classList.add('drag-over');
+    }
+    
+    // Drag leave handler
+    function handleDragLeave(e) {
+        this.classList.remove('drag-over');
+    }
+    
+    // Drop handler
+    function handleDrop(e) {
+        e.preventDefault();
+        this.classList.remove('drag-over');
+        
+        if (this === draggedElement) return;
+        
+        const rect = this.getBoundingClientRect();
+        const midpoint = rect.top + rect.height / 2;
+        const isAfter = e.clientY > midpoint;
+        
+        // Move the element
+        moveElement(draggedElement, this, isAfter);
+        
+        // Update question numbers
+        updateQuestionNumbersAfterDrag();
+    }
+    
+    // Function to show drop indicator
+    function showDropIndicator(targetElement, isAfter) {
+        // Ensure drop indicator is created
+        if (!dropIndicator) {
+            createDropIndicator();
+        }
+        
+        if (!dropIndicator) return;
+        
+        // Remove existing indicator
+        if (dropIndicator.parentNode) {
+            dropIndicator.parentNode.removeChild(dropIndicator);
+        }
+        
+        // Insert indicator
+        if (isAfter) {
+            targetElement.parentNode.insertBefore(dropIndicator, targetElement.nextSibling);
+        } else {
+            targetElement.parentNode.insertBefore(dropIndicator, targetElement);
+        }
+        
+        // Show with animation
+        setTimeout(() => {
+            if (dropIndicator) {
+                dropIndicator.style.opacity = '1';
+            }
+        }, 10);
+    }
+    
+    // Function to move element
+    function moveElement(draggedEl, targetEl, isAfter) {
+        const container = draggedEl.parentNode;
+        
+        if (isAfter) {
+            container.insertBefore(draggedEl, targetEl.nextSibling);
+        } else {
+            container.insertBefore(draggedEl, targetEl);
+        }
+        
+        // Update indices
+        updateElementIndices();
+    }
+    
+    // Function to update element indices
+    function updateElementIndices() {
+        const questionCards = document.querySelectorAll('.question-card');
+        questionCards.forEach((card, index) => {
+            card.dataset.index = index;
+        });
+    }
+    
+    // Function to update question numbers after drag
+    function updateQuestionNumbersAfterDrag() {
+        const questionCards = document.querySelectorAll('.question-card');
+        let questionNumber = 1;
+        
+        questionCards.forEach(card => {
+            const checkbox = card.querySelector('.question-checkbox');
+            const questionNumberInput = card.querySelector('.question-number');
+            
+            if (checkbox && checkbox.checked && questionNumberInput) {
+                questionNumberInput.value = questionNumber;
+                questionNumber++;
+            }
+        });
+    }
+    
+    // Function to load available dates
+    function loadDates() {
+        return fetch('{{ route("partner.questions.available-dates") }}', {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.dates && data.dates.length > 0) {
+                const dateFilter = document.getElementById('date-filter');
+                if (dateFilter) {
+                    // Clear existing options except the first one
+                    dateFilter.innerHTML = '<option value="">All Dates</option>';
+                    
+                    // Add date options
+                    data.dates.forEach(date => {
+                        const option = document.createElement('option');
+                        option.value = date;
+                        // Format date as 'dd-Mon-YYYY'
+                        const dateObj = new Date(date);
+                        const day = dateObj.getDate().toString().padStart(2, '0');
+                        const month = dateObj.toLocaleDateString('en-US', { month: 'short' });
+                        const year = dateObj.getFullYear();
+                        option.textContent = `${day}-${month}-${year}`;
+                        dateFilter.appendChild(option);
+                    });
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error loading dates:', error);
         });
     }
     
@@ -2142,7 +1075,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     option.textContent = questionType.q_type_name;
                     
                     // Check if this question type was previously selected
-                    if (questionType.q_type_code == '{{ request("question_type_filter") }}') {
+                    if (questionType.q_type_code == '{{ request("question_type_filter") ?? "" }}') {
                         option.selected = true;
                     }
                     
@@ -2151,52 +1084,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
         .catch(error => {
-            console.error('Error loading question types:', error);
             questionTypeFilter.innerHTML = '<option value="">Error loading question types</option>';
         });
     }
     
-    // Function to update subjects based on selected course
-    function updateSubjectsForCourse(courseId) {
-        if (!subjectFilter) return;
-        
-        console.log('updateSubjectsForCourse called with courseId:', courseId);
-        
-        // Show loading state
-        subjectFilter.disabled = true;
-        subjectFilter.innerHTML = '<option value="">Loading subjects...</option>';
-        
-        // Load subjects for the selected course
-        loadSubjects(courseId);
-        
-        // Re-enable the dropdown after loading
-        setTimeout(() => {
-            subjectFilter.disabled = false;
-            console.log('Subjects updated for course:', courseId);
-        }, 500);
-    }
-    
-    // Function to update topics based on selected subject
-    function updateTopicsForSubject(subjectId) {
-        if (!topicFilter) return;
-        
-        console.log('updateTopicsForSubject called with subjectId:', subjectId);
-        
-        // Show loading state
-        topicFilter.disabled = true;
-        topicFilter.innerHTML = '<option value="">Loading topics...</option>';
-        
-        // Load topics for the selected subject
-        loadTopics(subjectId);
-        
-        // Re-enable the dropdown after loading
-        setTimeout(() => {
-            topicFilter.disabled = false;
-            console.log('Topics updated for subject:', subjectId);
-        }, 500);
-    }
-    
-    // Original AJAX Search Function (for non-date filters)
+    // AJAX Search Function
     function performAjaxSearch() {
         const searchValue = searchInput.value;
         const currentUrl = new URL(window.location);
@@ -2220,16 +1112,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const questionTypeFilterValue = questionTypeFilter ? questionTypeFilter.value : '';
         const dateFilterValue = dateFilter ? dateFilter.value : '';
         
-        console.log('Filter values:', {
-            course: courseFilterValue,
-            subject: subjectFilterValue,
-            topic: topicFilterValue,
-            questionType: questionTypeFilterValue,
-            date: dateFilterValue,
-            dateType: typeof dateFilterValue,
-            dateLength: dateFilterValue ? dateFilterValue.length : 0
-        });
-        
         if (courseFilterValue) {
             currentUrl.searchParams.set('course_filter', courseFilterValue);
         } else {
@@ -2260,7 +1142,6 @@ document.addEventListener('DOMContentLoaded', function() {
             currentUrl.searchParams.delete('date_filter');
         }
         
-        console.log('Making AJAX request to:', currentUrl.toString());
         
         // Update browser URL without reloading
         window.history.pushState({}, '', currentUrl);
@@ -2272,895 +1153,36 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
         .then(response => {
-            console.log('AJAX response status:', response.status);
-            return response.text();
-        })
-        .then(html => {
-            console.log('AJAX response received, HTML length:', html.length);
-            
-            // Parse the response HTML
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            
-            // Extract the questions grid
-            const questionsGrid = doc.querySelector('.questions-container');
-            const emptyState = doc.querySelector('.empty-state');
-            const questionsCount = doc.querySelector('.questions-count');
-            
-            console.log('Extracted elements:', {
-                questionsGrid: questionsGrid ? 'found' : 'not found',
-                emptyState: emptyState ? 'found' : 'not found',
-                questionsCount: questionsCount ? questionsCount.textContent.trim() : 'not found'
-            });
-            
-            // Update the questions grid
-            if (questionsContainer) {
-                if (questionsGrid) {
-                    questionsContainer.innerHTML = questionsGrid.innerHTML;
-                } else if (emptyState) {
-                    questionsContainer.innerHTML = emptyState.outerHTML;
-                }
-            }
-            
-            // Update questions count
-            if (questionsCountElement && questionsCount) {
-                questionsCountElement.textContent = questionsCount.textContent;
-            }
-            
-            // Hide loading indicators
-            if (questionsContainer) {
-                questionsContainer.classList.remove('updating');
-            }
-        })
-        .catch(error => {
-            console.error('Search error:', error);
-            // Hide loading indicators on error
-            if (questionsContainer) {
-                questionsContainer.classList.remove('updating');
-            }
-        });
-    }
-    
-    // Load available dates for dropdown
-    function loadAvailableDates() {
-        console.log('Loading available dates...');
-        fetch('/partner/questions/available-dates', {
-            method: 'GET',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
-        })
-        .then(response => {
-            console.log('Response status:', response.status);
-            console.log('Response headers:', response.headers);
             return response.json();
         })
         .then(data => {
-            console.log('Available dates response:', data);
-            if (data.dates && data.dates.length > 0) {
-                populateDateDropdown(data.dates);
-            } else if (data.error) {
-                console.error('API Error:', data.error);
-                // Show error message to user
-                if (dateFilter) {
-                    dateFilter.innerHTML = '<option value="">Error loading dates</option>';
-                }
-            } else {
-                console.log('No available dates found');
-                if (dateFilter) {
-                    dateFilter.innerHTML = '<option value="">No dates available</option>';
-                }
+            // Update questions container
+            if (data.questions_html && questionsContainer) {
+                questionsContainer.innerHTML = data.questions_html;
+                // Reattach checkbox listeners for new questions
+                attachCheckboxListeners();
+                // Reinitialize drag and drop for new questions
+                initializeDragAndDrop();
             }
+            
+            // Update total questions count
+            const currentTotalCount = document.getElementById('total-questions-count');
+            if (data.total_count !== undefined && currentTotalCount) {
+                currentTotalCount.textContent = data.total_count;
+            }
+            
+            // Remove updating class
+            if (questionsContainer) {
+                questionsContainer.classList.remove('updating');
+            }
+            
         })
         .catch(error => {
-            console.error('Error loading available dates:', error);
-            if (dateFilter) {
-                dateFilter.innerHTML = '<option value="">Error loading dates</option>';
+            if (questionsContainer) {
+                questionsContainer.classList.remove('updating');
             }
+            alert('Search failed. Please try again. Error: ' + error.message);
         });
     }
-    
-    // Populate date dropdown with available dates
-    function populateDateDropdown(dates) {
-        if (!dateFilter) return;
-        
-        // Clear existing options except "All Dates"
-        dateFilter.innerHTML = '<option value="">All Dates</option>';
-        
-        // Add available dates
-        dates.forEach(dateStr => {
-            const option = document.createElement('option');
-            option.value = dateStr;
-            
-            // Format date for display as 'DD-Mmm-YYYY' (e.g., "2025-08-30" -> "30-Aug-2025")
-            const date = new Date(dateStr);
-            const day = date.getDate().toString().padStart(2, '0');
-            const month = date.toLocaleDateString('en-US', { month: 'short' });
-            const year = date.getFullYear();
-            const formattedDate = `${day}-${month}-${year}`;
-            
-            option.textContent = formattedDate;
-            dateFilter.appendChild(option);
-        });
-        
-        console.log(`Populated date dropdown with ${dates.length} dates`);
-    }
-    
-    // Initialize date dropdown
-    if (dateFilter) {
-        // Load available dates on page load
-        loadAvailableDates();
-        
-        // Add change event listener for auto-search
-        dateFilter.addEventListener('change', function() {
-            console.log('Date filter changed to:', this.value);
-            // Trigger search with the selected date value
-            performAjaxSearchWithDate(this.value);
-        });
-    }
-
-    const form = document.querySelector('form');
-    const questionCheckboxes = document.querySelectorAll('.question-checkbox');
-    const selectAllBtn = document.getElementById('select-all');
-    const clearAllBtn = document.getElementById('clear-all');
-    
-    console.log('Found question checkboxes:', questionCheckboxes.length);
-    console.log('Question checkboxes:', questionCheckboxes);
-    
-    // Test Q# input finding
-    const testQuestionId = questionCheckboxes[0]?.value;
-    if (testQuestionId) {
-        const testNumberInput = document.querySelector(`input[name="question_numbers[${testQuestionId}]"]`);
-        console.log('Test Q# input for question', testQuestionId, ':', testNumberInput);
-    }
-    
-    // Add global test function for debugging
-    window.testQNumber = function(questionId, number) {
-        const input = document.querySelector(`input[name="question_numbers[${questionId}]"]`);
-        if (input) {
-            input.removeAttribute('readonly');
-            input.value = number;
-            input.setAttribute('readonly', 'readonly');
-            console.log('Set Q# for question', questionId, 'to', number);
-            return true;
-        } else {
-            console.error('Q# input not found for question', questionId);
-            return false;
-        }
-    };
-    
-    console.log('Test function available: window.testQNumber(questionId, number)');
-    
-    const maxQuestions = 40; // Default max questions
-    
-    // Additional filter elements
-    const clearSearchBtn = document.getElementById('clear-search');
-    const clearFiltersBtn = document.getElementById('clear-filters');
-    const refreshFiltersBtn = document.getElementById('refresh-filters');
-    
-    // Store all questions for filtering
-    const allQuestions = Array.from(document.querySelectorAll('.question-checkbox')).map(checkbox => {
-        const questionDiv = checkbox.closest('.question-card');
-        return {
-            checkbox: checkbox,
-            element: questionDiv,
-            text: questionDiv.textContent.toLowerCase(),
-            type: questionDiv.dataset.type || '',
-            course: questionDiv.dataset.course || '',
-            subject: questionDiv.dataset.subject || '',
-            topic: questionDiv.dataset.topic || ''
-        };
-    });
-    
-    function updateSelectedCount() {
-        const selectedCount = document.querySelectorAll('.question-checkbox:checked').length;
-        
-        
-        
-        // Disable/enable checkboxes based on limit
-        const isAtLimit = selectedCount >= maxQuestions;
-        document.querySelectorAll('.question-card').forEach(card => {
-            const checkbox = card.querySelector('.question-checkbox');
-            if (!checkbox.checked && isAtLimit) {
-                card.classList.add('disabled');
-                checkbox.disabled = true;
-            } else {
-                card.classList.remove('disabled');
-                checkbox.disabled = false;
-            }
-        });
-        
-        // Show/hide limit warning
-        const limitWarning = document.getElementById('limit-warning');
-        if (isAtLimit) {
-            limitWarning.classList.remove('hidden');
-        } else {
-            limitWarning.classList.add('hidden');
-        }
-        
-        // Update button states
-        selectAllBtn.disabled = isAtLimit;
-        
-        // Sort questions: selected questions on top, sorted by Q# order
-        sortQuestionsBySelection();
-    }
-    
-    function selectAll() {
-        const visibleQuestions = document.querySelectorAll('.question-checkbox:not(.hidden)');
-        const selectedCount = document.querySelectorAll('.question-checkbox:checked').length;
-        const remaining = maxQuestions - selectedCount;
-        
-        let selected = 0;
-        const currentTime = Date.now();
-        visibleQuestions.forEach((checkbox, index) => {
-            if (!checkbox.checked && selected < remaining) {
-                checkbox.checked = true;
-                // Add timestamp with slight offset to maintain order
-                checkbox.setAttribute('data-check-time', currentTime + index);
-                selected++;
-            }
-        });
-        
-        // Renumber all checked questions sequentially based on check order
-        const checkedQuestions = Array.from(document.querySelectorAll('.question-checkbox:checked'));
-        
-        // Sort by check time to maintain proper sequence
-        checkedQuestions.sort((a, b) => {
-            const timeA = parseInt(a.getAttribute('data-check-time') || '0');
-            const timeB = parseInt(b.getAttribute('data-check-time') || '0');
-            return timeA - timeB;
-        });
-        
-        checkedQuestions.forEach((checkbox, index) => {
-            const questionId = checkbox.value;
-            let numberInput = document.querySelector(`input[name="question_numbers[${questionId}]"]`);
-            
-            // Fallback: try to find the input within the same question card
-            if (!numberInput) {
-                const questionCard = checkbox.closest('.question-card');
-                if (questionCard) {
-                    numberInput = questionCard.querySelector('.question-number');
-                }
-            }
-            
-            if (numberInput) {
-                // Force value update by removing and re-adding readonly
-                numberInput.removeAttribute('readonly');
-                numberInput.value = index + 1;
-                numberInput.setAttribute('readonly', 'readonly');
-            }
-        });
-        
-        updateSelectedCount();
-        
-        // Auto-sort questions after selecting all
-        sortQuestionsBySelection();
-    }
-    
-    function clearAll() {
-        questionCheckboxes.forEach(checkbox => {
-            checkbox.checked = false;
-            // Remove timestamps
-            checkbox.removeAttribute('data-check-time');
-        });
-        // Clear all question numbers
-        document.querySelectorAll('.question-number').forEach(input => {
-            input.value = '';
-        });
-        updateSelectedCount();
-        
-        // Auto-sort questions after clearing all
-        sortQuestionsBySelection();
-    }
-    
-    function applyFilters() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const selectedType = typeFilter.value;
-        const selectedCourse = courseFilter.value;
-        const selectedSubject = subjectFilter.value;
-        const selectedTopic = topicFilter.value;
-        
-        allQuestions.forEach(question => {
-            let shouldShow = true;
-            
-            if (searchTerm && !question.text.includes(searchTerm)) shouldShow = false;
-            if (selectedType && question.type !== selectedType) shouldShow = false;
-            if (selectedCourse && question.course !== selectedCourse) shouldShow = false;
-            if (selectedSubject && question.subject !== selectedSubject) shouldShow = false;
-            if (selectedTopic && question.topic !== selectedTopic) shouldShow = false;
-            
-            if (shouldShow) {
-                question.element.classList.remove('hidden');
-            } else {
-                question.element.classList.add('hidden');
-            }
-        });
-        
-        // Sort questions after filtering
-        sortQuestionsBySelection();
-        
-        // Update search results info
-        updateSearchResultsInfo();
-    }
-    
-    function clearAllFilters() {
-        searchInput.value = '';
-        typeFilter.value = '';
-        courseFilter.value = '';
-        subjectFilter.value = '';
-        topicFilter.value = '';
-        allQuestions.forEach(question => {
-            question.element.classList.remove('hidden');
-        });
-        
-        // Sort questions after clearing filters
-        sortQuestionsBySelection();
-    }
-    
-    function refreshFilters() {
-        // Reapply current filters to refresh the view
-        applyFilters();
-    }
-    
-    function sortQuestionsBySelection() {
-        const questionsContainer = document.querySelector('.grid.grid-cols-1.gap-2');
-        if (!questionsContainer) return;
-        
-        const questionCards = Array.from(questionsContainer.querySelectorAll('.question-card'));
-        
-        // Add sorting animation to all cards
-        questionCards.forEach(card => {
-            card.classList.add('sorting');
-        });
-        
-        // Separate selected and unselected questions
-        const selectedQuestions = [];
-        const unselectedQuestions = [];
-        
-        questionCards.forEach(card => {
-            const checkbox = card.querySelector('.question-checkbox');
-            if (checkbox && checkbox.checked) {
-                selectedQuestions.push(card);
-            } else {
-                unselectedQuestions.push(card);
-            }
-        });
-        
-        // Sort selected questions by their check time (check sequence)
-        selectedQuestions.sort((a, b) => {
-            const checkboxA = a.querySelector('.question-checkbox');
-            const checkboxB = b.querySelector('.question-checkbox');
-            const timeA = parseInt(checkboxA?.getAttribute('data-check-time') || '0');
-            const timeB = parseInt(checkboxB?.getAttribute('data-check-time') || '0');
-            return timeA - timeB;
-        });
-        
-        // Reassign Q# numbers based on check sequence order
-        selectedQuestions.forEach((card, index) => {
-            const numberInput = card.querySelector('.question-number');
-            if (numberInput) {
-                // Force value update by removing and re-adding readonly
-                numberInput.removeAttribute('readonly');
-                numberInput.value = index + 1;
-                numberInput.setAttribute('readonly', 'readonly');
-                console.log('Setting Q# for card', index + 1, ':', numberInput.value);
-            } else {
-                console.error('Q# input not found in card:', card);
-            }
-        });
-        
-        // Clear the container
-        questionsContainer.innerHTML = '';
-        
-        // Add selected questions first (sorted by Q#)
-        selectedQuestions.forEach((card, index) => {
-            questionsContainer.appendChild(card);
-            
-            // Add highlight animation to newly selected questions
-            if (card.querySelector('.question-checkbox')?.checked) {
-                card.classList.add('newly-selected');
-                setTimeout(() => {
-                    card.classList.remove('newly-selected');
-                }, 600);
-            }
-        });
-        
-        // Add unselected questions after
-        unselectedQuestions.forEach(card => {
-            questionsContainer.appendChild(card);
-        });
-        
-        // Remove sorting animation after a short delay
-        setTimeout(() => {
-            questionCards.forEach(card => {
-                card.classList.remove('sorting');
-            });
-        }, 300);
-        
-        // Update allQuestions array to reflect new order
-        const newOrder = [...selectedQuestions, ...unselectedQuestions];
-        allQuestions.forEach((question, index) => {
-            const newIndex = newOrder.findIndex(card => card === question.element);
-            if (newIndex !== -1) {
-                allQuestions[index] = {
-                    ...question,
-                    element: newOrder[newIndex]
-                };
-            }
-        });
-    }
-    
-    // Event listeners
-    questionCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function(e) {
-            // If checking a checkbox, verify we haven't exceeded the limit
-            if (e.target.checked) {
-                const selectedCount = document.querySelectorAll('.question-checkbox:checked').length;
-                if (selectedCount > maxQuestions) {
-                    e.target.checked = false;
-                    alert(`Maximum ${maxQuestions} questions allowed`);
-                    return;
-                }
-                
-                // Auto-assign sequential question number based on check sequence
-                const questionId = e.target.value;
-                let numberInput = document.querySelector(`input[name="question_numbers[${questionId}]"]`);
-                
-                console.log('Checking question:', questionId);
-                console.log('Number input found:', numberInput);
-                
-                // Fallback: try to find the input within the same question card
-                if (!numberInput) {
-                    const questionCard = e.target.closest('.question-card');
-                    if (questionCard) {
-                        numberInput = questionCard.querySelector('.question-number');
-                        console.log('Found Q# input in card:', numberInput);
-                    }
-                }
-                
-                if (numberInput) {
-                    // Count currently checked questions to get the next sequential number
-                    const checkedQuestions = document.querySelectorAll('.question-checkbox:checked');
-                    const newNumber = checkedQuestions.length;
-                    
-                    console.log('Setting Q# to:', newNumber);
-                    
-                    // Force value update by removing and re-adding readonly
-                    numberInput.removeAttribute('readonly');
-                    numberInput.value = newNumber;
-                    numberInput.setAttribute('readonly', 'readonly');
-                    
-                    // Add visual feedback
-                    numberInput.style.backgroundColor = '#dbeafe';
-                    numberInput.style.borderColor = '#3b82f6';
-                    numberInput.style.fontWeight = 'bold';
-                    numberInput.style.color = '#1e40af';
-                    setTimeout(() => {
-                        numberInput.style.backgroundColor = '';
-                        numberInput.style.borderColor = '';
-                        numberInput.style.fontWeight = '';
-                        numberInput.style.color = '';
-                    }, 1000);
-                    
-                    // Add timestamp to track check order
-                    e.target.setAttribute('data-check-time', Date.now());
-                    
-                    // Trigger change event to ensure the value is updated
-                    numberInput.dispatchEvent(new Event('change', { bubbles: true }));
-                    
-                    console.log('Q# value after setting:', numberInput.value);
-                } else {
-                    console.error('Number input not found for question:', questionId);
-                    console.log('Available inputs:', document.querySelectorAll('input[type="number"]'));
-                }
-            } else {
-                // Clear question number when deselected
-                const questionId = e.target.value;
-                let numberInput = document.querySelector(`input[name="question_numbers[${questionId}]"]`);
-                
-                // Fallback: try to find the input within the same question card
-                if (!numberInput) {
-                    const questionCard = e.target.closest('.question-card');
-                    if (questionCard) {
-                        numberInput = questionCard.querySelector('.question-number');
-                    }
-                }
-                
-                if (numberInput) {
-                    // Force value update by removing and re-adding readonly
-                    numberInput.removeAttribute('readonly');
-                    numberInput.value = '';
-                    numberInput.setAttribute('readonly', 'readonly');
-                }
-                
-                // Remove timestamp
-                e.target.removeAttribute('data-check-time');
-                
-                // Renumber all remaining checked questions sequentially based on check order
-                const checkedQuestions = Array.from(document.querySelectorAll('.question-checkbox:checked'));
-                
-                // Sort by check time to maintain original check sequence
-                checkedQuestions.sort((a, b) => {
-                    const timeA = parseInt(a.getAttribute('data-check-time') || '0');
-                    const timeB = parseInt(b.getAttribute('data-check-time') || '0');
-                    return timeA - timeB;
-                });
-                
-                // Assign sequential numbers based on check order
-                checkedQuestions.forEach((checkbox, index) => {
-                    const qId = checkbox.value;
-                    let qNumberInput = document.querySelector(`input[name="question_numbers[${qId}]"]`);
-                    
-                    // Fallback: try to find the input within the same question card
-                    if (!qNumberInput) {
-                        const questionCard = checkbox.closest('.question-card');
-                        if (questionCard) {
-                            qNumberInput = questionCard.querySelector('.question-number');
-                        }
-                    }
-                    
-                    if (qNumberInput) {
-                        // Force value update by removing and re-adding readonly
-                        qNumberInput.removeAttribute('readonly');
-                        qNumberInput.value = index + 1;
-                        qNumberInput.setAttribute('readonly', 'readonly');
-                    }
-                });
-            }
-            // Always update the count and UI state
-            updateSelectedCount();
-            
-            // Auto-sort questions when selection changes
-            sortQuestionsBySelection();
-        });
-    });
-    
-    selectAllBtn.addEventListener('click', selectAll);
-    clearAllBtn.addEventListener('click', clearAll);
-    
-    // Enhanced Search functionality
-    const searchLoading = document.getElementById('search-loading');
-    const searchResultsInfo = document.getElementById('search-results-info');
-    const searchResultsCount = document.getElementById('search-results-count');
-    
-    searchInput.addEventListener('input', function() {
-        const searchTerm = this.value.trim();
-        
-        // Clear previous timeout
-        clearTimeout(searchTimeout);
-        
-        // Show loading indicator for longer searches
-        if (searchTerm.length > 2) {
-            searchLoading.classList.add('show');
-            clearSearchBtn.classList.remove('show');
-        }
-        
-        // Debounce search to avoid excessive filtering
-        searchTimeout = setTimeout(() => {
-            applyFilters();
-            searchLoading.classList.remove('show');
-            
-            // Show/hide clear button and results info
-            if (searchTerm.length > 0) {
-                clearSearchBtn.classList.add('show');
-                searchResultsInfo.classList.add('show');
-                updateSearchResultsInfo();
-            } else {
-                clearSearchBtn.classList.remove('show');
-                searchResultsInfo.classList.remove('show');
-            }
-        }, searchTerm.length > 2 ? 300 : 100);
-    });
-    
-    clearSearchBtn.addEventListener('click', () => {
-        searchInput.value = '';
-        clearSearchBtn.classList.remove('show');
-        searchResultsInfo.classList.remove('show');
-        searchLoading.classList.remove('show');
-        clearTimeout(searchTimeout);
-        applyFilters();
-        searchInput.focus();
-    });
-    
-    // Focus search on Ctrl+K
-    document.addEventListener('keydown', function(e) {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-            e.preventDefault();
-            searchInput.focus();
-        }
-    });
-    
-    function updateSearchResultsInfo() {
-        const visibleQuestions = document.querySelectorAll('.question-card:not(.hidden)');
-        const searchTerm = searchInput.value.trim();
-        
-        if (searchTerm.length > 0) {
-            searchResultsCount.textContent = visibleQuestions.length;
-            searchResultsInfo.classList.add('show');
-        } else {
-            searchResultsInfo.classList.remove('show');
-        }
-    }
-    typeFilter.addEventListener('change', applyFilters);
-    courseFilter.addEventListener('change', applyFilters);
-    subjectFilter.addEventListener('change', applyFilters);
-    topicFilter.addEventListener('change', applyFilters);
-    clearFiltersBtn.addEventListener('click', clearAllFilters);
-    refreshFiltersBtn.addEventListener('click', refreshFilters);
-    
-    // Form validation
-    form.addEventListener('submit', function(e) {
-        const questionIds = new FormData(form).getAll('question_ids[]');
-        if (questionIds.length === 0) {
-            e.preventDefault();
-            alert('Please select at least one question before submitting.');
-            return false;
-        }
-        
-        // Clear question numbers for unchecked questions before submission
-        const allQuestionNumbers = document.querySelectorAll('input[name^="question_numbers["]');
-        allQuestionNumbers.forEach(input => {
-            const questionId = input.name.match(/\[(\d+)\]/)[1];
-            const checkbox = document.querySelector(`input[name="question_ids[]"][value="${questionId}"]`);
-            if (!checkbox || !checkbox.checked) {
-                input.value = '';
-            }
-        });
-        
-        // Validate mark inputs for selected questions
-        let hasInvalidMarks = false;
-        
-        questionIds.forEach(questionId => {
-            const markInput = document.querySelector(`input[name="question_marks[${questionId}]"]`);
-            
-            // Validate marks
-            if (markInput) {
-                const markValue = parseInt(markInput.value);
-                if (isNaN(markValue) || markValue < 1 || markValue > 100) {
-                    hasInvalidMarks = true;
-                    markInput.classList.add('border-red-500');
-                } else {
-                    markInput.classList.remove('border-red-500');
-                }
-            }
-        });
-        
-        if (hasInvalidMarks) {
-            e.preventDefault();
-            alert('Please enter valid marks (1-100) for all selected questions.');
-            return false;
-        }
-    });
-    
-    // Drag and Drop functionality
-    function initializeDragAndDrop() {
-        const questionsContainer = document.querySelector('.grid.grid-cols-1.gap-4');
-        if (!questionsContainer) return;
-        
-        let draggedElement = null;
-        let draggedIndex = -1;
-        let indicatorTimeout = null;
-        
-        // Add drag event listeners to all question cards
-        function addDragListeners() {
-            const questionCards = document.querySelectorAll('.question-card');
-            console.log('Adding drag listeners to', questionCards.length, 'question cards');
-            
-            questionCards.forEach((card, index) => {
-                // Remove existing listeners to prevent duplicates
-                card.removeEventListener('dragstart', handleDragStart);
-                card.removeEventListener('dragend', handleDragEnd);
-                card.removeEventListener('dragover', handleDragOver);
-                card.removeEventListener('drop', handleDrop);
-                card.removeEventListener('dragenter', handleDragEnter);
-                card.removeEventListener('dragleave', handleDragLeave);
-                
-                // Add new listeners
-                card.addEventListener('dragstart', handleDragStart);
-                card.addEventListener('dragend', handleDragEnd);
-                card.addEventListener('dragover', handleDragOver);
-                card.addEventListener('drop', handleDrop);
-                card.addEventListener('dragenter', handleDragEnter);
-                card.addEventListener('dragleave', handleDragLeave);
-                
-                // Ensure draggable attribute is set
-                card.setAttribute('draggable', 'true');
-            });
-        }
-        
-        function handleDragStart(e) {
-            console.log('Drag start triggered');
-            
-            // Find the question card (might be triggered by child elements)
-            const questionCard = e.target.closest('.question-card');
-            if (!questionCard) {
-                console.log('No question card found');
-                e.preventDefault();
-                return;
-            }
-            
-            // Only allow dragging if the question is selected
-            const checkbox = questionCard.querySelector('.question-checkbox');
-            if (!checkbox) {
-                console.log('No checkbox found');
-                e.preventDefault();
-                return;
-            }
-            
-            if (!checkbox.checked) {
-                console.log('Question not selected, preventing drag');
-                e.preventDefault();
-                return;
-            }
-            
-            console.log('Drag allowed for selected question');
-            draggedElement = questionCard;
-            draggedIndex = Array.from(questionsContainer.children).indexOf(draggedElement);
-            questionCard.classList.add('dragging');
-            e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/html', questionCard.outerHTML);
-        }
-        
-        function handleDragEnd(e) {
-            const questionCard = e.target.closest('.question-card');
-            if (questionCard) {
-                questionCard.classList.remove('dragging');
-            }
-            hideDropIndicator();
-            clearTimeout(indicatorTimeout);
-            draggedElement = null;
-            draggedIndex = -1;
-        }
-        
-        function handleDragOver(e) {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-        }
-        
-        function handleDragEnter(e) {
-            e.preventDefault();
-            const targetCard = e.target.closest('.question-card');
-            if (targetCard && targetCard !== draggedElement && targetCard.querySelector('.question-checkbox').checked) {
-                targetCard.classList.add('drag-over');
-                
-                // Debounce indicator showing to prevent rapid changes
-                clearTimeout(indicatorTimeout);
-                indicatorTimeout = setTimeout(() => {
-                    showDropIndicator(targetCard);
-                }, 50);
-            }
-        }
-        
-        function handleDragLeave(e) {
-            const targetCard = e.target.closest('.question-card');
-            if (targetCard && !targetCard.contains(e.relatedTarget)) {
-                targetCard.classList.remove('drag-over');
-                hideDropIndicator();
-            }
-        }
-        
-        function showDropIndicator(targetCard) {
-            // Don't show indicator if already showing for the same target
-            const existingIndicator = document.querySelector('.drop-indicator');
-            if (existingIndicator && existingIndicator.getAttribute('data-drop-target') === targetCard.dataset.questionId) {
-                return;
-            }
-            
-            hideDropIndicator(); // Remove any existing indicator
-            
-            const indicator = document.createElement('div');
-            indicator.className = 'drop-indicator show';
-            indicator.setAttribute('data-drop-target', targetCard.dataset.questionId);
-            
-            // Add event listeners to the indicator
-            indicator.addEventListener('dragover', handleDragOver);
-            indicator.addEventListener('drop', handleDrop);
-            indicator.addEventListener('dragenter', (e) => e.preventDefault());
-            
-            // Insert the indicator before the target card
-            targetCard.parentNode.insertBefore(indicator, targetCard);
-        }
-        
-        function hideDropIndicator() {
-            const existingIndicator = document.querySelector('.drop-indicator');
-            if (existingIndicator) {
-                existingIndicator.remove();
-            }
-        }
-        
-        function handleDrop(e) {
-            e.preventDefault();
-            hideDropIndicator();
-            
-            if (!draggedElement) return;
-            
-            // Clean up all drag-over states
-            document.querySelectorAll('.question-card.drag-over').forEach(card => {
-                card.classList.remove('drag-over');
-            });
-            
-            // Check if we're dropping on a drop indicator
-            const dropIndicator = e.target.closest('.drop-indicator');
-            let dropTarget;
-            
-            if (dropIndicator) {
-                // Find the question card that comes after the indicator
-                const nextSibling = dropIndicator.nextSibling;
-                dropTarget = nextSibling && nextSibling.classList.contains('question-card') ? nextSibling : null;
-            } else {
-                // Fallback to dropping on the question card itself
-                dropTarget = e.target.closest('.question-card');
-            }
-            
-            if (!dropTarget || dropTarget === draggedElement) return;
-            
-            // Only allow dropping on selected questions
-            const dropCheckbox = dropTarget.querySelector('.question-checkbox');
-            if (!dropCheckbox || !dropCheckbox.checked) return;
-            
-            const currentIndex = Array.from(questionsContainer.children).indexOf(draggedElement);
-            const dropIndex = Array.from(questionsContainer.children).indexOf(dropTarget);
-            
-            // Only move if the position actually changed
-            if (currentIndex !== dropIndex) {
-                // Move the dragged element to the new position
-                if (currentIndex < dropIndex) {
-                    questionsContainer.insertBefore(draggedElement, dropTarget.nextSibling);
-                } else {
-                    questionsContainer.insertBefore(draggedElement, dropTarget);
-                }
-                
-                // Update question numbers based on new order
-                updateQuestionNumbersAfterDrag();
-            }
-        }
-        
-        function updateQuestionNumbersAfterDrag() {
-            const selectedQuestions = Array.from(questionsContainer.querySelectorAll('.question-card'))
-                .filter(card => {
-                    const checkbox = card.querySelector('.question-checkbox');
-                    return checkbox && checkbox.checked;
-                });
-            
-            selectedQuestions.forEach((card, index) => {
-                const numberInput = card.querySelector('.question-number');
-                if (numberInput) {
-                    numberInput.value = index + 1;
-                }
-            });
-            
-            // Update the allQuestions array to reflect new order
-            updateAllQuestionsArray();
-        }
-        
-        function updateAllQuestionsArray() {
-            const questionCards = Array.from(questionsContainer.querySelectorAll('.question-card'));
-            const newOrder = questionCards.map(card => {
-                const questionId = card.dataset.questionId;
-                return allQuestions.find(q => q.element === card);
-            }).filter(Boolean);
-            
-            // Update allQuestions array
-            allQuestions.splice(0, allQuestions.length, ...newOrder);
-        }
-        
-        // Initialize drag and drop
-        addDragListeners();
-        
-        // Re-initialize when questions are filtered or sorted
-        const originalSortQuestions = sortQuestionsBySelection;
-        sortQuestionsBySelection = function() {
-            originalSortQuestions();
-            addDragListeners();
-        };
-    }
-    
-    // Initialize drag and drop
-    initializeDragAndDrop();
-    
-    // Initial setup
-    updateSelectedCount();
 });
 </script>
-@endpush
