@@ -287,7 +287,6 @@
 /* Drag and Drop Styles */
 .question-card {
     transition: all 0.3s ease;
-    cursor: grab;
 }
 
 .question-card.dragging {
@@ -305,6 +304,7 @@
 
 .drag-handle {
     transition: all 0.2s ease;
+    cursor: grab; /* Set the cursor here */
 }
 
 .drag-handle:hover {
@@ -318,11 +318,11 @@
 }
 
 @keyframes pulse {
-    0%, 100% { 
+    0%, 100% {
         opacity: 0.4;
         transform: scale(0.8);
     }
-    50% { 
+    50% {
         opacity: 1;
         transform: scale(1.2);
     }
@@ -354,7 +354,7 @@
     z-index: 10;
 }
 
-    .question-card {
+.question-card {
     transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -364,7 +364,7 @@
 }
 
 .drag-handle:hover svg {
-        transform: scale(1.1);
+    transform: scale(1.1);
     color: #3b82f6;
 }
 
@@ -783,25 +783,41 @@
         
         function attachDragListeners() {
             document.querySelectorAll('.question-card').forEach((card) => {
-                card.draggable = true;
-                card.addEventListener('dragstart', handleDragStart);
-                card.addEventListener('dragend', handleDragEnd);
+                // Make the entire card a drop target
                 card.addEventListener('dragover', handleDragOver);
                 card.addEventListener('drop', handleDrop);
                 card.addEventListener('dragenter', handleDragEnter);
                 card.addEventListener('dragleave', handleDragLeave);
+                
+                // Only make the drag handle draggable
+                const dragHandle = card.querySelector('.drag-handle');
+                if (dragHandle) {
+                    dragHandle.addEventListener('mousedown', function(e) {
+                        card.draggable = true;
+                        card.style.cursor = 'grabbing';
+                    });
+                    
+                    dragHandle.addEventListener('dragstart', handleDragStart);
+                    dragHandle.addEventListener('dragend', handleDragEnd);
+                }
             });
         }
         
         function handleDragStart(e) {
-            draggedElement = this;
-            this.classList.add('dragging');
+            // Find the parent question card
+            const questionCard = e.target.closest('.question-card');
+            draggedElement = questionCard;
+            questionCard.classList.add('dragging');
             e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/html', this.outerHTML);
+            e.dataTransfer.setData('text/html', questionCard.outerHTML);
         }
         
-        function handleDragEnd() {
-            this.classList.remove('dragging');
+        function handleDragEnd(e) {
+            // Find the parent question card
+            const questionCard = e.target.closest('.question-card');
+            questionCard.classList.remove('dragging');
+            questionCard.draggable = false;
+            questionCard.style.cursor = '';
             if (dropIndicator && dropIndicator.parentNode) {
                 dropIndicator.parentNode.removeChild(dropIndicator);
             }
