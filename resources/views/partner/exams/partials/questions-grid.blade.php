@@ -17,14 +17,15 @@
                                 
                                 <!-- Question Number -->
                                 <div class="flex items-center space-x-1 question-number-container">
-                                    <label class="text-xs text-green-600 dark:text-green-400 font-semibold">Q#:</label>
+                                    <label class="text-xs">Q#:</label>
                                     <input type="number" 
                                            name="question_numbers[{{ $question->id }}]" 
-                                           value="{{ $assignedQuestionsWithOrder[$question->id] ?? '' }}" 
+                                           value="{{ $assignedQuestions->contains($question->id) ? ($assignedQuestionsWithOrder[$question->id] ?? '') : '' }}" 
                                            min="1" 
                                            max="999" 
-                                           class="question-number w-10 border border-green-400 rounded bg-gray-100 dark:bg-gray-600 dark:border-green-500 dark:text-white font-semibold text-center text-xs"
-                                           style="-moz-appearance: textfield; -webkit-appearance: none; appearance: none;">
+                                           class="question-number w-10 border rounded text-center text-xs"
+                                           style="-moz-appearance: textfield; -webkit-appearance: none; appearance: none;"
+                                           {{ !$assignedQuestions->contains($question->id) ? 'disabled' : '' }}>
                                 </div>
                                 
                                 <!-- Question Type Icon -->

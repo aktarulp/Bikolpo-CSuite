@@ -494,6 +494,14 @@
     // =========================================================================
     
     function attachCheckboxListeners() {
+        // Remove any existing listeners first to avoid duplicates
+        document.querySelectorAll('.question-checkbox').forEach(checkbox => {
+            // Clone the checkbox to remove all event listeners
+            const newCheckbox = checkbox.cloneNode(true);
+            checkbox.parentNode.replaceChild(newCheckbox, checkbox);
+        });
+        
+        // Add fresh event listeners
         document.querySelectorAll('.question-checkbox').forEach(checkbox => {
             checkbox.addEventListener('change', function() {
                 console.log('Checkbox changed:', this.value, 'checked:', this.checked);
@@ -505,15 +513,27 @@
                 }
             });
         });
+        
+        console.log('Attached checkbox listeners to', document.querySelectorAll('.question-checkbox').length, 'checkboxes');
+        
+        // Ensure initial state is correct
+        updateAllQuestionNumbers();
     }
 
     function assignQuestionNumber(checkbox) {
         const questionCard = checkbox.closest('.question-card');
         const questionNumberInput = questionCard.querySelector('.question-number');
         if (questionNumberInput) {
+            // Enable the input field
+            questionNumberInput.disabled = false;
+            
+            // Assign sequential number if empty
             if (!questionNumberInput.value) {
                 questionNumberInput.value = getNextQuestionNumber();
             }
+            
+            // Update all question numbers to ensure sequential order
+            updateAllQuestionNumbers();
         }
     }
 
@@ -522,20 +542,55 @@
         const questionNumberInput = questionCard.querySelector('.question-number');
         if (questionNumberInput) {
             questionNumberInput.value = '';
+            questionNumberInput.disabled = true;
+            console.log('Cleared question number for question:', checkbox.value);
         }
+        
+        // Update all question numbers to ensure sequential order
+        updateAllQuestionNumbers();
     }
 
     function getNextQuestionNumber() {
-        const existingNumbers = Array.from(document.querySelectorAll('.question-number'))
-            .map(input => parseInt(input.value))
-            .filter(num => !isNaN(num) && num > 0);
+        // Count currently selected questions to get the next number
+        const checkedBoxes = document.querySelectorAll('.question-checkbox:checked');
+        return checkedBoxes.length;
+    }
+
+    function updateAllQuestionNumbers() {
+        const questionCards = Array.from(document.querySelectorAll('.question-card'));
         
-        if (existingNumbers.length === 0) {
-            return 1;
-        }
+        console.log('updateAllQuestionNumbers called - processing', questionCards.length, 'question cards');
         
-        const maxNumber = Math.max(...existingNumbers);
-        return maxNumber + 1;
+        // First, clear all question numbers and disable unselected ones
+        questionCards.forEach(card => {
+            const checkbox = card.querySelector('.question-checkbox');
+            const questionNumberInput = card.querySelector('.question-number');
+            if (checkbox && !checkbox.checked && questionNumberInput) {
+                questionNumberInput.value = '';
+                questionNumberInput.disabled = true;
+                console.log('Disabled Q# field for unchecked question:', checkbox.value);
+            }
+        });
+        
+        // Get checked questions in their visual order (DOM order)
+        const checkedQuestions = questionCards.filter(card => {
+            const checkbox = card.querySelector('.question-checkbox');
+            return checkbox && checkbox.checked;
+        });
+        
+        console.log('Found', checkedQuestions.length, 'checked questions');
+        
+        // Assign sequential numbers starting from 1
+        checkedQuestions.forEach((questionCard, index) => {
+            const questionNumberInput = questionCard.querySelector('.question-number');
+            if (questionNumberInput) {
+                questionNumberInput.value = index + 1;
+                questionNumberInput.disabled = false;
+                console.log('Assigned Q#', index + 1, 'to question');
+            }
+        });
+        
+        console.log(`Updated ${checkedQuestions.length} question numbers to be sequential starting from 1`);
     }
 
     function updateSelectedCount() {
@@ -835,19 +890,8 @@
     }
 
     function updateQuestionNumbersAfterDrag() {
-        const questionCards = document.querySelectorAll('.question-card');
-        let questionNumber = 1;
-        
-        questionCards.forEach((card, index) => {
-            const checkbox = card.querySelector('.question-checkbox');
-            const questionNumberInput = card.querySelector('.question-number');
-            
-            if (checkbox && checkbox.checked && questionNumberInput) {
-                questionNumberInput.value = questionNumber;
-                questionNumber++;
-            }
-        });
-        
+        // Use the same function to ensure consistent sequential numbering
+        updateAllQuestionNumbers();
         updateSelectedCount();
     }
 
@@ -1249,7 +1293,16 @@
             updateSelectedCount();
         }
         
-   
+        // =========================================================================
+        //  Initial Setup
+        // =========================================================================
+        
+        // Initialize all functionality on page load
+        console.log('Initializing page functionality...');
+        attachCheckboxListeners();
+        initializeDragAndDrop();
+        updateSelectedCount();
+        console.log('Page initialization complete');
 
     });
 </script>
