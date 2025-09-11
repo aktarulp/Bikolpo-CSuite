@@ -239,6 +239,13 @@
                                     </svg>
                                     Clear All
                                 </button>
+                                
+                                <!-- Selection Counter -->
+                                <div class="flex items-center">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-700">
+                                        Selected: <span id="selected-count">0</span>/<span id="total-count">{{ $exam->total_questions }}</span>
+                                    </span>
+                                </div>
                                 </div>
                             </div>
                             
@@ -686,13 +693,15 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateSelectedCount() {
         const checkboxes = document.querySelectorAll('.question-checkbox');
         const selectedCount = document.querySelectorAll('.question-checkbox:checked').length;
-        const totalCount = checkboxes.length;
+        const totalCountElement = document.getElementById('total-count');
+        const examQuestionCount = totalCountElement ? parseInt(totalCountElement.textContent) : 0;
         
         // Update any selected count display if it exists
         const selectedCountElement = document.getElementById('selected-count');
         if (selectedCountElement) {
-            selectedCountElement.textContent = `${selectedCount} Selected / ${totalCount}`;
+            selectedCountElement.textContent = selectedCount;
         }
+        // Keep the total count as the exam's assigned questions count (already set in HTML)
     }
     
     // Add event listeners to individual checkboxes for count updates
