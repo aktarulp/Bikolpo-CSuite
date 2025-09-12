@@ -1221,18 +1221,20 @@
                 console.log('Selected questions:', selectedQuestions.length);
                 console.log('Selected question IDs:', selectedQuestions.map(cb => cb.value));
                 
-                // Check if at least one question is selected
-                if (selectedQuestions.length === 0) {
-                    e.preventDefault();
-                    alert('Please select at least one question before assigning.');
-                    return false;
-                }
+                // Allow form submission even with no questions selected (for removing all questions)
                 
                 // Validate all marks fields
                 if (!validateAllMarksFields()) {
                     e.preventDefault();
                     alert('Please fix the marks validation errors before submitting.');
                     return false;
+                }
+                
+                // Log whether questions are selected or not
+                if (selectedQuestions.length === 0) {
+                    console.log('No questions selected - will clear all questions from exam');
+                } else {
+                    console.log(`${selectedQuestions.length} questions selected - will assign to exam`);
                 }
                 
                 // Log form data for debugging

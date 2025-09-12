@@ -991,9 +991,9 @@ class ExamController extends Controller
             ]);
 
             $request->validate([
-                'question_ids' => 'required|array',
+                'question_ids' => 'nullable|array',
                 'question_ids.*' => 'exists:questions,id',
-                'question_marks' => 'required|array',
+                'question_marks' => 'nullable|array',
                 'question_marks.*' => 'integer|min:1|max:100',
                 'question_numbers' => 'array',
                 'question_numbers.*' => 'nullable|integer|min:1|max:999'
@@ -1011,42 +1011,53 @@ class ExamController extends Controller
             \Log::info('Deleted existing exam questions', ['deleted_count' => $deletedCount]);
 
             // Store new assigned questions
-            $questionIds = $request->question_ids;
-            $questionMarks = $request->question_marks;
-            $questionNumbers = $request->question_numbers ?? [];
+            $questionIds = $request->has('question_ids') && is_array($request->question_ids) 
+                ? array_filter($request->question_ids) // Remove empty values
+                : [];
+            $questionMarks = $request->has('question_marks') && is_array($request->question_marks) 
+                ? $request->question_marks 
+                : [];
+            $questionNumbers = $request->has('question_numbers') && is_array($request->question_numbers) 
+                ? $request->question_numbers 
+                : [];
             $examQuestions = [];
             
-            foreach ($questionIds as $index => $questionId) {
-                $question = \App\Models\Question::find($questionId);
-                $marks = isset($questionMarks[$questionId]) ? (int)$questionMarks[$questionId] : 1;
-                
-                // Only use question number if it's not empty, otherwise use sequential order
-                $order = $index + 1;
-                if (isset($questionNumbers[$questionId]) && !empty($questionNumbers[$questionId])) {
-                    $order = (int)$questionNumbers[$questionId];
+            // If no questions are selected, we just clear all questions (already done above)
+            if (empty($questionIds)) {
+                \Log::info('No questions selected - all questions removed from exam', ['exam_id' => $exam->id]);
+            } else {
+                foreach ($questionIds as $index => $questionId) {
+                    $question = \App\Models\Question::find($questionId);
+                    $marks = isset($questionMarks[$questionId]) ? (int)$questionMarks[$questionId] : 1;
+                    
+                    // Only use question number if it's not empty, otherwise use sequential order
+                    $order = $index + 1;
+                    if (isset($questionNumbers[$questionId]) && !empty($questionNumbers[$questionId])) {
+                        $order = (int)$questionNumbers[$questionId];
+                    }
+                    
+                    $examQuestions[] = [
+                        'exam_id' => $exam->id,
+                        'question_id' => $questionId,
+                        'order' => $order,
+                        'marks' => $marks,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
                 }
-                
-                $examQuestions[] = [
+
+                // Debug: Log the exam questions to be inserted
+                \Log::info('Exam Questions to Insert', [
                     'exam_id' => $exam->id,
-                    'question_id' => $questionId,
-                    'order' => $order,
-                    'marks' => $marks,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-            }
+                    'exam_questions' => $examQuestions
+                ]);
 
-            // Debug: Log the exam questions to be inserted
-            \Log::info('Exam Questions to Insert', [
-                'exam_id' => $exam->id,
-                'exam_questions' => $examQuestions
-            ]);
-
-            // Insert all exam questions
-            if (!empty($examQuestions)) {
-                \App\Models\ExamQuestion::insert($examQuestions);
-                $insertedCount = count($examQuestions);
-                \Log::info('Inserted exam questions', ['inserted_count' => $insertedCount]);
+                // Insert all exam questions
+                if (!empty($examQuestions)) {
+                    \App\Models\ExamQuestion::insert($examQuestions);
+                    $insertedCount = count($examQuestions);
+                    \Log::info('Inserted exam questions', ['inserted_count' => $insertedCount]);
+                }
             }
 
             // Validate that assigned questions don't exceed the exam's total_questions limit
@@ -1069,8 +1080,12 @@ class ExamController extends Controller
                 'total_questions_limit' => $exam->total_questions
             ]);
 
+            $successMessage = $assignedCount > 0 
+                ? 'Questions assigned successfully to the exam.'
+                : 'All questions have been removed from the exam.';
+
             return redirect()->route('partner.exams.show', $exam)
-                ->with('success', 'Questions assigned successfully to the exam.');
+                ->with('success', $successMessage);
 
         } catch (\Exception $e) {
             \Log::error('Error assigning questions to exam', [

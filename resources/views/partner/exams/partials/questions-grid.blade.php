@@ -12,7 +12,7 @@
                                 <input type="checkbox" 
                                        name="question_ids[]" 
                                        value="{{ $question->id }}" 
-                                       class="question-checkbox h-6 w-6 text-blue-600 focus:ring-blue-500 border-gray-300 rounded transition-all duration-200"
+                                       class="question-checkbox h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded transition-all duration-200"
                                        {{ $assignedQuestions->contains($question->id) ? 'checked' : '' }}>
                                 
                                 <!-- Question Number -->
