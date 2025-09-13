@@ -350,43 +350,6 @@
                     </div>
                 </div>
 
-                <!-- Exam Options -->
-                <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Exam Options</h3>
-                    </div>
-                    <div class="px-6 py-4 space-y-3">
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm text-gray-600 dark:text-gray-400">Allow Retake</span>
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                {{ $exam->allow_retake ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
-                                {{ $exam->allow_retake ? 'Yes' : 'No' }}
-                            </span>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm text-gray-600 dark:text-gray-400">Show Results Immediately</span>
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                {{ $exam->show_results_immediately ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
-                                {{ $exam->show_results_immediately ? 'Yes' : 'No' }}
-                            </span>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-sm text-gray-600 dark:text-gray-400">Negative Marking</span>
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                {{ $exam->has_negative_marking ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800' }}">
-                                {{ $exam->has_negative_marking ? 'Yes' : 'No' }}
-                            </span>
-                        </div>
-                                                 @if($exam->has_negative_marking)
-                         <div class="flex items-center justify-between">
-                             <span class="text-sm text-gray-600 dark:text-gray-400">Negative Marks</span>
-                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                 {{ $exam->negative_marks_per_question }}
-                             </span>
-                         </div>
-                         @endif
-                    </div>
-                                 </div>
             </div>
         </div>
 
