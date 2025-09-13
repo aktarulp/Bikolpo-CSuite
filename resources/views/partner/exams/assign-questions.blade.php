@@ -76,7 +76,6 @@
     </div>
 
     <div class="container mx-auto px-4 py-4 space-y-2 relative" style="padding-bottom: 200px;">
-        <!-- Display validation errors if any -->
         @if ($errors->any())
             <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
                 <div class="flex items-center">
@@ -555,42 +554,55 @@
         const checkedBoxes = document.querySelectorAll('.question-checkbox:checked');
         return checkedBoxes.length;
     }
-
+    
     function updateAllQuestionNumbers() {
         const questionCards = Array.from(document.querySelectorAll('.question-card'));
+        const container = document.querySelector('.questions-container');
         
         console.log('updateAllQuestionNumbers called - processing', questionCards.length, 'question cards');
         
-        // First, clear all question numbers and disable unselected ones
+        // First, separate checked and unchecked questions
+        const checkedQuestions = [];
+        const uncheckedQuestions = [];
+        
         questionCards.forEach(card => {
             const checkbox = card.querySelector('.question-checkbox');
-            const questionNumberInput = card.querySelector('.question-number');
-            if (checkbox && !checkbox.checked && questionNumberInput) {
-                questionNumberInput.value = '';
-                questionNumberInput.disabled = true;
-                console.log('Disabled Q# field for unchecked question:', checkbox.value);
+            if (checkbox && checkbox.checked) {
+                checkedQuestions.push(card);
+            } else {
+                uncheckedQuestions.push(card);
             }
         });
         
-        // Get checked questions in their visual order (DOM order)
-        const checkedQuestions = questionCards.filter(card => {
-            const checkbox = card.querySelector('.question-checkbox');
-            return checkbox && checkbox.checked;
+        // Sort checked questions by their current order
+        const sortedCheckedQuestions = checkedQuestions.sort((a, b) => {
+            const orderA = parseInt(a.querySelector('.question-number').value) || 0;
+            const orderB = parseInt(b.querySelector('.question-number').value) || 0;
+            return orderA - orderB;
         });
         
-        console.log('Found', checkedQuestions.length, 'checked questions');
-        
-        // Assign sequential numbers starting from 1
-        checkedQuestions.forEach((questionCard, index) => {
+        // Re-assign sequential numbers and reorder the elements
+        container.innerHTML = '';
+        sortedCheckedQuestions.forEach((questionCard, index) => {
             const questionNumberInput = questionCard.querySelector('.question-number');
             if (questionNumberInput) {
                 questionNumberInput.value = index + 1;
                 questionNumberInput.disabled = false;
-                console.log('Assigned Q#', index + 1, 'to question');
             }
+            container.appendChild(questionCard);
         });
         
-        console.log(`Updated ${checkedQuestions.length} question numbers to be sequential starting from 1`);
+        // Append the unchecked questions at the end
+        uncheckedQuestions.forEach(questionCard => {
+            const questionNumberInput = questionCard.querySelector('.question-number');
+            if (questionNumberInput) {
+                questionNumberInput.value = '';
+                questionNumberInput.disabled = true;
+            }
+            container.appendChild(questionCard);
+        });
+        
+        console.log(`Reordered and renumbered ${sortedCheckedQuestions.length} questions.`);
     }
 
     function updateSelectedCount() {
