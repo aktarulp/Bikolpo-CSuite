@@ -1940,102 +1940,131 @@ class QuestionController extends Controller
         ], $analytics);
         
         // Get students who answered correctly and incorrectly
-        $correctStudents = \App\Models\QuestionStat::forQuestion($question->id)
-            ->correct()
-            ->with(['student', 'exam'])
-            ->get()
-            ->groupBy('student_id')
-            ->map(function ($attempts) {
-                $firstAttempt = $attempts->first();
-                $student = $firstAttempt ? $firstAttempt->student : null;
-                
-                if (!$student) {
-                    return null;
-                }
-                
-                return [
-                    'student' => $student,
-                    'attempts' => $attempts->count(),
-                    'exams' => $attempts->pluck('exam.title')->filter()->unique()->values(),
-                    'last_attempt' => $attempts->max('question_answered_at'),
-                    'average_time' => $attempts->whereNotNull('time_spent_seconds')->avg('time_spent_seconds')
-                ];
-            })
-            ->filter(); // Remove null entries
+        $correctStudents = collect();
+        try {
+            $correctStudents = \App\Models\QuestionStat::forQuestion($question->id)
+                ->correct()
+                ->with(['student', 'exam'])
+                ->get()
+                ->groupBy('student_id')
+                ->map(function ($attempts) {
+                    $firstAttempt = $attempts->first();
+                    $student = $firstAttempt ? $firstAttempt->student : null;
+                    
+                    if (!$student) {
+                        return null;
+                    }
+                    
+                    return [
+                        'student' => $student,
+                        'attempts' => $attempts->count(),
+                        'exams' => $attempts->pluck('exam.title')->filter()->unique()->values(),
+                        'last_attempt' => $attempts->max('question_answered_at'),
+                        'average_time' => $attempts->whereNotNull('time_spent_seconds')->avg('time_spent_seconds')
+                    ];
+                })
+                ->filter(); // Remove null entries
+        } catch (\Exception $e) {
+            \Log::error('Error getting correct students: ' . $e->getMessage());
+            $correctStudents = collect();
+        }
             
-        $incorrectStudents = \App\Models\QuestionStat::forQuestion($question->id)
-            ->incorrect()
-            ->with(['student', 'exam'])
-            ->get()
-            ->groupBy('student_id')
-            ->map(function ($attempts) {
-                $firstAttempt = $attempts->first();
-                $student = $firstAttempt ? $firstAttempt->student : null;
-                
-                if (!$student) {
-                    return null;
-                }
-                
-                $answers = $attempts->pluck('student_answer')->filter()->values();
-                return [
-                    'student' => $student,
-                    'attempts' => $attempts->count(),
-                    'exams' => $attempts->pluck('exam.title')->filter()->unique()->values(),
-                    'last_attempt' => $attempts->max('question_answered_at'),
-                    'average_time' => $attempts->whereNotNull('time_spent_seconds')->avg('time_spent_seconds'),
-                    'common_wrong_answers' => $answers->countBy()
-                ];
-            })
-            ->filter(); // Remove null entries
+        $incorrectStudents = collect();
+        try {
+            $incorrectStudents = \App\Models\QuestionStat::forQuestion($question->id)
+                ->incorrect()
+                ->with(['student', 'exam'])
+                ->get()
+                ->groupBy('student_id')
+                ->map(function ($attempts) {
+                    $firstAttempt = $attempts->first();
+                    $student = $firstAttempt ? $firstAttempt->student : null;
+                    
+                    if (!$student) {
+                        return null;
+                    }
+                    
+                    $answers = $attempts->pluck('student_answer')->filter()->values();
+                    return [
+                        'student' => $student,
+                        'attempts' => $attempts->count(),
+                        'exams' => $attempts->pluck('exam.title')->filter()->unique()->values(),
+                        'last_attempt' => $attempts->max('question_answered_at'),
+                        'average_time' => $attempts->whereNotNull('time_spent_seconds')->avg('time_spent_seconds'),
+                        'common_wrong_answers' => $answers->countBy()
+                    ];
+                })
+                ->filter(); // Remove null entries
+        } catch (\Exception $e) {
+            \Log::error('Error getting incorrect students: ' . $e->getMessage());
+            $incorrectStudents = collect();
+        }
         
         // Get recent attempts (last 30 days)
-        $recentAttempts = \App\Models\QuestionStat::forQuestion($question->id)
-            ->where('question_answered_at', '>=', now()->subDays(30))
-            ->with(['student', 'exam'])
-            ->orderBy('question_answered_at', 'desc')
-            ->limit(20)
-            ->get()
-            ->filter(function ($attempt) {
-                return $attempt->student && $attempt->exam;
-            });
+        $recentAttempts = collect();
+        try {
+            $recentAttempts = \App\Models\QuestionStat::forQuestion($question->id)
+                ->where('question_answered_at', '>=', now()->subDays(30))
+                ->with(['student', 'exam'])
+                ->orderBy('question_answered_at', 'desc')
+                ->limit(20)
+                ->get()
+                ->filter(function ($attempt) {
+                    return $attempt->student && $attempt->exam;
+                });
+        } catch (\Exception $e) {
+            \Log::error('Error getting recent attempts: ' . $e->getMessage());
+            $recentAttempts = collect();
+        }
         
         // Get question performance over time (monthly data for last 12 months)
-        $performanceOverTime = \App\Models\QuestionStat::forQuestion($question->id)
-            ->where('question_answered_at', '>=', now()->subMonths(12))
-            ->selectRaw('
-                DATE_FORMAT(question_answered_at, "%Y-%m") as month,
-                COUNT(*) as total_attempts,
-                SUM(CASE WHEN is_correct = 1 THEN 1 ELSE 0 END) as correct_attempts,
-                SUM(CASE WHEN is_answered = 1 AND is_correct = 0 THEN 1 ELSE 0 END) as incorrect_attempts,
-                SUM(CASE WHEN is_skipped = 1 THEN 1 ELSE 0 END) as skipped_attempts
-            ')
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get()
-            ->map(function ($item) {
-                // Convert array to object for consistent access
-                if (is_array($item)) {
-                    return (object) $item;
-                }
-                return $item;
-            });
+        $performanceOverTime = collect();
+        try {
+            $performanceOverTime = \App\Models\QuestionStat::forQuestion($question->id)
+                ->where('question_answered_at', '>=', now()->subMonths(12))
+                ->selectRaw('
+                    DATE_FORMAT(question_answered_at, "%Y-%m") as month,
+                    COUNT(*) as total_attempts,
+                    SUM(CASE WHEN is_correct = 1 THEN 1 ELSE 0 END) as correct_attempts,
+                    SUM(CASE WHEN is_answered = 1 AND is_correct = 0 THEN 1 ELSE 0 END) as incorrect_attempts,
+                    SUM(CASE WHEN is_skipped = 1 THEN 1 ELSE 0 END) as skipped_attempts
+                ')
+                ->groupBy('month')
+                ->orderBy('month')
+                ->get()
+                ->map(function ($item) {
+                    // Convert array to object for consistent access
+                    if (is_array($item)) {
+                        return (object) $item;
+                    }
+                    return $item;
+                });
+        } catch (\Exception $e) {
+            \Log::error('Error getting performance over time: ' . $e->getMessage());
+            $performanceOverTime = collect();
+        }
         
         // Get answer distribution for MCQ questions
         $answerDistribution = [];
         if (in_array($question->question_type, ['mcq', 'true_false'])) {
-            $answerDistribution = \App\Models\QuestionStat::forQuestion($question->id)
-                ->answered()
-                ->selectRaw('student_answer, COUNT(*) as count')
-                ->groupBy('student_answer')
-                ->orderBy('count', 'desc')
-                ->get()
-                ->mapWithKeys(function ($item) {
-                    // Handle both array and object formats
-                    $answer = is_array($item) ? ($item['student_answer'] ?? null) : ($item->student_answer ?? null);
-                    $count = is_array($item) ? ($item['count'] ?? 0) : ($item->count ?? 0);
-                    return $answer ? [$answer => $count] : [];
-                })
-                ->toArray();
+            try {
+                $answerDistribution = \App\Models\QuestionStat::forQuestion($question->id)
+                    ->answered()
+                    ->selectRaw('student_answer, COUNT(*) as count')
+                    ->groupBy('student_answer')
+                    ->orderBy('count', 'desc')
+                    ->get()
+                    ->mapWithKeys(function ($item) {
+                        // Handle both array and object formats
+                        $answer = is_array($item) ? ($item['student_answer'] ?? null) : ($item->student_answer ?? null);
+                        $count = is_array($item) ? ($item['count'] ?? 0) : ($item->count ?? 0);
+                        return $answer ? [$answer => $count] : [];
+                    })
+                    ->toArray();
+            } catch (\Exception $e) {
+                \Log::error('Error getting answer distribution: ' . $e->getMessage());
+                $answerDistribution = [];
+            }
         }
         
         return view('partner.questions.common-question-view', compact(

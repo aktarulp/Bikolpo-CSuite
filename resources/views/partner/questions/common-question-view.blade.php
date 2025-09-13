@@ -907,7 +907,7 @@
             </div>
 
             <!-- Tags -->
-            @if($question->tags && count($question->tags) > 0)
+            @if($question->tags && is_array($question->tags) && count($question->tags) > 0)
                 <div class="tags-container">
                     @foreach($question->tags as $tag)
                         <span class="tag">{{ $tag }}</span>
