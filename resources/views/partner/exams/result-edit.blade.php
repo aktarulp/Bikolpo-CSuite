@@ -92,6 +92,11 @@
                 @if($exam->questions->count() > 0)
                     <div class="space-y-6">
                         @foreach($exam->questions as $index => $question)
+                            @php
+                                $answerData = $result->answers[(string)$question->id] ?? null;
+                                $answer = $answerData['answer'] ?? '';
+                                $answerUpper = trim(strtoupper($answer));
+                            @endphp
                             <div class="border border-gray-200 dark:border-gray-600 rounded-xl p-3 sm:p-4 bg-gray-50 dark:bg-gray-700/50">
                                 @if($question->question_type === 'mcq')
                                     <!-- MCQ Layout: Single Line with Question Number, Text, and Options -->
@@ -109,7 +114,6 @@
                                         </div>
                                         
                                         <!-- Answer Options -->
-                                        <!-- Debug: Correct Answer = {{ $question->correct_answer }} -->
                                         <div class="grid grid-cols-4 gap-2 sm:gap-3 flex-shrink-0 w-full max-w-2xl">
                                             @if($question->option_a)
                                                 <div class="flex items-center gap-1 sm:gap-2 p-2 rounded-lg transition-all duration-200 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50
@@ -122,7 +126,7 @@
                                                         @else
                                                             border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 hover:border-gray-400 dark:hover:border-gray-500
                                                         @endif">
-                                                        <input type="radio" name="answers[{{ $question->id }}]" value="A" class="sr-only" onchange="toggleAnswer(this)" @if(isset($result->answers[$question->id]['answer']) && $result->answers[$question->id]['answer'] === 'A') checked @endif>
+                                                        <input type="radio" name="answers[{{ $question->id }}]" value="A" class="sr-only" onchange="toggleAnswer(this)" {{ $answerUpper === 'A' ? 'checked' : '' }}>
                                                         <span class="font-bold text-xs sm:text-sm transition-all duration-200
                                                             @if(strtoupper($question->correct_answer) === 'A' || $question->correct_answer === '1' || $question->correct_answer === 1)
                                                                 text-green-800 dark:text-green-200
@@ -166,7 +170,7 @@
                                                         @else
                                                             border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 hover:border-gray-400 dark:hover:border-gray-500
                                                         @endif">
-                                                        <input type="radio" name="answers[{{ $question->id }}]" value="B" class="sr-only" onchange="toggleAnswer(this)" @if(isset($result->answers[$question->id]['answer']) && $result->answers[$question->id]['answer'] === 'B') checked @endif>
+                                                        <input type="radio" name="answers[{{ $question->id }}]" value="B" class="sr-only" onchange="toggleAnswer(this)" {{ $answerUpper === 'B' ? 'checked' : '' }}>
                                                         <span class="font-bold text-xs sm:text-sm transition-all duration-200
                                                             @if(strtoupper($question->correct_answer) === 'B' || $question->correct_answer === '2' || $question->correct_answer === 2)
                                                                 text-green-800 dark:text-green-200
@@ -210,7 +214,7 @@
                                                         @else
                                                             border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 hover:border-gray-400 dark:hover:border-gray-500
                                                         @endif">
-                                                        <input type="radio" name="answers[{{ $question->id }}]" value="C" class="sr-only" onchange="toggleAnswer(this)" @if(isset($result->answers[$question->id]['answer']) && $result->answers[$question->id]['answer'] === 'C') checked @endif>
+                                                        <input type="radio" name="answers[{{ $question->id }}]" value="C" class="sr-only" onchange="toggleAnswer(this)" {{ $answerUpper === 'C' ? 'checked' : '' }}>
                                                         <span class="font-bold text-xs sm:text-sm transition-all duration-200
                                                             @if(strtoupper($question->correct_answer) === 'C' || $question->correct_answer === '3' || $question->correct_answer === 3)
                                                                 text-green-800 dark:text-green-200
@@ -254,7 +258,7 @@
                                                         @else
                                                             border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 hover:border-gray-400 dark:hover:border-gray-500
                                                         @endif">
-                                                        <input type="radio" name="answers[{{ $question->id }}]" value="D" class="sr-only" onchange="toggleAnswer(this)" @if(isset($result->answers[$question->id]['answer']) && $result->answers[$question->id]['answer'] === 'D') checked @endif>
+                                                        <input type="radio" name="answers[{{ $question->id }}]" value="D" class="sr-only" onchange="toggleAnswer(this)" {{ $answerUpper === 'D' ? 'checked' : '' }}>
                                                         <span class="font-bold text-xs sm:text-sm transition-all duration-200
                                                             @if(strtoupper($question->correct_answer) === 'D' || $question->correct_answer === '4' || $question->correct_answer === 4)
                                                                 text-green-800 dark:text-green-200
@@ -312,7 +316,7 @@
                                                       name="answers[{{ $question->id }}]" 
                                                       rows="1" 
                                                       class="w-24 sm:w-32 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-700 dark:text-white resize-none text-xs sm:text-sm"
-                                                      placeholder="Answer...">{{ isset($result->answers[$question->id]['answer']) ? $result->answers[$question->id]['answer'] : '' }}</textarea>
+                                                      placeholder="Answer...">{{ $answer }}</textarea>
                                             @if($question->min_words)
                                                 <span class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">Min {{ $question->min_words }}w</span>
                                             @endif
@@ -349,6 +353,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Debug: Check if elements are found
     console.log('Form found:', !!form);
+    
+    // Initialize pre-checked answers to show visual tick marks
+    initializePreCheckedAnswers();
     console.log('Started input found:', !!startedAtInput);
     console.log('Completed input found:', !!completedAtInput);
 
@@ -390,9 +397,11 @@ document.addEventListener('DOMContentLoaded', function() {
         // Submit the form
         const updateUrl = '{{ route("partner.exams.result-update", ["exam" => $exam, "result" => $result]) }}';
         console.log('Update URL:', updateUrl);
+        console.log('Exam ID:', {{ $exam->id }});
+        console.log('Result ID:', {{ $result->id }});
         
         fetch(updateUrl, {
-            method: 'PUT',
+            method: 'POST',
             body: formData,
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -463,6 +472,14 @@ function selectAnswer(questionId, answerValue) {
         radioInput.checked = true;
         toggleAnswer(radioInput);
     }
+}
+
+// Function to initialize pre-checked answers on page load
+function initializePreCheckedAnswers() {
+    const checkedRadios = document.querySelectorAll('input[type="radio"]:checked');
+    checkedRadios.forEach(radio => {
+        toggleAnswer(radio);
+    });
 }
 
 // Function to toggle answer selection with tick mark

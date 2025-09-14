@@ -614,7 +614,8 @@ class ExamController extends Controller
                 $isSkipped = true;
             } else {
                 if ($question->question_type === 'mcq') {
-                    $isCorrect = $questionAnswer === $question->correct_answer;
+                    // Convert form answer to lowercase for comparison
+                    $isCorrect = strtolower($questionAnswer) === strtolower($question->correct_answer);
                 } else {
                     // For descriptive questions, check if it meets minimum requirements
                     $wordCount = str_word_count($questionAnswer);
@@ -855,7 +856,8 @@ class ExamController extends Controller
                 $isAnswered = true;
                 
                 if ($question->question_type === 'mcq') {
-                    $isCorrect = $questionAnswer === $question->correct_answer;
+                    // Convert form answer to lowercase for comparison
+                    $isCorrect = strtolower($questionAnswer) === strtolower($question->correct_answer);
                 } else {
                     // For descriptive questions, check if it meets minimum requirements
                     $wordCount = str_word_count($questionAnswer);
@@ -916,7 +918,8 @@ class ExamController extends Controller
                 $isSkipped = true;
             } else {
                 if ($question->question_type === 'mcq') {
-                    $isCorrect = $questionAnswer === $question->correct_answer;
+                    // Convert form answer to lowercase for comparison
+                    $isCorrect = strtolower($questionAnswer) === strtolower($question->correct_answer);
                 } else {
                     // For descriptive questions, give partial marks based on word count
                     $wordCount = str_word_count($questionAnswer);
@@ -1097,7 +1100,8 @@ class ExamController extends Controller
                 $isAnswered = true;
                 
                 if ($question->question_type === 'mcq') {
-                    $isCorrect = $questionAnswer === $question->correct_answer;
+                    // Convert form answer to lowercase for comparison
+                    $isCorrect = strtolower($questionAnswer) === strtolower($question->correct_answer);
                 } else {
                     // For descriptive questions, check if it meets minimum requirements
                     $wordCount = str_word_count($questionAnswer);
@@ -1170,7 +1174,8 @@ class ExamController extends Controller
                 $isSkipped = true;
             } else {
                 if ($question->question_type === 'mcq') {
-                    $isCorrect = $questionAnswer === $question->correct_answer;
+                    // Convert form answer to lowercase for comparison
+                    $isCorrect = strtolower($questionAnswer) === strtolower($question->correct_answer);
                 } else {
                     // For descriptive questions, give partial marks based on word count
                     $wordCount = str_word_count($questionAnswer);
