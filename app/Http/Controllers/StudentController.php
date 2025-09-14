@@ -59,30 +59,46 @@ class StudentController extends Controller
 
     public function create()
     {
-        return view('partner.students.create');
+        $partnerId = $this->getPartnerId();
+        $courses = \App\Models\Course::where('partner_id', $partnerId)->get();
+        $batches = \App\Models\Batch::where('partner_id', $partnerId)->get();
+        
+        return view('partner.students.create', compact('courses', 'batches'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'full_name' => 'required|string|max:255',
-            'student_id' => 'nullable|string|max:50|unique:students,student_id',
+            'student_id' => 'required|string|max:50|unique:students,student_id',
             'date_of_birth' => 'required|date',
+            'enroll_date' => 'required|date',
             'gender' => 'required|in:male,female,other',
             'email' => 'required|email|unique:students,email',
-            'phone' => 'nullable|string|regex:/^01[3-9][0-9]{8}$/|max:20',
+            'phone' => 'required|string|regex:/^01[3-9][0-9]{8}$/|max:20|unique:students,phone',
             'address' => 'nullable|string|max:500',
             'city' => 'nullable|string|max:100',
             'school_college' => 'nullable|string|max:255',
             'class_grade' => 'nullable|string|max:50',
-            'parent_name' => 'nullable|string|max:255',
-            'parent_phone' => 'nullable|string|regex:/^01[3-9][0-9]{8}$/|max:20',
+            'father_name' => 'nullable|string|max:255',
+            'father_phone' => 'required|string|regex:/^01[3-9][0-9]{8}$/|max:20',
+            'mother_name' => 'nullable|string|max:255',
+            'mother_phone' => 'nullable|string|regex:/^01[3-9][0-9]{8}$/|max:20',
+            'guardian' => 'required|in:Father,Mother,Other',
+            'guardian_name' => 'required|string|max:255',
+            'guardian_phone' => 'required|string|regex:/^01[3-9][0-9]{8}$/|max:20|unique:students,guardian_phone',
+            'blood_group' => 'required|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
+            'religion' => 'required|in:Islam,Hinduism,Christianity,Buddhism',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'course_id' => 'nullable|exists:courses,id',
-            'batch_id' => 'nullable|exists:batches,id',
+            'course_id' => 'required|exists:courses,id',
+            'batch_id' => 'required|exists:batches,id',
         ], [
             'phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
-            'parent_phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
+            'phone.unique' => 'This phone number is already registered.',
+            'father_phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
+            'mother_phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
+            'guardian_phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
+            'guardian_phone.unique' => 'This guardian phone number is already registered.',
             'course_id.exists' => 'The selected course is invalid.',
             'batch_id.exists' => 'The selected batch is invalid.',
         ]);
@@ -119,21 +135,33 @@ class StudentController extends Controller
             'full_name' => 'required|string|max:255',
             'student_id' => 'nullable|string|max:50|unique:students,student_id,' . $student->id,
             'date_of_birth' => 'required|date',
+            'enroll_date' => 'nullable|date',
             'gender' => 'required|in:male,female,other',
             'email' => 'required|email|unique:students,email,' . $student->id,
-            'phone' => 'nullable|string|regex:/^01[3-9][0-9]{8}$/|max:20',
+            'phone' => 'required|string|regex:/^01[3-9][0-9]{8}$/|max:20|unique:students,phone',
             'address' => 'nullable|string|max:500',
             'city' => 'nullable|string|max:100',
             'school_college' => 'nullable|string|max:255',
             'class_grade' => 'nullable|string|max:50',
-            'parent_name' => 'nullable|string|max:255',
-            'parent_phone' => 'nullable|string|regex:/^01[3-9][0-9]{8}$/|max:20',
+            'father_name' => 'nullable|string|max:255',
+            'father_phone' => 'required|string|regex:/^01[3-9][0-9]{8}$/|max:20',
+            'mother_name' => 'nullable|string|max:255',
+            'mother_phone' => 'nullable|string|regex:/^01[3-9][0-9]{8}$/|max:20',
+            'guardian' => 'required|in:Father,Mother,Other',
+            'guardian_name' => 'required|string|max:255',
+            'guardian_phone' => 'required|string|regex:/^01[3-9][0-9]{8}$/|max:20|unique:students,guardian_phone',
+            'blood_group' => 'nullable|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
+            'religion' => 'nullable|in:Islam,Hinduism,Christianity,Buddhism',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'course_id' => 'nullable|exists:courses,id',
             'batch_id' => 'nullable|exists:batches,id',
         ], [
             'phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
-            'parent_phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
+            'phone.unique' => 'This phone number is already registered.',
+            'father_phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
+            'mother_phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
+            'guardian_phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
+            'guardian_phone.unique' => 'This guardian phone number is already registered.',
             'course_id.exists' => 'The selected course is invalid.',
             'batch_id.exists' => 'The selected batch is invalid.',
         ]);

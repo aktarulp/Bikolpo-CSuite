@@ -26,8 +26,15 @@ class Student extends Model
         'city',
         'school_college',
         'class_grade',
-        'parent_name',
-        'parent_phone',
+        'father_name',
+        'father_phone',
+        'mother_name',
+        'mother_phone',
+        'guardian',
+        'guardian_name',
+        'guardian_phone',
+        'blood_group',
+        'religion',
         'status',
     ];
 
