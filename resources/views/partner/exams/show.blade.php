@@ -42,7 +42,7 @@
                                                               <div class="px-4 py-3">
                          <!-- Exam Details Grid -->
                          <div class="mt-3">
-                             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                             <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
                                  <div class="text-center">
                                      <div class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Status</div>
                                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
@@ -68,6 +68,13 @@
                                  <div class="text-center">
                                      <div class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Passing Marks</div>
                                      <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ $exam->passing_marks }}%</span>
+                                 </div>
+                                 <div class="text-center">
+                                     <div class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Language</div>
+                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                         {{ $exam->question_language === 'bangla' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' }}">
+                                         {{ $exam->question_language === 'bangla' ? '🇧🇩 Bangla' : '🇺🇸 English' }}
+                                     </span>
                                  </div>
                              </div>
                          </div>

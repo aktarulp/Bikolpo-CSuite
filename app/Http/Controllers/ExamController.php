@@ -91,6 +91,7 @@ class ExamController extends Controller
                 'has_negative_marking' => 'boolean',
                 'negative_marks_per_question' => 'nullable|numeric|min:0|max:5',
                 'question_header' => 'nullable|string',
+                'question_language' => 'required|in:english,bangla',
             ]);
         } else {
             // Full validation for complete exam creation
@@ -108,6 +109,7 @@ class ExamController extends Controller
                 'has_negative_marking' => 'boolean',
                 'negative_marks_per_question' => 'required_if:has_negative_marking,1|nullable|numeric|min:0|max:5',
                 'question_header' => 'nullable|string',
+                'question_language' => 'required|in:english,bangla',
             ]);
         }
 
@@ -171,6 +173,7 @@ class ExamController extends Controller
             'total_questions',
             'passing_marks',
             'question_header',
+            'question_language',
         ]);
 
         // For draft saves, provide default values for required fields that might be empty
@@ -179,6 +182,7 @@ class ExamController extends Controller
             $data['duration'] = $data['duration'] ?? 60; // Default 60 minutes
             $data['total_questions'] = $data['total_questions'] ?? 10; // Default 10 questions
             $data['passing_marks'] = $data['passing_marks'] ?? 50; // Default 50% passing marks
+            $data['question_language'] = $data['question_language'] ?? 'english'; // Default English
         }
 
         // Add the combined datetime values (only if they exist)
@@ -278,6 +282,7 @@ class ExamController extends Controller
             'has_negative_marking' => 'boolean',
             'negative_marks_per_question' => 'required_if:has_negative_marking,1|nullable|numeric|min:0|max:5',
             'question_header' => 'nullable|string',
+            'question_language' => 'required|in:english,bangla',
             'exam_question_id' => 'nullable|exists:exam_questions,id',
         ]);
 
@@ -318,6 +323,7 @@ class ExamController extends Controller
             'total_questions',
             'passing_marks',
             'question_header',
+            'question_language',
             'exam_question_id',
         ]);
 

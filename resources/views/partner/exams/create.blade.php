@@ -236,7 +236,7 @@
                         @enderror
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                         <div class="form-group">
                             <label for="examType" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Exam Type <span class="text-red-500">*</span>
@@ -283,6 +283,20 @@
                                    min="0" max="100" required 
                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors">
                             @error('passing_marks')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label for="questionLanguage" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Language <span class="text-red-500">*</span>
+                            </label>
+                            <select id="questionLanguage" name="question_language" required 
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors">
+                                <option value="english" {{ old('question_language', 'english') === 'english' ? 'selected' : '' }}>🇺🇸 English</option>
+                                <option value="bangla" {{ old('question_language') === 'bangla' ? 'selected' : '' }}>🇧🇩 Bangla</option>
+                            </select>
+                            @error('question_language')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
@@ -402,6 +416,7 @@
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
