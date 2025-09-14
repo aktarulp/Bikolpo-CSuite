@@ -105,7 +105,7 @@
                                         </div>
                                         
                                         <!-- Answer Options -->
-                                        <div class="flex gap-1 sm:gap-2 flex-shrink-0">
+                                        <div class="grid grid-cols-4 gap-2 sm:gap-3 flex-shrink-0 w-full max-w-2xl">
                                             @if($question->option_a)
                                                 <div class="flex items-center gap-1 sm:gap-2">
                                                     <label class="flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 border rounded cursor-pointer transition-colors
@@ -122,13 +122,15 @@
                                                                 text-gray-900 dark:text-white
                                                             @endif">a</span>
                                                     </label>
-                                                    <span class="text-xs sm:text-sm whitespace-nowrap max-w-16 sm:max-w-20 truncate
+                                                    <span class="text-xs sm:text-sm break-words
                                                         @if($question->correct_answer === 'A' || $question->correct_answer === '1')
                                                             text-blue-700 dark:text-blue-300
                                                         @else
                                                             text-gray-600 dark:text-gray-400
                                                         @endif">{{ $question->option_a }}</span>
                                                 </div>
+                                            @else
+                                                <div></div>
                                             @endif
                                             @if($question->option_b)
                                                 <div class="flex items-center gap-1 sm:gap-2">
@@ -146,13 +148,15 @@
                                                                 text-gray-900 dark:text-white
                                                             @endif">b</span>
                                                     </label>
-                                                    <span class="text-xs sm:text-sm whitespace-nowrap max-w-16 sm:max-w-20 truncate
+                                                    <span class="text-xs sm:text-sm break-words
                                                         @if($question->correct_answer === 'B' || $question->correct_answer === '2')
                                                             text-blue-700 dark:text-blue-300
                                                         @else
                                                             text-gray-600 dark:text-gray-400
                                                         @endif">{{ $question->option_b }}</span>
                                                 </div>
+                                            @else
+                                                <div></div>
                                             @endif
                                             @if($question->option_c)
                                                 <div class="flex items-center gap-1 sm:gap-2">
@@ -170,13 +174,15 @@
                                                                 text-gray-900 dark:text-white
                                                             @endif">c</span>
                                                     </label>
-                                                    <span class="text-xs sm:text-sm whitespace-nowrap max-w-16 sm:max-w-20 truncate
+                                                    <span class="text-xs sm:text-sm break-words
                                                         @if($question->correct_answer === 'C' || $question->correct_answer === '3')
                                                             text-blue-700 dark:text-blue-300
                                                         @else
                                                             text-gray-600 dark:text-gray-400
                                                         @endif">{{ $question->option_c }}</span>
                                                 </div>
+                                            @else
+                                                <div></div>
                                             @endif
                                             @if($question->option_d)
                                                 <div class="flex items-center gap-1 sm:gap-2">
@@ -194,13 +200,15 @@
                                                                 text-gray-900 dark:text-white
                                                             @endif">d</span>
                                                     </label>
-                                                    <span class="text-xs sm:text-sm whitespace-nowrap max-w-16 sm:max-w-20 truncate
+                                                    <span class="text-xs sm:text-sm break-words
                                                         @if($question->correct_answer === 'D' || $question->correct_answer === '4')
                                                             text-blue-700 dark:text-blue-300
                                                         @else
                                                             text-gray-600 dark:text-gray-400
                                                         @endif">{{ $question->option_d }}</span>
                                                 </div>
+                                            @else
+                                                <div></div>
                                             @endif
                                         </div>
                                         
