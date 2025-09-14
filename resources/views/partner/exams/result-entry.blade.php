@@ -105,26 +105,32 @@
                                         </div>
                                         
                                         <!-- Answer Options -->
+                                        <!-- Debug: Correct Answer = {{ $question->correct_answer }} -->
                                         <div class="grid grid-cols-4 gap-2 sm:gap-3 flex-shrink-0 w-full max-w-2xl">
                                             @if($question->option_a)
-                                                <div class="flex items-center gap-1 sm:gap-2">
+                                                <div class="flex items-center gap-1 sm:gap-2 p-2 rounded-lg transition-all duration-200
+                                                    @if(strtoupper($question->correct_answer) === 'A' || $question->correct_answer === '1' || $question->correct_answer === 1)
+                                                        bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 shadow-sm
+                                                    @else
+                                                        hover:bg-gray-50 dark:hover:bg-gray-700/50
+                                                    @endif">
                                                     <label class="flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 border rounded cursor-pointer transition-colors
-                                                        @if($question->correct_answer === 'A' || $question->correct_answer === '1')
-                                                            border-blue-500 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30
+                                                        @if(strtoupper($question->correct_answer) === 'A' || $question->correct_answer === '1' || $question->correct_answer === 1)
+                                                            border-green-500 bg-green-100 dark:bg-green-800/30 hover:bg-green-200 dark:hover:bg-green-700/40 shadow-md
                                                         @else
                                                             border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600
                                                         @endif">
                                                         <input type="radio" name="answers[{{ $question->id }}]" value="A" class="sr-only">
                                                         <span class="font-bold text-xs sm:text-sm
-                                                            @if($question->correct_answer === 'A' || $question->correct_answer === '1')
-                                                                text-blue-800 dark:text-blue-200
+                                                            @if(strtoupper($question->correct_answer) === 'A' || $question->correct_answer === '1' || $question->correct_answer === 1)
+                                                                text-green-800 dark:text-green-200
                                                             @else
                                                                 text-gray-900 dark:text-white
                                                             @endif">a</span>
                                                     </label>
-                                                    <span class="text-xs sm:text-sm break-words
-                                                        @if($question->correct_answer === 'A' || $question->correct_answer === '1')
-                                                            text-blue-700 dark:text-blue-300
+                                                    <span class="text-xs sm:text-sm break-words font-medium
+                                                        @if(strtoupper($question->correct_answer) === 'A' || $question->correct_answer === '1' || $question->correct_answer === 1)
+                                                            text-green-800 dark:text-green-200
                                                         @else
                                                             text-gray-600 dark:text-gray-400
                                                         @endif">{{ $question->option_a }}</span>
@@ -133,24 +139,29 @@
                                                 <div></div>
                                             @endif
                                             @if($question->option_b)
-                                                <div class="flex items-center gap-1 sm:gap-2">
+                                                <div class="flex items-center gap-1 sm:gap-2 p-2 rounded-lg transition-all duration-200
+                                                    @if(strtoupper($question->correct_answer) === 'B' || $question->correct_answer === '2' || $question->correct_answer === 2)
+                                                        bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 shadow-sm
+                                                    @else
+                                                        hover:bg-gray-50 dark:hover:bg-gray-700/50
+                                                    @endif">
                                                     <label class="flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 border rounded cursor-pointer transition-colors
-                                                        @if($question->correct_answer === 'B' || $question->correct_answer === '2')
-                                                            border-blue-500 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30
+                                                        @if(strtoupper($question->correct_answer) === 'B' || $question->correct_answer === '2' || $question->correct_answer === 2)
+                                                            border-green-500 bg-green-100 dark:bg-green-800/30 hover:bg-green-200 dark:hover:bg-green-700/40 shadow-md
                                                         @else
                                                             border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600
                                                         @endif">
                                                         <input type="radio" name="answers[{{ $question->id }}]" value="B" class="sr-only">
                                                         <span class="font-bold text-xs sm:text-sm
-                                                            @if($question->correct_answer === 'B' || $question->correct_answer === '2')
-                                                                text-blue-800 dark:text-blue-200
+                                                            @if(strtoupper($question->correct_answer) === 'B' || $question->correct_answer === '2' || $question->correct_answer === 2)
+                                                                text-green-800 dark:text-green-200
                                                             @else
                                                                 text-gray-900 dark:text-white
                                                             @endif">b</span>
                                                     </label>
-                                                    <span class="text-xs sm:text-sm break-words
-                                                        @if($question->correct_answer === 'B' || $question->correct_answer === '2')
-                                                            text-blue-700 dark:text-blue-300
+                                                    <span class="text-xs sm:text-sm break-words font-medium
+                                                        @if(strtoupper($question->correct_answer) === 'B' || $question->correct_answer === '2' || $question->correct_answer === 2)
+                                                            text-green-800 dark:text-green-200
                                                         @else
                                                             text-gray-600 dark:text-gray-400
                                                         @endif">{{ $question->option_b }}</span>
@@ -159,24 +170,29 @@
                                                 <div></div>
                                             @endif
                                             @if($question->option_c)
-                                                <div class="flex items-center gap-1 sm:gap-2">
+                                                <div class="flex items-center gap-1 sm:gap-2 p-2 rounded-lg transition-all duration-200
+                                                    @if(strtoupper($question->correct_answer) === 'C' || $question->correct_answer === '3' || $question->correct_answer === 3)
+                                                        bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 shadow-sm
+                                                    @else
+                                                        hover:bg-gray-50 dark:hover:bg-gray-700/50
+                                                    @endif">
                                                     <label class="flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 border rounded cursor-pointer transition-colors
-                                                        @if($question->correct_answer === 'C' || $question->correct_answer === '3')
-                                                            border-blue-500 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30
+                                                        @if(strtoupper($question->correct_answer) === 'C' || $question->correct_answer === '3' || $question->correct_answer === 3)
+                                                            border-green-500 bg-green-100 dark:bg-green-800/30 hover:bg-green-200 dark:hover:bg-green-700/40 shadow-md
                                                         @else
                                                             border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600
                                                         @endif">
                                                         <input type="radio" name="answers[{{ $question->id }}]" value="C" class="sr-only">
                                                         <span class="font-bold text-xs sm:text-sm
-                                                            @if($question->correct_answer === 'C' || $question->correct_answer === '3')
-                                                                text-blue-800 dark:text-blue-200
+                                                            @if(strtoupper($question->correct_answer) === 'C' || $question->correct_answer === '3' || $question->correct_answer === 3)
+                                                                text-green-800 dark:text-green-200
                                                             @else
                                                                 text-gray-900 dark:text-white
                                                             @endif">c</span>
                                                     </label>
-                                                    <span class="text-xs sm:text-sm break-words
-                                                        @if($question->correct_answer === 'C' || $question->correct_answer === '3')
-                                                            text-blue-700 dark:text-blue-300
+                                                    <span class="text-xs sm:text-sm break-words font-medium
+                                                        @if(strtoupper($question->correct_answer) === 'C' || $question->correct_answer === '3' || $question->correct_answer === 3)
+                                                            text-green-800 dark:text-green-200
                                                         @else
                                                             text-gray-600 dark:text-gray-400
                                                         @endif">{{ $question->option_c }}</span>
@@ -185,24 +201,29 @@
                                                 <div></div>
                                             @endif
                                             @if($question->option_d)
-                                                <div class="flex items-center gap-1 sm:gap-2">
+                                                <div class="flex items-center gap-1 sm:gap-2 p-2 rounded-lg transition-all duration-200
+                                                    @if(strtoupper($question->correct_answer) === 'D' || $question->correct_answer === '4' || $question->correct_answer === 4)
+                                                        bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 shadow-sm
+                                                    @else
+                                                        hover:bg-gray-50 dark:hover:bg-gray-700/50
+                                                    @endif">
                                                     <label class="flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 border rounded cursor-pointer transition-colors
-                                                        @if($question->correct_answer === 'D' || $question->correct_answer === '4')
-                                                            border-blue-500 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30
+                                                        @if(strtoupper($question->correct_answer) === 'D' || $question->correct_answer === '4' || $question->correct_answer === 4)
+                                                            border-green-500 bg-green-100 dark:bg-green-800/30 hover:bg-green-200 dark:hover:bg-green-700/40 shadow-md
                                                         @else
                                                             border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600
                                                         @endif">
                                                         <input type="radio" name="answers[{{ $question->id }}]" value="D" class="sr-only">
                                                         <span class="font-bold text-xs sm:text-sm
-                                                            @if($question->correct_answer === 'D' || $question->correct_answer === '4')
-                                                                text-blue-800 dark:text-blue-200
+                                                            @if(strtoupper($question->correct_answer) === 'D' || $question->correct_answer === '4' || $question->correct_answer === 4)
+                                                                text-green-800 dark:text-green-200
                                                             @else
                                                                 text-gray-900 dark:text-white
                                                             @endif">d</span>
                                                     </label>
-                                                    <span class="text-xs sm:text-sm break-words
-                                                        @if($question->correct_answer === 'D' || $question->correct_answer === '4')
-                                                            text-blue-700 dark:text-blue-300
+                                                    <span class="text-xs sm:text-sm break-words font-medium
+                                                        @if(strtoupper($question->correct_answer) === 'D' || $question->correct_answer === '4' || $question->correct_answer === 4)
+                                                            text-green-800 dark:text-green-200
                                                         @else
                                                             text-gray-600 dark:text-gray-400
                                                         @endif">{{ $question->option_d }}</span>
