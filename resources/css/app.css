@@ -2,6 +2,54 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Global Bengali Font Settings */
+@import url('https://fonts.googleapis.com/css2?family=Nikosh:wght@300;400;500;600;700;800;900&display=swap');
+
+/* Global font loading for Bengali characters */
+@font-face {
+  font-family: 'Nikosh';
+  src: url('https://fonts.googleapis.com/css2?family=Nikosh:wght@300;400;500;600;700;800;900&display=swap');
+  font-display: swap;
+  unicode-range: U+0980-09FF; /* Bengali Unicode range */
+}
+
+/* Global Bengali Font Application */
+/* Apply Nikosh as default font for all elements */
+* {
+  font-family: 'Nikosh', 'Noto Sans Bengali', 'Arial Unicode MS', sans-serif;
+}
+
+/* Override for specific elements that should use default fonts */
+.font-mono,
+.font-sans,
+.font-serif,
+.font-display,
+.font-brand,
+.font-modern,
+.font-figtree,
+code,
+pre,
+kbd,
+samp,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+textarea,
+select {
+  font-family: inherit;
+}
+
+/* Ensure Bengali characters specifically use Nikosh */
+[lang="bn"],
+[lang="bn-BD"],
+.font-bengali,
+.font-bangla {
+  font-family: 'Nikosh', 'Noto Sans Bengali', 'Arial Unicode MS', sans-serif !important;
+}
+
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -11,4 +59,13 @@ input[type="number"]::-webkit-inner-spin-button {
 /* Firefox */
 input[type="number"] {
   -moz-appearance: textfield;
+}
+
+/* Additional Bengali Character Support */
+/* Force Bengali characters to use Nikosh font */
+[lang="bn"],
+[lang="bn-BD"],
+.font-bengali,
+.font-bangla {
+  font-family: 'Nikosh', 'Noto Sans Bengali', 'Arial Unicode MS', sans-serif !important;
 }

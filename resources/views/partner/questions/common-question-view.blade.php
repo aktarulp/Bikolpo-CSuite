@@ -1424,24 +1424,18 @@
                             </div>
                         </div>
                     @endif
+                    
+                    <!-- Explanation -->
+                    @if($question->explanation)
+                        <div class="space-y-2">
+                            <h4 class="text-xs font-medium text-gray-600 uppercase tracking-wide">Explanation</h4>
+                            <div class="explanation-content bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                                {!! $question->explanation !!}
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
-
-
-            <!-- Explanation -->
-            @if($question->explanation)
-                <div class="explanation-section">
-                    <div class="explanation-title">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        Explanation
-                    </div>
-                    <div class="explanation-content">
-                        {!! $question->explanation !!}
-                    </div>
-                </div>
-            @endif
         </div>
     </div>
 

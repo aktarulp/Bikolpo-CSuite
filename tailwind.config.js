@@ -14,8 +14,8 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
-                bangla: ['"Hind Siliguri"', 'sans-serif'],
+                sans: ['Nikosh', 'Figtree', ...defaultTheme.fontFamily.sans],
+                bangla: ['"Nikosh"', '"Hind Siliguri"', 'sans-serif'],
                 brand: ['"Poppins"', 'sans-serif'],
                 modern: ['"Inter"', 'sans-serif'],
                 display: ['"Space Grotesk"', 'sans-serif']

@@ -16,7 +16,7 @@
             theme: {
                 extend: {
                     fontFamily: {
-                    bangla: ['"Hind Siliguri"', 'sans-serif'],
+                    bangla: ['"Nikosh"', '"Hind Siliguri"', 'sans-serif'],
                     brand: ['"Poppins"', 'sans-serif'],
                     modern: ['"Inter"', 'sans-serif'],
                     display: ['"Space Grotesk"', 'sans-serif']
@@ -37,7 +37,7 @@
             }
         }
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Nikosh:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
