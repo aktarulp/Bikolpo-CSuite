@@ -521,13 +521,22 @@
                                                <label for="include_header" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Header</label>
                                                <span class="ml-2 text-xs text-gray-500">(Title, Model Test, Full Marks & Time)</span>
                                            </div>
+                                                                                     <div class="flex items-center">
+                                               <input type="checkbox" id="mark_answer" name="mark_answer" value="1" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                               <label for="mark_answer" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Mark Answer</label>
+                                               <span class="ml-2 text-xs text-gray-500">(Check to show correct answers)</span>
+                                           </div>
                                        </div>
                                        
                                                                                <div class="space-y-2">
                                                                                          <div class="flex items-center">
-                                                 <input type="checkbox" id="mark_answer" name="mark_answer" value="1" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                                 <label for="mark_answer" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Mark Answer</label>
-                                                 <span class="ml-2 text-xs text-gray-500">(Check to show correct answers)</span>
+                                                 <label for="header_push" class="text-sm font-medium text-gray-900 dark:text-gray-300 mr-3">Header Push:</label>
+                                                 <select id="header_push" name="header_push" class="px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
+                                                     <option value="1st_col" selected>1st Col</option>
+                                                     <option value="2nd_col">2nd Col</option>
+                                                     <option value="3rd_col">3rd Col</option>
+                                                     <option value="4th_col">4th Col</option>
+                                                 </select>
                                              </div>
                                         </div>
                                   </div>
