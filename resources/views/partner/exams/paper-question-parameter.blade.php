@@ -37,6 +37,9 @@
             padding: 10px;
             margin-bottom: 15px;
             grid-column: 1 / -1; /* Default to span all columns */
+            height: auto !important;
+            min-height: auto !important;
+            align-self: start;
         }
         
         /* Header span styles for different configurations */
@@ -806,7 +809,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     console.log(`Header grid span: ${headerGridSpan}`);
                     
                     const headerContent = `
-                        <div class="header-container" data-header-span="${headerSpan}" style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 20px; grid-column: ${headerGridSpan};">
+                        <div class="header-container" data-header-span="${headerSpan}" style="text-align: center; border-bottom: 2px solid #333; padding: 15px; margin-bottom: 20px; grid-column: ${headerGridSpan}; height: auto; min-height: auto;">
                             <div style="font-size: ${(parseInt(params.font_size) || 12) + 8}pt; font-weight: bold; margin-bottom: 3px;">${exam.title}</div>
                             <div style="font-size: ${(parseInt(params.font_size) || 12) + 4}pt; font-weight: bold; margin-bottom: 3px;">${exam.question_header || 'Model Test'}</div>
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: ${(parseInt(params.font_size) || 12) + 4}pt; font-weight: bold; color: #333;">
@@ -820,9 +823,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Add vertical separator lines between columns (but not over header)
                 const hasHeader = (pageNum === 1 && params.include_header);
-                const separatorTop = hasHeader ? '180px' : '0px';
-                for (let i = 1; i < paperColumns; i++) {
-                    html += `<div class="column-separator" style="position: absolute; top: ${separatorTop}; bottom: 0; left: ${(i * 100) / paperColumns}%; width: 1px; background: #333; opacity: 0.3;"></div>`;
+                const headerSpan = params.header_span || '1';
+                const headerSpansMultipleColumns = headerSpan === 'full' || parseInt(headerSpan) > 1;
+                
+                // Only add separators if header doesn't span all columns
+                if (!headerSpansMultipleColumns) {
+                    for (let i = 1; i < paperColumns; i++) {
+                        html += `<div class="column-separator" style="position: absolute; top: 0; bottom: 0; left: ${(i * 100) / paperColumns}%; width: 1px; background: #333; opacity: 0.3;"></div>`;
+                    }
                 }
                 
                 // Create columns and distribute questions sequentially (fill each column completely)
@@ -832,27 +840,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 const questionsPerColumn = Math.ceil(pageQuestions.length / paperColumns);
                 console.log(`Page ${pageNum}: ${pageQuestions.length} questions, ${questionsPerColumn} questions per column`);
                 
+                // Track question index across all columns
+                let globalQuestionIndex = 0;
+                
                 for (let columnIndex = 0; columnIndex < paperColumns; columnIndex++) {
                     html += `<div class="question-column" data-column="${columnIndex + 1}" style="padding: 0 10px;">`;
                     
-                    // Calculate start and end indices for this column
-                    const columnStartIndex = columnIndex * questionsPerColumn;
-                    const columnEndIndex = Math.min(columnStartIndex + questionsPerColumn, pageQuestions.length);
+                    // Calculate how many questions should go in this column
+                    const remainingQuestions = pageQuestions.length - globalQuestionIndex;
+                    const remainingColumns = paperColumns - columnIndex;
+                    const questionsInThisColumn = Math.ceil(remainingQuestions / remainingColumns);
                     
-                    let questionsInThisColumn = 0;
+                    let questionsAdded = 0;
                     const columnQuestions = [];
                     
-                    // Fill this column completely with questions
-                    for (let i = columnStartIndex; i < columnEndIndex; i++) {
-                        const question = pageQuestions[i];
+                    // Fill this column with questions starting from globalQuestionIndex
+                    for (let i = 0; i < questionsInThisColumn && globalQuestionIndex < pageQuestions.length; i++) {
+                        const question = pageQuestions[globalQuestionIndex];
                         // Calculate the correct question number based on the page and position
-                        const questionNumber = startIndex + i + 1;
+                        const questionNumber = startIndex + globalQuestionIndex + 1;
                         html += generateQuestionHTML(question, questionNumber, params);
-                        questionsInThisColumn++;
+                        questionsAdded++;
                         columnQuestions.push(`Q${questionNumber}`);
+                        globalQuestionIndex++;
                     }
                     
-                    console.log(`Page ${pageNum}, Column ${columnIndex + 1}: ${questionsInThisColumn} questions (${columnStartIndex + 1}-${columnEndIndex}) - ${columnQuestions.join(', ')}`);
+                    console.log(`Page ${pageNum}, Column ${columnIndex + 1}: ${questionsAdded} questions - ${columnQuestions.join(', ')}`);
                     html += '</div>';
                 }
                 
