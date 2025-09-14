@@ -29,6 +29,10 @@ class Exam extends Model
         'status',
         'flag',
         'created_by',
+        'ba',
+        'bb',
+        'bc',
+        'bd',
     ];
 
     protected $casts = [
@@ -45,6 +49,10 @@ class Exam extends Model
         'question_header' => 'string',
         'status' => 'string',
         'flag' => 'string',
+        'ba' => 'string',
+        'bb' => 'string',
+        'bc' => 'string',
+        'bd' => 'string',
     ];
 
     /**

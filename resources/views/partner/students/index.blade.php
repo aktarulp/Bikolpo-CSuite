@@ -166,14 +166,6 @@
                                     <span>Student ID</span>
                                 </div>
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wider border-b-2 border-purple-500/30">
-                                <div class="flex items-center space-x-2">
-                                    <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                    </svg>
-                                    <span>School & Class</span>
-                                </div>
-                            </th>
                             <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wider border-b-2 border-green-500/30">
                                 <div class="flex items-center space-x-2">
                                     <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -237,12 +229,6 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"></path>
                                     </svg>
                                     {{ $student->student_id ?? 'N/A' }}
-                                </div>
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap">
-                                <div class="text-sm text-gray-900 dark:text-white">
-                                    <div class="font-medium">{{ $student->school_college ?? 'N/A' }}</div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ $student->class_grade ?? 'N/A' }}</div>
                                 </div>
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap">

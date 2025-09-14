@@ -147,26 +147,43 @@
             max-width: 420mm;
         }
         
-        /* Responsive scaling for smaller screens */
+        /* True size mode - no scaling */
+        #livePreview.true-size .page-container {
+            transform: none !important;
+        }
+        
+        /* Responsive scaling for smaller screens (only when not in true size mode) */
         @media (max-width: 1200px) {
-            #livePreview .page-container {
+            #livePreview:not(.true-size) .page-container {
                 transform: scale(0.8);
                 transform-origin: top center;
             }
         }
         
         @media (max-width: 900px) {
-            #livePreview .page-container {
+            #livePreview:not(.true-size) .page-container {
                 transform: scale(0.6);
                 transform-origin: top center;
             }
         }
         
         @media (max-width: 600px) {
-            #livePreview .page-container {
+            #livePreview:not(.true-size) .page-container {
                 transform: scale(0.4);
                 transform-origin: top center;
             }
+        }
+        
+        /* True size mode styling */
+        #livePreview.true-size {
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+        
+        #livePreview.true-size .page-container {
+            margin: 10px auto;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
         
         /* Add page number indicator */
@@ -408,22 +425,22 @@
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Margins (mm)</label>
                                 <div class="grid grid-cols-4 gap-3">
                                     <div>
-                                        <label for="margin_top" class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Top</label>
+                                        <label for="margin_top" class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Top (mm)</label>
                                         <input type="number" id="margin_top" name="margin_top" value="25" min="10" max="50" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
                                     </div>
                                     
                                     <div>
-                                        <label for="margin_bottom" class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Bottom</label>
+                                        <label for="margin_bottom" class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Bottom (mm)</label>
                                         <input type="number" id="margin_bottom" name="margin_bottom" value="25" min="10" max="50" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
                                     </div>
                                     
                                     <div>
-                                        <label for="margin_left" class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Left</label>
+                                        <label for="margin_left" class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Left (mm)</label>
                                         <input type="number" id="margin_left" name="margin_left" value="20" min="10" max="50" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
                                     </div>
                                     
                                     <div>
-                                        <label for="margin_right" class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Right</label>
+                                        <label for="margin_right" class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Right (mm)</label>
                                         <input type="number" id="margin_right" name="margin_right" value="20" min="10" max="50" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
                                     </div>
                                 </div>
@@ -539,8 +556,19 @@
         <!-- Live Preview (Full Width) -->
         <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Live Preview</h3>
-                <p class="text-sm text-gray-600 dark:text-gray-400">See how your question paper will look</p>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Live Preview</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">See how your question paper will look</p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <span class="text-sm text-gray-600 dark:text-gray-400" id="scaleIndicator">Scaled to fit screen</span>
+                        <button type="button" id="trueSizeToggle" 
+                                class="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-medium rounded-lg hover:from-green-600 hover:to-emerald-700 transform hover:scale-105 transition-all duration-200 shadow-md">
+                            📏 True Size
+                        </button>
+                    </div>
+                </div>
             </div>
                          <div class="p-6">
                  <div id="livePreview" class="bg-white border border-gray-200 rounded-lg p-6 overflow-visible" style="font-family: Arial, sans-serif; font-size: 12pt; line-height: 1.5; transition: all 0.3s ease; box-sizing: border-box;">
@@ -646,7 +674,7 @@ document.addEventListener('DOMContentLoaded', function() {
          const orientation = params.orientation || 'portrait';
          const sizeClass = `${paperSize.toLowerCase()}-${orientation}`;
          
-         // Update all page containers with the correct paper size class
+         // Update all page containers with the correct paper size class and margins
          document.querySelectorAll('.page-container').forEach((pageContainer, index) => {
              // Remove all existing paper size classes
              pageContainer.classList.remove('a4-portrait', 'a4-landscape', 'letter-portrait', 'letter-landscape', 'legal-portrait', 'legal-landscape', 'a3-portrait', 'a3-landscape');
@@ -658,10 +686,22 @@ document.addEventListener('DOMContentLoaded', function() {
              pageContainer.setAttribute('data-paper-size', paperSize);
              pageContainer.setAttribute('data-orientation', orientation);
              
+             // Apply margin values from form to the page container
+             const marginTop = (parseInt(params.margin_top) || 20) + 'px';
+             const marginRight = (parseInt(params.margin_right) || 20) + 'px';
+             const marginBottom = (parseInt(params.margin_bottom) || 20) + 'px';
+             const marginLeft = (parseInt(params.margin_left) || 20) + 'px';
+             
+             pageContainer.style.marginTop = marginTop;
+             pageContainer.style.marginRight = marginRight;
+             pageContainer.style.marginBottom = marginBottom;
+             pageContainer.style.marginLeft = marginLeft;
+             
              // Log the exact dimensions being applied
              const computedStyle = window.getComputedStyle(pageContainer);
              console.log(`Updated page container ${index + 1} with class: ${sizeClass}`);
              console.log(`Dimensions: width=${computedStyle.width}, height=${computedStyle.height}`);
+             console.log(`Margins: top=${marginTop}, right=${marginRight}, bottom=${marginBottom}, left=${marginLeft}`);
          });
          
          // Add visual indicator for MCQ columns
@@ -1024,6 +1064,46 @@ document.addEventListener('DOMContentLoaded', function() {
          input.addEventListener('change', updatePreview);
          input.addEventListener('input', updatePreview);
      });
+     
+     // True Size Toggle functionality
+     const trueSizeToggle = document.getElementById('trueSizeToggle');
+     const scaleIndicator = document.getElementById('scaleIndicator');
+     let isTrueSize = false;
+     
+     if (trueSizeToggle) {
+         trueSizeToggle.addEventListener('click', function() {
+             isTrueSize = !isTrueSize;
+             
+             if (isTrueSize) {
+                 // Enable true size mode
+                 previewContainer.classList.add('true-size');
+                 trueSizeToggle.innerHTML = '📐 Fit Screen';
+                 trueSizeToggle.className = 'px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-indigo-700 transform hover:scale-105 transition-all duration-200 shadow-md';
+                 scaleIndicator.textContent = 'True paper size (scroll to see full page)';
+                 
+                 // Log the actual dimensions
+                 const pageContainers = document.querySelectorAll('.page-container');
+                 if (pageContainers.length > 0) {
+                     const firstPage = pageContainers[0];
+                     const computedStyle = window.getComputedStyle(firstPage);
+                     console.log('True Size Mode - Actual dimensions:', {
+                         width: computedStyle.width,
+                         height: computedStyle.height,
+                         paperSize: firstPage.getAttribute('data-paper-size'),
+                         orientation: firstPage.getAttribute('data-orientation')
+                     });
+                 }
+             } else {
+                 // Enable scaled mode
+                 previewContainer.classList.remove('true-size');
+                 trueSizeToggle.innerHTML = '📏 True Size';
+                 trueSizeToggle.className = 'px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-medium rounded-lg hover:from-green-600 hover:to-emerald-700 transform hover:scale-105 transition-all duration-200 shadow-md';
+                 scaleIndicator.textContent = 'Scaled to fit screen';
+                 
+                 console.log('Scaled Mode - Preview scaled for screen display');
+             }
+         });
+     }
      
      // PDF Download functionality
      const downloadPdfBtn = document.getElementById('downloadPdfBtn');

@@ -126,7 +126,11 @@ class StudentController extends Controller
 
     public function edit(Student $student)
     {
-        return view('partner.students.edit', compact('student'));
+        $partnerId = $this->getPartnerId();
+        $courses = \App\Models\Course::where('partner_id', $partnerId)->get();
+        $batches = \App\Models\Batch::where('partner_id', $partnerId)->get();
+        
+        return view('partner.students.edit', compact('student', 'courses', 'batches'));
     }
 
     public function update(Request $request, Student $student)
