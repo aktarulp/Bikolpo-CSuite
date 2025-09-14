@@ -108,25 +108,29 @@
                                         <!-- Debug: Correct Answer = {{ $question->correct_answer }} -->
                                         <div class="grid grid-cols-4 gap-2 sm:gap-3 flex-shrink-0 w-full max-w-2xl">
                                             @if($question->option_a)
-                                                <div class="flex items-center gap-1 sm:gap-2 p-2 rounded-lg transition-all duration-200
+                                                <div class="flex items-center gap-1 sm:gap-2 p-2 rounded-lg transition-all duration-200 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50
                                                     @if(strtoupper($question->correct_answer) === 'A' || $question->correct_answer === '1' || $question->correct_answer === 1)
                                                         bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 shadow-sm
-                                                    @else
-                                                        hover:bg-gray-50 dark:hover:bg-gray-700/50
-                                                    @endif">
-                                                    <label class="flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 border rounded cursor-pointer transition-colors
+                                                    @endif" onclick="selectAnswer('{{ $question->id }}', 'A')">
+                                                    <label class="flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 border rounded cursor-pointer transition-all duration-200 relative group
                                                         @if(strtoupper($question->correct_answer) === 'A' || $question->correct_answer === '1' || $question->correct_answer === 1)
                                                             border-green-500 bg-green-100 dark:bg-green-800/30 hover:bg-green-200 dark:hover:bg-green-700/40 shadow-md
                                                         @else
-                                                            border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600
+                                                            border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 hover:border-gray-400 dark:hover:border-gray-500
                                                         @endif">
-                                                        <input type="radio" name="answers[{{ $question->id }}]" value="A" class="sr-only">
-                                                        <span class="font-bold text-xs sm:text-sm
+                                                        <input type="radio" name="answers[{{ $question->id }}]" value="A" class="sr-only" onchange="toggleAnswer(this)">
+                                                        <span class="font-bold text-xs sm:text-sm transition-all duration-200
                                                             @if(strtoupper($question->correct_answer) === 'A' || $question->correct_answer === '1' || $question->correct_answer === 1)
                                                                 text-green-800 dark:text-green-200
                                                             @else
-                                                                text-gray-900 dark:text-white
+                                                                text-gray-900 dark:text-white group-hover:text-gray-700 dark:group-hover:text-gray-200
                                                             @endif">a</span>
+                                                        <!-- Tick Mark -->
+                                                        <div class="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-200 answer-tick">
+                                                            <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                                                            </svg>
+                                                        </div>
                                                     </label>
                                                     <span class="text-xs sm:text-sm break-words font-medium
                                                         @if(strtoupper($question->correct_answer) === 'A' || $question->correct_answer === '1' || $question->correct_answer === 1)
@@ -139,25 +143,29 @@
                                                 <div></div>
                                             @endif
                                             @if($question->option_b)
-                                                <div class="flex items-center gap-1 sm:gap-2 p-2 rounded-lg transition-all duration-200
+                                                <div class="flex items-center gap-1 sm:gap-2 p-2 rounded-lg transition-all duration-200 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50
                                                     @if(strtoupper($question->correct_answer) === 'B' || $question->correct_answer === '2' || $question->correct_answer === 2)
                                                         bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 shadow-sm
-                                                    @else
-                                                        hover:bg-gray-50 dark:hover:bg-gray-700/50
-                                                    @endif">
-                                                    <label class="flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 border rounded cursor-pointer transition-colors
+                                                    @endif" onclick="selectAnswer('{{ $question->id }}', 'B')">
+                                                    <label class="flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 border rounded cursor-pointer transition-all duration-200 relative group
                                                         @if(strtoupper($question->correct_answer) === 'B' || $question->correct_answer === '2' || $question->correct_answer === 2)
                                                             border-green-500 bg-green-100 dark:bg-green-800/30 hover:bg-green-200 dark:hover:bg-green-700/40 shadow-md
                                                         @else
-                                                            border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600
+                                                            border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 hover:border-gray-400 dark:hover:border-gray-500
                                                         @endif">
-                                                        <input type="radio" name="answers[{{ $question->id }}]" value="B" class="sr-only">
-                                                        <span class="font-bold text-xs sm:text-sm
+                                                        <input type="radio" name="answers[{{ $question->id }}]" value="B" class="sr-only" onchange="toggleAnswer(this)">
+                                                        <span class="font-bold text-xs sm:text-sm transition-all duration-200
                                                             @if(strtoupper($question->correct_answer) === 'B' || $question->correct_answer === '2' || $question->correct_answer === 2)
                                                                 text-green-800 dark:text-green-200
                                                             @else
-                                                                text-gray-900 dark:text-white
+                                                                text-gray-900 dark:text-white group-hover:text-gray-700 dark:group-hover:text-gray-200
                                                             @endif">b</span>
+                                                        <!-- Tick Mark -->
+                                                        <div class="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-200 answer-tick">
+                                                            <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                                                            </svg>
+                                                        </div>
                                                     </label>
                                                     <span class="text-xs sm:text-sm break-words font-medium
                                                         @if(strtoupper($question->correct_answer) === 'B' || $question->correct_answer === '2' || $question->correct_answer === 2)
@@ -170,25 +178,29 @@
                                                 <div></div>
                                             @endif
                                             @if($question->option_c)
-                                                <div class="flex items-center gap-1 sm:gap-2 p-2 rounded-lg transition-all duration-200
+                                                <div class="flex items-center gap-1 sm:gap-2 p-2 rounded-lg transition-all duration-200 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50
                                                     @if(strtoupper($question->correct_answer) === 'C' || $question->correct_answer === '3' || $question->correct_answer === 3)
                                                         bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 shadow-sm
-                                                    @else
-                                                        hover:bg-gray-50 dark:hover:bg-gray-700/50
-                                                    @endif">
-                                                    <label class="flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 border rounded cursor-pointer transition-colors
+                                                    @endif" onclick="selectAnswer('{{ $question->id }}', 'C')">
+                                                    <label class="flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 border rounded cursor-pointer transition-all duration-200 relative group
                                                         @if(strtoupper($question->correct_answer) === 'C' || $question->correct_answer === '3' || $question->correct_answer === 3)
                                                             border-green-500 bg-green-100 dark:bg-green-800/30 hover:bg-green-200 dark:hover:bg-green-700/40 shadow-md
                                                         @else
-                                                            border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600
+                                                            border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 hover:border-gray-400 dark:hover:border-gray-500
                                                         @endif">
-                                                        <input type="radio" name="answers[{{ $question->id }}]" value="C" class="sr-only">
-                                                        <span class="font-bold text-xs sm:text-sm
+                                                        <input type="radio" name="answers[{{ $question->id }}]" value="C" class="sr-only" onchange="toggleAnswer(this)">
+                                                        <span class="font-bold text-xs sm:text-sm transition-all duration-200
                                                             @if(strtoupper($question->correct_answer) === 'C' || $question->correct_answer === '3' || $question->correct_answer === 3)
                                                                 text-green-800 dark:text-green-200
                                                             @else
-                                                                text-gray-900 dark:text-white
+                                                                text-gray-900 dark:text-white group-hover:text-gray-700 dark:group-hover:text-gray-200
                                                             @endif">c</span>
+                                                        <!-- Tick Mark -->
+                                                        <div class="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-200 answer-tick">
+                                                            <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                                                            </svg>
+                                                        </div>
                                                     </label>
                                                     <span class="text-xs sm:text-sm break-words font-medium
                                                         @if(strtoupper($question->correct_answer) === 'C' || $question->correct_answer === '3' || $question->correct_answer === 3)
@@ -201,25 +213,29 @@
                                                 <div></div>
                                             @endif
                                             @if($question->option_d)
-                                                <div class="flex items-center gap-1 sm:gap-2 p-2 rounded-lg transition-all duration-200
+                                                <div class="flex items-center gap-1 sm:gap-2 p-2 rounded-lg transition-all duration-200 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50
                                                     @if(strtoupper($question->correct_answer) === 'D' || $question->correct_answer === '4' || $question->correct_answer === 4)
                                                         bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 shadow-sm
-                                                    @else
-                                                        hover:bg-gray-50 dark:hover:bg-gray-700/50
-                                                    @endif">
-                                                    <label class="flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 border rounded cursor-pointer transition-colors
+                                                    @endif" onclick="selectAnswer('{{ $question->id }}', 'D')">
+                                                    <label class="flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 border rounded cursor-pointer transition-all duration-200 relative group
                                                         @if(strtoupper($question->correct_answer) === 'D' || $question->correct_answer === '4' || $question->correct_answer === 4)
                                                             border-green-500 bg-green-100 dark:bg-green-800/30 hover:bg-green-200 dark:hover:bg-green-700/40 shadow-md
                                                         @else
-                                                            border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600
+                                                            border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 hover:border-gray-400 dark:hover:border-gray-500
                                                         @endif">
-                                                        <input type="radio" name="answers[{{ $question->id }}]" value="D" class="sr-only">
-                                                        <span class="font-bold text-xs sm:text-sm
+                                                        <input type="radio" name="answers[{{ $question->id }}]" value="D" class="sr-only" onchange="toggleAnswer(this)">
+                                                        <span class="font-bold text-xs sm:text-sm transition-all duration-200
                                                             @if(strtoupper($question->correct_answer) === 'D' || $question->correct_answer === '4' || $question->correct_answer === 4)
                                                                 text-green-800 dark:text-green-200
                                                             @else
-                                                                text-gray-900 dark:text-white
+                                                                text-gray-900 dark:text-white group-hover:text-gray-700 dark:group-hover:text-gray-200
                                                             @endif">d</span>
+                                                        <!-- Tick Mark -->
+                                                        <div class="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-200 answer-tick">
+                                                            <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                                                            </svg>
+                                                        </div>
                                                     </label>
                                                     <span class="text-xs sm:text-sm break-words font-medium
                                                         @if(strtoupper($question->correct_answer) === 'D' || $question->correct_answer === '4' || $question->correct_answer === 4)
@@ -376,6 +392,57 @@ document.addEventListener('DOMContentLoaded', function() {
         input.addEventListener('change', autoSave);
     });
 });
+
+// Function to select answer when clicking on option container
+function selectAnswer(questionId, answerValue) {
+    const radioInput = document.querySelector(`input[name="answers[${questionId}]"][value="${answerValue}"]`);
+    if (radioInput) {
+        radioInput.checked = true;
+        toggleAnswer(radioInput);
+    }
+}
+
+// Function to toggle answer selection with tick mark
+function toggleAnswer(radioInput) {
+    const questionId = radioInput.name.match(/\[(\d+)\]/)[1];
+    const allOptions = document.querySelectorAll(`input[name="answers[${questionId}]"]`);
+    
+    // Remove tick marks from all options in this question
+    allOptions.forEach(option => {
+        const label = option.closest('label');
+        const tick = label.querySelector('.answer-tick');
+        const letter = label.querySelector('span');
+        
+        if (tick) {
+            tick.style.opacity = '0';
+        }
+        if (letter) {
+            letter.style.opacity = '1';
+        }
+        
+        // Reset styling
+        label.classList.remove('ring-2', 'ring-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+        label.classList.add('border-gray-300', 'dark:border-gray-600');
+    });
+    
+    // Add tick mark to selected option
+    if (radioInput.checked) {
+        const label = radioInput.closest('label');
+        const tick = label.querySelector('.answer-tick');
+        const letter = label.querySelector('span');
+        
+        if (tick) {
+            tick.style.opacity = '1';
+        }
+        if (letter) {
+            letter.style.opacity = '0';
+        }
+        
+        // Add selection styling
+        label.classList.add('ring-2', 'ring-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+        label.classList.remove('border-gray-300', 'dark:border-gray-600');
+    }
+}
 
 function resetForm() {
     if (confirm('Are you sure you want to reset the form? All entered data will be lost.')) {
