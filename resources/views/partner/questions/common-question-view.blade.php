@@ -320,17 +320,519 @@
     .tags-container {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.5rem;
-        margin: 1rem 0;
+        gap: 0.375rem;
+        margin: 0;
     }
     
     .tag {
         background: #e0e7ff;
         color: #3730a3;
-        padding: 0.25rem 0.75rem;
-        border-radius: 12px;
-        font-size: 0.75rem;
+        padding: 0.1875rem 0.5rem;
+        border-radius: 8px;
+        font-size: 0.6875rem;
         font-weight: 500;
+        border: 1px solid #c7d2fe;
+        transition: all 0.2s ease;
+    }
+    
+    .tag:hover {
+        background: #c7d2fe;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(55, 48, 163, 0.1);
+    }
+    
+    /* Difficulty Analysis Enhanced Styling */
+    .difficulty-analysis-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .difficulty-analysis-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4, #10b981);
+        opacity: 0.8;
+    }
+    
+    .difficulty-analysis-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        border-color: #3b82f6;
+    }
+    
+    .difficulty-analysis-header {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        color: white;
+        margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+        padding: 1.5rem;
+        border-radius: 12px 12px 0 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .difficulty-analysis-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transition: left 0.6s ease;
+    }
+    
+    .difficulty-analysis-header:hover::before {
+        left: 100%;
+    }
+    
+    .difficulty-metric-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 1rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
+    }
+    
+    .difficulty-metric-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.05), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .difficulty-metric-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        border-color: #3b82f6;
+    }
+    
+    .difficulty-metric-card:hover::before {
+        left: 100%;
+    }
+    
+    .difficulty-level-card {
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        border-color: #3b82f6;
+    }
+    
+    .difficulty-level-card:hover {
+        background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
+    }
+    
+    .confidence-card {
+        background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+        border-color: #22c55e;
+    }
+    
+    .confidence-card:hover {
+        background: linear-gradient(135deg, #bbf7d0 0%, #86efac 100%);
+        box-shadow: 0 8px 25px rgba(34, 197, 94, 0.2);
+    }
+    
+    .attempts-card {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        border-color: #f59e0b;
+    }
+    
+    .attempts-card:hover {
+        background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%);
+        box-shadow: 0 8px 25px rgba(245, 158, 11, 0.2);
+    }
+    
+    .accuracy-card {
+        background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+        border-color: #ec4899;
+    }
+    
+    .accuracy-card:hover {
+        background: linear-gradient(135deg, #fbcfe8 0%, #f9a8d4 100%);
+        box-shadow: 0 8px 25px rgba(236, 72, 153, 0.2);
+    }
+    
+    .difficulty-explanation {
+        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        border: 1px solid #3b82f6;
+        border-radius: 8px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .difficulty-explanation::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+        transition: left 0.6s ease;
+    }
+    
+    .difficulty-explanation:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+        border-color: #1d4ed8;
+    }
+    
+    .difficulty-explanation:hover::before {
+        left: 100%;
+    }
+    
+    .difficulty-progress-bar {
+        background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+        border-radius: 4px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .difficulty-progress-bar::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        animation: shimmer 2s infinite;
+    }
+    
+    @keyframes shimmer {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+    
+    /* Enhanced Tab Navigation */
+    .analytics-tabs-container {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .analytics-tabs-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4, #10b981);
+        opacity: 0.8;
+    }
+    
+    .analytics-tab-navigation {
+        background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+        border-bottom: 1px solid #e2e8f0;
+        position: relative;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    
+    .analytics-tab-navigation::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .analytics-tab-navigation::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+    }
+    
+    .analytics-tab-button {
+        position: relative;
+        padding: 0.75rem 1.25rem;
+        margin: 0;
+        border: none;
+        background: transparent;
+        color: #6b7280;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        white-space: nowrap;
+        min-width: fit-content;
+        border-bottom: 2px solid transparent;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .analytics-tab-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.05), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .analytics-tab-button:hover {
+        color: #374151;
+        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        transform: translateY(-1px);
+    }
+    
+    .analytics-tab-button:hover::before {
+        left: 100%;
+    }
+    
+    .analytics-tab-button.active {
+        color: #1d4ed8;
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        border-bottom-color: #3b82f6;
+        font-weight: 600;
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+    }
+    
+    .analytics-tab-button.active::before {
+        background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+        left: 100%;
+    }
+    
+    .analytics-tab-content {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        min-height: 400px;
+        position: relative;
+        animation: fadeInUp 0.4s ease-out;
+    }
+    
+    .analytics-tab-content::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Compact Tab Content Styling */
+    .compact-metric-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 0.75rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+    }
+    
+    .compact-metric-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.05), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .compact-metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-color: #3b82f6;
+    }
+    
+    .compact-metric-card:hover::before {
+        left: 100%;
+    }
+    
+    .compact-student-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 0.625rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 0.375rem;
+    }
+    
+    .compact-student-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.05), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .compact-student-card:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-color: #22c55e;
+    }
+    
+    .compact-student-card:hover::before {
+        left: 100%;
+    }
+    
+    .compact-student-card.incorrect {
+        border-color: #fecaca;
+    }
+    
+    .compact-student-card.incorrect:hover {
+        border-color: #ef4444;
+    }
+    
+    .compact-student-card.incorrect::before {
+        background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.05), transparent);
+    }
+    
+    .compact-activity-item {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 0.5rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 0.375rem;
+    }
+    
+    .compact-activity-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.05), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .compact-activity-item:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-color: #3b82f6;
+    }
+    
+    .compact-activity-item:hover::before {
+        left: 100%;
+    }
+    
+    /* Compact Grid Layouts */
+    .compact-grid-2 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 0.75rem;
+    }
+    
+    .compact-grid-3 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 0.5rem;
+    }
+    
+    .compact-section-title {
+        font-size: 0.9375rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .compact-section-title svg {
+        width: 1rem;
+        height: 1rem;
+    }
+    
+    /* Mobile Responsive Tabs */
+    @media (max-width: 768px) {
+        .analytics-tab-button {
+            padding: 0.625rem 0.875rem;
+            font-size: 0.75rem;
+        }
+        
+        .analytics-tab-content {
+            padding: 1rem;
+        }
+        
+        .compact-grid-2 {
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
+        }
+        
+        .compact-grid-3 {
+            grid-template-columns: 1fr;
+            gap: 0.375rem;
+        }
+        
+        .compact-metric-card {
+            padding: 0.625rem;
+        }
+        
+        .compact-student-card {
+            padding: 0.5rem;
+        }
+        
+        .compact-activity-item {
+            padding: 0.375rem;
+        }
+    }
+    
+    @media (max-width: 640px) {
+        .analytics-tab-navigation {
+            padding: 0 0.5rem;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .analytics-tab-button {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.6875rem;
+            margin-right: 0.125rem;
+            min-width: auto;
+            flex-shrink: 0;
+        }
+        
+        .analytics-tab-content {
+            padding: 0.75rem;
+        }
     }
     
     /* Mobile responsiveness */
@@ -737,7 +1239,7 @@
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
-                        Show Question Meta Data
+                        Show Question Meta
                     </button>
                 </div>
             </div>
@@ -830,7 +1332,7 @@
 
             <!-- Question Metadata Section (Toggleable) -->
             <div id="question-metadata-section" class="hidden mt-4 p-4 bg-gray-50 rounded-lg border">
-                <h3 class="text-sm font-semibold text-gray-700 mb-3">Question Metadata</h3>
+                <h3 class="text-sm font-semibold text-gray-700 mb-3">Question Meta</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <!-- Basic Info -->
                     <div class="space-y-2">
@@ -910,17 +1412,21 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Tags -->
+                    @if($question->tags && is_array($question->tags) && count($question->tags) > 0)
+                        <div class="space-y-2">
+                            <h4 class="text-xs font-medium text-gray-600 uppercase tracking-wide">Tags</h4>
+                            <div class="tags-container">
+                                @foreach($question->tags as $tag)
+                                    <span class="tag">{{ $tag }}</span>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
 
-            <!-- Tags -->
-            @if($question->tags && is_array($question->tags) && count($question->tags) > 0)
-                <div class="tags-container">
-                    @foreach($question->tags as $tag)
-                        <span class="tag">{{ $tag }}</span>
-                    @endforeach
-                </div>
-            @endif
 
             <!-- Explanation -->
             @if($question->explanation)
@@ -1001,17 +1507,19 @@
         </div>
 
         <!-- Difficulty Analysis Card -->
-        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <svg class="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                </svg>
-                Difficulty Analysis
-            </h3>
+        <div class="difficulty-analysis-card p-6 mb-8">
+            <div class="difficulty-analysis-header">
+                <h3 class="text-lg font-semibold flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                    Difficulty Analysis
+                </h3>
+            </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <!-- Difficulty Level -->
-                <div class="bg-gray-50 rounded-lg p-4">
+                <div class="difficulty-metric-card difficulty-level-card">
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-sm font-medium text-gray-600">Current Level</span>
                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $question->difficulty_color }}">
@@ -1022,18 +1530,18 @@
                 </div>
 
                 <!-- Confidence Score -->
-                <div class="bg-gray-50 rounded-lg p-4">
+                <div class="difficulty-metric-card confidence-card">
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-sm font-medium text-gray-600">Confidence</span>
                         <span class="text-xs text-gray-500">{{ round($question->difficulty_confidence * 100) }}%</span>
                     </div>
                     <div class="w-full bg-gray-200 rounded-full h-2">
-                        <div class="bg-blue-500 h-2 rounded-full transition-all duration-300" style="width: {{ $question->difficulty_confidence * 100 }}%"></div>
+                        <div class="difficulty-progress-bar h-2 rounded-full transition-all duration-300" style="width: {{ $question->difficulty_confidence * 100 }}%"></div>
                     </div>
                 </div>
 
                 <!-- Total Attempts -->
-                <div class="bg-gray-50 rounded-lg p-4">
+                <div class="difficulty-metric-card attempts-card">
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-sm font-medium text-gray-600">Total Attempts</span>
                         <span class="text-xs text-gray-500">for calculation</span>
@@ -1042,7 +1550,7 @@
                 </div>
 
                 <!-- Correct Percentage -->
-                <div class="bg-gray-50 rounded-lg p-4">
+                <div class="difficulty-metric-card accuracy-card">
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-sm font-medium text-gray-600">Correct Rate</span>
                         <span class="text-xs text-gray-500">accuracy</span>
@@ -1052,7 +1560,7 @@
             </div>
 
             <!-- Difficulty Explanation -->
-            <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+            <div class="difficulty-explanation mt-4 p-4">
                 <div class="flex items-start">
                     <svg class="w-5 h-5 text-blue-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -1074,101 +1582,133 @@
         </div>
 
         <!-- Detailed Analytics Tabs -->
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-            <div class="border-b border-gray-200">
-                <nav class="flex space-x-8 px-6" aria-label="Tabs">
-                    <button onclick="showTab('overview')" class="tab-button active py-4 px-1 border-b-2 border-blue-500 font-medium text-sm text-blue-600">
+        <div class="analytics-tabs-container">
+            <div class="analytics-tab-navigation">
+                <nav class="flex px-4" aria-label="Tabs">
+                    <button onclick="showTab('overview')" class="analytics-tab-button active">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
                         Overview
                     </button>
-                    <button onclick="showTab('students')" class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700">
+                    <button onclick="showTab('students')" class="analytics-tab-button">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
+                        </svg>
                         Student Performance
                     </button>
-                    <button onclick="showTab('distribution')" class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700">
+                    <button onclick="showTab('distribution')" class="analytics-tab-button">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
                         Answer Distribution
                     </button>
-                    <button onclick="showTab('timeline')" class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700">
+                    <button onclick="showTab('timeline')" class="analytics-tab-button">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                        </svg>
                         Performance Timeline
                     </button>
                 </nav>
             </div>
 
             <!-- Tab Content -->
-            <div class="p-6">
+            <div class="analytics-tab-content p-4">
                 <!-- Overview Tab -->
                 <div id="overview-tab" class="tab-content">
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="compact-grid-2">
                         <!-- Performance Metrics -->
-                        <div class="space-y-6">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Performance Metrics</h3>
+                        <div>
+                            <h3 class="compact-section-title">
+                                <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                </svg>
+                                Performance Metrics
+                            </h3>
                             
-                            <div class="space-y-4">
-                                <div class="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
-                                    <span class="text-sm font-medium text-gray-600">Answer Rate</span>
-                                    <span class="text-lg font-semibold text-gray-900">{{ $analytics['answer_rate'] ?? 0 }}%</span>
-                                </div>
-                                
-                                <div class="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
-                                    <span class="text-sm font-medium text-gray-600">Average Time Spent</span>
-                                    <span class="text-lg font-semibold text-gray-900">
-                                        @if($analytics['average_time_spent'])
-                                            {{ floor($analytics['average_time_spent'] / 60) }}m {{ $analytics['average_time_spent'] % 60 }}s
-                                        @else
-                                            N/A
-                                        @endif
-                                    </span>
-                                </div>
-                                
-                                <div class="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
-                                    <span class="text-sm font-medium text-gray-600">Difficulty Level</span>
-                                    <div class="flex items-center gap-2">
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $question->difficulty_color }}">
-                                            {{ $question->difficulty_label }}
-                                        </span>
-                                        @if($question->has_enough_attempts_for_difficulty_calculation)
-                                            <span class="text-xs text-gray-500" title="Confidence: {{ round($question->difficulty_confidence * 100) }}%">
-                                                ({{ $question->difficulty_correct_percentage }}% correct)
-                                            </span>
-                                        @else
-                                            <span class="text-xs text-gray-500" title="Based on {{ $question->difficulty_calculation_attempts }} attempts">
-                                                ({{ $question->difficulty_calculation_attempts }} attempts)
-                                            </span>
-                                        @endif
+                            <div class="space-y-2">
+                                <div class="compact-metric-card">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-sm font-medium text-gray-600">Answer Rate</span>
+                                        <span class="text-lg font-semibold text-gray-900">{{ $analytics['answer_rate'] ?? 0 }}%</span>
                                     </div>
                                 </div>
                                 
-                                <div class="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
-                                    <span class="text-sm font-medium text-gray-600">Skipped Questions</span>
-                                    <span class="text-lg font-semibold text-gray-900">{{ $analytics['total_skipped'] ?? 0 }}</span>
+                                <div class="compact-metric-card">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-sm font-medium text-gray-600">Average Time Spent</span>
+                                        <span class="text-lg font-semibold text-gray-900">
+                                            @if($analytics['average_time_spent'])
+                                                {{ floor($analytics['average_time_spent'] / 60) }}m {{ $analytics['average_time_spent'] % 60 }}s
+                                            @else
+                                                N/A
+                                            @endif
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <div class="compact-metric-card">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-sm font-medium text-gray-600">Difficulty Level</span>
+                                        <div class="flex items-center gap-2">
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $question->difficulty_color }}">
+                                                {{ $question->difficulty_label }}
+                                            </span>
+                                            @if($question->has_enough_attempts_for_difficulty_calculation)
+                                                <span class="text-xs text-gray-500" title="Confidence: {{ round($question->difficulty_confidence * 100) }}%">
+                                                    ({{ $question->difficulty_correct_percentage }}% correct)
+                                                </span>
+                                            @else
+                                                <span class="text-xs text-gray-500" title="Based on {{ $question->difficulty_calculation_attempts }} attempts">
+                                                    ({{ $question->difficulty_calculation_attempts }} attempts)
+                                                </span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="compact-metric-card">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-sm font-medium text-gray-600">Skipped Questions</span>
+                                        <span class="text-lg font-semibold text-gray-900">{{ $analytics['total_skipped'] ?? 0 }}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Recent Activity -->
-                        <div class="space-y-6">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
+                        <div>
+                            <h3 class="compact-section-title">
+                                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                Recent Activity
+                            </h3>
                             
-                            <div class="space-y-3 max-h-64 overflow-y-auto">
+                            <div class="space-y-2 max-h-64 overflow-y-auto">
                                 @forelse($recentAttempts as $attempt)
-                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                        <div class="flex items-center space-x-3">
-                                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                                <span class="text-xs font-medium text-blue-600">
-                                                    {{ substr($attempt->student->full_name ?? 'Unknown', 0, 2) }}
+                                    <div class="compact-activity-item">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+                                                    <span class="text-xs font-medium text-blue-600">
+                                                        {{ substr($attempt->student->full_name ?? 'Unknown', 0, 2) }}
+                                                    </span>
+                                                </div>
+                                                <div>
+                                                    <p class="text-sm font-medium text-gray-900">{{ $attempt->student->full_name ?? 'Unknown Student' }}</p>
+                                                    <p class="text-xs text-gray-500">{{ $attempt->exam->title ?? 'Unknown Exam' }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="text-right">
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium
+                                                    {{ $attempt->is_correct ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                                    {{ $attempt->is_correct ? 'Correct' : 'Incorrect' }}
                                                 </span>
+                                                <p class="text-xs text-gray-500 mt-1">
+                                                    {{ $attempt->question_answered_at ? $attempt->question_answered_at->diffForHumans() : 'N/A' }}
+                                                </p>
                                             </div>
-                                            <div>
-                                                <p class="text-sm font-medium text-gray-900">{{ $attempt->student->full_name ?? 'Unknown Student' }}</p>
-                                                <p class="text-xs text-gray-500">{{ $attempt->exam->title ?? 'Unknown Exam' }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="text-right">
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                                {{ $attempt->is_correct ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                                {{ $attempt->is_correct ? 'Correct' : 'Incorrect' }}
-                                            </span>
-                                            <p class="text-xs text-gray-500 mt-1">
-                                                {{ $attempt->question_answered_at ? $attempt->question_answered_at->diffForHumans() : 'N/A' }}
-                                            </p>
                                         </div>
                                     </div>
                                 @empty
@@ -1181,21 +1721,21 @@
 
                 <!-- Student Performance Tab -->
                 <div id="students-tab" class="tab-content hidden">
-                    <div class="space-y-8">
+                    <div class="space-y-6">
                         <!-- Students who got it correct -->
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                                <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <h3 class="compact-section-title">
+                                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
+                                </svg>
                                 Students Who Answered Correctly ({{ $correctStudents->count() }})
                             </h3>
                             
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                            <div class="compact-grid-3">
                                 @forelse($correctStudents as $studentData)
-                                    <div class="bg-green-50 border border-green-200 rounded-lg p-3">
+                                    <div class="compact-student-card">
                                         <div class="flex items-center space-x-2 mb-2">
-                                            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                            <div class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center">
                                                 <span class="text-xs font-medium text-green-600">
                                                     {{ substr($studentData['student']->full_name ?? 'U', 0, 2) }}
                                                 </span>
@@ -1259,16 +1799,16 @@
 
                         <!-- Students who got it incorrect -->
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                                <svg class="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <h3 class="compact-section-title">
+                                <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
                                 Students Who Answered Incorrectly ({{ $incorrectStudents->count() }})
                             </h3>
                             
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                            <div class="compact-grid-3">
                                 @forelse($incorrectStudents as $studentData)
-                                    <div class="bg-red-50 border border-red-200 rounded-lg p-3">
+                                    <div class="compact-student-card incorrect">
                                         <div class="flex items-center space-x-2 mb-2">
                                             <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
                                                 <span class="text-xs font-medium text-red-600">
@@ -1465,10 +2005,8 @@ function showTab(tabName) {
     });
     
     // Remove active class from all tab buttons
-    document.querySelectorAll('.tab-button').forEach(button => {
+    document.querySelectorAll('.analytics-tab-button').forEach(button => {
         button.classList.remove('active');
-        button.classList.add('border-transparent', 'text-gray-500');
-        button.classList.remove('border-blue-500', 'text-blue-600');
     });
     
     // Show selected tab content
@@ -1480,8 +2018,7 @@ function showTab(tabName) {
     // Add active class to selected tab button
     const selectedButton = document.querySelector(`[onclick="showTab('${tabName}')"]`);
     if (selectedButton) {
-        selectedButton.classList.add('active', 'border-blue-500', 'text-blue-600');
-        selectedButton.classList.remove('border-transparent', 'text-gray-500');
+        selectedButton.classList.add('active');
     }
 }
 
@@ -1497,7 +2034,7 @@ function toggleQuestionMetadata() {
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
-                Hide Question Meta Data
+                Hide Question Meta
             `;
         } else {
             metadataSection.classList.add('hidden');
