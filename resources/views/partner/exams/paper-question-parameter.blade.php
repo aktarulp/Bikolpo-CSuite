@@ -411,11 +411,12 @@
                                 </div>
                                 
                                 <div>
-                                    <label for="paper_columns" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Paper Columns</label>
+                                    <label for="paper_columns" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Columns</label>
                                     <select id="paper_columns" name="paper_columns" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
                                         <option value="1" selected>1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
+                                        <option value="4">4</option>
                                     </select>
                                 </div>
                             </div>
@@ -425,22 +426,22 @@
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Margins (mm)</label>
                                 <div class="grid grid-cols-4 gap-3">
                                     <div>
-                                        <label for="margin_top" class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Top (mm)</label>
+                                        <label for="margin_top" class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Top</label>
                                         <input type="number" id="margin_top" name="margin_top" value="25" min="10" max="50" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
                                     </div>
                                     
                                     <div>
-                                        <label for="margin_bottom" class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Bottom (mm)</label>
+                                        <label for="margin_bottom" class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Bottom</label>
                                         <input type="number" id="margin_bottom" name="margin_bottom" value="25" min="10" max="50" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
                                     </div>
                                     
                                     <div>
-                                        <label for="margin_left" class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Left (mm)</label>
+                                        <label for="margin_left" class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Left</label>
                                         <input type="number" id="margin_left" name="margin_left" value="20" min="10" max="50" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
                                     </div>
                                     
                                     <div>
-                                        <label for="margin_right" class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Right (mm)</label>
+                                        <label for="margin_right" class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Right</label>
                                         <input type="number" id="margin_right" name="margin_right" value="20" min="10" max="50" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
                                     </div>
                                 </div>
