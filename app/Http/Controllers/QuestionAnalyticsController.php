@@ -203,7 +203,7 @@ class QuestionAnalyticsController extends Controller
         // Get easy questions
         $easyQuestions = $student->getEasyQuestions(10);
         
-        return view('analytics.students.show', compact(
+        return view('analytics.students.studentAnalytics', compact(
             'student',
             'analytics',
             'comprehensiveAnalytics',
