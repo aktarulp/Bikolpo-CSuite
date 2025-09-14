@@ -4,34 +4,57 @@
 
 @section('content')
 <style>
-    /* Mobile-first responsive design */
+    /* Compact professional design */
     .question-container {
         max-width: 100%;
         margin: 0 auto;
-        padding: 1rem;
+        padding: 0.75rem;
     }
     
     .question-card {
-        background: #ffffff;
-        border-radius: 12px;
+        background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+        border-radius: 8px;
         box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-        border: 1px solid #e5e7eb;
+        border: 1px solid #e2e8f0;
         overflow: hidden;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+    }
+    
+    .question-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4);
+        opacity: 0;
+        transition: opacity 0.3s ease;
     }
     
     .question-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
         border-color: #3b82f6;
+        background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+    }
+    
+    .question-card:hover::before {
+        opacity: 1;
     }
     
     .question-header {
-        background: #ffffff;
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
         color: #1f2937;
-        padding: 1.5rem;
-        border-bottom: 1px solid #e5e7eb;
+        padding: 1rem;
+        border-bottom: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+    
+    .question-card:hover .question-header {
+        background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
     }
     
     .question-type-badge {
@@ -50,42 +73,24 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #3b82f6;
         color: #ffffff;
-        border-radius: 12px;
-        font-weight: 700;
-        font-size: 0.875rem;
-        min-width: 3rem;
-        height: 3rem;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        border: 2px solid rgba(255, 255, 255, 0.2);
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .question-id-badge::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        transition: left 0.5s;
-    }
-    
-    .question-id-badge:hover::before {
-        left: 100%;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.75rem;
+        min-width: 2.5rem;
+        height: 2.5rem;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        transition: all 0.2s ease;
     }
     
     .question-id-badge:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        background: #2563eb;
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
     }
     
     .question-content {
-        padding: 1.5rem;
+        padding: 1rem;
     }
     
     .question-text {
@@ -114,17 +119,36 @@
         align-items: center;
         gap: 0.5rem;
         padding: 0.25rem 0.75rem;
-        background: #ffffff;
-        border: 1px solid #e5e7eb;
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border: 1px solid #e2e8f0;
         border-radius: 4px;
-        transition: all 0.15s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         cursor: pointer;
         font-size: 0.75rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .option-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+        transition: left 0.5s ease;
     }
     
     .option-item:hover {
-        background: #f9fafb;
-        border-color: #d1d5db;
+        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        border-color: #3b82f6;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+    }
+    
+    .option-item:hover::before {
+        left: 100%;
     }
     
     .option-item.correct {
@@ -162,122 +186,180 @@
     }
     
     .question-meta {
-        background: #f8fafc;
-        padding: 1rem;
-        border-radius: 8px;
-        margin: 1.5rem 0;
+        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        padding: 0.75rem;
+        border-radius: 6px;
+        margin: 1rem 0;
+        border: 1px solid #cbd5e1;
+        transition: all 0.3s ease;
+    }
+    
+    .question-card:hover .question-meta {
+        background: linear-gradient(135deg, #e2e8f0 0%, #f1f5f9 100%);
+        border-color: #94a3b8;
     }
     
     .meta-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 0.75rem;
     }
     
     .meta-item {
         display: flex;
         flex-direction: column;
-        gap: 0.25rem;
+        gap: 0.125rem;
     }
     
     .meta-label {
-        font-size: 0.75rem;
+        font-size: 0.6875rem;
         font-weight: 600;
         color: #6b7280;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.025em;
     }
     
     .meta-value {
-        font-size: 0.875rem;
+        font-size: 0.8125rem;
         color: #1f2937;
         font-weight: 500;
     }
     
     .explanation-section {
-        background: #fef3c7;
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
         border: 1px solid #f59e0b;
-        border-radius: 8px;
-        padding: 1.5rem;
-        margin: 1.5rem 0;
+        border-radius: 6px;
+        padding: 1rem;
+        margin: 1rem 0;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .explanation-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.6s ease;
+    }
+    
+    .explanation-section:hover {
+        background: linear-gradient(135deg, #fde68a 0%, #fef3c7 100%);
+        border-color: #d97706;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px -2px rgba(245, 158, 11, 0.3);
+    }
+    
+    .explanation-section:hover::before {
+        left: 100%;
     }
     
     .explanation-title {
-        font-size: 1rem;
+        font-size: 0.875rem;
         font-weight: 600;
         color: #92400e;
-        margin-bottom: 0.75rem;
+        margin-bottom: 0.5rem;
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.375rem;
     }
     
     .explanation-content {
-        font-size: 0.875rem;
-        line-height: 1.6;
+        font-size: 0.8125rem;
+        line-height: 1.5;
         color: #92400e;
     }
     
     .action-buttons {
         display: flex;
-        gap: 1rem;
+        gap: 0.75rem;
         flex-wrap: wrap;
-        margin-top: 2rem;
+        margin-top: 1.5rem;
     }
     
     .btn {
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.75rem 1.5rem;
-        border-radius: 8px;
-        font-weight: 600;
+        gap: 0.375rem;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-weight: 500;
         text-decoration: none;
-        transition: all 0.2s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         border: none;
         cursor: pointer;
-        font-size: 0.875rem;
+        font-size: 0.8125rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .btn:hover::before {
+        left: 100%;
     }
     
     .btn-primary {
-        background: #3b82f6;
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
         color: white;
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
     }
     
     .btn-primary:hover {
-        background: #2563eb;
-        transform: translateY(-1px);
+        background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
     }
     
     .btn-secondary {
-        background: #6b7280;
+        background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
         color: white;
+        box-shadow: 0 2px 4px rgba(107, 114, 128, 0.3);
     }
     
     .btn-secondary:hover {
-        background: #4b5563;
-        transform: translateY(-1px);
+        background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(107, 114, 128, 0.4);
     }
     
     .btn-success {
-        background: #22c55e;
+        background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
         color: white;
+        box-shadow: 0 2px 4px rgba(34, 197, 94, 0.3);
     }
     
     .btn-success:hover {
-        background: #16a34a;
-        transform: translateY(-1px);
+        background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
     }
     
     .btn-outline {
-        background: transparent;
+        background: linear-gradient(135deg, transparent 0%, rgba(59, 130, 246, 0.05) 100%);
         color: #3b82f6;
         border: 2px solid #3b82f6;
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
     }
     
     .btn-outline:hover {
-        background: #3b82f6;
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
         color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
     }
     
     .image-container {
@@ -425,41 +507,256 @@
     
     /* Analytics Dashboard Styles */
     .analytics-dashboard {
-        margin-top: 2rem;
+        margin-top: 1.5rem;
     }
     
     .analytics-card {
-        padding: 1.5rem;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .analytics-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+        opacity: 0;
+        transition: opacity 0.3s ease;
     }
     
     .analytics-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+        border-color: #3b82f6;
+    }
+    
+    .analytics-card:hover::before {
+        opacity: 1;
+    }
+    
+    /* Professional Tab Navigation */
+    .tab-navigation {
+        background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+        border-bottom: 1px solid #e2e8f0;
+        position: relative;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    
+    .tab-navigation::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .tab-navigation::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
     }
     
     .tab-button {
-        transition: all 0.2s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         cursor: pointer;
+        position: relative;
+        white-space: nowrap;
+        min-width: fit-content;
+        padding: 1rem 1.5rem;
+        border-radius: 8px 8px 0 0;
+        background: transparent;
+        border: none;
+        font-weight: 500;
+        font-size: 0.875rem;
+        color: #6b7280;
+        border-bottom: 2px solid transparent;
+        margin-right: 0.5rem;
+    }
+    
+    .tab-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(147, 51, 234, 0.05));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        border-radius: 8px 8px 0 0;
     }
     
     .tab-button:hover {
         color: #374151;
+        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        transform: translateY(-1px);
+    }
+    
+    .tab-button:hover::before {
+        opacity: 1;
     }
     
     .tab-button.active {
-        color: #2563eb;
-        border-color: #2563eb;
+        color: #1d4ed8;
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        border-bottom-color: #3b82f6;
+        font-weight: 600;
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+    }
+    
+    .tab-button.active::before {
+        opacity: 1;
     }
     
     .tab-content {
         display: block;
+        animation: fadeIn 0.3s ease-in-out;
     }
     
     .tab-content.hidden {
         display: none;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Professional Tab Content */
+    .tab-content-container {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        min-height: 400px;
+        position: relative;
+    }
+    
+    .tab-content-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+    }
+    
+    /* Enhanced Metric Cards */
+    .metric-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 1rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .metric-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.05), transparent);
+        transition: left 0.6s ease;
+    }
+    
+    .metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-color: #3b82f6;
+    }
+    
+    .metric-card:hover::before {
+        left: 100%;
+    }
+    
+    /* Student Cards Enhancement */
+    .student-card {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 1rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .student-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.05), transparent);
+        transition: left 0.6s ease;
+    }
+    
+    .student-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        border-color: #22c55e;
+    }
+    
+    .student-card:hover::before {
+        left: 100%;
+    }
+    
+    .student-card.incorrect {
+        border-color: #fecaca;
+    }
+    
+    .student-card.incorrect:hover {
+        border-color: #ef4444;
+    }
+    
+    .student-card.incorrect::before {
+        background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.05), transparent);
+    }
+    
+    /* Activity Feed Enhancement */
+    .activity-item {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 0.75rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .activity-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.05), transparent);
+        transition: left 0.6s ease;
+    }
+    
+    .activity-item:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-color: #3b82f6;
+    }
+    
+    .activity-item:hover::before {
+        left: 100%;
     }
     
     /* Student Performance Cards */
@@ -479,23 +776,160 @@
     }
     
     /* Mobile Responsive Enhancements */
-    @media (max-width: 640px) {
-        .analytics-card {
-            padding: 1rem;
-        }
-        
-        .analytics-card .text-3xl {
-            font-size: 1.875rem;
+    @media (max-width: 1024px) {
+        .tab-navigation {
+            padding: 0 1rem;
         }
         
         .tab-button {
-            padding: 0.75rem 0.5rem;
+            padding: 0.75rem 1rem;
+            font-size: 0.8125rem;
+            margin-right: 0.25rem;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .tab-navigation {
+            padding: 0 0.75rem;
+        }
+        
+        .tab-button {
+            padding: 0.625rem 0.75rem;
             font-size: 0.75rem;
+            margin-right: 0.125rem;
+        }
+        
+        .tab-content-container {
+            padding: 1rem;
+        }
+        
+        .metric-card {
+            padding: 0.75rem;
         }
         
         .student-card {
             padding: 0.75rem;
         }
+        
+        .activity-item {
+            padding: 0.5rem;
+        }
+    }
+    
+    @media (max-width: 640px) {
+        .analytics-card {
+            padding: 0.75rem;
+        }
+        
+        .analytics-card .text-3xl {
+            font-size: 1.5rem;
+        }
+        
+        .tab-navigation {
+            padding: 0 0.5rem;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .tab-button {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.6875rem;
+            margin-right: 0.125rem;
+            min-width: auto;
+            flex-shrink: 0;
+        }
+        
+        .tab-content-container {
+            padding: 0.75rem;
+        }
+        
+        .metric-card {
+            padding: 0.625rem;
+        }
+        
+        .student-card {
+            padding: 0.625rem;
+        }
+        
+        .activity-item {
+            padding: 0.5rem;
+        }
+        
+        .grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3 {
+            grid-template-columns: 1fr;
+        }
+        
+        .question-text {
+            white-space: normal;
+            line-height: 1.4;
+        }
+        
+        .question-header .flex.items-center {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        .question-header .flex.items-center .flex-1 {
+            width: 100%;
+        }
+        
+        /* Mobile-specific tab improvements */
+        .tab-button.active {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            box-shadow: 0 1px 3px rgba(59, 130, 246, 0.2);
+        }
+        
+        .tab-content {
+            animation: slideIn 0.3s ease-in-out;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .tab-navigation {
+            padding: 0 0.25rem;
+        }
+        
+        .tab-button {
+            padding: 0.375rem 0.5rem;
+            font-size: 0.625rem;
+            margin-right: 0.0625rem;
+        }
+        
+        .tab-content-container {
+            padding: 0.5rem;
+        }
+        
+        .metric-card {
+            padding: 0.5rem;
+        }
+        
+        .student-card {
+            padding: 0.5rem;
+        }
+        
+        .activity-item {
+            padding: 0.375rem;
+        }
+        
+        .text-3xl {
+            font-size: 1.25rem;
+        }
+        
+        .text-2xl {
+            font-size: 1.125rem;
+        }
+        
+        .text-lg {
+            font-size: 1rem;
+        }
+    }
         
         .grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3 {
             grid-template-columns: 1fr;
@@ -586,6 +1020,192 @@
         to { transform: rotate(360deg); }
     }
     
+    /* Enhanced Difficulty Analysis Animations */
+    .difficulty-card {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .difficulty-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        transition: left 0.6s;
+    }
+    
+    .difficulty-card:hover::before {
+        left: 100%;
+    }
+    
+    .difficulty-level-dots {
+        animation: fadeInUp 0.6s ease-out;
+    }
+    
+    .difficulty-level-dots .dot {
+        animation: scaleIn 0.4s ease-out;
+        animation-fill-mode: both;
+    }
+    
+    .difficulty-level-dots .dot:nth-child(1) { animation-delay: 0.1s; }
+    .difficulty-level-dots .dot:nth-child(2) { animation-delay: 0.2s; }
+    .difficulty-level-dots .dot:nth-child(3) { animation-delay: 0.3s; }
+    .difficulty-level-dots .dot:nth-child(4) { animation-delay: 0.4s; }
+    .difficulty-level-dots .dot:nth-child(5) { animation-delay: 0.5s; }
+    
+    .progress-bar-animated {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .progress-bar-animated::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+        animation: shimmer 2s infinite;
+    }
+    
+    .difficulty-badge {
+        animation: bounceIn 0.8s ease-out;
+    }
+    
+    .difficulty-title {
+        animation: slideInLeft 0.6s ease-out;
+    }
+    
+    .difficulty-explanation {
+        animation: slideInUp 0.8s ease-out;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes scaleIn {
+        from {
+            opacity: 0;
+            transform: scale(0.5);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    
+    @keyframes shimmer {
+        0% {
+            left: -100%;
+        }
+        100% {
+            left: 100%;
+        }
+    }
+    
+    @keyframes bounceIn {
+        0% {
+            opacity: 0;
+            transform: scale(0.3);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+        70% {
+            transform: scale(0.9);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .floating-elements {
+        animation: float 6s ease-in-out infinite;
+    }
+    
+    .floating-elements:nth-child(2) {
+        animation-delay: -2s;
+        animation-duration: 8s;
+    }
+    
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0px) rotate(0deg);
+        }
+        50% {
+            transform: translateY(-20px) rotate(5deg);
+        }
+    }
+    
+    .gradient-text {
+        background: linear-gradient(45deg, #3b82f6, #8b5cf6, #06b6d4);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: gradientShift 3s ease infinite;
+    }
+    
+    @keyframes gradientShift {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+    
+    .pulse-glow {
+        animation: pulseGlow 2s ease-in-out infinite alternate;
+    }
+    
+    @keyframes pulseGlow {
+        from {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+        to {
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.6);
+        }
+    }
+
     /* Print styles */
     @media print {
         .action-buttons,
@@ -943,131 +1563,160 @@
     <div class="analytics-dashboard mt-8">
         <!-- Analytics Overview Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <div class="analytics-card bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+            <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-blue-100 text-sm font-medium">Total Attempts</p>
-                        <p class="text-3xl font-bold">{{ $analytics['total_attempts'] ?? 0 }}</p>
+                        <p class="text-gray-600 text-sm font-medium">Total Attempts</p>
+                        <p class="text-3xl font-bold text-gray-900">{{ $analytics['total_attempts'] ?? 0 }}</p>
                     </div>
-                    <div class="w-12 h-12 bg-blue-400 bg-opacity-30 rounded-lg flex items-center justify-center">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-            </svg>
+                        </svg>
                     </div>
                 </div>
             </div>
 
-            <div class="analytics-card bg-gradient-to-r from-green-500 to-green-600 text-white">
+            <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-green-100 text-sm font-medium">Correct Answers</p>
-                        <p class="text-3xl font-bold">{{ $analytics['total_correct'] ?? 0 }}</p>
+                        <p class="text-gray-600 text-sm font-medium">Correct Answers</p>
+                        <p class="text-3xl font-bold text-gray-900">{{ $analytics['total_correct'] ?? 0 }}</p>
                     </div>
-                    <div class="w-12 h-12 bg-green-400 bg-opacity-30 rounded-lg flex items-center justify-center">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
+                        </svg>
                     </div>
                 </div>
             </div>
 
-            <div class="analytics-card bg-gradient-to-r from-red-500 to-red-600 text-white">
+            <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-red-100 text-sm font-medium">Incorrect Answers</p>
-                        <p class="text-3xl font-bold">{{ $analytics['total_incorrect'] ?? 0 }}</p>
+                        <p class="text-gray-600 text-sm font-medium">Incorrect Answers</p>
+                        <p class="text-3xl font-bold text-gray-900">{{ $analytics['total_incorrect'] ?? 0 }}</p>
                     </div>
-                    <div class="w-12 h-12 bg-red-400 bg-opacity-30 rounded-lg flex items-center justify-center">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
+                        </svg>
                     </div>
                 </div>
             </div>
 
-            <div class="analytics-card bg-gradient-to-r from-purple-500 to-purple-600 text-white">
+            <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-purple-100 text-sm font-medium">Success Rate</p>
-                        <p class="text-3xl font-bold">{{ $analytics['correct_percentage'] ?? 0 }}%</p>
+                        <p class="text-gray-600 text-sm font-medium">Success Rate</p>
+                        <p class="text-3xl font-bold text-gray-900">{{ $analytics['correct_percentage'] ?? 0 }}%</p>
                     </div>
-                    <div class="w-12 h-12 bg-purple-400 bg-opacity-30 rounded-lg flex items-center justify-center">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                </svg>
+                        </svg>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Difficulty Analysis Card -->
-        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <div class="bg-gradient-to-br from-slate-50 to-white rounded-lg shadow-sm p-6 mb-6 border border-slate-200 hover:shadow-md transition-all duration-300 hover:border-blue-300">
             <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <svg class="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                </svg>
+                <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                </div>
                 Difficulty Analysis
             </h3>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Difficulty Level -->
-                <div class="bg-gray-50 rounded-lg p-4">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-sm font-medium text-gray-600">Current Level</span>
-                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $question->difficulty_color }}">
-                            {{ $question->difficulty_label }}
-                        </span>
+                    <!-- Difficulty Level -->
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200 hover:shadow-md hover:border-blue-300 transition-all duration-300 hover:transform hover:-translate-y-1">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-medium text-gray-600 uppercase tracking-wide">Current Level</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $question->difficulty_color }}">
+                                {{ $question->difficulty_label }}
+                            </span>
+                        </div>
+                        <div class="text-2xl font-bold text-gray-900 mb-2">{{ $question->difficulty_level }}/5</div>
+                        <div class="flex space-x-1">
+                            @for($i = 1; $i <= 5; $i++)
+                                <div class="w-2 h-2 rounded-full {{ $i <= $question->difficulty_level ? 'bg-blue-500' : 'bg-gray-200' }}"></div>
+                            @endfor
+                        </div>
                     </div>
-                    <div class="text-2xl font-bold text-gray-900">{{ $question->difficulty_level }}/5</div>
+
+                    <!-- Confidence Score -->
+                    <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-4 border border-green-200 hover:shadow-md hover:border-green-300 transition-all duration-300 hover:transform hover:-translate-y-1">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-medium text-gray-600 uppercase tracking-wide">Confidence</span>
+                            <span class="text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded-full">{{ round($question->difficulty_confidence * 100) }}%</span>
+                        </div>
+                        <div class="text-2xl font-bold text-gray-900 mb-2">{{ round($question->difficulty_confidence * 100) }}%</div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-500 h-2 rounded-full transition-all duration-300" style="width: {{ $question->difficulty_confidence * 100 }}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Total Attempts -->
+                    <div class="bg-gradient-to-br from-purple-50 to-violet-50 rounded-lg p-4 border border-purple-200 hover:shadow-md hover:border-purple-300 transition-all duration-300 hover:transform hover:-translate-y-1">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-medium text-gray-600 uppercase tracking-wide">Total Attempts</span>
+                            <span class="text-xs font-medium text-purple-600 bg-purple-100 px-2 py-1 rounded-full">for calculation</span>
+                        </div>
+                        <div class="text-2xl font-bold text-gray-900 mb-2">{{ $question->difficulty_calculation_attempts }}</div>
+                        <div class="flex items-center text-xs text-gray-600">
+                            <svg class="w-3 h-3 mr-1 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                            </svg>
+                            <span>Data Points</span>
+                        </div>
+                    </div>
+
+                    <!-- Correct Percentage -->
+                    <div class="bg-gradient-to-br from-orange-50 to-amber-50 rounded-lg p-4 border border-orange-200 hover:shadow-md hover:border-orange-300 transition-all duration-300 hover:transform hover:-translate-y-1">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-medium text-gray-600 uppercase tracking-wide">Correct Rate</span>
+                            <span class="text-xs font-medium text-orange-600 bg-orange-100 px-2 py-1 rounded-full">accuracy</span>
+                        </div>
+                        <div class="text-2xl font-bold text-gray-900 mb-2">{{ $question->difficulty_correct_percentage }}%</div>
+                        <div class="flex items-center text-xs text-gray-600">
+                            <svg class="w-3 h-3 mr-1 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span>Success Rate</span>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Confidence Score -->
-                <div class="bg-gray-50 rounded-lg p-4">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-sm font-medium text-gray-600">Confidence</span>
-                        <span class="text-xs text-gray-500">{{ round($question->difficulty_confidence * 100) }}%</span>
-                    </div>
-                    <div class="w-full bg-gray-200 rounded-full h-2">
-                        <div class="bg-blue-500 h-2 rounded-full transition-all duration-300" style="width: {{ $question->difficulty_confidence * 100 }}%"></div>
-                    </div>
-                </div>
-
-                <!-- Total Attempts -->
-                <div class="bg-gray-50 rounded-lg p-4">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-sm font-medium text-gray-600">Total Attempts</span>
-                        <span class="text-xs text-gray-500">for calculation</span>
-                    </div>
-                    <div class="text-2xl font-bold text-gray-900">{{ $question->difficulty_calculation_attempts }}</div>
-                </div>
-
-                <!-- Correct Percentage -->
-                <div class="bg-gray-50 rounded-lg p-4">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-sm font-medium text-gray-600">Correct Rate</span>
-                        <span class="text-xs text-gray-500">accuracy</span>
-                    </div>
-                    <div class="text-2xl font-bold text-gray-900">{{ $question->difficulty_correct_percentage }}%</div>
-                </div>
-            </div>
-
-            <!-- Difficulty Explanation -->
-            <div class="mt-4 p-4 bg-blue-50 rounded-lg">
-                <div class="flex items-start">
-                    <svg class="w-5 h-5 text-blue-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    <div>
-                        <h4 class="text-sm font-medium text-blue-900 mb-1">How is difficulty calculated?</h4>
-                        <p class="text-sm text-blue-800">
-                            @if($question->has_enough_attempts_for_difficulty_calculation)
-                                This difficulty level is calculated based on student performance data from {{ $question->difficulty_calculation_attempts }} attempts. 
-                                The system analyzes the percentage of correct answers to determine if the question is Very Easy (90%+), Easy (75-89%), Medium (50-74%), Hard (25-49%), or Very Hard (<25%).
-                            @else
-                                This difficulty level is based on limited data ({{ $question->difficulty_calculation_attempts }} attempts). 
-                                For more accurate difficulty assessment, the question needs at least 10 attempts from students.
-                            @endif
-                        </p>
+                <!-- Difficulty Explanation -->
+                <div class="mt-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200 hover:shadow-md hover:border-blue-300 transition-all duration-300 hover:transform hover:-translate-y-1">
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-semibold text-gray-900 mb-1">How is difficulty calculated?</h4>
+                            <p class="text-xs text-gray-700 leading-relaxed">
+                                @if($question->has_enough_attempts_for_difficulty_calculation)
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 mr-2">
+                                        ✓ Reliable Data
+                                    </span>
+                                    This difficulty level is calculated based on student performance data from <strong>{{ $question->difficulty_calculation_attempts }} attempts</strong>. 
+                                    The system analyzes the percentage of correct answers to determine if the question is Very Easy (90%+), Easy (75-89%), Medium (50-74%), Hard (25-49%), or Very Hard (<25%).
+                                @else
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 mr-2">
+                                        ⚠ Limited Data
+                                    </span>
+                                    This difficulty level is based on limited data (<strong>{{ $question->difficulty_calculation_attempts }} attempts</strong>). 
+                                    For more accurate difficulty assessment, the question needs at least 10 attempts from students.
+                                @endif
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1075,25 +1724,25 @@
 
         <!-- Detailed Analytics Tabs -->
         <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-            <div class="border-b border-gray-200">
-                <nav class="flex space-x-8 px-6" aria-label="Tabs">
-                    <button onclick="showTab('overview')" class="tab-button active py-4 px-1 border-b-2 border-blue-500 font-medium text-sm text-blue-600">
+            <div class="tab-navigation">
+                <nav class="flex space-x-2 px-6 py-2" aria-label="Tabs">
+                    <button onclick="showTab('overview')" class="tab-button active">
                         Overview
                     </button>
-                    <button onclick="showTab('students')" class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700">
+                    <button onclick="showTab('students')" class="tab-button">
                         Student Performance
                     </button>
-                    <button onclick="showTab('distribution')" class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700">
+                    <button onclick="showTab('distribution')" class="tab-button">
                         Answer Distribution
                     </button>
-                    <button onclick="showTab('timeline')" class="tab-button py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700">
+                    <button onclick="showTab('timeline')" class="tab-button">
                         Performance Timeline
                     </button>
                 </nav>
             </div>
 
             <!-- Tab Content -->
-            <div class="p-6">
+            <div class="tab-content-container p-6">
                 <!-- Overview Tab -->
                 <div id="overview-tab" class="tab-content">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -1102,12 +1751,12 @@
                             <h3 class="text-lg font-semibold text-gray-900 mb-4">Performance Metrics</h3>
                             
                             <div class="space-y-4">
-                                <div class="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                                <div class="metric-card flex justify-between items-center">
                                     <span class="text-sm font-medium text-gray-600">Answer Rate</span>
                                     <span class="text-lg font-semibold text-gray-900">{{ $analytics['answer_rate'] ?? 0 }}%</span>
                                 </div>
                                 
-                                <div class="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                                <div class="metric-card flex justify-between items-center">
                                     <span class="text-sm font-medium text-gray-600">Average Time Spent</span>
                                     <span class="text-lg font-semibold text-gray-900">
                                         @if($analytics['average_time_spent'])
@@ -1118,7 +1767,7 @@
                                     </span>
                                 </div>
                                 
-                                <div class="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                                <div class="metric-card flex justify-between items-center">
                                     <span class="text-sm font-medium text-gray-600">Difficulty Level</span>
                                     <div class="flex items-center gap-2">
                                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $question->difficulty_color }}">
@@ -1136,7 +1785,7 @@
                                     </div>
                                 </div>
                                 
-                                <div class="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                                <div class="metric-card flex justify-between items-center">
                                     <span class="text-sm font-medium text-gray-600">Skipped Questions</span>
                                     <span class="text-lg font-semibold text-gray-900">{{ $analytics['total_skipped'] ?? 0 }}</span>
                                 </div>
@@ -1149,7 +1798,7 @@
                             
                             <div class="space-y-3 max-h-64 overflow-y-auto">
                                 @forelse($recentAttempts as $attempt)
-                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div class="activity-item flex items-center justify-between">
                                         <div class="flex items-center space-x-3">
                                             <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
                                                 <span class="text-xs font-medium text-blue-600">
@@ -1193,7 +1842,7 @@
                             
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                                 @forelse($correctStudents as $studentData)
-                                    <div class="bg-green-50 border border-green-200 rounded-lg p-3">
+                                    <div class="student-card">
                                         <div class="flex items-center space-x-2 mb-2">
                                             <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
                                                 <span class="text-xs font-medium text-green-600">
@@ -1268,7 +1917,7 @@
                             
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                                 @forelse($incorrectStudents as $studentData)
-                                    <div class="bg-red-50 border border-red-200 rounded-lg p-3">
+                                    <div class="student-card incorrect">
                                         <div class="flex items-center space-x-2 mb-2">
                                             <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
                                                 <span class="text-xs font-medium text-red-600">
