@@ -712,7 +712,7 @@ class ExamController extends Controller
         }
 
         // Check if student is assigned to this exam
-        $isAssigned = $exam->assignedStudents()->where('student_id', $request->student_id)->exists();
+        $isAssigned = $exam->assignedStudents()->where('students.id', $request->student_id)->exists();
         if (!$isAssigned) {
             return response()->json([
                 'error' => 'Student is not assigned to this exam'
@@ -816,7 +816,7 @@ class ExamController extends Controller
         ]);
 
         // Check if student is assigned to this exam
-        $isAssigned = $exam->assignedStudents()->where('student_id', $request->student_id)->exists();
+        $isAssigned = $exam->assignedStudents()->where('students.id', $request->student_id)->exists();
         if (!$isAssigned) {
             return response()->json([
                 'error' => 'Student is not assigned to this exam'
@@ -904,9 +904,322 @@ class ExamController extends Controller
             'answers' => $detailedAnswers,
         ]);
 
+        // Create question statistics records (same as quiz submission)
+        foreach ($questions as $question) {
+            $questionAnswer = $answers[$question->id] ?? null;
+            $isAnswered = !empty($questionAnswer);
+            $isCorrect = false;
+            $isSkipped = false;
+            $answerMetadata = null;
+
+            if ($questionAnswer === null || $questionAnswer === '') {
+                $isSkipped = true;
+            } else {
+                if ($question->question_type === 'mcq') {
+                    $isCorrect = $questionAnswer === $question->correct_answer;
+                } else {
+                    // For descriptive questions, give partial marks based on word count
+                    $wordCount = str_word_count($questionAnswer);
+                    $minWords = $question->min_words ?? 10;
+                    $maxWords = $question->max_words ?? 100;
+                    
+                    $answerMetadata = [
+                        'word_count' => $wordCount,
+                        'min_words_required' => $minWords,
+                        'max_words_expected' => $maxWords,
+                    ];
+                    
+                    $isCorrect = $wordCount >= $minWords;
+                }
+            }
+
+            // Record individual question statistics
+            \App\Models\QuestionStat::create([
+                'question_id' => $question->id,
+                'exam_id' => $exam->id,
+                'student_id' => $request->student_id,
+                'exam_result_id' => $result->id,
+                'student_answer' => $questionAnswer,
+                'correct_answer' => $question->correct_answer,
+                'is_correct' => $isCorrect,
+                'is_answered' => $isAnswered,
+                'is_skipped' => $isSkipped,
+                'question_order' => $question->pivot->order ?? 0,
+                'marks' => $question->pivot->marks ?? 1,
+                'question_type' => $question->question_type,
+                'answer_metadata' => $answerMetadata,
+                'question_answered_at' => $request->completed_at ? \Carbon\Carbon::parse($request->completed_at) : now(),
+            ]);
+        }
+
+        // Mark access code as used (same as quiz submission)
+        $accessCode = \App\Models\ExamAccessCode::where('student_id', $request->student_id)
+            ->where('exam_id', $exam->id)
+            ->where('status', 'active')
+            ->first();
+
+        if ($accessCode) {
+            $accessCode->markAsUsed();
+            \Log::info('Access code marked as used for manual result entry', [
+                'access_code_id' => $accessCode->id,
+                'student_id' => $request->student_id,
+                'exam_id' => $exam->id,
+                'result_id' => $result->id
+            ]);
+        } else {
+            \Log::warning('No active access code found for manual result entry', [
+                'student_id' => $request->student_id,
+                'exam_id' => $exam->id,
+                'result_id' => $result->id
+            ]);
+        }
+
+        \Log::info('Manual result entry completed successfully', [
+            'exam_id' => $exam->id,
+            'student_id' => $request->student_id,
+            'result_id' => $result->id,
+            'score' => $totalScore,
+            'percentage' => round($percentage, 2),
+            'correct_answers' => $correctAnswers,
+            'wrong_answers' => $wrongAnswers,
+            'unanswered' => $unanswered
+        ]);
+
         return response()->json([
             'success' => true,
             'message' => 'Detailed result created successfully',
+            'result' => $result,
+            'redirect_url' => route('partner.exams.results', $exam)
+        ]);
+    }
+
+    /**
+     * Show the edit result form
+     */
+    public function editResult(Exam $exam, ExamResult $result)
+    {
+        // Ensure the authenticated user is a partner
+        if (!auth()->user() || auth()->user()->role !== 'partner') {
+            abort(403, 'Only partners can edit results.');
+        }
+
+        // Verify the exam belongs to this partner
+        $partnerId = $this->getPartnerId();
+        if ($exam->partner_id !== $partnerId) {
+            abort(403, 'Unauthorized access to this exam.');
+        }
+
+        // Verify the result belongs to this exam
+        if ($result->exam_id !== $exam->id) {
+            abort(404, 'Result not found for this exam.');
+        }
+
+        // Only allow editing manual results
+        if ($result->result_type !== 'manual') {
+            abort(403, 'Only manual results can be edited.');
+        }
+
+        // Load exam with questions
+        $exam->load([
+            'questions' => function($query) {
+                $query->orderBy('exam_questions.order', 'asc');
+            }
+        ]);
+
+        // Load the result with student
+        $result->load('student');
+
+        return view('partner.exams.result-edit', compact('exam', 'result'));
+    }
+
+    /**
+     * Update the manual result
+     */
+    public function updateResult(Request $request, Exam $exam, ExamResult $result)
+    {
+        // Ensure the authenticated user is a partner
+        if (!auth()->user() || auth()->user()->role !== 'partner') {
+            return response()->json(['error' => 'Only partners can update results.'], 403);
+        }
+
+        // Verify the exam belongs to this partner
+        $partnerId = $this->getPartnerId();
+        if ($exam->partner_id !== $partnerId) {
+            return response()->json(['error' => 'Unauthorized access to this exam.'], 403);
+        }
+
+        // Verify the result belongs to this exam
+        if ($result->exam_id !== $exam->id) {
+            return response()->json(['error' => 'Result not found for this exam.'], 404);
+        }
+
+        // Only allow updating manual results
+        if ($result->result_type !== 'manual') {
+            return response()->json(['error' => 'Only manual results can be updated.'], 403);
+        }
+
+        // Debug: Log incoming request data
+        \Log::info('UpdateResult request received', [
+            'exam_id' => $exam->id,
+            'result_id' => $result->id,
+            'answers_count' => count($request->answers ?? []),
+            'started_at' => $request->started_at,
+            'completed_at' => $request->completed_at,
+            'answers' => $request->answers
+        ]);
+
+        // Validate the request
+        $request->validate([
+            'answers' => 'required|array',
+            'answers.*' => 'nullable|string',
+            'started_at' => 'nullable|date',
+            'completed_at' => 'nullable|date|after_or_equal:started_at',
+        ]);
+
+        // Load exam questions
+        $questions = $exam->questions()->orderBy('exam_questions.order')->get();
+        $answers = $request->answers;
+        
+        // Calculate results
+        $correctAnswers = 0;
+        $wrongAnswers = 0;
+        $unanswered = 0;
+        $totalScore = 0;
+        $detailedAnswers = [];
+
+        foreach ($questions as $question) {
+            $questionAnswer = $answers[$question->id] ?? null;
+            $isCorrect = false;
+            $isAnswered = false;
+            $score = 0;
+
+            if ($questionAnswer !== null && $questionAnswer !== '') {
+                $isAnswered = true;
+                
+                if ($question->question_type === 'mcq') {
+                    $isCorrect = $questionAnswer === $question->correct_answer;
+                } else {
+                    // For descriptive questions, check if it meets minimum requirements
+                    $wordCount = str_word_count($questionAnswer);
+                    $minWords = $question->min_words ?? 10;
+                    $isCorrect = $wordCount >= $minWords;
+                }
+                
+                if ($isCorrect) {
+                    $correctAnswers++;
+                    $score = $question->pivot->marks ?? 1;
+                    $totalScore += $score;
+                } else {
+                    $wrongAnswers++;
+                }
+            } else {
+                $unanswered++;
+            }
+
+            $detailedAnswers[$question->id] = [
+                'answer' => $questionAnswer,
+                'is_correct' => $isCorrect,
+                'is_answered' => $isAnswered,
+                'score' => $score,
+                'time_spent' => null, // Manual entry doesn't track time per question
+            ];
+        }
+
+        // Calculate percentage
+        $totalMarks = $questions->sum(function($q) { return $q->pivot->marks ?? 1; });
+        $percentage = $totalMarks > 0 ? ($totalScore / $totalMarks) * 100 : 0;
+
+        // Update the result
+        $updateData = [
+            'started_at' => $request->started_at ? \Carbon\Carbon::parse($request->started_at) : $result->started_at,
+            'completed_at' => $request->completed_at ? \Carbon\Carbon::parse($request->completed_at) : $result->completed_at,
+            'total_questions' => $questions->count(),
+            'correct_answers' => $correctAnswers,
+            'wrong_answers' => $wrongAnswers,
+            'unanswered' => $unanswered,
+            'score' => $totalScore,
+            'percentage' => round($percentage, 2),
+            'answers' => $detailedAnswers,
+        ];
+        
+        \Log::info('Updating result with data', [
+            'result_id' => $result->id,
+            'update_data' => $updateData
+        ]);
+        
+        $updateResult = $result->update($updateData);
+        
+        \Log::info('Result update result', [
+            'result_id' => $result->id,
+            'update_success' => $updateResult,
+            'updated_result' => $result->fresh()
+        ]);
+
+        // Delete existing question statistics and create new ones
+        $result->questionStats()->delete();
+
+        // Create question statistics records (same as quiz submission)
+        foreach ($questions as $question) {
+            $questionAnswer = $answers[$question->id] ?? null;
+            $isAnswered = !empty($questionAnswer);
+            $isCorrect = false;
+            $isSkipped = false;
+            $answerMetadata = null;
+
+            if ($questionAnswer === null || $questionAnswer === '') {
+                $isSkipped = true;
+            } else {
+                if ($question->question_type === 'mcq') {
+                    $isCorrect = $questionAnswer === $question->correct_answer;
+                } else {
+                    // For descriptive questions, give partial marks based on word count
+                    $wordCount = str_word_count($questionAnswer);
+                    $minWords = $question->min_words ?? 10;
+                    $maxWords = $question->max_words ?? 100;
+                    
+                    $answerMetadata = [
+                        'word_count' => $wordCount,
+                        'min_words_required' => $minWords,
+                        'max_words_expected' => $maxWords,
+                    ];
+                    
+                    $isCorrect = $wordCount >= $minWords;
+                }
+            }
+
+            // Record individual question statistics
+            \App\Models\QuestionStat::create([
+                'question_id' => $question->id,
+                'exam_id' => $exam->id,
+                'student_id' => $result->student_id,
+                'exam_result_id' => $result->id,
+                'student_answer' => $questionAnswer,
+                'correct_answer' => $question->correct_answer,
+                'is_correct' => $isCorrect,
+                'is_answered' => $isAnswered,
+                'is_skipped' => $isSkipped,
+                'question_order' => $question->pivot->order ?? 0,
+                'marks' => $question->pivot->marks ?? 1,
+                'question_type' => $question->question_type,
+                'answer_metadata' => $answerMetadata,
+                'question_answered_at' => $request->completed_at ? \Carbon\Carbon::parse($request->completed_at) : $result->completed_at,
+            ]);
+        }
+
+        \Log::info('Manual result updated successfully', [
+            'exam_id' => $exam->id,
+            'student_id' => $result->student_id,
+            'result_id' => $result->id,
+            'score' => $totalScore,
+            'percentage' => round($percentage, 2),
+            'correct_answers' => $correctAnswers,
+            'wrong_answers' => $wrongAnswers,
+            'unanswered' => $unanswered
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Result updated successfully',
             'result' => $result,
             'redirect_url' => route('partner.exams.results', $exam)
         ]);

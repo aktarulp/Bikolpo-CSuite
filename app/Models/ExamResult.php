@@ -64,7 +64,7 @@ class ExamResult extends Model
     public function getTimeTakenAttribute()
     {
         if ($this->completed_at && $this->started_at) {
-            return $this->completed_at->diffInMinutes($this->started_at);
+            return $this->started_at->diffInMinutes($this->completed_at);
         }
         return null;
     }

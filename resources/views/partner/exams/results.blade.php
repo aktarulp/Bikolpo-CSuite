@@ -88,7 +88,7 @@
         </div>
 
         <!-- Statistics Cards -->
-        @if($results->count() > 0)
+        @if($results->total() > 0)
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
         @php
             $totalStudents = $results->total();
@@ -97,9 +97,8 @@
             $passedStudents = $results->where('status', '!=', 'absent')->where('percentage', '>=', $exam->passing_marks)->count();
             $failedStudents = $attemptedStudents - $passedStudents;
             $avgScore = $results->where('status', '!=', 'absent')->avg('percentage');
-            $avgTime = $results->where('status', '!=', 'absent')->whereNotNull('started_at')->whereNotNull('completed_at')->avg(function($result) {
-                return $result->started_at->diffInMinutes($result->completed_at);
-            });
+            // Calculate average time based on exam duration for students who completed
+            $avgTime = $results->where('status', '!=', 'absent')->whereNotNull('completed_at')->count() > 0 ? $exam->duration : null;
         @endphp
         
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700 p-4">
@@ -198,9 +197,7 @@
                     <div class="ml-3">
                         <p class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Avg Score</p>
                         <p class="text-lg font-bold text-gray-900 dark:text-white">{{ $attemptedStudents > 0 ? round($avgScore, 1) : 0 }}%</p>
-                        @if($avgTime)
-                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ round($avgTime) }}m</p>
-                        @endif
+                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ $exam->duration }}m Duration</p>
                     </div>
                 </div>
             </div>
@@ -215,10 +212,6 @@
                         <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Performance overview and detailed analytics</p>
                     </div>
                     <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-                        <div class="text-right">
-                            <div class="text-sm text-gray-500 dark:text-gray-400">Exam #{{ $exam->id }}</div>
-                            <div class="text-sm font-semibold text-gray-900 dark:text-white">{{ $exam->title }}</div>
-                        </div>
                         <a href="{{ route('partner.exams.result-entry', $exam) }}" 
                            class="inline-flex items-center px-4 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -234,11 +227,11 @@
                     <thead class="bg-gray-50 dark:bg-gray-700">
                         <tr>
                             <th class="px-4 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Student</th>
-                            <th class="px-3 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Result Type</th>
+                            <th class="px-3 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Type</th>
                             <th class="px-3 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Score</th>
                             <th class="px-3 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">%</th>
                             <th class="px-3 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
-                            <th class="px-3 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Time</th>
+                            <th class="px-3 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Duration</th>
                             <th class="px-3 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Completed</th>
                             <th class="px-4 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Details</th>
                         </tr>
@@ -334,10 +327,9 @@
                             <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                                 @if($result->status === 'absent')
                                     <span class="text-gray-500 dark:text-gray-400">N/A</span>
-                                @elseif($result->time_taken)
-                                    <div class="font-bold">{{ $result->time_taken }}m</div>
                                 @else
-                                    <span class="text-gray-500 dark:text-gray-400">-</span>
+                                    <div class="font-bold">{{ $exam->duration }}m</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">Exam Duration</div>
                                 @endif
                             </td>
                             <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
@@ -353,10 +345,12 @@
                                 @if($result->status === 'absent')
                                     <span class="text-gray-400 dark:text-gray-500">N/A</span>
                                 @else
-                                    <button class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5" 
-                                            onclick="showResultDetails({{ $result->id }})">
-                                        View Details
-                                    </button>
+                                    <div class="flex items-center space-x-2">
+                                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5" 
+                                                onclick="showResultDetails({{ $result->id }})">
+                                            View
+                                        </button>
+                                    </div>
                                 @endif
                             </td>
                     </tr>

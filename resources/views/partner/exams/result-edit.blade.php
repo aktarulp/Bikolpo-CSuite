@@ -1,6 +1,6 @@
 @extends('layouts.partner-layout')
 
-@section('title', 'Result Entry - ' . $exam->title)
+@section('title', 'Edit Result - ' . $exam->title)
 
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -17,10 +17,10 @@
                         Back to Results
                     </a>
                     <div>
-                        <h1 class="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent dark:from-indigo-400 dark:to-purple-400">
-                            Result Entry
+                        <h1 class="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent dark:from-orange-400 dark:to-red-400">
+                            Edit Result
                         </h1>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Detailed question-wise result entry for {{ $exam->title }}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Edit manual result for {{ $result->student->full_name }} - {{ $exam->title }}</p>
                     </div>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3">
@@ -37,41 +37,47 @@
         <!-- Result Entry Form -->
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
             <div class="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Student Selection & Basic Info</h3>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Select an absent student and enter basic exam information</p>
-                @if($absentStudents->count() === 0)
-                    <div class="mt-2 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                        <div class="flex items-center">
-                            <svg class="w-4 h-4 text-blue-600 dark:text-blue-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            <span class="text-sm text-blue-800 dark:text-blue-200 font-medium">No absent students found. All students have completed the exam.</span>
-                        </div>
-                    </div>
-                @endif
+                <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Student Information & Timing</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Edit student result and exam timing information</p>
             </div>
             
-            <form id="detailedResultForm" class="p-6 space-y-6" @if($absentStudents->count() === 0) style="pointer-events: none; opacity: 0.6;" @endif>
+            <form id="detailedResultForm" class="p-6 space-y-6">
                 @csrf
+                @method('PUT')
                 
-                <!-- Student Selection and Basic Info -->
+                <!-- Student Information and Timing -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
-                        <label for="student_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select Student</label>
-                        <select id="student_id" name="student_id" required @if($absentStudents->count() === 0) disabled @endif class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white @if($absentStudents->count() === 0) bg-gray-100 dark:bg-gray-600 @endif">
-                            <option value="">Choose a student...</option>
-                            @foreach($absentStudents as $student)
-                                <option value="{{ $student->id }}">{{ $student->full_name }} ({{ $student->student_id }})</option>
-                            @endforeach
-                        </select>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Student</label>
+                        <div class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-100 dark:bg-gray-700 dark:text-white">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-8 w-8">
+                                    @if($result->student->photo && file_exists(public_path('storage/' . $result->student->photo)))
+                                        <img class="h-8 w-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600" 
+                                             src="{{ asset('storage/' . $result->student->photo) }}" 
+                                             alt="{{ $result->student->full_name }}">
+                                    @else
+                                        <div class="h-8 w-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center border-2 border-gray-200 dark:border-gray-600">
+                                            <span class="text-xs font-bold text-white">
+                                                {{ strtoupper(substr($result->student->full_name, 0, 1)) }}{{ strtoupper(substr(explode(' ', $result->student->full_name)[1] ?? '', 0, 1)) }}
+                                            </span>
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="ml-3">
+                                    <div class="text-sm font-semibold text-gray-900 dark:text-white">{{ $result->student->full_name }}</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ $result->student->student_id }}</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div>
                         <label for="started_at" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Started At</label>
-                        <input type="datetime-local" id="started_at" name="started_at" @if($absentStudents->count() === 0) disabled @endif class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white @if($absentStudents->count() === 0) bg-gray-100 dark:bg-gray-600 @endif">
+                        <input type="datetime-local" id="started_at" name="started_at" value="{{ $result->started_at ? $result->started_at->format('Y-m-d\TH:i') : '' }}" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-700 dark:text-white">
                     </div>
                     <div>
                         <label for="completed_at" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Completed At</label>
-                        <input type="datetime-local" id="completed_at" name="completed_at" @if($absentStudents->count() === 0) disabled @endif class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white @if($absentStudents->count() === 0) bg-gray-100 dark:bg-gray-600 @endif">
+                        <input type="datetime-local" id="completed_at" name="completed_at" value="{{ $result->completed_at ? $result->completed_at->format('Y-m-d\TH:i') : '' }}" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-700 dark:text-white">
                     </div>
                 </div>
 
@@ -116,7 +122,7 @@
                                                         @else
                                                             border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 hover:border-gray-400 dark:hover:border-gray-500
                                                         @endif">
-                                                        <input type="radio" name="answers[{{ $question->id }}]" value="A" class="sr-only" onchange="toggleAnswer(this)">
+                                                        <input type="radio" name="answers[{{ $question->id }}]" value="A" class="sr-only" onchange="toggleAnswer(this)" @if(isset($result->answers[$question->id]['answer']) && $result->answers[$question->id]['answer'] === 'A') checked @endif>
                                                         <span class="font-bold text-xs sm:text-sm transition-all duration-200
                                                             @if(strtoupper($question->correct_answer) === 'A' || $question->correct_answer === '1' || $question->correct_answer === 1)
                                                                 text-green-800 dark:text-green-200
@@ -160,7 +166,7 @@
                                                         @else
                                                             border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 hover:border-gray-400 dark:hover:border-gray-500
                                                         @endif">
-                                                        <input type="radio" name="answers[{{ $question->id }}]" value="B" class="sr-only" onchange="toggleAnswer(this)">
+                                                        <input type="radio" name="answers[{{ $question->id }}]" value="B" class="sr-only" onchange="toggleAnswer(this)" @if(isset($result->answers[$question->id]['answer']) && $result->answers[$question->id]['answer'] === 'B') checked @endif>
                                                         <span class="font-bold text-xs sm:text-sm transition-all duration-200
                                                             @if(strtoupper($question->correct_answer) === 'B' || $question->correct_answer === '2' || $question->correct_answer === 2)
                                                                 text-green-800 dark:text-green-200
@@ -204,7 +210,7 @@
                                                         @else
                                                             border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 hover:border-gray-400 dark:hover:border-gray-500
                                                         @endif">
-                                                        <input type="radio" name="answers[{{ $question->id }}]" value="C" class="sr-only" onchange="toggleAnswer(this)">
+                                                        <input type="radio" name="answers[{{ $question->id }}]" value="C" class="sr-only" onchange="toggleAnswer(this)" @if(isset($result->answers[$question->id]['answer']) && $result->answers[$question->id]['answer'] === 'C') checked @endif>
                                                         <span class="font-bold text-xs sm:text-sm transition-all duration-200
                                                             @if(strtoupper($question->correct_answer) === 'C' || $question->correct_answer === '3' || $question->correct_answer === 3)
                                                                 text-green-800 dark:text-green-200
@@ -248,7 +254,7 @@
                                                         @else
                                                             border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 hover:border-gray-400 dark:hover:border-gray-500
                                                         @endif">
-                                                        <input type="radio" name="answers[{{ $question->id }}]" value="D" class="sr-only" onchange="toggleAnswer(this)">
+                                                        <input type="radio" name="answers[{{ $question->id }}]" value="D" class="sr-only" onchange="toggleAnswer(this)" @if(isset($result->answers[$question->id]['answer']) && $result->answers[$question->id]['answer'] === 'D') checked @endif>
                                                         <span class="font-bold text-xs sm:text-sm transition-all duration-200
                                                             @if(strtoupper($question->correct_answer) === 'D' || $question->correct_answer === '4' || $question->correct_answer === 4)
                                                                 text-green-800 dark:text-green-200
@@ -305,8 +311,8 @@
                                             <textarea id="answer_{{ $question->id }}" 
                                                       name="answers[{{ $question->id }}]" 
                                                       rows="1" 
-                                                      class="w-24 sm:w-32 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white resize-none text-xs sm:text-sm"
-                                                      placeholder="Answer..."></textarea>
+                                                      class="w-24 sm:w-32 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-orange-500 focus:border-orange-500 dark:bg-gray-700 dark:text-white resize-none text-xs sm:text-sm"
+                                                      placeholder="Answer...">{{ isset($result->answers[$question->id]['answer']) ? $result->answers[$question->id]['answer'] : '' }}</textarea>
                                             @if($question->min_words)
                                                 <span class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">Min {{ $question->min_words }}w</span>
                                             @endif
@@ -321,29 +327,15 @@
 
                         <!-- Submit Button -->
                         <div class="mt-8 flex items-center justify-end space-x-4 pt-6 border-t border-gray-200 dark:border-gray-700">
-                            <button type="button" onclick="resetForm()" @if($absentStudents->count() === 0) disabled @endif class="px-6 py-3 text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl transition-all duration-200 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600 @if($absentStudents->count() === 0) opacity-50 cursor-not-allowed @endif">
+                            <button type="button" onclick="resetForm()" class="px-6 py-3 text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl transition-all duration-200 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600">
                                 Reset Form
                             </button>
-                            <button type="submit" @if($absentStudents->count() === 0) disabled @endif class="px-8 py-3 text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5 @if($absentStudents->count() === 0) opacity-50 cursor-not-allowed @endif">
-                                Save Detailed Result
+                            <button type="submit" class="px-8 py-3 text-sm font-semibold text-white bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5">
+                                Update Result
                             </button>
                         </div>
-                    @else
-                        <div class="text-center py-12">
-                            <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                            </svg>
-                            <h3 class="mt-4 text-lg font-semibold text-gray-900 dark:text-white">No questions found</h3>
-                            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">This exam doesn't have any questions assigned yet.</p>
-                            <div class="mt-6">
-                                <a href="{{ route('partner.exams.assign-questions', $exam) }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                    Assign Questions
-                                </a>
-                            </div>
-                        </div>
-                    @endif
                     </div>
-                </div>
+                @endif
             </form>
         </div>
     </div>
@@ -352,25 +344,28 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('detailedResultForm');
-    const studentSelect = document.getElementById('student_id');
     const startedAtInput = document.getElementById('started_at');
     const completedAtInput = document.getElementById('completed_at');
 
-    // Set default times
-    const now = new Date();
-    const startedTime = new Date(now.getTime() - (2 * 60 * 60 * 1000)); // 2 hours ago
-    startedAtInput.value = startedTime.toISOString().slice(0, 16);
-    completedAtInput.value = now.toISOString().slice(0, 16);
+    // Debug: Check if elements are found
+    console.log('Form found:', !!form);
+    console.log('Started input found:', !!startedAtInput);
+    console.log('Completed input found:', !!completedAtInput);
+
+    // Note: Times are pre-populated from the existing result data
 
     // Form submission
     form.addEventListener('submit', function(e) {
         e.preventDefault();
+        console.log('Form submission started');
         
-        if (!studentSelect.value) {
-            alert('Please select a student');
+        // Basic validation
+        const hasAnswers = Array.from(document.querySelectorAll('input[name^="answers"], textarea[name^="answers"]')).some(input => input.value.trim() !== '');
+        if (!hasAnswers) {
+            alert('Please provide at least one answer');
             return;
         }
-
+        
         const formData = new FormData(form);
         
         // Debug: Log form data
@@ -379,6 +374,13 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log(key, value);
         }
         
+        // Debug: Check if answers are being collected
+        const answerInputs = document.querySelectorAll('input[name^="answers"], textarea[name^="answers"]');
+        console.log('Answer inputs found:', answerInputs.length);
+        answerInputs.forEach((input, index) => {
+            console.log(`Answer ${index + 1}:`, input.name, '=', input.value);
+        });
+        
         // Show loading state
         const submitBtn = form.querySelector('button[type="submit"]');
         const originalText = submitBtn.textContent;
@@ -386,8 +388,11 @@ document.addEventListener('DOMContentLoaded', function() {
         submitBtn.disabled = true;
 
         // Submit the form
-        fetch('{{ route("partner.exams.result-entry.store", $exam) }}', {
-            method: 'POST',
+        const updateUrl = '{{ route("partner.exams.result-update", ["exam" => $exam, "result" => $result]) }}';
+        console.log('Update URL:', updateUrl);
+        
+        fetch(updateUrl, {
+            method: 'PUT',
             body: formData,
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -442,7 +447,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Add auto-save listeners
-    studentSelect.addEventListener('change', autoSave);
     startedAtInput.addEventListener('change', autoSave);
     completedAtInput.addEventListener('change', autoSave);
     
