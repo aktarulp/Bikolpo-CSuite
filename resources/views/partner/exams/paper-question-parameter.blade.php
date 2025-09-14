@@ -1014,11 +1014,6 @@ document.addEventListener('DOMContentLoaded', function() {
          
          console.log('Margin values:', { marginTop, marginRight, marginBottom, marginLeft });
          
-         // Create margin area grid (covers entire page)
-         const marginAreaGrid = document.createElement('div');
-         marginAreaGrid.className = 'margin-area-grid';
-         pageContainer.appendChild(marginAreaGrid);
-         
          // Create content area (shows printable area within margins)
          const contentArea = document.createElement('div');
          contentArea.className = 'content-area';
@@ -1028,7 +1023,52 @@ document.addEventListener('DOMContentLoaded', function() {
          contentArea.style.bottom = marginBottom + 'px';
          pageContainer.appendChild(contentArea);
          
-         console.log('Margin area grid and content area added');
+         // Create margin area grids for each side (non-printable areas)
+         // Top margin area
+         if (marginTop > 0) {
+             const topMarginArea = document.createElement('div');
+             topMarginArea.className = 'margin-area-grid';
+             topMarginArea.style.top = '0px';
+             topMarginArea.style.left = '0px';
+             topMarginArea.style.right = '0px';
+             topMarginArea.style.height = marginTop + 'px';
+             pageContainer.appendChild(topMarginArea);
+         }
+         
+         // Bottom margin area
+         if (marginBottom > 0) {
+             const bottomMarginArea = document.createElement('div');
+             bottomMarginArea.className = 'margin-area-grid';
+             bottomMarginArea.style.bottom = '0px';
+             bottomMarginArea.style.left = '0px';
+             bottomMarginArea.style.right = '0px';
+             bottomMarginArea.style.height = marginBottom + 'px';
+             pageContainer.appendChild(bottomMarginArea);
+         }
+         
+         // Left margin area
+         if (marginLeft > 0) {
+             const leftMarginArea = document.createElement('div');
+             leftMarginArea.className = 'margin-area-grid';
+             leftMarginArea.style.top = '0px';
+             leftMarginArea.style.left = '0px';
+             leftMarginArea.style.width = marginLeft + 'px';
+             leftMarginArea.style.bottom = '0px';
+             pageContainer.appendChild(leftMarginArea);
+         }
+         
+         // Right margin area
+         if (marginRight > 0) {
+             const rightMarginArea = document.createElement('div');
+             rightMarginArea.className = 'margin-area-grid';
+             rightMarginArea.style.top = '0px';
+             rightMarginArea.style.right = '0px';
+             rightMarginArea.style.width = marginRight + 'px';
+             rightMarginArea.style.bottom = '0px';
+             pageContainer.appendChild(rightMarginArea);
+         }
+         
+         console.log('Margin area grids and content area added');
      }
      
           // Function to generate HTML for a single question
