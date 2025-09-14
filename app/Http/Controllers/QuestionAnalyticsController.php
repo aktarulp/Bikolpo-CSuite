@@ -30,7 +30,7 @@ class QuestionAnalyticsController extends Controller
                 ->selectRaw('SUM(CASE WHEN is_correct = 1 THEN 1 ELSE 0 END) as correct_attempts')
                 ->selectRaw('ROUND((SUM(CASE WHEN is_correct = 1 THEN 1 ELSE 0 END) / COUNT(*)) * 100, 2) as accuracy_percentage')
                 ->groupBy('question_id')
-                ->having('total_attempts', '>=', 1) // Lower threshold for demo
+                ->having('total_attempts', '>=', 1)
                 ->orderBy('accuracy_percentage', 'desc')
                 ->limit(10)
                 ->with('question')
@@ -42,11 +42,17 @@ class QuestionAnalyticsController extends Controller
                 ->selectRaw('SUM(CASE WHEN is_correct = 1 THEN 1 ELSE 0 END) as correct_attempts')
                 ->selectRaw('ROUND((SUM(CASE WHEN is_correct = 1 THEN 1 ELSE 0 END) / COUNT(*)) * 100, 2) as accuracy_percentage')
                 ->groupBy('question_id')
-                ->having('total_attempts', '>=', 1) // Lower threshold for demo
+                ->having('total_attempts', '>=', 1)
                 ->orderBy('accuracy_percentage', 'asc')
                 ->limit(10)
                 ->with('question')
                 ->get();
+
+            // Get virtual difficulty statistics
+            $questionsByDifficulty = $this->getVirtualDifficultyDistribution();
+            $difficultyStats = $this->getVirtualDifficultyStats();
+            $questionsWithSufficientData = Question::withEnoughAttempts()->count();
+            $questionsNeedingRecalculation = 0; // Not needed with virtual calculation
         
             return view('analytics.questions.index', compact(
                 'totalQuestions',
@@ -56,12 +62,107 @@ class QuestionAnalyticsController extends Controller
                 'totalSkipped',
                 'overallAccuracy',
                 'topQuestions',
-                'worstQuestions'
+                'worstQuestions',
+                'questionsByDifficulty',
+                'difficultyStats',
+                'questionsWithSufficientData',
+                'questionsNeedingRecalculation'
             ));
         } catch (\Exception $e) {
             \Log::error('Question Analytics Error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Unable to load analytics data. Please try again.');
         }
+    }
+
+    /**
+     * Get virtual difficulty distribution
+     */
+    private function getVirtualDifficultyDistribution()
+    {
+        // Get questions with their statistics
+        $questions = Question::withCount('questionStats')
+            ->having('question_stats_count', '>', 0)
+            ->get();
+
+        $distribution = [
+            'very_easy' => 0,
+            'easy' => 0,
+            'medium' => 0,
+            'hard' => 0,
+            'very_hard' => 0
+        ];
+
+        foreach ($questions as $question) {
+            $totalAttempts = $question->question_stats_count;
+            if ($totalAttempts < 5) {
+                $distribution['medium']++;
+                continue;
+            }
+
+            // Get correct attempts for this question
+            $correctAttempts = QuestionStat::where('question_id', $question->id)
+                ->where('is_correct', 1)
+                ->count();
+            
+            $accuracyPercentage = ($correctAttempts / $totalAttempts) * 100;
+            
+            if ($accuracyPercentage >= 90) {
+                $distribution['very_easy']++;
+            } elseif ($accuracyPercentage >= 75) {
+                $distribution['easy']++;
+            } elseif ($accuracyPercentage >= 50) {
+                $distribution['medium']++;
+            } elseif ($accuracyPercentage >= 25) {
+                $distribution['hard']++;
+            } else {
+                $distribution['very_hard']++;
+            }
+        }
+
+        return $distribution;
+    }
+
+    /**
+     * Get virtual difficulty statistics
+     */
+    private function getVirtualDifficultyStats()
+    {
+        $questionsWithStats = Question::withCount('questionStats')
+            ->having('question_stats_count', '>=', 5)
+            ->get();
+
+        $totalQuestionsWithStats = $questionsWithStats->count();
+        $totalDifficulty = 0;
+
+        foreach ($questionsWithStats as $question) {
+            // Calculate virtual difficulty based on performance
+            $totalAttempts = $question->question_stats_count;
+            $correctAttempts = QuestionStat::where('question_id', $question->id)
+                ->where('is_correct', 1)
+                ->count();
+            
+            $accuracyPercentage = ($correctAttempts / $totalAttempts) * 100;
+            
+            // Convert accuracy to difficulty level (1-5)
+            if ($accuracyPercentage >= 90) {
+                $difficultyLevel = 1; // Very Easy
+            } elseif ($accuracyPercentage >= 75) {
+                $difficultyLevel = 2; // Easy
+            } elseif ($accuracyPercentage >= 50) {
+                $difficultyLevel = 3; // Medium
+            } elseif ($accuracyPercentage >= 25) {
+                $difficultyLevel = 4; // Hard
+            } else {
+                $difficultyLevel = 5; // Very Hard
+            }
+            
+            $totalDifficulty += $difficultyLevel;
+        }
+
+        return [
+            'average_difficulty' => $totalQuestionsWithStats > 0 ? round($totalDifficulty / $totalQuestionsWithStats, 2) : 0,
+            'total_with_stats' => $totalQuestionsWithStats
+        ];
     }
     
     /**

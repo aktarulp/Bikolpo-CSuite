@@ -622,16 +622,18 @@
                         </div>
                         @if($question->difficulty_level)
                             <div class="mt-1 flex items-center gap-2">
-                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
-                                    {{ $question->difficulty_level == 1 ? 'bg-green-100 text-green-800' : ($question->difficulty_level == 2 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
-                                    @if($question->difficulty_level == 1)
-                                        Easy
-                                    @elseif($question->difficulty_level == 2)
-                                        Medium
-                                    @else
-                                        Hard
-                                    @endif
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $question->difficulty_color }}">
+                                    {{ $question->difficulty_label }}
                                 </span>
+                                @if($question->has_enough_attempts_for_difficulty_calculation)
+                                    <span class="text-xs text-gray-500" title="Based on {{ $question->difficulty_calculation_attempts }} attempts">
+                                        ({{ $question->difficulty_correct_percentage }}% correct)
+                                    </span>
+                                @else
+                                    <span class="text-xs text-gray-500" title="Based on {{ $question->difficulty_calculation_attempts }} attempts">
+                                        ({{ $question->difficulty_calculation_attempts }} attempts)
+                                    </span>
+                                @endif
                                 <!-- Breadcrumb moved here -->
                                 <span class="text-xs text-gray-600">
                                     {{ $question->course->name ?? 'N/A' }} → {{ $question->subject->name ?? 'N/A' }} → {{ $question->topic->name ?? 'N/A' }}
@@ -866,15 +868,20 @@
                             </div>
                             <div class="flex justify-between text-sm">
                                 <span class="text-gray-600">Difficulty:</span>
-                                <span class="font-medium">
-                                    @if($question->difficulty_level == 1)
-                                        Easy
-                                    @elseif($question->difficulty_level == 2)
-                                        Medium
+                                <div class="flex items-center gap-2">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $question->difficulty_color }}">
+                                        {{ $question->difficulty_label }}
+                                    </span>
+                                    @if($question->has_enough_attempts_for_difficulty_calculation)
+                                        <span class="text-xs text-gray-500" title="Confidence: {{ round($question->difficulty_confidence * 100) }}%">
+                                            ({{ $question->difficulty_correct_percentage }}% correct)
+                                        </span>
                                     @else
-                                        Hard
+                                        <span class="text-xs text-gray-500" title="Based on {{ $question->difficulty_calculation_attempts }} attempts">
+                                            ({{ $question->difficulty_calculation_attempts }} attempts)
+                                        </span>
                                     @endif
-                                </span>
+                                </div>
                             </div>
                             @if($question->marks)
                                 <div class="flex justify-between text-sm">
@@ -993,6 +1000,79 @@
             </div>
         </div>
 
+        <!-- Difficulty Analysis Card -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <svg class="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+                Difficulty Analysis
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Difficulty Level -->
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium text-gray-600">Current Level</span>
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $question->difficulty_color }}">
+                            {{ $question->difficulty_label }}
+                        </span>
+                    </div>
+                    <div class="text-2xl font-bold text-gray-900">{{ $question->difficulty_level }}/5</div>
+                </div>
+
+                <!-- Confidence Score -->
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium text-gray-600">Confidence</span>
+                        <span class="text-xs text-gray-500">{{ round($question->difficulty_confidence * 100) }}%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-blue-500 h-2 rounded-full transition-all duration-300" style="width: {{ $question->difficulty_confidence * 100 }}%"></div>
+                    </div>
+                </div>
+
+                <!-- Total Attempts -->
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium text-gray-600">Total Attempts</span>
+                        <span class="text-xs text-gray-500">for calculation</span>
+                    </div>
+                    <div class="text-2xl font-bold text-gray-900">{{ $question->difficulty_calculation_attempts }}</div>
+                </div>
+
+                <!-- Correct Percentage -->
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium text-gray-600">Correct Rate</span>
+                        <span class="text-xs text-gray-500">accuracy</span>
+                    </div>
+                    <div class="text-2xl font-bold text-gray-900">{{ $question->difficulty_correct_percentage }}%</div>
+                </div>
+            </div>
+
+            <!-- Difficulty Explanation -->
+            <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                <div class="flex items-start">
+                    <svg class="w-5 h-5 text-blue-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <div>
+                        <h4 class="text-sm font-medium text-blue-900 mb-1">How is difficulty calculated?</h4>
+                        <p class="text-sm text-blue-800">
+                            @if($question->has_enough_attempts_for_difficulty_calculation)
+                                This difficulty level is calculated based on student performance data from {{ $question->difficulty_calculation_attempts }} attempts. 
+                                The system analyzes the percentage of correct answers to determine if the question is Very Easy (90%+), Easy (75-89%), Medium (50-74%), Hard (25-49%), or Very Hard (<25%).
+                            @else
+                                This difficulty level is based on limited data ({{ $question->difficulty_calculation_attempts }} attempts). 
+                                For more accurate difficulty assessment, the question needs at least 10 attempts from students.
+                            @endif
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Detailed Analytics Tabs -->
         <div class="bg-white rounded-lg shadow-lg overflow-hidden">
             <div class="border-b border-gray-200">
@@ -1040,7 +1120,20 @@
                                 
                                 <div class="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
                                     <span class="text-sm font-medium text-gray-600">Difficulty Level</span>
-                                    <span class="text-lg font-semibold text-gray-900 capitalize">{{ $analytics['difficulty_level'] ?? 'Unknown' }}</span>
+                                    <div class="flex items-center gap-2">
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $question->difficulty_color }}">
+                                            {{ $question->difficulty_label }}
+                                        </span>
+                                        @if($question->has_enough_attempts_for_difficulty_calculation)
+                                            <span class="text-xs text-gray-500" title="Confidence: {{ round($question->difficulty_confidence * 100) }}%">
+                                                ({{ $question->difficulty_correct_percentage }}% correct)
+                                            </span>
+                                        @else
+                                            <span class="text-xs text-gray-500" title="Based on {{ $question->difficulty_calculation_attempts }} attempts">
+                                                ({{ $question->difficulty_calculation_attempts }} attempts)
+                                            </span>
+                                        @endif
+                                    </div>
                                 </div>
                                 
                                 <div class="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
