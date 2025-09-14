@@ -791,34 +791,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Multi-column layout within the page - create a grid container that includes header
                 html += `<div class="questions-grid" style="display: grid; grid-template-columns: repeat(${paperColumns}, 1fr); gap: 20px; position: relative;">`;
                 
-                // Header (only on first page) - now inside the grid
+                // Header (only on first page) - handle based on span
                 if (pageNum === 1 && params.include_header) {
                     const headerSpan = params.header_span || '1';
                     console.log(`Generating header with span: ${headerSpan} for ${paperColumns} columns`);
                     
-                    // Calculate header grid span based on header span setting
-                    let headerGridSpan = '1 / 2'; // Default to single column
-                    if (headerSpan === 'full') {
-                        headerGridSpan = `1 / ${paperColumns + 1}`; // Span all columns
-                    } else {
-                        const spanValue = parseInt(headerSpan) || 1;
-                        const actualSpan = Math.min(spanValue, paperColumns);
-                        headerGridSpan = `1 / ${actualSpan + 1}`;
+                    if (headerSpan === 'full' || parseInt(headerSpan) > 1) {
+                        // Header spans multiple columns - put outside grid
+                        const headerContent = `
+                            <div class="header-container" data-header-span="${headerSpan}" style="text-align: center; border-bottom: 2px solid #333; padding: 15px; margin-bottom: 20px; width: 100%; height: auto; min-height: auto;">
+                                <div style="font-size: ${(parseInt(params.font_size) || 12) + 8}pt; font-weight: bold; margin-bottom: 3px;">${exam.title}</div>
+                                <div style="font-size: ${(parseInt(params.font_size) || 12) + 4}pt; font-weight: bold; margin-bottom: 3px;">${exam.question_header || 'Model Test'}</div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: ${(parseInt(params.font_size) || 12) + 4}pt; font-weight: bold; color: #333;">
+                                    <div>Full Marks: ${exam.questions.reduce((sum, q) => sum + (q.marks || 1), 0)}</div>
+                                    <div>Time: ${exam.duration} minutes</div>
+                                </div>
+                            </div>`;
+                        
+                        html += headerContent;
                     }
-                    
-                    console.log(`Header grid span: ${headerGridSpan}`);
-                    
-                    const headerContent = `
-                        <div class="header-container" data-header-span="${headerSpan}" style="text-align: center; border-bottom: 2px solid #333; padding: 15px; margin-bottom: 20px; grid-column: ${headerGridSpan}; height: auto; min-height: auto;">
-                            <div style="font-size: ${(parseInt(params.font_size) || 12) + 8}pt; font-weight: bold; margin-bottom: 3px;">${exam.title}</div>
-                            <div style="font-size: ${(parseInt(params.font_size) || 12) + 4}pt; font-weight: bold; margin-bottom: 3px;">${exam.question_header || 'Model Test'}</div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: ${(parseInt(params.font_size) || 12) + 4}pt; font-weight: bold; color: #333;">
-                                <div>Full Marks: ${exam.questions.reduce((sum, q) => sum + (q.marks || 1), 0)}</div>
-                                <div>Time: ${exam.duration} minutes</div>
-                            </div>
-                        </div>`;
-                    
-                    html += headerContent;
+                    // For single column header, we'll add it inside the first column
                 }
                 
                 // Add vertical separator lines between columns (but not over header)
@@ -843,8 +835,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Track question index across all columns
                 let globalQuestionIndex = 0;
                 
+                // Check if header spans only first column
+                const headerSpansOnlyFirstColumn = hasHeader && !headerSpansMultipleColumns;
+                
                 for (let columnIndex = 0; columnIndex < paperColumns; columnIndex++) {
                     html += `<div class="question-column" data-column="${columnIndex + 1}" style="padding: 0 10px;">`;
+                    
+                    // Add header to first column if it spans only one column
+                    if (headerSpansOnlyFirstColumn && columnIndex === 0) {
+                        const headerContent = `
+                            <div class="header-container" data-header-span="${headerSpan}" style="text-align: center; border-bottom: 2px solid #333; padding: 15px; margin-bottom: 20px; width: 100%; height: auto; min-height: auto;">
+                                <div style="font-size: ${(parseInt(params.font_size) || 12) + 8}pt; font-weight: bold; margin-bottom: 3px;">${exam.title}</div>
+                                <div style="font-size: ${(parseInt(params.font_size) || 12) + 4}pt; font-weight: bold; margin-bottom: 3px;">${exam.question_header || 'Model Test'}</div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: ${(parseInt(params.font_size) || 12) + 4}pt; font-weight: bold; color: #333;">
+                                    <div>Full Marks: ${exam.questions.reduce((sum, q) => sum + (q.marks || 1), 0)}</div>
+                                    <div>Time: ${exam.duration} minutes</div>
+                                </div>
+                            </div>`;
+                        
+                        html += headerContent;
+                    }
                     
                     // Calculate how many questions should go in this column
                     const remainingQuestions = pageQuestions.length - globalQuestionIndex;
