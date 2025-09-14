@@ -57,14 +57,30 @@ class PublicQuizController extends Controller
                 'access_code' => $request->access_code
             ]);
             
+            // Create user-friendly error messages
+            $errorMessages = [];
+            foreach ($e->errors() as $field => $errors) {
+                foreach ($errors as $error) {
+                    if ($field === 'phone') {
+                        $errorMessages[] = 'Phone Number: ' . $error;
+                    } elseif ($field === 'access_code') {
+                        $errorMessages[] = 'Access Code: ' . $error;
+                    } else {
+                        $errorMessages[] = $error;
+                    }
+                }
+            }
+            
+            $combinedMessage = 'Please correct the following errors: ' . implode(' ', $errorMessages);
+            
             if ($request->ajax() && $request->header('X-Requested-With') === 'XMLHttpRequest') {
                 return response()->json([
                     'success' => false,
                     'errors' => $e->errors(),
-                    'message' => 'Validation failed'
+                    'message' => $combinedMessage
                 ], 422);
             }
-            return back()->withErrors($e->errors())->withInput();
+            return back()->withErrors(['access' => $combinedMessage])->withInput();
         }
 
         // Normalize phone number to handle both formats
@@ -104,7 +120,31 @@ class PublicQuizController extends Controller
                 ]);
             }
             
-            return back()->withErrors($validator)->withInput();
+            // Create user-friendly error messages
+            $errorMessages = [];
+            foreach ($validator->errors()->toArray() as $field => $errors) {
+                foreach ($errors as $error) {
+                    if ($field === 'phone') {
+                        $errorMessages[] = 'Phone Number: ' . $error;
+                    } elseif ($field === 'access_code') {
+                        $errorMessages[] = 'Access Code: ' . $error;
+                    } else {
+                        $errorMessages[] = $error;
+                    }
+                }
+            }
+            
+            $combinedMessage = 'Please correct the following errors: ' . implode(' ', $errorMessages);
+            
+            if ($request->ajax() && $request->header('X-Requested-With') === 'XMLHttpRequest') {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $validator->errors()->toArray(),
+                    'message' => $combinedMessage
+                ], 422);
+            }
+            
+            return back()->withErrors(['access' => $combinedMessage])->withInput();
         }
 
         // Try to find access code with normalized phone number
@@ -143,15 +183,23 @@ class PublicQuizController extends Controller
                 'exists' => $accessCodeExists
             ]);
             
+            // Provide specific error messages based on what was found
+            $errorMessage = 'Access denied. ';
+            if (!$accessCodeExists) {
+                $errorMessage .= 'The access code "' . $request->access_code . '" does not exist. Please check your code and try again.';
+            } else {
+                $errorMessage .= 'The access code "' . $request->access_code . '" does not match your phone number "' . $phone . '". Please verify your credentials.';
+            }
+            
             if ($request->ajax() && $request->header('X-Requested-With') === 'XMLHttpRequest') {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Invalid access code. Please check your code and try again.',
-                    'errors' => ['access' => 'Invalid access code. Please check your code and try again.']
+                    'message' => $errorMessage,
+                    'errors' => ['access' => $errorMessage]
                 ], 422);
             }
             
-            return back()->withErrors(['access' => 'Invalid access code. Please check your code and try again.'])->withInput();
+            return back()->withErrors(['access' => $errorMessage])->withInput();
         }
 
         // Check if exam has ended first
@@ -161,7 +209,19 @@ class PublicQuizController extends Controller
                 'access_code' => $request->access_code,
                 'exam_end_time' => $accessCode->exam->end_time
             ]);
-            return back()->withErrors(['access' => 'Exam time has expired.'])->withInput();
+            
+            $examEndTime = \Carbon\Carbon::parse($accessCode->exam->end_time)->format('M d, Y \a\t g:i A');
+            $errorMessage = 'Exam access expired. This exam ended on ' . $examEndTime . '. Please contact your teacher for assistance.';
+            
+            if ($request->ajax() && $request->header('X-Requested-With') === 'XMLHttpRequest') {
+                return response()->json([
+                    'success' => false,
+                    'message' => $errorMessage,
+                    'errors' => ['access' => $errorMessage]
+                ], 422);
+            }
+            
+            return back()->withErrors(['access' => $errorMessage])->withInput();
         }
 
         \Log::info('Quiz access successful', [
@@ -229,15 +289,17 @@ class PublicQuizController extends Controller
                 'status' => $accessCode->status
             ]);
             
+            $errorMessage = 'Access code is not active. Your access code status is "' . ucfirst($accessCode->status) . '". Please contact your teacher to activate your access or get a new code.';
+            
             if ($request->ajax() && $request->header('X-Requested-With') === 'XMLHttpRequest') {
                 return response()->json([
                     'success' => false,
-                    'message' => 'This access code is not active. Please contact your teacher.',
-                    'errors' => ['access' => 'This access code is not active. Please contact your teacher.']
+                    'message' => $errorMessage,
+                    'errors' => ['access' => $errorMessage]
                 ], 422);
             }
             
-            return back()->withErrors(['access' => 'This access code is not active. Please contact your teacher.'])->withInput();
+            return back()->withErrors(['access' => $errorMessage])->withInput();
         }
 
         // Check if student has already attempted this exam
@@ -299,18 +361,33 @@ class PublicQuizController extends Controller
 
         // Handle AJAX requests differently
         if ($request->ajax() && $request->header('X-Requested-With') === 'XMLHttpRequest') {
-            // Always redirect to waiting view for all exam statuses
             $exam = $accessCode->exam;
+            
+            // Check if exam is available (published and not expired)
             if ($exam->status === 'published' && !$accessCode->isExpired()) {
                 $redirectUrl = route('public.quiz.start', $exam->id);
+                return response()->json([
+                    'success' => true,
+                    'redirect' => $redirectUrl
+                ]);
             } else {
-                $redirectUrl = route('public.quiz.access');
+                // Exam is not available - return error message
+                $errorMessage = 'Exam is not available. ';
+                if ($exam->status === 'draft') {
+                    $errorMessage .= 'This exam is still being prepared by your teacher. Please wait for it to be published.';
+                } elseif ($exam->status === 'published') {
+                    $examStartTime = \Carbon\Carbon::parse($exam->start_time)->format('M d, Y \a\t g:i A');
+                    $errorMessage .= 'This exam starts on ' . $examStartTime . '. Please come back at the scheduled time.';
+                } else {
+                    $errorMessage .= 'Exam status: "' . ucfirst($exam->status) . '". Please contact your teacher for more information.';
+                }
+                
+                return response()->json([
+                    'success' => false,
+                    'message' => $errorMessage,
+                    'errors' => ['access' => $errorMessage]
+                ], 422);
             }
-            
-            return response()->json([
-                'success' => true,
-                'redirect' => $redirectUrl
-            ]);
         }
         
         // Always redirect to waiting view for all exam statuses
@@ -341,7 +418,17 @@ class PublicQuizController extends Controller
                 'end_time' => $exam->end_time
             ]);
             
-            return redirect()->route('public.quiz.access')->withErrors(['access' => 'This exam is not currently available.']);
+            $errorMessage = 'Exam is not available. ';
+            if ($exam->status === 'draft') {
+                $errorMessage .= 'This exam is still being prepared by your teacher. Please wait for it to be published.';
+            } elseif ($exam->status === 'published') {
+                $examStartTime = \Carbon\Carbon::parse($exam->start_time)->format('M d, Y \a\t g:i A');
+                $errorMessage .= 'This exam starts on ' . $examStartTime . '. Please come back at the scheduled time.';
+            } else {
+                $errorMessage .= 'Exam status: "' . ucfirst($exam->status) . '". Please contact your teacher for more information.';
+            }
+            
+            return redirect()->route('public.quiz.access')->withErrors(['access' => $errorMessage]);
         }
     }
 
@@ -371,7 +458,7 @@ class PublicQuizController extends Controller
                          ->first();
         
         if (!$student) {
-            return back()->withErrors(['access' => 'Phone number not found.'])->withInput();
+            return back()->withErrors(['access' => 'Phone number "' . $phone . '" not found in our records. Please verify your phone number or contact your teacher.'])->withInput();
         }
 
         // Find all access codes for this student
@@ -381,7 +468,7 @@ class PublicQuizController extends Controller
             ->get();
 
         if ($accessCodes->isEmpty()) {
-            return back()->withErrors(['access' => 'Invalid access code for this phone number.'])->withInput();
+            return back()->withErrors(['access' => 'Access code "' . $request->access_code . '" is not assigned to phone number "' . $phone . '". Please verify your credentials or contact your teacher.'])->withInput();
         }
 
         // Check if any access code is valid (using same logic as processAccess)
@@ -393,7 +480,7 @@ class PublicQuizController extends Controller
         });
 
         if ($validAccessCodes->isEmpty()) {
-            return back()->withErrors(['access' => 'Access code is no longer valid.'])->withInput();
+            return back()->withErrors(['access' => 'Access code "' . $request->access_code . '" is no longer valid. It may have expired or been deactivated. Please contact your teacher for assistance.'])->withInput();
         }
 
         // Check if all access codes are 'used' (submitted) - redirect to results
@@ -437,7 +524,7 @@ class PublicQuizController extends Controller
         });
 
         if ($availableExams->isEmpty()) {
-            return back()->withErrors(['access' => 'No available exams found.'])->withInput();
+            return back()->withErrors(['access' => 'No available exams found for your access code "' . $request->access_code . '". All your assigned exams may have expired or been deactivated. Please contact your teacher.'])->withInput();
         }
 
         // Store student info in session
@@ -498,17 +585,18 @@ class PublicQuizController extends Controller
                 'access_info' => $accessInfo,
                 'session_id' => session()->getId()
             ]);
-            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Session expired. Please enter your access details again.']);
+            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Your session has expired or is invalid. Please enter your access details again to continue with the exam.']);
         }
 
         $accessCode = ExamAccessCode::find($accessInfo['access_code_id']);
         if (!$accessCode) {
-            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Access code not found.']);
+            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Your access code could not be found. Please enter your credentials again or contact your teacher for assistance.']);
         }
 
         // Check if exam has ended
         if ($accessCode->isExpired()) {
-            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Exam time has expired.']);
+            $examEndTime = \Carbon\Carbon::parse($accessCode->exam->end_time)->format('M d, Y \a\t g:i A');
+            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Exam time has expired. This exam ended on ' . $examEndTime . '. Please contact your teacher for assistance.']);
         }
 
         // Check access code status to determine access level
@@ -574,7 +662,7 @@ class PublicQuizController extends Controller
         $accessInfo = session('quiz_access');
         
         if (!$accessInfo || $accessInfo['exam_id'] != $exam->id) {
-            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Invalid access. Please try again.']);
+            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Invalid or expired session. Please enter your access details again to start the exam.']);
         }
 
         // Check if already started
@@ -646,7 +734,7 @@ class PublicQuizController extends Controller
                 'access_info' => $accessInfo,
                 'session_id' => session()->getId()
             ]);
-            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Session expired. Please enter your access details again.']);
+            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Your exam session has expired. Please enter your access details again to continue with the exam.']);
         }
 
         $result = ExamResult::where('student_id', $accessInfo['student_id'])
@@ -767,7 +855,7 @@ class PublicQuizController extends Controller
                     'access_info' => $accessInfo,
                     'session_id' => session()->getId()
                 ]);
-                return redirect()->route('public.quiz.access')->withErrors(['access' => 'Session expired. Please enter your access details again.']);
+                return redirect()->route('public.quiz.access')->withErrors(['access' => 'Your exam session has expired. Please enter your access details again to submit your exam.']);
             }
 
             $result = ExamResult::where('student_id', $accessInfo['student_id'])
@@ -780,7 +868,7 @@ class PublicQuizController extends Controller
                     'exam_id' => $exam->id,
                     'student_id' => $accessInfo['student_id']
                 ]);
-                return redirect()->route('public.quiz.access')->withErrors(['access' => 'No active quiz found.']);
+                return redirect()->route('public.quiz.access')->withErrors(['access' => 'No active quiz session found. Please start the exam again or contact your teacher if the problem persists.']);
             }
 
             // Process answers and calculate score
@@ -849,7 +937,7 @@ class PublicQuizController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
             
-            return redirect()->route('public.quiz.access')->withErrors(['access' => 'An error occurred while submitting your quiz. Please try again.']);
+            return redirect()->route('public.quiz.access')->withErrors(['access' => 'An unexpected error occurred while submitting your quiz. Your answers may not have been saved. Please try again or contact your teacher for assistance.']);
         }
     }
 
@@ -866,7 +954,7 @@ class PublicQuizController extends Controller
         
         if (!$allowAccess) {
             return redirect()->route('public.quiz.access')
-                ->with('info', 'Results are not available immediately. Please contact your instructor.');
+                ->withErrors(['access' => 'Results are not available immediately. Please contact your instructor for more information about when results will be published.']);
         }
 
         $resultInfo = session('quiz_result');
@@ -958,7 +1046,7 @@ class PublicQuizController extends Controller
             
             if (!$result) {
                 return redirect()->route('public.quiz.access')
-                    ->withErrors(['access' => 'No quiz result found. Please contact your instructor.']);
+                    ->withErrors(['access' => 'No quiz result found for this exam. Please contact your instructor or try accessing your results through the main access page.']);
             }
         }
 
@@ -1109,7 +1197,7 @@ class PublicQuizController extends Controller
         $studentInfo = session('student_info');
         
         if (!$studentInfo) {
-            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Please login first.']);
+            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Please enter your access details first to view available exams.']);
         }
 
         // Get all access codes for this student
@@ -1166,12 +1254,13 @@ class PublicQuizController extends Controller
         $accessCode = ExamAccessCode::find($accessCodeId);
         
         if (!$accessCode) {
-            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Access code not found.']);
+            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Access code not found. Please enter your credentials again or contact your teacher for assistance.']);
         }
 
         // Check if exam has ended
         if ($accessCode->isExpired()) {
-            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Exam time has expired.']);
+            $examEndTime = \Carbon\Carbon::parse($accessCode->exam->end_time)->format('M d, Y \a\t g:i A');
+            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Exam time has expired. This exam ended on ' . $examEndTime . '. Please contact your teacher for assistance.']);
         }
 
         // Check access code status to determine access level
@@ -1196,7 +1285,7 @@ class PublicQuizController extends Controller
         // Verify student info
         $studentInfo = session('student_info');
         if (!$studentInfo || $studentInfo['student_id'] != $accessCode->student_id) {
-            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Invalid access. Please try again.']);
+            return redirect()->route('public.quiz.access')->withErrors(['access' => 'Invalid access session. Please enter your access details again to select an exam.']);
         }
 
         // Store access info in session for the quiz
@@ -1215,7 +1304,16 @@ class PublicQuizController extends Controller
         if ($exam->status === 'published' && !$accessCode->isExpired()) {
             return redirect()->route('public.quiz.start', $exam->id);
         } else {
-            return redirect()->route('public.quiz.access')->withErrors(['access' => 'This exam is not currently available.']);
+            $errorMessage = 'Exam is not currently available. ';
+            if ($exam->status === 'draft') {
+                $errorMessage .= 'This exam is still being prepared by your teacher.';
+            } elseif ($exam->status === 'published') {
+                $examStartTime = \Carbon\Carbon::parse($exam->start_time)->format('M d, Y \a\t g:i A');
+                $errorMessage .= 'This exam starts on ' . $examStartTime . '. Please come back at the scheduled time.';
+            } else {
+                $errorMessage .= 'Exam status: "' . ucfirst($exam->status) . '". Please contact your teacher for more information.';
+            }
+            return redirect()->route('public.quiz.access')->withErrors(['access' => $errorMessage]);
         }
     }
 
@@ -1317,13 +1415,13 @@ class PublicQuizController extends Controller
         // If still no access code, redirect to access page
         if (!$accessCode) {
             return redirect()->route('public.quiz.access')
-                ->withErrors(['access' => 'Please enter your access details to view results.']);
+                ->withErrors(['access' => 'Access details not found. Please enter your phone number and access code to view your exam results.']);
         }
 
         // Check if access code is for this exam
         if ($accessCode->exam_id != $exam->id) {
             return redirect()->route('public.quiz.access')
-                ->withErrors(['access' => 'Invalid access code for this exam.']);
+                ->withErrors(['access' => 'This access code is not valid for the requested exam. Please verify your credentials or contact your teacher.']);
         }
 
         // Recover session for submitted exam
