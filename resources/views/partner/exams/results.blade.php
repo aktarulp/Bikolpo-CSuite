@@ -209,14 +209,32 @@
         <!-- Results Table -->
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
             <div class="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Student Results</h3>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Performance overview and detailed analytics</p>
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Student Results</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Performance overview and detailed analytics</p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                        <div class="text-right">
+                            <div class="text-sm text-gray-500 dark:text-gray-400">Exam #{{ $exam->id }}</div>
+                            <div class="text-sm font-semibold text-gray-900 dark:text-white">{{ $exam->title }}</div>
+                        </div>
+                        <a href="{{ route('partner.exams.result-entry', $exam) }}" 
+                           class="inline-flex items-center px-4 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                            Result Entry
+                        </a>
+                    </div>
+                </div>
             </div>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead class="bg-gray-50 dark:bg-gray-700">
                         <tr>
                             <th class="px-4 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Student</th>
+                            <th class="px-3 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Result Type</th>
                             <th class="px-3 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Score</th>
                             <th class="px-3 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">%</th>
                             <th class="px-3 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
@@ -248,6 +266,27 @@
                                         <div class="text-xs text-gray-500 dark:text-gray-400">{{ $result->student->student_id }}</div>
                                     </div>
                                 </div>
+                            </td>
+                            <td class="px-3 py-4 whitespace-nowrap">
+                                @if($result->status === 'absent')
+                                    <div class="flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Absent">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M12 2.25a9.75 9.75 0 100 19.5 9.75 9.75 0 000-19.5z"></path>
+                                        </svg>
+                                    </div>
+                                @elseif($result->result_type === 'auto')
+                                    <div class="flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-green-500 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Auto Generated">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                    </div>
+                                @else
+                                    <div class="flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-blue-500 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Manually Entered">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                        </svg>
+                                    </div>
+                                @endif
                             </td>
                             <td class="px-3 py-4 whitespace-nowrap">
                                 @if($result->status === 'absent')
@@ -323,7 +362,7 @@
                     </tr>
                         @empty
                         <tr>
-                            <td colspan="7" class="px-6 py-12 text-center">
+                            <td colspan="8" class="px-6 py-12 text-center">
                                 <div class="flex flex-col items-center">
                                     <svg class="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
@@ -380,6 +419,7 @@
                 </div>
     </div>
 </div>
+
 
 <script>
 function showResultDetails(resultId) {
@@ -598,5 +638,6 @@ document.getElementById('resultModal').addEventListener('click', function(e) {
         closeResultModal();
     }
 });
+
 </script>
 @endsection

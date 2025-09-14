@@ -445,6 +445,9 @@ Route::middleware('auth')->group(function () {
         Route::post('exams/{exam}/restore', [ExamController::class, 'restore'])->name('exams.restore');
         Route::get('exams/{exam}/results', [ExamController::class, 'results'])->name('exams.results');
         Route::get('exams/{exam}/results/{result}/details', [ExamController::class, 'getResultDetails'])->name('exams.results.details');
+        Route::post('exams/{exam}/results', [ExamController::class, 'storeResult'])->name('exams.results.store');
+        Route::get('exams/{exam}/result-entry', [ExamController::class, 'resultEntry'])->name('exams.result-entry');
+        Route::post('exams/{exam}/result-entry', [ExamController::class, 'storeDetailedResult'])->name('exams.result-entry.store');
         Route::get('exams/{exam}/export', [ExamController::class, 'export'])->name('exams.export');
         Route::get('exams/{exam}/paper-parameters', [ExamController::class, 'paperParameters'])->name('exams.paper-parameters');
         Route::post('exams/{exam}/download-paper', [ExamController::class, 'downloadPaper'])->name('exams.download-paper');

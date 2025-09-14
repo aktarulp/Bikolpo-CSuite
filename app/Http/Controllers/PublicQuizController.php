@@ -698,6 +698,7 @@ class PublicQuizController extends Controller
                     'started_at' => now(),
                     'total_questions' => $exam->total_questions ?? 0,
                     'status' => 'in_progress',
+                    'result_type' => 'auto',
                 ]);
                 
                 return redirect()->route('public.quiz.take', $exam->id);
@@ -713,6 +714,7 @@ class PublicQuizController extends Controller
             'started_at' => now(),
             'total_questions' => $exam->total_questions ?? 0,
             'status' => 'in_progress',
+            'result_type' => 'auto',
         ]);
 
         // Don't mark access code as used yet - only when exam is submitted
@@ -760,6 +762,7 @@ class PublicQuizController extends Controller
                 'started_at' => now(),
                 'total_questions' => $exam->total_questions ?? 0,
                 'status' => 'in_progress',
+                'result_type' => 'auto',
             ]);
         }
 

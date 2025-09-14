@@ -26,6 +26,7 @@ class ExamResult extends Model
         'score',
         'percentage',
         'status',
+        'result_type',
         'answers',
     ];
 
@@ -39,6 +40,7 @@ class ExamResult extends Model
         'score' => 'decimal:2',
         'percentage' => 'decimal:2',
         'status' => 'string',
+        'result_type' => 'string',
         'answers' => 'array',
     ];
 
@@ -210,5 +212,33 @@ class ExamResult extends Model
     public function getSkippedQuestions()
     {
         return $this->questionStats()->where('is_skipped', true)->with('question')->get();
+    }
+
+    /**
+     * Check if the result was automatically generated
+     */
+    public function getIsAutoResultAttribute()
+    {
+        return $this->result_type === 'auto';
+    }
+
+    /**
+     * Check if the result was manually entered
+     */
+    public function getIsManualResultAttribute()
+    {
+        return $this->result_type === 'manual';
+    }
+
+    /**
+     * Get the result type display name
+     */
+    public function getResultTypeDisplayAttribute()
+    {
+        return match($this->result_type) {
+            'auto' => 'Auto Generated',
+            'manual' => 'Manually Entered',
+            default => 'Unknown'
+        };
     }
 }

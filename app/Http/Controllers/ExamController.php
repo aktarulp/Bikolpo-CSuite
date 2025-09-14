@@ -505,10 +505,11 @@ class ExamController extends Controller
 
     public function results(Exam $exam)
     {
+        // Load the exam with assigned students
+        $exam->load('assignedStudents.course', 'assignedStudents.batch');
+        
         // Get all assigned students for this exam
-        $assignedStudents = $exam->assignedStudents()
-            ->with(['course', 'batch'])
-            ->get();
+        $assignedStudents = $exam->assignedStudents;
 
         // Get all exam results for this exam
         $examResults = ExamResult::where('exam_id', $exam->id)
@@ -676,6 +677,239 @@ class ExamController extends Controller
         ];
 
         return response()->json($data);
+    }
+
+    public function storeResult(Request $request, Exam $exam)
+    {
+        // Ensure the authenticated user is a partner
+        if (!auth()->user() || auth()->user()->role !== 'partner') {
+            return response()->json(['error' => 'Only partners can create results.'], 403);
+        }
+
+        // Verify the exam belongs to this partner
+        $partnerId = $this->getPartnerId();
+        if ($exam->partner_id !== $partnerId) {
+            return response()->json(['error' => 'Unauthorized access to this exam.'], 403);
+        }
+
+        // Validate the request
+        $request->validate([
+            'student_id' => 'required|exists:students,id',
+            'score' => 'required|numeric|min:0|max:' . $exam->total_questions,
+            'correct_answers' => 'required|integer|min:0|max:' . $exam->total_questions,
+            'wrong_answers' => 'required|integer|min:0|max:' . $exam->total_questions,
+            'unanswered' => 'required|integer|min:0|max:' . $exam->total_questions,
+            'started_at' => 'nullable|date',
+            'completed_at' => 'nullable|date|after_or_equal:started_at',
+        ]);
+
+        // Validate that correct + wrong + unanswered = total questions
+        $totalAnswers = $request->correct_answers + $request->wrong_answers + $request->unanswered;
+        if ($totalAnswers !== $exam->total_questions) {
+            return response()->json([
+                'error' => "Total answers ({$totalAnswers}) must equal total questions ({$exam->total_questions})"
+            ], 422);
+        }
+
+        // Check if student is assigned to this exam
+        $isAssigned = $exam->assignedStudents()->where('student_id', $request->student_id)->exists();
+        if (!$isAssigned) {
+            return response()->json([
+                'error' => 'Student is not assigned to this exam'
+            ], 422);
+        }
+
+        // Check if result already exists for this student and exam
+        $existingResult = ExamResult::where('exam_id', $exam->id)
+            ->where('student_id', $request->student_id)
+            ->first();
+
+        if ($existingResult) {
+            return response()->json([
+                'error' => 'Result already exists for this student. Please update the existing result instead.'
+            ], 422);
+        }
+
+        // Calculate percentage
+        $percentage = ($request->score / $exam->total_questions) * 100;
+
+        // Create the result
+        $result = ExamResult::create([
+            'student_id' => $request->student_id,
+            'exam_id' => $exam->id,
+            'started_at' => $request->started_at ? \Carbon\Carbon::parse($request->started_at) : null,
+            'completed_at' => $request->completed_at ? \Carbon\Carbon::parse($request->completed_at) : now(),
+            'total_questions' => $exam->total_questions,
+            'correct_answers' => $request->correct_answers,
+            'wrong_answers' => $request->wrong_answers,
+            'unanswered' => $request->unanswered,
+            'score' => $request->score,
+            'percentage' => round($percentage, 2),
+            'status' => 'completed',
+            'result_type' => 'manual',
+            'answers' => [], // Empty for manual results
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Result created successfully',
+            'result' => $result
+        ]);
+    }
+
+    public function resultEntry(Exam $exam)
+    {
+        // Ensure the authenticated user is a partner
+        if (!auth()->user() || auth()->user()->role !== 'partner') {
+            abort(403, 'Only partners can access result entry.');
+        }
+
+        // Verify the exam belongs to this partner
+        $partnerId = $this->getPartnerId();
+        if ($exam->partner_id !== $partnerId) {
+            abort(403, 'Unauthorized access to this exam.');
+        }
+
+        // Load exam with questions
+        $exam->load([
+            'questions' => function($query) {
+                $query->orderBy('exam_questions.order', 'asc');
+            }
+        ]);
+
+        // Get students who are absent (no results or status = 'absent')
+        $absentStudents = $exam->assignedStudents()
+            ->whereDoesntHave('examResults', function($query) use ($exam) {
+                $query->where('exam_id', $exam->id)
+                      ->where('status', '!=', 'absent');
+            })
+            ->orWhereHas('examResults', function($query) use ($exam) {
+                $query->where('exam_id', $exam->id)
+                      ->where('status', 'absent');
+            })
+            ->with(['course', 'batch'])
+            ->get();
+
+        return view('partner.exams.result-entry', compact('exam', 'absentStudents'));
+    }
+
+    public function storeDetailedResult(Request $request, Exam $exam)
+    {
+        // Ensure the authenticated user is a partner
+        if (!auth()->user() || auth()->user()->role !== 'partner') {
+            return response()->json(['error' => 'Only partners can create results.'], 403);
+        }
+
+        // Verify the exam belongs to this partner
+        $partnerId = $this->getPartnerId();
+        if ($exam->partner_id !== $partnerId) {
+            return response()->json(['error' => 'Unauthorized access to this exam.'], 403);
+        }
+
+        // Validate the request
+        $request->validate([
+            'student_id' => 'required|exists:students,id',
+            'answers' => 'required|array',
+            'answers.*' => 'nullable|string',
+            'started_at' => 'nullable|date',
+            'completed_at' => 'nullable|date|after_or_equal:started_at',
+        ]);
+
+        // Check if student is assigned to this exam
+        $isAssigned = $exam->assignedStudents()->where('student_id', $request->student_id)->exists();
+        if (!$isAssigned) {
+            return response()->json([
+                'error' => 'Student is not assigned to this exam'
+            ], 422);
+        }
+
+        // Check if result already exists for this student and exam
+        $existingResult = ExamResult::where('exam_id', $exam->id)
+            ->where('student_id', $request->student_id)
+            ->first();
+
+        if ($existingResult) {
+            return response()->json([
+                'error' => 'Result already exists for this student. Please update the existing result instead.'
+            ], 422);
+        }
+
+        // Load exam questions
+        $questions = $exam->questions()->orderBy('exam_questions.order')->get();
+        $answers = $request->answers;
+        
+        // Calculate results
+        $correctAnswers = 0;
+        $wrongAnswers = 0;
+        $unanswered = 0;
+        $totalScore = 0;
+        $detailedAnswers = [];
+
+        foreach ($questions as $question) {
+            $questionAnswer = $answers[$question->id] ?? null;
+            $isCorrect = false;
+            $isAnswered = false;
+            $score = 0;
+
+            if ($questionAnswer !== null && $questionAnswer !== '') {
+                $isAnswered = true;
+                
+                if ($question->question_type === 'mcq') {
+                    $isCorrect = $questionAnswer === $question->correct_answer;
+                } else {
+                    // For descriptive questions, check if it meets minimum requirements
+                    $wordCount = str_word_count($questionAnswer);
+                    $minWords = $question->min_words ?? 10;
+                    $isCorrect = $wordCount >= $minWords;
+                }
+                
+                if ($isCorrect) {
+                    $correctAnswers++;
+                    $score = $question->pivot->marks ?? 1;
+                    $totalScore += $score;
+                } else {
+                    $wrongAnswers++;
+                }
+            } else {
+                $unanswered++;
+            }
+
+            $detailedAnswers[$question->id] = [
+                'answer' => $questionAnswer,
+                'is_correct' => $isCorrect,
+                'is_answered' => $isAnswered,
+                'score' => $score,
+                'time_spent' => null, // Manual entry doesn't track time per question
+            ];
+        }
+
+        // Calculate percentage
+        $totalMarks = $questions->sum(function($q) { return $q->pivot->marks ?? 1; });
+        $percentage = $totalMarks > 0 ? ($totalScore / $totalMarks) * 100 : 0;
+
+        // Create the result
+        $result = ExamResult::create([
+            'student_id' => $request->student_id,
+            'exam_id' => $exam->id,
+            'started_at' => $request->started_at ? \Carbon\Carbon::parse($request->started_at) : null,
+            'completed_at' => $request->completed_at ? \Carbon\Carbon::parse($request->completed_at) : now(),
+            'total_questions' => $questions->count(),
+            'correct_answers' => $correctAnswers,
+            'wrong_answers' => $wrongAnswers,
+            'unanswered' => $unanswered,
+            'score' => $totalScore,
+            'percentage' => round($percentage, 2),
+            'status' => 'completed',
+            'result_type' => 'manual',
+            'answers' => $detailedAnswers,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Detailed result created successfully',
+            'result' => $result,
+            'redirect_url' => route('partner.exams.results', $exam)
+        ]);
     }
 
     public function export(Exam $exam)
