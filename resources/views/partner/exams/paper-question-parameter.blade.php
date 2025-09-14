@@ -63,19 +63,6 @@
             background: rgba(239, 68, 68, 0.1) !important; /* Red tint for 4 column span */
         }
         
-        /* Add header span indicator */
-        #livePreview .header-container::after {
-            content: "Header Span: " attr(data-header-span);
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-size: 10px;
-            font-weight: bold;
-        }
       
         /* Header span styles - now handled within page containers */
      
@@ -83,12 +70,10 @@
       
                 /* Page container styling */
         #livePreview .page-container {
-            border: 3px solid #3b82f6;
             background: white;
             margin: 20px auto;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             page-break-inside: avoid;
             break-inside: avoid;
             width: 210mm; /* A4 width */
@@ -186,36 +171,37 @@
         
         #livePreview.true-size .page-container {
             margin: 10px auto;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
         
-        /* Add page number indicator */
-        #livePreview .page-container::before {
-            content: "PAGE " attr(data-page) " - " attr(data-paper-size) " " attr(data-orientation);
-            position: absolute;
-            top: -15px;
-            left: 20px;
-            background: #3b82f6;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
+        /* Margin area visualization */
+        .page-container {
+            position: relative;
         }
         
-        /* Add paper size dimensions indicator */
-        #livePreview .page-container::after {
-            content: attr(data-paper-size) " (" attr(data-orientation) ")";
+        /* Margin area grid - shows area outside margins */
+        .margin-area-grid {
             position: absolute;
-            top: -15px;
-            right: 20px;
-            background: #10b981;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+            background-image: 
+                linear-gradient(rgba(255, 0, 0, 0.2) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 0, 0, 0.2) 1px, transparent 1px);
+            background-size: 20px 20px;
         }
+        
+        /* Content area - shows printable area within margins */
+        .content-area {
+            position: absolute;
+            background: rgba(0, 255, 0, 0.1);
+            border: 2px solid rgba(0, 255, 0, 0.5);
+            pointer-events: none;
+            z-index: 1;
+        }
+        
         
         /* Multi-column layout within pages - now handled by questions-grid */
         #livePreview .questions-grid {
@@ -241,18 +227,6 @@
             min-height: 200px;
         }
         
-        /* Debug: Make columns more visible */
-        #livePreview .question-column::before {
-            content: "Column " attr(data-column);
-            display: block;
-            background: #f0f0f0;
-            padding: 5px;
-            margin: -10px -10px 10px -10px;
-            font-size: 12px;
-            font-weight: bold;
-            color: #666;
-            border-bottom: 1px solid #ddd;
-        }
         
         /* Column separator styling */
         #livePreview .column-separator {
@@ -710,6 +684,9 @@ document.addEventListener('DOMContentLoaded', function() {
              pageContainer.style.marginBottom = marginBottom;
              pageContainer.style.marginLeft = marginLeft;
              
+             // Add margin area grid visualization
+             addMarginAreaGrid(pageContainer, params);
+             
              // Log the exact dimensions being applied
              const computedStyle = window.getComputedStyle(pageContainer);
              console.log(`Updated page container ${index + 1} with class: ${sizeClass}`);
@@ -792,8 +769,6 @@ document.addEventListener('DOMContentLoaded', function() {
             html += `<div class="page-container ${sizeClass}" data-columns="${paperColumns}" data-page="${pageNum}" data-paper-size="${paperSize}" data-orientation="${orientation}">`;
             console.log(`Created page container ${pageNum} with ${paperColumns} columns, size: ${paperSize} ${orientation}`);
             
-            // Page title
-            html += `<div class="page-title">📄 Page ${pageNum} of ${totalPages} (${pageQuestions.length} questions)</div>`;
             
             // Questions for this page - fill completely before moving to next page
             if (paperColumns > 1) {
@@ -1014,9 +989,49 @@ document.addEventListener('DOMContentLoaded', function() {
         return finalCount;
     }
     
-    // Pagination removed - all pages displayed continuously
-    
-         // Function to generate HTML for a single question
+     // Pagination removed - all pages displayed continuously
+     
+     // Function to add margin area grid visualization
+     function addMarginAreaGrid(pageContainer, params) {
+         console.log('Adding margin area grid to page container');
+         
+         // Remove existing margin area grid if any
+         const existingGrid = pageContainer.querySelector('.margin-area-grid');
+         if (existingGrid) {
+             existingGrid.remove();
+         }
+         
+         const existingContentArea = pageContainer.querySelector('.content-area');
+         if (existingContentArea) {
+             existingContentArea.remove();
+         }
+         
+         // Get margin values
+         const marginTop = parseInt(params.margin_top) || 20;
+         const marginRight = parseInt(params.margin_right) || 20;
+         const marginBottom = parseInt(params.margin_bottom) || 20;
+         const marginLeft = parseInt(params.margin_left) || 20;
+         
+         console.log('Margin values:', { marginTop, marginRight, marginBottom, marginLeft });
+         
+         // Create margin area grid (covers entire page)
+         const marginAreaGrid = document.createElement('div');
+         marginAreaGrid.className = 'margin-area-grid';
+         pageContainer.appendChild(marginAreaGrid);
+         
+         // Create content area (shows printable area within margins)
+         const contentArea = document.createElement('div');
+         contentArea.className = 'content-area';
+         contentArea.style.top = marginTop + 'px';
+         contentArea.style.left = marginLeft + 'px';
+         contentArea.style.right = marginRight + 'px';
+         contentArea.style.bottom = marginBottom + 'px';
+         pageContainer.appendChild(contentArea);
+         
+         console.log('Margin area grid and content area added');
+     }
+     
+          // Function to generate HTML for a single question
      function generateQuestionHTML(question, questionNumber, params) {
          let questionContent = `<div style="margin-bottom: 10px;">`;
         
@@ -1429,7 +1444,6 @@ document.addEventListener('DOMContentLoaded', function() {
             margin: 20px auto !important;
             padding: 20px !important;
             border-radius: 8px !important;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
             page-break-inside: avoid !important;
             break-inside: avoid !important;
             width: ${getPageWidth(params)} !important;
@@ -1594,8 +1608,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             .page-container { 
                 margin: 20px auto !important; 
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important; 
-                border: 3px solid #3b82f6 !important;
             }
         }
     </style>
