@@ -284,14 +284,193 @@
          width: 100%;
      }
      
-     /* Scaling functionality */
+        /* Scaling functionality */
      .adjust-to-percentage {
          transform: scale(var(--adjust-percentage, 1)) !important;
          transform-origin: center !important;
      }
      
+     /* Paper Container Layout - matching PHP method */
+     .paper-container {
+         background: white;
+         border: 2px solid #3b82f6;
+         margin: 0 auto;
+         display: grid;
+         gap: 20px;
+         padding: 20px;
+         box-sizing: border-box;
+         position: relative;
+         page-break-inside: avoid;
+         break-inside: avoid;
+     }
      
-      
+     .paper-container.paper-columns-1 {
+         grid-template-columns: 1fr;
+     }
+     
+     .paper-container.paper-columns-2 {
+         grid-template-columns: 1fr 1fr;
+         gap: 10px;
+         padding: 15px;
+     }
+     
+     .paper-container.paper-columns-3 {
+         grid-template-columns: 1fr 1fr 1fr;
+         gap: 10px;
+         padding: 15px;
+     }
+     
+     .paper-container.paper-columns-4 {
+         grid-template-columns: 1fr 1fr 1fr 1fr;
+         gap: 10px;
+         padding: 15px;
+     }
+     
+     /* Question column containers for sequential filling */
+     .paper-container .question-column {
+         display: flex;
+         flex-direction: column;
+         min-height: 0;
+         background: rgba(248, 250, 252, 0.3);
+         border: 1px dashed #cbd5e1;
+         border-radius: 4px;
+         padding: 10px;
+         margin-bottom: 5px;
+     }
+     
+     .paper-container .question-column[data-column="1"] {
+         background: rgba(239, 246, 255, 0.5); /* Blue tint for first column */
+     }
+     
+     .paper-container .question-column[data-column="2"] {
+         background: rgba(236, 253, 245, 0.5); /* Green tint for second column */
+     }
+     
+     .paper-container .question-column[data-column="3"] {
+         background: rgba(255, 251, 235, 0.5); /* Yellow tint for third column */
+     }
+     
+     .paper-container .question-column[data-column="4"] {
+         background: rgba(254, 242, 242, 0.5); /* Red tint for fourth column */
+     }
+     
+     /* Footer spanning all columns */
+     .paper-container .footer {
+         margin-top: 40px;
+         text-align: center;
+         color: #666;
+         border-top: 1px solid #ccc;
+         padding-top: 20px;
+         font-size: 0.9em;
+     }
+     
+     /* Header Container */
+     .paper-container .header-container {
+         text-align: center;
+         border-bottom: 2px solid #333;
+         padding-bottom: 15px;
+         margin-bottom: 20px;
+         background: rgba(248, 250, 252, 0.8);
+         border-radius: 4px;
+         padding: 15px;
+     }
+     
+     .paper-container .exam-title {
+         font-weight: bold;
+         margin-bottom: 10px;
+     }
+     
+     .paper-container .exam-info {
+         color: #666;
+     }
+     
+     .paper-container .question-header {
+         margin: 15px 0;
+         padding: 15px;
+         background: #f9f9f9;
+         border-radius: 5px;
+     }
+     
+     /* Question styling within paper container */
+     .paper-container .question {
+         margin-bottom: 10px;
+         page-break-inside: avoid;
+         break-inside: avoid;
+     }
+     
+     .paper-container .question-number {
+         font-weight: bold;
+         color: #333;
+     }
+     
+     .paper-container .question-text {
+         margin: 5px 0;
+     }
+     
+     .paper-container .marks {
+         font-weight: bold;
+         color: #333;
+         float: right;
+     }
+     
+     /* MCQ Options Grid */
+     .paper-container .mcq-options {
+         display: grid;
+         gap: 10px;
+         margin: 5px 0;
+     }
+     
+     .paper-container .mcq-options.columns-1 { grid-template-columns: 1fr; }
+     .paper-container .mcq-options.columns-2 { grid-template-columns: 1fr 1fr; }
+     .paper-container .mcq-options.columns-3 { grid-template-columns: 1fr 1fr 1fr; }
+     .paper-container .mcq-options.columns-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+     
+     .paper-container .option {
+         margin: 5px 0;
+     }
+     
+     /* Paper size specific styling for preview */
+     #livePreview .paper-container {
+         max-width: 800px;
+         min-height: 600px;
+     }
+     
+     /* A4 dimensions */
+     #livePreview.preview-a4 .paper-container {
+         width: 210mm;
+         min-height: 297mm;
+     }
+     
+     #livePreview.preview-a4-landscape .paper-container {
+         width: 297mm;
+         min-height: 210mm;
+     }
+     
+     /* Letter dimensions */
+     #livePreview.preview-letter .paper-container {
+         width: 216mm;
+         min-height: 279mm;
+         border-color: #10b981;
+     }
+     
+     #livePreview.preview-letter-landscape .paper-container {
+         width: 279mm;
+         min-height: 216mm;
+         border-color: #10b981;
+     }
+     
+     /* Legal dimensions */
+     #livePreview.preview-legal .paper-container {
+         width: 216mm;
+         min-height: 356mm;
+         border-color: #f59e0b;
+     }
+     
+     #livePreview.preview-legal-landscape .paper-container {
+         width: 356mm;
+         min-height: 216mm;
+         border-color: #f59e0b;
+     }
      
 </style>
 <div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
@@ -383,6 +562,7 @@
                      data-total-questions="{{ $exam->questions->count() }}"
                      data-passing-marks="{{ $exam->passing_marks }}"
                      data-question-header="{{ addslashes($exam->question_header ?? "") }}"
+                     data-partner-name="{{ addslashes($partner->name ?? 'Unknown Partner') }}"
                                             data-questions="{{ $exam->questions->map(function($q) { 
                           return [
                               'question_text' => $q->question_text,
@@ -768,69 +948,37 @@ document.addEventListener('DOMContentLoaded', function() {
              return;
          }
          
-         // Debug: Check what was actually created and show all pages stacked vertically
+         // Debug: Check what was actually created
          setTimeout(() => {
-             const pageContainers = document.querySelectorAll('.page-container');
-             console.log(`After setting innerHTML, found ${pageContainers.length} page containers`);
-             
-             // Show all pages stacked vertically with page breaks
-             pageContainers.forEach((page, index) => {
-                 page.style.display = 'block';
-                 page.style.marginBottom = '20px';
-                 page.style.pageBreakAfter = 'always';
-                 page.style.breakAfter = 'page';
+             const paperContainer = document.querySelector('.paper-container');
+             if (paperContainer) {
+                 console.log('Paper container found and styled');
                  
-                 // Remove page break from last page
-                 if (index === pageContainers.length - 1) {
-                     page.style.pageBreakAfter = 'avoid';
-                     page.style.breakAfter = 'avoid';
+                 // Apply font styling directly to paper container
+                 paperContainer.style.fontFamily = params.font_family || 'Arial';
+                 paperContainer.style.fontSize = (params.font_size || 12) + 'pt';
+                 paperContainer.style.lineHeight = params.line_spacing || 1.5;
+                 
+                 // Apply scaling if needed
+                 const adjustToPercentage = parseInt(params.adjust_to_percentage) || 100;
+                 if (adjustToPercentage !== 100) {
+                     paperContainer.style.transform = `scale(${adjustToPercentage / 100})`;
+                     paperContainer.style.transformOrigin = 'top left';
                  }
-                 
-                 console.log(`Page ${index + 1}:`, {
-                     dataPage: page.getAttribute('data-page'),
-                     dataColumns: page.getAttribute('data-columns'),
-                     display: page.style.display,
-                     visible: page.offsetHeight > 0
-                 });
-             });
-             
-             console.log('All pages displayed vertically with page breaks');
+             } else {
+                 console.error('No paper container found!');
+             }
          }, 100);
          
-                  // All pages are now displayed vertically with page breaks
-         console.log('All pages displayed in continuous vertical layout');
+         console.log('Paper container styled and ready');
         
-                 // Apply current styling
-         currentPreviewContainer.style.fontFamily = params.font_family || 'Arial';
-         currentPreviewContainer.style.fontSize = (params.font_size || 12) + 'pt';
-         currentPreviewContainer.style.lineHeight = params.line_spacing || 1.5;
-         
-         // Apply scaling settings
-         const adjustToPercentage = parseInt(params.adjust_to_percentage) || 100;
-         
-         // Apply adjust to percentage scaling
-             document.querySelectorAll('.page-container').forEach(pageContainer => {
-                 // Remove existing scaling classes
-             pageContainer.classList.remove('adjust-to-percentage');
-                 
-                 // Apply adjust to percentage scaling
-                 if (adjustToPercentage !== 100) {
-                     pageContainer.classList.add('adjust-to-percentage');
-                     pageContainer.style.setProperty('--adjust-percentage', adjustToPercentage / 100);
-                 }
-             });
-         
-         
-         // Apply paper format settings to page containers
+        // Apply paper format settings to preview container
          const paperSize = params.paper_size || 'A4';
          const orientation = params.orientation || 'portrait';
-         const sizeClass = `${paperSize.toLowerCase()}-${orientation}`;
          
          console.log('🔧 PAPER SIZE UPDATE:', {
              paperSize: paperSize,
-             orientation: orientation,
-             sizeClass: sizeClass,
-             totalPages: document.querySelectorAll('.page-container').length
+             orientation: orientation
          });
          
          // Update preview container classes based on paper size and orientation
@@ -863,72 +1011,6 @@ document.addEventListener('DOMContentLoaded', function() {
                  console.log('🏷️ Paper size indicator updated:', displayText);
              }
          }
-         
-         // Update all page containers with the correct paper size class and margins
-         document.querySelectorAll('.page-container').forEach((pageContainer, index) => {
-             console.log(`📄 Updating page container ${index + 1}: current classes:`, pageContainer.className);
-             // Remove all existing paper size classes
-             pageContainer.classList.remove('a4-portrait', 'a4-landscape', 'letter-portrait', 'letter-landscape', 'legal-portrait', 'legal-landscape');
-             
-             // Add the correct paper size class
-             pageContainer.classList.add(sizeClass);
-             console.log(`✅ Updated page container ${index + 1}: new classes:`, pageContainer.className);
-             
-             // Update data attributes
-             pageContainer.setAttribute('data-paper-size', paperSize);
-             pageContainer.setAttribute('data-orientation', orientation);
-             
-             // Apply margin values from form to the page container (convert mm to px)
-             const marginTop = (parseInt(params.margin_top) || 0) * 3.7795275591 + 'px'; // 1mm = 3.7795275591px
-             const marginRight = (parseInt(params.margin_right) || 0) * 3.7795275591 + 'px';
-             const marginBottom = (parseInt(params.margin_bottom) || 0) * 3.7795275591 + 'px';
-             const marginLeft = (parseInt(params.margin_left) || 0) * 3.7795275591 + 'px';
-             
-             // Set page container margins to 0 to use full width
-             pageContainer.style.marginTop = '0px';
-             pageContainer.style.marginRight = '0px';
-             pageContainer.style.marginBottom = '0px';
-             pageContainer.style.marginLeft = '0px';
-             
-             // Don't apply margins as padding - only use visual indicators
-             // The margin visualization will show the margin areas without affecting layout
-             
-             // Add margin area grid visualization
-             console.log(`Adding margin visualization to page container ${index + 1}`);
-             addMarginAreaGrid(pageContainer, params);
-             
-             // Log the exact dimensions being applied
-             const computedStyle = window.getComputedStyle(pageContainer);
-             console.log(`Updated page container ${index + 1} with class: ${sizeClass}`);
-             console.log(`Dimensions: width=${computedStyle.width}, height=${computedStyle.height}`);
-             console.log(`Margins: top=${marginTop}, right=${marginRight}, bottom=${marginBottom}, left=${marginLeft}`);
-         });
-         
-         // Add visual indicator for MCQ columns
-         if (params.mcq_columns) {
-             const columns = parseInt(params.mcq_columns);
-             currentPreviewContainer.setAttribute('data-mcq-columns', columns);
-             
-             // Add CSS custom property for MCQ columns
-             currentPreviewContainer.style.setProperty('--mcq-columns', columns);
-         }
-         
-         // Add visual indicator for Header Span
-         if (params.header_span) {
-             const headerSpan = params.header_span;
-             currentPreviewContainer.setAttribute('data-header-span', headerSpan);
-             
-             console.log(`Applied header span: ${headerSpan}`);
-             console.log(`Header span value: ${headerSpan}, type: ${typeof headerSpan}`);
-         }
-         
-                   // Add visual indicator for Paper columns (now handled within page containers)
-          if (params.paper_columns) {
-              const paperColumns = parseInt(params.paper_columns);
-              currentPreviewContainer.setAttribute('data-paper-columns', paperColumns);
-              
-              console.log(`Paper columns set to: ${paperColumns} (handled within page containers)`);
-          }
         } catch (error) {
             console.error('❌ Fatal error in updatePreview:', error);
             const errorPreviewContainer = document.getElementById('livePreview');
@@ -971,198 +1053,231 @@ document.addEventListener('DOMContentLoaded', function() {
         input.addEventListener('input', updatePreview);
     });
     
-        // Function to generate preview HTML with multi-page support
+    // Function to generate preview HTML matching PHP method structure
     function generatePreviewHTML(exam, params) {
         console.log('generatePreviewHTML called with:', { exam, params });
         
-        let html = '';
+        const paperColumns = parseInt(params.paper_columns) || 1;
+        const headerSpan = params.header_span || '1';
+        const mcqColumns = parseInt(params.mcq_columns) || 4;
+        const paperSize = params.paper_size || 'A4';
+        const orientation = params.orientation || 'portrait';
+        const fontSize = parseInt(params.font_size) || 12;
+        const adjustToPercentage = parseInt(params.adjust_to_percentage) || 100;
         
-                // Calculate questions per page based on A4 dimensions
-        const baseQuestionsPerPage = calculateQuestionsPerPage(params);
-        const totalQuestions = exam.questions.length;
-        
-        // Calculate total pages needed - fill each page completely before moving to next
-        let totalPages = 0;
-        let currentIndex = 0;
-        
-        // Calculate pages dynamically to ensure proper filling
-        while (currentIndex < totalQuestions) {
-            const questionsForThisPage = calculateActualQuestionsPerPage(exam, params, currentIndex);
-            console.log(`Page ${totalPages + 1}: Will contain ${questionsForThisPage} questions starting from index ${currentIndex}`);
-            currentIndex += questionsForThisPage;
-            totalPages++;
+        // Calculate header grid column span based on paper columns
+        let headerGridSpan;
+        if (headerSpan === 'full') {
+            headerGridSpan = '1 / -1'; // Span full width
+        } else {
+            const spanValue = parseInt(headerSpan);
+            if (spanValue >= paperColumns) {
+                headerGridSpan = `1 / ${paperColumns + 1}`;
+            } else {
+                headerGridSpan = `1 / ${spanValue + 1}`;
+            }
         }
         
-        console.log(`Calculated: ${baseQuestionsPerPage} base questions per page, ${totalQuestions} total questions, ${totalPages} total pages`);
-        console.log(`Page filling strategy: Fill each page completely before moving to next page`);
+        console.log('Generating single-container HTML to match PHP method');
         
-        // Generate each page
-        currentIndex = 0;
-        for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
-            const startIndex = currentIndex;
-            const questionsForThisPage = calculateActualQuestionsPerPage(exam, params, startIndex);
-            const endIndex = Math.min(startIndex + questionsForThisPage, totalQuestions);
-            const pageQuestions = exam.questions.slice(startIndex, endIndex);
+        // Start with the paper container (matches PHP structure)
+        let html = `<div class="paper-container paper-columns-${paperColumns}" data-header-span="${headerSpan}" style="font-family: '${params.font_family || 'Arial'}'; font-size: ${fontSize}pt; line-height: ${params.line_spacing || 1.5}; transform: scale(${adjustToPercentage / 100}); transform-origin: top left;">`;
+        
+        // Add header container if enabled
+        if (params.include_header !== false) {
+            html += `<div class="header-container" style="grid-column: ${headerGridSpan}; text-align: center; border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 20px;">`;
+            html += `<div class="exam-title" style="font-size: ${fontSize + 8}pt; font-weight: bold; margin-bottom: 10px;">${exam.title}</div>`;
             
-            currentIndex = endIndex;
+            const totalMarks = exam.questions.reduce((sum, q) => sum + (parseInt(q.marks) || 1), 0);
+            html += `<div class="exam-info" style="font-size: ${fontSize - 2}pt; color: #666;">`;
+            html += `<strong>Exam ID:</strong> ${exam.id} | `;
+            html += `<strong>Duration:</strong> ${exam.duration} minutes | `;
+            html += `<strong>Total Questions:</strong> ${exam.total_questions} | `;
+            html += `<strong>Passing Marks:</strong> ${exam.passing_marks}% | `;
+            html += `<strong>Total Marks:</strong> ${totalMarks}`;
+            html += `</div>`;
             
-            console.log(`Page ${pageNum}: Questions ${startIndex + 1} to ${endIndex} (${pageQuestions.length} questions) - Filling page completely`);
-            console.log(`Page ${pageNum} questions array:`, pageQuestions.map((q, i) => `Q${startIndex + i + 1}: ${q.question_text.substring(0, 30)}...`));
-            console.log(`DEBUG: Page ${pageNum} - questionsForThisPage: ${questionsForThisPage}, actual questions: ${pageQuestions.length}`);
-            
-            // Start page container with proper paper size classes
-            const paperColumns = parseInt(params.paper_columns) || 1;
-            const paperSize = params.paper_size || 'A4';
-            const orientation = params.orientation || 'portrait';
-            const sizeClass = `${paperSize.toLowerCase()}-${orientation}`;
-            const adjustToPercentage = parseInt(params.adjust_to_percentage) || 100;
-            const showPageNumber = params.show_page_number === '1';
-            
-            console.log(`📄 Page ${pageNum}: Creating page container with sizeClass: ${sizeClass}, paperSize: ${paperSize}, orientation: ${orientation}`);
-            
-            // Determine scaling classes
-            let scalingClasses = '';
-            if (adjustToPercentage !== 100) {
-                scalingClasses += ' adjust-to-percentage';
+            if (exam.question_header) {
+                html += `<div class="question-header" style="margin-top: 15px; padding: 15px; background: #f9f9f9; border-radius: 5px;">${exam.question_header}</div>`;
             }
+            html += `</div>`;
+        }
+        
+        // Add questions with sequential column filling logic
+        if (paperColumns > 1) {
+            // Multi-column layout: fill first column completely, then second column, etc.
+            const questionsPerColumn = calculateQuestionsPerColumn(exam.questions.length, paperColumns, params);
+            let questionIndex = 0;
             
-            html += `<div class="page-container ${sizeClass}${scalingClasses}" data-columns="${paperColumns}" data-page="${pageNum}" data-paper-size="${paperSize}" data-orientation="${orientation}" style="--adjust-percentage: ${adjustToPercentage / 100}; position: relative;">`;
-            console.log(`✅ Created page container ${pageNum} with ${paperColumns} columns, size: ${paperSize} ${orientation}`);
+            console.log(`Sequential column filling: ${questionsPerColumn} questions per column`);
             
-            // Add page number if enabled
-            if (showPageNumber) {
-                html += `<div class="page-number" style="position: absolute; bottom: 10px; right: 10px; font-size: 10pt; color: #666; z-index: 10;">Page ${pageNum} of ${totalPages}</div>`;
-            }
-            
-            
-            // Questions for this page - fill completely before moving to next page
-            if (paperColumns > 1) {
-                // Multi-column layout within the page - create a grid container that includes header
-                html += `<div class="questions-grid" style="display: grid; grid-template-columns: repeat(${paperColumns}, 1fr); gap: 20px; position: relative;">`;
+            // Create column containers and fill them sequentially
+            for (let columnIndex = 0; columnIndex < paperColumns; columnIndex++) {
+                const questionsInThisColumn = Math.min(questionsPerColumn, exam.questions.length - questionIndex);
                 
-                // Header (only on first page) - handle based on span
-                if (pageNum === 1 && params.include_header) {
-                    const headerSpan = params.header_span || '1';
-                    console.log(`Generating header with span: ${headerSpan} for ${paperColumns} columns`);
+                if (questionsInThisColumn > 0) {
+                    html += `<div class="question-column" data-column="${columnIndex + 1}">`;
                     
-                    if (headerSpan === 'full' || parseInt(headerSpan) > 1) {
-                        // Header spans multiple columns - put outside grid
-                        const headerContent = `
-                            <div class="header-container" data-header-span="${headerSpan}" style="text-align: center; border-bottom: 2px solid #333; padding: 15px; margin-bottom: 20px; width: 100%; height: auto; min-height: auto;">
-                                <div style="font-size: ${(parseInt(params.font_size) || 12) + 8}pt; font-weight: bold; margin-bottom: 3px;">${exam.title}</div>
-                                <div style="font-size: ${(parseInt(params.font_size) || 12) + 4}pt; font-weight: bold; margin-bottom: 3px;">${exam.question_header || 'Model Test'}</div>
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: ${(parseInt(params.font_size) || 12) + 4}pt; font-weight: bold; color: #333;">
-                                    <div>Full Marks: ${exam.questions.reduce((sum, q) => sum + (q.marks || 1), 0)}</div>
-                                    <div>Time: ${exam.duration} minutes</div>
-                                </div>
-                            </div>`;
+                    console.log(`Column ${columnIndex + 1}: Adding ${questionsInThisColumn} questions starting from question ${questionIndex + 1}`);
+                    
+                    // Fill this column with questions
+                    for (let i = 0; i < questionsInThisColumn && questionIndex < exam.questions.length; i++) {
+                        const question = exam.questions[questionIndex];
+                        const questionNumber = questionIndex + 1;
+                        const marks = parseInt(question.marks) || 1;
                         
-                        html += headerContent;
-                    }
-                    // For single column header, we'll add it inside the first column
-                }
-                
-                // Add vertical separator lines between columns (but not over header)
-                const hasHeader = (pageNum === 1 && params.include_header);
-                const headerSpan = params.header_span || '1';
-                const headerSpansMultipleColumns = headerSpan === 'full' || parseInt(headerSpan) > 1;
-                
-                // Only add separators if header doesn't span all columns
-                if (!headerSpansMultipleColumns) {
-                    for (let i = 1; i < paperColumns; i++) {
-                        html += `<div class="column-separator" style="position: absolute; top: 0; bottom: 0; left: ${(i * 100) / paperColumns}%; width: 1px; background: #333; opacity: 0.3;"></div>`;
-                    }
-                }
-                
-                // Create columns and distribute questions sequentially (fill each column completely)
-                console.log(`Page ${pageNum}: Starting sequential column filling with ${paperColumns} columns`);
-                
-                // Calculate questions per column for this page
-                const questionsPerColumn = Math.ceil(pageQuestions.length / paperColumns);
-                console.log(`Page ${pageNum}: ${pageQuestions.length} questions, ${questionsPerColumn} questions per column`);
-                
-                // Track question index across all columns
-                let globalQuestionIndex = 0;
-                
-                // Check if header spans only first column
-                const headerSpansOnlyFirstColumn = hasHeader && !headerSpansMultipleColumns;
-                
-                for (let columnIndex = 0; columnIndex < paperColumns; columnIndex++) {
-                    html += `<div class="question-column" data-column="${columnIndex + 1}" style="padding: 0 10px;">`;
-                    
-                    // Add header to first column if it spans only one column
-                    if (headerSpansOnlyFirstColumn && columnIndex === 0) {
-                        const headerContent = `
-                            <div class="header-container" data-header-span="${headerSpan}" style="text-align: center; border-bottom: 2px solid #333; padding: 15px; margin-bottom: 20px; width: 100%; height: auto; min-height: auto;">
-                                <div style="font-size: ${(parseInt(params.font_size) || 12) + 8}pt; font-weight: bold; margin-bottom: 3px;">${exam.title}</div>
-                                <div style="font-size: ${(parseInt(params.font_size) || 12) + 4}pt; font-weight: bold; margin-bottom: 3px;">${exam.question_header || 'Model Test'}</div>
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: ${(parseInt(params.font_size) || 12) + 4}pt; font-weight: bold; color: #333;">
-                                    <div>Full Marks: ${exam.questions.reduce((sum, q) => sum + (q.marks || 1), 0)}</div>
-                                    <div>Time: ${exam.duration} minutes</div>
-                                </div>
-                            </div>`;
-                        
-                        html += headerContent;
+                        html += generateQuestionHTMLSimple(question, questionNumber, marks, params, mcqColumns);
+                        questionIndex++;
                     }
                     
-                    // Calculate how many questions should go in this column
-                    const remainingQuestions = pageQuestions.length - globalQuestionIndex;
-                    const remainingColumns = paperColumns - columnIndex;
-                    const questionsInThisColumn = Math.ceil(remainingQuestions / remainingColumns);
-                    
-                    let questionsAdded = 0;
-                    const columnQuestions = [];
-                    
-                    // Fill this column with questions starting from globalQuestionIndex
-                    for (let i = 0; i < questionsInThisColumn && globalQuestionIndex < pageQuestions.length; i++) {
-                        const question = pageQuestions[globalQuestionIndex];
-                        // Calculate the correct question number based on the page and position
-                        const questionNumber = startIndex + globalQuestionIndex + 1;
-                        html += generateQuestionHTML(question, questionNumber, params);
-                        questionsAdded++;
-                        columnQuestions.push(`Q${questionNumber}`);
-                        globalQuestionIndex++;
-                    }
-                    
-                    console.log(`Page ${pageNum}, Column ${columnIndex + 1}: ${questionsAdded} questions - ${columnQuestions.join(', ')}`);
                     html += '</div>';
                 }
                 
-                html += '</div>';
-            } else {
-                // Single column layout - fill page completely
-                // Header (only on first page) for single column
-                if (pageNum === 1 && params.include_header) {
-                    const headerSpan = params.header_span || '1';
-                    console.log(`Generating header for single column with span: ${headerSpan}`);
-                    
-                    const headerContent = `
-                        <div class="header-container" data-header-span="${headerSpan}" style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 15px; margin-bottom: 20px;">
-                            <div style="font-size: ${(parseInt(params.font_size) || 12) + 8}pt; font-weight: bold; margin-bottom: 3px;">${exam.title}</div>
-                            <div style="font-size: ${(parseInt(params.font_size) || 12) + 4}pt; font-weight: bold; margin-bottom: 3px;">${exam.question_header || 'Model Test'}</div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: ${(parseInt(params.font_size) || 12) + 4}pt; font-weight: bold; color: #333;">
-                                <div>Full Marks: ${exam.questions.reduce((sum, q) => sum + (q.marks || 1), 0)}</div>
-                                <div>Time: ${exam.duration} minutes</div>
-                            </div>
-                        </div>`;
-                    
-                    html += headerContent;
+                // Break if all questions are distributed
+                if (questionIndex >= exam.questions.length) {
+                    break;
+                }
+            }
+        } else {
+            // Single column layout: add questions sequentially
+            exam.questions.forEach((question, index) => {
+                const questionNumber = index + 1;
+                const marks = parseInt(question.marks) || 1;
+                html += generateQuestionHTMLSimple(question, questionNumber, marks, params, mcqColumns);
+            });
+        }
+        
+        // Add footer if enabled
+        if (params.include_footer !== false) {
+            const footerSpan = paperColumns > 1 ? '1 / -1' : '';
+            const totalMarks = exam.questions.reduce((sum, q) => sum + (parseInt(q.marks) || 1), 0);
+            html += `<div class="footer" style="grid-column: ${footerSpan}; margin-top: 40px; text-align: center; font-size: ${fontSize - 2}pt; color: #666; border-top: 1px solid #ccc; padding-top: 20px;">`;
+            html += `<p>Generated on: ${new Date().toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            })}</p>`;
+            html += `<p>Total Questions: ${exam.questions.length} | Total Marks: ${totalMarks}</p>`;
+            html += `</div>`;
+        }
+        
+        // Close paper container
+        html += '</div>';
+        
+        console.log('Generated simplified HTML matching PHP method');
+        return html;
+    }
+    
+    // Generate HTML for a single question (matching PHP method)
+    function generateQuestionHTMLSimple(question, questionNumber, marks, params, mcqColumns) {
+        let html = `<div class="question" style="margin-bottom: 10px; page-break-inside: avoid; break-inside: avoid;">`;
+        html += `<div class="question-number" style="font-weight: bold; color: #333;">`;
+        html += `Question ${questionNumber} <span class="marks" style="font-weight: bold; color: #333; float: right;">[${marks} mark${marks > 1 ? 's' : ''}]</span>`;
+        html += `</div>`;
+        
+        if (question.question_header) {
+            html += `<div class="question-header" style="margin: 5px 0; font-style: italic; color: #666;">${question.question_header}</div>`;
+        }
+        
+        // Clean question text to remove any "(Question #X)" patterns
+        const cleanQuestionText = question.question_text.replace(/\(Question\s*#\d+\)/gi, '').trim();
+        html += `<div class="question-text" style="margin: 5px 0;">${cleanQuestionText}</div>`;
+        
+        if (question.question_type === 'mcq') {
+            html += `<div class="mcq-options columns-${mcqColumns}" style="display: grid; gap: 10px; margin: 5px 0; grid-template-columns: repeat(${mcqColumns}, 1fr);">`;
+            
+            const options = [
+                { label: 'A', text: question.option_a },
+                { label: 'B', text: question.option_b },
+                { label: 'C', text: question.option_c },
+                { label: 'D', text: question.option_d }
+            ].filter(opt => opt.text);
+            
+            options.forEach(option => {
+                let isCorrect = false;
+                if (params.mark_answer && question.correct_answer) {
+                    if (typeof question.correct_answer === 'string') {
+                        isCorrect = option.label === question.correct_answer.toUpperCase();
+                    } else if (typeof question.correct_answer === 'number') {
+                        const answerMap = {1: 'A', 2: 'B', 3: 'C', 4: 'D'};
+                        isCorrect = option.label === answerMap[question.correct_answer];
+                    }
                 }
                 
-                // Add questions
-                pageQuestions.forEach((question, index) => {
-                    const questionNumber = startIndex + index + 1;
-                    html += generateQuestionHTML(question, questionNumber, params);
-                });
-            }
+                const optionStyle = isCorrect ? ' style="background-color: #e8f5e8; border-left: 4px solid #28a745; padding-left: 10px;"' : '';
+                const correctIndicator = isCorrect ? ' <strong style="color: #28a745;">✓</strong>' : '';
+                
+                html += `<div class="option" style="margin: 5px 0;"${optionStyle}>${option.label}) ${option.text}${correctIndicator}</div>`;
+            });
             
-            // Close page container
             html += '</div>';
         }
         
-        // No pagination needed - all pages displayed continuously
-        console.log(`Generated HTML with ${totalPages} pages in continuous layout`);
+        html += '</div>';
         return html;
+    }
+    
+    // Calculate questions per column for sequential filling (matching PHP logic)
+    function calculateQuestionsPerColumn(totalQuestions, paperColumns, params) {
+        // Get paper dimensions and calculate available space
+        const paperSize = params.paper_size || 'A4';
+        const orientation = params.orientation || 'portrait';
+        const fontSize = parseInt(params.font_size) || 12;
+        const lineSpacing = parseFloat(params.line_spacing) || 1.5;
+        
+        // Paper height in mm (approximate)
+        const paperHeights = {
+            'A4': orientation === 'landscape' ? 210 : 297,
+            'Letter': orientation === 'landscape' ? 216 : 279,
+            'Legal': orientation === 'landscape' ? 216 : 356
+        };
+        
+        const paperHeight = paperHeights[paperSize] || 297;
+        
+        // Calculate available height (subtract margins and header space)
+        const marginTop = parseInt(params.margin_top) || 0;
+        const marginBottom = parseInt(params.margin_bottom) || 0;
+        const headerHeight = (params.include_header !== false) ? 40 : 0; // Approximate header height in mm
+        
+        const availableHeight = paperHeight - marginTop - marginBottom - headerHeight - 40; // 40mm padding
+        
+        // Estimate question height based on font size and line spacing
+        // Average question takes about 4-6 lines depending on complexity
+        const averageLinesPerQuestion = 5;
+        const lineHeightMm = (fontSize * lineSpacing * 0.35); // Convert pt to mm approximately
+        const questionHeightMm = lineHeightMm * averageLinesPerQuestion + 5; // 5mm spacing between questions
+        
+        // Calculate maximum questions that can fit in one column
+        const maxQuestionsPerColumn = Math.floor(availableHeight / questionHeightMm);
+        
+        // Ensure we don't have empty columns by distributing evenly with a minimum
+        let questionsPerColumn = Math.max(
+            maxQuestionsPerColumn,
+            Math.ceil(totalQuestions / paperColumns)
+        );
+        
+        // But don't exceed what can physically fit
+        questionsPerColumn = Math.min(questionsPerColumn, maxQuestionsPerColumn || 20);
+        
+        // Ensure minimum of 5 questions per column if we have questions
+        if (totalQuestions > 0) {
+            questionsPerColumn = Math.max(questionsPerColumn, 5);
+        }
+        
+        console.log(`Questions per column calculation:`, {
+            totalQuestions,
+            paperColumns,
+            paperSize,
+            orientation,
+            paperHeight,
+            availableHeight,
+            maxQuestionsPerColumn,
+            questionsPerColumn
+        });
+        
+        return questionsPerColumn;
     }
     
     // Helper function to get paper dimensions in mm
@@ -1516,6 +1631,57 @@ document.addEventListener('DOMContentLoaded', function() {
          });
      }
      
+     // Function to save settings
+     function saveSettings() {
+         try {
+             const form = document.getElementById('parameterForm');
+             const formData = new FormData(form);
+             const parameters = Object.fromEntries(formData.entries());
+             
+             // Convert checkboxes to proper boolean values
+             parameters.include_header = parameters.include_header === '1';
+             parameters.mark_answer = parameters.mark_answer === '1';
+             parameters.show_page_number = parameters.show_page_number === '1';
+             
+             console.log('Saving parameters:', parameters);
+             
+             fetch('{{ route("partner.exams.save-paper-settings", $exam) }}', {
+                 method: 'POST',
+                 headers: {
+                     'Content-Type': 'application/json',
+                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                 },
+                 body: JSON.stringify({
+                     parameters: parameters
+                 })
+             })
+             .then(response => response.json())
+             .then(data => {
+                 if (data.status === 'success') {
+                     // Show success message
+                     const btn = document.getElementById('saveSettingsBtn');
+                     const originalText = btn.innerHTML;
+                     btn.innerHTML = '✅ Settings Saved!';
+                     btn.classList.add('bg-green-600');
+                     
+                     setTimeout(() => {
+                         btn.innerHTML = originalText;
+                         btn.classList.remove('bg-green-600');
+                     }, 2000);
+                 } else {
+                     throw new Error(data.message || 'Failed to save settings');
+                 }
+             })
+             .catch(error => {
+                 console.error('Error saving settings:', error);
+                 alert('Failed to save settings: ' + error.message);
+             });
+         } catch (error) {
+             console.error('Error preparing settings:', error);
+             alert('Error preparing settings for save.');
+         }
+     }
+     
      // Function to load saved settings
      function loadSavedSettings() {
          @if(isset($savedSettings) && !empty($savedSettings))
@@ -1776,7 +1942,6 @@ document.addEventListener('DOMContentLoaded', function() {
                      'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                  },
                  body: JSON.stringify({
-                     preview_html: completeHTML,
                      parameters: params
                  })
              })

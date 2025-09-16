@@ -1258,7 +1258,10 @@ class ExamController extends Controller
         // Get saved paper settings or use defaults
         $savedSettings = $exam->paper_settings ?? [];
         
-        return view('partner.exams.paper-question-parameter', compact('exam', 'questions', 'savedSettings'));
+        // Get partner information for footer
+        $partner = $exam->partner;
+        
+        return view('partner.exams.paper-question-parameter', compact('exam', 'questions', 'savedSettings', 'partner'));
     }
     
     public function downloadPaper(Request $request, Exam $exam)
@@ -1266,44 +1269,57 @@ class ExamController extends Controller
         try {
             // Validate the request
             $request->validate([
-                'preview_html' => 'required|string',
                 'parameters' => 'required|array',
                 'parameters.paper_size' => 'required|in:A4,Letter,Legal,A3',
                 'parameters.orientation' => 'required|in:portrait,landscape',
-                'parameters.paper_columns' => 'required|in:1,2,3',
+                'parameters.paper_columns' => 'required|in:1,2,3,4',
+                'parameters.adjust_to_percentage' => 'required|integer|min:10|max:500',
                 'parameters.header_span' => 'required|in:1,2,3,4,full',
+                'parameters.header_push' => 'required|in:1st_col,2nd_col,3rd_col,4th_col',
                 'parameters.font_family' => 'required|string',
-                'parameters.font_size' => 'required|integer|min:8|max:20',
+                'parameters.font_size' => 'required|integer|min:8|max:24',
                 'parameters.line_spacing' => 'required|numeric|min:0.5|max:3.0',
                 'parameters.mcq_columns' => 'required|in:1,2,3,4',
-                'parameters.margin_top' => 'required|integer|min:10|max:50',
-                'parameters.margin_bottom' => 'required|integer|min:10|max:50',
-                'parameters.margin_left' => 'required|integer|min:10|max:50',
-                'parameters.margin_right' => 'required|integer|min:10|max:50',
+                'parameters.margin_top' => 'required|integer|min:0|max:50',
+                'parameters.margin_bottom' => 'required|integer|min:0|max:50',
+                'parameters.margin_left' => 'required|integer|min:0|max:50',
+                'parameters.margin_right' => 'required|integer|min:0|max:50',
                 'parameters.include_header' => 'boolean',
                 'parameters.mark_answer' => 'boolean',
+                'parameters.show_page_number' => 'boolean',
             ]);
             
             $parameters = $request->input('parameters');
-            $previewHtml = $request->input('preview_html');
             
             // Validate PDF parameters
             $this->validatePDFParameters($parameters);
             
-            // Debug: Log the HTML structure
+            // Get exam questions for PDF generation
+            $questions = $exam->questions()->with(['topic', 'subject'])->orderBy('exam_questions.order')->get();
+            
+            // Get partner information for footer
+            $partner = $exam->partner;
+            
+            // Generate HTML using server-side method with parameters
+            $pdfHtml = $this->generateQuestionPaperHTMLWithParameters($exam, $questions, $parameters, $partner);
+            
+            // Debug: Log the generated HTML structure
             \Log::info('PDF Generation Debug', [
-                'html_length' => strlen($previewHtml),
-                'page_containers_count' => substr_count($previewHtml, 'class="page-container"'),
-                'page_break_always_count' => substr_count($previewHtml, 'page-break-after: always'),
-                'page_break_avoid_count' => substr_count($previewHtml, 'page-break-after: avoid'),
-                'break_after_page_count' => substr_count($previewHtml, 'break-after: page'),
-                'break_after_avoid_count' => substr_count($previewHtml, 'break-after: avoid'),
-                'page_break_inside_avoid_count' => substr_count($previewHtml, 'page-break-inside: avoid'),
-                'break_inside_avoid_count' => substr_count($previewHtml, 'break-inside: avoid'),
+                'html_length' => strlen($pdfHtml),
+                'paper_size' => $parameters['paper_size'] ?? 'A4',
+                'orientation' => $parameters['orientation'] ?? 'portrait',
+                'columns' => $parameters['paper_columns'] ?? 1,
+                'font_size' => $parameters['font_size'] ?? 12,
+                'margins' => [
+                    'top' => $parameters['margin_top'] ?? 20,
+                    'right' => $parameters['margin_right'] ?? 20,
+                    'bottom' => $parameters['margin_bottom'] ?? 20,
+                    'left' => $parameters['margin_left'] ?? 20,
+                ]
             ]);
             
-            // Generate PDF using Browsershot with exact preview HTML
-            $pdf = $this->generatePDFWithBrowsershot($previewHtml, $parameters);
+            // Generate PDF using Browsershot with server-generated HTML
+            $pdf = $this->generatePDFWithBrowsershot($pdfHtml, $parameters);
             
             // Generate filename
             $filename = 'question_paper_' . $exam->id . '_' . date('Y-m-d_H-i-s') . '.pdf';
@@ -1709,7 +1725,7 @@ class ExamController extends Controller
         return (int) $partner->id;
     }
     
-    private function generateQuestionPaperHTMLWithParameters($exam, $questions, $parameters)
+    private function generateQuestionPaperHTMLWithParameters($exam, $questions, $parameters, $partner = null)
     {
         // Get column configuration
         $paperColumns = (int)($parameters['paper_columns'] ?? 1);
@@ -1772,6 +1788,20 @@ class ExamController extends Controller
             grid-template-columns: 1fr 1fr 1fr;
             gap: 10px;
             padding: 15px;
+        }
+        
+        .paper-container.paper-columns-4 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 10px;
+            padding: 15px;
+        }
+        
+        /* Question column containers */
+        .question-column {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
         }
         
         /* Header Span */
@@ -1838,32 +1868,53 @@ class ExamController extends Controller
         
         $html .= '</div>';
         
-        if ($parameters['include_instructions'] ?? true) {
-            $html .= '
-    <div class="instructions">
-        <strong>Instructions:</strong>
-        <ul>
-            <li>Read each question carefully before answering</li>
-            <li>All questions are compulsory</li>
-            <li>Write your answers clearly and legibly</li>
-            <li>Check your answers before submitting</li>
-        </ul>
-    </div>';
-        }
-        
-        // Add questions sequentially - CSS Grid will handle the distribution
-        foreach ($questions as $index => $question) {
-            $questionNumber = $index + 1;
-            $marks = $question->pivot->marks ?? 1;
+        // Add questions with sequential column filling logic
+        if ($paperColumns > 1) {
+            // Multi-column layout: fill first column completely, then second column, etc.
+            $questionsPerColumn = $this->calculateQuestionsPerColumn($questions->count(), $paperColumns, $parameters);
+            $questionIndex = 0;
             
-            $html .= $this->generateQuestionHTML($question, $questionNumber, $marks, $parameters, $mcqColumns);
+            // Create column containers and fill them sequentially
+            for ($columnIndex = 0; $columnIndex < $paperColumns; $columnIndex++) {
+                $questionsInThisColumn = min($questionsPerColumn, $questions->count() - $questionIndex);
+                
+                if ($questionsInThisColumn > 0) {
+                    $html .= '<div class="question-column" data-column="' . ($columnIndex + 1) . '">';
+                    
+                    // Fill this column with questions
+                    for ($i = 0; $i < $questionsInThisColumn && $questionIndex < $questions->count(); $i++) {
+                        $question = $questions[$questionIndex];
+                        $questionNumber = $questionIndex + 1;
+                        $marks = $question->pivot->marks ?? 1;
+                        
+                        $html .= $this->generateQuestionHTML($question, $questionNumber, $marks, $parameters, $mcqColumns);
+                        $questionIndex++;
+                    }
+                    
+                    $html .= '</div>';
+                }
+                
+                // Break if all questions are distributed
+                if ($questionIndex >= $questions->count()) {
+                    break;
+                }
+            }
+        } else {
+            // Single column layout: add questions sequentially
+            foreach ($questions as $index => $question) {
+                $questionNumber = $index + 1;
+                $marks = $question->pivot->marks ?? 1;
+                
+                $html .= $this->generateQuestionHTML($question, $questionNumber, $marks, $parameters, $mcqColumns);
+            }
         }
         
         if ($parameters['include_footer'] ?? true) {
+            $footerSpan = $paperColumns > 1 ? '1 / -1' : '';
+            $partnerName = $partner ? $partner->name : 'Unknown Partner';
             $html .= '
-    <div class="footer">
-        <p>Generated on: ' . date('F d, Y \a\t g:i A') . '</p>
-        <p>Total Questions: ' . $questions->count() . ' | Total Marks: ' . $questions->sum(function($q) { return $q->pivot->marks ?? 1; }) . '</p>
+    <div class="footer" style="grid-column: ' . $footerSpan . ';">
+        <p>This Question is created by <strong>' . htmlspecialchars($partnerName) . '</strong> | Powered By <strong>bikolpo LQ</strong></p>
     </div>';
         }
         
@@ -1950,10 +2001,10 @@ class ExamController extends Controller
             throw new \InvalidArgumentException('Invalid orientation: ' . $parameters['orientation']);
         }
         
-        // Validate margins
+        // Validate margins (allow 0mm margins)
         $margins = ['margin_top', 'margin_bottom', 'margin_left', 'margin_right'];
         foreach ($margins as $margin) {
-            if (!isset($parameters[$margin]) || !is_numeric($parameters[$margin]) || $parameters[$margin] < 10 || $parameters[$margin] > 50) {
+            if (!isset($parameters[$margin]) || !is_numeric($parameters[$margin]) || $parameters[$margin] < 0 || $parameters[$margin] > 50) {
                 throw new \InvalidArgumentException('Invalid margin value for ' . $margin . ': ' . ($parameters[$margin] ?? 'not set'));
             }
         }
@@ -2237,6 +2288,59 @@ class ExamController extends Controller
         }
     }
 
+    /**
+     * Calculate questions per column for sequential filling
+     */
+    private function calculateQuestionsPerColumn($totalQuestions, $paperColumns, $parameters)
+    {
+        // Get paper dimensions and calculate available space
+        $paperSize = $parameters['paper_size'] ?? 'A4';
+        $orientation = $parameters['orientation'] ?? 'portrait';
+        $fontSize = (int)($parameters['font_size'] ?? 12);
+        $lineSpacing = (float)($parameters['line_spacing'] ?? 1.5);
+        
+        // Paper height in mm (approximate)
+        $paperHeights = [
+            'A4' => $orientation === 'landscape' ? 210 : 297,
+            'Letter' => $orientation === 'landscape' ? 216 : 279, 
+            'Legal' => $orientation === 'landscape' ? 216 : 356
+        ];
+        
+        $paperHeight = $paperHeights[$paperSize] ?? 297;
+        
+        // Calculate available height (subtract margins and header space)
+        $marginTop = (int)($parameters['margin_top'] ?? 0);
+        $marginBottom = (int)($parameters['margin_bottom'] ?? 0);
+        $headerHeight = ($parameters['include_header'] ?? true) ? 40 : 0; // Approximate header height in mm
+        
+        $availableHeight = $paperHeight - $marginTop - $marginBottom - $headerHeight - 40; // 40mm padding
+        
+        // Estimate question height based on font size and line spacing
+        // Average question takes about 4-6 lines depending on complexity
+        $averageLinesPerQuestion = 5;
+        $lineHeightMm = ($fontSize * $lineSpacing * 0.35); // Convert pt to mm approximately
+        $questionHeightMm = $lineHeightMm * $averageLinesPerQuestion + 5; // 5mm spacing between questions
+        
+        // Calculate maximum questions that can fit in one column
+        $maxQuestionsPerColumn = (int)floor($availableHeight / $questionHeightMm);
+        
+        // Ensure we don't have empty columns by distributing evenly with a minimum
+        $questionsPerColumn = max(
+            $maxQuestionsPerColumn,
+            (int)ceil($totalQuestions / $paperColumns)
+        );
+        
+        // But don't exceed what can physically fit
+        $questionsPerColumn = min($questionsPerColumn, $maxQuestionsPerColumn ?: 20);
+        
+        // Ensure minimum of 5 questions per column if we have questions
+        if ($totalQuestions > 0) {
+            $questionsPerColumn = max($questionsPerColumn, 5);
+        }
+        
+        return $questionsPerColumn;
+    }
+    
     /**
      * Save paper settings to database
      */
