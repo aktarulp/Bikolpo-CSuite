@@ -315,15 +315,15 @@
         </div>
 
         <!-- Paper Settings Form -->
-        <div class="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 shadow-2xl rounded-2xl border border-slate-200/50 dark:border-slate-700/50 mb-6 backdrop-blur-sm">
-            <div class="px-6 py-4 border-b border-slate-200/60 dark:border-slate-700/60 bg-gradient-to-r from-slate-100/50 to-slate-200/50 dark:from-slate-800/50 dark:to-slate-700/50 rounded-t-2xl">
-                <div class="flex items-center space-x-3">
-                    <div class="w-2 h-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full shadow-lg"></div>
-                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200 bg-gradient-to-r from-slate-700 to-slate-900 dark:from-slate-300 dark:to-slate-100 bg-clip-text text-transparent">Paper Settings</h3>
+        <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg border border-gray-200 dark:border-gray-700 mb-6">
+            <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+                <div class="flex items-center space-x-2">
+                    <div class="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                    <h3 class="text-base font-semibold text-gray-800 dark:text-gray-200">Paper Settings</h3>
                 </div>
             </div>
             
-            <form id="parameterForm" action="{{ route('partner.exams.download-paper', $exam) }}" method="POST" class="p-6">
+            <form id="parameterForm" action="{{ route('partner.exams.download-paper', $exam) }}" method="POST" class="p-4">
                 @csrf
                 
                 <!-- Hidden data for JavaScript -->
@@ -350,67 +350,95 @@
                      style="display: none;">
                 </div>
                 
-                <!-- Professional Settings Grid -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+                <!-- Compact Settings Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                         
                     <!-- Paper Format -->
-                    <div class="bg-gradient-to-br from-white/80 to-slate-50/80 dark:from-slate-800/80 dark:to-slate-900/80 backdrop-blur-sm rounded-xl border border-slate-200/60 dark:border-slate-700/60 shadow-lg p-4">
-                        <div class="flex items-center space-x-2 mb-4">
-                            <div class="w-1.5 h-1.5 bg-gradient-to-r from-slate-500 to-slate-600 rounded-full shadow-sm"></div>
-                            <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Paper Format</h4>
+                    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+                        <div class="flex items-center space-x-2 mb-3">
+                            <div class="w-1 h-1 bg-blue-500 rounded-full"></div>
+                            <h4 class="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">Paper Format</h4>
                         </div>
                         
-                        <div class="space-y-3">
-                            <div class="grid grid-cols-2 gap-3">
+                        <div class="space-y-2">
+                            <div class="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label for="paper_size" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Paper Size</label>
-                                    <select id="paper_size" name="paper_size" class="w-full px-3 py-2.5 text-sm bg-white/90 dark:bg-slate-800/90 border border-slate-300/60 dark:border-slate-600/60 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:text-white shadow-sm transition-all duration-200 hover:shadow-md">
-                                        <option value="A4" selected>A4 (210 × 297 mm)</option>
-                                        <option value="Letter">Letter (8.5 × 11 in)</option>
-                                        <option value="Legal">Legal (8.5 × 14 in)</option>
+                                    <label for="paper_size" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Size</label>
+                                    <select id="paper_size" name="paper_size" class="w-full px-2 py-1.5 text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:text-white">
+                                        <option value="A4" selected>A4</option>
+                                        <option value="Letter">Letter</option>
+                                        <option value="Legal">Legal</option>
                                     </select>
                                 </div>
                                 
                                 <div>
-                                    <label for="orientation" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Orientation</label>
-                                    <select id="orientation" name="orientation" class="w-full px-3 py-2.5 text-sm bg-white/90 dark:bg-slate-800/90 border border-slate-300/60 dark:border-slate-600/60 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:text-white shadow-sm transition-all duration-200 hover:shadow-md">
+                                    <label for="orientation" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Orientation</label>
+                                    <select id="orientation" name="orientation" class="w-full px-2 py-1.5 text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:text-white">
                                         <option value="portrait" selected>Portrait</option>
                                         <option value="landscape">Landscape</option>
                                     </select>
                                 </div>
-                                </div>
+                            </div>
                                 
-                            <div class="grid grid-cols-2 gap-3">
+                            <div class="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label for="paper_columns" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Columns</label>
-                                    <select id="paper_columns" name="paper_columns" class="w-full px-3 py-2.5 text-sm bg-white/90 dark:bg-slate-800/90 border border-slate-300/60 dark:border-slate-600/60 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:text-white shadow-sm transition-all duration-200 hover:shadow-md">
+                                    <label for="paper_columns" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Columns</label>
+                                    <select id="paper_columns" name="paper_columns" class="w-full px-2 py-1.5 text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:text-white">
                                         <option value="1" selected>1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                     </select>
-                            </div>
-                            
-                                    <div>
-                                    <label for="adjust_to_percentage" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Scale (%)</label>
-                                    <input type="number" id="adjust_to_percentage" name="adjust_to_percentage" value="100" min="10" max="500" class="w-full px-3 py-2.5 text-sm bg-white/90 dark:bg-slate-800/90 border border-slate-300/60 dark:border-slate-600/60 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:text-white shadow-sm transition-all duration-200 hover:shadow-md">
-                                    </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                    <!-- Typography & Content -->
-                    <div class="bg-gradient-to-br from-white/80 to-slate-50/80 dark:from-slate-800/80 dark:to-slate-900/80 backdrop-blur-sm rounded-xl border border-slate-200/60 dark:border-slate-700/60 shadow-lg p-4">
-                        <div class="flex items-center space-x-2 mb-4">
-                            <div class="w-1.5 h-1.5 bg-gradient-to-r from-slate-500 to-slate-600 rounded-full shadow-sm"></div>
-                            <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Typography & Content</h4>
                                 </div>
                                 
-                        <div class="space-y-3">
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <div>
-                                    <label for="font_family" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Font Family</label>
-                                    <select id="font_family" name="font_family" class="w-full px-3 py-2.5 text-sm bg-white/90 dark:bg-slate-800/90 border border-slate-300/60 dark:border-slate-600/60 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:text-white shadow-sm transition-all duration-200 hover:shadow-md">
+                                <div>
+                                    <label for="adjust_to_percentage" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Scale (%)</label>
+                                    <input type="number" id="adjust_to_percentage" name="adjust_to_percentage" value="100" min="10" max="500" class="w-full px-2 py-1.5 text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:text-white">
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-4 gap-2">
+                                <div>
+                                    <label for="margin_top" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Top</label>
+                                    <input type="number" id="margin_top" name="margin_top" value="0" min="0" max="50" class="w-full px-2 py-1.5 text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:text-white">
+                                </div>
+                                
+                                <div>
+                                    <label for="margin_bottom" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Bottom</label>
+                                    <input type="number" id="margin_bottom" name="margin_bottom" value="0" min="0" max="50" class="w-full px-2 py-1.5 text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:text-white">
+                                </div>
+                                
+                                <div>
+                                    <label for="margin_left" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Left</label>
+                                    <input type="number" id="margin_left" name="margin_left" value="0" min="0" max="50" class="w-full px-2 py-1.5 text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:text-white">
+                                </div>
+                                
+                                <div>
+                                    <label for="margin_right" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Right</label>
+                                    <input type="number" id="margin_right" name="margin_right" value="0" min="0" max="50" class="w-full px-2 py-1.5 text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:text-white">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                            
+                    <!-- Typography & Content -->
+                    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-1 h-1 bg-blue-500 rounded-full"></div>
+                                <h4 class="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">Typography & Content</h4>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <input type="checkbox" id="include_header" name="include_header" value="1" checked class="w-3 h-3 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 focus:ring-1 dark:focus:ring-blue-400 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
+                                <label for="include_header" class="text-xs font-medium text-gray-600 dark:text-gray-400">Include Header</label>
+                            </div>
+                        </div>
+                                
+                        <div class="space-y-2">
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label for="font_family" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Font</label>
+                                    <select id="font_family" name="font_family" class="w-full px-2 py-1.5 text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:text-white">
                                          <option value="Arial">Arial</option>
                                          <option value="Times New Roman">Times New Roman</option>
                                          <option value="Calibri" selected>Calibri</option>
@@ -420,8 +448,8 @@
                                 </div>
                                 
                                 <div>
-                                    <label for="font_size" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Font Size</label>
-                                    <select id="font_size" name="font_size" class="w-full px-3 py-2.5 text-sm bg-white/90 dark:bg-slate-800/90 border border-slate-300/60 dark:border-slate-600/60 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:text-white shadow-sm transition-all duration-200 hover:shadow-md">
+                                    <label for="font_size" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Size</label>
+                                    <select id="font_size" name="font_size" class="w-full px-2 py-1.5 text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:text-white">
                                          <option value="10" selected>10pt</option>
                                          <option value="11">11pt</option>
                                          <option value="12">12pt</option>
@@ -429,12 +457,12 @@
                                          <option value="16">16pt</option>
                                      </select>
                                 </div>
-                                </div>
+                            </div>
                                 
-                            <div class="grid grid-cols-2 gap-3">
+                            <div class="grid grid-cols-2 gap-2">
                                 <div>
-                                    <label for="line_spacing" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Line Spacing</label>
-                                    <select id="line_spacing" name="line_spacing" class="w-full px-3 py-2.5 text-sm bg-white/90 dark:bg-slate-800/90 border border-slate-300/60 dark:border-slate-600/60 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:text-white shadow-sm transition-all duration-200 hover:shadow-md">
+                                    <label for="line_spacing" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Line Spacing</label>
+                                    <select id="line_spacing" name="line_spacing" class="w-full px-2 py-1.5 text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:text-white">
                                         <option value="1.0" selected>Single</option>
                                          <option value="1.15">1.15</option>
                                          <option value="1.5">1.5</option>
@@ -443,8 +471,8 @@
                                 </div>
                                 
                                 <div>
-                                    <label for="mcq_columns" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">MCQ Columns</label>
-                                    <select id="mcq_columns" name="mcq_columns" class="w-full px-3 py-2.5 text-sm bg-white/90 dark:bg-slate-800/90 border border-slate-300/60 dark:border-slate-600/60 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:text-white shadow-sm transition-all duration-200 hover:shadow-md">
+                                    <label for="mcq_columns" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">MCQ Columns</label>
+                                    <select id="mcq_columns" name="mcq_columns" class="w-full px-2 py-1.5 text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:text-white">
                                          <option value="1">1</option>
                                          <option value="2">2</option>
                                          <option value="3">3</option>
@@ -452,92 +480,48 @@
                                      </select>
                                 </div>
                             </div>
-                        </div>
-                                </div>
-                                
-                    <!-- Margins -->
-                    <div class="bg-gradient-to-br from-white/80 to-slate-50/80 dark:from-slate-800/80 dark:to-slate-900/80 backdrop-blur-sm rounded-xl border border-slate-200/60 dark:border-slate-700/60 shadow-lg p-4">
-                        <div class="flex items-center space-x-2 mb-4">
-                            <div class="w-1.5 h-1.5 bg-gradient-to-r from-slate-500 to-slate-600 rounded-full shadow-sm"></div>
-                            <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Margins (mm)</h4>
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-3">
+                            
+                            <div class="grid grid-cols-2 gap-2">
                                 <div>
-                                <label for="margin_top" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Top</label>
-                                <input type="number" id="margin_top" name="margin_top" value="0" min="0" max="50" class="w-full px-3 py-2.5 text-sm bg-white/90 dark:bg-slate-800/90 border border-slate-300/60 dark:border-slate-600/60 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:text-white shadow-sm transition-all duration-200 hover:shadow-md">
-                                </div>
-                            
-                            <div>
-                                <label for="margin_bottom" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Bottom</label>
-                                <input type="number" id="margin_bottom" name="margin_bottom" value="0" min="0" max="50" class="w-full px-3 py-2.5 text-sm bg-white/90 dark:bg-slate-800/90 border border-slate-300/60 dark:border-slate-600/60 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:text-white shadow-sm transition-all duration-200 hover:shadow-md">
-                            </div>
-                            
-                            <div>
-                                <label for="margin_left" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Left</label>
-                                <input type="number" id="margin_left" name="margin_left" value="0" min="0" max="50" class="w-full px-3 py-2.5 text-sm bg-white/90 dark:bg-slate-800/90 border border-slate-300/60 dark:border-slate-600/60 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:text-white shadow-sm transition-all duration-200 hover:shadow-md">
-                                           </div>
-                            
-                            <div>
-                                <label for="margin_right" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Right</label>
-                                <input type="number" id="margin_right" name="margin_right" value="0" min="0" max="50" class="w-full px-3 py-2.5 text-sm bg-white/90 dark:bg-slate-800/90 border border-slate-300/60 dark:border-slate-600/60 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:text-white shadow-sm transition-all duration-200 hover:shadow-md">
-                            </div>
-                                           </div>
-                                       </div>
-                                       
-                    <!-- Header Settings -->
-                    <div class="bg-gradient-to-br from-white/80 to-slate-50/80 dark:from-slate-800/80 dark:to-slate-900/80 backdrop-blur-sm rounded-xl border border-slate-200/60 dark:border-slate-700/60 shadow-lg p-4">
-                        <div class="space-y-3 mb-4">
-                            <div class="flex items-center space-x-2">
-                                <div class="w-1.5 h-1.5 bg-gradient-to-r from-slate-500 to-slate-600 rounded-full shadow-sm"></div>
-                                <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Header Settings</h4>
-                            </div>
-                            
-                            <div class="flex items-center space-x-6">
-                                <div class="flex items-center space-x-2">
-                                    <input type="checkbox" id="include_header" name="include_header" value="1" checked class="w-4 h-4 text-blue-600 bg-white border-slate-300 rounded focus:ring-blue-500/50 focus:ring-2 dark:focus:ring-blue-400 dark:ring-offset-slate-800 dark:bg-slate-700 dark:border-slate-600 shadow-sm">
-                                    <label for="include_header" class="text-xs font-semibold text-slate-600 dark:text-slate-400">Include Header</label>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <input type="checkbox" id="mark_answer" name="mark_answer" value="1" class="w-4 h-4 text-blue-600 bg-white border-slate-300 rounded focus:ring-blue-500/50 focus:ring-2 dark:focus:ring-blue-400 dark:ring-offset-slate-800 dark:bg-slate-700 dark:border-slate-600 shadow-sm">
-                                    <label for="mark_answer" class="text-xs font-semibold text-slate-600 dark:text-slate-400">Mark Correct Answers</label>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="space-y-3">
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label for="header_span" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Header Span</label>
-                                    <select id="header_span" name="header_span" class="w-full px-3 py-2.5 text-sm bg-white/90 dark:bg-slate-800/90 border border-slate-300/60 dark:border-slate-600/60 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:text-white shadow-sm transition-all duration-200 hover:shadow-md">
+                                    <label for="header_span" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Header Span</label>
+                                    <select id="header_span" name="header_span" class="w-full px-2 py-1.5 text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:text-white">
                                         <option value="1" selected>1 Column</option>
                                         <option value="2">2 Columns</option>
                                         <option value="3">3 Columns</option>
                                         <option value="4">4 Columns</option>
                                         <option value="full">Full Width</option>
-                                                 </select>
-                                             </div>
+                                    </select>
+                                </div>
                                 
                                 <div>
-                                    <label for="header_push" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Header Push</label>
-                                    <select id="header_push" name="header_push" class="w-full px-3 py-2.5 text-sm bg-white/90 dark:bg-slate-800/90 border border-slate-300/60 dark:border-slate-600/60 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:text-white shadow-sm transition-all duration-200 hover:shadow-md">
+                                    <label for="header_push" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Header Push</label>
+                                    <select id="header_push" name="header_push" class="w-full px-2 py-1.5 text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:text-white">
                                         <option value="1st_col" selected>1st Column</option>
                                         <option value="2nd_col">2nd Column</option>
                                         <option value="3rd_col">3rd Column</option>
                                         <option value="4th_col">4th Column</option>
-                                                 </select>
-                                        </div>
-                                  </div>
-                                  </div>
+                                    </select>
+                                </div>
+                            </div>
+                                  
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="flex items-center space-x-2">
+                                    <input type="checkbox" id="mark_answer" name="mark_answer" value="1" class="w-3 h-3 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 focus:ring-1 dark:focus:ring-blue-400 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
+                                    <label for="mark_answer" class="text-xs font-medium text-gray-600 dark:text-gray-400">Mark Correct Answers</label>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <input type="checkbox" id="show_page_number" name="show_page_number" value="1" class="w-3 h-3 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 focus:ring-1 dark:focus:ring-blue-400 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
+                                    <label for="show_page_number" class="text-xs font-medium text-gray-600 dark:text-gray-400">Show Page Number</label>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                                 <!-- Action Buttons -->
-                <div class="flex items-center justify-between pt-6 mt-6 border-t border-slate-200/60 dark:border-slate-700/60 bg-gradient-to-r from-slate-50/50 to-slate-100/50 dark:from-slate-800/50 dark:to-slate-900/50 -mx-6 px-6 py-4 rounded-b-2xl">
+                <!-- Action Buttons -->
+                <div class="flex items-center justify-between pt-4 mt-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 -mx-4 px-4 py-3">
                      <a href="{{ route('partner.exams.show', $exam) }}" 
-                       class="flex items-center space-x-2 px-4 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-white/80 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 backdrop-blur-sm">
+                       class="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:shadow-sm transition-all duration-200">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                         </svg>
@@ -545,7 +529,7 @@
                      </a>
                      
                      <button type="button" id="downloadPdfBtn"
-                            class="flex items-center space-x-2 px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-sm font-bold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
+                            class="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
@@ -817,6 +801,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const orientation = params.orientation || 'portrait';
             const sizeClass = `${paperSize.toLowerCase()}-${orientation}`;
             const adjustToPercentage = parseInt(params.adjust_to_percentage) || 100;
+            const showPageNumber = params.show_page_number === '1';
             
             console.log(`Page ${pageNum}: Creating page container with sizeClass: ${sizeClass}, paperSize: ${paperSize}, orientation: ${orientation}`);
             
@@ -826,8 +811,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 scalingClasses += ' adjust-to-percentage';
             }
             
-            html += `<div class="page-container ${sizeClass}${scalingClasses}" data-columns="${paperColumns}" data-page="${pageNum}" data-paper-size="${paperSize}" data-orientation="${orientation}" style="--adjust-percentage: ${adjustToPercentage / 100};">`;
+            html += `<div class="page-container ${sizeClass}${scalingClasses}" data-columns="${paperColumns}" data-page="${pageNum}" data-paper-size="${paperSize}" data-orientation="${orientation}" style="--adjust-percentage: ${adjustToPercentage / 100}; position: relative;">`;
             console.log(`Created page container ${pageNum} with ${paperColumns} columns, size: ${paperSize} ${orientation}`);
+            
+            // Add page number if enabled
+            if (showPageNumber) {
+                html += `<div class="page-number" style="position: absolute; bottom: 10px; right: 10px; font-size: 10pt; color: #666; z-index: 10;">Page ${pageNum} of ${totalPages}</div>`;
+            }
             
             
             // Questions for this page - fill completely before moving to next page
@@ -1697,6 +1687,17 @@ document.addEventListener('DOMContentLoaded', function() {
         .page-container:last-child {
             page-break-after: avoid !important;
             break-after: avoid !important;
+        }
+        
+        /* Page numbering */
+        .page-number {
+            position: absolute !important;
+            bottom: 10px !important;
+            right: 10px !important;
+            font-size: 10pt !important;
+            color: #666 !important;
+            z-index: 10 !important;
+            font-family: "${exactStyles.fontFamily}" !important;
         }
         
         /* Override with inline styles if they exist */
