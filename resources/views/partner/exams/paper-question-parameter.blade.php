@@ -33,9 +33,9 @@
                           /* Header container styling */
         .header-container {
             background: rgba(248, 250, 252, 0.8);
-            border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 15px;
+            border-radius: 4px;
+            padding: 5px;
+            margin-bottom: 8px;
             grid-column: 1 / -1; /* Default to span all columns */
             height: auto !important;
             min-height: auto !important;
@@ -63,22 +63,15 @@
             background: rgba(239, 68, 68, 0.1) !important; /* Red tint for 4 column span */
         }
         
-      
-        /* Header span styles - now handled within page containers */
-     
-        /* Questions container styling - now handled by questions-grid */
-      
                 /* Page container styling */
         #livePreview .page-container {
             background: white;
-            margin: 20px auto;
-            padding: 20px;
-            border-radius: 8px;
+            margin: 0;
+            padding: 0;
+            border-radius: 0;
             page-break-inside: avoid;
             break-inside: avoid;
-            width: 210mm; /* A4 width */
-            min-height: 297mm; /* A4 height */
-            max-width: 210mm;
+            border-green-500;
             box-sizing: border-box;
             position: relative;
         }
@@ -87,53 +80,41 @@
         #livePreview .page-container.a4-portrait {
             width: 210mm;
             min-height: 297mm;
-            max-width: 210mm;
+            
         }
         
         #livePreview .page-container.a4-landscape {
             width: 297mm;
             min-height: 210mm;
-            max-width: 297mm;
+            
         }
         
         /* Letter size */
         #livePreview .page-container.letter-portrait {
             width: 8.5in;
             min-height: 11in;
-            max-width: 8.5in;
+    
         }
         
         #livePreview .page-container.letter-landscape {
             width: 11in;
             min-height: 8.5in;
-            max-width: 11in;
+            
         }
         
         /* Legal size */
         #livePreview .page-container.legal-portrait {
             width: 8.5in;
             min-height: 14in;
-            max-width: 8.5in;
+            
         }
         
         #livePreview .page-container.legal-landscape {
             width: 14in;
             min-height: 8.5in;
-            max-width: 14in;
+        
         }
         
-        /* A3 size */
-        #livePreview .page-container.a3-portrait {
-            width: 297mm;
-            min-height: 420mm;
-            max-width: 297mm;
-        }
-        
-        #livePreview .page-container.a3-landscape {
-            width: 420mm;
-            min-height: 297mm;
-            max-width: 420mm;
-        }
         
         /* True size mode - no scaling */
         #livePreview.true-size .page-container {
@@ -170,7 +151,7 @@
         }
         
         #livePreview.true-size .page-container {
-            margin: 10px auto;
+            margin: 0 auto;
         }
         
         /* Margin area visualization */
@@ -181,16 +162,9 @@
         /* Margin area grid - shows area outside margins */
         .margin-area-grid {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
             pointer-events: none;
             z-index: 0;
-            background-image: 
-                linear-gradient(rgba(255, 0, 0, 0.2) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 0, 0, 0.2) 1px, transparent 1px);
-            background-size: 20px 20px;
+            background: rgba(255, 0, 0, 0.2);
         }
         
         /* Content area - shows printable area within margins */
@@ -200,13 +174,21 @@
             border: 2px solid rgba(0, 255, 0, 0.5);
             pointer-events: none;
             z-index: 1;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            box-sizing: border-box;
         }
         
         
         /* Multi-column layout within pages - now handled by questions-grid */
         #livePreview .questions-grid {
             display: grid !important;
-            gap: 20px !important;
+            gap: 10px !important;
             position: relative;
         }
         
@@ -221,10 +203,10 @@
         /* Question column styling */
         #livePreview .question-column {
             min-width: 0;
-            padding: 0 10px;
+            padding: 0 5px;
             border: 1px dashed #ccc;
             background: rgba(0, 0, 0, 0.02);
-            min-height: 200px;
+            min-height: 100px;
         }
         
         
@@ -241,19 +223,19 @@
         
         /* Question styling */
         #livePreview .question {
-            margin-bottom: 15px;
-            padding: 10px;
-            border-left: 3px solid #3b82f6;
+            margin-bottom: 8px;
+            padding: 5px;
+            border-left: 2px solid #3b82f6;
             background: #f8fafc;
-            border-radius: 4px;
+            border-radius: 2px;
         }
         
         /* Header styling */
         #livePreview .header-container {
             background: #f1f5f9;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            padding: 8px;
+            border-radius: 4px;
+            margin-bottom: 10px;
             text-align: center;
             border: 1px solid #e2e8f0;
         }
@@ -275,6 +257,14 @@
      .header-container[style*="grid-column"] {
          width: 100%;
      }
+     
+     /* Scaling functionality */
+     .adjust-to-percentage {
+         transform: scale(var(--adjust-percentage, 1)) !important;
+         transform-origin: center !important;
+     }
+     
+     
       
      
 </style>
@@ -282,7 +272,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <!-- Header -->
-        <div class="text-center mb-8">
+        <div class="text-center mb-0">
             <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full mb-4 shadow-lg">
                 <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -325,13 +315,15 @@
         </div>
 
         <!-- Paper Settings Form -->
-        <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg overflow-hidden mb-8">
-            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Paper Settings</h3>
-                <p class="text-sm text-gray-600 dark:text-gray-400">Configure your question paper parameters</p>
+        <div class="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 shadow-2xl rounded-2xl border border-slate-200/50 dark:border-slate-700/50 mb-6 backdrop-blur-sm">
+            <div class="px-6 py-4 border-b border-slate-200/60 dark:border-slate-700/60 bg-gradient-to-r from-slate-100/50 to-slate-200/50 dark:from-slate-800/50 dark:to-slate-700/50 rounded-t-2xl">
+                <div class="flex items-center space-x-3">
+                    <div class="w-2 h-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full shadow-lg"></div>
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200 bg-gradient-to-r from-slate-700 to-slate-900 dark:from-slate-300 dark:to-slate-100 bg-clip-text text-transparent">Paper Settings</h3>
+                </div>
             </div>
             
-                         <form id="parameterForm" action="{{ route('partner.exams.download-paper', $exam) }}" method="POST" class="p-4">
+            <form id="parameterForm" action="{{ route('partner.exams.download-paper', $exam) }}" method="POST" class="p-6">
                 @csrf
                 
                 <!-- Hidden data for JavaScript -->
@@ -358,82 +350,67 @@
                      style="display: none;">
                 </div>
                 
-                <!-- Paper Format Section -->
-                <div class="space-y-6">
-                    <!-- Two Column Grid Layout -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Professional Settings Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
                         
-                        <!-- Layout Column -->
-                        <div class="space-y-4">
-                            <h4 class="text-lg font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">Layout</h4>
-                            
-                            <!-- Paper Size, Orientation and Paper Columns -->
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Paper Format -->
+                    <div class="bg-gradient-to-br from-white/80 to-slate-50/80 dark:from-slate-800/80 dark:to-slate-900/80 backdrop-blur-sm rounded-xl border border-slate-200/60 dark:border-slate-700/60 shadow-lg p-4">
+                        <div class="flex items-center space-x-2 mb-4">
+                            <div class="w-1.5 h-1.5 bg-gradient-to-r from-slate-500 to-slate-600 rounded-full shadow-sm"></div>
+                            <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Paper Format</h4>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div class="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label for="paper_size" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Paper Size</label>
-                                    <select id="paper_size" name="paper_size" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
+                                    <label for="paper_size" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Paper Size</label>
+                                    <select id="paper_size" name="paper_size" class="w-full px-3 py-2.5 text-sm bg-white/90 dark:bg-slate-800/90 border border-slate-300/60 dark:border-slate-600/60 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:text-white shadow-sm transition-all duration-200 hover:shadow-md">
                                         <option value="A4" selected>A4 (210 × 297 mm)</option>
                                         <option value="Letter">Letter (8.5 × 11 in)</option>
                                         <option value="Legal">Legal (8.5 × 14 in)</option>
-                                        <option value="A3">A3 (297 × 420 mm)</option>
                                     </select>
                                 </div>
                                 
                                 <div>
-                                    <label for="orientation" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Orientation</label>
-                                    <select id="orientation" name="orientation" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
+                                    <label for="orientation" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Orientation</label>
+                                    <select id="orientation" name="orientation" class="w-full px-3 py-2.5 text-sm bg-white/90 dark:bg-slate-800/90 border border-slate-300/60 dark:border-slate-600/60 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:text-white shadow-sm transition-all duration-200 hover:shadow-md">
                                         <option value="portrait" selected>Portrait</option>
                                         <option value="landscape">Landscape</option>
                                     </select>
                                 </div>
+                                </div>
                                 
+                            <div class="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label for="paper_columns" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Columns</label>
-                                    <select id="paper_columns" name="paper_columns" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
+                                    <label for="paper_columns" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Columns</label>
+                                    <select id="paper_columns" name="paper_columns" class="w-full px-3 py-2.5 text-sm bg-white/90 dark:bg-slate-800/90 border border-slate-300/60 dark:border-slate-600/60 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:text-white shadow-sm transition-all duration-200 hover:shadow-md">
                                         <option value="1" selected>1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                     </select>
+                            </div>
+                            
+                                    <div>
+                                    <label for="adjust_to_percentage" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Scale (%)</label>
+                                    <input type="number" id="adjust_to_percentage" name="adjust_to_percentage" value="100" min="10" max="500" class="w-full px-3 py-2.5 text-sm bg-white/90 dark:bg-slate-800/90 border border-slate-300/60 dark:border-slate-600/60 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:text-white shadow-sm transition-all duration-200 hover:shadow-md">
+                                    </div>
+                                    </div>
                                 </div>
                             </div>
                             
-                            <!-- Margins -->
-                            <div class="space-y-3">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Margins (mm)</label>
-                                <div class="grid grid-cols-4 gap-3">
-                                    <div>
-                                        <label for="margin_top" class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Top</label>
-                                        <input type="number" id="margin_top" name="margin_top" value="25" min="10" max="50" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
-                                    </div>
-                                    
-                                    <div>
-                                        <label for="margin_bottom" class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Bottom</label>
-                                        <input type="number" id="margin_bottom" name="margin_bottom" value="25" min="10" max="50" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
-                                    </div>
-                                    
-                                    <div>
-                                        <label for="margin_left" class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Left</label>
-                                        <input type="number" id="margin_left" name="margin_left" value="20" min="10" max="50" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
-                                    </div>
-                                    
-                                    <div>
-                                        <label for="margin_right" class="block text-xs text-gray-600 dark:text-gray-400 mb-1">Right</label>
-                                        <input type="number" id="margin_right" name="margin_right" value="20" min="10" max="50" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
-                                    </div>
+                    <!-- Typography & Content -->
+                    <div class="bg-gradient-to-br from-white/80 to-slate-50/80 dark:from-slate-800/80 dark:to-slate-900/80 backdrop-blur-sm rounded-xl border border-slate-200/60 dark:border-slate-700/60 shadow-lg p-4">
+                        <div class="flex items-center space-x-2 mb-4">
+                            <div class="w-1.5 h-1.5 bg-gradient-to-r from-slate-500 to-slate-600 rounded-full shadow-sm"></div>
+                            <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Typography & Content</h4>
                                 </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Display Options Column -->
-                        <div class="space-y-4 lg:col-span-2">
-                            <h4 class="text-lg font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">Display Options</h4>
-                            
-                            <!-- Font Settings, Line Spacing, MCQ Columns and Header Span -->
-                            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-                                <div>
-                                    <label for="font_family" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Font Family</label>
-                                                                         <select id="font_family" name="font_family" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
+                                
+                        <div class="space-y-3">
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                    <label for="font_family" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Font Family</label>
+                                    <select id="font_family" name="font_family" class="w-full px-3 py-2.5 text-sm bg-white/90 dark:bg-slate-800/90 border border-slate-300/60 dark:border-slate-600/60 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:text-white shadow-sm transition-all duration-200 hover:shadow-md">
                                          <option value="Arial">Arial</option>
                                          <option value="Times New Roman">Times New Roman</option>
                                          <option value="Calibri" selected>Calibri</option>
@@ -443,8 +420,8 @@
                                 </div>
                                 
                                 <div>
-                                    <label for="font_size" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Font Size</label>
-                                                                         <select id="font_size" name="font_size" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
+                                    <label for="font_size" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Font Size</label>
+                                    <select id="font_size" name="font_size" class="w-full px-3 py-2.5 text-sm bg-white/90 dark:bg-slate-800/90 border border-slate-300/60 dark:border-slate-600/60 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:text-white shadow-sm transition-all duration-200 hover:shadow-md">
                                          <option value="10" selected>10pt</option>
                                          <option value="11">11pt</option>
                                          <option value="12">12pt</option>
@@ -452,90 +429,128 @@
                                          <option value="16">16pt</option>
                                      </select>
                                 </div>
+                                </div>
                                 
+                            <div class="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label for="line_spacing" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Line Spacing</label>
-                                                                         <select id="line_spacing" name="line_spacing" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
-                                         <option value="1.0" selected>Single (1.0)</option>
+                                    <label for="line_spacing" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Line Spacing</label>
+                                    <select id="line_spacing" name="line_spacing" class="w-full px-3 py-2.5 text-sm bg-white/90 dark:bg-slate-800/90 border border-slate-300/60 dark:border-slate-600/60 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:text-white shadow-sm transition-all duration-200 hover:shadow-md">
+                                        <option value="1.0" selected>Single</option>
                                          <option value="1.15">1.15</option>
                                          <option value="1.5">1.5</option>
-                                         <option value="2.0">Double (2.0)</option>
+                                        <option value="2.0">Double</option>
                                      </select>
                                 </div>
                                 
                                 <div>
-                                    <label for="mcq_columns" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">MCQ Columns</label>
-                                                                         <select id="mcq_columns" name="mcq_columns" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
+                                    <label for="mcq_columns" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">MCQ Columns</label>
+                                    <select id="mcq_columns" name="mcq_columns" class="w-full px-3 py-2.5 text-sm bg-white/90 dark:bg-slate-800/90 border border-slate-300/60 dark:border-slate-600/60 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:text-white shadow-sm transition-all duration-200 hover:shadow-md">
                                          <option value="1">1</option>
                                          <option value="2">2</option>
                                          <option value="3">3</option>
                                          <option value="4" selected>4</option>
                                      </select>
                                 </div>
-                                
-                                <div>
-                                    <label for="header_span" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Header Span</label>
-                                                                         <select id="header_span" name="header_span" class="w-full px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
-                                         <option value="1" selected>1</option>
-                                         <option value="2">2</option>
-                                         <option value="3">3</option>
-                                         <option value="4">4</option>
-                                         <option value="full">Full Width</option>
-                                     </select>
+                            </div>
+                        </div>
                                 </div>
+                                
+                    <!-- Margins -->
+                    <div class="bg-gradient-to-br from-white/80 to-slate-50/80 dark:from-slate-800/80 dark:to-slate-900/80 backdrop-blur-sm rounded-xl border border-slate-200/60 dark:border-slate-700/60 shadow-lg p-4">
+                        <div class="flex items-center space-x-2 mb-4">
+                            <div class="w-1.5 h-1.5 bg-gradient-to-r from-slate-500 to-slate-600 rounded-full shadow-sm"></div>
+                            <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Margins (mm)</h4>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                <label for="margin_top" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Top</label>
+                                <input type="number" id="margin_top" name="margin_top" value="0" min="0" max="50" class="w-full px-3 py-2.5 text-sm bg-white/90 dark:bg-slate-800/90 border border-slate-300/60 dark:border-slate-600/60 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:text-white shadow-sm transition-all duration-200 hover:shadow-md">
+                                </div>
+                            
+                            <div>
+                                <label for="margin_bottom" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Bottom</label>
+                                <input type="number" id="margin_bottom" name="margin_bottom" value="0" min="0" max="50" class="w-full px-3 py-2.5 text-sm bg-white/90 dark:bg-slate-800/90 border border-slate-300/60 dark:border-slate-600/60 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:text-white shadow-sm transition-all duration-200 hover:shadow-md">
                             </div>
                             
-                                                                                      <!-- Content Options -->
-                              <div class="space-y-3">
-                                  <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Content Options</label>
-                                  <div class="grid grid-cols-2 gap-4">
-                                      <div class="space-y-2">
-                                                                                     <div class="flex items-center">
-                                               <input type="checkbox" id="include_header" name="include_header" value="1" checked class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                               <label for="include_header" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Header</label>
-                                               <span class="ml-2 text-xs text-gray-500">(Title, Model Test, Full Marks & Time)</span>
+                            <div>
+                                <label for="margin_left" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Left</label>
+                                <input type="number" id="margin_left" name="margin_left" value="0" min="0" max="50" class="w-full px-3 py-2.5 text-sm bg-white/90 dark:bg-slate-800/90 border border-slate-300/60 dark:border-slate-600/60 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:text-white shadow-sm transition-all duration-200 hover:shadow-md">
                                            </div>
-                                                                                     <div class="flex items-center">
-                                               <input type="checkbox" id="mark_answer" name="mark_answer" value="1" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                               <label for="mark_answer" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Mark Answer</label>
-                                               <span class="ml-2 text-xs text-gray-500">(Check to show correct answers)</span>
+                            
+                            <div>
+                                <label for="margin_right" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Right</label>
+                                <input type="number" id="margin_right" name="margin_right" value="0" min="0" max="50" class="w-full px-3 py-2.5 text-sm bg-white/90 dark:bg-slate-800/90 border border-slate-300/60 dark:border-slate-600/60 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:text-white shadow-sm transition-all duration-200 hover:shadow-md">
+                            </div>
                                            </div>
                                        </div>
                                        
-                                                                               <div class="space-y-2">
-                                                                                         <div class="flex items-center">
-                                                 <label for="header_push" class="text-sm font-medium text-gray-900 dark:text-gray-300 mr-3">Header Push:</label>
-                                                 <select id="header_push" name="header_push" class="px-2 py-1.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white text-sm">
-                                                     <option value="1st_col" selected>1st Col</option>
-                                                     <option value="2nd_col">2nd Col</option>
-                                                     <option value="3rd_col">3rd Col</option>
-                                                     <option value="4th_col">4th Col</option>
+                    <!-- Header Settings -->
+                    <div class="bg-gradient-to-br from-white/80 to-slate-50/80 dark:from-slate-800/80 dark:to-slate-900/80 backdrop-blur-sm rounded-xl border border-slate-200/60 dark:border-slate-700/60 shadow-lg p-4">
+                        <div class="space-y-3 mb-4">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-1.5 h-1.5 bg-gradient-to-r from-slate-500 to-slate-600 rounded-full shadow-sm"></div>
+                                <h4 class="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Header Settings</h4>
+                            </div>
+                            
+                            <div class="flex items-center space-x-6">
+                                <div class="flex items-center space-x-2">
+                                    <input type="checkbox" id="include_header" name="include_header" value="1" checked class="w-4 h-4 text-blue-600 bg-white border-slate-300 rounded focus:ring-blue-500/50 focus:ring-2 dark:focus:ring-blue-400 dark:ring-offset-slate-800 dark:bg-slate-700 dark:border-slate-600 shadow-sm">
+                                    <label for="include_header" class="text-xs font-semibold text-slate-600 dark:text-slate-400">Include Header</label>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <input type="checkbox" id="mark_answer" name="mark_answer" value="1" class="w-4 h-4 text-blue-600 bg-white border-slate-300 rounded focus:ring-blue-500/50 focus:ring-2 dark:focus:ring-blue-400 dark:ring-offset-slate-800 dark:bg-slate-700 dark:border-slate-600 shadow-sm">
+                                    <label for="mark_answer" class="text-xs font-semibold text-slate-600 dark:text-slate-400">Mark Correct Answers</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label for="header_span" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Header Span</label>
+                                    <select id="header_span" name="header_span" class="w-full px-3 py-2.5 text-sm bg-white/90 dark:bg-slate-800/90 border border-slate-300/60 dark:border-slate-600/60 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:text-white shadow-sm transition-all duration-200 hover:shadow-md">
+                                        <option value="1" selected>1 Column</option>
+                                        <option value="2">2 Columns</option>
+                                        <option value="3">3 Columns</option>
+                                        <option value="4">4 Columns</option>
+                                        <option value="full">Full Width</option>
                                                  </select>
                                              </div>
+                                
+                                <div>
+                                    <label for="header_push" class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Header Push</label>
+                                    <select id="header_push" name="header_push" class="w-full px-3 py-2.5 text-sm bg-white/90 dark:bg-slate-800/90 border border-slate-300/60 dark:border-slate-600/60 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 dark:text-white shadow-sm transition-all duration-200 hover:shadow-md">
+                                        <option value="1st_col" selected>1st Column</option>
+                                        <option value="2nd_col">2nd Column</option>
+                                        <option value="3rd_col">3rd Column</option>
+                                        <option value="4th_col">4th Column</option>
+                                                 </select>
                                         </div>
                                   </div>
-                              </div>
+                                  </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
                                  <!-- Action Buttons -->
-                 <div class="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between pt-6 mt-6 border-t border-slate-200/60 dark:border-slate-700/60 bg-gradient-to-r from-slate-50/50 to-slate-100/50 dark:from-slate-800/50 dark:to-slate-900/50 -mx-6 px-6 py-4 rounded-b-2xl">
                      <a href="{{ route('partner.exams.show', $exam) }}" 
-                        class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
-                         ← Back to Exam
+                       class="flex items-center space-x-2 px-4 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-white/80 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 backdrop-blur-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                        <span>Back to Exam</span>
                      </a>
                      
                      <button type="button" id="downloadPdfBtn"
-                             class="px-6 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-indigo-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
-                         📄 Download as PDF
+                            class="flex items-center space-x-2 px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-sm font-bold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <span>Download PDF</span>
                      </button>
-                     @if(config('app.debug'))
-                     <button type="button" id="testPdfBtn"
-                             class="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-600 text-white font-semibold rounded-lg hover:from-purple-600 hover:to-pink-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
-                         🧪 Test PDF
-                     </button>
-                     @endif
                  </div>
             </form>
         </div>
@@ -589,6 +604,19 @@ document.addEventListener('DOMContentLoaded', function() {
                  const formData = new FormData(form);
          const params = Object.fromEntries(formData.entries());
          console.log('Form params:', params);
+         console.log('Paper size:', params.paper_size);
+         console.log('Orientation:', params.orientation);
+         console.log('Margin values from form:', {
+             top: params.margin_top,
+             right: params.margin_right,
+             bottom: params.margin_bottom,
+             left: params.margin_left
+         });
+         
+         // Debug: Check if paper size select is working
+         const paperSizeSelect = document.getElementById('paper_size');
+         console.log('Paper size select value:', paperSizeSelect ? paperSizeSelect.value : 'NOT FOUND');
+         console.log('Paper size select selectedIndex:', paperSizeSelect ? paperSizeSelect.selectedIndex : 'NOT FOUND');
          console.log('Mark Answer checkbox value:', params.mark_answer);
          console.log('Mark Answer checkbox type:', typeof params.mark_answer);
          console.log('MCQ columns:', params.mcq_columns);
@@ -656,6 +684,22 @@ document.addEventListener('DOMContentLoaded', function() {
          previewContainer.style.fontSize = (params.font_size || 12) + 'pt';
          previewContainer.style.lineHeight = params.line_spacing || 1.5;
          
+         // Apply scaling settings
+         const adjustToPercentage = parseInt(params.adjust_to_percentage) || 100;
+         
+         // Apply adjust to percentage scaling
+             document.querySelectorAll('.page-container').forEach(pageContainer => {
+                 // Remove existing scaling classes
+             pageContainer.classList.remove('adjust-to-percentage');
+                 
+                 // Apply adjust to percentage scaling
+                 if (adjustToPercentage !== 100) {
+                     pageContainer.classList.add('adjust-to-percentage');
+                     pageContainer.style.setProperty('--adjust-percentage', adjustToPercentage / 100);
+                 }
+             });
+         
+         
          // Apply paper format settings to page containers
          const paperSize = params.paper_size || 'A4';
          const orientation = params.orientation || 'portrait';
@@ -663,28 +707,35 @@ document.addEventListener('DOMContentLoaded', function() {
          
          // Update all page containers with the correct paper size class and margins
          document.querySelectorAll('.page-container').forEach((pageContainer, index) => {
+             console.log(`Updating page container ${index + 1}: current classes:`, pageContainer.className);
              // Remove all existing paper size classes
-             pageContainer.classList.remove('a4-portrait', 'a4-landscape', 'letter-portrait', 'letter-landscape', 'legal-portrait', 'legal-landscape', 'a3-portrait', 'a3-landscape');
+             pageContainer.classList.remove('a4-portrait', 'a4-landscape', 'letter-portrait', 'letter-landscape', 'legal-portrait', 'legal-landscape');
              
              // Add the correct paper size class
              pageContainer.classList.add(sizeClass);
+             console.log(`Updated page container ${index + 1}: new classes:`, pageContainer.className);
              
              // Update data attributes
              pageContainer.setAttribute('data-paper-size', paperSize);
              pageContainer.setAttribute('data-orientation', orientation);
              
-             // Apply margin values from form to the page container
-             const marginTop = (parseInt(params.margin_top) || 20) + 'px';
-             const marginRight = (parseInt(params.margin_right) || 20) + 'px';
-             const marginBottom = (parseInt(params.margin_bottom) || 20) + 'px';
-             const marginLeft = (parseInt(params.margin_left) || 20) + 'px';
+             // Apply margin values from form to the page container (convert mm to px)
+             const marginTop = (parseInt(params.margin_top) || 0) * 3.7795275591 + 'px'; // 1mm = 3.7795275591px
+             const marginRight = (parseInt(params.margin_right) || 0) * 3.7795275591 + 'px';
+             const marginBottom = (parseInt(params.margin_bottom) || 0) * 3.7795275591 + 'px';
+             const marginLeft = (parseInt(params.margin_left) || 0) * 3.7795275591 + 'px';
              
-             pageContainer.style.marginTop = marginTop;
-             pageContainer.style.marginRight = marginRight;
-             pageContainer.style.marginBottom = marginBottom;
-             pageContainer.style.marginLeft = marginLeft;
+             // Set page container margins to 0 to use full width
+             pageContainer.style.marginTop = '0px';
+             pageContainer.style.marginRight = '0px';
+             pageContainer.style.marginBottom = '0px';
+             pageContainer.style.marginLeft = '0px';
+             
+             // Don't apply margins as padding - only use visual indicators
+             // The margin visualization will show the margin areas without affecting layout
              
              // Add margin area grid visualization
+             console.log(`Adding margin visualization to page container ${index + 1}`);
              addMarginAreaGrid(pageContainer, params);
              
              // Log the exact dimensions being applied
@@ -765,8 +816,17 @@ document.addEventListener('DOMContentLoaded', function() {
             const paperSize = params.paper_size || 'A4';
             const orientation = params.orientation || 'portrait';
             const sizeClass = `${paperSize.toLowerCase()}-${orientation}`;
+            const adjustToPercentage = parseInt(params.adjust_to_percentage) || 100;
             
-            html += `<div class="page-container ${sizeClass}" data-columns="${paperColumns}" data-page="${pageNum}" data-paper-size="${paperSize}" data-orientation="${orientation}">`;
+            console.log(`Page ${pageNum}: Creating page container with sizeClass: ${sizeClass}, paperSize: ${paperSize}, orientation: ${orientation}`);
+            
+            // Determine scaling classes
+            let scalingClasses = '';
+            if (adjustToPercentage !== 100) {
+                scalingClasses += ' adjust-to-percentage';
+            }
+            
+            html += `<div class="page-container ${sizeClass}${scalingClasses}" data-columns="${paperColumns}" data-page="${pageNum}" data-paper-size="${paperSize}" data-orientation="${orientation}" style="--adjust-percentage: ${adjustToPercentage / 100};">`;
             console.log(`Created page container ${pageNum} with ${paperColumns} columns, size: ${paperSize} ${orientation}`);
             
             
@@ -900,24 +960,42 @@ document.addEventListener('DOMContentLoaded', function() {
         return html;
     }
     
-    // Function to calculate questions per page based on A4 dimensions
+    // Helper function to get paper dimensions in mm
+    function getPaperDimensions(paperSize, orientation) {
+        const dimensions = {
+            'A4': { portrait: { width: 210, height: 297 }, landscape: { width: 297, height: 210 } },
+            'Letter': { portrait: { width: 216, height: 279 }, landscape: { width: 279, height: 216 } }, // 8.5" x 11" in mm
+            'Legal': { portrait: { width: 216, height: 356 }, landscape: { width: 356, height: 216 } }  // 8.5" x 14" in mm
+        };
+        
+        return dimensions[paperSize][orientation] || dimensions['A4']['portrait'];
+    }
+    
+    // Function to calculate questions per page based on selected paper size
     function calculateQuestionsPerPage(params) {
+        console.log('calculateQuestionsPerPage called with params:', params);
         const fontSize = parseInt(params.font_size) || 12;
         const lineSpacing = parseFloat(params.line_spacing) || 1.5;
         const paperColumns = parseInt(params.paper_columns) || 1;
         
-        // A4 dimensions in mm: 210mm x 297mm
-        const pageHeight = 297;
-        const pageWidth = 210;
+        // Get paper dimensions based on selected paper size and orientation
+        const paperSize = params.paper_size || 'A4';
+        const orientation = params.orientation || 'portrait';
+        console.log('Using paper size:', paperSize, 'orientation:', orientation);
+        const dimensions = getPaperDimensions(paperSize, orientation);
+        console.log('Paper dimensions:', dimensions);
+        
+        const pageHeight = dimensions.height;
+        const pageWidth = dimensions.width;
         
         // Margins (top, bottom, left, right) in mm
-        const marginTop = 20;
-        const marginBottom = 20;
-        const marginLeft = 15;
-        const marginRight = 15;
+        const marginTop = 0;
+        const marginBottom = 0;
+        const marginLeft = 0;
+        const marginRight = 0;
         
         // Header height in mm (if included)
-        const headerHeight = params.include_header ? 40 : 0;
+        const headerHeight = params.include_header ? 20 : 0;
         
         // Available height for questions
         const availableHeight = pageHeight - marginTop - marginBottom - headerHeight;
@@ -940,12 +1018,22 @@ document.addEventListener('DOMContentLoaded', function() {
             questionsPerPage = Math.floor(questionsPerPage * 2); // Double the questions with columns
         }
         
-        // Ensure minimum questions per page - increase minimum for better filling
-        // Allow more questions per page to match what preview actually shows
-        questionsPerPage = Math.max(25, questionsPerPage);
+        // Ensure minimum questions per page based on paper size
+        // Legal size should allow more questions than A4
+        let minQuestions = 25; // Default for A4
+        if (paperSize === 'Legal') {
+            minQuestions = 35; // Legal is taller, can fit more questions
+        } else if (paperSize === 'Letter') {
+            minQuestions = 28; // Letter is slightly shorter than A4
+        }
         
-        console.log('A4 Page Calculation:', {
+        questionsPerPage = Math.max(minQuestions, questionsPerPage);
+        
+        console.log(`${paperSize} ${orientation} Page Calculation:`, {
+            paperSize,
+            orientation,
             pageHeight,
+            pageWidth,
             availableHeight,
             lineHeightMm,
             avgQuestionHeightMm,
@@ -971,8 +1059,15 @@ document.addEventListener('DOMContentLoaded', function() {
             questionsForPage = baseQuestionsPerPage * paperColumns;
         } else {
             // For single column, use the base calculation but allow more questions
-            // Increase the limit to match what the preview actually shows
-            questionsForPage = Math.max(baseQuestionsPerPage, 30); // Allow up to 30 questions per page
+            // Use dynamic minimum based on paper size
+            const paperSize = params.paper_size || 'A4';
+            let minQuestions = 30; // Default for A4
+            if (paperSize === 'Legal') {
+                minQuestions = 40; // Legal is taller, can fit more questions
+            } else if (paperSize === 'Letter') {
+                minQuestions = 32; // Letter is slightly shorter than A4
+            }
+            questionsForPage = Math.max(baseQuestionsPerPage, minQuestions);
         }
         
         const finalCount = Math.min(questionsForPage, remainingQuestions);
@@ -995,32 +1090,44 @@ document.addEventListener('DOMContentLoaded', function() {
      function addMarginAreaGrid(pageContainer, params) {
          console.log('Adding margin area grid to page container');
          
-         // Remove existing margin area grid if any
-         const existingGrid = pageContainer.querySelector('.margin-area-grid');
-         if (existingGrid) {
-             existingGrid.remove();
-         }
+         // Remove existing margin area grids if any
+         const existingGrids = pageContainer.querySelectorAll('.margin-area-grid');
+         existingGrids.forEach(grid => grid.remove());
+         console.log(`Removed ${existingGrids.length} existing margin area grids`);
          
          const existingContentArea = pageContainer.querySelector('.content-area');
          if (existingContentArea) {
              existingContentArea.remove();
          }
          
-         // Get margin values
-         const marginTop = parseInt(params.margin_top) || 20;
-         const marginRight = parseInt(params.margin_right) || 20;
-         const marginBottom = parseInt(params.margin_bottom) || 20;
-         const marginLeft = parseInt(params.margin_left) || 20;
+         // Get margin values and convert mm to px
+         const marginTop = (parseInt(params.margin_top) || 0) * 3.7795275591; // 1mm = 3.7795275591px
+         const marginRight = (parseInt(params.margin_right) || 0) * 3.7795275591;
+         const marginBottom = (parseInt(params.margin_bottom) || 0) * 3.7795275591;
+         const marginLeft = (parseInt(params.margin_left) || 0) * 3.7795275591;
          
-         console.log('Margin values:', { marginTop, marginRight, marginBottom, marginLeft });
+         console.log('Margin values (mm to px):', { marginTop, marginRight, marginBottom, marginLeft });
+         console.log('Original margin values (mm):', { 
+             top: parseInt(params.margin_top) || 0, 
+             right: parseInt(params.margin_right) || 0, 
+             bottom: parseInt(params.margin_bottom) || 0, 
+             left: parseInt(params.margin_left) || 0 
+         });
          
          // Create content area (shows printable area within margins)
          const contentArea = document.createElement('div');
          contentArea.className = 'content-area';
-         contentArea.style.top = marginTop + 'px';
-         contentArea.style.left = marginLeft + 'px';
-         contentArea.style.right = marginRight + 'px';
-         contentArea.style.bottom = marginBottom + 'px';
+         contentArea.style.position = 'absolute';
+         contentArea.style.top = marginTop;
+         contentArea.style.left = marginLeft;
+         contentArea.style.right = marginRight;
+         contentArea.style.bottom = marginBottom;
+         contentArea.style.background = 'rgba(0, 255, 0, 0.1)';
+         contentArea.style.border = '2px solid rgba(0, 255, 0, 0.5)';
+         contentArea.style.pointerEvents = 'none';
+         contentArea.style.zIndex = '1';
+         contentArea.style.width = 'auto';
+         contentArea.style.height = 'auto';
          pageContainer.appendChild(contentArea);
          
          // Create margin area grids for each side (non-printable areas)
@@ -1028,47 +1135,89 @@ document.addEventListener('DOMContentLoaded', function() {
          if (marginTop > 0) {
              const topMarginArea = document.createElement('div');
              topMarginArea.className = 'margin-area-grid';
+             topMarginArea.style.position = 'absolute';
              topMarginArea.style.top = '0px';
              topMarginArea.style.left = '0px';
              topMarginArea.style.right = '0px';
              topMarginArea.style.height = marginTop + 'px';
+             topMarginArea.style.background = 'rgba(255, 0, 0, 0.2)';
+             topMarginArea.style.pointerEvents = 'none';
+             topMarginArea.style.zIndex = '-1';
              pageContainer.appendChild(topMarginArea);
          }
          
          // Bottom margin area
          if (marginBottom > 0) {
+             console.log('Creating bottom margin area with height:', marginBottom + 'px');
              const bottomMarginArea = document.createElement('div');
              bottomMarginArea.className = 'margin-area-grid';
+             bottomMarginArea.style.position = 'absolute';
              bottomMarginArea.style.bottom = '0px';
              bottomMarginArea.style.left = '0px';
              bottomMarginArea.style.right = '0px';
              bottomMarginArea.style.height = marginBottom + 'px';
+             bottomMarginArea.style.background = 'rgba(255, 0, 0, 0.2)';
+             bottomMarginArea.style.pointerEvents = 'none';
+             bottomMarginArea.style.zIndex = '-1';
              pageContainer.appendChild(bottomMarginArea);
+             console.log('Bottom margin area created and appended');
+         } else {
+             console.log('No bottom margin area created (marginBottom = 0)');
          }
          
          // Left margin area
          if (marginLeft > 0) {
              const leftMarginArea = document.createElement('div');
              leftMarginArea.className = 'margin-area-grid';
+             leftMarginArea.style.position = 'absolute';
              leftMarginArea.style.top = '0px';
              leftMarginArea.style.left = '0px';
              leftMarginArea.style.width = marginLeft + 'px';
              leftMarginArea.style.bottom = '0px';
+             leftMarginArea.style.background = 'rgba(255, 0, 0, 0.2)';
+             leftMarginArea.style.pointerEvents = 'none';
+             leftMarginArea.style.zIndex = '-1';
              pageContainer.appendChild(leftMarginArea);
          }
          
          // Right margin area
          if (marginRight > 0) {
+             console.log('Creating right margin area with width:', marginRight + 'px');
              const rightMarginArea = document.createElement('div');
              rightMarginArea.className = 'margin-area-grid';
+             rightMarginArea.style.position = 'absolute';
              rightMarginArea.style.top = '0px';
              rightMarginArea.style.right = '0px';
              rightMarginArea.style.width = marginRight + 'px';
              rightMarginArea.style.bottom = '0px';
+             rightMarginArea.style.background = 'rgba(255, 0, 0, 0.2)';
+             rightMarginArea.style.pointerEvents = 'none';
+             rightMarginArea.style.zIndex = '-1';
              pageContainer.appendChild(rightMarginArea);
+             console.log('Right margin area created and appended');
+         } else {
+             console.log('No right margin area created (marginRight = 0)');
          }
          
-         console.log('Margin area grids and content area added');
+         // Count how many margin areas were actually created
+         const createdGrids = pageContainer.querySelectorAll('.margin-area-grid');
+         console.log(`Margin area grids and content area added. Total margin areas created: ${createdGrids.length}`);
+         
+         // Log what margin areas exist
+         createdGrids.forEach((grid, index) => {
+             const rect = grid.getBoundingClientRect();
+             console.log(`Margin area ${index + 1}:`, {
+                 position: grid.style.position,
+                 top: grid.style.top,
+                 right: grid.style.right,
+                 bottom: grid.style.bottom,
+                 left: grid.style.left,
+                 width: grid.style.width,
+                 height: grid.style.height,
+                 background: grid.style.background,
+                 zIndex: grid.style.zIndex
+             });
+         });
      }
      
           // Function to generate HTML for a single question
@@ -1201,13 +1350,6 @@ document.addEventListener('DOMContentLoaded', function() {
          });
      }
      
-     // Test PDF functionality (debug mode only)
-     const testPdfBtn = document.getElementById('testPdfBtn');
-     if (testPdfBtn) {
-         testPdfBtn.addEventListener('click', function() {
-             testPDFGeneration();
-         });
-     }
      
      // Function to download PDF
      function downloadPDF() {
@@ -1387,8 +1529,6 @@ document.addEventListener('DOMContentLoaded', function() {
              return orientation === 'landscape' ? '11in' : '8.5in';
          } else if (paperSize === 'Legal') {
              return orientation === 'landscape' ? '14in' : '8.5in';
-         } else if (paperSize === 'A3') {
-             return orientation === 'landscape' ? '420mm' : '297mm';
          }
          return '210mm'; // Default to A4 portrait
      }
@@ -1403,8 +1543,6 @@ document.addEventListener('DOMContentLoaded', function() {
              return orientation === 'landscape' ? '8.5in' : '11in';
          } else if (paperSize === 'Legal') {
              return orientation === 'landscape' ? '8.5in' : '14in';
-         } else if (paperSize === 'A3') {
-             return orientation === 'landscape' ? '297mm' : '420mm';
          }
          return '297mm'; // Default to A4 portrait
      }
@@ -1444,7 +1582,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <style>
         @page {
             size: ${params.paper_size || 'A4'} ${params.orientation || 'portrait'};
-            margin: ${params.margin_top || '20'}mm ${params.margin_right || '20'}mm ${params.margin_bottom || '20'}mm ${params.margin_left || '20'}mm;
+            margin: ${params.margin_top || '0'}mm ${params.margin_right || '0'}mm ${params.margin_bottom || '0'}mm ${params.margin_left || '0'}mm;
         }
         
         * {
@@ -1479,11 +1617,11 @@ document.addEventListener('DOMContentLoaded', function() {
         
         /* Exact page container styling - match preview pixel by pixel */
         .page-container {
-            border: 3px solid #3b82f6 !important;
+            border: 1px solid #3b82f6 !important;
             background: white !important;
-            margin: 20px auto !important;
-            padding: 20px !important;
-            border-radius: 8px !important;
+            margin: 0 !important;
+            padding: ${params.margin_top || '0'}mm ${params.margin_right || '0'}mm ${params.margin_bottom || '0'}mm ${params.margin_left || '0'}mm !important;
+            border-radius: 0 !important;
             page-break-inside: avoid !important;
             break-inside: avoid !important;
             width: ${getPageWidth(params)} !important;
@@ -1491,7 +1629,16 @@ document.addEventListener('DOMContentLoaded', function() {
             max-width: ${getPageWidth(params)} !important;
             box-sizing: border-box !important;
             position: relative !important;
+            text-align: left !important;
         }
+        
+        /* Scaling functionality for PDF */
+        .adjust-to-percentage {
+            transform: scale(var(--adjust-percentage, 1)) !important;
+            transform-origin: center !important;
+        }
+        
+        
         
         /* Apply exact same styling as preview to ALL elements */
         .page-container, .page-container * {
@@ -1512,13 +1659,13 @@ document.addEventListener('DOMContentLoaded', function() {
         /* Header styling - exact match */
         .header-container {
             background: rgba(248, 250, 252, 0.8) !important;
-            border-radius: 8px !important;
-            padding: 10px !important;
-            margin-bottom: 15px !important;
+            border-radius: 4px !important;
+            padding: 5px !important;
+            margin-bottom: 2px !important;
             text-align: center !important;
             border-bottom: 2px solid #333 !important;
-            padding-bottom: 15px !important;
-            margin-bottom: 20px !important;
+            padding-bottom: 2px !important;
+            margin-bottom: 2px !important;
             width: 100% !important;
             clear: both !important;
             font-family: "${exactStyles.fontFamily}" !important;
@@ -1529,10 +1676,10 @@ document.addEventListener('DOMContentLoaded', function() {
         
         /* Question styling - exact match */
         .question {
-            margin-bottom: 15px !important;
-            padding: 10px !important;
+            margin-bottom: 8px !important;
+            padding: 5px !important;
             border: 1px solid #e5e7eb !important;
-            border-radius: 4px !important;
+            border-radius: 2px !important;
             font-family: "${exactStyles.fontFamily}" !important;
             font-size: ${exactStyles.fontSize} !important;
             line-height: ${exactStyles.lineHeight} !important;
@@ -1606,7 +1753,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         .question-column {
-            padding: 0 10px !important;
+            padding: 0 5px !important;
             min-width: 0 !important;
             float: left !important;
             box-sizing: border-box !important;
@@ -1647,7 +1794,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 padding: 0 !important;
             }
             .page-container { 
-                margin: 20px auto !important; 
+                margin: 0 !important; 
+                padding: ${params.margin_top || '0'}mm ${params.margin_right || '0'}mm ${params.margin_bottom || '0'}mm ${params.margin_left || '0'}mm !important;
             }
         }
     </style>
@@ -1660,139 +1808,13 @@ document.addEventListener('DOMContentLoaded', function() {
 </html>`;
      }
      
-     // Function to test PDF generation
-     function testPDFGeneration() {
-         const testBtn = document.getElementById('testPdfBtn');
-         const originalText = testBtn.innerHTML;
-         
-         // Show loading state
-         testBtn.innerHTML = '⏳ Testing PDF Generation...';
-         testBtn.disabled = true;
-         
-         fetch('{{ route("partner.exams.test-pdf", $exam) }}', {
-             method: 'GET',
-             headers: {
-                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-             }
-         })
-         .then(response => {
-             if (!response.ok) {
-                 throw new Error(`HTTP error! status: ${response.status}`);
-             }
-             return response.json();
-         })
-         .then(data => {
-             // Check if there's an error in the response
-             if (data.error) {
-                 throw new Error(data.message || data.error);
-             }
-             
-             // Show results in a modal or alert
-             let resultMessage = 'PDF Generation Test Results:\n\n';
-             resultMessage += `Total Tests: ${data.summary.total_tests}\n`;
-             resultMessage += `Successful: ${data.summary.successful}\n`;
-             resultMessage += `Failed: ${data.summary.failed}\n\n`;
-             
-             data.test_results.forEach(result => {
-                 if (result.status === 'success') {
-                     resultMessage += `✅ ${result.paper_size} ${result.orientation}: ${result.generation_time_ms}ms (${Math.round(result.pdf_size_bytes/1024)}KB)\n`;
-                 } else {
-                     resultMessage += `❌ ${result.paper_size} ${result.orientation}: ${result.error}\n`;
-                 }
-             });
-             
-             alert(resultMessage);
-             
-             // Show success message
-             testBtn.innerHTML = '✅ Test Complete!';
-             setTimeout(() => {
-                 testBtn.innerHTML = originalText;
-                 testBtn.disabled = false;
-             }, 2000);
-         })
-         .catch(error => {
-             console.error('Test Error:', error);
-             testBtn.innerHTML = '❌ Test Failed';
-             setTimeout(() => {
-                 testBtn.innerHTML = originalText;
-                 testBtn.disabled = false;
-             }, 3000);
-             
-             // Show detailed error message
-             let errorMessage = 'Failed to run PDF tests.\n\n';
-             errorMessage += `Error: ${error.message}\n\n`;
-             errorMessage += 'Possible causes:\n';
-             errorMessage += '• Browsershot/Chrome not installed\n';
-             errorMessage += '• Server configuration issues\n';
-             errorMessage += '• Memory or timeout issues\n\n';
-             errorMessage += 'Please check the browser console and server logs for more details.';
-             
-             alert(errorMessage);
-         });
-     }
      
-     // Function to debug preview vs PDF differences
-     function debugPreviewPDF() {
-         console.log('=== DEBUGGING PREVIEW VS PDF ===');
-         
-         // Get current preview HTML
-         const previewHTML = previewContainer.innerHTML;
-         console.log('Preview HTML length:', previewHTML.length);
-         
-         // Create a sample div to analyze
-         const sampleDiv = document.createElement('div');
-         sampleDiv.innerHTML = previewHTML;
-         
-         // Analyze page containers
-         const pageContainers = sampleDiv.querySelectorAll('.page-container');
-         console.log('Number of page containers:', pageContainers.length);
-         
-         pageContainers.forEach((page, index) => {
-             console.log(`Page ${index + 1}:`, {
-                 dataPage: page.getAttribute('data-page'),
-                 dataColumns: page.getAttribute('data-columns'),
-                 inlineStyles: page.getAttribute('style'),
-                 computedStyles: {
-                     width: window.getComputedStyle(page).width,
-                     height: window.getComputedStyle(page).height,
-                     fontSize: window.getComputedStyle(page).fontSize,
-                     fontFamily: window.getComputedStyle(page).fontFamily,
-                     margin: window.getComputedStyle(page).margin,
-                     padding: window.getComputedStyle(page).padding,
-                     border: window.getComputedStyle(page).border,
-                     boxShadow: window.getComputedStyle(page).boxShadow
-                 }
-             });
-         });
-         
-         // Analyze questions
-         const questions = sampleDiv.querySelectorAll('.question');
-         console.log('Number of questions:', questions.length);
-         
-         if (questions.length > 0) {
-             const firstQuestion = questions[0];
-             console.log('First question styles:', {
-                 inlineStyles: firstQuestion.getAttribute('style'),
-                 computedStyles: {
-                     fontSize: window.getComputedStyle(firstQuestion).fontSize,
-                     fontFamily: window.getComputedStyle(firstQuestion).fontFamily,
-                     margin: window.getComputedStyle(firstQuestion).margin,
-                     padding: window.getComputedStyle(firstQuestion).padding,
-                     border: window.getComputedStyle(firstQuestion).border
-                 }
-             });
-         }
-         
-         console.log('=== END DEBUG ===');
-     }
 
      
              // Initial preview
         console.log('DOM loaded, calling updatePreview');
         updatePreview();
         
-        // Add debug function to window for console access
-        window.debugPreviewPDF = debugPreviewPDF;
     });
 </script>
 @endsection
