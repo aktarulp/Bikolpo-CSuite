@@ -315,11 +315,24 @@
         </div>
 
         <!-- Paper Settings Form -->
-        <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg border border-gray-200 dark:border-gray-700 mb-6">
-            <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
-                <div class="flex items-center space-x-2">
-                    <div class="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
-                    <h3 class="text-base font-semibold text-gray-800 dark:text-gray-200">Paper Settings</h3>
+        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 shadow-xl rounded-xl border-2 border-blue-200 dark:border-blue-800 mb-6 relative overflow-hidden">
+            <!-- Decorative background pattern -->
+            <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-100/30 to-transparent dark:from-blue-800/20 dark:to-transparent rounded-full -translate-y-16 translate-x-16"></div>
+            <div class="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-indigo-100/30 to-transparent dark:from-indigo-800/20 dark:to-transparent rounded-full translate-y-12 -translate-x-12"></div>
+            
+            <div class="px-4 py-3 border-b border-blue-200 dark:border-blue-800 bg-gradient-to-r from-blue-100/50 to-indigo-100/50 dark:from-blue-900/30 dark:to-indigo-900/30 relative">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-md">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-base font-bold text-blue-900 dark:text-blue-100 bg-gradient-to-r from-blue-800 to-indigo-800 dark:from-blue-200 dark:to-indigo-200 bg-clip-text text-transparent">Paper Settings</h3>
+                    <div class="ml-auto flex items-center space-x-1">
+                        <div class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                        <div class="w-2 h-2 bg-indigo-400 rounded-full animate-pulse" style="animation-delay: 0.2s;"></div>
+                        <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse" style="animation-delay: 0.4s;"></div>
+                    </div>
                 </div>
             </div>
             
@@ -354,10 +367,17 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                         
                     <!-- Paper Format -->
-                    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3">
-                        <div class="flex items-center space-x-2 mb-3">
-                            <div class="w-1 h-1 bg-blue-500 rounded-full"></div>
-                            <h4 class="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">Paper Format</h4>
+                    <div class="bg-gradient-to-br from-white to-blue-50/30 dark:from-gray-800 dark:to-blue-900/20 border-2 border-blue-200 dark:border-blue-700 rounded-xl p-3 shadow-lg relative overflow-hidden">
+                        <!-- Subtle background pattern -->
+                        <div class="absolute top-0 right-0 w-16 h-16 bg-blue-100/20 dark:bg-blue-800/10 rounded-full -translate-y-8 translate-x-8"></div>
+                        
+                        <div class="flex items-center space-x-2 mb-3 relative">
+                            <div class="w-6 h-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center shadow-sm">
+                                <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                            </div>
+                            <h4 class="text-xs font-bold text-blue-800 dark:text-blue-200 uppercase tracking-wide">Paper Format</h4>
                         </div>
                         
                         <div class="space-y-2">
@@ -422,15 +442,22 @@
                     </div>
                             
                     <!-- Typography & Content -->
-                    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3">
-                        <div class="flex items-center justify-between mb-3">
+                    <div class="bg-gradient-to-br from-white to-indigo-50/30 dark:from-gray-800 dark:to-indigo-900/20 border-2 border-indigo-200 dark:border-indigo-700 rounded-xl p-3 shadow-lg relative overflow-hidden">
+                        <!-- Subtle background pattern -->
+                        <div class="absolute top-0 right-0 w-16 h-16 bg-indigo-100/20 dark:bg-indigo-800/10 rounded-full -translate-y-8 translate-x-8"></div>
+                        
+                        <div class="flex items-center justify-between mb-3 relative">
                             <div class="flex items-center space-x-2">
-                                <div class="w-1 h-1 bg-blue-500 rounded-full"></div>
-                                <h4 class="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">Typography & Content</h4>
+                                <div class="w-6 h-6 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-sm">
+                                    <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                                <h4 class="text-xs font-bold text-indigo-800 dark:text-indigo-200 uppercase tracking-wide">Typography & Content</h4>
                             </div>
                             <div class="flex items-center space-x-2">
-                                <input type="checkbox" id="include_header" name="include_header" value="1" checked class="w-3 h-3 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 focus:ring-1 dark:focus:ring-blue-400 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
-                                <label for="include_header" class="text-xs font-medium text-gray-600 dark:text-gray-400">Include Header</label>
+                                <input type="checkbox" id="include_header" name="include_header" value="1" checked class="w-3 h-3 text-indigo-600 bg-white border-indigo-300 rounded focus:ring-indigo-500 focus:ring-1 dark:focus:ring-indigo-400 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-indigo-600">
+                                <label for="include_header" class="text-xs font-medium text-indigo-600 dark:text-indigo-400">Include Header</label>
                             </div>
                         </div>
                                 
@@ -519,9 +546,16 @@
                 </div>
                 
                 <!-- Action Buttons -->
-                <div class="flex items-center justify-between pt-4 mt-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 -mx-4 px-4 py-3">
+                <div class="flex items-center justify-between pt-4 mt-4 border-t-2 border-blue-200 dark:border-blue-800 bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-blue-900/20 dark:to-indigo-900/20 -mx-4 px-4 py-4 relative">
+                    <!-- Decorative elements -->
+                    <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full flex items-center justify-center shadow-lg">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    
                      <a href="{{ route('partner.exams.show', $exam) }}" 
-                       class="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:shadow-sm transition-all duration-200">
+                       class="flex items-center space-x-2 px-4 py-2.5 text-sm font-medium text-blue-700 dark:text-blue-300 hover:text-blue-900 dark:hover:text-blue-100 bg-white dark:bg-gray-800 border-2 border-blue-200 dark:border-blue-700 rounded-xl hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-200 transform hover:scale-105">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                         </svg>
@@ -529,7 +563,7 @@
                      </a>
                      
                      <button type="button" id="downloadPdfBtn"
-                            class="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
+                            class="flex items-center space-x-2 px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm font-bold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
