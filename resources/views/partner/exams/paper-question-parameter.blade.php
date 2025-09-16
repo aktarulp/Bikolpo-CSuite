@@ -80,78 +80,104 @@
         #livePreview .page-container.a4-portrait {
             width: 210mm;
             min-height: 297mm;
-            
+            border: 2px solid #3b82f6; /* Blue border for A4 */
         }
         
         #livePreview .page-container.a4-landscape {
             width: 297mm;
             min-height: 210mm;
-            
+            border: 2px solid #3b82f6; /* Blue border for A4 */
         }
         
         /* Letter size */
         #livePreview .page-container.letter-portrait {
-            width: 8.5in;
-            min-height: 11in;
-    
+            width: 216mm;
+            min-height: 279mm;
+            border: 2px solid #10b981; /* Green border for Letter */
         }
         
         #livePreview .page-container.letter-landscape {
-            width: 11in;
-            min-height: 8.5in;
-            
+            width: 279mm;
+            min-height: 216mm;
+            border: 2px solid #10b981; /* Green border for Letter */
         }
         
         /* Legal size */
         #livePreview .page-container.legal-portrait {
-            width: 8.5in;
-            min-height: 14in;
-            
+            width: 216mm;
+            min-height: 356mm;
+            border: 2px solid #f59e0b; /* Orange border for Legal */
         }
         
         #livePreview .page-container.legal-landscape {
-            width: 14in;
-            min-height: 8.5in;
-        
+            width: 356mm;
+            min-height: 216mm;
+            border: 2px solid #f59e0b; /* Orange border for Legal */
         }
         
         
-        /* True size mode - no scaling */
-        #livePreview.true-size .page-container {
-            transform: none !important;
+        /* Dynamic preview container sizing based on paper size */
+        #livePreview.preview-a4 {
+            max-width: 800px;
         }
         
-        /* Responsive scaling for smaller screens (only when not in true size mode) */
+        #livePreview.preview-letter {
+            max-width: 820px;
+        }
+        
+        #livePreview.preview-legal {
+            max-width: 820px;
+        }
+        
+        #livePreview.preview-a4-landscape,
+        #livePreview.preview-letter-landscape,
+        #livePreview.preview-legal-landscape {
+            max-width: 1100px;
+        }
+        
+        /* Responsive scaling for smaller screens */
         @media (max-width: 1200px) {
-            #livePreview:not(.true-size) .page-container {
+            #livePreview .page-container {
                 transform: scale(0.8);
                 transform-origin: top center;
+            }
+            #livePreview.preview-a4-landscape,
+            #livePreview.preview-letter-landscape,
+            #livePreview.preview-legal-landscape {
+                max-width: 900px;
             }
         }
         
         @media (max-width: 900px) {
-            #livePreview:not(.true-size) .page-container {
+            #livePreview .page-container {
                 transform: scale(0.6);
                 transform-origin: top center;
+            }
+            #livePreview.preview-a4,
+            #livePreview.preview-letter,
+            #livePreview.preview-legal {
+                max-width: 600px;
+            }
+            #livePreview.preview-a4-landscape,
+            #livePreview.preview-letter-landscape,
+            #livePreview.preview-legal-landscape {
+                max-width: 700px;
             }
         }
         
         @media (max-width: 600px) {
-            #livePreview:not(.true-size) .page-container {
+            #livePreview .page-container {
                 transform: scale(0.4);
                 transform-origin: top center;
             }
-        }
-        
-        /* True size mode styling */
-        #livePreview.true-size {
-            overflow-x: auto;
-            overflow-y: auto;
-            max-height: 80vh;
-        }
-        
-        #livePreview.true-size .page-container {
-            margin: 0 auto;
+            #livePreview.preview-a4,
+            #livePreview.preview-letter,
+            #livePreview.preview-legal,
+            #livePreview.preview-a4-landscape,
+            #livePreview.preview-letter-landscape,
+            #livePreview.preview-legal-landscape {
+                max-width: 100%;
+            }
         }
         
         /* Margin area visualization */
@@ -322,7 +348,7 @@
             
             <div class="px-4 py-3 border-b border-blue-200 dark:border-blue-800 bg-gradient-to-l from-blue-100/50 to-indigo-100/50 dark:from-blue-900/30 dark:to-indigo-900/30 relative">
                 <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-3">
                         <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-md">
                             <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
@@ -333,9 +359,9 @@
                             <div class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
                             <div class="w-2 h-2 bg-indigo-400 rounded-full animate-pulse" style="animation-delay: 0.2s;"></div>
                             <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse" style="animation-delay: 0.4s;"></div>
-                        </div>
-                    </div>
-                    
+                </div>
+            </div>
+            
                     <button type="button" id="saveSettingsBtn"
                             class="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-sm font-medium rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -408,7 +434,7 @@
                                         <option value="landscape">Landscape</option>
                                     </select>
                                 </div>
-                            </div>
+                                </div>
                                 
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
@@ -419,13 +445,13 @@
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                     </select>
-                                </div>
-                                
-                                <div>
+                            </div>
+                            
+                                    <div>
                                     <label for="adjust_to_percentage" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Scale (%)</label>
                                     <input type="number" id="adjust_to_percentage" name="adjust_to_percentage" value="100" min="10" max="500" class="w-full px-2 py-1.5 text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:text-white">
-                                </div>
-                            </div>
+                                    </div>
+                                    </div>
                             
                             <div class="grid grid-cols-4 gap-2">
                                 <div>
@@ -448,8 +474,8 @@
                                     <input type="number" id="margin_right" name="margin_right" value="0" min="0" max="50" class="w-full px-2 py-1.5 text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:text-white">
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                                </div>
+                            </div>
                             
                     <!-- Typography & Content -->
                     <div class="bg-gradient-to-br from-white to-indigo-50/30 dark:from-gray-800 dark:to-indigo-900/20 border-2 border-indigo-200 dark:border-indigo-700 rounded-xl p-3 shadow-lg relative overflow-hidden">
@@ -469,11 +495,11 @@
                                 <input type="checkbox" id="include_header" name="include_header" value="1" checked class="w-3 h-3 text-indigo-600 bg-white border-indigo-300 rounded focus:ring-indigo-500 focus:ring-1 dark:focus:ring-indigo-400 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-indigo-600">
                                 <label for="include_header" class="text-xs font-medium text-indigo-600 dark:text-indigo-400">Include Header</label>
                             </div>
-                        </div>
+                                </div>
                                 
                         <div class="space-y-2">
                             <div class="grid grid-cols-2 gap-2">
-                                <div>
+                                        <div>
                                     <label for="font_family" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Font</label>
                                     <select id="font_family" name="font_family" class="w-full px-2 py-1.5 text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:text-white">
                                          <option value="Arial">Arial</option>
@@ -494,7 +520,7 @@
                                          <option value="16">16pt</option>
                                      </select>
                                 </div>
-                            </div>
+                                </div>
                                 
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
@@ -515,9 +541,9 @@
                                          <option value="3">3</option>
                                          <option value="4" selected>4</option>
                                      </select>
+                        </div>
                                 </div>
-                            </div>
-                            
+                                
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
                                     <label for="header_span" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Header Span</label>
@@ -527,8 +553,8 @@
                                         <option value="3">3 Columns</option>
                                         <option value="4">4 Columns</option>
                                         <option value="full">Full Width</option>
-                                    </select>
-                                </div>
+                                                 </select>
+                                             </div>
                                 
                                 <div>
                                     <label for="header_push" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Header Push</label>
@@ -537,9 +563,9 @@
                                         <option value="2nd_col">2nd Column</option>
                                         <option value="3rd_col">3rd Column</option>
                                         <option value="4th_col">4th Column</option>
-                                    </select>
-                                </div>
-                            </div>
+                                                 </select>
+                                        </div>
+                                  </div>
                                   
                             <div class="grid grid-cols-2 gap-2">
                                 <div class="flex items-center space-x-2">
@@ -549,13 +575,13 @@
                                 <div class="flex items-center space-x-2">
                                     <input type="checkbox" id="show_page_number" name="show_page_number" value="1" class="w-3 h-3 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 focus:ring-1 dark:focus:ring-blue-400 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
                                     <label for="show_page_number" class="text-xs font-medium text-gray-600 dark:text-gray-400">Show Page Number</label>
-                                </div>
+                                  </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Action Buttons -->
+                                 <!-- Action Buttons -->
                 <div class="flex items-center justify-between pt-4 mt-4 border-t-2 border-blue-200 dark:border-blue-800 bg-gradient-to-r from-blue-50/50 to-indigo-50/50 dark:from-blue-900/20 dark:to-indigo-900/20 -mx-4 px-4 py-4 relative">
                     <!-- Decorative elements -->
                     <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-8 h-8 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full flex items-center justify-center shadow-lg">
@@ -590,13 +616,10 @@
                     <div>
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Live Preview</h3>
                         <p class="text-sm text-gray-600 dark:text-gray-400">See how your question paper will look</p>
+                        <div class="flex items-center space-x-2 mt-1">
+                            <span class="text-xs text-gray-500">Paper Size:</span>
+                            <span id="currentPaperSize" class="text-xs font-medium text-blue-600 bg-blue-100 px-2 py-1 rounded">A4 Portrait</span>
                     </div>
-                    <div class="flex items-center space-x-3">
-                        <span class="text-sm text-gray-600 dark:text-gray-400" id="scaleIndicator">Scaled to fit screen</span>
-                        <button type="button" id="trueSizeToggle" 
-                                class="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-medium rounded-lg hover:from-green-600 hover:to-emerald-700 transform hover:scale-105 transition-all duration-200 shadow-md">
-                            📏 True Size
-                        </button>
                     </div>
                 </div>
             </div>
@@ -621,25 +644,46 @@ document.addEventListener('DOMContentLoaded', function() {
     const previewContainer = document.getElementById('livePreview');
     const form = document.getElementById('parameterForm');
     
-    // Load saved settings if available
-    loadSavedSettings();
-    
-    // Continuous page layout - no current page tracking needed
-    
-    // Navigation removed - all pages displayed continuously
-    
-             // Function to update live preview
+    // Define updatePreview function first
     function updatePreview() {
-        console.log('updatePreview called');
+        try {
+            console.log('🚀 updatePreview called');
+            
+            // Get elements fresh to avoid scope issues
+            const currentForm = document.getElementById('parameterForm');
+            const currentPreviewContainer = document.getElementById('livePreview');
+            
+            // Check if form exists
+            if (!currentForm) {
+                console.error('❌ Form not found!');
+                return;
+            }
+            
+            // Check if previewContainer exists
+            if (!currentPreviewContainer) {
+                console.error('❌ Preview container not found!');
+                return;
+            }
+            
+            console.log('✅ Both form and previewContainer found');
         
-                 const formData = new FormData(form);
-         const params = Object.fromEntries(formData.entries());
-         console.log('Form params:', params);
-         console.log('Paper size:', params.paper_size);
-         console.log('Orientation:', params.orientation);
-         console.log('Margin values from form:', {
-             top: params.margin_top,
-             right: params.margin_right,
+        // First, let's clear the placeholder message
+        currentPreviewContainer.innerHTML = '<div class="text-center text-blue-500 py-4">🔄 Generating preview...</div>';
+        console.log('🔄 Cleared placeholder message');
+        
+        const formData = new FormData(currentForm);
+        const params = Object.fromEntries(formData.entries());
+        console.log('📋 Form params:', params);
+        
+        // Check if we have basic required parameters
+        if (!params.paper_size) {
+            console.warn('⚠️ Paper size not found in form data');
+        }
+        console.log('Paper size:', params.paper_size);
+        console.log('Orientation:', params.orientation);
+        console.log('Margin values from form:', {
+            top: params.margin_top,
+            right: params.margin_right,
              bottom: params.margin_bottom,
              left: params.margin_left
          });
@@ -653,10 +697,19 @@ document.addEventListener('DOMContentLoaded', function() {
          console.log('MCQ columns:', params.mcq_columns);
          console.log('Paper columns:', params.paper_columns);
          console.log('Font size:', params.font_size);
-         console.log('Current preview container classes:', previewContainer.className);
+         console.log('Current preview container classes:', currentPreviewContainer.className);
         
                  // Get exam data from the page
          const examDataElement = document.getElementById('examData');
+         console.log('🔍 examDataElement found:', !!examDataElement);
+         
+         if (!examDataElement) {
+             console.error('❌ examData element not found!');
+             return;
+         }
+         
+         console.log('📊 examDataElement dataset:', examDataElement.dataset);
+         
          const examData = {
              title: examDataElement.dataset.title,
              id: parseInt(examDataElement.dataset.id),
@@ -666,7 +719,23 @@ document.addEventListener('DOMContentLoaded', function() {
              question_header: examDataElement.dataset.questionHeader,
              questions: JSON.parse(examDataElement.dataset.questions)
          };
-         console.log('Exam data:', examData);
+         console.log('📚 Exam data:', examData);
+         console.log('📝 Total questions:', examData.questions.length);
+         
+         if (examData.questions.length === 0) {
+             console.warn('⚠️ No questions found for this exam!');
+             currentPreviewContainer.innerHTML = `
+                 <div class="text-center text-red-500 py-8">
+                     <svg class="w-12 h-12 mx-auto mb-4 text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                     </svg>
+                     <p class="text-lg font-medium">No Questions Found</p>
+                     <p class="text-sm">This exam doesn't have any questions assigned yet.</p>
+                 </div>
+             `;
+             return;
+         }
+         
          console.log('Questions with correct answers:', examData.questions.map(q => ({
              question_text: q.question_text.substring(0, 50) + '...',
              correct_answer: q.correct_answer,
@@ -674,9 +743,30 @@ document.addEventListener('DOMContentLoaded', function() {
          })));
         
                  // Generate preview HTML
-         const previewHTML = generatePreviewHTML(examData, params);
-         console.log('Preview HTML generated, length:', previewHTML.length);
-         previewContainer.innerHTML = previewHTML;
+         try {
+             const previewHTML = generatePreviewHTML(examData, params);
+             console.log('Preview HTML generated, length:', previewHTML.length);
+             
+             if (previewHTML && previewHTML.length > 0) {
+                 currentPreviewContainer.innerHTML = previewHTML;
+                 console.log('✅ Preview content set successfully');
+             } else {
+                 throw new Error('Generated preview HTML is empty');
+             }
+         } catch (error) {
+             console.error('❌ Error generating preview:', error);
+             currentPreviewContainer.innerHTML = `
+                 <div class="text-center text-red-500 py-8">
+                     <svg class="w-12 h-12 mx-auto mb-4 text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                     </svg>
+                     <p class="text-lg font-medium">Preview Generation Failed</p>
+                     <p class="text-sm">Error: ${error.message}</p>
+                     <p class="text-xs text-gray-500 mt-2">Check console for details</p>
+                 </div>
+             `;
+             return;
+         }
          
          // Debug: Check what was actually created and show all pages stacked vertically
          setTimeout(() => {
@@ -711,9 +801,9 @@ document.addEventListener('DOMContentLoaded', function() {
          console.log('All pages displayed in continuous vertical layout');
         
                  // Apply current styling
-         previewContainer.style.fontFamily = params.font_family || 'Arial';
-         previewContainer.style.fontSize = (params.font_size || 12) + 'pt';
-         previewContainer.style.lineHeight = params.line_spacing || 1.5;
+         currentPreviewContainer.style.fontFamily = params.font_family || 'Arial';
+         currentPreviewContainer.style.fontSize = (params.font_size || 12) + 'pt';
+         currentPreviewContainer.style.lineHeight = params.line_spacing || 1.5;
          
          // Apply scaling settings
          const adjustToPercentage = parseInt(params.adjust_to_percentage) || 100;
@@ -736,15 +826,53 @@ document.addEventListener('DOMContentLoaded', function() {
          const orientation = params.orientation || 'portrait';
          const sizeClass = `${paperSize.toLowerCase()}-${orientation}`;
          
+         console.log('🔧 PAPER SIZE UPDATE:', {
+             paperSize: paperSize,
+             orientation: orientation,
+             sizeClass: sizeClass,
+             totalPages: document.querySelectorAll('.page-container').length
+         });
+         
+         // Update preview container classes based on paper size and orientation
+         if (currentPreviewContainer) {
+             // Remove all existing preview size classes
+             currentPreviewContainer.classList.remove('preview-a4', 'preview-letter', 'preview-legal', 'preview-a4-landscape', 'preview-letter-landscape', 'preview-legal-landscape');
+             
+             // Add the appropriate preview size class
+             const previewClass = `preview-${paperSize.toLowerCase()}${orientation === 'landscape' ? '-landscape' : ''}`;
+             currentPreviewContainer.classList.add(previewClass);
+             
+             console.log('📦 Preview container updated with class:', previewClass);
+             
+             // Update the paper size indicator
+             const paperSizeIndicator = document.getElementById('currentPaperSize');
+             if (paperSizeIndicator) {
+                 const displayText = `${paperSize} ${orientation.charAt(0).toUpperCase() + orientation.slice(1)}`;
+                 paperSizeIndicator.textContent = displayText;
+                 
+                 // Update indicator color based on paper size
+                 paperSizeIndicator.className = 'text-xs font-medium px-2 py-1 rounded';
+                 if (paperSize === 'A4') {
+                     paperSizeIndicator.classList.add('text-blue-600', 'bg-blue-100');
+                 } else if (paperSize === 'Letter') {
+                     paperSizeIndicator.classList.add('text-green-600', 'bg-green-100');
+                 } else if (paperSize === 'Legal') {
+                     paperSizeIndicator.classList.add('text-orange-600', 'bg-orange-100');
+                 }
+                 
+                 console.log('🏷️ Paper size indicator updated:', displayText);
+             }
+         }
+         
          // Update all page containers with the correct paper size class and margins
          document.querySelectorAll('.page-container').forEach((pageContainer, index) => {
-             console.log(`Updating page container ${index + 1}: current classes:`, pageContainer.className);
+             console.log(`📄 Updating page container ${index + 1}: current classes:`, pageContainer.className);
              // Remove all existing paper size classes
              pageContainer.classList.remove('a4-portrait', 'a4-landscape', 'letter-portrait', 'letter-landscape', 'legal-portrait', 'legal-landscape');
              
              // Add the correct paper size class
              pageContainer.classList.add(sizeClass);
-             console.log(`Updated page container ${index + 1}: new classes:`, pageContainer.className);
+             console.log(`✅ Updated page container ${index + 1}: new classes:`, pageContainer.className);
              
              // Update data attributes
              pageContainer.setAttribute('data-paper-size', paperSize);
@@ -779,16 +907,16 @@ document.addEventListener('DOMContentLoaded', function() {
          // Add visual indicator for MCQ columns
          if (params.mcq_columns) {
              const columns = parseInt(params.mcq_columns);
-             previewContainer.setAttribute('data-mcq-columns', columns);
+             currentPreviewContainer.setAttribute('data-mcq-columns', columns);
              
              // Add CSS custom property for MCQ columns
-             previewContainer.style.setProperty('--mcq-columns', columns);
+             currentPreviewContainer.style.setProperty('--mcq-columns', columns);
          }
          
          // Add visual indicator for Header Span
          if (params.header_span) {
              const headerSpan = params.header_span;
-             previewContainer.setAttribute('data-header-span', headerSpan);
+             currentPreviewContainer.setAttribute('data-header-span', headerSpan);
              
              console.log(`Applied header span: ${headerSpan}`);
              console.log(`Header span value: ${headerSpan}, type: ${typeof headerSpan}`);
@@ -797,11 +925,51 @@ document.addEventListener('DOMContentLoaded', function() {
                    // Add visual indicator for Paper columns (now handled within page containers)
           if (params.paper_columns) {
               const paperColumns = parseInt(params.paper_columns);
-              previewContainer.setAttribute('data-paper-columns', paperColumns);
+              currentPreviewContainer.setAttribute('data-paper-columns', paperColumns);
               
               console.log(`Paper columns set to: ${paperColumns} (handled within page containers)`);
           }
+        } catch (error) {
+            console.error('❌ Fatal error in updatePreview:', error);
+            const errorPreviewContainer = document.getElementById('livePreview');
+            if (errorPreviewContainer) {
+                errorPreviewContainer.innerHTML = `
+                    <div class="text-center text-red-500 py-8">
+                        <svg class="w-12 h-12 mx-auto mb-4 text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                        <p class="text-lg font-medium">Preview Error</p>
+                        <p class="text-sm">Fatal error: ${error.message}</p>
+                        <p class="text-xs text-gray-500 mt-2">Check console for details</p>
+                    </div>
+                `;
+            }
+        }
     }
+    
+    // Load saved settings if available
+    loadSavedSettings();
+    
+    // Apply default preview container sizing if no saved settings
+    setTimeout(() => {
+        const previewContainer = document.getElementById('livePreview');
+        if (previewContainer && !previewContainer.classList.contains('preview-a4') && 
+            !previewContainer.classList.contains('preview-letter') && 
+            !previewContainer.classList.contains('preview-legal')) {
+            previewContainer.classList.add('preview-a4'); // Default to A4
+            console.log('📦 Default preview container class applied: preview-a4');
+        }
+        
+        // Trigger initial preview update
+        updatePreview();
+    }, 200);
+    
+    // Add event listeners to all form inputs
+    const inputs = form.querySelectorAll('input, select');
+    inputs.forEach(input => {
+        input.addEventListener('change', updatePreview);
+        input.addEventListener('input', updatePreview);
+    });
     
         // Function to generate preview HTML with multi-page support
     function generatePreviewHTML(exam, params) {
@@ -850,7 +1018,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const adjustToPercentage = parseInt(params.adjust_to_percentage) || 100;
             const showPageNumber = params.show_page_number === '1';
             
-            console.log(`Page ${pageNum}: Creating page container with sizeClass: ${sizeClass}, paperSize: ${paperSize}, orientation: ${orientation}`);
+            console.log(`📄 Page ${pageNum}: Creating page container with sizeClass: ${sizeClass}, paperSize: ${paperSize}, orientation: ${orientation}`);
             
             // Determine scaling classes
             let scalingClasses = '';
@@ -859,7 +1027,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             html += `<div class="page-container ${sizeClass}${scalingClasses}" data-columns="${paperColumns}" data-page="${pageNum}" data-paper-size="${paperSize}" data-orientation="${orientation}" style="--adjust-percentage: ${adjustToPercentage / 100}; position: relative;">`;
-            console.log(`Created page container ${pageNum} with ${paperColumns} columns, size: ${paperSize} ${orientation}`);
+            console.log(`✅ Created page container ${pageNum} with ${paperColumns} columns, size: ${paperSize} ${orientation}`);
             
             // Add page number if enabled
             if (showPageNumber) {
@@ -1331,53 +1499,6 @@ document.addEventListener('DOMContentLoaded', function() {
         questionContent += '</div>';
         return questionContent;
     }
-    
-         // Add event listeners to all form inputs
-     const inputs = form.querySelectorAll('input, select');
-     inputs.forEach(input => {
-         input.addEventListener('change', updatePreview);
-         input.addEventListener('input', updatePreview);
-     });
-     
-     // True Size Toggle functionality
-     const trueSizeToggle = document.getElementById('trueSizeToggle');
-     const scaleIndicator = document.getElementById('scaleIndicator');
-     let isTrueSize = false;
-     
-     if (trueSizeToggle) {
-         trueSizeToggle.addEventListener('click', function() {
-             isTrueSize = !isTrueSize;
-             
-             if (isTrueSize) {
-                 // Enable true size mode
-                 previewContainer.classList.add('true-size');
-                 trueSizeToggle.innerHTML = '📐 Fit Screen';
-                 trueSizeToggle.className = 'px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-medium rounded-lg hover:from-blue-600 hover:to-indigo-700 transform hover:scale-105 transition-all duration-200 shadow-md';
-                 scaleIndicator.textContent = 'True paper size (scroll to see full page)';
-                 
-                 // Log the actual dimensions
-                 const pageContainers = document.querySelectorAll('.page-container');
-                 if (pageContainers.length > 0) {
-                     const firstPage = pageContainers[0];
-                     const computedStyle = window.getComputedStyle(firstPage);
-                     console.log('True Size Mode - Actual dimensions:', {
-                         width: computedStyle.width,
-                         height: computedStyle.height,
-                         paperSize: firstPage.getAttribute('data-paper-size'),
-                         orientation: firstPage.getAttribute('data-orientation')
-                     });
-                 }
-             } else {
-                 // Enable scaled mode
-                 previewContainer.classList.remove('true-size');
-                 trueSizeToggle.innerHTML = '📏 True Size';
-                 trueSizeToggle.className = 'px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-medium rounded-lg hover:from-green-600 hover:to-emerald-700 transform hover:scale-105 transition-all duration-200 shadow-md';
-                 scaleIndicator.textContent = 'Scaled to fit screen';
-                 
-                 console.log('Scaled Mode - Preview scaled for screen display');
-             }
-         });
-     }
      
      // PDF Download functionality
      const downloadPdfBtn = document.getElementById('downloadPdfBtn');
@@ -1421,6 +1542,36 @@ document.addEventListener('DOMContentLoaded', function() {
              setTimeout(() => {
                  updatePreview();
              }, 100);
+             
+             // Apply initial preview container sizing
+             setTimeout(() => {
+                 const paperSize = savedSettings.paper_size || 'A4';
+                 const orientation = savedSettings.orientation || 'portrait';
+                 const previewContainer = document.getElementById('livePreview');
+                 if (previewContainer) {
+                     previewContainer.classList.remove('preview-a4', 'preview-letter', 'preview-legal', 'preview-a4-landscape', 'preview-letter-landscape', 'preview-legal-landscape');
+                     const previewClass = `preview-${paperSize.toLowerCase()}${orientation === 'landscape' ? '-landscape' : ''}`;
+                     previewContainer.classList.add(previewClass);
+                     console.log('📦 Initial preview container class applied:', previewClass);
+                     
+                     // Update the paper size indicator
+                     const paperSizeIndicator = document.getElementById('currentPaperSize');
+                     if (paperSizeIndicator) {
+                         const displayText = `${paperSize} ${orientation.charAt(0).toUpperCase() + orientation.slice(1)}`;
+                         paperSizeIndicator.textContent = displayText;
+                         
+                         // Update indicator color based on paper size
+                         paperSizeIndicator.className = 'text-xs font-medium px-2 py-1 rounded';
+                         if (paperSize === 'A4') {
+                             paperSizeIndicator.classList.add('text-blue-600', 'bg-blue-100');
+                         } else if (paperSize === 'Letter') {
+                             paperSizeIndicator.classList.add('text-green-600', 'bg-green-100');
+                         } else if (paperSize === 'Legal') {
+                             paperSizeIndicator.classList.add('text-orange-600', 'bg-orange-100');
+                         }
+                     }
+                 }
+             }, 150);
          @endif
      }
      
