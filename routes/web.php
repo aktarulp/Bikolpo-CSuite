@@ -452,6 +452,7 @@ Route::middleware('auth')->group(function () {
         Route::put('exams/{exam}/results/{result}', [ExamController::class, 'updateResult'])->name('exams.result-update');
         Route::get('exams/{exam}/export', [ExamController::class, 'export'])->name('exams.export');
         Route::get('exams/{exam}/paper-parameters', [ExamController::class, 'paperParameters'])->name('exams.paper-parameters');
+        Route::post('exams/{exam}/save-paper-settings', [ExamController::class, 'savePaperSettings'])->name('exams.save-paper-settings');
         Route::post('exams/{exam}/download-paper', [ExamController::class, 'downloadPaper'])->name('exams.download-paper');
         Route::get('exams/{exam}/test-pdf', [ExamController::class, 'testPDFGeneration'])->name('exams.test-pdf');
         Route::get('test-pdf-simple', [ExamController::class, 'simplePDFTest'])->name('test-pdf-simple');

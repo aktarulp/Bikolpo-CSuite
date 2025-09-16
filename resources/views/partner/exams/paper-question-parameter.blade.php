@@ -320,19 +320,29 @@
             <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-100/30 to-transparent dark:from-blue-800/20 dark:to-transparent rounded-full -translate-y-16 translate-x-16"></div>
             <div class="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-indigo-100/30 to-transparent dark:from-indigo-800/20 dark:to-transparent rounded-full translate-y-12 -translate-x-12"></div>
             
-            <div class="px-4 py-3 border-b border-blue-200 dark:border-blue-800 bg-gradient-to-r from-blue-100/50 to-indigo-100/50 dark:from-blue-900/30 dark:to-indigo-900/30 relative">
-                <div class="flex items-center space-x-3">
-                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-md">
-                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            <div class="px-4 py-3 border-b border-blue-200 dark:border-blue-800 bg-gradient-to-l from-blue-100/50 to-indigo-100/50 dark:from-blue-900/30 dark:to-indigo-900/30 relative">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-md">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-base font-bold text-blue-900 dark:text-blue-100 bg-gradient-to-r from-blue-800 to-indigo-800 dark:from-blue-200 dark:to-indigo-200 bg-clip-text text-transparent">Paper Settings</h3>
+                        <div class="flex items-center space-x-1">
+                            <div class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                            <div class="w-2 h-2 bg-indigo-400 rounded-full animate-pulse" style="animation-delay: 0.2s;"></div>
+                            <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse" style="animation-delay: 0.4s;"></div>
+                        </div>
+                    </div>
+                    
+                    <button type="button" id="saveSettingsBtn"
+                            class="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-sm font-medium rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12"></path>
                         </svg>
-                    </div>
-                    <h3 class="text-base font-bold text-blue-900 dark:text-blue-100 bg-gradient-to-r from-blue-800 to-indigo-800 dark:from-blue-200 dark:to-indigo-200 bg-clip-text text-transparent">Paper Settings</h3>
-                    <div class="ml-auto flex items-center space-x-1">
-                        <div class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
-                        <div class="w-2 h-2 bg-indigo-400 rounded-full animate-pulse" style="animation-delay: 0.2s;"></div>
-                        <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse" style="animation-delay: 0.4s;"></div>
-                    </div>
+                        <span>Save Settings</span>
+                    </button>
                 </div>
             </div>
             
@@ -610,6 +620,9 @@
 document.addEventListener('DOMContentLoaded', function() {
     const previewContainer = document.getElementById('livePreview');
     const form = document.getElementById('parameterForm');
+    
+    // Load saved settings if available
+    loadSavedSettings();
     
     // Continuous page layout - no current page tracking needed
     
@@ -1372,6 +1385,127 @@ document.addEventListener('DOMContentLoaded', function() {
          downloadPdfBtn.addEventListener('click', function() {
              downloadPDF();
          });
+     }
+     
+     // Save Settings functionality
+     const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+     if (saveSettingsBtn) {
+         saveSettingsBtn.addEventListener('click', function() {
+             saveSettings();
+         });
+     }
+     
+     // Function to load saved settings
+     function loadSavedSettings() {
+         @if(isset($savedSettings) && !empty($savedSettings))
+             const savedSettings = @json($savedSettings);
+             console.log('Loading saved settings:', savedSettings);
+             
+             // Populate form fields with saved settings
+             Object.keys(savedSettings).forEach(key => {
+                 const element = document.getElementById(key) || document.querySelector(`[name="${key}"]`);
+                 if (element) {
+                     if (element.type === 'checkbox') {
+                         element.checked = Boolean(savedSettings[key]);
+                     } else if (element.type === 'number') {
+                         element.value = savedSettings[key];
+                     } else if (element.tagName === 'SELECT') {
+                         element.value = savedSettings[key];
+                     } else {
+                         element.value = savedSettings[key];
+                     }
+                 }
+             });
+             
+             // Update preview after loading settings
+             setTimeout(() => {
+                 updatePreview();
+             }, 100);
+         @endif
+     }
+     
+     // Function to save settings
+     function saveSettings() {
+         const saveBtn = document.getElementById('saveSettingsBtn');
+         const originalText = saveBtn.innerHTML;
+         
+         // Show loading state
+         saveBtn.innerHTML = `
+             <svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+             </svg>
+             <span>Saving...</span>
+         `;
+         saveBtn.disabled = true;
+         
+         try {
+             // Get form parameters
+             const formData = new FormData(form);
+             const params = Object.fromEntries(formData.entries());
+             
+             // Send to server for saving
+             fetch('{{ route("partner.exams.save-paper-settings", $exam) }}', {
+                 method: 'POST',
+                 headers: {
+                     'Content-Type': 'application/json',
+                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                 },
+                 body: JSON.stringify({
+                     parameters: params
+                 })
+             })
+             .then(response => {
+                 if (!response.ok) {
+                     throw new Error(`HTTP error! status: ${response.status}`);
+                 }
+                 return response.json();
+             })
+             .then(data => {
+                 // Show success message
+                 saveBtn.innerHTML = `
+                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                     </svg>
+                     <span>Saved!</span>
+                 `;
+                 saveBtn.classList.remove('from-green-500', 'to-emerald-600', 'hover:from-green-600', 'hover:to-emerald-700');
+                 saveBtn.classList.add('from-green-600', 'to-green-700');
+                 
+                 setTimeout(() => {
+                     saveBtn.innerHTML = originalText;
+                     saveBtn.disabled = false;
+                     saveBtn.classList.remove('from-green-600', 'to-green-700');
+                     saveBtn.classList.add('from-green-500', 'to-emerald-600', 'hover:from-green-600', 'hover:to-emerald-700');
+                 }, 2000);
+             })
+             .catch(error => {
+                 console.error('Save Settings Error:', error);
+                 
+                 // Show error message
+                 saveBtn.innerHTML = `
+                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                     </svg>
+                     <span>Failed!</span>
+                 `;
+                 saveBtn.classList.remove('from-green-500', 'to-emerald-600', 'hover:from-green-600', 'hover:to-emerald-700');
+                 saveBtn.classList.add('from-red-500', 'to-red-600');
+                 
+                 setTimeout(() => {
+                     saveBtn.innerHTML = originalText;
+                     saveBtn.disabled = false;
+                     saveBtn.classList.remove('from-red-500', 'to-red-600');
+                     saveBtn.classList.add('from-green-500', 'to-emerald-600', 'hover:from-green-600', 'hover:to-emerald-700');
+                 }, 3000);
+                 
+                 alert('Failed to save settings: ' + error.message + '\n\nPlease try again.');
+             });
+         } catch (error) {
+             console.error('Save Settings Error:', error);
+             saveBtn.innerHTML = originalText;
+             saveBtn.disabled = false;
+             alert('Failed to save settings. Please try again.');
+         }
      }
      
      

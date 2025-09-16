@@ -1255,7 +1255,10 @@ class ExamController extends Controller
         // Get exam questions for display purposes
         $questions = $exam->questions()->with(['topic', 'subject'])->get();
         
-        return view('partner.exams.paper-question-parameter', compact('exam', 'questions'));
+        // Get saved paper settings or use defaults
+        $savedSettings = $exam->paper_settings ?? [];
+        
+        return view('partner.exams.paper-question-parameter', compact('exam', 'questions', 'savedSettings'));
     }
     
     public function downloadPaper(Request $request, Exam $exam)
@@ -2230,6 +2233,83 @@ class ExamController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'PDF generation failed: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Save paper settings to database
+     */
+    public function savePaperSettings(Request $request, Exam $exam)
+    {
+        try {
+            $partnerId = $this->getPartnerId();
+            
+            // Verify the exam belongs to the partner
+            if ($exam->partner_id !== $partnerId) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Unauthorized access to exam'
+                ], 403);
+            }
+
+            $parameters = $request->input('parameters', []);
+            
+            // Validate parameters
+            $validated = $request->validate([
+                'parameters.paper_size' => 'required|string|in:A4,Letter,Legal',
+                'parameters.orientation' => 'required|string|in:portrait,landscape',
+                'parameters.paper_columns' => 'required|integer|min:1|max:4',
+                'parameters.adjust_to_percentage' => 'required|integer|min:10|max:500',
+                'parameters.font_family' => 'required|string',
+                'parameters.font_size' => 'required|integer|min:8|max:24',
+                'parameters.line_spacing' => 'required|numeric|min:0.5|max:3.0',
+                'parameters.mcq_columns' => 'required|integer|min:1|max:6',
+                'parameters.margin_top' => 'required|integer|min:0|max:50',
+                'parameters.margin_bottom' => 'required|integer|min:0|max:50',
+                'parameters.margin_left' => 'required|integer|min:0|max:50',
+                'parameters.margin_right' => 'required|integer|min:0|max:50',
+                'parameters.header_span' => 'required|string',
+                'parameters.header_push' => 'required|string',
+                'parameters.include_header' => 'boolean',
+                'parameters.mark_answer' => 'boolean',
+                'parameters.show_page_number' => 'boolean'
+            ]);
+
+            // Convert checkbox values to boolean
+            $parameters['include_header'] = isset($parameters['include_header']) && $parameters['include_header'] === '1';
+            $parameters['mark_answer'] = isset($parameters['mark_answer']) && $parameters['mark_answer'] === '1';
+            $parameters['show_page_number'] = isset($parameters['show_page_number']) && $parameters['show_page_number'] === '1';
+
+            // Store paper settings in the exam model
+            $exam->paper_settings = $parameters;
+            $exam->save();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Paper settings saved successfully',
+                'data' => [
+                    'exam_id' => $exam->id,
+                    'settings' => $parameters
+                ]
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            \Log::error('Error saving paper settings: ' . $e->getMessage(), [
+                'exam_id' => $exam->id ?? null,
+                'partner_id' => $this->getPartnerId(),
+                'parameters' => $request->input('parameters', [])
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to save paper settings: ' . $e->getMessage()
             ], 500);
         }
     }
