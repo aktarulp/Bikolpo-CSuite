@@ -1727,202 +1727,155 @@ class ExamController extends Controller
     
     private function generateQuestionPaperHTMLWithParameters($exam, $questions, $parameters, $partner = null)
     {
-        // Get column configuration
+        // New pagination-aware generation: estimate question heights in mm,
+        // paginate into pages (columns filled top-to-bottom) and produce one <div> per page.
         $paperColumns = (int)($parameters['paper_columns'] ?? 1);
-        $headerSpan = $parameters['header_span'] ?? '1';
         $mcqColumns = (int)($parameters['mcq_columns'] ?? 4);
-        
-        // Calculate header grid column span based on paper columns
-        if ($headerSpan === 'full') {
-            $headerGridSpan = '1 / -1'; // Span full width
-        } else {
-            $spanValue = (int)$headerSpan;
-            
-            if ($spanValue >= $paperColumns) {
-                // If header span is >= paper columns, span across all columns
-                $headerGridSpan = "1 / " . ($paperColumns + 1);
-            } else {
-                // If header span is < paper columns, span across specified columns
-                $headerGridSpan = "1 / " . ($spanValue + 1);
+        $paperSize = $parameters['paper_size'] ?? 'A4';
+        $orientation = $parameters['orientation'] ?? 'portrait';
+
+        // helper: paper dims in mm
+        $paperDims = [
+            'A4' => ['w' => 210, 'h' => 297],
+            'Letter' => ['w' => 216, 'h' => 279],
+            'Legal' => ['w' => 216, 'h' => 356],
+            'A3' => ['w' => 297, 'h' => 420],
+        ];
+        $p = $paperDims[$paperSize] ?? $paperDims['A4'];
+        $widthMm = ($orientation === 'landscape') ? $p['h'] : $p['w'];
+        $heightMm = ($orientation === 'landscape') ? $p['w'] : $p['h'];
+
+        // usable height per page (in mm)
+        $marginTop = (float)($parameters['margin_top'] ?? 20);
+        $marginBottom = (float)($parameters['margin_bottom'] ?? 20);
+        $headerHeight = ($parameters['include_header'] ?? true) ? 20 : 0;
+        $footerHeight = ($parameters['show_page_number'] ?? true) ? 8 : 0;
+        $usableHeightMm = max(10, $heightMm - $marginTop - $marginBottom - $headerHeight - $footerHeight);
+
+        // convert pt/mm helpers
+        $ptToMm = 0.352778;
+
+        $estimateQuestionHeightMm = function($question) use ($parameters, $ptToMm) {
+            $fontSize = (float)($parameters['font_size'] ?? 12);
+            $lineSpacing = (float)($parameters['line_spacing'] ?? 1.5);
+            $lineHeightMm = $fontSize * $lineSpacing * $ptToMm;
+
+            $text = strip_tags($question->question_text ?? '');
+            $charsPerLine = max(40, (int)floor(1200 / max(6, $fontSize))); // heuristic
+            $lines = max(1, (int)ceil(mb_strlen($text) / $charsPerLine));
+
+            // MCQ options
+            $opts = 0;
+            foreach (['option_a','option_b','option_c','option_d'] as $k) {
+                if (!empty($question->$k)) $opts++;
             }
-        }
-        
-        $html = '<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Question Paper - ' . htmlspecialchars($exam->title) . '</title>
-    <style>
-        @page {
-            size: ' . $parameters['paper_size'] . ' ' . $parameters['orientation'] . ';
-            margin: ' . $parameters['margin_top'] . 'mm ' . $parameters['margin_right'] . 'mm ' . $parameters['margin_bottom'] . 'mm ' . $parameters['margin_left'] . 'mm;
-        }
-        body { 
-            font-family: "' . $parameters['font_family'] . '", Arial, sans-serif; 
-            margin: 0; 
-            line-height: ' . $parameters['line_spacing'] . '; 
-            font-size: ' . $parameters['font_size'] . 'pt;
-        }
-        
-        /* Paper Column Layout */
-        .paper-container {
-            display: grid;
-            gap: 20px;
-            padding: 20px;
-        }
-        
-        .paper-container.paper-columns-1 {
-            grid-template-columns: 1fr;
-        }
-        
-        .paper-container.paper-columns-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            padding: 15px;
-        }
-        
-        .paper-container.paper-columns-3 {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-            padding: 15px;
-        }
-        
-        .paper-container.paper-columns-4 {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr;
-            gap: 10px;
-            padding: 15px;
-        }
-        
-        /* Question column containers */
-        .question-column {
-            display: flex;
-            flex-direction: column;
-            min-height: 0;
-        }
-        
-        /* Header Span */
-        .header-container {
-            grid-column: ' . $headerGridSpan . ';
-            text-align: center;
-            border-bottom: 2px solid #333;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .exam-title { font-size: ' . ($parameters['font_size'] + 8) . 'pt; font-weight: bold; margin-bottom: 10px; }
-        .exam-info { font-size: ' . ($parameters['font_size'] - 2) . 'pt; color: #666; }
-        .instructions { background: #f5f5f5; padding: 20px; border-radius: 5px; margin-bottom: 30px; }
-        .question { margin-bottom: 10px; page-break-inside: avoid; break-inside: avoid; }
-        .question-number { font-weight: bold; color: #333; }
-        .question-text { margin: 5px 0; }
-        .question-header { margin: 5px 0; font-style: italic; color: #666; }
-        .options { margin-left: 20px; }
-        .option { margin: 5px 0; }
-        .marks { font-weight: bold; color: #333; float: right; }
-        .footer { margin-top: 40px; text-align: center; font-size: ' . ($parameters['font_size'] - 2) . 'pt; color: #666; border-top: 1px solid #ccc; padding-top: 20px; }
-        
-        /* MCQ Options Grid */
-        .mcq-options {
-            display: grid;
-            gap: 10px;
-            margin: 5px 0;
-        }
-        
-        .mcq-options.columns-1 { grid-template-columns: 1fr; }
-        .mcq-options.columns-2 { grid-template-columns: 1fr 1fr; }
-        .mcq-options.columns-3 { grid-template-columns: 1fr 1fr 1fr; }
-        .mcq-options.columns-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
-        
-        @media print { 
-            body { margin: 0; } 
-            .question { page-break-inside: avoid; break-inside: avoid; } 
-        }
-    </style>
-</head>
-<body>
-            <div class="paper-container paper-columns-' . $paperColumns . '" data-header-span="' . $headerSpan . '">
-        <div class="header-container">';
-        
-        if ($parameters['include_header'] ?? true) {
-            $html .= '
-        <div class="exam-title">' . htmlspecialchars($exam->title) . '</div>';
-            
-            // Always include full marks and time when header is enabled
-            $html .= '
-        <div class="exam-info">
-            <strong>Exam ID:</strong> ' . $exam->id . ' | 
-            <strong>Duration:</strong> ' . $exam->duration . ' minutes | 
-            <strong>Total Questions:</strong> ' . $exam->total_questions . ' | 
-            <strong>Passing Marks:</strong> ' . $exam->passing_marks . '% | 
-            <strong>Total Marks:</strong> ' . $questions->sum(function($q) { return $q->pivot->marks ?? 1; }) . '
-        </div>';
-            
-            if ($exam->question_header && ($parameters['include_question_headers'] ?? true)) {
-                $html .= '<div class="question-header" style="margin-top: 15px; padding: 15px; background: #f9f9f9; border-radius: 5px;">' . $exam->question_header . '</div>';
-            }
-        }
-        
-        $html .= '</div>';
-        
-        // Add questions with sequential column filling logic
-        if ($paperColumns > 1) {
-            // Multi-column layout: fill first column completely, then second column, etc.
-            $questionsPerColumn = $this->calculateQuestionsPerColumn($questions->count(), $paperColumns, $parameters);
-            $questionIndex = 0;
-            
-            // Create column containers and fill them sequentially
-            for ($columnIndex = 0; $columnIndex < $paperColumns; $columnIndex++) {
-                $questionsInThisColumn = min($questionsPerColumn, $questions->count() - $questionIndex);
-                
-                if ($questionsInThisColumn > 0) {
-                    $html .= '<div class="question-column" data-column="' . ($columnIndex + 1) . '">';
-                    
-                    // Fill this column with questions
-                    for ($i = 0; $i < $questionsInThisColumn && $questionIndex < $questions->count(); $i++) {
-                        $question = $questions[$questionIndex];
-                        $questionNumber = $questionIndex + 1;
-                        $marks = $question->pivot->marks ?? 1;
-                        
-                        $html .= $this->generateQuestionHTML($question, $questionNumber, $marks, $parameters, $mcqColumns);
-                        $questionIndex++;
-                    }
-                    
-                    $html .= '</div>';
-                }
-                
-                // Break if all questions are distributed
-                if ($questionIndex >= $questions->count()) {
+            $optLines = $opts; // ~1 line per option heuristic
+
+            $totalLines = $lines + $optLines + 1; // +1 for question title/spacing
+            $h = $totalLines * $lineHeightMm + 2; // padding mm
+            return max(4, min(150, $h));
+        };
+
+        // paginate: fill columns top-to-bottom; when no column can accept next question, create new page
+        $pages = [];
+        $current = [
+            'columns' => array_fill(0, $paperColumns, []),
+            'heights' => array_fill(0, $paperColumns, 0.0)
+        ];
+
+        $globalIndex = 0;
+        foreach ($questions as $q) {
+            $globalIndex++;
+            $qh = $estimateQuestionHeightMm($q);
+            $placed = false;
+
+            // try to place into first column that fits or into empty column at minimum
+            for ($c = 0; $c < $paperColumns; $c++) {
+                if ($current['heights'][$c] + $qh <= $usableHeightMm || count($current['columns'][$c]) === 0) {
+                    $current['columns'][$c][] = ['q' => $q, 'number' => $globalIndex];
+                    $current['heights'][$c] += $qh;
+                    $placed = true;
                     break;
                 }
             }
-        } else {
-            // Single column layout: add questions sequentially
-            foreach ($questions as $index => $question) {
-                $questionNumber = $index + 1;
-                $marks = $question->pivot->marks ?? 1;
-                
-                $html .= $this->generateQuestionHTML($question, $questionNumber, $marks, $parameters, $mcqColumns);
+
+            if (!$placed) {
+                // push current page and start a new one
+                $pages[] = $current['columns'];
+                $current = [
+                    'columns' => array_fill(0, $paperColumns, []),
+                    'heights' => array_fill(0, $paperColumns, 0.0)
+                ];
+                // place into first column of new page
+                $current['columns'][0][] = ['q' => $q, 'number' => $globalIndex];
+                $current['heights'][0] += $qh;
             }
         }
-        
-        if ($parameters['include_footer'] ?? true) {
-            $footerSpan = $paperColumns > 1 ? '1 / -1' : '';
-            $partnerName = $partner ? $partner->name : 'Unknown Partner';
-            $html .= '
-    <div class="footer" style="grid-column: ' . $footerSpan . ';">
-        <p>This Question is created by <strong>' . htmlspecialchars($partnerName) . '</strong> | Powered By <strong>bikolpo LQ</strong></p>
-    </div>';
+
+        // push last page if has content
+        $hasContent = false;
+        foreach ($current['columns'] as $col) { if (count($col) > 0) { $hasContent = true; break; } }
+        if ($hasContent) $pages[] = $current['columns'];
+
+        // build HTML for pages
+        $html = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Question Paper - ' . htmlspecialchars($exam->title) . '</title>';
+        $html .= '<style>@page { size: ' . $paperSize . ' ' . $orientation . '; margin: ' . $marginTop . 'mm ' . ($parameters['margin_right'] ?? 20) . 'mm ' . $marginBottom . 'mm ' . ($parameters['margin_left'] ?? 20) . 'mm; }';
+        $html .= 'body{font-family:"' . ($parameters['font_family'] ?? 'Arial') . '",Arial,sans-serif;margin:0;padding:0;font-size:' . ($parameters['font_size'] ?? 12) . 'pt;line-height:' . ($parameters['line_spacing'] ?? 1.5) . ';}';
+        $html .= '.page{box-sizing:border-box;width:' . $widthMm . 'mm;min-height:' . $heightMm . 'mm;padding:0;margin:0 auto;background:white;padding-top:' . $marginTop . 'mm;padding-bottom:' . $marginBottom . 'mm;}';
+        $html .= '.paper-container{display:grid;gap:12px;grid-template-columns:repeat(' . $paperColumns . ',1fr);padding:0 10px;}';
+        $html .= '.question{margin-bottom:6px;page-break-inside:avoid;break-inside:avoid-column;}';
+        $html .= '.header{ text-align:center;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #ddd;}';
+        $html .= '.footer{text-align:center;margin-top:8px;font-size:10pt;color:#666;}';
+        $html .= '</style></head><body>';
+
+        $pageNo = 1;
+        foreach ($pages as $pageCols) {
+            $html .= '<div class="page" data-page="' . $pageNo . '">';
+            // header
+            if ($parameters['include_header'] ?? true) {
+                $html .= '<div class="header"><div class="exam-title" style="font-weight:700;font-size:' . ((int)$parameters['font_size'] + 4) . 'pt;">' . htmlspecialchars($exam->title) . '</div>';
+                $html .= '<div class="exam-info" style="font-size:' . max(8, (int)$parameters['font_size'] - 2) . 'pt;color:#666;">';
+                $html .= 'Exam ID: ' . $exam->id . ' | Duration: ' . $exam->duration . ' mins | Total Questions: ' . $questions->count();
+                $html .= '</div></div>';
+            }
+
+            $html .= '<div class="paper-container paper-columns-' . $paperColumns . '">';
+            // columns
+            for ($c = 0; $c < $paperColumns; $c++) {
+                $html .= '<div class="question-column" data-column="' . ($c + 1) . '">';
+                $colItems = $pageCols[$c] ?? [];
+                foreach ($colItems as $item) {
+                    $q = $item['q'];
+                    $num = $item['number'];
+                    // render question
+                    $html .= '<div class="question"><div style="font-weight:600;">Q' . $num . '</div>';
+                    $html .= '<div>'. nl2br(htmlspecialchars($q->question_text ?? '')) .'</div>';
+                    if ($q->question_type === 'mcq') {
+                        $html .= '<div class="mcq-options" style="margin-top:6px;">';
+                        foreach (['option_a','option_b','option_c','option_d'] as $idx => $k) {
+                            if (!empty($q->$k)) {
+                                $label = strtoupper(['a','b','c','d'][$idx]);
+                                $html .= '<div>' . $label . ') ' . htmlspecialchars($q->$k) . '</div>';
+                            }
+                        }
+                        $html .= '</div>';
+                    }
+                    $html .= '</div>';
+                }
+                $html .= '</div>';
+            }
+            $html .= '</div>'; // paper-container
+
+            if ($parameters['show_page_number'] ?? true) {
+                $html .= '<div class="footer">Page ' . $pageNo . '</div>';
+            }
+
+            $html .= '</div>'; // page
+            $pageNo++;
         }
-        
-        $html .= '
-    </div>
-</body>
-</html>';
-        
+
+        $html .= '</body></html>';
+
         return $html;
     }
     
@@ -2183,10 +2136,8 @@ class ExamController extends Controller
     private function generateTestHTML($exam, $paperSize, $orientation)
     {
         return '<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test PDF - ' . $exam->title . '</title>
     <style>
         @page {
