@@ -454,6 +454,7 @@ Route::middleware('auth')->group(function () {
         Route::get('exams/{exam}/paper-parameters', [ExamController::class, 'paperParameters'])->name('exams.paper-parameters');
         Route::post('exams/{exam}/save-paper-settings', [ExamController::class, 'savePaperSettings'])->name('exams.save-paper-settings');
         Route::post('exams/{exam}/download-paper', [ExamController::class, 'downloadPaper'])->name('exams.download-paper');
+        Route::post('exams/{exam}/print-paper-preview', [ExamController::class, 'printPaperPreview'])->name('exams.print-paper-preview');
         Route::get('exams/{exam}/test-pdf', [ExamController::class, 'testPDFGeneration'])->name('exams.test-pdf');
         Route::get('test-pdf-simple', [ExamController::class, 'simplePDFTest'])->name('test-pdf-simple');
         Route::get('exams/{exam}/assign-questions', [ExamController::class, 'assignQuestions'])->name('exams.assign-questions');
