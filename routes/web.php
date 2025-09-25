@@ -496,6 +496,7 @@ Route::middleware('auth')->group(function () {
         Route::get('profile/edit', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit-partnar');
         Route::put('profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
         Route::put('profile/partner', [\App\Http\Controllers\ProfileController::class, 'updatePartner'])->name('profile.updatePartner');
+        Route::put('profile/update-partner-details', [PartnerController::class, 'updateProfile'])->name('profile.update-details'); // New route
         
         // User Profile Management
         Route::get('profile/user', [\App\Http\Controllers\ProfileController::class, 'showUser'])->name('profile.show-user-profile');

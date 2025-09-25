@@ -58,44 +58,12 @@
 </div>
 
 @push('styles')
-<style>
-    /* Mobile-first, professional appearance */
-    .settings-tab.active, .settings-tab[aria-selected="true"] {
-        background: linear-gradient(90deg, rgba(16,185,129,0.06), rgba(59,130,246,0.03));
-        color: #065f46; /* dark green */
-        font-weight: 600;
-    }
-
-    .settings-tab i { color: #10b981; }
-
-    /* Small screens: tabs stack horizontally inside sidebar area */
-    @media (max-width: 767px) {
-        #settingsNav { display: block; }
-        #settingsNav ul { display: flex; gap: 0.5rem; overflow-x: auto; }
-        #settingsNav li { display: inline-block; }
-        .settings-tab { white-space: nowrap; }
-        main { padding-top: 0.5rem; }
-    }
-
-    /* Medium and up: standard sidebar */
-    @media (min-width: 768px) {
-        #settingsNav ul { display: block; }
-        #settingsNav { padding-left: 0.75rem; padding-right: 0.75rem; }
-        .settings-tab { width: 100%; }
-    }
-
-    /* Panels */
-    .settings-panel { animation: fadeIn 180ms ease-in; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px);} to { opacity: 1; transform: translateY(0); } }
-
-    /* Professional form inputs fallback for older sections */
-    .form-control { @apply w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-primaryGreen focus:border-primaryGreen dark:bg-gray-700 dark:text-white; }
-</style>
+    {{-- No custom styles are pushed here; Tailwind CSS handles styling directly in HTML --}}
 @endpush
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
     const tabs = document.querySelectorAll('.settings-tab');
     const panels = document.querySelectorAll('.settings-panel');
 
@@ -108,11 +76,15 @@ document.addEventListener('DOMContentLoaded', function() {
     tabs.forEach(tab => {
         tab.addEventListener('click', function() {
             // Deselect all
-            tabs.forEach(t => t.classList.remove('active'));
+            tabs.forEach(t => t.classList.remove('bg-primaryGreen/10', 'text-primaryGreen', 'font-semibold', 'border-l-4', 'border-primaryGreen'));
+            tabs.forEach(t => t.classList.add('text-gray-700', 'dark:text-gray-200', 'hover:bg-gray-100', 'dark:hover:bg-gray-700'));
+            tabs.forEach(t => t.querySelector('i')?.classList.remove('text-primaryGreen'));
             tabs.forEach(t => t.setAttribute('aria-selected', 'false'));
 
             // Select current
-            this.classList.add('active');
+            this.classList.add('bg-primaryGreen/10', 'text-primaryGreen', 'font-semibold', 'border-l-4', 'border-primaryGreen');
+            this.classList.remove('text-gray-700', 'dark:text-gray-200', 'hover:bg-gray-100', 'dark:hover:bg-gray-700');
+            this.querySelector('i')?.classList.add('text-primaryGreen');
             this.setAttribute('aria-selected', 'true');
 
             const target = this.getAttribute('data-target');
@@ -122,7 +94,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // On first load ensure first tab is active
     if (tabs.length) {
-        tabs[0].classList.add('active');
+        tabs[0].classList.add('bg-primaryGreen/10', 'text-primaryGreen', 'font-semibold', 'border-l-4', 'border-primaryGreen');
+        tabs[0].classList.remove('text-gray-700', 'dark:text-gray-200', 'hover:bg-gray-100', 'dark:hover:bg-gray-700');
+        tabs[0].querySelector('i')?.classList.add('text-primaryGreen');
         tabs[0].setAttribute('aria-selected', 'true');
     }
 
