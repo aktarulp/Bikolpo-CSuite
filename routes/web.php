@@ -520,8 +520,20 @@ Route::middleware('auth')->group(function () {
                 
                 // Debug: Log the partner data
                 \Log::info('Partner data for settings:', ['partner_id' => $partner->id, 'name' => $partner->name ?? 'No name']);
+
+                $roles = \App\Models\Role::all(); // Fetch all roles
+
+                $finalRoleUserCounts = $roles->mapWithKeys(function ($role) {
+                    return [$role->id => \App\Models\User::where('role', $role->name)->count()];
+                });
                 
-                return view('partner.Settings.partner-settings', compact('partner'));
+                $totalUsers = \App\Models\User::where('partner_id', $partner->id)->count();
+                $activeUsers = \App\Models\User::where('partner_id', $partner->id)->where('status', 'active')->count();
+                $pendingUsers = \App\Models\User::where('partner_id', $partner->id)->where('status', 'pending')->count();
+                $suspendedUsers = \App\Models\User::where('partner_id', $partner->id)->where('status', 'suspended')->count();
+                $users = \App\Models\User::where('partner_id', $partner->id)->with('roles')->get();
+
+                return view('partner.Settings.partner-settings', compact('partner', 'roles', 'finalRoleUserCounts', 'totalUsers', 'activeUsers', 'pendingUsers', 'suspendedUsers', 'users'));
             } catch (\Exception $e) {
                 \Log::error('Error in partner settings route: ' . $e->getMessage());
                 return redirect()->route('partner.dashboard')->with('error', 'An error occurred while loading settings.');
