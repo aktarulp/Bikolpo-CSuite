@@ -195,15 +195,6 @@
                                         </button>
                                     </form>
                                     
-                                    <button type="button" 
-                                            onclick="sendSms([{{ $accessCode->id }}], '{{ $accessCode->student->full_name }}')"
-                                            class="inline-flex items-center p-1.5 border border-transparent text-xs font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                                            title="Send SMS">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M20 4H4c-1.103 0-2 .897-2 2v12c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm0 2v.511l-8 6.223-8-6.222V6h16zM4 18V9.75l7.595 5.89L12 16l.405-.36L20 9.75V18H4z"/>
-                                        </svg>
-                                    </button>
-
                                     <form method="POST" action="{{ route('partner.exams.remove-assignment', $exam) }}" class="inline remove-form" data-assignment-id="{{ $accessCode->id }}">
                                         @csrf
                                         @method('DELETE')
@@ -216,6 +207,15 @@
                                             Remove
                                         </button>
                                     </form>
+                                     
+                                     <button type="button" 
+                                             onclick="sendSms([{{ $accessCode->id }}], '{{ $accessCode->student->full_name }}')"
+                                             class="inline-flex items-center p-1.5 border border-transparent text-xs font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                             title="Send SMS">
+                                         <svg class="w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                         </svg>Send
+                                     </button>
                                 </div>
                             </div>
                             @endforeach
