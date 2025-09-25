@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+.bubble {
+    position: absolute;
+    border-radius: 9999px;
+    border: 5px solid red;
+    background-color: blue !important;
+}
+
 /* Global Bengali Font Settings */
 @import url('https://fonts.googleapis.com/css2?family=Nikosh:wght@300;400;500;600;700;800;900&display=swap');
 

@@ -31,7 +31,8 @@ export default {
                 'fade-in': 'fadeIn 0.5s ease-in-out',
                 'slide-up': 'slideUp 0.6s ease-out',
                 'bounce-slow': 'bounce 2s infinite',
-                'pulse-slow': 'pulse 3s infinite'
+                'pulse-slow': 'pulse 3s infinite',
+                float: 'float 8s infinite ease-in-out',
             },
             keyframes: {
                 fadeIn: {
@@ -41,6 +42,10 @@ export default {
                 slideUp: {
                     'from': { opacity: '0', transform: 'translateY(40px)' },
                     'to': { opacity: '1', transform: 'translateY(0)' }
+                },
+                float: {
+                    '0%, 100%': { transform: 'translateY(0)' },
+                    '50%': { transform: 'translateY(-20px)' },
                 }
             }
         },

@@ -1023,6 +1023,11 @@ class ExamController extends Controller
                       });
             });
 
+        // If exam type is 'online', only load MCQ questions
+        if ($exam->exam_type === 'online') {
+            $questionsQuery->where('question_type', 'mcq');
+        }
+
         // Apply filters based on the request
         if ($request->filled('search')) {
             $search = $request->input('search');

@@ -373,9 +373,9 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                         <div class="form-group">
                             <div class="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                                <h3 class="text-sm font-medium text-gray-900 dark:text-white">Allow Retake</h3>
+                                <h3 class="text-sm font-medium text-gray-900 dark:text-white">Allow Review</h3>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" id="allowRetake" name="allow_retake" value="1" {{ old('allow_retake') ? 'checked' : '' }}>
+                                    <input type="checkbox" id="allowReview" name="allow_review" value="1" {{ old('allow_review') ? 'checked' : '' }}>
                                     <span class="slider"></span>
                                 </label>
                             </div>

@@ -162,6 +162,9 @@
                                         <select name="question_type_filter" id="type-filter" class="filter-select w-full rounded-xl p-2 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
                                             <option value="">All Types</option>
                                             @foreach($questionTypes as $questionType)
+                                                @if($exam->exam_type === 'online' && $questionType['value'] !== 'mcq')
+                                                    @continue
+                                                @endif
                                                 <option value="{{ $questionType['value'] }}">{{ $questionType['label'] }}</option>
                                             @endforeach
                                         </select>
