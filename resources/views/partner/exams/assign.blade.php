@@ -71,6 +71,9 @@
         </div>
 
         <div class="space-y-4">
+            <!-- Message Container -->
+            <div id="message-container" class="fixed inset-x-0 top-0 z-50 w-full md:w-1/2 lg:w-1/3 mx-auto mt-4 px-4"></div>
+            
             <!-- Assigned Students -->
             <div class="bg-white rounded border border-gray-200">
                 <div class="px-3 py-2 border-b border-gray-200 bg-gray-50">
@@ -101,15 +104,18 @@
                             </button>
                             
                             <!-- Bulk Actions -->
-                            <form method="POST" action="{{ route('partner.exams.bulk-operations', $exam) }}" class="inline">
+                            <form id="bulk-actions-form" method="POST" action="{{ route('partner.exams.bulk-operations', $exam) }}" class="inline">
                                 @csrf
                                 <div class="flex items-center space-x-1">
-                                    <select name="action" class="text-xs border border-gray-300 rounded px-1.5 py-1 focus:outline-none focus:ring-1 focus:ring-primaryGreen focus:border-primaryGreen">
+                                    <select name="action" id="bulk-action-select" class="text-xs border border-gray-300 rounded px-1.5 py-1 focus:outline-none focus:ring-1 focus:ring-primaryGreen focus:border-primaryGreen">
                                         <option value="">Actions</option>
                                         <option value="remove">Remove</option>
                                         <option value="regenerate">Regenerate</option>
+                                        <option value="send_sms">Send SMS</option>
                                     </select>
-                                    <button type="submit" class="px-1.5 py-1 bg-red-600 text-white text-xs font-medium rounded hover:bg-red-700 focus:outline-none focus:ring-1 focus:ring-red-500">
+                                    <button type="submit" 
+                                            class="px-1.5 py-1 bg-red-600 text-white text-xs font-medium rounded hover:bg-red-700 focus:outline-none focus:ring-1 focus:ring-red-500"
+                                            onclick="return confirmBulkAction()">
                                         Apply
                                     </button>
                                 </div>
@@ -119,13 +125,13 @@
                         <!-- Assigned Students List -->
                         <div class="space-y-0.5">
                             @foreach($exam->accessCodes as $accessCode)
-                            <div class="flex items-center justify-between p-1.5 border border-gray-200 rounded hover:bg-gray-50 transition-colors">
+                            <div class="flex items-center justify-between p-1.5 border border-gray-200 rounded hover:bg-gray-50 transition-colors assignment-row" data-assignment-id="{{ $accessCode->id }}">
                                 <!-- Student Info -->
                                 <div class="flex items-center space-x-2 flex-1 min-w-0">
                                     <input type="checkbox" 
-                                           name="student_ids[]" 
-                                           value="{{ $accessCode->student_id }}"
-                                           class="h-5 w-5 text-red-600 focus:ring-red-500 border-gray-400 rounded">
+                                           name="assignment_ids[]" 
+                                           value="{{ $accessCode->id }}"
+                                           class="h-5 w-5 text-red-600 focus:ring-red-500 border-gray-400 rounded assigned-student-checkbox">
                                     
                                     <div class="flex-shrink-0">
                                         @if($accessCode->student->photo)
@@ -157,18 +163,29 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Access Code -->
+                                <!-- Access Code & SMS Status -->
                                 <div class="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-1">
                                     <div class="text-base text-gray-500">
                                         <div class="mb-1 sm:mb-0">{{ $accessCode->student->phone }}</div>
                                         <div>Code: <span class="font-mono font-bold text-gray-900 bg-gray-100 px-2 py-1 rounded text-base">{{ $accessCode->access_code }}</span></div>
+                                        <div class="mt-1 text-xs text-gray-500 sms-status-display" data-assignment-id="{{ $accessCode->id }}">
+                                            SMS Status: 
+                                            <span class="font-semibold 
+                                                @if($accessCode->sms_status === 'sent') text-green-600 
+                                                @elseif($accessCode->sms_status === 'failed') text-red-600 
+                                                @elseif($accessCode->sms_status === 'skipped_no_phone') text-yellow-600 
+                                                @else text-gray-500 
+                                                @endif">
+                                                {{ ucfirst(str_replace('_', ' ', $accessCode->sms_status ?? 'pending')) }}
+                                            </span>
+                                        </div>
                                     </div>
                                     
                                     <!-- Actions -->
                                     <div class="flex space-x-0.5">
-                                        <form method="POST" action="{{ route('partner.exams.regenerate-code', $exam) }}" class="inline">
+                                        <form method="POST" action="{{ route('partner.exams.regenerate-code', $exam) }}" class="inline regenerate-form" data-assignment-id="{{ $accessCode->id }}">
                                             @csrf
-                                            <input type="hidden" name="student_id" value="{{ $accessCode->student_id }}">
+                                            <input type="hidden" name="assignment_id" value="{{ $accessCode->id }}"> {{-- Changed from student_id to assignment_id --}}
                                             <button type="submit" 
                                                     class="text-green-600 hover:text-green-800 p-2 rounded hover:bg-green-500 transition-colors"
                                                     onclick="return confirm('Regenerate code for {{ $accessCode->student->full_name }}?')"
@@ -184,10 +201,19 @@
                                             </button>
                                         </form>
                                         
-                                        <form method="POST" action="{{ route('partner.exams.remove-assignment', $exam) }}" class="inline">
+                                        <button type="button" 
+                                                onclick="sendSms([{{ $accessCode->id }}], '{{ $accessCode->student->full_name }}')"
+                                                class="text-blue-600 hover:text-blue-800 p-2 rounded hover:bg-blue-500 transition-colors"
+                                                title="Send SMS">
+                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M20 4H4c-1.103 0-2 .897-2 2v12c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm0 2v.511l-8 6.223-8-6.222V6h16zM4 18V9.75l7.595 5.89L12 16l.405-.36L20 9.75V18H4z"/>
+                                            </svg>
+                                        </button>
+
+                                        <form method="POST" action="{{ route('partner.exams.remove-assignment', $exam) }}" class="inline remove-form" data-assignment-id="{{ $accessCode->id }}">
                                             @csrf
                                             @method('DELETE')
-                                            <input type="hidden" name="student_id" value="{{ $accessCode->student_id }}">
+                                            <input type="hidden" name="assignment_id" value="{{ $accessCode->id }}"> {{-- Changed from student_id to assignment_id --}}
                                             <button type="submit" 
                                                     class="text-red-600 hover:text-red-800 p-2 rounded hover:bg-red-500 transition-colors"
                                                     onclick="return confirm('Remove {{ $accessCode->student->full_name }}?')"
@@ -501,6 +527,30 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// Function to display messages (like toasts)
+function displayMessage(message, type = 'success') {
+    const messageContainer = document.getElementById('message-container');
+    if (!messageContainer) {
+        console.warn('Message container not found.');
+        return;
+    }
+
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `p-3 rounded-md mb-3 text-sm flex items-center justify-between ${type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+    alertDiv.innerHTML = `
+        <span>${message}</span>
+        <button type="button" onclick="this.closest('div').remove()" class="ml-4 text-current hover:opacity-75">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+            </svg>
+        </button>
+    `;
+    messageContainer.prepend(alertDiv);
+
+    // Automatically remove after 5 seconds
+    setTimeout(() => alertDiv.remove(), 5000);
+}
+
 // Student selection functions
     function selectAll() {
         document.querySelectorAll('.student-checkbox').forEach(checkbox => {
@@ -518,13 +568,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Assigned students selection functions
     function selectAllAssigned() {
-        document.querySelectorAll('input[name="student_ids[]"]').forEach(checkbox => {
+        document.querySelectorAll('.assigned-student-checkbox').forEach(checkbox => {
             checkbox.checked = true;
         });
     }
     
     function deselectAllAssigned() {
-        document.querySelectorAll('input[name="student_ids[]"]').forEach(checkbox => {
+        document.querySelectorAll('.assigned-student-checkbox').forEach(checkbox => {
             checkbox.checked = false;
         });
     }
@@ -538,6 +588,126 @@ document.addEventListener('DOMContentLoaded', function() {
             selectedCountElement.textContent = checkedCount;
         }
     }
+
+    // Function to update SMS status on the UI
+    function updateSmsStatusInUi(assignmentId, newStatus) {
+        const statusSpan = document.querySelector(`.sms-status-display[data-assignment-id="${assignmentId}"] span`);
+        if (statusSpan) {
+            statusSpan.textContent = newStatus.replace(/_/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+            statusSpan.className = 'font-semibold ';
+            if (newStatus === 'sent') {
+                statusSpan.classList.add('text-green-600');
+            } else if (newStatus === 'failed') {
+                statusSpan.classList.add('text-red-600');
+            } else if (newStatus === 'skipped_no_phone') {
+                statusSpan.classList.add('text-yellow-600');
+            } else {
+                statusSpan.classList.add('text-gray-500');
+            }
+        }
+    }
+
+    // Send SMS function
+    async function sendSms(assignmentIds, studentName = 'selected students') {
+        if (!confirm(`Send SMS to ${studentName}?`)) {
+            return;
+        }
+
+        const url = `{{ route('partner.exams.send-assignment-sms', $exam) }}`;
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ assignment_ids: assignmentIds })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                displayMessage(data.message, 'success');
+                // Update status for each sent SMS
+                assignmentIds.forEach(id => updateSmsStatusInUi(id, 'sent')); // Assuming all in a successful bulk send are 'sent'
+            } else {
+                displayMessage(`Error: ${data.message || 'Failed to send SMS.'}`, 'error');
+                // You might need to reload or fetch specific assignment statuses if individual failures are reported.
+                // For now, let's assume if the overall call failed, we show a generic error.
+            }
+        } catch (error) {
+            console.error('Error sending SMS:', error);
+            displayMessage('An unexpected error occurred while sending SMS.', 'error');
+        }
+    }
+
+    // Bulk Send SMS function
+    async function bulkSendSms() {
+        const selectedAssignmentCheckboxes = document.querySelectorAll('.assigned-student-checkbox:checked');
+        const assignmentIds = Array.from(selectedAssignmentCheckboxes).map(cb => cb.value);
+
+        if (assignmentIds.length === 0) {
+            displayMessage('Please select at least one student to send SMS.', 'error');
+            return;
+        }
+        
+        const url = `{{ route('partner.exams.bulk-operations', $exam) }}`;
+        const action = 'send_sms';
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ action: action, assignment_ids: assignmentIds })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                displayMessage(data.message, 'success');
+                // For bulk operations, a full reload might still be simpler to reflect all changes accurately
+                window.location.reload();
+            } else {
+                displayMessage(`Error: ${data.message || 'Failed to perform bulk SMS action.'}`, 'error');
+            }
+        } catch (error) {
+            console.error('Error during bulk SMS action:', error);
+            displayMessage('An unexpected error occurred during bulk SMS action.', 'error');
+        }
+    }
+
+    // New function for bulk actions confirmation
+    function confirmBulkAction() {
+        const actionSelect = document.getElementById('bulk-action-select');
+        const selectedAction = actionSelect.value;
+        const selectedAssignmentCheckboxes = document.querySelectorAll('.assigned-student-checkbox:checked');
+        const assignmentIds = Array.from(selectedAssignmentCheckboxes).map(cb => cb.value);
+
+        if (assignmentIds.length === 0) {
+            displayMessage('Please select at least one assignment to perform a bulk action.', 'error');
+            return false;
+        }
+
+        if (selectedAction === 'send_sms') {
+            bulkSendSms(); // Call the async function directly
+            return false; // Prevent default form submission
+        } else if (selectedAction) {
+            return confirm(`Are you sure you want to ${selectedAction} ${assignmentIds.length} assignments?`);
+        }
+
+        displayMessage('Please select an action.', 'error');
+        return false;
+    }
+
+    // Attach event listener to the bulk actions form
+    document.getElementById('bulk-actions-form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent default form submission
+        confirmBulkAction();
+    });
 </script>
 @endpush
 @endsection

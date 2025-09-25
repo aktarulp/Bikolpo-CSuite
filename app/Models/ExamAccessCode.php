@@ -14,6 +14,7 @@ class ExamAccessCode extends Model
         'student_id',
         'access_code',
         'status',
+        'sms_status',
         'used_at',
         'expires_at',
     ];
@@ -21,6 +22,7 @@ class ExamAccessCode extends Model
     protected $casts = [
         'used_at' => 'datetime',
         'expires_at' => 'datetime',
+        'sms_status' => 'string',
     ];
 
     // Relationships

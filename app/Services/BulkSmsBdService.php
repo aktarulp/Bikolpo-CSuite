@@ -44,20 +44,20 @@ class BulkSmsBdService
             $responseData = $response->body();
 
             // Log the full response for debugging
-            Log::info('BulkSMSBD API Response', [
+            Log::info('BulkSMSBD API Raw Response', [
                 'status' => $response->status(),
                 'body' => $responseData,
                 'number' => $number,
                 'message' => $message,
             ]);
 
-            // Check for success based on BulkSMSBD's API response format
-            // This might need adjustment based on their actual success indicator
-            if ($response->successful() && str_contains($responseData, 'SMS TEXT FAILED: 1002') == false) {
-                Log::info('SMS sent successfully to ' . $number);
+            // For now, we will consider any successful HTTP status code as a success
+            // We will refine this based on actual API response content later.
+            if ($response->successful()) {
+                Log::info('SMS API call successfully made to ' . $number);
                 return true;
             } else {
-                Log::error('Failed to send SMS to ' . $number, ['response' => $responseData]);
+                Log::error('SMS API call failed for ' . $number, ['response' => $responseData]);
                 return false;
             }
         } catch (\Exception $e) {

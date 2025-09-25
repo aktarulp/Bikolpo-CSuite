@@ -7,9 +7,17 @@ use App\Models\ExamAccessCode;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Services\BulkSmsBdService;
 
 class ExamAssignmentController extends Controller
 {
+    protected $bulkSmsBdService;
+
+    public function __construct(BulkSmsBdService $bulkSmsBdService)
+    {
+        $this->bulkSmsBdService = $bulkSmsBdService;
+    }
+
     /**
      * Show the exam assignment page
      */
@@ -149,10 +157,10 @@ class ExamAssignmentController extends Controller
 
         if ($assignment) {
             $assignment->delete();
-            return back()->with('success', 'Student assignment removed successfully.');
+            return response()->json(['success' => true, 'message' => 'Student assignment removed successfully.']);
         }
 
-        return back()->withErrors(['error' => 'Assignment not found.']);
+        return response()->json(['success' => false, 'message' => 'Assignment not found.'], 404);
     }
 
     /**
@@ -176,10 +184,10 @@ class ExamAssignmentController extends Controller
                 'used_at' => null,
             ]);
 
-            return back()->with('success', 'Access code regenerated successfully.');
+            return response()->json(['success' => true, 'message' => 'Access code regenerated successfully.']);
         }
 
-        return back()->withErrors(['error' => 'Assignment not found.']);
+        return response()->json(['success' => false, 'message' => 'Assignment not found.'], 404);
     }
 
     /**
@@ -188,33 +196,39 @@ class ExamAssignmentController extends Controller
     public function bulkOperations(Request $request, Exam $exam)
     {
         $request->validate([
-            'action' => 'required|in:assign,remove,regenerate',
-            'student_ids' => 'required|array',
-            'student_ids.*' => 'exists:students,id',
+            'action' => 'required|in:assign,remove,regenerate,send_sms',
+            'assignment_ids' => 'required|array',
+            'assignment_ids.*' => 'exists:exam_access_codes,id',
         ]);
 
         $action = $request->action;
-        $studentIds = $request->student_ids;
+        $assignmentIds = $request->assignment_ids; // Changed to assignment_ids
         $count = 0;
+        $message = '';
 
         switch ($action) {
             case 'assign':
-                $count = $this->bulkAssign($exam, $studentIds);
+                $count = $this->bulkAssign($exam, $assignmentIds); // Assuming student_ids is passed for assignment
                 $message = "Successfully assigned {$count} students to the exam.";
                 break;
                 
             case 'remove':
-                $count = $this->bulkRemove($exam, $studentIds);
+                $count = $this->bulkRemove($exam, $assignmentIds);
                 $message = "Successfully removed {$count} student assignments.";
                 break;
                 
             case 'regenerate':
-                $count = $this->bulkRegenerate($exam, $studentIds);
+                $count = $this->bulkRegenerate($exam, $assignmentIds);
                 $message = "Successfully regenerated {$count} access codes.";
+                break;
+            
+            case 'send_sms':
+                $count = $this->bulkSendSms($exam, $assignmentIds); 
+                $message = "Attempted to send SMS to {$count} assignments.";
                 break;
         }
 
-        return back()->with('success', $message);
+        return response()->json(['success' => true, 'message' => $message]);
     }
 
     /**
@@ -239,6 +253,7 @@ class ExamAssignmentController extends Controller
                         'access_code' => $accessCode,
                         'status' => 'active',
                         'expires_at' => $exam->end_time,
+                        'sms_status' => 'pending',
                     ]);
                     
                     $count++;
@@ -252,22 +267,22 @@ class ExamAssignmentController extends Controller
     /**
      * Bulk remove assignments
      */
-    private function bulkRemove(Exam $exam, array $studentIds)
+    private function bulkRemove(Exam $exam, array $assignmentIds) // Changed to assignmentIds
     {
         return ExamAccessCode::where('exam_id', $exam->id)
-            ->whereIn('student_id', $studentIds)
+            ->whereIn('id', $assignmentIds) // Changed to 'id'
             ->delete();
     }
 
     /**
      * Bulk regenerate codes
      */
-    private function bulkRegenerate(Exam $exam, array $studentIds)
+    private function bulkRegenerate(Exam $exam, array $assignmentIds) // Changed to assignmentIds
     {
         $count = 0;
         
         $assignments = ExamAccessCode::where('exam_id', $exam->id)
-            ->whereIn('student_id', $studentIds)
+            ->whereIn('id', $assignmentIds) // Changed to 'id'
             ->get();
 
         foreach ($assignments as $assignment) {
@@ -276,11 +291,44 @@ class ExamAssignmentController extends Controller
                 'access_code' => $newCode,
                 'status' => 'active',
                 'used_at' => null,
+                'sms_status' => 'pending',
             ]);
             $count++;
         }
 
         return $count;
+    }
+
+    /**
+     * Bulk send SMS to assignments.
+     */
+    private function bulkSendSms(Exam $exam, array $assignmentIds)
+    {
+        $sentCount = 0;
+        $failedCount = 0;
+
+        foreach ($assignmentIds as $assignmentId) {
+            $assignment = ExamAccessCode::with('student')
+                                        ->find($assignmentId);
+
+            if ($assignment && $assignment->student && $assignment->student->phone) {
+                $message = "Dear {$assignment->student->full_name},\nYou are assigned to exam {$exam->title} by {$exam->partner->name}, scheduled at {$exam->formatted_start_time} & your access code is: {$assignment->access_code}.\nVisit: " . config('app.url') . "/LiveExam to access the exam.";
+                
+                $smsSent = $this->bulkSmsBdService->sendSms($assignment->student->phone, $message);
+
+                if ($smsSent) {
+                    $assignment->update(['sms_status' => 'sent']);
+                    $sentCount++;
+                } else {
+                    $assignment->update(['sms_status' => 'failed']);
+                    $failedCount++;
+                }
+            } else if ($assignment) {
+                $assignment->update(['sms_status' => 'skipped_no_phone']);
+                $failedCount++;
+            }
+        }
+        return $sentCount; // Return only the count of successfully sent SMS
     }
 
     /**
@@ -320,5 +368,45 @@ class ExamAssignmentController extends Controller
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Send SMS to assigned students.
+     */
+    public function sendAssignmentSms(Request $request, Exam $exam)
+    {
+        $request->validate([
+            'assignment_ids' => 'required|array',
+            'assignment_ids.*' => 'exists:exam_access_codes,id',
+        ]);
+
+        $assignmentIds = $request->assignment_ids;
+        $sentCount = 0;
+        $failedCount = 0;
+
+        foreach ($assignmentIds as $assignmentId) {
+            $assignment = ExamAccessCode::with(['student', 'exam.partner'])
+                                        ->find($assignmentId);
+
+            if ($assignment && $assignment->student && $assignment->student->phone && $assignment->exam && $assignment->exam->partner) {
+                $message = "Dear {$assignment->student->full_name},\nYou are assigned to exam {$assignment->exam->title} by {$assignment->exam->partner->name}, scheduled at {$assignment->exam->formatted_start_time} & your access code is: {$assignment->access_code}.\nVisit: " . config('app.url') . "/LiveExam to access the exam.";
+                
+                $smsSent = $this->bulkSmsBdService->sendSms($assignment->student->phone, $message);
+
+                if ($smsSent) {
+                    $assignment->update(['sms_status' => 'sent']);
+                    $sentCount++;
+                } else {
+                    $assignment->update(['sms_status' => 'failed']);
+                    $failedCount++;
+                }
+            } else if ($assignment) {
+                $assignment->update(['sms_status' => 'skipped_no_phone']);
+                $failedCount++;
+            }
+        }
+
+        $message = "SMS sending complete. Sent to {$sentCount} students, failed for {$failedCount}.";
+        return response()->json(['success' => true, 'message' => $message]);
     }
 }

@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('exam_results', function (Blueprint $table) {
-            //
+        Schema::table('exam_access_codes', function (Blueprint $table) {
+            $table->string('sms_status')->default('pending')->nullable()->after('status');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('exam_results', function (Blueprint $table) {
-            //
+        Schema::table('exam_access_codes', function (Blueprint $table) {
+            $table->dropColumn('sms_status');
         });
     }
 };

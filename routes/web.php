@@ -467,6 +467,7 @@ Route::middleware('auth')->group(function () {
         Route::post('exams/{exam}/regenerate-code', [\App\Http\Controllers\ExamAssignmentController::class, 'regenerateCode'])->name('exams.regenerate-code');
         Route::post('exams/{exam}/bulk-operations', [\App\Http\Controllers\ExamAssignmentController::class, 'bulkOperations'])->name('exams.bulk-operations');
         Route::get('exams/{exam}/export-assignments', [\App\Http\Controllers\ExamAssignmentController::class, 'exportAssignments'])->name('exams.export-assignments');
+        Route::post('exams/{exam}/send-assignment-sms', [\App\Http\Controllers\ExamAssignmentController::class, 'sendAssignmentSms'])->name('exams.send-assignment-sms');
         
         // Student Assignment Routes (must come BEFORE resource route)
         Route::match(['get', 'post', 'put'], 'students/assignment', [StudentController::class, 'assignment'])->name('students.assignment');
