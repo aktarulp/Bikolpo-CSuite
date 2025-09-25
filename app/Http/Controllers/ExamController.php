@@ -18,6 +18,7 @@ use App\Models\ExamResult;
 use App\Services\ExamManagementService;
 use App\Services\ExamQuestionManagementService;
 use App\Services\PdfGeneratorService;
+use App\Services\BulkSmsBdService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -36,16 +37,19 @@ class ExamController extends Controller
     protected $examManagementService;
     protected $examQuestionManagementService;
     protected $pdfGeneratorService;
+    protected $bulkSmsBdService;
 
     public function __construct(
         ExamManagementService $examManagementService,
         ExamQuestionManagementService $examQuestionManagementService,
-        PdfGeneratorService $pdfGeneratorService
+        PdfGeneratorService $pdfGeneratorService,
+        BulkSmsBdService $bulkSmsBdService
     )
     {
         $this->examManagementService = $examManagementService;
         $this->examQuestionManagementService = $examQuestionManagementService;
         $this->pdfGeneratorService = $pdfGeneratorService;
+        $this->bulkSmsBdService = $bulkSmsBdService;
     }
 
     public function index(Request $request)
@@ -1972,6 +1976,16 @@ class ExamController extends Controller
                 $validatedData['access_code'],
                 $validatedData['valid_until']
             );
+
+            // Retrieve the students who were just assigned
+            $students = Student::whereIn('id', $validatedData['student_ids'])->get();
+            $phoneNumbers = $students->pluck('phone')->filter()->toArray(); // Assuming 'phone' is the student's phone number field
+
+            if (!empty($phoneNumbers)) {
+                $message = "Dear Student, you have been assigned to the exam: {$exam->title}. Check your portal for details.";
+                $this->bulkSmsBdService->sendManySms($phoneNumbers, $message);
+            }
+
             return response()->json(['success' => true, 'message' => 'Students assigned successfully.']);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to assign students: ' . $e->getMessage()], 500);
