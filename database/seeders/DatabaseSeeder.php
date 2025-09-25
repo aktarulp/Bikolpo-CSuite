@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             BasicDemoSeeder::class,
             DemoStudentsSeeder::class, // Add Bangladeshi demo students
-            McqQuestionSeeder::class,
+            // McqQuestionSeeder::class,
             DescriptiveQuestionSeeder::class,
         ]);
     }

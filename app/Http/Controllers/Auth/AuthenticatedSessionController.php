@@ -50,13 +50,44 @@ class AuthenticatedSessionController extends Controller
             ]);
         }
         
+        // Log role and intended redirect for debugging
+        Log::info('User logged in', [
+            'user_id' => $user->id,
+            'user_role' => $user->role,
+            'login_type' => $loginType,
+        ]);
+
+        Log::debug('Login Debug: User Role and Login Type', [
+            'user_id' => $user->id,
+            'user_role' => $user->role,
+            'login_type' => $loginType,
+            'redirect_target' => 'student.dashboard'
+        ]);
+
         // Redirect based on user's actual role in database
         if ($user->role === 'student') {
+            Log::info('Redirecting to student dashboard', ['user_id' => $user->id]);
             return redirect()->route('student.dashboard');
-        } else {
-            // Default to partner dashboard
+        } elseif ($user->role === 'partner') {
+            Log::info('Redirecting to partner dashboard', ['user_id' => $user->id]);
+            Log::debug('Login Debug: User Role and Login Type', [
+            'user_id' => $user->id,
+            'user_role' => $user->role,
+            'login_type' => $loginType,
+            'redirect_target' => 'partner.dashboard'
+        ]);
             return redirect()->route('partner.dashboard');
         }
+
+        // Unknown role: log and redirect to welcome (safe) page
+        Log::warning('User role unknown during login redirect, sending to welcome', ['user_id' => $user->id, 'role' => $user->role]);
+        Log::debug('Login Debug: User Role and Login Type', [
+            'user_id' => $user->id,
+            'user_role' => $user->role,
+            'login_type' => $loginType,
+            'redirect_target' => '/'
+        ]);
+        return redirect('/');
     }
 
     /**

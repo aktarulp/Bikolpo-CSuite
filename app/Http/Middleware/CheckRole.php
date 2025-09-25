@@ -20,12 +20,20 @@ class CheckRole
         }
 
         if (auth()->user()->role !== $role) {
-            // Redirect based on user's actual role
-            if (auth()->user()->role === 'student') {
+            // Redirect based on user's actual role when possible.
+            // Avoid redirecting to the same protected route which can cause infinite loops.
+            $actualRole = auth()->user()->role;
+
+            if ($actualRole === 'student') {
                 return redirect()->route('student.dashboard');
-            } else {
+            }
+
+            if ($actualRole === 'partner') {
                 return redirect()->route('partner.dashboard');
             }
+
+            // Fallback: send to home page to avoid loops for unexpected roles (admin, super-admin, etc.)
+            return redirect('/');
         }
 
         return $next($request);

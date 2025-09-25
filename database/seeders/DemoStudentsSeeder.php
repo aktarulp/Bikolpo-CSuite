@@ -122,8 +122,15 @@ class DemoStudentsSeeder extends Seeder
                     'city' => $city,
                     'school_college' => $school,
                     'class_grade' => $classGrade,
-                    'parent_name' => $this->generateParentName($name, $gender),
-                    'parent_phone' => '+8801' . rand(3, 9) . rand(10000000, 99999999),
+                    'father_name' => $this->generateMaleName(), // Assign a generic male parent name
+                    'father_phone' => '+8801' . rand(3, 9) . rand(10000000, 99999999),
+                    'mother_name' => $this->generateFemaleName(), // Assign a generic female parent name
+                    'mother_phone' => '+8801' . rand(3, 9) . rand(10000000, 99999999),
+                    'guardian' => ($gender === 'male' ? 'Father' : 'Mother'),
+                    'guardian_name' => ($gender === 'male' ? $this->generateMaleName() : $this->generateFemaleName()),
+                    'guardian_phone' => '+8801' . rand(3, 9) . rand(10000000, 99999999),
+                    'blood_group' => $this->generateBloodGroup(),
+                    'religion' => $this->generateReligion(),
                     'status' => 'active',
                     'created_at' => now(),
                     'updated_at' => now(),
@@ -161,17 +168,17 @@ class DemoStudentsSeeder extends Seeder
      */
     private function determineGender($name): string
     {
-        $femaleSuffixes = ['Begum', 'Khatun', 'Akter', 'Yasmin', 'Jahan'];
-        $maleSuffixes = ['Rahman', 'Ali', 'Khan', 'Ahmed', 'Islam', 'Hossain', 'Uddin', 'Amin', 'Karim', 'Hassan', 'Rashid', 'Imran', 'Fazal', 'Shahid', 'Kamal', 'Nurul', 'Rafiqul', 'Jahangir', 'Mizanur', 'Shafiqul', 'Azizul', 'Mahbubur', 'Mominul', 'Shahjahan', 'Nasir', 'Rashidul', 'Firoz', 'Tariqul', 'Shahidul', 'Mamunur', 'Nazrul', 'Habibur'];
-        
-        foreach ($femaleSuffixes as $suffix) {
-            if (str_contains($name, $suffix)) {
+        $femaleNames = ['Fatima', 'Ayesha', 'Nusrat', 'Sabina', 'Rehana', 'Nasreen', 'Shahana', 'Momena', 'Rashida', 'Fahima', 'Tahmina', 'Shahida', 'Mamata', 'Nazma', 'Rahima'];
+        $maleNames = ['Ahmed', 'Mohammad', 'Abdul', 'Hassan', 'Rashid', 'Imran', 'Fazal', 'Shahid', 'Kamal', 'Nurul', 'Rafiqul', 'Jahangir', 'Mizanur', 'Shafiqul', 'Azizul', 'Mahbubur', 'Mominul', 'Shahjahan', 'Nasir', 'Rashidul', 'Firoz', 'Tariqul', 'Shahidul', 'Mamunur', 'Nazrul', 'Habibur'];
+
+        foreach ($femaleNames as $femaleName) {
+            if (str_starts_with($name, $femaleName)) {
                 return 'female';
             }
         }
-        
-        foreach ($maleSuffixes as $suffix) {
-            if (str_contains($name, $suffix)) {
+
+        foreach ($maleNames as $maleName) {
+            if (str_starts_with($name, $maleName)) {
                 return 'male';
             }
         }
@@ -222,26 +229,38 @@ class DemoStudentsSeeder extends Seeder
     }
 
     /**
-     * Generate parent name based on student name and gender
-     */
-    private function generateParentName($studentName, $gender): string
-    {
-        $nameParts = explode(' ', $studentName);
-        $lastName = end($nameParts);
-        
-        if ($gender === 'female') {
-            return "Mr. " . $this->generateMaleName() . " " . $lastName;
-        } else {
-            return "Mr. " . $this->generateMaleName() . " " . $lastName;
-        }
-    }
-
-    /**
      * Generate a male name for parent
      */
     private function generateMaleName(): string
     {
-        $maleNames = ['Abdul', 'Mohammad', 'Ahmed', 'Hassan', 'Rashid', 'Imran', 'Fazal', 'Shahid', 'Kamal', 'Nurul', 'Rafiqul', 'Jahangir', 'Mizanur', 'Shafiqul', 'Azizul', 'Mahbubur', 'Mominul', 'Shahjahan', 'Nasir', 'Rashidul', 'Firoz', 'Tariqul', 'Shahidul', 'Mamunur', 'Nazrul', 'Habibur'];
+        $maleNames = ['Mr. Abdul', 'Mr. Mohammad', 'Mr. Ahmed', 'Mr. Hassan', 'Mr. Rashid', 'Mr. Imran', 'Mr. Fazal', 'Mr. Shahid', 'Mr. Kamal', 'Mr. Nurul', 'Mr. Rafiqul', 'Mr. Jahangir', 'Mr. Mizanur', 'Mr. Shafiqul', 'Mr. Azizul', 'Mr. Mahbubur', 'Mr. Mominul', 'Mr. Shahjahan', 'Mr. Nasir', 'Mr. Rashidul', 'Mr. Firoz', 'Mr. Tariqul', 'Mr. Shahidul', 'Mr. Mamunur', 'Mr. Nazrul', 'Mr. Habibur'];
         return $maleNames[array_rand($maleNames)];
+    }
+
+    /**
+     * Generate a female name for parent
+     */
+    private function generateFemaleName(): string
+    {
+        $femaleNames = ['Mrs. Fatima', 'Mrs. Ayesha', 'Mrs. Nusrat', 'Mrs. Sabina', 'Mrs. Rehana', 'Mrs. Nasreen', 'Mrs. Shahana', 'Mrs. Momena', 'Mrs. Rashida', 'Mrs. Fahima', 'Mrs. Tahmina', 'Mrs. Shahida', 'Mrs. Mamata', 'Mrs. Nazma', 'Mrs. Rahima'];
+        return $femaleNames[array_rand($femaleNames)];
+    }
+
+    /**
+     * Generate a random blood group
+     */
+    private function generateBloodGroup(): string
+    {
+        $bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+        return $bloodGroups[array_rand($bloodGroups)];
+    }
+
+    /**
+     * Generate a random religion
+     */
+    private function generateReligion(): string
+    {
+        $religions = ['Islam', 'Hinduism', 'Christianity', 'Buddhism'];
+        return $religions[array_rand($religions)];
     }
 }

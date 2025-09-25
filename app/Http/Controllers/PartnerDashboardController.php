@@ -99,8 +99,18 @@ class PartnerDashboardController extends Controller
             ]);
             
             // Return a view with an error message
+            // Ensure the view always receives the keys it expects to avoid Blade errors
             return view('partner.dashboard', [
-                'stats' => ['total_questions' => 0, 'total_exams' => 0, 'total_students' => 0, 'total_courses' => 0, 'total_batches' => 0],
+                'stats' => [
+                    'total_questions' => 0,
+                    'total_exams' => 0,
+                    'total_students' => 0,
+                    'total_courses' => 0,
+                    'total_batches' => 0,
+                    'total_question_attempts' => 0,
+                    'total_correct_answers' => 0,
+                    'overall_accuracy' => 0,
+                ],
                 'recent_exams' => collect(),
                 'recent_results' => collect(),
                 'partner' => null,

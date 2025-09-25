@@ -31,19 +31,29 @@ class RedirectIfAuthenticated
                     'is_login_route' => $request->routeIs('login') || $request->routeIs('partner.login') || $request->routeIs('student.login')
                 ]);
                 
-                // Allow authenticated users to access login page if they want to switch accounts
+                // If the authenticated user is on a login/register page intentionally, allow access
                 if ($request->routeIs('login') || $request->routeIs('partner.login') || $request->routeIs('student.login')) {
                     Log::info('Allowing authenticated user to access login page');
                     return $next($request);
                 }
-                
-                // Redirect based on user role for other guest-only pages
+
+                // Redirect based on user role for other guest-only pages.
+                // Use safe fallbacks to avoid redirect loops.
                 if ($user->role === 'student') {
                     Log::info('Redirecting student to student dashboard');
-                    return redirect()->route('student.dashboard');
-                } else {
+                    // If current route already points to student.dashboard, avoid redirect
+                    if (!$request->routeIs('student.dashboard')) {
+                        return redirect()->route('student.dashboard');
+                    }
+                } elseif ($user->role === 'partner') {
                     Log::info('Redirecting partner to partner dashboard');
-                    return redirect()->route('partner.dashboard');
+                    if (!$request->routeIs('partner.dashboard')) {
+                        return redirect()->route('partner.dashboard');
+                    }
+                } else {
+                    // Unknown role: send to home to avoid redirecting into protected routes
+                    Log::warning('Authenticated user has unknown role, redirecting to home', ['role' => $user->role]);
+                    return redirect('/');
                 }
             }
         }

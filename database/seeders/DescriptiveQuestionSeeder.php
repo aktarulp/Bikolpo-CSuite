@@ -19,7 +19,7 @@ class DescriptiveQuestionSeeder extends Seeder
     public function run(): void
     {
         // Get existing data
-        $descriptiveType = QuestionType::where('q_type_code', 'DESC')->first();
+        $descriptiveType = QuestionType::where('q_type_code', 'CQ')->first();
         $partners = Partner::all();
         $courses = Course::with(['subjects.topics'])->get();
 

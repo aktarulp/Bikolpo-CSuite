@@ -431,7 +431,7 @@ class BasicDemoSeeder extends Seeder
                 'duration' => 120,
                 'passing_marks' => 40,
                 'status' => 'published',
-                'allow_retake' => false,
+                'allow_review' => false,
                 'show_results_immediately' => true,
                 'has_negative_marking' => true,
                 'negative_marks_per_question' => 0.25
@@ -444,7 +444,7 @@ class BasicDemoSeeder extends Seeder
                 'duration' => 90,
                 'passing_marks' => 35,
                 'status' => 'published',
-                'allow_retake' => true,
+                'allow_review' => true,
                 'show_results_immediately' => false,
                 'has_negative_marking' => false,
                 'negative_marks_per_question' => 0
@@ -457,7 +457,7 @@ class BasicDemoSeeder extends Seeder
                 'duration' => 100,
                 'passing_marks' => 45,
                 'status' => 'published',
-                'allow_retake' => false,
+                'allow_review' => false,
                 'show_results_immediately' => true,
                 'has_negative_marking' => true,
                 'negative_marks_per_question' => 0.50
@@ -476,7 +476,7 @@ class BasicDemoSeeder extends Seeder
                     'duration' => $examInfo['duration'],
                     'passing_marks' => $examInfo['passing_marks'],
                     'status' => $examInfo['status'],
-                    'allow_retake' => $examInfo['allow_retake'],
+                    'allow_review' => $examInfo['allow_review'],
                     'show_results_immediately' => $examInfo['show_results_immediately'],
                     'has_negative_marking' => $examInfo['has_negative_marking'],
                     'negative_marks_per_question' => $examInfo['negative_marks_per_question'],
