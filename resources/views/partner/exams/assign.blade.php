@@ -130,7 +130,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             @foreach($exam->accessCodes as $accessCode)
                             <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 assignment-card" data-assignment-id="{{ $accessCode->id }}">
-                                <div class="p-4">
+                                <div class="p-3 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-t-lg border-b border-gray-200">
                                     <div class="flex items-start space-x-3">
                                         <input type="checkbox" 
                                                name="assignment_ids[]" 
@@ -160,7 +160,10 @@
                                         </div>
                                     </div>
 
-                                    <div class="mt-4 space-y-2">
+                                    
+                                </div>
+
+                                <div class="p-4 space-y-2 bg-gradient-to-br from-white to-gray-50">
                                         <div class="flex items-center justify-between text-sm">
                                             <span class="font-medium text-gray-700">Phone:</span>
                                             <span class="text-gray-900">{{ $accessCode->student->phone ?? 'N/A' }}</span>
@@ -181,9 +184,8 @@
                                             </span>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="border-t border-gray-200 bg-gray-50 px-4 py-3 flex justify-end space-x-2">
+                                <div class="border-t border-gray-200 bg-gradient-to-r from-gray-100 to-gray-200 px-4 py-3 flex justify-end space-x-2">
                                     <form method="POST" action="{{ route('partner.exams.regenerate-code', $exam) }}" class="inline regenerate-form" data-assignment-id="{{ $accessCode->id }}">
                                         @csrf
                                         <input type="hidden" name="assignment_id" value="{{ $accessCode->id }}">
