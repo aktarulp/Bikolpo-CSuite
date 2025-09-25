@@ -185,7 +185,7 @@
                                         </div>
                                     </div>
 
-                                <div class="border-t border-gray-200 bg-gradient-to-r from-gray-100 to-gray-200 px-4 py-3 flex justify-end space-x-2">
+                                <div class="border-t border-gray-200 bg-gradient-to-r from-blue-100 to-blue-200 px-4 py-3 flex justify-end space-x-2">
                                     <form method="POST" action="{{ route('partner.exams.regenerate-code', $exam) }}" class="inline regenerate-form" data-assignment-id="{{ $accessCode->id }}">
                                         @csrf
                                         <input type="hidden" name="assignment_id" value="{{ $accessCode->id }}">
@@ -265,21 +265,28 @@
                 </div>
                 
                 <!-- Search and Filter Section -->
-                <div id="filters-content" class="px-3 py-2 border-b border-gray-200 bg-gray-50">
-                    <form method="GET" action="{{ route('partner.exams.assign', $exam) }}">
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                <div id="filters-content" class="p-4 border-b border-gray-200 bg-gray-50 rounded-b-lg mb-4">
+                    <form method="GET" action="{{ route('partner.exams.assign', $exam) }}" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                             <!-- Search -->
-                            <div class="col-span-2">
-                                <input type="text" name="search" id="search" 
-                                       value="{{ request('search') }}"
-                                       placeholder="Search students..."
-                                       class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primaryGreen focus:border-primaryGreen">
+                            <div class="col-span-full md:col-span-2">
+                                <div class="relative">
+                                    <input type="text" name="search" id="search" 
+                                           value="{{ request('search') }}"
+                                           placeholder="Search students..."
+                                           class="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primaryGreen focus:border-primaryGreen transition-all duration-200">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
                             
                             <!-- Course -->
                             <div>
                                 <select name="course_id" id="course_id" 
-                                        class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primaryGreen focus:border-primaryGreen">
+                                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primaryGreen focus:border-primaryGreen transition-all duration-200">
                                     <option value="all" {{ request('course_id') == 'all' || !request('course_id') ? 'selected' : '' }}>All Courses</option>
                                     @foreach($courses ?? [] as $course)
                                         <option value="{{ $course->id }}" {{ request('course_id') == $course->id ? 'selected' : '' }}>{{ $course->name }}</option>
@@ -290,7 +297,7 @@
                             <!-- Batch -->
                             <div>
                                 <select name="batch_id" id="batch_id" 
-                                        class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primaryGreen focus:border-primaryGreen">
+                                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primaryGreen focus:border-primaryGreen transition-all duration-200">
                                     <option value="all" {{ request('batch_id') == 'all' || !request('batch_id') ? 'selected' : '' }}>All Batches</option>
                                     @foreach($batches ?? [] as $batch)
                                         <option value="{{ $batch->id }}" {{ request('batch_id') == $batch->id ? 'selected' : '' }}>{{ $batch->name }}</option>
@@ -301,7 +308,7 @@
                             <!-- Gender -->
                             <div>
                                 <select name="gender" id="gender" 
-                                        class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-primaryGreen focus:border-primaryGreen">
+                                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primaryGreen focus:border-primaryGreen transition-all duration-200">
                                     <option value="all" {{ request('gender') == 'all' || !request('gender') ? 'selected' : '' }}>All Gender</option>
                                     <option value="male" {{ request('gender') == 'male' ? 'selected' : '' }}>Male</option>
                                     <option value="female" {{ request('gender') == 'female' ? 'selected' : '' }}>Female</option>
@@ -312,8 +319,8 @@
                             <!-- Clear Filters -->
                             <div>
                                 <a href="{{ route('partner.exams.assign', $exam) }}" 
-                                   class="w-full inline-flex items-center justify-center px-2 py-1 border border-gray-300 text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-primaryGreen">
-                                    Clear
+                                   class="w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primaryGreen shadow-sm transition-all duration-200">
+                                    Clear Filters
                                 </a>
                             </div>
                         </div>
@@ -345,59 +352,57 @@
                             </div>
                             
                             <!-- Student List -->
-                            <div class="space-y-0.5">
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 @foreach($availableStudents as $student)
-                                <label class="flex items-center justify-between p-1.5 border border-gray-200 rounded hover:bg-gray-50 transition-colors cursor-pointer">
-                                    <div class="flex items-center space-x-2 flex-1 min-w-0">
+                                <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 available-student-card">
+                                <div class="p-3 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-t-lg border-b border-gray-200">
+                                    <div class="flex items-start space-x-3">
                                         <input type="checkbox" 
                                                name="student_ids[]" 
                                                value="{{ $student->id }}"
-                                               class="h-5 w-5 text-primaryGreen focus:ring-primaryGreen border-gray-400 rounded student-checkbox"
+                                               class="mt-1 h-5 w-5 text-primaryGreen focus:ring-primaryGreen border-gray-300 rounded student-checkbox"
                                                onchange="updateSelectedCount()">
                                         
                                         <div class="flex-shrink-0">
                                             @if($student->photo)
-                                                <img class="h-10 w-10 rounded-full object-cover" 
+                                                <img class="h-12 w-12 rounded-full object-cover border border-gray-200" 
                                                      src="{{ Storage::url($student->photo) }}" 
                                                      alt="{{ $student->full_name }}">
                                             @else
-                                                <div class="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center">
-                                                    <span class="text-xs font-bold text-white">{{ substr($student->full_name, 0, 1) }}</span>
+                                                <div class="h-12 w-12 rounded-full bg-blue-500 flex items-center justify-center border border-gray-200">
+                                                    <span class="text-base font-bold text-white">{{ substr($student->full_name, 0, 1) }}</span>
                                                 </div>
                                             @endif
                                         </div>
                                         
                                         <div class="flex-1 min-w-0">
-                                            <div class="flex items-center space-x-2">
-                                                <p class="text-base font-medium text-gray-900 truncate">{{ $student->full_name }}</p>
-                                            </div>
-                                            <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-1 space-y-1 sm:space-y-0 text-base text-gray-500">
+                                            <p class="text-base font-semibold text-gray-900 leading-snug truncate">{{ $student->full_name }}</p>
+                                            <p class="text-sm text-gray-600 truncate">{{ $student->phone }}</p>
+                                            <div class="flex flex-wrap gap-1 mt-1">
                                                 @if($student->course)
-                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs w-fit">{{ $student->course->name }}</span>
+                                                    <span class="text-xs font-medium text-gray-700">Course:</span>
+                                                    <span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs">{{ $student->course->name }}</span>
                                                 @endif
                                                 @if($student->batch)
-                                                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded text-xs w-fit">{{ $student->batch->name }}</span>
+                                                <div class="mt-1">
+                                                    <span class="text-xs font-medium text-gray-700">Batch:</span>
+                                                    <span class="px-2 py-0.5 bg-green-100 text-green-800 rounded-full text-xs">{{ $student->batch->name }}</span>
+                                                </div>
                                                 @endif
                                             </div>
                                         </div>
                                     </div>
-                                    
-                                    <div class="text-right text-base text-gray-500">
-                                        <div class="mb-1 sm:mb-0">
-                                            <p class="font-medium">{{ $student->phone }}</p>
-                                        </div>
-                                        @if($student->class_grade)
-                                            <div class="mb-1 sm:mb-0">
-                                                <p class="font-medium">{{ $student->class_grade }}</p>
-                                            </div>
-                                        @endif
-                                        @if($student->school_college)
-                                            <div>
-                                                <p class="truncate max-w-[120px]">{{ $student->school_college }}</p>
-                                            </div>
-                                        @endif
-                                    </div>
-                                </label>
+                                </div>
+
+                                <div class="border-t border-gray-200 bg-gradient-to-r from-blue-100 to-blue-200 px-4 py-3 flex justify-end">
+                                    <button type="submit" form="assign-students-form" 
+                                            class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-primaryGreen hover:bg-primaryGreen/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primaryGreen"
+                                            onclick="return confirm('Assign {{ $student->full_name }} to the exam?')">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                                        Assign
+                                    </button>
+                                </div>
+                            </div>
                                 @endforeach
                             </div>
                         </form>
