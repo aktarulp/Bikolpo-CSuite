@@ -91,85 +91,86 @@
                 <div class="p-3">
                     @if($exam->accessCodes->count() > 0)
                         <!-- Select All / Deselect All / Bulk Actions -->
-                        <div class="flex items-center justify-end space-x-2 mb-2">
-                            <button type="button" 
-                                    onclick="selectAllAssigned()" 
-                                    class="px-2 py-1 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-500">
-                                Select All
-                            </button>
-                            <button type="button" 
-                                    onclick="deselectAllAssigned()" 
-                                    class="px-2 py-1 bg-gray-600 text-white text-xs font-medium rounded hover:bg-gray-700 focus:outline-none focus:ring-1 focus:ring-gray-500">
-                                Deselect All
-                            </button>
+                        <div class="flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0 sm:space-x-4 mb-4">
+                            <div class="flex space-x-2">
+                                <button type="button" 
+                                        onclick="selectAllAssigned()" 
+                                        class="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1">
+                                    Select All
+                                </button>
+                                <button type="button" 
+                                        onclick="deselectAllAssigned()" 
+                                        class="px-3 py-1.5 bg-gray-600 text-white text-xs font-medium rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1">
+                                    Deselect All
+                                </button>
+                            </div>
                             
                             <!-- Bulk Actions -->
-                            <form id="bulk-actions-form" method="POST" action="{{ route('partner.exams.bulk-operations', $exam) }}" class="inline">
+                            <form id="bulk-actions-form" method="POST" action="{{ route('partner.exams.bulk-operations', $exam) }}" class="w-full sm:w-auto">
                                 @csrf
-                                <div class="flex items-center space-x-1">
-                                    <select name="action" id="bulk-action-select" class="text-xs border border-gray-300 rounded px-1.5 py-1 focus:outline-none focus:ring-1 focus:ring-primaryGreen focus:border-primaryGreen">
+                                <div class="flex items-center space-x-2">
+                                    <select name="action" id="bulk-action-select" 
+                                            class="flex-grow block w-full px-3 py-1.5 text-xs border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primaryGreen focus:border-primaryGreen">
                                         <option value="">Actions</option>
                                         <option value="remove">Remove</option>
                                         <option value="regenerate">Regenerate</option>
                                         <option value="send_sms">Send SMS</option>
                                     </select>
                                     <button type="submit" 
-                                            class="px-1.5 py-1 bg-red-600 text-white text-xs font-medium rounded hover:bg-red-700 focus:outline-none focus:ring-1 focus:ring-red-500"
-                                            onclick="return confirmBulkAction()">
-                                        Apply
-                                    </button>
+                                            class="px-3 py-1.5 bg-red-600 text-white text-xs font-medium rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1"
+                                            onclick="return confirmBulkAction()"
+                                            title="Apply Bulk Action">
+                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                     </button>
                                 </div>
                             </form>
                         </div>
                         
                         <!-- Assigned Students List -->
-                        <div class="space-y-0.5">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             @foreach($exam->accessCodes as $accessCode)
-                            <div class="flex items-center justify-between p-1.5 border border-gray-200 rounded hover:bg-gray-50 transition-colors assignment-row" data-assignment-id="{{ $accessCode->id }}">
-                                <!-- Student Info -->
-                                <div class="flex items-center space-x-2 flex-1 min-w-0">
-                                    <input type="checkbox" 
-                                           name="assignment_ids[]" 
-                                           value="{{ $accessCode->id }}"
-                                           class="h-5 w-5 text-red-600 focus:ring-red-500 border-gray-400 rounded assigned-student-checkbox">
-                                    
-                                    <div class="flex-shrink-0">
-                                        @if($accessCode->student->photo)
-                                            <img class="h-10 w-10 rounded-full object-cover" 
-                                                 src="{{ Storage::url($accessCode->student->photo) }}" 
-                                                 alt="{{ $accessCode->student->full_name }}">
-                                        @else
-                                            <div class="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center">
-                                                <span class="text-xs font-bold text-white">{{ substr($accessCode->student->full_name, 0, 1) }}</span>
-                                            </div>
-                                        @endif
-                                    </div>
-                                    
-                                    <div class="flex-1 min-w-0">
-                                        <div class="flex items-center space-x-2">
-                                            <p class="text-base font-medium text-gray-900 truncate">{{ $accessCode->student->full_name }}</p>
-                                            @if($accessCode->used_at)
-                                                <span class="text-base text-green-600 font-medium">✓</span>
+                            <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 assignment-card" data-assignment-id="{{ $accessCode->id }}">
+                                <div class="p-4">
+                                    <div class="flex items-start space-x-3">
+                                        <input type="checkbox" 
+                                               name="assignment_ids[]" 
+                                               value="{{ $accessCode->id }}"
+                                               class="mt-1 h-5 w-5 text-red-600 focus:ring-red-500 border-gray-300 rounded assigned-student-checkbox">
+                                        
+                                        <div class="flex-shrink-0">
+                                            @if($accessCode->student->photo)
+                                                <img class="h-12 w-12 rounded-full object-cover border border-gray-200" 
+                                                     src="{{ Storage::url($accessCode->student->photo) }}" 
+                                                     alt="{{ $accessCode->student->full_name }}">
+                                            @else
+                                                <div class="h-12 w-12 rounded-full bg-blue-500 flex items-center justify-center border border-gray-200">
+                                                    <span class="text-base font-bold text-white">{{ substr($accessCode->student->full_name, 0, 1) }}</span>
+                                                </div>
                                             @endif
                                         </div>
-                                        <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-1 space-y-1 sm:space-y-0 text-base text-gray-500">
-                                            @if($accessCode->student->course)
-                                                <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs w-fit">{{ $accessCode->student->course->name }}</span>
-                                            @endif
-                                            @if($accessCode->student->batch)
-                                                <span class="px-2 py-1 bg-green-100 text-green-800 rounded text-xs w-fit">{{ $accessCode->student->batch->name }}</span>
-                                            @endif
+                                        
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-base font-semibold text-gray-900 leading-snug truncate">{{ $accessCode->student->full_name }}
+                                                @if($accessCode->used_at)
+                                                    <span class="ml-1 text-green-600 font-medium" title="Exam Taken">✓</span>
+                                                @endif
+                                            </p>
+                                            <p class="text-sm text-gray-600 truncate">{{ $accessCode->student->phone }}</p>
+                                            
                                         </div>
                                     </div>
-                                </div>
-                                
-                                <!-- Access Code & SMS Status -->
-                                <div class="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-1">
-                                    <div class="text-base text-gray-500">
-                                        <div class="mb-1 sm:mb-0">{{ $accessCode->student->phone }}</div>
-                                        <div>Code: <span class="font-mono font-bold text-gray-900 bg-gray-100 px-2 py-1 rounded text-base">{{ $accessCode->access_code }}</span></div>
-                                        <div class="mt-1 text-xs text-gray-500 sms-status-display" data-assignment-id="{{ $accessCode->id }}">
-                                            SMS Status: 
+
+                                    <div class="mt-4 space-y-2">
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="font-medium text-gray-700">Phone:</span>
+                                            <span class="text-gray-900">{{ $accessCode->student->phone ?? 'N/A' }}</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="font-medium text-gray-700">Access Code:</span>
+                                            <span class="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded text-sm">{{ $accessCode->access_code }}</span>
+                                        </div>
+                                        <div class="flex items-center justify-between text-sm sms-status-display" data-assignment-id="{{ $accessCode->id }}">
+                                            <span class="font-medium text-gray-700">SMS Status:</span>
                                             <span class="font-semibold 
                                                 @if($accessCode->sms_status === 'sent') text-green-600 
                                                 @elseif($accessCode->sms_status === 'failed') text-red-600 
@@ -180,54 +181,41 @@
                                             </span>
                                         </div>
                                     </div>
-                                    
-                                    <!-- Actions -->
-                                    <div class="flex space-x-0.5">
-                                        <form method="POST" action="{{ route('partner.exams.regenerate-code', $exam) }}" class="inline regenerate-form" data-assignment-id="{{ $accessCode->id }}">
-                                            @csrf
-                                            <input type="hidden" name="assignment_id" value="{{ $accessCode->id }}"> {{-- Changed from student_id to assignment_id --}}
-                                            <button type="submit" 
-                                                    class="text-green-600 hover:text-green-800 p-2 rounded hover:bg-green-500 transition-colors"
-                                                    onclick="return confirm('Regenerate code for {{ $accessCode->student->full_name }}?')"
-                                                    title="Regenerate Code">
-                                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 1024 1024">
-    <g>
-        <path d="M277.333333 277.333333c0-70.4 57.6-128 128-128h213.333334c70.4 0 128 57.6 128 128h85.333333c0-117.333333-96-213.333333-213.333333-213.333333H405.333333C288 64 192 160 192 277.333333v238.933334h85.333333V277.333333z"></path>
-        <path d="M98.133333 469.333333l136.533334 179.2 136.533333-179.2z"></path>
-        <path d="M746.666667 746.666667c0 70.4-57.6 128-128 128H405.333333c-70.4 0-128-57.6-128-128H192c0 117.333333 96 213.333333 213.333333 213.333333h213.333334c117.333333 0 213.333333-96 213.333333-213.333333V490.666667h-85.333333v256z"></path>
-        <path d="M652.8 554.666667l136.533333-179.2 136.533334 179.2z"></path>
-    </g>
-</svg>
-                                            </button>
-                                        </form>
-                                        
-                                        <button type="button" 
-                                                onclick="sendSms([{{ $accessCode->id }}], '{{ $accessCode->student->full_name }}')"
-                                                class="text-blue-600 hover:text-blue-800 p-2 rounded hover:bg-blue-500 transition-colors"
-                                                title="Send SMS">
-                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M20 4H4c-1.103 0-2 .897-2 2v12c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm0 2v.511l-8 6.223-8-6.222V6h16zM4 18V9.75l7.595 5.89L12 16l.405-.36L20 9.75V18H4z"/>
-                                            </svg>
-                                        </button>
+                                </div>
 
-                                        <form method="POST" action="{{ route('partner.exams.remove-assignment', $exam) }}" class="inline remove-form" data-assignment-id="{{ $accessCode->id }}">
-                                            @csrf
-                                            @method('DELETE')
-                                            <input type="hidden" name="assignment_id" value="{{ $accessCode->id }}"> {{-- Changed from student_id to assignment_id --}}
-                                            <button type="submit" 
-                                                    class="text-red-600 hover:text-red-800 p-2 rounded hover:bg-red-500 transition-colors"
-                                                    onclick="return confirm('Remove {{ $accessCode->student->full_name }}?')"
-                                                    title="Remove Assignment">
-                                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                                    <g>
-                                                        <path d="M14,18.5A2.5,2.5,0,0,1,16.5,16a2.6,2.6,0,0,1,.74.12L18,7H6l.93,13.07a1,1,0,0,0,1,.93H11l1-2h2.05A2.73,2.73,0,0,1,14,18.5Z" style="fill: #2ca9bc; stroke-width: 2;"></path>
-                                                        <path d="M17.24,16.11,18,7H6l.93,13.07a1,1,0,0,0,1,.93H11l1-2h2" style="fill: none; stroke: #000000; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path>
-                                                        <path d="M7,7l.81-3.24a1,1,0,0,1,1-.76h6.44a1,1,0,0,1,1,.76L17,7ZM5,7H19m0,11.5A2.5,2.5,0,1,0,16.5,21,2.5,2.5,0,0,0,19,18.5Z" style="fill: none; stroke: #000000; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path>
-                                                    </g>
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </div>
+                                <div class="border-t border-gray-200 bg-gray-50 px-4 py-3 flex justify-end space-x-2">
+                                    <form method="POST" action="{{ route('partner.exams.regenerate-code', $exam) }}" class="inline regenerate-form" data-assignment-id="{{ $accessCode->id }}">
+                                        @csrf
+                                        <input type="hidden" name="assignment_id" value="{{ $accessCode->id }}">
+                                        <button type="submit" 
+                                                class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                                                onclick="return confirm('Regenerate code for {{ $accessCode->student->full_name }}?')">
+                                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 1024 1024"><g><path d="M277.333333 277.333333c0-70.4 57.6-128 128-128h213.333334c70.4 0 128 57.6 128 128h85.333333c0-117.333333-96-213.333333-213.333333-213.333333H405.333333C288 64 192 160 192 277.333333v238.933334h85.333333V277.333333z"></path><path d="M98.133333 469.333333l136.533334 179.2 136.533333-179.2z"></path><path d="M746.666667 746.666667c0 70.4-57.6 128-128 128H405.333333c-70.4 0-128-57.6-128-128H192c0 117.333333 96 213.333333 213.333333 213.333333h213.333334c117.333333 0 213.333333-96 213.333333-213.333333V490.666667h-85.333333v256z"></path><path d="M652.8 554.666667l136.533333-179.2 136.533334 179.2z"></path></g></svg>
+                                            Regenerate
+                                        </button>
+                                    </form>
+                                    
+                                    <button type="button" 
+                                            onclick="sendSms([{{ $accessCode->id }}], '{{ $accessCode->student->full_name }}')"
+                                            class="inline-flex items-center p-1.5 border border-transparent text-xs font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                            title="Send SMS">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M20 4H4c-1.103 0-2 .897-2 2v12c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm0 2v.511l-8 6.223-8-6.222V6h16zM4 18V9.75l7.595 5.89L12 16l.405-.36L20 9.75V18H4z"/>
+                                        </svg>
+                                    </button>
+
+                                    <form method="POST" action="{{ route('partner.exams.remove-assignment', $exam) }}" class="inline remove-form" data-assignment-id="{{ $accessCode->id }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <input type="hidden" name="assignment_id" value="{{ $accessCode->id }}">
+                                        <button type="submit" 
+                                                class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                                                onclick="return confirm('Remove {{ $accessCode->student->full_name }}?')">
+                                            <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                                                <g><path d="M14,18.5A2.5,2.5,0,0,1,16.5,16a2.6,2.6,0,0,1,.74.12L18,7H6l.93,13.07a1,1,0,0,0,1,.93H11l1-2h2.05A2.73,2.73,0,0,1,14,18.5Z" style="fill: #2ca9bc; stroke-width: 2;"></path><path d="M17.24,16.11,18,7H6l.93,13.07a1,1,0,0,0,1,.93H11l1-2h2" style="fill: none; stroke: #000000; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path><path d="M7,7l.81-3.24a1,1,0,0,1,1-.76h6.44a1,1,0,0,1,1,.76L17,7ZM5,7H19m0,11.5A2.5,2.5,0,1,0,16.5,21,2.5,2.5,0,0,0,19,18.5Z" style="fill: none; stroke: #000000; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path></g></svg>
+                                            Remove
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                             @endforeach
