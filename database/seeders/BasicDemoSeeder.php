@@ -42,9 +42,6 @@ class BasicDemoSeeder extends Seeder
                 'name' => 'Demo Coaching Center',
                 'phone' => '+880 1234567890',
                 'user_id' => $partnerUser->id,
-                'address' => 'Dhaka, Bangladesh',
-                'city' => 'Dhaka',
-                'description' => 'A demo coaching center for testing purposes',
                 'status' => 'active',
             ]
         );

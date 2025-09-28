@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('exams', function (Blueprint $table) {
-            $table->enum('exam_type', ['online', 'offline'])->default('online')->after('total_questions');
+            $table->enum('exam_type', ['mcq', 'descriptive', 'both'])->default('mcq')->after('total_questions');
         });
     }
 
