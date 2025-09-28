@@ -75,7 +75,6 @@ class OtpVerificationController extends Controller
                 'user_id' => $user->id,
                 'status' => 'active',
                 'flag' => 'active',
-                'partner_category' => $registrationData['organization_type'] ?? null,
             ]);
 
             // Mark OTP as used
@@ -92,9 +91,7 @@ class OtpVerificationController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            
-            return redirect()->route('register')
-                ->withErrors(['email' => 'Registration failed. Please try again.']);
+            dd($e);
         }
     }
 

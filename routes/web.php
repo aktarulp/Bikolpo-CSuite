@@ -13,9 +13,16 @@ use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\QuestionHistoryController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\StudentExamController;
+use Illuminate\Support\Facades\Log;
 
 // Include Auth Routes
 require __DIR__.'/auth.php';
+
+// Test logging route
+Route::get('/test-log', function () {
+    Log::info('Test log entry from /test-log route.');
+    return 'Log entry attempted.';
+});
 
 /*
 |--------------------------------------------------------------------------
