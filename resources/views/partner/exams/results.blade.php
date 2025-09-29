@@ -88,19 +88,28 @@
         </div>
 
         <!-- Statistics Cards -->
-        @if($results->total() > 0)
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+        @if($results->count() > 0)
         @php
-            $totalStudents = $results->total();
+            $totalStudents = $results->count();
             $attemptedStudents = $results->where('status', '!=', 'absent')->count();
             $absentStudents = $results->where('status', 'absent')->count();
-            $passedStudents = $results->where('status', '!=', 'absent')->where('percentage', '>=', $exam->passing_marks)->count();
+            $passedStudents = $results->where('status', '!=', 'absent')
+                                     ->where('percentage', '>=', $exam->passing_marks)
+                                     ->count();
             $failedStudents = $attemptedStudents - $passedStudents;
-            $avgScore = $results->where('status', '!=', 'absent')->avg('percentage');
+            
+            // If you're using pagination, you might want to use the total() method from the paginator
+            // $totalStudents = $results instanceof \Illuminate\Pagination\LengthAwarePaginator ? $results->total() : $results->count();
+            
+            $avgScore = $results->where('status', '!=', 'absent')
+                               ->avg('percentage') ?? 0;
+            
             // Calculate average time based on exam duration for students who completed
-            $avgTime = $results->where('status', '!=', 'absent')->whereNotNull('completed_at')->count() > 0 ? $exam->duration : null;
+            $avgTime = $results->where('status', '!=', 'absent')
+                              ->whereNotNull('completed_at')
+                              ->count() > 0 ? $exam->duration : null;
         @endphp
-        
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700 p-4">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
@@ -376,7 +385,7 @@
             </div>
             
             <!-- Pagination -->
-            @if($results->hasPages())
+            @if(method_exists($results, 'hasPages') && $results->hasPages())
             <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
                 {{ $results->links() }}
             </div>
