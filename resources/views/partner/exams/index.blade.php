@@ -3,8 +3,8 @@
 @section('title', 'Exams')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-4">
-    <div class="max-w-7xl mx-auto space-y-3">
+<div class="flex-1 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+    <div class="max-w-7xl mx-auto space-y-3 p-4">
         <!-- Enhanced Page Header -->
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
             <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -125,7 +125,7 @@
         @endisset
 
         <!-- Enhanced Exams List -->
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700">
             <div class="p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800">
                 <div class="flex flex-wrap gap-4 items-center">
                     <h2 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
@@ -138,7 +138,7 @@
             </div>
 
             @if($exams->count() > 0)
-                <div class="overflow-x-auto">
+                <div>
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                         <thead class="bg-gray-50 dark:bg-gray-700/50">
                             <tr>
@@ -227,7 +227,7 @@
                                         </span>
                                     </td>
                                     <td class="px-3 py-3 whitespace-nowrap">
-                                        <div class="relative" x-data="{ open: false }">
+                                        <div x-data="{ open: false }" class="z-50 relative inline-block">
                                             <button @click="open = !open" 
                                                     x-ref="button"
                                                     class="inline-flex items-center justify-center px-3 py-2 rounded-lg text-xs font-medium bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-all duration-200 border border-blue-200 dark:border-blue-700"
@@ -250,7 +250,7 @@
                                                  x-transition:leave="transition ease-in duration-75"
                                                  x-transition:leave-start="transform opacity-100 scale-100"
                                                  x-transition:leave-end="transform opacity-0 scale-95"
-                                                 class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
+                                                 class="absolute right-0 bottom-full mb-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
                                                 <div class="py-1">
                                                     <!-- View Details -->
                                                     <a href="{{ route('partner.exams.show', $exam) }}" 

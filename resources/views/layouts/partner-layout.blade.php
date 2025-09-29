@@ -140,8 +140,8 @@
         }
     </style>
 </head>
-<body class="font-sans antialiased bg-gray-100 dark:bg-gray-900">
-    <div class="min-h-screen flex">
+<body class="font-sans antialiased bg-gray-100 dark:bg-gray-900 overflow-x-hidden">
+    <div class="flex">
         <!-- Sidebar -->
         <div id="sidebar" class="sidebar-container bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700">
             <div class="flex flex-col flex-grow pt-5 h-full overflow-y-auto">
