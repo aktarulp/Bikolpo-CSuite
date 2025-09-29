@@ -244,7 +244,7 @@ return new class extends Migration
             $table->string('option_b')->nullable();
             $table->string('option_c')->nullable();
             $table->string('option_d')->nullable();
-            $table->enum('correct_answer', ['a', 'b', 'c', 'd'])->nullable();
+            $table->text('correct_answer')->nullable();
             $table->text('explanation')->nullable();
             $table->integer('difficulty_level')->default(1);
             $table->integer('marks')->nullable();
@@ -385,6 +385,7 @@ return new class extends Migration
         Schema::create('batches', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->unsignedBigInteger('course_id')->nullable();
             $table->integer('year');
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->enum('flag', ['active', 'deleted'])->default('active');

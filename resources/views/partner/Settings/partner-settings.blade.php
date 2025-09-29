@@ -41,15 +41,15 @@
             <main class="flex-1 p-4 md:p-6">
                 <div id="settingsContent">
                     <section id="user-management" class="settings-panel">
-                @include('partner.Settings.partials.user-management')
+                @include('partner.Settings.views.user-management')
                     </section>
 
                     <section id="partner-profile-management" class="hidden settings-panel">
-                        @include('partner.Settings.partials.partner-profile-management')
+                        @include('partner.Settings.views.partner-profile-management')
                     </section>
 
                     <section id="role-permission-grid" class="hidden settings-panel">
-                        @include('partner.Settings.partials.role-permission-grid')
+                        @include('partner.Settings.views.role-permission-grid')
                     </section>
             </div>
             </main>

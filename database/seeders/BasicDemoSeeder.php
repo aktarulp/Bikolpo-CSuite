@@ -466,7 +466,7 @@ class BasicDemoSeeder extends Seeder
                 ['title' => $examInfo['title'], 'partner_id' => $partner->id],
                 [
                     'total_questions' => $examInfo['total_questions'] ?? 10,
-                    'exam_type' => $examInfo['exam_type'] ?? 'online',
+                    'exam_type' => $examInfo['exam_type'] ?? 'mcq',
                     'description' => $examInfo['description'],
                     'start_time' => $examInfo['start_time'],
                     'end_time' => $examInfo['end_time'],

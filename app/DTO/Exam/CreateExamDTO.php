@@ -12,10 +12,11 @@ class CreateExamDTO extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'exam_type' => 'required|in:mcq,descriptive,both',
+            'exam_type' => 'required|in:online,offline',
+            'duration' => 'required|integer|min:15|max:480',
             'total_questions' => 'nullable|integer|min:1',
             'passing_marks' => 'required|integer|min:0',
-            'allow_retake' => 'boolean',
+            'allow_review' => 'boolean',
             'show_results_immediately' => 'boolean',
             'has_negative_marking' => 'boolean',
             'negative_marks_per_question' => 'required_if:has_negative_marking,1|nullable|numeric|min:0|max:5',
@@ -40,8 +41,9 @@ class CreateExamDTO extends FormRequest
             unset($validated['endDateTime']);
         }
 
-        // Set default values for boolean and negative marking if not present
-        $validated['allow_retake'] = $validated['allow_retake'] ?? false;
+        // Set default values for duration, boolean and negative marking if not present
+        $validated['duration'] = $validated['duration'] ?? 60;
+        $validated['allow_review'] = $validated['allow_review'] ?? false;
         $validated['show_results_immediately'] = $validated['show_results_immediately'] ?? true;
         $validated['has_negative_marking'] = $validated['has_negative_marking'] ?? false;
 

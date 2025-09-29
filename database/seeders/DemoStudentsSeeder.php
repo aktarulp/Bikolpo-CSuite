@@ -66,8 +66,6 @@ class DemoStudentsSeeder extends Seeder
             [
                 'name' => 'Demo Bangladesh Institute',
                 'email' => 'demo.bangladesh@example.com', // Required field
-                'slug' => 'demo-bangladesh',
-                'description' => 'Demo institute for testing with Bangladeshi students',
                 'status' => 'active',
                 'created_at' => now(),
                 'updated_at' => now(),

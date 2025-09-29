@@ -89,7 +89,7 @@ class ExamController extends Controller
                 'exam_title' => $exam->title
             ]);
         } else {
-            return redirect()->route('partner.exams.edit', $exam->id)->with('success', 'Exam created successfully. Now assign questions.');
+            return redirect()->route('partner.exams.show', $exam->id)->with('success', 'Exam created successfully!');
         }
     }
 
@@ -1027,6 +1027,8 @@ class ExamController extends Controller
         // If exam type is 'online', only load MCQ questions
         if ($exam->exam_type === 'online') {
             $questionsQuery->where('question_type', 'mcq');
+        } elseif ($exam->exam_type === 'offline') {
+            $questionsQuery->where('question_type', 'descriptive');
         }
 
         // Apply filters based on the request

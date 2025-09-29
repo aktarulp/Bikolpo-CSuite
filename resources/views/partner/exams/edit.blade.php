@@ -243,8 +243,8 @@
                             </label>
                             <select id="examType" name="exam_type" required 
                                     class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors">
-                                <option value="online" {{ old('exam_type', $exam->exam_type) === 'online' ? 'selected' : '' }}>🖥️ Online Exam</option>
-                                <option value="offline" {{ old('exam_type', $exam->exam_type) === 'offline' ? 'selected' : '' }}>📝 Offline Exam</option>
+                                <option value="online" {{ old('exam_type', $exam->exam_type) === 'online' ? 'selected' : '' }}>🖥️ Online</option>
+                                <option value="offline" {{ old('exam_type', $exam->exam_type) === 'offline' ? 'selected' : '' }}>📝 Offline</option>
                             </select>
                             @error('exam_type')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>

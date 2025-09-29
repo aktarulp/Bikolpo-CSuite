@@ -295,8 +295,8 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Father's Phone *</label>
-                        <input type="tel" name="father_phone" value="{{ old('father_phone') }}" required
+                        <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Father's Phone (Optional)</label>
+                        <input type="tel" name="father_phone" value="{{ old('father_phone', $student->father_phone) }}"
                                placeholder="01XXXXXXXXX"
                                pattern="01[3-9][0-9]{8}"
                                title="Please enter a valid Bangladeshi phone number (01XXXXXXXXX)"
@@ -330,8 +330,8 @@
             </div>
 
                     <div>
-                        <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Guardian *</label>
-                        <select name="guardian" required class="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 text-sm focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
+                        <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Guardian (Optional)</label>
+                        <select name="guardian" class="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 text-sm focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
                             <option value="">Select Guardian</option>
                             <option value="Father" {{ old('guardian') == 'Father' ? 'selected' : '' }}>Father</option>
                             <option value="Mother" {{ old('guardian') == 'Mother' ? 'selected' : '' }}>Mother</option>
@@ -343,8 +343,8 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Guardian Name *</label>
-                        <input type="text" name="guardian_name" value="{{ old('guardian_name') }}" required
+                        <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Guardian Name (Optional)</label>
+                        <input type="text" name="guardian_name" value="{{ old('guardian_name', $student->guardian_name) }}"
                                class="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 text-sm focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
                         @error('guardian_name')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -352,8 +352,8 @@
                 </div>
 
                     <div>
-                        <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Guardian Phone *</label>
-                        <input type="tel" name="guardian_phone" value="{{ old('guardian_phone') }}" required
+                        <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Guardian Phone (Optional)</label>
+                        <input type="tel" name="guardian_phone" value="{{ old('guardian_phone', $student->guardian_phone) }}"
                                placeholder="01XXXXXXXXX"
                                pattern="01[3-9][0-9]{8}"
                                title="Please enter a valid Bangladeshi phone number (01XXXXXXXXX)"

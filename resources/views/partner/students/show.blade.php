@@ -165,13 +165,13 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 @if($student->parent_name)
                                     <div>
-                                        <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Parent Name</label>
+                                        <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Parent Name (Optional)</label>
                                         <p class="text-gray-900 dark:text-white">{{ $student->parent_name }}</p>
                                     </div>
                                 @endif
                                 @if($student->parent_phone)
                                     <div>
-                                        <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Parent Phone</label>
+                                        <label class="text-sm font-medium text-gray-500 dark:text-gray-400">Parent Phone (Optional)</label>
                                         <p class="text-gray-900 dark:text-white">{{ $student->parent_phone }}</p>
                                     </div>
                                 @endif

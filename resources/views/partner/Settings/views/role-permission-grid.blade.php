@@ -44,7 +44,7 @@
         </div>
     </div>
 </div>
-
+    
 <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-6">
     <div class="p-4 border-b border-gray-100 dark:border-gray-700">
         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Permission Grid</h3>
@@ -95,7 +95,7 @@
         </div>
     </div>
 </div>
-
+    
 <div class="flex justify-end mt-6">
     <button type="submit" class="inline-flex items-center px-4 py-2 bg-primaryGreen text-white font-medium rounded-md shadow-sm hover:bg-primaryGreen/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primaryGreen">Save Permissions</button>
 </div>
