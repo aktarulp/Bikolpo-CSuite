@@ -258,11 +258,16 @@ class ExamController extends Controller
         // Process questions and student answers for display
         $processedQuestions = $result->exam->questions->map(function ($question) use ($result) {
             $stat = $result->questionStats->where('question_id', $question->id)->first();
-            $studentAnswer = $stat ? $stat->answer_given : null;
+            
+            // Ensure answers are strings for consistent comparison in the view
+            $studentAnswer = $stat ? (string)($stat->answer_given ?? '') : '';
+            $correctAnswer = (string)($question->correct_answer ?? '');
+            
             $isCorrect = $stat ? $stat->is_correct : false;
 
             return array_merge($question->toArray(), [
                 'student_answer' => $studentAnswer,
+                'correct_answer' => $correctAnswer, // Add correct answer to processed data
                 'is_correct' => $isCorrect,
                 'marks_obtained' => $stat ? $stat->marks_obtained : 0,
             ]);
@@ -278,8 +283,13 @@ class ExamController extends Controller
 
         // Also include the student's answers in a separate array, keyed by question ID
         $studentAnswers = $result->questionStats->keyBy('question_id')->map(function ($stat) {
+            $answerGiven = $stat->answer_given;
+            // Ensure answer_given is a string, even if it was stored as an array (e.g., multi-select)
+            if (is_array($answerGiven)) {
+                $answerGiven = json_encode($answerGiven); // Convert array to JSON string
+            }
             return [
-                'answer_given' => $stat->answer_given,
+                'answer_given' => (string)$answerGiven,
                 'is_correct' => $stat->is_correct,
                 'marks_obtained' => $stat->marks_obtained,
             ];
@@ -365,19 +375,29 @@ class ExamController extends Controller
 
         // Process each question with student's answer and result
         $processedQuestions = $questions->map(function ($question, $index) use ($studentAnswers, $result) {
-            $questionAnswer = $studentAnswers[$question->id] ?? null;
+            // Retrieve the student's answer for this specific question from the $studentAnswers array.
+            // $studentAnswers now contains the raw answers from $result->answers which is already cast as array.
+            $rawStudentAnswer = $studentAnswers[$question->id] ?? null;
+            
+            // If the raw answer is an array (e.g., for multi-select MCQs), convert it to a comma-separated string for display.
+            $questionAnswer = is_array($rawStudentAnswer) ? implode(', ', $rawStudentAnswer) : (string)($rawStudentAnswer ?? '');
+
+            // Ensure the correct_answer is also a string
+            $rawCorrectAnswer = $question->correct_answer ?? null;
+            $correctAnswer = is_array($rawCorrectAnswer) ? implode(', ', $rawCorrectAnswer) : (string)($rawCorrectAnswer ?? '');
+            
             $isCorrect = false;
             $isSkipped = false;
             $score = 0;
             $timeTaken = null;
 
             // Determine if the answer is correct, wrong, or skipped
-            if ($questionAnswer === null || $questionAnswer === '') {
+            if ($questionAnswer === '') {
                 $isSkipped = true;
             } else {
                 if ($question->question_type === 'mcq') {
                     // Convert form answer to lowercase for comparison
-                    $isCorrect = strtolower($questionAnswer) === strtolower($question->correct_answer);
+                    $isCorrect = strtolower($questionAnswer) === strtolower($correctAnswer);
                 } else {
                     // For descriptive questions, check if it meets minimum requirements
                     $wordCount = str_word_count($questionAnswer);
@@ -391,10 +411,15 @@ class ExamController extends Controller
                 $score = $question->marks ?? 1;
             }
 
-            // Parse options for MCQ questions
+            // Ensure options are an array for MCQ questions
             $options = null;
-            if ($question->question_type === 'mcq' && $question->options) {
-                $options = is_string($question->options) ? json_decode($question->options, true) : $question->options;
+            if ($question->question_type === 'mcq' && !empty($question->options)) {
+                if (is_string($question->options)) {
+                    $decodedOptions = json_decode($question->options, true);
+                    $options = is_array($decodedOptions) ? $decodedOptions : null;
+                } elseif (is_array($question->options)) {
+                    $options = $question->options;
+                }
             }
 
             return [
@@ -402,12 +427,12 @@ class ExamController extends Controller
                 'question_text' => $question->question_text,
                 'question_type' => $question->question_type,
                 'marks' => $question->marks ?? 1,
-                'correct_answer' => $question->correct_answer,
+                'correct_answer' => $correctAnswer,
                 'submitted_answer' => $questionAnswer,
                 'is_correct' => $isCorrect,
                 'is_skipped' => $isSkipped,
                 'score' => $score,
-                'options' => $options,
+                'options' => $options, // Pass the processed options array
                 'time_taken' => $timeTaken,
                 'topic' => $question->topic?->name,
                 'subject' => $question->subject?->name,
@@ -439,7 +464,12 @@ class ExamController extends Controller
             'answers' => $studentAnswers,
         ];
 
-        return response()->json($data);
+        // Extract student and exam data directly for the view
+        $student = $result->student;
+
+        // The original method returned JSON. Now it will render a view.
+        // This will pass the structured data to the Blade view.
+        return view('partner.exams.result-details', compact('exam', 'student', 'result', 'processedQuestions', 'analytics', 'studentAnswers', 'questions'));
     }
 
     public function storeResult(Request $request, Exam $exam)
