@@ -140,12 +140,12 @@ class StudentController extends Controller
     {
         $request->validate([
             'full_name' => 'required|string|max:255',
-            'student_id' => 'nullable|string|max:50|unique:students,student_id,' . $student->id,
+            'student_id' => 'required|string|max:50|unique:students,student_id,'.$student->id,
             'date_of_birth' => 'required|date',
-            'enroll_date' => 'nullable|date',
+            'enroll_date' => 'required|date',
             'gender' => 'required|in:male,female,other',
-            'email' => 'required|email|unique:students,email,' . $student->id,
-            'phone' => 'required|string|regex:/^01[3-9][0-9]{8}$/|max:20|unique:students,phone',
+            'email' => 'required|email|unique:students,email,'.$student->id,
+            'phone' => 'required|string|regex:/^01[3-9][0-9]{8}$/|max:20|unique:students,phone,'.$student->id,
             'address' => 'nullable|string|max:500',
             'city' => 'nullable|string|max:100',
             'school_college' => 'nullable|string|max:255',
@@ -156,37 +156,32 @@ class StudentController extends Controller
             'mother_phone' => 'nullable|string|regex:/^01[3-9][0-9]{8}$/|max:20',
             'guardian' => 'nullable|in:Father,Mother,Other',
             'guardian_name' => 'nullable|string|max:255',
-            'guardian_phone' => 'nullable|string|regex:/^01[3-9][0-9]{8}$/|max:20|unique:students,guardian_phone,' . $student->id,
-            'blood_group' => 'nullable|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
-            'religion' => 'nullable|in:Islam,Hinduism,Christianity,Buddhism',
+            'guardian_phone' => 'nullable|string|regex:/^01[3-9][0-9]{8}$/|max:20',
+            'blood_group' => 'required|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
+            'religion' => 'required|in:Islam,Hinduism,Christianity,Buddhism',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'course_id' => 'nullable|exists:courses,id',
-            'batch_id' => 'nullable|exists:batches,id',
-        ], [
-            'email.unique' => 'This email address is already registered.',
-            'phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
-            'phone.unique' => 'This phone number is already registered.',
-            'father_phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
-            'mother_phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
-            'guardian_phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
-            'guardian_phone.unique' => 'This guardian phone number is already registered.',
-            'course_id.exists' => 'The selected course is invalid.',
-            'batch_id.exists' => 'The selected batch is invalid.',
+            'course_id' => 'required|exists:courses,id',
+            'batch_id' => 'required|exists:batches,id',
         ]);
 
         $data = $request->all();
 
+        // Handle photo upload
         if ($request->hasFile('photo')) {
+            // Delete old photo if exists
             if ($student->photo) {
-                Storage::disk('public')->delete($student->photo);
+                Storage::delete($student->photo);
             }
-            $data['photo'] = $request->file('photo')->store('students', 'public');
+            
+            // Store new photo
+            $data['photo'] = $request->file('photo')->store('student-photos', 'public');
         }
 
+        // Update student
         $student->update($data);
 
         return redirect()->route('partner.students.index')
-            ->with('success', 'Student updated successfully.');
+            ->with('success', 'Student updated successfully');
     }
 
     public function destroy(Student $student)
