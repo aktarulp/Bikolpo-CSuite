@@ -13,6 +13,7 @@ use App\Http\Controllers\QuestionHistoryController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\StudentExamController;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\SmsRecordController;
 
 // Include Auth Routes
 require __DIR__.'/auth.php';
@@ -579,6 +580,12 @@ Route::middleware('auth')->group(function () {
             Route::post('/reset', [\App\Http\Controllers\PermissionController::class, 'resetToDefaults'])->name('reset');
             Route::get('/export', [\App\Http\Controllers\PermissionController::class, 'export'])->name('export');
             Route::post('/import', [\App\Http\Controllers\PermissionController::class, 'import'])->name('import');
+        });
+        
+        // SMS Management
+        Route::prefix('sms')->name('sms.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\SmsRecordController::class, 'index'])->name('index');
+            // Add other SMS related routes here (e.g., show, delete, etc.)
         });
         
         // Analytics routes moved outside partner middleware for better access

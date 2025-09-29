@@ -23,17 +23,17 @@ class BulkSmsBdService
      *
      * @param string $number The recipient's phone number (e.g., 8801XXXXXXXXX).
      * @param string $message The message content.
-     * @return bool True if the SMS was sent successfully, false otherwise.
+     * @return string The raw response body from the SMS provider, or an error string.
      */
-    public function sendSms(string $number, string $message): bool
+    public function sendSms(string $number, string $message): string
     {
         if (empty($this->apiKey) || empty($this->senderId) || empty($this->baseUrl)) {
             Log::error('BulkSmsBdService: API credentials are not configured.');
-            return false;
+            return 'API credentials not configured.';
         }
 
         try {
-            $response = Http::get($this->baseUrl, [
+            $response = Http::timeout(30)->get($this->baseUrl, [
                 'api_key' => $this->apiKey,
                 'type' => 'text',
                 'number' => $number,
@@ -43,7 +43,6 @@ class BulkSmsBdService
 
             $responseData = $response->body();
 
-            // Log the full response for debugging
             Log::info('BulkSMSBD API Raw Response', [
                 'status' => $response->status(),
                 'body' => $responseData,
@@ -51,14 +50,12 @@ class BulkSmsBdService
                 'message' => $message,
             ]);
 
-            // For now, we will consider any successful HTTP status code as a success
-            // We will refine this based on actual API response content later.
             if ($response->successful()) {
                 Log::info('SMS API call successfully made to ' . $number);
-                return true;
+                return $responseData; // Return the raw response body on success
             } else {
                 Log::error('SMS API call failed for ' . $number, ['response' => $responseData]);
-                return false;
+                return $responseData; // Return the raw response body on failure as well
             }
         } catch (\Exception $e) {
             Log::error('Exception while sending SMS via BulkSmsBdService: ' . $e->getMessage(), [
@@ -66,7 +63,7 @@ class BulkSmsBdService
                 'message' => $message,
                 'exception' => $e,
             ]);
-            return false;
+            return 'Exception: ' . $e->getMessage(); // Return exception message
         }
     }
 

@@ -8,6 +8,7 @@ use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Services\BulkSmsBdService;
+use App\Models\SmsRecord;
 
 class ExamAssignmentController extends Controller
 {
@@ -314,17 +315,39 @@ class ExamAssignmentController extends Controller
             if ($assignment && $assignment->student && $assignment->student->phone) {
                 $message = "Dear {$assignment->student->full_name},\nYou are assigned to exam {$exam->title} by {$exam->partner->name}, scheduled at {$exam->formatted_start_time} & your access code is: {$assignment->access_code}.\nVisit: " . config('app.url') . "/LiveExam to access the exam.";
                 
-                $smsSent = $this->bulkSmsBdService->sendSms($assignment->student->phone, $message);
+                $smsResponse = $this->bulkSmsBdService->sendSms($assignment->student->phone, $message);
 
-                if ($smsSent) {
+                $smsRecordData = [
+                    'partner_id' => $exam->partner_id,
+                    'recipient' => $assignment->student->phone,
+                    'message' => $message,
+                    'provider_response' => $smsResponse,
+                    'sent_at' => now(),
+                ];
+
+                // Assuming a successful response contains "1000" or specific success indicators from BulkSMSBD
+                // This part needs to be adapted based on actual BulkSMSBD API documentation
+                if (str_contains($smsResponse, '1000')) { // Example success check
                     $assignment->update(['sms_status' => 'sent']);
+                    $smsRecordData['status'] = 'sent';
                     $sentCount++;
                 } else {
                     $assignment->update(['sms_status' => 'failed']);
+                    $smsRecordData['status'] = 'failed';
                     $failedCount++;
                 }
+                SmsRecord::create($smsRecordData);
             } else if ($assignment) {
                 $assignment->update(['sms_status' => 'skipped_no_phone']);
+                // Also log to SmsRecord as skipped
+                SmsRecord::create([
+                    'partner_id' => $exam->partner_id,
+                    'recipient' => $assignment->student->phone ?? 'N/A',
+                    'message' => "Skipped: No phone number for student ID {$assignment->student->id}",
+                    'status' => 'skipped',
+                    'provider_response' => 'No phone number provided.',
+                    'sent_at' => now(),
+                ]);
                 $failedCount++;
             }
         }
@@ -391,17 +414,39 @@ class ExamAssignmentController extends Controller
             if ($assignment && $assignment->student && $assignment->student->phone && $assignment->exam && $assignment->exam->partner) {
                 $message = "Dear {$assignment->student->full_name},\nYou are assigned to exam {$assignment->exam->title} by {$assignment->exam->partner->name}, scheduled at {$assignment->exam->formatted_start_time} & your access code is: {$assignment->access_code}.\nVisit: " . config('app.url') . "/LiveExam to access the exam.";
                 
-                $smsSent = $this->bulkSmsBdService->sendSms($assignment->student->phone, $message);
+                $smsResponse = $this->bulkSmsBdService->sendSms($assignment->student->phone, $message);
 
-                if ($smsSent) {
+                $smsRecordData = [
+                    'partner_id' => $assignment->exam->partner_id,
+                    'recipient' => $assignment->student->phone,
+                    'message' => $message,
+                    'provider_response' => $smsResponse,
+                    'sent_at' => now(),
+                ];
+
+                // Assuming a successful response contains "1000" or specific success indicators from BulkSMSBD
+                // This part needs to be adapted based on actual BulkSMSBD API documentation
+                if (str_contains($smsResponse, '1000')) { // Example success check
                     $assignment->update(['sms_status' => 'sent']);
+                    $smsRecordData['status'] = 'sent';
                     $sentCount++;
                 } else {
                     $assignment->update(['sms_status' => 'failed']);
+                    $smsRecordData['status'] = 'failed';
                     $failedCount++;
                 }
+                SmsRecord::create($smsRecordData);
             } else if ($assignment) {
                 $assignment->update(['sms_status' => 'skipped_no_phone']);
+                // Also log to SmsRecord as skipped
+                SmsRecord::create([
+                    'partner_id' => $assignment->exam->partner_id,
+                    'recipient' => $assignment->student->phone ?? 'N/A',
+                    'message' => "Skipped: No phone number for student ID {$assignment->student->id}",
+                    'status' => 'skipped',
+                    'provider_response' => 'No phone number provided.',
+                    'sent_at' => now(),
+                ]);
                 $failedCount++;
             }
         }
