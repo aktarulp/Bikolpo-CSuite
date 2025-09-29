@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PartnerDashboardController;
 use App\Http\Controllers\StudentDashboardController;
-use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\SubjectController;
@@ -335,9 +334,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', [PartnerDashboardController::class, 'index'])->name('dashboard');
         
         // Partner Management
-        Route::resource('partners', PartnerController::class);
-        Route::get('partners/{partner}/assign', [PartnerController::class, 'assign'])->name('partners.assign');
-        Route::patch('partners/{partner}/toggle-status', [PartnerController::class, 'toggleStatus'])->name('partners.toggle-status');
         
         // Course Management
         Route::resource('courses', CourseController::class);
