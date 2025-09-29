@@ -40,8 +40,8 @@
                 <!-- Column 1: Exam Info Card -->
                 <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6">
                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Exam Information</h3>
-                        <span class="text-md font-semibold text-gray-600 dark:text-gray-400">{{ $exam['id'] }}</span>
+                        <h3 class="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-indigo-400">Exam Information</h3>
+                        <span class="inline-flex items-center rounded-full bg-blue-100 dark:bg-blue-900/30 px-3 py-1 text-sm font-semibold text-blue-800 dark:text-blue-200">{{ $exam['id'] }}</span>
                     </div>
                     <div class="space-y-4">
                         <div class="flex items-center justify-between p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 print:bg-gray-100">
@@ -62,8 +62,8 @@
                 <!-- Column 2: Student Info Card -->
                 <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6">
                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Student Information</h3>
-                        <span class="text-md font-semibold text-gray-600 dark:text-gray-400">{{ $student['student_id'] }}</span>
+                        <h3 class="text-lg sm:text-xl font-bold bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent dark:from-green-400 dark:to-teal-400">Student Information</h3>
+                        <span class="inline-flex items-center rounded-full bg-green-100 dark:bg-green-900/30 px-3 py-1 text-sm font-semibold text-green-800 dark:text-green-200">{{ $student['student_id'] }}</span>
                     </div>
                     <div class="space-y-4">
                         <div class="flex items-center justify-between p-2 rounded-lg bg-green-50 dark:bg-green-900/20 print:bg-gray-100">
@@ -84,35 +84,33 @@
                 <!-- Column 3: Result Info Card -->
                 <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6">
                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Result Summary</h3>
-                        <span class="text-md font-semibold text-gray-600 dark:text-gray-400">Score: {{ $result['score'] }}</span>
+                        <h3 class="text-lg sm:text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent dark:from-purple-400 dark:to-pink-400">Result Summary</h3>
+                        <span class="inline-flex items-center rounded-full bg-purple-100 dark:bg-purple-900/30 px-3 py-1 text-sm font-semibold text-purple-800 dark:text-purple-200">Score: {{ $result['score'] }}</span>
                     </div>
-                    <div class="space-y-4">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 text-center print:grid-cols-1 print:gap-2">
-                            <div class="flex items-center justify-between p-2 rounded-lg bg-green-100 dark:bg-green-900/20 print:bg-gray-100">
-                                <p class="text-sm text-green-600 font-medium print:text-black print:font-semibold">Percentage:</p>
-                                <p class="text-md font-bold text-green-800 dark:text-green-100 print:text-gray-900 print:text-base">{{ $result['percentage'] }}%</p>
-                            </div>
-                            <div class="flex items-center justify-between p-2 rounded-lg bg-yellow-100 dark:bg-yellow-900/20 print:bg-gray-100">
-                                <p class="text-sm text-yellow-600 font-medium print:text-black print:font-semibold">Status:</p>
-                                <p class="text-md font-bold text-yellow-800 dark:text-yellow-100 print:text-gray-900 print:text-base">{{ $result['status'] }}</p>
-                            </div>
-                            <div class="flex items-center justify-between p-2 rounded-lg bg-purple-100 dark:bg-purple-900/20 print:bg-gray-100">
-                                <p class="text-sm text-purple-600 font-medium print:text-black print:font-semibold">Pass/Fail:</p>
-                                <p class="text-md font-bold text-purple-800 dark:text-purple-100 print:text-gray-900 print:text-base">{{ $result['is_passed'] ? 'Passed' : 'Failed' }}</p>
-                            </div>
-                            <div class="flex items-center justify-between p-2 rounded-lg bg-teal-100 dark:bg-teal-900/20 print:bg-gray-100">
-                                <p class="text-sm text-teal-600 font-medium print:text-black print:font-semibold">Correct Answers:</p>
-                                <p class="text-md font-bold text-teal-800 dark:text-teal-100 print:text-gray-900 print:text-base">{{ $result['correct_answers'] }}</p>
-                            </div>
-                            <div class="flex items-center justify-between p-2 rounded-lg bg-red-100 dark:bg-red-900/20 print:bg-gray-100">
-                                <p class="text-sm text-red-600 font-medium print:text-black print:font-semibold">Wrong Answers:</p>
-                                <p class="text-md font-bold text-red-800 dark:text-red-100 print:text-gray-900 print:text-base">{{ $result['wrong_answers'] }}</p>
-                            </div>
-                            <div class="flex items-center justify-between p-2 rounded-lg bg-gray-100 dark:bg-gray-700/50 print:bg-gray-100">
-                                <p class="text-sm text-gray-600 font-medium dark:text-gray-400 print:text-black print:font-semibold">Skipped:</p>
-                                <p class="text-md font-bold text-gray-800 dark:text-gray-200 print:text-gray-900 print:text-base">{{ $result['unanswered'] }}</p>
-                            </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 text-center print:grid-cols-1 print:gap-2">
+                        <div class="flex items-center justify-between p-2 rounded-lg bg-green-100 dark:bg-green-900/20 print:bg-gray-100">
+                            <p class="text-sm font-medium text-green-600 dark:text-green-300 print:text-black print:font-semibold">Percentage:</p>
+                            <p class="text-md font-bold text-green-800 dark:text-green-100 print:text-gray-900 print:text-base">{{ $result['percentage'] }}%</p>
+                        </div>
+                        <div class="flex items-center justify-between p-2 rounded-lg bg-yellow-100 dark:bg-yellow-900/20 print:bg-gray-100">
+                            <p class="text-sm font-medium text-yellow-600 dark:text-yellow-300 print:text-black print:font-semibold">Status:</p>
+                            <p class="text-md font-bold text-yellow-800 dark:text-yellow-100 print:text-gray-900 print:text-base">{{ $result['status'] }}</p>
+                        </div>
+                        <div class="flex items-center justify-between p-2 rounded-lg bg-purple-100 dark:bg-purple-900/20 print:bg-gray-100">
+                            <p class="text-sm font-medium text-purple-600 dark:text-purple-300 print:text-black print:font-semibold">Pass/Fail:</p>
+                            <p class="text-md font-bold text-purple-800 dark:text-purple-100 print:text-gray-900 print:text-base">{{ $result['is_passed'] ? 'Passed' : 'Failed' }}</p>
+                        </div>
+                        <div class="flex items-center justify-between p-2 rounded-lg bg-green-100 dark:bg-green-900/20 print:bg-gray-100">
+                            <p class="text-sm font-medium text-green-600 dark:text-green-300 print:text-black print:font-semibold">Correct Answers:</p>
+                            <p class="text-md font-bold text-green-800 dark:text-green-100 print:text-gray-900 print:text-base">{{ $result['correct_answers'] }}</p>
+                        </div>
+                        <div class="flex items-center justify-between p-2 rounded-lg bg-red-100 dark:bg-red-900/20 print:bg-gray-100">
+                            <p class="text-sm font-medium text-red-600 dark:text-red-300 print:text-black print:font-semibold">Wrong Answers:</p>
+                            <p class="text-md font-bold text-red-800 dark:text-red-100 print:text-gray-900 print:text-base">{{ $result['wrong_answers'] }}</p>
+                        </div>
+                        <div class="flex items-center justify-between p-2 rounded-lg bg-yellow-100 dark:bg-yellow-900/20 print:bg-gray-100">
+                            <p class="text-sm font-medium text-yellow-600 dark:text-yellow-300 print:text-black print:font-semibold">Skipped:</p>
+                            <p class="text-md font-bold text-yellow-800 dark:text-yellow-100 print:text-gray-900 print:text-base">{{ $result['unanswered'] }}</p>
                         </div>
                     </div>
                 </div>
