@@ -67,6 +67,9 @@ class PartnerDashboardController extends Controller
                 'total_students' => $totalStudents,
                 'total_courses' => Course::where('partner_id', $partnerId)->count(),
                 'total_batches' => Batch::where('partner_id', $partnerId)->count(),
+                'total_subjects' => Subject::where('partner_id', $partnerId)->count(),
+                'total_topics' => Topic::where('partner_id', $partnerId)->count(),
+                'total_sms' => 0, // Placeholder for SMS count
                 'total_question_attempts' => $questionAnalytics->count(),
                 'total_correct_answers' => $questionAnalytics->where('is_correct', true)->count(),
                 'overall_accuracy' => $questionAnalytics->count() > 0 ? 
@@ -107,6 +110,9 @@ class PartnerDashboardController extends Controller
                     'total_students' => 0,
                     'total_courses' => 0,
                     'total_batches' => 0,
+                    'total_subjects' => 0,
+                    'total_topics' => 0,
+                    'total_sms' => 0,
                     'total_question_attempts' => 0,
                     'total_correct_answers' => 0,
                     'overall_accuracy' => 0,
@@ -280,6 +286,9 @@ class PartnerDashboardController extends Controller
                 'total_students' => Student::where('partner_id', $partnerId)->count(),
                 'total_courses' => Course::where('partner_id', $partnerId)->count(),
                 'total_batches' => Batch::where('partner_id', $partnerId)->count(),
+                'total_subjects' => Subject::where('partner_id', $partnerId)->count(),
+                'total_topics' => Topic::where('partner_id', $partnerId)->count(),
+                'total_sms' => 0,
             ];
             
             return response()->json([

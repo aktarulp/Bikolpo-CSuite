@@ -175,6 +175,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                         </svg>
                         <span class="ml-3 transition-all duration-300">Courses</span>
+                        <span class="ml-auto inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300 shadow-sm border border-orange-300 dark:border-orange-700 transition-all duration-200 group-hover:scale-110 group-hover:shadow-md group-hover:bg-orange-200 dark:group-hover:bg-orange-800/50">{{ $stats['total_courses'] ?? 0 }}</span>
                     </a>
                     <a href="{{ route('partner.batches.index') }}"
                        class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.batches.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
@@ -182,6 +183,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
                         </svg>
                         <span class="ml-3 transition-all duration-300">Batches</span>
+                        <span class="ml-auto inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 shadow-sm border border-indigo-300 dark:border-indigo-700 transition-all duration-200 group-hover:scale-110 group-hover:shadow-md group-hover:bg-indigo-200 dark:group-hover:bg-indigo-800/50">{{ $stats['total_batches'] ?? 0 }}</span>
                     </a>
 
                     <a href="{{ route('partner.subjects.index') }}"
@@ -190,6 +192,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
                         </svg>
                         <span class="ml-3 transition-all duration-300">Subjects</span>
+                        <span class="ml-auto inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300 shadow-sm border border-purple-300 dark:border-purple-700 transition-all duration-200 group-hover:scale-110 group-hover:shadow-md group-hover:bg-purple-200 dark:group-hover:bg-purple-800/50">{{ $stats['total_subjects'] ?? 0 }}</span>
                     </a>
 
                     <a href="{{ route('partner.topics.index') }}"
@@ -198,6 +201,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
                         </svg>
                         <span class="ml-3 transition-all duration-300">Topics</span>
+                        <span class="ml-auto inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-pink-100 text-pink-700 dark:bg-pink-900/50 dark:text-pink-300 shadow-sm border border-pink-300 dark:border-pink-700 transition-all duration-200 group-hover:scale-110 group-hover:shadow-md group-hover:bg-pink-200 dark:group-hover:bg-pink-800/50">{{ $stats['total_topics'] ?? 0 }}</span>
                     </a>
                     <a href="{{ route('partner.students.index') }}"
                        class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.students.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
@@ -205,6 +209,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
                         </svg>
                         <span class="ml-3 transition-all duration-300">Students</span>
+                        <span class="ml-auto inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 shadow-sm border border-emerald-300 dark:border-emerald-700 transition-all duration-200 group-hover:scale-110 group-hover:shadow-md group-hover:bg-emerald-200 dark:group-hover:bg-emerald-800/50">{{ $stats['total_students'] ?? 0 }}</span>
                     </a>
                     <a href="{{ route('partner.questions.all') }}"
                        class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.questions.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
@@ -212,6 +217,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                         <span class="ml-3 transition-all duration-300">Questions</span>
+                        <span class="ml-auto inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 shadow-sm border border-blue-300 dark:border-blue-700 transition-all duration-200 group-hover:scale-110 group-hover:shadow-md group-hover:bg-blue-200 dark:group-hover:bg-blue-800/50">{{ $stats['total_questions'] ?? 0 }}</span>
                     </a>
 
 
@@ -221,6 +227,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                         </svg>
                         <span class="ml-3 transition-all duration-300">Exams</span>
+                        <span class="ml-auto inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-cyan-100 text-cyan-700 dark:bg-cyan-900/50 dark:text-cyan-300 shadow-sm border border-cyan-300 dark:border-cyan-700 transition-all duration-200 group-hover:scale-110 group-hover:shadow-md group-hover:bg-cyan-200 dark:group-hover:bg-cyan-800/50">{{ $stats['total_exams'] ?? 0 }}</span>
                     </a>
 
                     <a href="{{ route('analytics.questions.index') }}"
@@ -229,6 +236,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                         </svg>
                         <span class="ml-3 transition-all duration-300">Question Analytics</span>
+                        <span class="ml-auto inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-violet-100 text-violet-700 dark:bg-violet-900/50 dark:text-violet-300 shadow-sm border border-violet-300 dark:border-violet-700 transition-all duration-200 group-hover:scale-110 group-hover:shadow-md group-hover:bg-violet-200 dark:group-hover:bg-violet-800/50">{{ $stats['total_question_attempts'] ?? 0 }}</span>
                     </a>
 
                     <a href="{{ route('partner.sms.index') }}"
@@ -237,6 +245,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                         </svg>
                         <span class="ml-3 transition-all duration-300">SMS</span>
+                        <span class="ml-auto inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-teal-100 text-teal-700 dark:bg-teal-900/50 dark:text-teal-300 shadow-sm border border-teal-300 dark:border-teal-700 transition-all duration-200 group-hover:scale-110 group-hover:shadow-md group-hover:bg-teal-200 dark:group-hover:bg-teal-800/50">{{ $stats['total_sms'] ?? 0 }}</span>
                     </a>
                 </nav>
 
