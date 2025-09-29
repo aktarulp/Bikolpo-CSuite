@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
+use App\Models\Course;
+use App\Models\Batch;
 use App\Traits\HasPartnerContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -127,9 +129,9 @@ class StudentController extends Controller
 
     public function edit(Student $student)
     {
-        $partnerId = $this->getPartnerId();
-        $courses = \App\Models\Course::where('partner_id', $partnerId)->get();
-        $batches = \App\Models\Batch::where('partner_id', $partnerId)->get();
+        $student->load(['course', 'batch']); // Load relationships
+        $courses = Course::where('partner_id', auth()->user()->partner_id)->get();
+        $batches = Batch::where('partner_id', auth()->user()->partner_id)->get();
         
         return view('partner.students.edit', compact('student', 'courses', 'batches'));
     }

@@ -101,14 +101,14 @@
                         <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Blood Group *</label>
                         <select name="blood_group" required class="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 text-sm focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
                             <option value="">Select Blood Group</option>
-                            <option value="A+" {{ old('blood_group') == 'A+' ? 'selected' : '' }}>A+</option>
-                            <option value="A-" {{ old('blood_group') == 'A-' ? 'selected' : '' }}>A-</option>
-                            <option value="B+" {{ old('blood_group') == 'B+' ? 'selected' : '' }}>B+</option>
-                            <option value="B-" {{ old('blood_group') == 'B-' ? 'selected' : '' }}>B-</option>
-                            <option value="AB+" {{ old('blood_group') == 'AB+' ? 'selected' : '' }}>AB+</option>
-                            <option value="AB-" {{ old('blood_group') == 'AB-' ? 'selected' : '' }}>AB-</option>
-                            <option value="O+" {{ old('blood_group') == 'O+' ? 'selected' : '' }}>O+</option>
-                            <option value="O-" {{ old('blood_group') == 'O-' ? 'selected' : '' }}>O-</option>
+                            <option value="A+" {{ old('blood_group', $student->blood_group) == 'A+' ? 'selected' : '' }}>A+</option>
+                            <option value="A-" {{ old('blood_group', $student->blood_group) == 'A-' ? 'selected' : '' }}>A-</option>
+                            <option value="B+" {{ old('blood_group', $student->blood_group) == 'B+' ? 'selected' : '' }}>B+</option>
+                            <option value="B-" {{ old('blood_group', $student->blood_group) == 'B-' ? 'selected' : '' }}>B-</option>
+                            <option value="AB+" {{ old('blood_group', $student->blood_group) == 'AB+' ? 'selected' : '' }}>AB+</option>
+                            <option value="AB-" {{ old('blood_group', $student->blood_group) == 'AB-' ? 'selected' : '' }}>AB-</option>
+                            <option value="O+" {{ old('blood_group', $student->blood_group) == 'O+' ? 'selected' : '' }}>O+</option>
+                            <option value="O-" {{ old('blood_group', $student->blood_group) == 'O-' ? 'selected' : '' }}>O-</option>
                         </select>
                         @error('blood_group')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -117,12 +117,12 @@
 
                     <div>
                         <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Religion *</label>
-                        <select name="religion" required class="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 text-sm focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
+                        <select name="religion" required class="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 text-sm">
                             <option value="">Select Religion</option>
-                            <option value="Islam" {{ old('religion') == 'Islam' ? 'selected' : '' }}>Islam</option>
-                            <option value="Hinduism" {{ old('religion') == 'Hinduism' ? 'selected' : '' }}>Hinduism</option>
-                            <option value="Christianity" {{ old('religion') == 'Christianity' ? 'selected' : '' }}>Christianity</option>
-                            <option value="Buddhism" {{ old('religion') == 'Buddhism' ? 'selected' : '' }}>Buddhism</option>
+                            <option value="Islam" {{ old('religion', $student->religion) == 'Islam' ? 'selected' : '' }}>Islam</option>
+                            <option value="Hinduism" {{ old('religion', $student->religion) == 'Hinduism' ? 'selected' : '' }}>Hinduism</option>
+                            <option value="Christianity" {{ old('religion', $student->religion) == 'Christianity' ? 'selected' : '' }}>Christianity</option>
+                            <option value="Buddhism" {{ old('religion', $student->religion) == 'Buddhism' ? 'selected' : '' }}>Buddhism</option>
                         </select>
                         @error('religion')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -188,7 +188,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                     <div>
                         <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Email Address *</label>
-                        <input type="email" name="email" value="{{ old('email') }}" required
+                        <input type="email" name="email" value="{{ old('email', $student->email) }}" required
                                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                                title="Please enter a valid email address"
                                class="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 text-sm focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
@@ -199,7 +199,7 @@
 
                     <div>
                         <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Phone Number *</label>
-                        <input type="tel" name="phone" value="{{ old('phone') }}" required
+                        <input type="tel" name="phone" value="{{ old('phone', $student->phone) }}" required
                                placeholder="01XXXXXXXXX"
                                pattern="01[3-9][0-9]{8}"
                                title="Please enter a valid Bangladeshi phone number (01XXXXXXXXX)"
@@ -211,8 +211,8 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Home Dirstict</label>
-                        <input type="text" name="city" value="{{ old('city') }}"
+                        <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Home District</label>
+                        <input type="text" name="city" value="{{ old('city', $student->city) }}"
                                class="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 text-sm focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
                         @error('city')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -224,9 +224,7 @@
                 <!-- Full Width Address Field -->
                 <div class="mt-4">
                     <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Detailed Address</label>
-                    <input type="text" name="address" value="{{ old('address') }}"
-                           placeholder="Enter full address details..."
-                           class="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 text-sm focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
+                    <textarea name="address" class="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 text-sm">{{ old('address', $student->address) }}</textarea>
                     @error('address')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
@@ -251,7 +249,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div>
                         <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Last Institute</label>
-                        <input type="text" name="school_college" value="{{ old('school_college') }}"
+                        <input type="text" name="school_college" value="{{ old('school_college', $student->school_college) }}"
                                class="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 text-sm focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
                         @error('school_college')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -260,7 +258,7 @@
 
                     <div>
                         <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Last Degree/Class</label>
-                        <input type="text" name="class_grade" value="{{ old('class_grade') }}"
+                        <input type="text" name="class_grade" value="{{ old('class_grade', $student->class_grade) }}"
                                class="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 text-sm focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
                         @error('class_grade')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -287,7 +285,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                     <div>
                         <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Father's Name</label>
-                        <input type="text" name="father_name" value="{{ old('father_name') }}"
+                        <input type="text" name="father_name" value="{{ old('father_name', $student->father_name) }}"
                                class="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 text-sm focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
                         @error('father_name')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -309,7 +307,7 @@
 
                     <div>
                         <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Mother's Name</label>
-                        <input type="text" name="mother_name" value="{{ old('mother_name') }}"
+                        <input type="text" name="mother_name" value="{{ old('mother_name', $student->mother_name) }}"
                                class="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 text-sm focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
                         @error('mother_name')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -318,7 +316,7 @@
 
                     <div>
                         <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Mother's Phone</label>
-                        <input type="tel" name="mother_phone" value="{{ old('mother_phone') }}"
+                        <input type="tel" name="mother_phone" value="{{ old('mother_phone', $student->mother_phone) }}"
                                placeholder="01XXXXXXXXX"
                                pattern="01[3-9][0-9]{8}"
                                title="Please enter a valid Bangladeshi phone number (01XXXXXXXXX)"
@@ -333,9 +331,9 @@
                         <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Guardian (Optional)</label>
                         <select name="guardian" class="w-full rounded-md border border-gray-300 dark:border-gray-600 p-2 text-sm focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
                             <option value="">Select Guardian</option>
-                            <option value="Father" {{ old('guardian') == 'Father' ? 'selected' : '' }}>Father</option>
-                            <option value="Mother" {{ old('guardian') == 'Mother' ? 'selected' : '' }}>Mother</option>
-                            <option value="Other" {{ old('guardian') == 'Other' ? 'selected' : '' }}>Other</option>
+                            <option value="Father" {{ old('guardian', $student->guardian) == 'Father' ? 'selected' : '' }}>Father</option>
+                            <option value="Mother" {{ old('guardian', $student->guardian) == 'Mother' ? 'selected' : '' }}>Mother</option>
+                            <option value="Other" {{ old('guardian', $student->guardian) == 'Other' ? 'selected' : '' }}>Other</option>
                         </select>
                         @error('guardian')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -366,8 +364,13 @@
 
                     <div>
                         <label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Student Photo</label>
-                        <input type="file" name="photo" accept="image/*" 
-                               class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primaryGreen file:text-white hover:file:bg-green-600">
+                        @if($student->photo)
+        <div class="mb-2">
+            <img src="{{ Storage::url($student->photo) }}" alt="Current Photo" class="w-32 h-32 object-cover rounded">
+        </div>
+    @endif
+                        <input type="file" name="photo" 
+                               class="w-full border border-gray-300 dark:border-gray-600 p-2 text-sm">
                         @error('photo')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -465,4 +468,4 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-@endpush 
+@endpush
