@@ -90,6 +90,15 @@
                                 <span class="sm:hidden">You</span>
                             </span>
                         @endif
+                        @if($questionStat->correct_answer === 'a')
+                            <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800 border border-green-200 mt-1 ml-1">
+                                <svg class="w-2 h-2 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="hidden sm:inline">Correct</span>
+                                <span class="sm:hidden">✓</span>
+                            </span>
+                        @endif
                     </div>
                 </div>
                 
@@ -114,6 +123,15 @@
                                 </svg>
                                 <span class="hidden sm:inline">Your Answer</span>
                                 <span class="sm:hidden">You</span>
+                            </span>
+                        @endif
+                        @if($questionStat->correct_answer === 'b')
+                            <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800 border border-green-200 mt-1 ml-1">
+                                <svg class="w-2 h-2 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="hidden sm:inline">Correct</span>
+                                <span class="sm:hidden">✓</span>
                             </span>
                         @endif
                     </div>
@@ -142,6 +160,15 @@
                                 <span class="sm:hidden">You</span>
                             </span>
                         @endif
+                        @if($questionStat->correct_answer === 'c')
+                            <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800 border border-green-200 mt-1 ml-1">
+                                <svg class="w-2 h-2 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="hidden sm:inline">Correct</span>
+                                <span class="sm:hidden">✓</span>
+                            </span>
+                        @endif
                     </div>
                 </div>
                 
@@ -166,6 +193,15 @@
                                 </svg>
                                 <span class="hidden sm:inline">Your Answer</span>
                                 <span class="sm:hidden">You</span>
+                            </span>
+                        @endif
+                        @if($questionStat->correct_answer === 'd')
+                            <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800 border border-green-200 mt-1 ml-1">
+                                <svg class="w-2 h-2 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="hidden sm:inline">Correct</span>
+                                <span class="sm:hidden">✓</span>
                             </span>
                         @endif
                     </div>

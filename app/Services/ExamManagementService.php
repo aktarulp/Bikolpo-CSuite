@@ -203,6 +203,44 @@ class ExamManagementService
             }
         }
 
+        // Sort by score (descending) to calculate ranks, then by student name for tie-breakers
+        $sortedResults = $results->sortBy(function($result) {
+            return [$result->percentage * -1, $result->score * -1, $result->student->name];
+        });
+        
+        // Calculate ranks and store them in an array
+        $rank = 1;
+        $previousScore = null;
+        $previousPercentage = null;
+        $studentsWithSameScore = 0;
+        $ranks = [];
+        
+        foreach ($sortedResults as $result) {
+            if ($result->status === 'absent') {
+                $ranks[$result->student_id] = '-';
+            } else {
+                if ($previousPercentage !== null && $previousScore !== null) {
+                    if ($result->percentage == $previousPercentage && $result->score == $previousScore) {
+                        // Same score as previous, same rank
+                        $studentsWithSameScore++;
+                    } else {
+                        // Different score, new rank
+                        $rank += $studentsWithSameScore + 1;
+                        $studentsWithSameScore = 0;
+                    }
+                }
+                $ranks[$result->student_id] = $rank;
+                $previousPercentage = $result->percentage;
+                $previousScore = $result->score;
+            }
+        }
+        
+        // Assign ranks back to the original results
+        foreach ($results as $result) {
+            $result->rank = $ranks[$result->student_id];
+        }
+        
+        // Return results sorted by student name for display
         return $results->sortBy('student.name');
     }
 
