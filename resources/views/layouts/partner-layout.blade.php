@@ -1,294 +1,309 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="theme-color" content="#10b981">
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
 
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Nikosh:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
+        /* Bengali Font */
         .font-bengali {
             font-family: 'Nikosh', 'Noto Sans Bengali', 'Noto Sans', 'Arial Unicode MS', sans-serif;
         }
 
-        .bg-gradient-to-r {
-            background: linear-gradient(135deg, #10b981 0%, #059669 50%, #2563eb 100%);
-        }
-
-        .bg-clip-text {
-            -webkit-background-clip: text;
-            background-clip: text;
-        }
-
-        .text-transparent {
-            color: transparent;
-        }
-
-        /* Simplified Layout System */
-        .sidebar-container {
+        /* Mobile-First Sidebar - Hidden by default on mobile */
+        .mobile-sidebar {
             position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            width: 16rem;
-            z-index: 60;
-            transition: transform 0.3s ease-in-out;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-        }
-
-        .main-content-wrapper {
-            margin-left: 16rem;
-            min-height: 100vh;
-            padding-top: 0;
-        }
-
-        .sticky-top-bar {
-            position: sticky;
-            top: 0;
+            inset: 0;
             z-index: 50;
-            background: white;
-            border-bottom: 1px solid #e5e7eb;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            transform: translateX(-100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Mobile Styles */
-        @media (max-width: 1023px) {
-            .sidebar-container {
-                transform: translateX(-100%);
-            }
-            .sidebar-container.open {
-                transform: translateX(0);
-            }
-            .main-content-wrapper {
-                margin-left: 0;
-            }
-            #sidebar-toggle {
-                display: block !important;
-                position: fixed;
-                top: 1rem;
-                right: 1rem;
-                z-index: 70;
-                background: white;
-                border: 1px solid #e5e7eb;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            }
+        .mobile-sidebar.open {
+            transform: translateX(0);
         }
 
-        /* Desktop Styles */
+        /* Desktop Sidebar - Always visible */
         @media (min-width: 1024px) {
-            .sidebar-container {
-                box-shadow: none;
-            }
-            #sidebar-toggle {
-                display: none !important;
-            }
-            #sideNavToggler {
-                display: none !important;
+            .mobile-sidebar {
+                position: sticky;
+                top: 0;
+                transform: translateX(0);
+                height: 100vh;
             }
         }
 
-        /* Mobile Sidebar Backdrop */
-        #sidebar-backdrop {
+        /* Backdrop */
+        .sidebar-backdrop {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            inset: 0;
             background-color: rgba(0, 0, 0, 0.5);
-            z-index: 55;
-            display: none;
-        }
-        #sidebar-backdrop.active {
-            display: block;
-        }
-
-        /* Dark mode styles */
-        .dark .sidebar-container {
-            background: #111827;
-            border-color: #374151;
+            z-index: 40;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
 
-        .dark .main-content-wrapper {
-            background: #111827;
+        .sidebar-backdrop.active {
+            opacity: 1;
+            visibility: visible;
         }
 
-        .dark .sticky-top-bar {
-            background: #111827;
-            border-color: #374151;
-        }
-
-        .dark body {
-            background: #111827;
-        }
-
-        /* Simplified responsive stats */
-        @media (max-width: 1023px) {
-            .stats-container {
-                display: none !important;
+        @media (min-width: 1024px) {
+            .sidebar-backdrop {
+                display: none;
             }
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+
+        /* Safe area for mobile notches */
+        @supports (padding: max(0px)) {
+            .safe-top {
+                padding-top: max(1rem, env(safe-area-inset-top));
+            }
+            .safe-bottom {
+                padding-bottom: max(1rem, env(safe-area-inset-bottom));
+            }
+        }
+
+        /* Prevent text selection on double tap (mobile) */
+        .no-tap-highlight {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            user-select: none;
+        }
+
+        /* Smooth transitions */
+        * {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
     </style>
 </head>
-<body class="font-sans antialiased bg-gray-100 dark:bg-gray-900 overflow-x-hidden">
-    <div class="flex">
+<body class="h-full font-sans antialiased bg-gray-50 dark:bg-gray-900">
+    <!-- Mobile Backdrop -->
+    <div id="sidebar-backdrop" class="sidebar-backdrop lg:hidden"></div>
+
+    <!-- Layout Container -->
+    <div class="flex h-full">
         <!-- Sidebar -->
-        <div id="sidebar" class="sidebar-container bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700">
-            <div class="flex flex-col flex-grow pt-5 h-full overflow-y-auto">
-                <div class="flex flex-col items-center flex-shrink-0 px-6 mb-5">
-                    <x-brand-logo 
-                        size="lg" 
-                        variant="minimal" 
-                        :href="route('partner.dashboard')" 
-                        :show-tagline="false" 
-                        logo-size="w-12 h-12"
-                    />
-                    <div class="text-center transition-all duration-300 mt-2">
-                        <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Partner Portal</p>
+        <aside id="sidebar" class="mobile-sidebar w-56 lg:w-60 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col">
+            <div class="flex flex-col h-full overflow-y-auto custom-scrollbar">
+                <!-- Sidebar Header -->
+                <div class="relative px-3 py-3 lg:py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-br from-primaryGreen/5 to-emerald-50 dark:from-primaryGreen/10 dark:to-gray-900">
+                    <div class="flex items-center justify-between">
+                        <a href="{{ route('partner.dashboard') }}" class="flex items-center space-x-2 group flex-1 min-w-0">
+                            <div class="relative flex-shrink-0">
+                                <div class="w-14 h-14 bg-white dark:bg-gray-800 rounded-xl flex items-center justify-center shadow-lg ring-2 ring-primaryGreen/20 group-hover:ring-primaryGreen/40 transition-all duration-300 group-hover:scale-105 overflow-hidden">
+                                    <img src="{{ asset('images/only_logo.png') }}" alt="Bikolpo Live Question" class="w-full h-full object-contain p-1">
+                                </div>
+                                <div class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full animate-pulse"></div>
+                            </div>
+                            <div class="flex flex-col min-w-0 flex-1">
+                                <h2 class="text-lg font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-primaryGreen to-emerald-600 dark:from-white dark:via-emerald-400 dark:to-primaryGreen tracking-tight leading-tight">
+                                    Bikolpo<br/>Live Question
+                                </h2>
+                            </div>
+                        </a>
+                        <!-- Close button for mobile -->
+                        <button id="sidebar-close" class="lg:hidden p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-white/50 dark:hover:bg-gray-800 transition-all duration-200 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
                     </div>
                 </div>
 
-                <nav class="flex-1 px-4">
+                <!-- Navigation -->
+                <nav class="flex-1 px-2 py-3 lg:px-3 space-y-1">
                     <a href="{{ route('partner.dashboard') }}"
-                       class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.dashboard') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                        <svg class="h-5 w-5 {{ request()->routeIs('partner.dashboard') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 01-2-2z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
-                        </svg>
-                        <span class="ml-3 transition-all duration-300">Dashboard</span>
+                       class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.dashboard') ? 'bg-gradient-to-r from-primaryGreen/10 to-emerald-50 text-primaryGreen border border-primaryGreen/20 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
+                        <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.dashboard') ? 'bg-primaryGreen/10' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-primaryGreen/10' }} flex items-center justify-center transition-all duration-200">
+                            <svg class="h-4 w-4 {{ request()->routeIs('partner.dashboard') ? 'text-primaryGreen' : 'text-gray-500 group-hover:text-primaryGreen' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                            </svg>
+                        </div>
+                        <span class="ml-2 flex-1">Dashboard</span>
                     </a>
 
                     
                     <a href="{{ route('partner.courses.index') }}"
-                       class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.courses.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                        <svg class="h-5 w-5 {{ request()->routeIs('partner.courses.*') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                        </svg>
-                        <span class="ml-3 transition-all duration-300">Courses</span>
-                        <span class="ml-auto inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300 shadow-sm border border-orange-300 dark:border-orange-700 transition-all duration-200 group-hover:scale-110 group-hover:shadow-md group-hover:bg-orange-200 dark:group-hover:bg-orange-800/50">{{ $stats['total_courses'] ?? 0 }}</span>
+                       class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.courses.*') ? 'bg-gradient-to-r from-orange-50 to-orange-100 text-orange-700 border border-orange-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-orange-50/50 hover:to-orange-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-orange-700 dark:hover:text-white' }}">
+                        <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.courses.*') ? 'bg-orange-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-orange-50' }} flex items-center justify-center transition-all duration-200">
+                            <svg class="h-4 w-4 {{ request()->routeIs('partner.courses.*') ? 'text-orange-600' : 'text-gray-500 group-hover:text-orange-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                        </div>
+                        <span class="ml-2 flex-1">Courses</span>
+                        <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300 border border-orange-300 dark:border-orange-700">{{ $stats['total_courses'] ?? 0 }}</span>
                     </a>
                     <a href="{{ route('partner.batches.index') }}"
-                       class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.batches.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                        <svg class="h-5 w-5 {{ request()->routeIs('partner.batches.*') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                        </svg>
-                        <span class="ml-3 transition-all duration-300">Batches</span>
-                        <span class="ml-auto inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 shadow-sm border border-indigo-300 dark:border-indigo-700 transition-all duration-200 group-hover:scale-110 group-hover:shadow-md group-hover:bg-indigo-200 dark:group-hover:bg-indigo-800/50">{{ $stats['total_batches'] ?? 0 }}</span>
+                       class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.batches.*') ? 'bg-gradient-to-r from-indigo-50 to-indigo-100 text-indigo-700 border border-indigo-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-indigo-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-indigo-700 dark:hover:text-white' }}">
+                        <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.batches.*') ? 'bg-indigo-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-indigo-50' }} flex items-center justify-center transition-all duration-200">
+                            <svg class="h-4 w-4 {{ request()->routeIs('partner.batches.*') ? 'text-indigo-600' : 'text-gray-500 group-hover:text-indigo-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            </svg>
+                        </div>
+                        <span class="ml-2 flex-1">Batches</span>
+                        <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-700">{{ $stats['total_batches'] ?? 0 }}</span>
                     </a>
 
                     <a href="{{ route('partner.subjects.index') }}"
-                       class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.subjects.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                        <svg class="h-5 w-5 {{ request()->routeIs('partner.subjects.*') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
-                        </svg>
-                        <span class="ml-3 transition-all duration-300">Subjects</span>
-                        <span class="ml-auto inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300 shadow-sm border border-purple-300 dark:border-purple-700 transition-all duration-200 group-hover:scale-110 group-hover:shadow-md group-hover:bg-purple-200 dark:group-hover:bg-purple-800/50">{{ $stats['total_subjects'] ?? 0 }}</span>
+                       class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.subjects.*') ? 'bg-gradient-to-r from-purple-50 to-purple-100 text-purple-700 border border-purple-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-purple-50/50 hover:to-purple-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-purple-700 dark:hover:text-white' }}">
+                        <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.subjects.*') ? 'bg-purple-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-purple-50' }} flex items-center justify-center transition-all duration-200">
+                            <svg class="h-4 w-4 {{ request()->routeIs('partner.subjects.*') ? 'text-purple-600' : 'text-gray-500 group-hover:text-purple-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <span class="ml-2 flex-1">Subjects</span>
+                        <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300 border border-purple-300 dark:border-purple-700">{{ $stats['total_subjects'] ?? 0 }}</span>
                     </a>
 
                     <a href="{{ route('partner.topics.index') }}"
-                       class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.topics.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                        <svg class="h-5 w-5 {{ request()->routeIs('partner.topics.*') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                        </svg>
-                        <span class="ml-3 transition-all duration-300">Topics</span>
-                        <span class="ml-auto inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-pink-100 text-pink-700 dark:bg-pink-900/50 dark:text-pink-300 shadow-sm border border-pink-300 dark:border-pink-700 transition-all duration-200 group-hover:scale-110 group-hover:shadow-md group-hover:bg-pink-200 dark:group-hover:bg-pink-800/50">{{ $stats['total_topics'] ?? 0 }}</span>
+                       class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.topics.*') ? 'bg-gradient-to-r from-pink-50 to-pink-100 text-pink-700 border border-pink-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-pink-50/50 hover:to-pink-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-pink-700 dark:hover:text-white' }}">
+                        <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.topics.*') ? 'bg-pink-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-pink-50' }} flex items-center justify-center transition-all duration-200">
+                            <svg class="h-4 w-4 {{ request()->routeIs('partner.topics.*') ? 'text-pink-600' : 'text-gray-500 group-hover:text-pink-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                            </svg>
+                        </div>
+                        <span class="ml-2 flex-1">Topics</span>
+                        <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-pink-100 text-pink-700 dark:bg-pink-900/50 dark:text-pink-300 border border-pink-300 dark:border-pink-700">{{ $stats['total_topics'] ?? 0 }}</span>
                     </a>
                     <a href="{{ route('partner.students.index') }}"
-                       class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.students.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                        <svg class="h-5 w-5 {{ request()->routeIs('partner.students.*') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                        </svg>
-                        <span class="ml-3 transition-all duration-300">Students</span>
-                        <span class="ml-auto inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 shadow-sm border border-emerald-300 dark:border-emerald-700 transition-all duration-200 group-hover:scale-110 group-hover:shadow-md group-hover:bg-emerald-200 dark:group-hover:bg-emerald-800/50">{{ $stats['total_students'] ?? 0 }}</span>
+                       class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.students.*') ? 'bg-gradient-to-r from-emerald-50 to-emerald-100 text-emerald-700 border border-emerald-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-emerald-50/50 hover:to-emerald-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-emerald-700 dark:hover:text-white' }}">
+                        <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.students.*') ? 'bg-emerald-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-emerald-50' }} flex items-center justify-center transition-all duration-200">
+                            <svg class="h-4 w-4 {{ request()->routeIs('partner.students.*') ? 'text-emerald-600' : 'text-gray-500 group-hover:text-emerald-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                            </svg>
+                        </div>
+                        <span class="ml-2 flex-1">Students</span>
+                        <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700">{{ $stats['total_students'] ?? 0 }}</span>
                     </a>
                     <a href="{{ route('partner.questions.all') }}"
-                       class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.questions.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                        <svg class="h-5 w-5 {{ request()->routeIs('partner.questions.*') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <span class="ml-3 transition-all duration-300">Questions</span>
-                        <span class="ml-auto inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 shadow-sm border border-blue-300 dark:border-blue-700 transition-all duration-200 group-hover:scale-110 group-hover:shadow-md group-hover:bg-blue-200 dark:group-hover:bg-blue-800/50">{{ $stats['total_questions'] ?? 0 }}</span>
+                       class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.questions.*') ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 border border-blue-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-blue-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-blue-700 dark:hover:text-white' }}">
+                        <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.questions.*') ? 'bg-blue-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-blue-50' }} flex items-center justify-center transition-all duration-200">
+                            <svg class="h-4 w-4 {{ request()->routeIs('partner.questions.*') ? 'text-blue-600' : 'text-gray-500 group-hover:text-blue-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <span class="ml-2 flex-1">Questions</span>
+                        <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 border border-blue-300 dark:border-blue-700">{{ $stats['total_questions'] ?? 0 }}</span>
                     </a>
 
 
                     <a href="{{ route('partner.exams.index') }}"
-                       class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.exams.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                        <svg class="h-5 w-5 {{ request()->routeIs('partner.exams.*') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                        </svg>
-                        <span class="ml-3 transition-all duration-300">Exams</span>
-                        <span class="ml-auto inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-cyan-100 text-cyan-700 dark:bg-cyan-900/50 dark:text-cyan-300 shadow-sm border border-cyan-300 dark:border-cyan-700 transition-all duration-200 group-hover:scale-110 group-hover:shadow-md group-hover:bg-cyan-200 dark:group-hover:bg-cyan-800/50">{{ $stats['total_exams'] ?? 0 }}</span>
+                       class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.exams.*') ? 'bg-gradient-to-r from-cyan-50 to-cyan-100 text-cyan-700 border border-cyan-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-cyan-50/50 hover:to-cyan-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-cyan-700 dark:hover:text-white' }}">
+                        <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.exams.*') ? 'bg-cyan-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-cyan-50' }} flex items-center justify-center transition-all duration-200">
+                            <svg class="h-4 w-4 {{ request()->routeIs('partner.exams.*') ? 'text-cyan-600' : 'text-gray-500 group-hover:text-cyan-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <span class="ml-2 flex-1">Exams</span>
+                        <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-cyan-100 text-cyan-700 dark:bg-cyan-900/50 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-700">{{ $stats['total_exams'] ?? 0 }}</span>
                     </a>
 
                     <a href="{{ route('analytics.questions.index') }}"
-                       class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('analytics.questions.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                        <svg class="h-5 w-5 {{ request()->routeIs('analytics.questions.*') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                        </svg>
-                        <span class="ml-3 transition-all duration-300">Question Analytics</span>
-                        <span class="ml-auto inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-violet-100 text-violet-700 dark:bg-violet-900/50 dark:text-violet-300 shadow-sm border border-violet-300 dark:border-violet-700 transition-all duration-200 group-hover:scale-110 group-hover:shadow-md group-hover:bg-violet-200 dark:group-hover:bg-violet-800/50">{{ $stats['total_question_attempts'] ?? 0 }}</span>
+                       class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('analytics.questions.*') ? 'bg-gradient-to-r from-violet-50 to-violet-100 text-violet-700 border border-violet-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-violet-50/50 hover:to-violet-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-violet-700 dark:hover:text-white' }}">
+                        <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('analytics.questions.*') ? 'bg-violet-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-violet-50' }} flex items-center justify-center transition-all duration-200">
+                            <svg class="h-4 w-4 {{ request()->routeIs('analytics.questions.*') ? 'text-violet-600' : 'text-gray-500 group-hover:text-violet-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                        </div>
+                        <span class="ml-2 flex-1">Analytics</span>
+                        <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-violet-100 text-violet-700 dark:bg-violet-900/50 dark:text-violet-300 border border-violet-300 dark:border-violet-700">{{ $stats['total_question_attempts'] ?? 0 }}</span>
                     </a>
 
                     <a href="{{ route('partner.sms.index') }}"
-                       class="group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('partner.sms.*') ? 'bg-primaryGreen/10 text-primaryGreen border border-primaryGreen/20' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                        <svg class="h-5 w-5 {{ request()->routeIs('partner.sms.*') ? 'text-primaryGreen' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                        </svg>
-                        <span class="ml-3 transition-all duration-300">SMS</span>
-                        <span class="ml-auto inline-flex items-center justify-center min-w-[28px] h-6 px-2 text-xs font-semibold rounded-full bg-teal-100 text-teal-700 dark:bg-teal-900/50 dark:text-teal-300 shadow-sm border border-teal-300 dark:border-teal-700 transition-all duration-200 group-hover:scale-110 group-hover:shadow-md group-hover:bg-teal-200 dark:group-hover:bg-teal-800/50">{{ $stats['total_sms'] ?? 0 }}</span>
+                       class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.sms.*') ? 'bg-gradient-to-r from-teal-50 to-teal-100 text-teal-700 border border-teal-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-teal-50/50 hover:to-teal-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-teal-700 dark:hover:text-white' }}">
+                        <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.sms.*') ? 'bg-teal-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-teal-50' }} flex items-center justify-center transition-all duration-200">
+                            <svg class="h-4 w-4 {{ request()->routeIs('partner.sms.*') ? 'text-teal-600' : 'text-gray-500 group-hover:text-teal-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                            </svg>
+                        </div>
+                        <span class="ml-2 flex-1">SMS</span>
+                        <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-teal-100 text-teal-700 dark:bg-teal-900/50 dark:text-teal-300 border border-teal-300 dark:border-teal-700">{{ $stats['total_sms'] ?? 0 }}</span>
                     </a>
                 </nav>
 
-                <div class="flex-shrink-0 p-4 border-t border-gray-200 dark:border-gray-700">
-                    <div class="flex items-center">
+                <!-- Sidebar Footer -->
+                <div class="flex-shrink-0 p-2 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+                    <div class="flex items-center space-x-2">
                         <div class="flex-shrink-0">
-                            <div class="w-8 h-8 bg-gradient-to-br from-primaryGreen to-emerald-500 rounded-full flex items-center justify-center">
-                                <span class="text-sm font-bold text-white">{{ substr(Auth::user()->name ?? 'P', 0, 1) }}</span>
+                            <div class="w-8 h-8 bg-gradient-to-br from-primaryGreen to-emerald-600 rounded-full flex items-center justify-center ring-2 ring-white dark:ring-gray-800">
+                                <span class="text-xs font-bold text-white">{{ substr(Auth::user()->name ?? 'P', 0, 1) }}</span>
                             </div>
                         </div>
-                        <div class="ml-3 min-w-0 flex-1 transition-all duration-300">
-                            <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ Auth::user()->name ?? 'Partner' }}</p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ Auth::user()->email ?? 'partner@example.com' }}</p>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-bold text-gray-900 dark:text-white truncate">{{ Auth::user()->name ?? 'Partner' }}</p>
+                            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 truncate">{{ Auth::user()->email ?? 'partner@example.com' }}</p>
                         </div>
-                        <div class="ml-auto flex-shrink-0 transition-all duration-300">
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 transition-colors duration-200">
-                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                                    </svg>
-                                </button>
-                            </form>
-                        </div>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="p-1.5 rounded-md text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200" title="Logout">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                </svg>
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
-        </div>
+        </aside>
 
-        <!-- Mobile Backdrop -->
-        <div id="sidebar-backdrop" class="lg:hidden"></div>
+        <!-- Main Content Area -->
+        <main class="flex-1 flex flex-col min-h-screen lg:min-h-0 overflow-hidden">
+            <!-- Mobile Header -->
+            <header class="lg:hidden sticky top-0 z-30 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 safe-top">
+                <div class="flex items-center justify-between px-4 py-3">
+                    <button id="sidebar-toggle" class="p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors no-tap-highlight">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                    <h1 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $partner?->name ?? 'Partner Portal' }}</h1>
+                    <div class="w-10"></div> <!-- Spacer for centering -->
+                </div>
+            </header>
 
-        <!-- Mobile Toggle Button -->
-        <button id="sidebar-toggle" class="lg:hidden fixed top-4 right-4 z-70 p-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
-            <svg class="w-6 h-6 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-        </button>
-
-        <!-- Main Content -->
-        <div class="main-content-wrapper flex-1 flex flex-col bg-gray-100 dark:bg-gray-900">
-            <!-- Top Bar -->
-            <div class="sticky-top-bar">
+            <!-- Desktop Top Bar -->
+            <div class="hidden lg:block sticky top-0 z-20 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm">
                 <div class="px-4 lg:px-8 py-4">
                     <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                         <div class="flex items-center space-x-4">
@@ -419,8 +434,9 @@
                 </div>
             </div>
 
-            <!-- Main Content Area -->
-            <main class="flex-1 p-6">
+            <!-- Page Content -->
+            <div class="flex-1 overflow-y-auto custom-scrollbar bg-gray-50 dark:bg-gray-900">
+                <div class="p-4 lg:p-6 xl:p-8 max-w-7xl mx-auto safe-bottom">
                 @if(session('success'))
                     <div class="fixed top-4 right-4 z-50 max-w-sm w-full bg-green-50 border border-green-200 rounded-lg shadow-lg p-4 transition-all duration-300 transform translate-x-full" id="success-message">
                         <div class="flex items-start">
@@ -489,68 +505,95 @@
                     </script>
                 @endif
 
-                @yield('content')
-            </main>
-        </div>
+                    @yield('content')
+                </div>
+            </div>
+        </main>
     </div>
 
+    <!-- JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const sidebar = document.getElementById('sidebar');
             const sidebarToggle = document.getElementById('sidebar-toggle');
+            const sidebarClose = document.getElementById('sidebar-close');
             const sidebarBackdrop = document.getElementById('sidebar-backdrop');
 
-            // Handle mobile sidebar toggle
-            if (sidebarToggle && sidebar && sidebarBackdrop) {
-                sidebarToggle.addEventListener('click', () => {
-                    sidebar.classList.toggle('open');
-                    sidebarBackdrop.classList.toggle('active');
-                    document.body.classList.toggle('overflow-hidden');
-                });
-
-                sidebarBackdrop.addEventListener('click', () => {
-                    sidebar.classList.remove('open');
-                    sidebarBackdrop.classList.remove('active');
-                    document.body.classList.remove('overflow-hidden');
-                });
+            // Toggle sidebar
+            function toggleSidebar() {
+                sidebar.classList.toggle('open');
+                sidebarBackdrop.classList.toggle('active');
+                document.body.classList.toggle('overflow-hidden');
             }
 
-            // Close sidebar when clicking outside
-            document.addEventListener('click', (event) => {
-                if (sidebar && sidebar.classList.contains('open')) {
-                    if (sidebar.contains(event.target) || sidebarToggle?.contains(event.target)) {
-                        return;
+            // Close sidebar
+            function closeSidebar() {
+                sidebar.classList.remove('open');
+                sidebarBackdrop.classList.remove('active');
+                document.body.classList.remove('overflow-hidden');
+            }
+
+            // Event listeners
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', toggleSidebar);
+            }
+
+            if (sidebarClose) {
+                sidebarClose.addEventListener('click', closeSidebar);
+            }
+
+            if (sidebarBackdrop) {
+                sidebarBackdrop.addEventListener('click', closeSidebar);
+            }
+
+            // Close sidebar on navigation (mobile)
+            const navLinks = sidebar?.querySelectorAll('a');
+            navLinks?.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth < 1024) {
+                        closeSidebar();
                     }
-                    sidebar.classList.remove('open');
-                    sidebarBackdrop.classList.remove('active');
-                    document.body.classList.remove('overflow-hidden');
-                }
+                });
             });
 
             // Handle window resize
-            function handleResize() {
-                if (window.innerWidth >= 1024) {
-                    sidebar.classList.remove('open');
-                    sidebarBackdrop.classList.remove('active');
-                    document.body.classList.remove('overflow-hidden');
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(() => {
+                    if (window.innerWidth >= 1024) {
+                        closeSidebar();
+                    }
+                }, 250);
+            });
+
+            // Prevent body scroll when sidebar is open on mobile
+            const observer = new MutationObserver(() => {
+                if (sidebar?.classList.contains('open') && window.innerWidth < 1024) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
                 }
+            });
+
+            if (sidebar) {
+                observer.observe(sidebar, { attributes: true, attributeFilter: ['class'] });
             }
 
-            window.addEventListener('resize', handleResize);
-            handleResize();
-
-            // Theme toggle
-            const themeToggle = document.getElementById('theme-toggle');
+            // Theme management
             const htmlTag = document.documentElement;
+            const currentTheme = localStorage.getItem('theme');
+            
+            if (currentTheme) {
+                htmlTag.classList.add(currentTheme);
+            } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                htmlTag.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
 
+            // Optional: Add theme toggle button handler if you have one
+            const themeToggle = document.getElementById('theme-toggle');
             if (themeToggle) {
-                const currentTheme = localStorage.getItem('theme');
-                if (currentTheme) {
-                    htmlTag.classList.add(currentTheme);
-                } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    htmlTag.classList.add('dark');
-                }
-
                 themeToggle.addEventListener('click', () => {
                     if (htmlTag.classList.contains('dark')) {
                         htmlTag.classList.remove('dark');
