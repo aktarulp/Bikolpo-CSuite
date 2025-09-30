@@ -16,9 +16,10 @@ class TopicController extends Controller
         // Get the authenticated user's partner ID using the trait
         $partnerId = $this->getPartnerId();
         
-        // Only show topics for the logged-in partner
+        // Only show active topics for the logged-in partner (flag = 'active')
         $topics = Topic::with(['subject.course'])
             ->where('partner_id', $partnerId)
+            ->where('flag', 'active')
             ->latest()
             ->paginate(15);
             
@@ -28,7 +29,7 @@ class TopicController extends Controller
     public function create()
     {
         $partnerId = $this->getPartnerId();
-        $subjects = Subject::where('status', 'active')
+        $subjects = Subject::where('flag', 'active')
             ->with('course')
             ->where('partner_id', $partnerId)
             ->get();
@@ -99,7 +100,16 @@ class TopicController extends Controller
 
     public function destroy(Topic $topic)
     {
-        $topic->delete();
+        // Check if topic has questions
+        $questionsCount = $topic->questions()->count();
+        
+        if ($questionsCount > 0) {
+            return redirect()->route('partner.topics.index')
+                ->with('error', "Cannot delete this topic. It has {$questionsCount} question(s) associated with it. Please delete or move the questions first.");
+        }
+        
+        // No child items, mark as deleted instead of hard delete
+        $topic->update(['flag' => 'deleted']);
 
         return redirect()->route('partner.topics.index')
             ->with('success', 'Topic deleted successfully.');

@@ -7,11 +7,14 @@ use App\Models\Course;
 use App\Models\Batch;
 use App\Models\StudentMigration;
 use App\Services\StudentMigrationService;
+use App\Traits\HasPartnerContext;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 class StudentMigrationController extends Controller
 {
+    use HasPartnerContext;
+    
     protected $migrationService;
 
     public function __construct(StudentMigrationService $migrationService)
@@ -24,8 +27,9 @@ class StudentMigrationController extends Controller
      */
     public function showMigrationForm(Student $student)
     {
-        $courses = Course::where('status', 'active')->get();
-        $batches = Batch::where('status', 'active')->get();
+        $partnerId = $this->getPartnerId();
+        $courses = Course::where('status', 'active')->where('partner_id', $partnerId)->get();
+        $batches = Batch::where('status', 'active')->where('partner_id', $partnerId)->get();
         $migrationHistory = $this->migrationService->getMigrationHistory($student);
 
         return view('partner.students.migration-form', compact('student', 'courses', 'batches', 'migrationHistory'));

@@ -16,12 +16,14 @@ class Topic extends Model
         'description',
         'chapter_number',
         'status',
+        'flag',
         'partner_id',
         'created_by',
     ];
 
     protected $casts = [
         'status' => 'string',
+        'flag' => 'string',
     ];
 
     // Relationships

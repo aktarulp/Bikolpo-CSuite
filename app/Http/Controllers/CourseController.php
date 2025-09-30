@@ -15,9 +15,10 @@ class CourseController extends Controller
         // Get the authenticated user's partner ID using the trait
         $partnerId = $this->getPartnerId();
         
-        // Only show courses for the logged-in partner
+        // Only show active courses for the logged-in partner
         $courses = Course::withCount('subjects')
             ->where('partner_id', $partnerId)
+            ->where('status', 'active')
             ->latest()
             ->paginate(15);
             
@@ -63,7 +64,10 @@ class CourseController extends Controller
             abort(403, 'Unauthorized access to this course.');
         }
         
-        $course->load(['subjects.topics']);
+        // Load relationships with counts
+        $course->load(['subjects.topics', 'students.batch']);
+        $course->loadCount(['subjects', 'students', 'questions']);
+        
         return view('partner.courses.show', compact('course'));
     }
 
@@ -106,7 +110,16 @@ class CourseController extends Controller
             abort(403, 'Unauthorized access to this course.');
         }
         
-        $course->delete();
+        // Check if course has any subjects
+        $subjectsCount = $course->subjects()->count();
+        
+        if ($subjectsCount > 0) {
+            return redirect()->route('partner.courses.index')
+                ->with('error', "Cannot delete this course. It has {$subjectsCount} subject(s) associated with it. Please delete or move the subjects first.");
+        }
+        
+        // Soft delete by changing status to 'deleted'
+        $course->update(['status' => 'deleted']);
 
         return redirect()->route('partner.courses.index')
             ->with('success', 'Course deleted successfully.');

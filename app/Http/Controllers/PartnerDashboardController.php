@@ -61,8 +61,37 @@ class PartnerDashboardController extends Controller
                 $query->where('partner_id', $partnerId);
             });
             
+            // Get detailed question breakdown
+            // Match the logic from QuestionController index - only count questions with valid course links
+            $totalQuestions = Question::where('partner_id', $partnerId)
+                ->whereHas('course', function($q) use ($partnerId) {
+                    $q->where('partner_id', $partnerId);
+                })
+                ->count();
+            $mcqQuestions = Question::where('partner_id', $partnerId)
+                ->whereHas('course', function($q) use ($partnerId) {
+                    $q->where('partner_id', $partnerId);
+                })
+                ->where('question_type', 'mcq')
+                ->count();
+            $descriptiveQuestions = Question::where('partner_id', $partnerId)
+                ->whereHas('course', function($q) use ($partnerId) {
+                    $q->where('partner_id', $partnerId);
+                })
+                ->where('question_type', 'descriptive')
+                ->count();
+            $trueFalseQuestions = Question::where('partner_id', $partnerId)
+                ->whereHas('course', function($q) use ($partnerId) {
+                    $q->where('partner_id', $partnerId);
+                })
+                ->where('question_type', 'true_false')
+                ->count();
+            
             $stats = [
-                'total_questions' => Question::where('partner_id', $partnerId)->count(),
+                'total_questions' => $totalQuestions,
+                'mcq_questions' => $mcqQuestions,
+                'descriptive_questions' => $descriptiveQuestions,
+                'true_false_questions' => $trueFalseQuestions,
                 'total_exams' => Exam::where('partner_id', $partnerId)->count(),
                 'total_students' => $totalStudents,
                 'total_courses' => Course::where('partner_id', $partnerId)->count(),
@@ -281,7 +310,11 @@ class PartnerDashboardController extends Controller
             \DB::flushQueryLog();
             
             $stats = [
-                'total_questions' => Question::where('partner_id', $partnerId)->count(),
+                'total_questions' => Question::where('partner_id', $partnerId)
+                    ->whereHas('course', function($q) use ($partnerId) {
+                        $q->where('partner_id', $partnerId);
+                    })
+                    ->count(),
                 'total_exams' => Exam::where('partner_id', $partnerId)->count(),
                 'total_students' => Student::where('partner_id', $partnerId)->count(),
                 'total_courses' => Course::where('partner_id', $partnerId)->count(),

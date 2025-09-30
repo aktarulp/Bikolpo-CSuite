@@ -18,7 +18,8 @@ class BatchController extends Controller
     public function index()
     {
         $batches = Batch::byPartner($this->getPartnerId())
-            ->visible()
+            ->where('flag', 'active')
+            ->withCount('students')
             ->latest()
             ->paginate(15);
             
@@ -59,6 +60,16 @@ class BatchController extends Controller
      */
     public function show(Batch $batch)
     {
+        // Ensure the batch belongs to the logged-in partner
+        if ($batch->partner_id !== $this->getPartnerId()) {
+            abort(403, 'Unauthorized access to this batch.');
+        }
+        
+        // Load students relationship
+        $batch->load(['students' => function($query) {
+            $query->orderBy('full_name');
+        }]);
+        
         return view('partner.batches.show', compact('batch'));
     }
 
@@ -67,6 +78,11 @@ class BatchController extends Controller
      */
     public function edit(Batch $batch)
     {
+        // Ensure the batch belongs to the logged-in partner
+        if ($batch->partner_id !== $this->getPartnerId()) {
+            abort(403, 'Unauthorized access to this batch.');
+        }
+        
         return view('partner.batches.edit', compact('batch'));
     }
 
@@ -75,6 +91,11 @@ class BatchController extends Controller
      */
     public function update(Request $request, Batch $batch)
     {
+        // Ensure the batch belongs to the logged-in partner
+        if ($batch->partner_id !== $this->getPartnerId()) {
+            abort(403, 'Unauthorized access to this batch.');
+        }
+        
         $request->validate([
             'name' => 'required|string|max:255',
             'year' => 'required|integer|min:2000|max:2030',
@@ -96,7 +117,20 @@ class BatchController extends Controller
      */
     public function destroy(Batch $batch)
     {
-        // Soft delete - update flag to 'deleted' instead of removing from database
+        // Ensure the batch belongs to the logged-in partner
+        if ($batch->partner_id !== $this->getPartnerId()) {
+            abort(403, 'Unauthorized access to this batch.');
+        }
+        
+        // Check if batch has any students
+        $studentsCount = $batch->students()->count();
+        
+        if ($studentsCount > 0) {
+            return redirect()->route('partner.batches.index')
+                ->with('error', "Cannot delete this batch. It has {$studentsCount} student(s) associated with it. Please delete or move the students first.");
+        }
+        
+        // No students associated, mark as deleted instead of hard delete
         $batch->update(['flag' => 'deleted']);
         
         return redirect()->route('partner.batches.index')

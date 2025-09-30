@@ -64,7 +64,7 @@ class AppServiceProvider extends ServiceProvider
                 'total_subjects' => $existingStats['total_subjects'] ?? ($partnerId ? Subject::where('partner_id', $partnerId)->count() : 0),
                 'total_topics' => $existingStats['total_topics'] ?? ($partnerId ? Topic::where('partner_id', $partnerId)->count() : 0),
                 'total_students' => $existingStats['total_students'] ?? ($partnerId ? Student::where('partner_id', $partnerId)->count() : 0),
-                'total_questions' => $existingStats['total_questions'] ?? ($partnerId ? Question::where('partner_id', $partnerId)->count() : 0),
+                'total_questions' => $existingStats['total_questions'] ?? ($partnerId ? Question::where('partner_id', $partnerId)->where('status', 'active')->count() : 0),
                 'total_exams' => $existingStats['total_exams'] ?? ($partnerId ? Exam::where('partner_id', $partnerId)->count() : 0),
                 'total_question_attempts' => $existingStats['total_question_attempts'] ?? 0,
                 'total_sms' => $existingStats['total_sms'] ?? 0,

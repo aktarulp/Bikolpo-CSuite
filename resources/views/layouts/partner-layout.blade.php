@@ -19,6 +19,9 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
     <style>
         /* Bengali Font */
         .font-bengali {
@@ -115,6 +118,11 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
+
+        /* Alpine.js cloak */
+        [x-cloak] {
+            display: none !important;
+        }
     </style>
 </head>
 <body class="h-full font-sans antialiased bg-gray-50 dark:bg-gray-900">
@@ -174,16 +182,7 @@
                         <span class="ml-2 flex-1">Courses</span>
                         <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300 border border-orange-300 dark:border-orange-700">{{ $stats['total_courses'] ?? 0 }}</span>
                     </a>
-                    <a href="{{ route('partner.batches.index') }}"
-                       class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.batches.*') ? 'bg-gradient-to-r from-indigo-50 to-indigo-100 text-indigo-700 border border-indigo-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-indigo-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-indigo-700 dark:hover:text-white' }}">
-                        <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.batches.*') ? 'bg-indigo-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-indigo-50' }} flex items-center justify-center transition-all duration-200">
-                            <svg class="h-4 w-4 {{ request()->routeIs('partner.batches.*') ? 'text-indigo-600' : 'text-gray-500 group-hover:text-indigo-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                            </svg>
-                        </div>
-                        <span class="ml-2 flex-1">Batches</span>
-                        <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-700">{{ $stats['total_batches'] ?? 0 }}</span>
-                    </a>
+                    
 
                     <a href="{{ route('partner.subjects.index') }}"
                        class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.subjects.*') ? 'bg-gradient-to-r from-purple-50 to-purple-100 text-purple-700 border border-purple-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-purple-50/50 hover:to-purple-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-purple-700 dark:hover:text-white' }}">
@@ -205,6 +204,16 @@
                         </div>
                         <span class="ml-2 flex-1">Topics</span>
                         <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-pink-100 text-pink-700 dark:bg-pink-900/50 dark:text-pink-300 border border-pink-300 dark:border-pink-700">{{ $stats['total_topics'] ?? 0 }}</span>
+                    </a>
+                    <a href="{{ route('partner.batches.index') }}"
+                       class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.batches.*') ? 'bg-gradient-to-r from-indigo-50 to-indigo-100 text-indigo-700 border border-indigo-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-indigo-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-indigo-700 dark:hover:text-white' }}">
+                        <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.batches.*') ? 'bg-indigo-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-indigo-50' }} flex items-center justify-center transition-all duration-200">
+                            <svg class="h-4 w-4 {{ request()->routeIs('partner.batches.*') ? 'text-indigo-600' : 'text-gray-500 group-hover:text-indigo-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            </svg>
+                        </div>
+                        <span class="ml-2 flex-1">Batches</span>
+                        <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-700">{{ $stats['total_batches'] ?? 0 }}</span>
                     </a>
                     <a href="{{ route('partner.students.index') }}"
                        class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.students.*') ? 'bg-gradient-to-r from-emerald-50 to-emerald-100 text-emerald-700 border border-emerald-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-emerald-50/50 hover:to-emerald-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-emerald-700 dark:hover:text-white' }}">
@@ -290,79 +299,85 @@
         <!-- Main Content Area -->
         <main class="flex-1 flex flex-col min-h-screen lg:min-h-0 overflow-hidden">
             <!-- Mobile Header -->
-            <header class="lg:hidden sticky top-0 z-30 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 safe-top">
+            <header class="lg:hidden sticky top-0 z-30 bg-gradient-to-r from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 border-b border-gray-200 dark:border-gray-700 safe-top backdrop-blur-sm bg-white/95 dark:bg-gray-900/95 shadow-sm">
                 <div class="flex items-center justify-between px-4 py-3">
-                    <button id="sidebar-toggle" class="p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors no-tap-highlight">
+                    <button id="sidebar-toggle" class="p-2.5 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-primaryGreen/10 hover:text-primaryGreen dark:hover:bg-primaryGreen/20 transition-all duration-200 no-tap-highlight active:scale-95">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
                     </button>
-                    <h1 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $partner?->name ?? 'Partner Portal' }}</h1>
+                    <h1 class="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-primaryGreen to-emerald-600 dark:from-white dark:via-emerald-400 dark:to-primaryGreen">
+                        {{ $partner?->name ?? 'Partner Portal' }}
+                    </h1>
                     <div class="w-10"></div> <!-- Spacer for centering -->
                 </div>
             </header>
 
             <!-- Desktop Top Bar -->
-            <div class="hidden lg:block sticky top-0 z-20 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+            <div class="hidden lg:block sticky top-0 z-20 bg-gradient-to-r from-white via-gray-50 to-white dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-md backdrop-blur-sm bg-white/95 dark:bg-gray-900/95">
                 <div class="px-4 lg:px-8 py-4">
                     <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                         <div class="flex items-center space-x-4">
-                            <div class="w-8 h-8 lg:w-12 lg:h-12 flex items-center justify-center">
+                            <div class="w-12 h-12 flex items-center justify-center bg-gradient-to-br from-primaryGreen/10 to-emerald-100 dark:from-primaryGreen/20 dark:to-emerald-900/30 rounded-xl ring-2 ring-primaryGreen/20 shadow-lg">
                                 @if(!empty($partner?->logo))
-                                    <img src="{{ asset('storage/' . $partner->logo) }}" alt="Partner Logo" class="w-8 h-8 lg:w-12 lg:h-12 object-cover rounded">
+                                    <img src="{{ asset('storage/' . $partner->logo) }}" alt="Partner Logo" class="w-10 h-10 object-cover rounded-lg">
                                 @else
-                                    <svg class="w-4 h-4 lg:w-6 lg:h-6 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                    <svg class="w-6 h-6 text-primaryGreen dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                                     </svg>
                                 @endif
                             </div>
                             <div>
-                                <h2 class="text-lg lg:text-2xl font-semibold text-gray-900 dark:text-white">
-                                    Welcome back, <span class="text-blue-600 dark:text-blue-400">{{ $partner?->slug ?? $partner?->name ?? Auth::user()->name ?? 'Partner' }}</span>
+                                <h2 class="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white">
+                                    Welcome back, <span class="text-transparent bg-clip-text bg-gradient-to-r from-primaryGreen to-emerald-600 dark:from-emerald-400 dark:to-primaryGreen">{{ $partner?->slug ?? $partner?->name ?? Auth::user()->name ?? 'Partner' }}</span>
                                 </h2>
-                                <p class="text-gray-600 dark:text-gray-400 text-xs lg:text-sm">Manage your exam system efficiently</p>
+                                <p class="text-gray-600 dark:text-gray-400 text-sm flex items-center mt-1">
+                                    <svg class="w-4 h-4 mr-1.5 text-primaryGreen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    Manage your exam system efficiently
+                                </p>
                             </div>
                         </div>
 
-                        <!-- Stats Container - Hidden on mobile -->
-                        <div class="stats-container hidden lg:flex items-center space-x-4">
-                            <div class="flex items-center space-x-2">
-                                <div class="w-6 h-6 lg:w-8 lg:h-8 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
-                                    <svg class="w-3 h-3 lg:w-4 lg:h-4 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <!-- Stats Container - Mobile First -->
+                        <div class="stats-container flex flex-wrap gap-3 lg:gap-4">
+                            <!-- Courses Card -->
+                            <div class="group flex items-center gap-2 px-3 py-2 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-900/30 rounded-xl border border-orange-200 dark:border-orange-800/50 hover:shadow-lg hover:scale-105 transition-all duration-200">
+                                <div class="w-10 h-10 bg-white dark:bg-orange-900/50 rounded-lg flex items-center justify-center shadow-sm group-hover:rotate-12 transition-transform duration-200">
+                                    <svg class="w-5 h-5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                                     </svg>
                                 </div>
                                 <div>
-                                    <p class="text-lg font-bold text-orange-600 dark:text-orange-400">{{ $stats['total_courses'] ?? 0 }}</p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">Courses</p>
+                                    <p class="text-xl font-bold text-orange-600 dark:text-orange-400 leading-none">{{ $stats['total_courses'] ?? 0 }}</p>
+                                    <p class="text-xs font-medium text-orange-700 dark:text-orange-300 mt-0.5">Courses</p>
                                 </div>
                             </div>
 
-                            <div class="w-px h-8 bg-gray-300 dark:bg-gray-600"></div>
-
-                            <div class="flex items-center space-x-2">
-                                <div class="w-6 h-6 lg:w-8 lg:h-8 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center">
-                                    <svg class="w-3 h-3 lg:w-4 lg:h-4 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <!-- Questions Card -->
+                            <div class="group flex items-center gap-2 px-3 py-2 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-900/30 rounded-xl border border-blue-200 dark:border-blue-800/50 hover:shadow-lg hover:scale-105 transition-all duration-200">
+                                <div class="w-10 h-10 bg-white dark:bg-blue-900/50 rounded-lg flex items-center justify-center shadow-sm group-hover:rotate-12 transition-transform duration-200">
+                                    <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
                                 </div>
                                 <div>
-                                    <p class="text-lg font-bold text-emerald-600 dark:text-emerald-400">{{ $stats['total_questions'] ?? 0 }}</p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">Questions</p>
+                                    <p class="text-xl font-bold text-blue-600 dark:text-blue-400 leading-none">{{ $stats['total_questions'] ?? 0 }}</p>
+                                    <p class="text-xs font-medium text-blue-700 dark:text-blue-300 mt-0.5">Questions</p>
                                 </div>
                             </div>
 
-                            <div class="w-px h-8 bg-gray-300 dark:bg-gray-600"></div>
-
-                            <div class="flex items-center space-x-2">
-                                <div class="w-6 h-6 lg:w-8 lg:h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-                                    <svg class="w-3 h-3 lg:w-4 lg:h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                            <!-- Exams Card -->
+                            <div class="group flex items-center gap-2 px-3 py-2 bg-gradient-to-br from-cyan-50 to-cyan-100 dark:from-cyan-900/20 dark:to-cyan-900/30 rounded-xl border border-cyan-200 dark:border-cyan-800/50 hover:shadow-lg hover:scale-105 transition-all duration-200">
+                                <div class="w-10 h-10 bg-white dark:bg-cyan-900/50 rounded-lg flex items-center justify-center shadow-sm group-hover:rotate-12 transition-transform duration-200">
+                                    <svg class="w-5 h-5 text-cyan-600 dark:text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                     </svg>
                                 </div>
                                 <div>
-                                    <p class="text-lg font-bold text-blue-600 dark:text-blue-400">{{ $stats['total_exams'] ?? 0 }}</p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">Exams</p>
+                                    <p class="text-xl font-bold text-cyan-600 dark:text-cyan-400 leading-none">{{ $stats['total_exams'] ?? 0 }}</p>
+                                    <p class="text-xs font-medium text-cyan-700 dark:text-cyan-300 mt-0.5">Exams</p>
                                 </div>
                             </div>
 

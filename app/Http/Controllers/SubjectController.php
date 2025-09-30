@@ -16,9 +16,10 @@ class SubjectController extends Controller
         // Get the authenticated user's partner ID using the trait
         $partnerId = $this->getPartnerId();
         
-        // Only show subjects for the logged-in partner
+        // Only show active subjects for the logged-in partner
         $subjects = Subject::with(['course'])
             ->where('partner_id', $partnerId)
+            ->where('status', 'active')
             ->withCount('topics')
             ->latest()
             ->paginate(15);
@@ -109,7 +110,28 @@ class SubjectController extends Controller
 
     public function destroy(Subject $subject)
     {
-        $subject->delete();
+        // Check if subject has topics
+        $topicsCount = $subject->topics()->count();
+        
+        // Check if subject has questions
+        $questionsCount = $subject->questions()->count();
+        
+        $totalChildren = $topicsCount + $questionsCount;
+        
+        if ($totalChildren > 0) {
+            // Subject has child items, cannot delete
+            return redirect()->route('partner.subjects.index')
+                ->with('error', 'Cannot delete subject. It has ' . $topicsCount . ' topic(s) and ' . $questionsCount . ' question(s) associated with it.')
+                ->with('error_details', [
+                    'subject_name' => $subject->name,
+                    'topics_count' => $topicsCount,
+                    'questions_count' => $questionsCount,
+                    'total_count' => $totalChildren
+                ]);
+        }
+        
+        // No child items, mark as deleted instead of hard delete
+        $subject->update(['status' => 'deleted']);
 
         return redirect()->route('partner.subjects.index')
             ->with('success', 'Subject deleted successfully.');

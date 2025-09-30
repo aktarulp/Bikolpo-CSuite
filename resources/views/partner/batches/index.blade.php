@@ -3,134 +3,173 @@
 @section('title', 'Batches')
 
 @section('content')
-<div class="space-y-6">
-    <!-- Page Header -->
-    <div class="flex justify-between items-center">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Batches</h1>
-            <p class="text-gray-600 dark:text-gray-400">Manage your coaching center batches</p>
-        </div>
-        <a href="{{ route('partner.batches.create') }}" 
-           class="bg-primaryGreen hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors duration-200">
-            Add New Batch
-        </a>
-    </div>
-
-    <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-blue-100 dark:bg-blue-900">
-                    <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                    </svg>
-                </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Total Batches</p>
-                    <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ $batches->total() }}</p>
-                </div>
+<div class="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-gray-900 dark:via-purple-900 dark:to-indigo-900 -m-6 p-4 sm:p-6 lg:p-8">
+    <div class="max-w-7xl mx-auto space-y-4 sm:space-y-6">
+        <!-- Page Header - Mobile First -->
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-2xl p-4 sm:p-6 shadow-xl border border-purple-200 dark:border-purple-700">
+            <div class="space-y-1">
+                <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
+                    🎓 Batches
+                </h1>
+                <p class="text-sm sm:text-base text-gray-600 dark:text-gray-300">Manage your coaching center batches</p>
             </div>
+            <a href="{{ route('partner.batches.create') }}" 
+               class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-4 sm:px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                <span>Add New Batch</span>
+            </a>
         </div>
 
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-green-100 dark:bg-green-900">
-                    <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Active Batches</p>
-                    <p class="text-2xl font-semibold text-gray-900 dark:text-white">{{ $batches->where('status', 'active')->count() }}</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
-            <div class="flex items-center">
-                <div class="p-3 rounded-full bg-purple-100 dark:bg-purple-900">
+        <!-- Batches List - Mobile First Design -->
+        <div class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-lg rounded-2xl shadow-xl border border-purple-200 dark:border-purple-700 overflow-hidden">
+            <div class="p-4 sm:p-6 border-b border-purple-200 dark:border-purple-700 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900">
+                <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                     <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M5 7h16"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
                     </svg>
-                </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Deleted Batches</p>
-                    <p class="text-2xl font-semibold text-gray-900 dark:text-white">
-                        <a href="{{ route('partner.batches.trashed') }}" class="hover:text-purple-600 transition-colors duration-200">
-                            {{ \App\Models\Batch::where('flag', 'deleted')->count() }}
-                        </a>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Batches Table -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
-        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">All Batches</h3>
-        </div>
-        
-        @if($batches->count() > 0)
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                    <thead class="bg-gray-50 dark:bg-gray-700">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Batch Name</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Year</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                        @foreach($batches as $batch)
-                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $batch->name }}</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="text-sm text-gray-900 dark:text-white">{{ $batch->year }}</span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
-                                        @if($batch->status === 'active') bg-green-100 text-green-800
-                                        @else bg-red-100 text-red-800 @endif">
-                                        {{ ucfirst($batch->status) }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <a href="{{ route('partner.batches.show', $batch) }}" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 mr-3">View</a>
-                                    <a href="{{ route('partner.batches.edit', $batch) }}" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-3">Edit</a>
-                                    <form action="{{ route('partner.batches.destroy', $batch) }}" method="POST" class="inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300" onclick="return confirm('Are you sure you want to delete this batch?')">Delete</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                    All Batches
+                </h3>
             </div>
             
-            <!-- Pagination -->
-            <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
-                {{ $batches->links() }}
-            </div>
-        @else
-            <div class="p-6 text-center">
-                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                </svg>
-                <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">No batches</h3>
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Get started by creating a new batch.</p>
-                <div class="mt-6">
-                    <a href="{{ route('partner.batches.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primaryGreen hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                        Add Batch
+            @if($batches->count() > 0)
+                <!-- Mobile Card View (visible on mobile) -->
+                <div class="block lg:hidden divide-y divide-gray-200 dark:divide-gray-700">
+                    @foreach($batches as $batch)
+                        <div class="p-3 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors duration-200">
+                            <div class="flex items-start justify-between mb-2">
+                                <div class="flex-1">
+                                    <h4 class="text-sm font-bold text-gray-900 dark:text-white mb-0.5">{{ $batch->name }}</h4>
+                                    <p class="text-xs text-gray-600 dark:text-gray-400">📅 Year: {{ $batch->year }}</p>
+                                </div>
+                                <div class="flex flex-col items-end gap-1">
+                                    <span class="inline-flex px-2.5 py-0.5 text-xs font-bold rounded-full shadow-sm
+                                        @if($batch->status === 'active') 
+                                            bg-gradient-to-r from-green-400 to-emerald-500 text-white
+                                        @else 
+                                            bg-gradient-to-r from-red-400 to-pink-500 text-white
+                                        @endif">
+                                        {{ ucfirst($batch->status) }}
+                                    </span>
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-bold rounded-full shadow-sm bg-gradient-to-r from-blue-400 to-indigo-500 text-white">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                        </svg>
+                                        {{ $batch->students_count ?? 0 }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <a href="{{ route('partner.batches.show', $batch) }}" 
+                                   class="flex-1 min-w-[100px] text-center bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-md hover:shadow-lg transition-all duration-200">
+                                    👁️ View
+                                </a>
+                                <a href="{{ route('partner.batches.edit', $batch) }}" 
+                                   class="flex-1 min-w-[100px] text-center bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-md hover:shadow-lg transition-all duration-200">
+                                    ✏️ Edit
+                                </a>
+                                <form action="{{ route('partner.batches.destroy', $batch) }}" method="POST" class="flex-1 min-w-[100px]">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" 
+                                            class="w-full bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-md hover:shadow-lg transition-all duration-200">
+                                        🗑️ Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+
+                <!-- Desktop Table View (hidden on mobile) -->
+                <div class="hidden lg:block overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-purple-900 dark:text-purple-100 uppercase tracking-wider">Batch Name</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-purple-900 dark:text-purple-100 uppercase tracking-wider">Year</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-purple-900 dark:text-purple-100 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-purple-900 dark:text-purple-100 uppercase tracking-wider">Students</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-purple-900 dark:text-purple-100 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                            @foreach($batches as $batch)
+                                <tr class="hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors duration-200">
+                                    <td class="px-6 py-3">
+                                        <div class="text-sm font-bold text-gray-900 dark:text-white">{{ $batch->name }}</div>
+                                    </td>
+                                    <td class="px-6 py-3">
+                                        <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">📅 {{ $batch->year }}</span>
+                                    </td>
+                                    <td class="px-6 py-3">
+                                        <span class="inline-flex px-2.5 py-0.5 text-xs font-bold rounded-full shadow-sm
+                                            @if($batch->status === 'active') 
+                                                bg-gradient-to-r from-green-400 to-emerald-500 text-white
+                                            @else 
+                                                bg-gradient-to-r from-red-400 to-pink-500 text-white
+                                            @endif">
+                                            {{ ucfirst($batch->status) }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-3">
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-bold rounded-lg shadow-sm bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                            </svg>
+                                            {{ $batch->students_count ?? 0 }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-3 text-sm font-medium">
+                                        <div class="flex gap-2">
+                                            <a href="{{ route('partner.batches.show', $batch) }}" 
+                                               class="inline-flex items-center gap-1 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-md hover:shadow-lg transition-all duration-200">
+                                                👁️ View
+                                            </a>
+                                            <a href="{{ route('partner.batches.edit', $batch) }}" 
+                                               class="inline-flex items-center gap-1 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-md hover:shadow-lg transition-all duration-200">
+                                                ✏️ Edit
+                                            </a>
+                                            <form action="{{ route('partner.batches.destroy', $batch) }}" method="POST" class="inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" 
+                                                        class="inline-flex items-center gap-1 bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-md hover:shadow-lg transition-all duration-200">
+                                                    🗑️ Delete
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="px-4 sm:px-6 py-4 border-t border-purple-200 dark:border-purple-700 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/50 dark:to-pink-900/50">
+                    {{ $batches->links() }}
+                </div>
+            @else
+                <div class="p-8 sm:p-12 text-center">
+                    <div class="inline-flex items-center justify-center w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900 dark:to-pink-900 mb-4">
+                        <svg class="w-10 h-10 sm:w-12 sm:h-12 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-2">No batches yet! 🎓</h3>
+                    <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mb-6">Get started by creating your first batch.</p>
+                    <a href="{{ route('partner.batches.create') }}" 
+                       class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Add Your First Batch
                     </a>
                 </div>
-            </div>
-        @endif
+            @endif
+        </div>
     </div>
 </div>
 @endsection
