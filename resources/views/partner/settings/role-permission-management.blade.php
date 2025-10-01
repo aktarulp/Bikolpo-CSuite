@@ -3,6 +3,8 @@
 @section('title', 'Role & Permission Management')
 
 @section('styles')
+
+@section('styles')
 <style>
     @layer utilities {
         .role-card {
@@ -106,6 +108,46 @@
         background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
     }
 </style>
+
+<script>
+// Critical functions - define immediately to avoid caching issues
+window.showModal = function(modalId) {
+    console.log('showModal called with modalId:', modalId);
+    const modal = document.getElementById(modalId);
+    console.log('modal element:', modal);
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        modal.style.display = 'flex';
+        modal.style.visibility = 'visible';
+        modal.style.position = 'fixed';
+        modal.style.top = '0';
+        modal.style.left = '0';
+        modal.style.width = '100%';
+        modal.style.height = '100%';
+        modal.style.zIndex = '99999';
+        document.body.style.overflow = 'hidden';
+        console.log('Modal classes after change:', modal.className);
+        console.log('Modal display style:', modal.style.display);
+        console.log('Modal z-index:', modal.style.zIndex);
+        console.log('Modal should now be visible');
+    } else {
+        console.error('Modal not found:', modalId);
+    }
+};
+
+window.hideModal = function(modalId) {
+    const modal = document.getElementById(modalId);
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.style.overflow = 'auto';
+};
+
+// Test if functions are available immediately
+console.log('Critical functions loaded in styles section');
+console.log('showModal function available:', typeof window.showModal);
+console.log('hideModal function available:', typeof window.hideModal);
+</script>
 @endsection
 
 @section('content')
@@ -119,9 +161,6 @@
         <div class="flex flex-col sm:flex-row gap-3">
             <button type="button" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200" onclick="exportRoles()">
                 <i class="fas fa-download mr-2"></i>Export
-            </button>
-            <button type="button" class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200" onclick="showModal('addRoleModal')">
-                <i class="fas fa-plus mr-2"></i>Add Role
             </button>
         </div>
     </div>
@@ -200,82 +239,106 @@
                 <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <h5 class="text-lg font-semibold text-gray-900 dark:text-white mb-0">Roles</h5>
-                        <div class="flex flex-col sm:flex-row gap-3" style="display: none;">
-                            <input type="text" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" id="roleSearch" placeholder="Search roles...">
-                            <select class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" id="roleLevelFilter">
-                                <option value="">All Levels</option>
-                                @foreach($roles->pluck('level')->unique()->sort() as $level)
-                                    <option value="{{ $level }}">{{ $level }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                        <button type="button" class="inline-flex items-center px-3 py-1.5 border border-transparent rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200" onclick="window.location.href='{{ route('partner.settings.roles.create') }}'">
+                            <i class="fas fa-plus mr-1"></i>Add Role
+                        </button>
                     </div>
                 </div>
                 <div class="p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="rolesContainer">
-                        @foreach($roles as $role)
-                            <div class="role-item" data-role-name="{{ $role->name }}" data-role-level="{{ $role->level }}">
-                                <div class="role-card {{ $role->name }} h-full bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-300">
-                                    <div class="p-6">
-                                        <div class="flex justify-between items-start mb-4">
-                                            <div>
-                                                <h6 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">{{ $role->display_name }}</h6>
-                                                <div class="flex flex-wrap gap-2 mb-3">
-                                                    {!! $role->level_badge !!}
-                                                    {!! $role->status_badge !!}
-                                                    @if($role->inherit_permissions)
-                                                        {!! $role->inheritance_mode_badge !!}
-                                                    @endif
+                    <!-- Roles Table -->
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Role</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Level</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Permissions</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Users</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Inheritance</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                @foreach($roles as $role)
+                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700" onclick="event.stopPropagation();">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $role->display_name }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            {!! $role->level_badge !!}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            {!! $role->status_badge !!}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                            <div class="flex items-center">
+                                                <span class="text-gray-500 dark:text-gray-400">{{ $role->permissions->count() }}</span>
+                                                <div class="ml-3 w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-1">
+                                                    <div class="bg-indigo-600 h-1 rounded-full" style="width: {{ min($role->permissions->count() * 10, 100) }}%"></div>
                                                 </div>
                                             </div>
-                                            <div class="relative">
-                                                <button class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200" onclick="toggleRoleDropdown({{ $role->id }})">
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                            <div class="flex items-center">
+                                                <span class="text-gray-500 dark:text-gray-400">{{ $role->users->count() }}</span>
+                                                <div class="ml-3 w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-1">
+                                                    <div class="bg-green-500 h-1 rounded-full" style="width: {{ min($role->users->count() * 20, 100) }}%"></div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            @if($role->inherit_permissions)
+                                                {!! $role->inheritance_mode_badge !!}
+                                            @else
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">No Inheritance</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                            <div class="relative inline-block text-left">
+                                                <button class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200" onclick="toggleRoleDropdown({{ $role->id }})" type="button">
                                                     <i class="fas fa-ellipsis-v"></i>
                                                 </button>
-                                                <div id="roleDropdown{{ $role->id }}" class="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-10">
-                                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200" onclick="editRole({{ $role->id }})">
-                                                        <i class="fas fa-edit mr-2"></i>Edit
-                                                    </a>
-                                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200" onclick="viewRole({{ $role->id }})">
-                                                        <i class="fas fa-eye mr-2"></i>View Details
-                                                    </a>
-                                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200" onclick="cloneRole({{ $role->id }})">
-                                                        <i class="fas fa-copy mr-2"></i>Clone
-                                                    </a>
+                                                <div id="roleDropdown{{ $role->id }}" class="hidden absolute right-0 mt-2 w-56 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
+                                                    <div class="py-1">
+                                                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200" onclick="toggleRoleStatus({{ $role->id }})">
+                                                            <i class="fas {{ $role->status === 'active' ? 'fa-pause' : 'fa-play' }} mr-2"></i>{{ $role->status === 'active' ? 'Deactivate' : 'Activate' }}
+                                                        </a>
+                                                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200" onclick="editRole({{ $role->id }})">
+                                                            <i class="fas fa-edit mr-2"></i>Edit
+                                                        </a>
+                                                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200" onclick="assignPermissions({{ $role->id }})">
+                                                            <i class="fas fa-key mr-2"></i>Assign Permissions
+                                                        </a>
+                                                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200" onclick="assignAccess({{ $role->id }})">
+                                                            <i class="fas fa-user-plus mr-2"></i>Assign Access
+                                                        </a>
+                                                    </div>
                                                     <div class="border-t border-gray-200 dark:border-gray-700"></div>
-                                                    <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200" onclick="deleteRole({{ $role->id }})">
-                                                        <i class="fas fa-trash mr-2"></i>Delete
-                                                    </a>
+                                                    <div class="py-1">
+                                                        <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200" onclick="deleteRole({{ $role->id }})">
+                                                            <i class="fas fa-trash mr-2"></i>Delete
+                                                        </a>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        
-                                        <div class="mb-4">
-                                            <div class="flex justify-between items-center mb-2">
-                                                <small class="text-gray-500 dark:text-gray-400">Permissions</small>
-                                                <small class="text-gray-500 dark:text-gray-400">{{ $role->permissions->count() }}</small>
-                                            </div>
-                                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
-                                                <div class="bg-indigo-600 h-1 rounded-full" style="width: {{ min($role->permissions->count() * 10, 100) }}%"></div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="mb-4">
-                                            <div class="flex justify-between items-center mb-2">
-                                                <small class="text-gray-500 dark:text-gray-400">Users</small>
-                                                <small class="text-gray-500 dark:text-gray-400">{{ $role->users->count() }}</small>
-                                            </div>
-                                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
-                                                <div class="bg-green-500 h-1 rounded-full" style="width: {{ min($role->users->count() * 20, 100) }}%"></div>
-                                            </div>
-                                        </div>
-                                        
-                                        
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
+
+                    @if($roles->isEmpty())
+                        <div class="text-center py-12">
+                            <i class="fas fa-user-tag text-gray-400 text-4xl mb-4"></i>
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No roles found</h3>
+                            <p class="text-gray-500 dark:text-gray-400 mb-4">Get started by creating your first role.</p>
+                            <button type="button" class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200" onclick="window.location.href='{{ route('partner.settings.roles.create') }}'">
+                                <i class="fas fa-plus mr-2"></i>Create First Role
+                            </button>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -429,8 +492,11 @@
     </div>
 </div>
 
-<!-- Add Role Modal -->
-<div class="fixed inset-0 z-50 overflow-y-auto hidden" id="addRoleModal" aria-labelledby="addRoleModalLabel" aria-hidden="true">
+    </div>
+</div>
+@endsection
+
+@section('scripts')
     <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
         <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" data-bs-dismiss="modal"></div>
         <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
@@ -465,9 +531,9 @@
                         <div>
                             <label for="roleLevel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Level *</label>
                             <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" id="roleLevel" name="level" required>
-                                @foreach($roles->pluck('level')->unique()->sort() as $level)
-                                    <option value="{{ $level }}">{{ $level }}</option>
-                                @endforeach
+                                <option value="3">3 (Student/Teacher/Operator Level)</option>
+                                <option value="4">4 (Custom Level)</option>
+                                <option value="5">5 (Custom Level)</option>
                             </select>
                         </div>
                         <div>
@@ -655,25 +721,13 @@
 @endsection
 
 @section('scripts')
-<script>
+// Test if script is loading
+console.log('Script section loaded');
+
+// Rest of the script
 let currentRoleId = null;
 let currentPermissionId = null;
 let permissionGridData = {};
-
-// Modal management functions
-function showModal(modalId) {
-    const modal = document.getElementById(modalId);
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
-    document.body.style.overflow = 'hidden';
-}
-
-function hideModal(modalId) {
-    const modal = document.getElementById(modalId);
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-    document.body.style.overflow = 'auto';
-}
 
 // Tab management functions
 function showTab(tabName) {
@@ -883,27 +937,127 @@ function filterPermissions() {
     });
 }
 
-// Role management functions
-function addRole() {
+function toggleRoleDropdown(roleId) {
+    // Close all other dropdowns first
+    document.querySelectorAll('[id^="roleDropdown"]').forEach(dropdown => {
+        if (dropdown.id !== `roleDropdown${roleId}`) {
+            dropdown.classList.add('hidden');
+        }
+    });
+
+    // Toggle the target dropdown
+    const dropdown = document.getElementById(`roleDropdown${roleId}`);
+    if (dropdown) {
+        dropdown.classList.toggle('hidden');
+    }
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+    // Don't close if clicking on dropdown or its trigger
+    if (!e.target.closest('[id^="roleDropdown"]') && !e.target.closest('.relative')) {
+        document.querySelectorAll('[id^="roleDropdown"]').forEach(dropdown => {
+            dropdown.classList.add('hidden');
+        });
+    }
+});
+
+function toggleRoleStatus(roleId) {
+    // Get current role status
+    fetch(`/roles/${roleId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const role = data.role;
+                const newStatus = role.status === 'active' ? 'inactive' : 'active';
+                const confirmMessage = role.status === 'active'
+                    ? 'Are you sure you want to deactivate this role?'
+                    : 'Are you sure you want to activate this role?';
+
+                if (confirm(confirmMessage)) {
+                    fetch(`/roles/${roleId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({
+                            status: newStatus
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            showToast(`Role ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully`, 'success');
+                            location.reload();
+                        } else {
+                            showToast('Error: ' + data.message, 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showToast('An error occurred while updating the role status', 'error');
+                    });
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('An error occurred while loading role data', 'error');
+        });
+}
+
+function assignPermissions(roleId) {
+    // Open permission assignment modal or redirect to permission assignment page
+    showToast('Permission assignment feature coming soon!', 'info');
+    // For now, redirect to edit role page
+    editRole(roleId);
+}
+
+function assignAccess(roleId) {
+    // Open access assignment modal or redirect to access assignment page
+    showToast('Access assignment feature coming soon!', 'info');
+    // For now, redirect to edit role page
+    editRole(roleId);
+}
     const form = document.getElementById('addRoleForm');
     const formData = new FormData(form);
     
-    fetch('/api/roles', {
+    // Convert FormData to object and add required fields
+    const data = Object.fromEntries(formData);
+    data.is_system = false; // New roles are not system roles
+    data.inherit_permissions = data.inherit_permissions === '1';
+    
+    // Handle multiple select permissions
+    const permissionSelect = document.getElementById('rolePermissions');
+    data.permission_ids = Array.from(permissionSelect.selectedOptions).map(option => parseInt(option.value));
+    
+    // Ensure permissions_inheritance_mode is included
+    data.permissions_inheritance_mode = data.permissions_inheritance_mode || 'none';
+    
+    console.log('Sending role data:', data);
+    
+    fetch('/roles', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
         },
-        body: JSON.stringify(Object.fromEntries(formData))
+        body: JSON.stringify(data)
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('Response status:', response.status);
+        return response.json();
+    })
     .then(data => {
+        console.log('Response data:', data);
         if (data.success) {
             showToast('Role created successfully', 'success');
             hideModal('addRoleModal');
+            form.reset(); // Reset the form
             location.reload();
         } else {
-            showToast('Error: ' + data.message, 'error');
+            showToast('Error: ' + (data.message || 'Unknown error'), 'error');
         }
     })
     .catch(error => {
@@ -915,7 +1069,7 @@ function addRole() {
 function editRole(roleId) {
     currentRoleId = roleId;
     // Load role data and populate edit form
-    fetch(`/api/roles/${roleId}`)
+    fetch(`/roles/${roleId}`)
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -936,7 +1090,7 @@ function updateRole() {
     const form = document.getElementById('editRoleForm');
     const formData = new FormData(form);
     
-    fetch(`/api/roles/${currentRoleId}`, {
+    fetch(`/roles/${currentRoleId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -961,7 +1115,7 @@ function updateRole() {
 }
 
 function viewRole(roleId) {
-    fetch(`/api/roles/${roleId}`)
+    fetch(`/roles/${roleId}`)
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -1028,7 +1182,7 @@ function viewRole(roleId) {
 
 function deleteRole(roleId) {
     if (confirm('Are you sure you want to delete this role? This action cannot be undone.')) {
-        fetch(`/api/roles/${roleId}`, {
+        fetch(`/roles/${roleId}`, {
             method: 'DELETE',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
@@ -1052,7 +1206,7 @@ function deleteRole(roleId) {
 
 function cloneRole(roleId) {
     if (confirm('Are you sure you want to clone this role?')) {
-        fetch(`/api/roles/${roleId}/clone`, {
+        fetch(`/roles/${roleId}/clone`, {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
@@ -1079,7 +1233,7 @@ function addPermission() {
     const form = document.getElementById('addPermissionForm');
     const formData = new FormData(form);
     
-    fetch('/api/permissions', {
+    fetch('/permissions', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -1106,7 +1260,7 @@ function addPermission() {
 function editPermission(permissionId) {
     currentPermissionId = permissionId;
     // Load permission data and populate edit form
-    fetch(`/api/permissions/${permissionId}`)
+    fetch(`/permissions/${permissionId}`)
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -1124,7 +1278,7 @@ function editPermission(permissionId) {
 
 function deletePermission(permissionId) {
     if (confirm('Are you sure you want to delete this permission? This action cannot be undone.')) {
-        fetch(`/api/permissions/${permissionId}`, {
+        fetch(`/permissions/${permissionId}`, {
             method: 'DELETE',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
@@ -1368,7 +1522,7 @@ function refreshHierarchy() {
 
 // Export functions
 function exportRoles() {
-    window.location.href = '/api/roles/export';
+    window.location.href = '/roles/export';
 }
 
 function editRoleFromView() {

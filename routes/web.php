@@ -604,6 +604,7 @@ Route::middleware('auth')->group(function () {
             
             // Role & Permission Management Routes
             Route::get('role-permission-management', [\App\Http\Controllers\RolePermissionController::class, 'index'])->name('role-permission-management');
+            Route::get('roles/create', [\App\Http\Controllers\RolePermissionController::class, 'create'])->name('roles.create');
             Route::get('permission-grid', [\App\Http\Controllers\RolePermissionController::class, 'getPermissionGrid'])->name('permission-grid');
             Route::post('permissions/bulk-update', [\App\Http\Controllers\RolePermissionController::class, 'bulkUpdatePermissions'])->name('permissions.bulk-update');
             Route::get('role-hierarchy', [\App\Http\Controllers\RolePermissionController::class, 'getHierarchy'])->name('role-hierarchy');

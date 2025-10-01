@@ -1241,4 +1241,38 @@ class RolePermissionController extends Controller
         fclose($handle);
         exit;
     }
+
+    /**
+     * Show the form for creating a new role.
+     */
+    public function create()
+    {
+        // Authorization handled by middleware - partners can create roles
+
+        $user = auth()->user();
+        $userRoleLevel = null;
+
+        // Get current user's highest role level
+        if ($user && method_exists($user, 'getHighestRoleLevel')) {
+            $userRoleLevel = $user->getHighestRoleLevel();
+        }
+
+        // Filter available parent roles based on user's role level
+        $rolesQuery = EnhancedRole::active()
+            ->orderBy('level')
+            ->orderBy('name');
+
+        if ($userRoleLevel !== null) {
+            $rolesQuery->minLevel($userRoleLevel);
+        }
+
+        $roles = $rolesQuery->get();
+
+        $permissions = EnhancedPermission::active()
+            ->orderBy('module')
+            ->orderBy('name')
+            ->get();
+
+        return view('partner.settings.roles.create', compact('roles', 'permissions'));
+    }
 }
