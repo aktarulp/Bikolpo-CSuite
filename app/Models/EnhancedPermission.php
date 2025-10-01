@@ -82,7 +82,12 @@ class EnhancedPermission extends Model
      */
     public function roles(): BelongsToMany
     {
-        return $this->belongsToMany(Role::class, 'role_permissions')
+        return $this->belongsToMany(
+                    EnhancedRole::class,
+                    'role_permissions',
+                    'enhanced_permission_id',
+                    'enhanced_role_id'
+                )
                     ->withPivot('granted_by', 'granted_at', 'expires_at')
                     ->withTimestamps();
     }

@@ -13,7 +13,9 @@ class Role extends Model
 
     protected $fillable = [
         'name',
+        'display_name',
         'description',
+        'level',
         'parent_role_id',
         'permissions',
         'status',
@@ -48,7 +50,7 @@ class Role extends Model
      */
     public function users(): HasMany
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(User::class, 'role_id');
     }
 
     /**
@@ -95,6 +97,87 @@ class Role extends Model
     public function getModulePermissions(string $module): array
     {
         return $this->permissions[$module] ?? [];
+    }
+
+    /**
+     * Check if this role is a parent of another role
+     */
+    public function isParentOf(Role $role): bool
+    {
+        return $this->id === $role->parent_role_id;
+    }
+
+    /**
+     * Check if this role is a child of another role
+     */
+    public function isChildOf(Role $role): bool
+    {
+        return $this->parent_role_id === $role->id;
+    }
+
+    /**
+     * Get all descendant roles (children, grandchildren, etc.)
+     */
+    public function getDescendants()
+    {
+        $descendants = collect();
+        
+        foreach ($this->childRoles as $child) {
+            $descendants->push($child);
+            $descendants = $descendants->merge($child->getDescendants());
+        }
+        
+        return $descendants;
+    }
+
+    /**
+     * Get all ancestor roles (parent, grandparent, etc.)
+     */
+    public function getAncestors()
+    {
+        $ancestors = collect();
+        
+        if ($this->parentRole) {
+            $ancestors->push($this->parentRole);
+            $ancestors = $ancestors->merge($this->parentRole->getAncestors());
+        }
+        
+        return $ancestors;
+    }
+
+    /**
+     * Check if this role can manage another role
+     */
+    public function canManageRole(Role $role): bool
+    {
+        // System Administrator can manage all roles
+        if ($this->name === 'system_administrator') {
+            return true;
+        }
+
+        // Partner Admin can manage roles 3, 4, 5 (Student, Teacher, Operator)
+        if ($this->name === 'partner_admin') {
+            return in_array($role->level, [3, 4, 5]);
+        }
+
+        // Other roles cannot manage roles
+        return false;
+    }
+
+    /**
+     * Get roles that this role can manage
+     */
+    public function getManageableRoles()
+    {
+        if ($this->name === 'system_administrator') {
+            return Role::all();
+        }
+
+        if ($this->name === 'partner_admin') {
+            return Role::whereIn('level', [3, 4, 5])->get();
+        }
+
+        return collect();
     }
 
     /**

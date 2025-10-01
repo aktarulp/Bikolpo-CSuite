@@ -65,7 +65,7 @@ class RolePermissionController extends Controller
                 ->get(['id', 'name', 'display_name', 'description', 'module']);
 
             $rolePermissions = DB::table('role_permissions')
-                ->get(['role_id', 'permission_id'])
+                ->get(['enhanced_role_id as role_id', 'enhanced_permission_id as permission_id'])
                 ->groupBy('role_id')
                 ->map(function ($items) {
                     return $items->pluck('permission_id')->toArray();
@@ -369,11 +369,11 @@ class RolePermissionController extends Controller
         $updates = [];
 
         // Get recent role permission changes
-        $recentChanges = DB::table('role_permissions')
+            $recentChanges = DB::table('role_permissions')
             ->where('created_at', '>=', date('Y-m-d H:i:s', $lastUpdate))
             ->orWhere('updated_at', '>=', date('Y-m-d H:i:s', $lastUpdate))
             ->get()
-            ->groupBy('role_id');
+            ->groupBy('enhanced_role_id');
 
         foreach ($recentChanges as $roleId => $changes) {
             $role = EnhancedRole::find($roleId);

@@ -69,6 +69,15 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the role associated with the user
+     */
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'role_id');
+    }
+
+
+    /**
      * Get the partner profile associated with the user
      */
     public function partner()
@@ -101,6 +110,160 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if user is System Administrator
+     */
+    public function isSystemAdministrator(): bool
+    {
+        return $this->role && $this->role->name === 'system_administrator';
+    }
+
+    /**
+     * Check if user is Partner Admin
+     */
+    public function isPartnerAdmin(): bool
+    {
+        return $this->role && $this->role->name === 'partner_admin';
+    }
+
+    /**
+     * Check if user is Student
+     */
+    public function isStudentRole(): bool
+    {
+        return $this->role && $this->role->name === 'student';
+    }
+
+    /**
+     * Check if user is Teacher
+     */
+    public function isTeacherRole(): bool
+    {
+        return $this->role && $this->role->name === 'teacher';
+    }
+
+    /**
+     * Check if user is Operator
+     */
+    public function isOperatorRole(): bool
+    {
+        return $this->role && $this->role->name === 'operator';
+    }
+
+    /**
+     * Check if user can manage another user
+     */
+    public function canManageUser(User $user): bool
+    {
+        // System Administrator can manage everyone
+        if ($this->isSystemAdministrator()) {
+            return true;
+        }
+
+        // Partner Admin can only manage users with roles 3, 4, 5 (Student, Teacher, Operator)
+        // and only within their own partner
+        if ($this->isPartnerAdmin()) {
+            return $user->role && 
+                   in_array($user->role->level, [3, 4, 5]) &&
+                   $user->partner_id === $this->partner_id;
+        }
+
+        // Students, Teachers, and Operators cannot manage other users
+        return false;
+    }
+
+    /**
+     * Check if user can view another user
+     */
+    public function canViewUser(User $user): bool
+    {
+        // System Administrator can view everyone
+        if ($this->isSystemAdministrator()) {
+            return true;
+        }
+
+        // Partner Admin can view users within their partner
+        if ($this->isPartnerAdmin()) {
+            return $user->partner_id === $this->partner_id;
+        }
+
+        // Students, Teachers, and Operators can view other users
+        // except Partner Admins
+        if ($this->isStudentRole() || $this->isTeacherRole() || $this->isOperatorRole()) {
+            return !$user->isPartnerAdmin();
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if user can create users with specific role
+     */
+    public function canCreateUsersWithRole(Role $role): bool
+    {
+        // System Administrator can create any role
+        if ($this->isSystemAdministrator()) {
+            return true;
+        }
+
+        // Partner Admin can only create users with roles 3, 4, 5
+        if ($this->isPartnerAdmin()) {
+            return in_array($role->level, [3, 4, 5]);
+        }
+
+        // Other roles cannot create users
+        return false;
+    }
+
+    /**
+     * Get manageable users for this user
+     */
+    public function getManageableUsers()
+    {
+        if ($this->isSystemAdministrator()) {
+            return User::with('role')->get();
+        }
+
+        if ($this->isPartnerAdmin()) {
+            return User::with('role')
+                ->where('partner_id', $this->partner_id)
+                ->whereHas('role', function($query) {
+                    $query->whereIn('level', [3, 4, 5]); // Student, Teacher, Operator
+                })
+                ->get();
+        }
+
+        // Other roles cannot manage users
+        return collect();
+    }
+
+    /**
+     * Get viewable users for this user
+     */
+    public function getViewableUsers()
+    {
+        if ($this->isSystemAdministrator()) {
+            return User::with('role')->get();
+        }
+
+        if ($this->isPartnerAdmin()) {
+            return User::with('role')
+                ->where('partner_id', $this->partner_id)
+                ->get();
+        }
+
+        // Students, Teachers, and Operators can view all users except Partner Admins
+        if ($this->isStudentRole() || $this->isTeacherRole() || $this->isOperatorRole()) {
+            return User::with('role')
+                ->whereHas('role', function($query) {
+                    $query->where('name', '!=', 'partner_admin');
+                })
+                ->get();
+        }
+
+        return collect();
+    }
+
+    /**
      * Get subjects created by this user
      */
     public function createdSubjects()
@@ -117,13 +280,12 @@ class User extends Authenticatable
     }
 
     /**
-     * Get all roles assigned to this user
+     * Get all enhanced roles assigned to this user
      */
     public function roles()
     {
-        return $this->belongsToMany(Role::class, 'user_roles')
-                    ->using(UserRole::class)
-                    ->withPivot(['assigned_by', 'assigned_at', 'expires_at', 'status'])
+        return $this->belongsToMany(EnhancedRole::class, 'user_roles', 'user_id', 'role_id')
+                    ->withPivot('assigned_by', 'assigned_at', 'expires_at')
                     ->withTimestamps();
     }
 
