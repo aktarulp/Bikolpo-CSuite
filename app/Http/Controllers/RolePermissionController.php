@@ -1250,23 +1250,20 @@ class RolePermissionController extends Controller
         // Authorization handled by middleware - partners can create roles
 
         $user = auth()->user();
-        $userRoleLevel = null;
+        $roles = collect(); // Empty collection by default
 
-        // Get current user's highest role level
-        if ($user && method_exists($user, 'getHighestRoleLevel')) {
-            $userRoleLevel = $user->getHighestRoleLevel();
+        if ($user) {
+            // Get user's highest role (lowest level number = highest privilege)
+            $userHighestRole = $user->roles()->orderBy('level')->first();
+            
+            if ($userHighestRole) {
+                // Show roles with level >= user's role level (same level and child levels)
+                $roles = EnhancedRole::where('level', '>=', $userHighestRole->level)
+                    ->orderBy('level')
+                    ->orderBy('name')
+                    ->get();
+            }
         }
-
-        // Filter available parent roles based on user's role level
-        $rolesQuery = EnhancedRole::active()
-            ->orderBy('level')
-            ->orderBy('name');
-
-        if ($userRoleLevel !== null) {
-            $rolesQuery->minLevel($userRoleLevel);
-        }
-
-        $roles = $rolesQuery->get();
 
         $permissions = EnhancedPermission::active()
             ->orderBy('module')
