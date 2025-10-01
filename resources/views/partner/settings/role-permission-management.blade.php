@@ -204,12 +204,9 @@
                             <input type="text" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" id="roleSearch" placeholder="Search roles...">
                             <select class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" id="roleLevelFilter">
                                 <option value="">All Levels</option>
-                                <option value="1">Super Admin</option>
-                                <option value="2">Admin</option>
-                                <option value="3">Manager</option>
-                                <option value="4">Supervisor</option>
-                                <option value="5">Staff</option>
-                                <option value="6">User</option>
+                                @foreach($roles->pluck('level')->unique()->sort() as $level)
+                                    <option value="{{ $level }}">{{ $level }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -488,19 +485,17 @@
                         <div>
                             <label for="roleLevel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Level *</label>
                             <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" id="roleLevel" name="level" required>
-                                <option value="1">1 - Super Admin</option>
-                                <option value="2">2 - Admin</option>
-                                <option value="3">3 - Manager</option>
-                                <option value="4">4 - Supervisor</option>
-                                <option value="5">5 - Staff</option>
-                                <option value="6">6 - User</option>
+                                @foreach($roles->pluck('level')->unique()->sort() as $level)
+                                    <option value="{{ $level }}">{{ $level }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div>
                             <label for="roleStatus" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
                             <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" id="roleStatus" name="status">
-                                <option value="active">Active</option>
-                                <option value="inactive">Inactive</option>
+                                @foreach($roles->pluck('status')->unique() as $status)
+                                    <option value="{{ $status }}">{{ ucfirst($status) }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div>
