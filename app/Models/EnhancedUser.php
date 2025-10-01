@@ -72,7 +72,7 @@ class EnhancedUser extends Authenticatable
      */
     public function roles(): BelongsToMany
     {
-        return $this->belongsToMany(Role::class, 'user_roles')
+        return $this->belongsToMany(EnhancedRole::class, 'user_roles', 'user_id', 'role_id')
                     ->withPivot('assigned_by', 'assigned_at', 'expires_at')
                     ->withTimestamps();
     }
@@ -82,7 +82,7 @@ class EnhancedUser extends Authenticatable
      */
     public function permissions(): BelongsToMany
     {
-        return $this->belongsToMany(Permission::class, 'user_permissions')
+        return $this->belongsToMany(EnhancedPermission::class, 'user_permissions', 'user_id', 'permission_id')
                     ->withPivot('granted_by', 'granted_at', 'expires_at')
                     ->withTimestamps();
     }
@@ -322,6 +322,32 @@ class EnhancedUser extends Authenticatable
     public function scopeOfPartner($query, $partnerId)
     {
         return $query->where('partner_id', $partnerId);
+    }
+
+    /**
+     * Get the user's highest role level (lowest number = highest privilege).
+     */
+    public function getHighestRoleLevel(): ?int
+    {
+        return $this->roles()->min('level');
+    }
+
+    /**
+     * Get the user's highest role (lowest level number).
+     */
+    public function getHighestRole(): ?EnhancedRole
+    {
+        return $this->roles()->orderBy('level')->first();
+    }
+
+    /**
+     * Check if user can view roles of the given level or higher.
+     * Users can only view roles with level >= their own role level.
+     */
+    public function canViewRole(int $roleLevel): bool
+    {
+        $userLevel = $this->getHighestRoleLevel();
+        return $userLevel !== null && $roleLevel >= $userLevel;
     }
 
     /**

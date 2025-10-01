@@ -368,7 +368,7 @@ class User extends Authenticatable
         $this->roles()->attach($roleId, [
             'assigned_by' => $assignedBy,
             'assigned_at' => now(),
-            'status' => 'active'
+            'enhanced_user_id' => $this->id
         ]);
 
         return true;

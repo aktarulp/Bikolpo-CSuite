@@ -22,11 +22,28 @@ class RolePermissionController extends Controller
      */
     public function index()
     {
-
-        $roles = EnhancedRole::with(['permissions', 'users', 'parentRole', 'childRoles'])
+        $user = auth()->user();
+        $userRoleLevel = null;
+        
+        // Get current user's highest role level from their assigned roles
+        if ($user) {
+            $userRoles = $user->roles;
+            if ($userRoles->isNotEmpty()) {
+                $userRoleLevel = $userRoles->min('level');
+            }
+        }
+        
+        // Filter roles based on user's role level
+        // Users can only see roles with level >= their own role level (higher or equal level numbers)
+        $rolesQuery = EnhancedRole::with(['permissions', 'users', 'parentRole', 'childRoles'])
             ->orderBy('level')
-            ->orderBy('name')
-            ->get();
+            ->orderBy('name');
+            
+        if ($userRoleLevel !== null) {
+            $rolesQuery->minLevel($userRoleLevel);
+        }
+        
+        $roles = $rolesQuery->get();
 
         $permissions = EnhancedPermission::with(['roles'])
             ->orderBy('module')
@@ -52,12 +69,25 @@ class RolePermissionController extends Controller
     {
         $this->authorize('viewPermissionGrid', EnhancedRole::class);
 
-        $cacheKey = 'permission_grid_data';
-        $gridData = Cache::remember($cacheKey, now()->addMinutes(30), function () {
-            $roles = EnhancedRole::active()
+        $user = auth()->user();
+        $userRoleLevel = null;
+        
+        // Get current user's highest role level
+        if ($user && method_exists($user, 'getHighestRoleLevel')) {
+            $userRoleLevel = $user->getHighestRoleLevel();
+        }
+        
+        $cacheKey = 'permission_grid_data_' . ($userRoleLevel ?? 'all');
+        $gridData = Cache::remember($cacheKey, now()->addMinutes(30), function () use ($userRoleLevel) {
+            $rolesQuery = EnhancedRole::active()
                 ->orderBy('level')
-                ->orderBy('name')
-                ->get(['id', 'name', 'display_name', 'level']);
+                ->orderBy('name');
+                
+            if ($userRoleLevel !== null) {
+                $rolesQuery->minLevel($userRoleLevel);
+            }
+            
+            $roles = $rolesQuery->get(['id', 'name', 'display_name', 'level']);
 
             $permissions = EnhancedPermission::active()
                 ->orderBy('module')
@@ -65,6 +95,7 @@ class RolePermissionController extends Controller
                 ->get(['id', 'name', 'display_name', 'description', 'module']);
 
             $rolePermissions = DB::table('role_permissions')
+                ->whereIn('enhanced_role_id', $roles->pluck('id'))
                 ->get(['enhanced_role_id as role_id', 'enhanced_permission_id as permission_id'])
                 ->groupBy('role_id')
                 ->map(function ($items) {
