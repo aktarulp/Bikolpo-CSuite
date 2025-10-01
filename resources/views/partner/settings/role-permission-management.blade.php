@@ -200,7 +200,7 @@
                 <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <h5 class="text-lg font-semibold text-gray-900 dark:text-white mb-0">Roles</h5>
-                        <div class="flex flex-col sm:flex-row gap-3">
+                        <div class="flex flex-col sm:flex-row gap-3" style="display: none;">
                             <input type="text" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" id="roleSearch" placeholder="Search roles...">
                             <select class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" id="roleLevelFilter">
                                 <option value="">All Levels</option>
@@ -212,15 +212,14 @@
                     </div>
                 </div>
                 <div class="p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="rolesContainer">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="rolesContainer">
                         @foreach($roles as $role)
                             <div class="role-item" data-role-name="{{ $role->name }}" data-role-level="{{ $role->level }}">
                                 <div class="role-card {{ $role->name }} h-full bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-300">
                                     <div class="p-6">
                                         <div class="flex justify-between items-start mb-4">
                                             <div>
-                                                <h6 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">{{ $role->display_name }}</h6>
-                                                <p class="text-gray-600 dark:text-gray-400 text-sm mb-3">{{ $role->description }}</p>
+                                                <h6 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">{{ $role->display_name }}</h6>
                                                 <div class="flex flex-wrap gap-2 mb-3">
                                                     {!! $role->level_badge !!}
                                                     {!! $role->status_badge !!}
@@ -271,26 +270,7 @@
                                             </div>
                                         </div>
                                         
-                                        @if($role->parentRole)
-                                            <div class="mb-3">
-                                                <small class="text-gray-500 dark:text-gray-400">Parent Role:</small>
-                                                <span class="inline-block px-2 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full">{{ $role->parentRole->display_name }}</span>
-                                            </div>
-                                        @endif
                                         
-                                        @if($role->childRoles->count() > 0)
-                                            <div class="mb-2">
-                                                <small class="text-gray-500 dark:text-gray-400">Child Roles:</small>
-                                                <div class="flex flex-wrap gap-1 mt-1">
-                                                    @foreach($role->childRoles->take(3) as $childRole)
-                                                        <span class="inline-block px-2 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full">{{ $childRole->display_name }}</span>
-                                                    @endforeach
-                                                    @if($role->childRoles->count() > 3)
-                                                        <span class="inline-block px-2 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full">+{{ $role->childRoles->count() - 3 }} more</span>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        @endif
                                     </div>
                                 </div>
                             </div>

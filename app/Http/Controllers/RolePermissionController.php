@@ -36,8 +36,13 @@ class RolePermissionController extends Controller
         // Filter roles based on user's role level
         // Users can only see roles with level >= their own role level (higher or equal level numbers)
         $rolesQuery = EnhancedRole::with(['permissions', 'users', 'parentRole', 'childRoles'])
-            ->orderBy('level')
-            ->orderBy('name');
+            ->orderByRaw("CASE 
+                WHEN name = 'partner_admin' THEN 1
+                WHEN name = 'teacher' THEN 2
+                WHEN name = 'operator' THEN 3
+                WHEN name = 'student' THEN 4
+                ELSE 5
+            END");
             
         if ($userRoleLevel !== null) {
             $rolesQuery->minLevel($userRoleLevel);
