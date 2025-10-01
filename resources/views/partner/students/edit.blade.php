@@ -88,19 +88,53 @@
         <!-- Basic Information Section -->
         <div class="border-b border-gray-200 dark:border-gray-700">
             <!-- Section Header -->
-            <div class="w-full px-8 sm:px-10 py-6 sm:py-8 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 flex items-center gap-4">
-                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-                    <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                    </svg>
+            <div class="w-full px-8 sm:px-10 py-6 sm:py-8 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                    </div>
+                    <div class="text-left">
+                        <h2 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
+                            Basic Information
+                        </h2>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mt-0.5">
+                            Essential student details and enrollment information
+                        </p>
+                    </div>
                 </div>
-                <div class="text-left">
-                    <h2 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
-                        Basic Information
-                    </h2>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-0.5">
-                        Essential student details and enrollment information
-                    </p>
+                <!-- Status Field -->
+                <div class="relative min-w-[200px]">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <select name="status" required 
+                            class="w-full pl-10 pr-4 py-3 text-sm border-2 border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 appearance-none min-h-[52px] touch-manipulation">
+                        <option value="">Select Status</option>
+                        <option value="active" {{ old('status', $student->status) == 'active' ? 'selected' : '' }}>🟢 Active</option>
+                        <option value="inactive" {{ old('status', $student->status) == 'inactive' ? 'selected' : '' }}>⚪ Inactive</option>
+                        <option value="suspended" {{ old('status', $student->status) == 'suspended' ? 'selected' : '' }}>🟡 Suspended</option>
+                        <option value="graduated" {{ old('status', $student->status) == 'graduated' ? 'selected' : '' }}>🎓 Graduated</option>
+                    </select>
+                    <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                    <label class="absolute -top-2.5 left-10 px-2 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 text-xs font-semibold text-blue-700 dark:text-blue-400">
+                        Status *
+                    </label>
+                    @error('status')
+                        <p class="text-red-500 text-xs mt-2 flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                            </svg>
+                            {{ $message }}
+                        </p>
+                    @enderror
                 </div>
             </div>
             
@@ -367,34 +401,6 @@
                         @enderror
                     </div>
 
-                    <!-- Professional Status Field with Visual Indicators -->
-                    <div class="relative">
-                        <select name="status" required 
-                                class="w-full px-4 py-3 text-sm border-2 border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 appearance-none min-h-[52px] touch-manipulation">
-                            <option value="">Select Status</option>
-                            <option value="active" {{ old('status', $student->status) == 'active' ? 'selected' : '' }}>🟢 Active</option>
-                            <option value="inactive" {{ old('status', $student->status) == 'inactive' ? 'selected' : '' }}>⚪ Inactive</option>
-                            <option value="suspended" {{ old('status', $student->status) == 'suspended' ? 'selected' : '' }}>🟡 Suspended</option>
-                            <option value="graduated" {{ old('status', $student->status) == 'graduated' ? 'selected' : '' }}>🎓 Graduated</option>
-                            <option value="transferred" {{ old('status', $student->status) == 'transferred' ? 'selected' : '' }}>🔄 Transferred</option>
-                        </select>
-                        <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </div>
-                        <label class="absolute -top-2.5 left-4 px-2 bg-white dark:bg-gray-800 text-xs font-semibold text-gray-600 dark:text-gray-400">
-                            Status *
-                        </label>
-                        @error('status')
-                            <p class="text-red-500 text-xs mt-2 flex items-center gap-1">
-                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
-                                </svg>
-                                {{ $message }}
-                            </p>
-                        @enderror
-                    </div>
                 </div>
             </div>
         </div>
