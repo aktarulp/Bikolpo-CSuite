@@ -1,115 +1,560 @@
 @extends('layouts.partner-layout')
 
+@section('title', 'Partner Settings')
+
+@section('styles')
+@endsection
+
 @section('content')
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-    <div class="bg-white dark:bg-gray-900 rounded-lg shadow overflow-hidden">
-        <div class="md:flex">
-            <!-- Sidebar for md+ screens, top tabs for mobile -->
-            <aside class="w-full md:w-64 border-b md:border-b-0 md:border-r border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800">
-                <!-- Mobile Tabs -->
-                <nav class="md:hidden flex items-center justify-between p-3">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Settings</h3>
-                    <button id="settingsMenuToggle" class="text-gray-600 dark:text-gray-300 focus:outline-none" aria-label="Toggle settings menu">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                    </button>
-                </nav>
-
-                <div id="settingsNav" class="px-2 py-3 md:py-6">
-                    <ul class="space-y-1">
-                        <li>
-                            <button data-target="#user-management" class="settings-tab w-full text-left flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none active" aria-controls="user-management" aria-selected="true">
-                                <i class="fas fa-users w-4"></i>
-                                <span>User Management</span>
-                </button>
-                        </li>
-                        <li>
-                            <button data-target="#partner-profile-management" class="settings-tab w-full text-left flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none" aria-controls="partner-profile-management" aria-selected="false">
-                                <i class="fas fa-user-tie w-4"></i>
-                                <span>Partner Profile</span>
-                </button>
-                        </li>
-                        <li>
-                            <button data-target="#role-permission-grid" class="settings-tab w-full text-left flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none" aria-controls="role-permission-grid" aria-selected="false">
-                                <i class="fas fa-user-lock w-4"></i>
-                                <span>Roles & Permissions</span>
-                </button>
-                        </li>
-                    </ul>
-        </div>
-            </aside>
-
-            <main class="flex-1 p-4 md:p-6">
-                <div id="settingsContent">
-                    <section id="user-management" class="settings-panel">
-                @include('partner.Settings.views.user-management')
-                    </section>
-
-                    <section id="partner-profile-management" class="hidden settings-panel">
-                        @include('partner.Settings.views.partner-profile-management')
-                    </section>
-
-                    <section id="role-permission-grid" class="hidden settings-panel">
-                        @include('partner.Settings.views.role-permission-grid')
-                    </section>
+<div class="flex-1 overflow-y-auto custom-scrollbar p-4 lg:p-8">
+    <!-- Page Header -->
+    <div class="mb-8">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 tracking-tight">
+                    Partner Settings
+                </h1>
+                <p class="text-gray-600 text-sm lg:text-base mt-1 lg:mt-2 leading-relaxed">
+                    Manage your partner account settings, users, roles, and permissions
+                </p>
             </div>
-            </main>
+            <button onclick="refreshData()" class="bg-white border border-gray-200 text-gray-700 px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl hover:bg-gray-50 hover:border-gray-300 hover:shadow-md transition-all duration-300 text-sm font-medium whitespace-nowrap self-start sm:self-auto hover:-translate-y-0.5 active:scale-95 w-full sm:w-auto shadow-sm">
+                <i class="fas fa-sync-alt mr-2 transition-transform duration-300 hover:rotate-180"></i>
+                Refresh Data
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
+        <!-- Users Card -->
+        <div class="bg-gradient-to-br from-blue-100 via-blue-200 to-blue-300 border-2 border-transparent rounded-2xl p-4 sm:p-5 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative overflow-hidden shadow-lg hover:shadow-2xl sm:p-5 lg:p-6 min-h-[120px] sm:min-h-[140px] lg:min-h-[160px]">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-700 mb-1">Total Users</p>
+                    <p class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">{{ $stats['total_users'] ?? 0 }}</p>
+                    <p class="text-xs text-gray-600 mt-1">Active accounts</p>
+                </div>
+                <div class="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-2xl flex items-center justify-center text-white shadow-lg transition-all duration-300 hover:scale-110 hover:rotate-12 bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 shadow-blue-500/30 hover:shadow-blue-500/50">
+                    <i class="fas fa-users text-sm sm:text-lg"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Roles Card -->
+        <div class="bg-gradient-to-br from-emerald-100 via-emerald-200 to-emerald-300 border-2 border-transparent rounded-2xl p-4 sm:p-5 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative overflow-hidden shadow-lg hover:shadow-2xl sm:p-5 lg:p-6 min-h-[120px] sm:min-h-[140px] lg:min-h-[160px]">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-700 mb-1">Roles</p>
+                    <p class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">{{ $stats['total_roles'] ?? 0 }}</p>
+                    <p class="text-xs text-gray-600 mt-1">User roles defined</p>
+                </div>
+                <div class="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-2xl flex items-center justify-center text-white shadow-lg transition-all duration-300 hover:scale-110 hover:rotate-12 bg-gradient-to-br from-emerald-500 via-emerald-600 to-emerald-700 shadow-emerald-500/30 hover:shadow-emerald-500/50">
+                    <i class="fas fa-user-tag text-sm sm:text-lg"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Permissions Card -->
+        <div class="bg-gradient-to-br from-purple-100 via-purple-200 to-purple-300 border-2 border-transparent rounded-2xl p-4 sm:p-5 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative overflow-hidden shadow-lg hover:shadow-2xl sm:p-5 lg:p-6 min-h-[120px] sm:min-h-[140px] lg:min-h-[160px]">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-700 mb-1">Permissions</p>
+                    <p class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900" id="totalPermissionsCount">Loading...</p>
+                    <p class="text-xs text-gray-600 mt-1">System permissions</p>
+                </div>
+                <div class="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-2xl flex items-center justify-center text-white shadow-lg transition-all duration-300 hover:scale-110 hover:rotate-12 bg-gradient-to-br from-purple-500 via-purple-600 to-purple-700 shadow-purple-500/30 hover:shadow-purple-500/50">
+                    <i class="fas fa-key text-sm sm:text-lg"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Partner Card -->
+        <div class="bg-gradient-to-br from-amber-100 via-amber-200 to-amber-300 border-2 border-transparent rounded-2xl p-4 sm:p-5 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative overflow-hidden shadow-lg hover:shadow-2xl sm:p-5 lg:p-6 min-h-[120px] sm:min-h-[140px] lg:min-h-[160px]">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-700 mb-1">Partner</p>
+                    <p class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">{{ $partner?->name ?? 'N/A' }}</p>
+                    <p class="text-xs text-gray-600 mt-1">Your organization</p>
+                </div>
+                <div class="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-2xl flex items-center justify-center text-white shadow-lg transition-all duration-300 hover:scale-110 hover:rotate-12 bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 shadow-amber-500/30 hover:shadow-amber-500/50">
+                    <i class="fas fa-building text-sm sm:text-lg"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Cards Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mb-8">
+        <!-- User Management Card -->
+        <div class="bg-white border border-gray-100 rounded-xl p-4 sm:p-5 lg:p-7 transition-all duration-300 hover:shadow-lg hover:border-gray-200 hover:-translate-y-0.5 shadow-sm hover:shadow-xl">
+            <div class="flex items-start justify-between mb-6">
+                <div class="flex items-center">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white shadow-sm transition-all duration-300 hover:scale-110 mr-4">
+                        <i class="fas fa-users-cog text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900">User Management</h3>
+                        <p class="text-sm text-gray-600 mt-1">Manage user accounts and access</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="space-y-3 mb-6">
+                <div class="bg-gray-50/50 border border-gray-100 rounded-xl p-3 sm:p-4 transition-all duration-300 hover:bg-gray-100/70 hover:border-gray-200 hover:shadow-sm hover:-translate-y-0.5 cursor-pointer group">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center mr-3">
+                            <i class="fas fa-user-plus text-blue-600 text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900">Add New Users</p>
+                            <p class="text-xs text-gray-500">Create new user accounts</p>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50/50 border border-gray-100 rounded-xl p-3 sm:p-4 transition-all duration-300 hover:bg-gray-100/70 hover:border-gray-200 hover:shadow-sm hover:-translate-y-0.5 cursor-pointer group">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center mr-3">
+                            <i class="fas fa-user-edit text-blue-600 text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900">Edit User Details</p>
+                            <p class="text-xs text-gray-500">Update user information</p>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50/50 border border-gray-100 rounded-xl p-3 sm:p-4 transition-all duration-300 hover:bg-gray-100/70 hover:border-gray-200 hover:shadow-sm hover:-translate-y-0.5 cursor-pointer group">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center mr-3">
+                            <i class="fas fa-user-shield text-blue-600 text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900">User Permissions</p>
+                            <p class="text-xs text-gray-500">Manage user access rights</p>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <a href="{{ route('partner.settings.user-management') }}" class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-2.5 sm:py-3 px-4 sm:px-6 rounded-xl hover:shadow-lg transition-all duration-300 inline-flex items-center justify-center text-sm font-medium hover:-translate-y-0.5 active:scale-95 relative overflow-hidden group w-full sm:w-auto shadow-blue-600/30 hover:shadow-blue-600/50">
+                <i class="fas fa-arrow-right mr-2 transition-transform duration-300 group-hover:translate-x-1"></i>Access User Management
+            </a>
+        </div>
+
+        <!-- Role Management Card -->
+        <div class="bg-white border border-gray-100 rounded-xl p-4 sm:p-5 lg:p-7 transition-all duration-300 hover:shadow-lg hover:border-gray-200 hover:-translate-y-0.5 shadow-sm hover:shadow-xl">
+            <div class="flex items-start justify-between mb-6">
+                <div class="flex items-center">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white shadow-sm transition-all duration-300 hover:scale-110 mr-4">
+                        <i class="fas fa-user-tag text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900">Role & Permission Management</h3>
+                        <p class="text-sm text-gray-600 mt-1">Configure roles and permissions</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="space-y-3 mb-6">
+                <div class="bg-gray-50/50 border border-gray-100 rounded-xl p-3 sm:p-4 transition-all duration-300 hover:bg-gray-100/70 hover:border-gray-200 hover:shadow-sm hover:-translate-y-0.5 cursor-pointer group">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center mr-3">
+                            <i class="fas fa-plus-circle text-emerald-600 text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900">Create Roles</p>
+                            <p class="text-xs text-gray-500">Define new user roles</p>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50/50 border border-gray-100 rounded-xl p-3 sm:p-4 transition-all duration-300 hover:bg-gray-100/70 hover:border-gray-200 hover:shadow-sm hover:-translate-y-0.5 cursor-pointer group">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center mr-3">
+                            <i class="fas fa-sliders-h text-emerald-600 text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900">Permission Settings</p>
+                            <p class="text-xs text-gray-500">Configure system permissions</p>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50/50 border border-gray-100 rounded-xl p-3 sm:p-4 transition-all duration-300 hover:bg-gray-100/70 hover:border-gray-200 hover:shadow-sm hover:-translate-y-0.5 cursor-pointer group">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center mr-3">
+                            <i class="fas fa-link text-emerald-600 text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900">Role Assignments</p>
+                            <p class="text-xs text-gray-500">Assign roles to users</p>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <a href="{{ route('partner.settings.role-permission-management') }}" class="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white py-2.5 sm:py-3 px-4 sm:px-6 rounded-xl hover:shadow-lg transition-all duration-300 inline-flex items-center justify-center text-sm font-medium hover:-translate-y-0.5 active:scale-95 relative overflow-hidden group w-full sm:w-auto shadow-emerald-600/30 hover:shadow-emerald-600/50">
+                <i class="fas fa-arrow-right mr-2 transition-transform duration-300 group-hover:translate-x-1"></i>Access Role Management
+            </a>
+        </div>
+    </div>
+
+    <!-- Recent Activity Section -->
+    <div class="bg-gradient-to-br from-white via-gray-50/50 to-gray-100/30 border border-gray-200/50 rounded-2xl shadow-lg overflow-hidden backdrop-blur-sm transition-all duration-300 hover:shadow-xl hover:border-gray-200/80">
+        <div class="p-6 sm:p-7 border-b border-gray-200/50 bg-gradient-to-r from-indigo-50 via-purple-50/50 to-pink-50/30 relative overflow-hidden">
+            <!-- Decorative elements -->
+            <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-200/20 to-purple-200/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+            <div class="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-br from-pink-200/20 to-purple-200/20 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2"></div>
+            
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 relative z-10">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                            <i class="fas fa-chart-line text-white text-sm"></i>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Recent Activity</h3>
+                    </div>
+                    <p class="text-sm text-gray-600 ml-11">Latest system activities and user actions</p>
+                </div>
+                <button onclick="loadRecentActivity()" class="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-5 sm:px-7 py-2.5 sm:py-3 rounded-xl hover:shadow-lg transition-all duration-300 text-sm font-medium whitespace-nowrap self-start sm:self-auto hover:-translate-y-0.5 active:scale-95 w-full sm:w-auto shadow-indigo-500/30 hover:shadow-indigo-500/50 group">
+                    <i class="fas fa-sync-alt mr-2 transition-transform duration-300 group-hover:rotate-180"></i>
+                    Refresh Activity
+                </button>
+            </div>
+        </div>
+        
+        <!-- Desktop Table View -->
+        <div class="overflow-x-auto hidden sm:block bg-gradient-to-b from-white/50 to-gray-50/30">
+            <table class="w-full">
+                <thead class="bg-gradient-to-r from-indigo-50/50 via-purple-50/30 to-pink-50/20 border-b border-gray-200/50 backdrop-blur-sm">
+                    <tr>
+                        <th class="py-4 px-6 text-left text-xs font-semibold text-indigo-700 uppercase tracking-wider">User</th>
+                        <th class="py-4 px-6 text-left text-xs font-semibold text-purple-700 uppercase tracking-wider">Action</th>
+                        <th class="py-4 px-6 text-left text-xs font-semibold text-pink-700 uppercase tracking-wider">Description</th>
+                        <th class="py-4 px-6 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider hidden lg:table-cell">IP Address</th>
+                        <th class="py-4 px-6 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Time</th>
+                    </tr>
+                </thead>
+                <tbody id="recentActivityTable" class="divide-y divide-gray-200/30">
+                    <!-- Loading state -->
+                    <tr class="hover:bg-gradient-to-r hover:from-indigo-50/20 hover:to-purple-50/20 transition-all duration-300">
+                        <td colspan="5" class="text-center py-16">
+                            <div class="flex flex-col items-center">
+                                <div class="relative mb-4">
+                                    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center shadow-lg">
+                                        <i class="fas fa-spinner fa-spin text-2xl text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600"></i>
+                                    </div>
+                                    <div class="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full animate-pulse"></div>
+                                </div>
+                                <p class="text-lg font-semibold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-2">Loading activity...</p>
+                                <p class="text-sm text-gray-500">Please wait while we fetch the latest data</p>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Sample row for styling reference -->
+                    <tr class="hover:bg-gradient-to-r hover:from-indigo-50/20 hover:to-purple-50/20 transition-all duration-300">
+                        <td class="py-4 px-6">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-md shadow-blue-500/20 mr-3">
+                                    <i class="fas fa-user text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900">John Doe</p>
+                                    <p class="text-xs text-gray-500">john@example.com</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-4 px-6">
+                            <span class="px-3 py-1 text-xs font-medium rounded-full bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border border-green-200">Login</span>
+                        </td>
+                        <td class="py-4 px-6">
+                            <p class="text-sm text-gray-900">User logged in successfully</p>
+                        </td>
+                        <td class="py-4 px-6 hidden lg:table-cell">
+                            <p class="text-sm text-gray-600 font-mono">192.168.1.100</p>
+                        </td>
+                        <td class="py-4 px-6">
+                            <p class="text-sm text-gray-600">2 minutes ago</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Mobile Activity Cards -->
+        <div id="recentActivityCards" class="sm:hidden p-4 space-y-4">
+            <!-- Loading Card -->
+            <div class="bg-gradient-to-br from-white via-gray-50/50 to-gray-100/20 border border-gray-200/50 rounded-2xl p-5 shadow-lg backdrop-blur-sm transition-all duration-300 hover:shadow-xl hover:border-gray-200/80 relative overflow-hidden">
+                <!-- Decorative elements -->
+                <div class="absolute top-2 right-2 w-20 h-20 bg-gradient-to-br from-indigo-100/20 to-purple-100/20 rounded-full blur-2xl"></div>
+                
+                <div class="flex items-center mb-4 relative z-10">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center mr-4 flex-shrink-0 shadow-lg shadow-indigo-500/20">
+                        <i class="fas fa-spinner fa-spin text-lg text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-base font-semibold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Loading activity...</p>
+                        <p class="text-sm text-gray-500">Please wait while we fetch the latest data</p>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="px-3 py-1 text-xs font-medium rounded-full bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-800 border border-indigo-200">Loading</span>
+                    <div class="flex items-center text-xs text-gray-500">
+                        <i class="fas fa-clock mr-1"></i>
+                        <span>--</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sample Activity Card -->
+            <div class="bg-gradient-to-br from-white via-gray-50/50 to-gray-100/20 border border-gray-200/50 rounded-2xl p-5 shadow-lg backdrop-blur-sm transition-all duration-300 hover:shadow-xl hover:border-gray-200/80 relative overflow-hidden group">
+                <!-- Decorative elements -->
+                <div class="absolute top-2 right-2 w-20 h-20 bg-gradient-to-br from-blue-100/20 to-cyan-100/20 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                
+                <div class="flex items-center mb-4 relative z-10">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-400 to-cyan-600 flex items-center justify-center mr-4 flex-shrink-0 shadow-lg shadow-blue-500/20 transition-all duration-300 group-hover:scale-110">
+                        <i class="fas fa-user text-white text-lg"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-base font-semibold text-gray-900">John Doe</p>
+                        <p class="text-sm text-gray-500">john@example.com</p>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="flex items-center mb-2">
+                        <span class="px-3 py-1 text-xs font-medium rounded-full bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border border-green-200 mr-2">Login</span>
+                        <span class="text-xs text-gray-600">Successful login</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between text-xs text-gray-500">
+                    <div class="flex items-center">
+                        <i class="fas fa-network-wired mr-1"></i>
+                        <span class="font-mono">192.168.1.100</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-clock mr-1"></i>
+                        <span>2 min ago</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+@endsection
 
-@push('styles')
-    {{-- No custom styles are pushed here; Tailwind CSS handles styling directly in HTML --}}
-@endpush
-
-@push('scripts')
+@section('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    const tabs = document.querySelectorAll('.settings-tab');
-    const panels = document.querySelectorAll('.settings-panel');
-
-    function showPanel(targetId) {
-        panels.forEach(p => p.classList.add('hidden'));
-        const target = document.querySelector(targetId);
-        if (target) target.classList.remove('hidden');
-    }
-
-    tabs.forEach(tab => {
-        tab.addEventListener('click', function() {
-            // Deselect all
-            tabs.forEach(t => t.classList.remove('bg-primaryGreen/10', 'text-primaryGreen', 'font-semibold', 'border-l-4', 'border-primaryGreen'));
-            tabs.forEach(t => t.classList.add('text-gray-700', 'dark:text-gray-200', 'hover:bg-gray-100', 'dark:hover:bg-gray-700'));
-            tabs.forEach(t => t.querySelector('i')?.classList.remove('text-primaryGreen'));
-            tabs.forEach(t => t.setAttribute('aria-selected', 'false'));
-
-            // Select current
-            this.classList.add('bg-primaryGreen/10', 'text-primaryGreen', 'font-semibold', 'border-l-4', 'border-primaryGreen');
-            this.classList.remove('text-gray-700', 'dark:text-gray-200', 'hover:bg-gray-100', 'dark:hover:bg-gray-700');
-            this.querySelector('i')?.classList.add('text-primaryGreen');
-            this.setAttribute('aria-selected', 'true');
-
-            const target = this.getAttribute('data-target');
-            showPanel(target);
+// Load total permissions count
+function loadPermissionsCount() {
+    fetch('/api/permissions')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('totalPermissionsCount').textContent = data.permissions.length;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading permissions count:', error);
+            document.getElementById('totalPermissionsCount').textContent = 'Error';
         });
-    });
+}
 
-    // On first load ensure first tab is active
-    if (tabs.length) {
-        tabs[0].classList.add('bg-primaryGreen/10', 'text-primaryGreen', 'font-semibold', 'border-l-4', 'border-primaryGreen');
-        tabs[0].classList.remove('text-gray-700', 'dark:text-gray-200', 'hover:bg-gray-100', 'dark:hover:bg-gray-700');
-        tabs[0].querySelector('i')?.classList.add('text-primaryGreen');
-        tabs[0].setAttribute('aria-selected', 'true');
-    }
+// Load recent activity
+function loadRecentActivity() {
+    fetch('/api/users/recent-activity')
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.getElementById('recentActivityTable');
+            const cards = document.getElementById('recentActivityCards');
+            if (data.success && data.activities.length > 0) {
+                tbody.innerHTML = data.activities.slice(0, 10).map(activity => `
+                    <tr class="activity-row">
+                        <td class="py-4 px-6 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gray-400 to-gray-500 flex items-center justify-center mr-4 flex-shrink-0 shadow-sm">
+                                    <i class="fas fa-user text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900">${activity.user_name || 'Unknown User'}</p>
+                                    <p class="text-xs text-gray-500">${activity.user_email || ''}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-4 px-6 whitespace-nowrap">
+                            <span class="px-3 py-1 text-xs font-medium rounded-full ${getActionBadgeColor(activity.action)}">${formatAction(activity.action || '')}</span>
+                        </td>
+                        <td class="py-4 px-6 hidden sm:table-cell">
+                            <p class="text-sm text-gray-900 max-w-xs truncate">${activity.description}</p>
+                        </td>
+                        <td class="py-4 px-6 hidden sm:table-cell">
+                            <code class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-md">${activity.ip_address || 'N/A'}</code>
+                        </td>
+                        <td class="py-4 px-6 whitespace-nowrap">
+                            <p class="text-sm text-gray-900">${formatTimestamp(activity.created_at)}</p>
+                        </td>
+                    </tr>
+                `).join('');
 
-    // Mobile toggle for nav
-    const toggle = document.getElementById('settingsMenuToggle');
-    const nav = document.getElementById('settingsNav');
-    if (toggle && nav) {
-        toggle.addEventListener('click', () => {
-            nav.classList.toggle('hidden');
+                // Render mobile cards
+                cards.innerHTML = data.activities.slice(0, 10).map(activity => `
+                    <div class="activity-card">
+                        <div class="flex items-center mb-2">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gray-400 to-gray-500 flex items-center justify-center mr-3 flex-shrink-0 shadow-sm">
+                                <i class="fas fa-user text-white text-sm"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-sm font-medium text-gray-900 truncate">${activity.user_name || 'Unknown User'}</p>
+                                <p class="text-xs text-gray-500 truncate">${activity.user_email || ''}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between text-xs text-gray-500 mt-2">
+                            <span class="badge ${getActionBadgeColor(activity.action)}">${formatAction(activity.action || '')}</span>
+                            <span class="">${formatTimestamp(activity.created_at)}</span>
+                        </div>
+                        ${activity.description ? `<p class="text-sm text-gray-700 mt-2">${activity.description}</p>` : ''}
+                        ${activity.ip_address ? `<code class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-md inline-block mt-2">${activity.ip_address}</code>` : ''}
+                    </div>
+                `).join('');
+            } else {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center py-12 text-gray-500">
+                            <div class="flex flex-col items-center">
+                                <i class="fas fa-inbox text-3xl text-gray-300 mb-3"></i>
+                                <p class="text-base font-medium text-gray-900">No activity found</p>
+                                <p class="text-sm text-gray-500">There are no recent system activities to display</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                cards.innerHTML = `
+                    <div class="activity-card">
+                        <div class="flex items-center mb-2">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gray-400 to-gray-500 flex items-center justify-center mr-3 flex-shrink-0 shadow-sm">
+                                <i class="fas fa-inbox text-white text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">No activity found</p>
+                                <p class="text-xs text-gray-500">There are no recent system activities to display</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading recent activity:', error);
+            document.getElementById('recentActivityTable').innerHTML = `
+                <tr>
+                    <td colspan="5" class="text-center py-12 text-gray-500">
+                        <div class="flex flex-col items-center">
+                            <i class="fas fa-exclamation-triangle text-3xl text-gray-300 mb-3"></i>
+                            <p class="text-base font-medium text-gray-900">Unable to load activity</p>
+                            <p class="text-sm text-gray-500">Please check your connection and try again</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            document.getElementById('recentActivityCards').innerHTML = `
+                <div class="activity-card">
+                    <div class="flex items-center mb-2">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-400 to-red-500 flex items-center justify-center mr-3 flex-shrink-0 shadow-sm">
+                            <i class="fas fa-exclamation-triangle text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-900">Unable to load activity</p>
+                            <p class="text-xs text-gray-500">Please check your connection and try again</p>
+                        </div>
+                    </div>
+                </div>
+            `;
         });
-    }
+}
+
+// Helper functions
+function getActionBadgeColor(action) {
+    const colors = {
+        'login': 'bg-green-100 text-green-800',
+        'logout': 'bg-gray-100 text-gray-800',
+        'create': 'bg-blue-100 text-blue-800',
+        'update': 'bg-yellow-100 text-yellow-800',
+        'delete': 'bg-red-100 text-red-800',
+        'view': 'bg-purple-100 text-purple-800',
+        'export': 'bg-indigo-100 text-indigo-800',
+        'import': 'bg-pink-100 text-pink-800'
+    };
+    return colors[action?.toLowerCase()] || 'bg-gray-100 text-gray-800';
+}
+
+function formatAction(action) {
+    if (!action) return 'Unknown';
+    return action.charAt(0).toUpperCase() + action.slice(1).replace(/_/g, ' ');
+}
+
+function formatTimestamp(timestamp) {
+    if (!timestamp) return 'N/A';
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diff = now - date;
+    
+    if (diff < 60000) return 'Just now';
+    if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
+    if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
+    if (diff < 604800000) return `${Math.floor(diff / 86400000)}d ago`;
+    
+    return date.toLocaleDateString();
+}
+
+// Refresh all data
+function refreshData() {
+    loadPermissionsCount();
+    loadRecentActivity();
+    
+    // Show toast notification
+    const toast = document.createElement('div');
+    toast.className = 'fixed top-6 right-6 bg-white border border-gray-100 rounded-xl shadow-xl z-50 flex items-center p-4 min-w-[320px] backdrop-blur-sm';
+    toast.style.background = 'linear-gradient(135deg, #ffffff 0%, #fafbfc 100%)';
+    toast.setAttribute('role', 'alert');
+    toast.innerHTML = `
+        <div class="flex items-center">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center mr-3 shadow-sm">
+                <i class="fas fa-check text-white"></i>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-gray-900">Data refreshed</p>
+                <p class="text-xs text-gray-500">Statistics updated successfully</p>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    }, 3000);
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    loadPermissionsCount();
+    loadRecentActivity();
+    
+    // Auto-refresh every 5 minutes
+    setInterval(() => {
+        loadRecentActivity();
+    }, 300000);
 });
 </script>
-@endpush
-
 @endsection

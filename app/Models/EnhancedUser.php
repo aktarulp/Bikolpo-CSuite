@@ -1,0 +1,341 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
+use Laravel\Sanctum\HasApiTokens;
+
+class EnhancedUser extends Authenticatable
+{
+    use HasFactory, Notifiable, HasApiTokens;
+
+    protected $table = 'users';
+    
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'phone',
+        'avatar',
+        'status',
+        'email_verified_at',
+        'last_login_at',
+        'last_login_ip',
+        'partner_id',
+        'created_by',
+        'updated_by',
+        'preferences',
+        'metadata'
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'last_login_at' => 'datetime',
+        'preferences' => 'array',
+        'metadata' => 'array',
+    ];
+
+    // Status constants
+    const STATUS_ACTIVE = 'active';
+    const STATUS_INACTIVE = 'inactive';
+    const STATUS_SUSPENDED = 'suspended';
+    const STATUS_PENDING = 'pending';
+
+    // User type constants
+    const TYPE_ADMIN = 'admin';
+    const TYPE_PARTNER = 'partner';
+    const TYPE_STAFF = 'staff';
+    const TYPE_STUDENT = 'student';
+
+    /**
+     * Get the partner that owns the user.
+     */
+    public function partner(): BelongsTo
+    {
+        return $this->belongsTo(Partner::class);
+    }
+
+    /**
+     * Get the roles assigned to the user.
+     */
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(Role::class, 'user_roles')
+                    ->withPivot('assigned_by', 'assigned_at', 'expires_at')
+                    ->withTimestamps();
+    }
+
+    /**
+     * Get the permissions assigned to the user.
+     */
+    public function permissions(): BelongsToMany
+    {
+        return $this->belongsToMany(Permission::class, 'user_permissions')
+                    ->withPivot('granted_by', 'granted_at', 'expires_at')
+                    ->withTimestamps();
+    }
+
+    /**
+     * Get the user activities.
+     */
+    public function activities(): HasMany
+    {
+        return $this->hasMany(UserActivity::class);
+    }
+
+    /**
+     * Get users created by this user.
+     */
+    public function createdUsers(): HasMany
+    {
+        return $this->hasMany(EnhancedUser::class, 'created_by');
+    }
+
+    /**
+     * Get the creator of this user.
+     */
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(EnhancedUser::class, 'created_by');
+    }
+
+    /**
+     * Check if user has a specific role.
+     */
+    public function hasRole($role): bool
+    {
+        if (is_string($role)) {
+            return $this->roles()->where('name', $role)->exists();
+        }
+        
+        if (is_int($role)) {
+            return $this->roles()->where('id', $role)->exists();
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if user has any of the given roles.
+     */
+    public function hasAnyRole($roles): bool
+    {
+        if (is_string($roles)) {
+            $roles = [$roles];
+        }
+
+        return $this->roles()->whereIn('name', $roles)->exists();
+    }
+
+    /**
+     * Check if user has all of the given roles.
+     */
+    public function hasAllRoles($roles): bool
+    {
+        if (is_string($roles)) {
+            $roles = [$roles];
+        }
+
+        $userRoles = $this->roles()->pluck('name')->toArray();
+        return empty(array_diff($roles, $userRoles));
+    }
+
+    /**
+     * Check if user has a specific permission.
+     */
+    public function hasPermission($permission): bool
+    {
+        if (is_string($permission)) {
+            return $this->permissions()->where('name', $permission)->exists() ||
+                   $this->hasPermissionThroughRole($permission);
+        }
+        
+        if (is_int($permission)) {
+            return $this->permissions()->where('id', $permission)->exists() ||
+                   $this->hasPermissionThroughRoleById($permission);
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if user has permission through roles.
+     */
+    public function hasPermissionThroughRole($permission): bool
+    {
+        foreach ($this->roles as $role) {
+            if ($role->hasPermission($permission)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if user has permission through roles by ID.
+     */
+    public function hasPermissionThroughRoleById($permissionId): bool
+    {
+        foreach ($this->roles as $role) {
+            if ($role->hasPermissionById($permissionId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Assign a role to the user.
+     */
+    public function assignRole($role, $assignedBy = null, $expiresAt = null)
+    {
+        if (is_string($role)) {
+            $role = Role::where('name', $role)->first();
+        }
+
+        if (!$role) {
+            return false;
+        }
+
+        return $this->roles()->attach($role->id, [
+            'assigned_by' => $assignedBy ?? auth()->id(),
+            'assigned_at' => now(),
+            'expires_at' => $expiresAt
+        ]);
+    }
+
+    /**
+     * Remove a role from the user.
+     */
+    public function removeRole($role)
+    {
+        if (is_string($role)) {
+            $role = Role::where('name', $role)->first();
+        }
+
+        if (!$role) {
+            return false;
+        }
+
+        return $this->roles()->detach($role->id);
+    }
+
+    /**
+     * Grant a permission to the user.
+     */
+    public function grantPermission($permission, $grantedBy = null, $expiresAt = null)
+    {
+        if (is_string($permission)) {
+            $permission = Permission::where('name', $permission)->first();
+        }
+
+        if (!$permission) {
+            return false;
+        }
+
+        return $this->permissions()->attach($permission->id, [
+            'granted_by' => $grantedBy ?? auth()->id(),
+            'granted_at' => now(),
+            'expires_at' => $expiresAt
+        ]);
+    }
+
+    /**
+     * Revoke a permission from the user.
+     */
+    public function revokePermission($permission)
+    {
+        if (is_string($permission)) {
+            $permission = Permission::where('name', $permission)->first();
+        }
+
+        if (!$permission) {
+            return false;
+        }
+
+        return $this->permissions()->detach($permission->id);
+    }
+
+    /**
+     * Get all permissions (direct + through roles).
+     */
+    public function getAllPermissions()
+    {
+        $directPermissions = $this->permissions;
+        $rolePermissions = $this->roles()->with('permissions')->get()
+            ->pluck('permissions')
+            ->flatten()
+            ->unique('id');
+
+        return $directPermissions->merge($rolePermissions)->unique('id');
+    }
+
+    /**
+     * Get avatar URL.
+     */
+    public function getAvatarUrlAttribute()
+    {
+        if ($this->avatar) {
+            return Storage::url($this->avatar);
+        }
+        
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&color=7C3AED&background=EEF2FF';
+    }
+
+    /**
+     * Log user activity.
+     */
+    public function logActivity($action, $description = null, $metadata = [])
+    {
+        return $this->activities()->create([
+            'action' => $action,
+            'description' => $description,
+            'metadata' => $metadata,
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+        ]);
+    }
+
+    /**
+     * Scope a query to only include active users.
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('status', self::STATUS_ACTIVE);
+    }
+
+    /**
+     * Scope a query to only include users of a given partner.
+     */
+    public function scopeOfPartner($query, $partnerId)
+    {
+        return $query->where('partner_id', $partnerId);
+    }
+
+    /**
+     * Get status badge HTML.
+     */
+    public function getStatusBadgeAttribute()
+    {
+        $badges = [
+            self::STATUS_ACTIVE => '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">🟢 Active</span>',
+            self::STATUS_INACTIVE => '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200">⚪ Inactive</span>',
+            self::STATUS_SUSPENDED => '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">🟡 Suspended</span>',
+            self::STATUS_PENDING => '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">🔵 Pending</span>',
+        ];
+
+        return $badges[$this->status] ?? '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200">⚪ Unknown</span>';
+    }
+}

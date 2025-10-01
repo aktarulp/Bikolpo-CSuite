@@ -125,6 +125,11 @@ class Partner extends Model
         return $this->hasMany(Student::class);
     }
 
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
+
     // Accessors
     public function getFullAddressAttribute()
     {
