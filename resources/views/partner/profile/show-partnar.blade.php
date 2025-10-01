@@ -3,198 +3,200 @@
 @section('title', 'Partner Profile')
 
 @section('content')
-<div class="space-y-8">
-    <!-- Page Header with Enhanced Design -->
-    <div class="bg-gradient-to-r from-primaryGreen to-green-600 rounded-2xl p-8 text-white shadow-xl">
-        <div class="flex justify-between items-start">
-            <div class="flex-1">
-                <h1 class="text-4xl font-bold mb-2">Institution Profile</h1>
-                <p class="text-green-100 text-lg">Complete overview of your educational institution</p>
-                <div class="flex items-center space-x-4 mt-4">
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white/20 backdrop-blur-sm">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                        </svg>
-                        {{ ucfirst($partner->status ?? 'active') }}
-                    </span>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white/20 backdrop-blur-sm">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        {{ $partner->partner_category ?? 'Institution' }}
-                    </span>
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
+    <!-- Mobile-First Header -->
+    <div class="bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-700 px-4 pt-6 pb-8 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="flex-1">
+                    <h1 class="text-2xl sm:text-3xl font-bold text-white mb-2">Institution Profile</h1>
+                    <p class="text-emerald-100 text-sm sm:text-base">Complete overview of your educational institution</p>
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/20 backdrop-blur-sm text-white">
+                            <svg class="w-3 h-3 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            {{ ucfirst($partner->status) }}
+                        </span>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/20 backdrop-blur-sm text-white">
+                            <svg class="w-3 h-3 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            {{ $partner->partner_category }}
+                        </span>
+                    </div>
                 </div>
+                <a href="{{ route('partner.profile.edit-partnar') }}" 
+                   class="inline-flex items-center justify-center px-4 py-2.5 bg-white text-emerald-700 hover:bg-gray-50 rounded-lg font-semibold text-sm transition-all duration-200 shadow-lg hover:shadow-xl min-h-[44px] touch-manipulation">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                    </svg>
+                    Edit Profile
+                </a>
             </div>
-            <a href="{{ route('partner.profile.edit-partnar') }}" 
-               class="bg-white text-primaryGreen hover:bg-gray-50 px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-                <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                </svg>
-                Edit Profile
-            </a>
         </div>
     </div>
 
-    <!-- Main Profile Content -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Left Column - Basic Info & Logo -->
-        <div class="lg:col-span-1 space-y-6">
-            <!-- Institution Logo & Basic Info Card -->
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-                <div class="p-6">
-                    <!-- Logo Section -->
-                    <div class="text-center mb-6">
-                        @if($partner && $partner->logo)
-                            <img src="{{ asset('storage/' . $partner->logo) }}" 
-                                 alt="Institution Logo" 
-                                 class="w-32 h-32 rounded-2xl object-cover border-4 border-white shadow-lg mx-auto">
-                        @else
-                            <div class="w-32 h-32 bg-gradient-to-br from-primaryGreen to-green-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
-                                <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                </svg>
-                            </div>
-                        @endif
-                    </div>
-                    
-                    <!-- Basic Info -->
-                    <div class="text-center">
-                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                            {{ $partner->name ?? 'Institution Name' }}
-                        </h2>
-                        @if($partner->institute_name_bangla)
-                            <p class="text-lg text-gray-600 dark:text-gray-400 mb-3 font-bangla">
-                                {{ $partner->institute_name_bangla }}
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+        <div class="space-y-6">
+            <!-- Mobile-First Basic Info Card -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <div class="p-4 sm:p-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+                        <!-- Logo Section -->
+                        <div class="flex-shrink-0">
+                            @if($partner && $partner->logo)
+                                <img src="{{ asset('storage/' . $partner->logo) }}" 
+                                     alt="Institution Logo" 
+                                     class="w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-cover border-3 border-white shadow-md">
+                            @else
+                                <div class="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-md">
+                                    <svg class="w-10 h-10 sm:w-12 sm:h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                    </svg>
+                                </div>
+                            @endif
+                        </div>
+                        
+                        <!-- Basic Info -->
+                        <div class="flex-1 min-w-0">
+                            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-1 truncate">
+                                {{ $partner->name }}
+                            </h2>
+                            @if($partner->institute_name_bangla)
+                                <p class="text-base sm:text-lg text-gray-600 dark:text-gray-400 mb-2 font-bangla">
+                                    {{ $partner->institute_name_bangla }}
+                                </p>
+                            @endif
+                            <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 line-clamp-2">
+                                {{ $partner->description }}
                             </p>
-                        @endif
-                        <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-                            {{ $partner->description ?? 'No description available' }}
-                        </p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Quick Stats Card -->
-            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                    <svg class="w-5 h-5 mr-2 text-primaryGreen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <!-- Mobile-First Quick Stats -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
+                <h3 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                    <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                     </svg>
                     Quick Statistics
                 </h3>
-                <div class="space-y-3">
-                    <div class="flex justify-between items-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                        <span class="text-sm text-gray-600 dark:text-gray-400">Questions</span>
-                        <span class="text-lg font-bold text-blue-600 dark:text-blue-400">{{ $partner->questions_count ?? 0 }}</span>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3 text-center">
+                        <div class="text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400 mb-1">{{ $partner->questions_count }}</div>
+                        <div class="text-xs sm:text-sm text-blue-600 dark:text-blue-400 font-medium">Questions</div>
                     </div>
-                    <div class="flex justify-between items-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                        <span class="text-sm text-gray-600 dark:text-gray-400">Exams</span>
-                        <span class="text-lg font-bold text-green-600 dark:text-green-400">{{ $partner->exams_count ?? 0 }}</span>
+                    <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-3 text-center">
+                        <div class="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-400 mb-1">{{ $partner->exams_count }}</div>
+                        <div class="text-xs sm:text-sm text-green-600 dark:text-green-400 font-medium">Exams</div>
                     </div>
-                    <div class="flex justify-between items-center p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-                        <span class="text-sm text-gray-600 dark:text-gray-400">Students</span>
-                        <span class="text-lg font-bold text-purple-600 dark:text-purple-400">{{ $partner->students_count ?? 0 }}</span>
+                    <div class="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3 text-center">
+                        <div class="text-xl sm:text-2xl font-bold text-purple-600 dark:text-purple-400 mb-1">{{ $partner->students_count }}</div>
+                        <div class="text-xs sm:text-sm text-purple-600 dark:text-purple-400 font-medium">Students</div>
                     </div>
-                    <div class="flex justify-between items-center p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
-                        <span class="text-sm text-gray-600 dark:text-gray-400">Courses</span>
-                        <span class="text-lg font-bold text-orange-600 dark:text-orange-400">{{ $partner->courses_count ?? 0 }}</span>
-                                             </div>
-                     </div>
-                 </div>
-             </div>
+                    <div class="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-3 text-center">
+                        <div class="text-xl sm:text-2xl font-bold text-orange-600 dark:text-orange-400 mb-1">{{ $partner->courses_count }}</div>
+                        <div class="text-xs sm:text-sm text-orange-600 dark:text-orange-400 font-medium">Courses</div>
+                    </div>
+                </div>
+            </div>
 
-             <!-- Address Information Card -->
-             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-                 <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
-                         <svg class="w-6 h-6 mr-3 text-primaryGreen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                         </svg>
-                         Address Information
-                     </h3>
-                 </div>
-                 <div class="p-6">
-                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                         <div class="space-y-4">
-                             <div>
-                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Address</label>
-                                 <div class="flex items-start p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg">
-                                     <svg class="w-5 h-5 text-gray-400 mr-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                     </svg>
-                                     <span class="text-gray-900 dark:text-white">{{ $partner->address ?? 'No address provided' }}</span>
-                                 </div>
-                             </div>
-                             <div>
-                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">City</label>
-                                 <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg">
-                                     <svg class="w-5 h-5 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                     </svg>
-                                     <span class="text-gray-900 dark:text-white">{{ $partner->city ?? 'No city provided' }}</span>
-                                 </div>
-                             </div>
-                             <div>
-                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Division</label>
-                                 <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg">
-                                     <svg class="w-5 h-5 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                     </svg>
-                                     <span class="text-gray-900 dark:text-white">{{ $partner->division ?? 'No division specified' }}</span>
-                                 </div>
-                             </div>
-                             <div>
-                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">District</label>
-                                 <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg">
-                                     <svg class="w-5 h-5 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                     </svg>
-                                     <span class="text-gray-900 dark:text-white">{{ $partner->district ?? 'No district specified' }}</span>
-                                 </div>
-                             </div>
-                         </div>
-                         <div class="space-y-4">
-                             <div>
-                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Upazila</label>
-                                 <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg">
-                                     <svg class="w-5 h-5 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                     </svg>
-                                     <span class="text-gray-900 dark:text-white">{{ $partner->upazila ?? 'No upazila specified' }}</span>
-                                 </div>
-                             </div>
-                             <div>
-                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Post Office</label>
-                                 <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg">
-                                     <svg class="w-5 h-5 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                                     </svg>
-                                     <span class="text-gray-900 dark:text-white">{{ $partner->post_office ?? 'No post office specified' }}</span>
-                                 </div>
-                             </div>
-                             <div>
-                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Post Code</label>
-                                 <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg">
-                                     <svg class="w-5 h-5 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                                     </svg>
-                                     <span class="text-gray-900 dark:text-white">{{ $partner->post_code ?? 'No post code specified' }}</span>
-                                 </div>
-                             </div>
-                             <div>
-                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Village/Road No</label>
-                                 <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg">
-                                     <svg class="w-5 h-5 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                     </svg>
-                                     <span class="text-gray-900 dark:text-white">{{ $partner->village_road_no ?? 'No village/road number specified' }}</span>
-                                 </div>
-                             </div>
-                         </div>
-                     </div>
-                 </div>
-                          </div>
+            <!-- Mobile-First Address Information -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                    <h3 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white flex items-center">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        Address Information
+                    </h3>
+                </div>
+                <div class="p-4 sm:p-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Address</label>
+                                <div class="flex items-start p-2.5 sm:p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg">
+                                    <svg class="w-4 h-4 text-gray-400 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                    </svg>
+                                    <span class="text-sm text-gray-900 dark:text-white break-words">{{ $partner->address }}</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">City</label>
+                                <div class="flex items-center p-2.5 sm:p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg">
+                                    <svg class="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                    </svg>
+                                    <span class="text-sm text-gray-900 dark:text-white">{{ $partner->city }}</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Division</label>
+                                <div class="flex items-center p-2.5 sm:p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg">
+                                    <svg class="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                    </svg>
+                                    <span class="text-sm text-gray-900 dark:text-white">{{ $partner->division }}</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">District</label>
+                                <div class="flex items-center p-2.5 sm:p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg">
+                                    <svg class="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                    </svg>
+                                    <span class="text-sm text-gray-900 dark:text-white">{{ $partner->district }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Upazila</label>
+                                <div class="flex items-center p-2.5 sm:p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg">
+                                    <svg class="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                    </svg>
+                                    <span class="text-sm text-gray-900 dark:text-white">{{ $partner->upazila }}</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Post Office</label>
+                                <div class="flex items-center p-2.5 sm:p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg">
+                                    <svg class="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                    </svg>
+                                    <span class="text-sm text-gray-900 dark:text-white">{{ $partner->post_office }}</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Post Code</label>
+                                <div class="flex items-center p-2.5 sm:p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg">
+                                    <svg class="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                    </svg>
+                                    <span class="text-sm text-gray-900 dark:text-white">{{ $partner->post_code }}</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Village/Road No</label>
+                                <div class="flex items-center p-2.5 sm:p-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg">
+                                    <svg class="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                    </svg>
+                                    <span class="text-sm text-gray-900 dark:text-white">{{ $partner->village_road_no }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
              <!-- Institutional Details Card -->
              <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
