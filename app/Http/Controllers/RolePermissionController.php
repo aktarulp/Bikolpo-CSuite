@@ -12,15 +12,16 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class RolePermissionController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display the role and permission management dashboard.
      */
     public function index()
     {
-        $this->authorize('viewAny', EnhancedRole::class);
 
         $roles = EnhancedRole::with(['permissions', 'users', 'parentRole', 'childRoles'])
             ->orderBy('level')
