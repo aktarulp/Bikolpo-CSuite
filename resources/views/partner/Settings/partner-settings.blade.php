@@ -2,26 +2,134 @@
 
 @section('title', 'Partner Settings')
 
-@section('styles')
-@endsection
+@push('styles')
+<style>
+    @layer utilities {
+        .animate-shimmer {
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .animate-float-reverse {
+            animation: float 4s ease-in-out infinite reverse;
+        }
+        
+        .animate-float-delayed {
+            animation: float 5s ease-in-out infinite 1s;
+        }
+        
+        .custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 #f1f5f9;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 3px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    }
+    
+    @keyframes shimmer {
+        0%, 100% { transform: rotate(0deg); }
+        50% { transform: rotate(180deg); }
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-20px) rotate(180deg); }
+    }
+</style>
+@endpush
 
 @section('content')
 <div class="flex-1 overflow-y-auto custom-scrollbar p-4 lg:p-8">
     <!-- Page Header -->
     <div class="mb-8">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-                <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 tracking-tight">
-                    Partner Settings
-                </h1>
-                <p class="text-gray-600 text-sm lg:text-base mt-1 lg:mt-2 leading-relaxed">
-                    Manage your partner account settings, users, roles, and permissions
-                </p>
+        <div class="bg-gradient-to-br from-indigo-500 via-purple-500 to-purple-700 rounded-[40px] p-8 shadow-[0_20px_40px_rgba(0,0,0,0.1)] relative overflow-hidden">
+            <!-- Shimmer overlay -->
+            <div class="absolute inset-0 w-[200%] h-[200%] -top-[50%] -right-[50%] bg-[radial-gradient(circle,rgba(255,255,255,0.1)_0%,transparent_70%)] animate-shimmer"></div>
+            
+            <!-- Decorative Elements -->
+            <div class="absolute w-[120px] h-[120px] -top-[30px] -left-[30px] rounded-full bg-white/10 backdrop-blur-md animate-float"></div>
+            <div class="absolute w-[80px] h-[80px] -bottom-[20px] right-[20%] rounded-full bg-white/10 backdrop-blur-md animate-float-reverse"></div>
+            <div class="absolute w-[60px] h-[60px] top-[50%] -right-[15px] rounded-full bg-white/10 backdrop-blur-md animate-float-delayed"></div>
+            
+            <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+                <!-- Left Side - Title and Description -->
+                <div class="flex-1 relative z-10">
+                    <h1 class="text-[2.5rem] font-extrabold text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.2)] mb-2">
+                        Partner Settings
+                    </h1>
+                    <p class="text-[1.1rem] font-normal text-white/90 drop-shadow-[0_2px_4px_rgba(0,0,0,0.1)]">
+                        Manage your partner account settings, users, roles, and permissions
+                    </p>
+                </div>
+                
+                <!-- Refresh Button -->
+                <div class="flex-shrink-0">
+                    <button onclick="refreshData()" class="bg-gradient-to-r from-red-500 to-orange-500 text-white px-6 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap shadow-[0_4px_15px_rgba(238,90,36,0.3)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(238,90,36,0.4)]">
+                        <i class="fas fa-sync-alt mr-2 transition-transform duration-300 hover:rotate-180"></i>
+                        Refresh Data
+                    </button>
+                </div>
             </div>
-            <button onclick="refreshData()" class="bg-white border border-gray-200 text-gray-700 px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl hover:bg-gray-50 hover:border-gray-300 hover:shadow-md transition-all duration-300 text-sm font-medium whitespace-nowrap self-start sm:self-auto hover:-translate-y-0.5 active:scale-95 w-full sm:w-auto shadow-sm">
-                <i class="fas fa-sync-alt mr-2 transition-transform duration-300 hover:rotate-180"></i>
-                Refresh Data
-            </button>
+        </div>
+    </div>
+
+    <!-- Management Cards Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- User Management Card -->
+        <div class="bg-gradient-to-br from-blue-50 to-indigo-100 border-2 border-blue-200 shadow-[0_8px_32px_rgba(0,0,0,0.1)] rounded-xl p-6 transition-all duration-300 hover:shadow-[0_15px_40px_rgba(0,0,0,0.15)] hover:-translate-y-1 hover:border-blue-300">
+            <div class="flex items-start justify-between mb-4">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white shadow-sm transition-all duration-300 hover:scale-110 mr-3">
+                        <i class="fas fa-users-cog text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-gray-900">User Management</h3>
+                        <p class="text-xs text-gray-600 mt-1">Manage user accounts</p>
+                    </div>
+                </div>
+            </div>
+            
+            <a href="{{ route('partner.settings.user-management') }}" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 px-4 rounded-lg hover:shadow-lg transition-all duration-300 inline-flex items-center justify-center text-xs font-medium hover:-translate-y-0.5 active:scale-95 relative overflow-hidden group w-full shadow-blue-600/30">
+                <i class="fas fa-arrow-right mr-2 transition-transform duration-300 group-hover:translate-x-1"></i>Access User Management
+            </a>
+        </div>
+
+        <!-- Role Management Card -->
+        <div class="bg-gradient-to-br from-emerald-50 to-green-100 border-2 border-emerald-200 shadow-[0_8px_32px_rgba(0,0,0,0.1)] rounded-xl p-6 transition-all duration-300 hover:shadow-[0_15px_40px_rgba(0,0,0,0.15)] hover:-translate-y-1 hover:border-emerald-300">
+            <div class="flex items-start justify-between mb-4">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white shadow-sm transition-all duration-300 hover:scale-110 mr-3">
+                        <i class="fas fa-user-tag text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-gray-900">Role Management</h3>
+                        <p class="text-xs text-gray-600 mt-1">Configure roles & permissions</p>
+                    </div>
+                </div>
+            </div>
+            
+            <a href="{{ route('partner.settings.role-permission-management') }}" class="bg-gradient-to-r from-emerald-600 to-green-600 text-white py-2 px-4 rounded-lg hover:shadow-lg transition-all duration-300 inline-flex items-center justify-center text-xs font-medium hover:-translate-y-0.5 active:scale-95 relative overflow-hidden group w-full shadow-emerald-600/30">
+                <i class="fas fa-arrow-right mr-2 transition-transform duration-300 group-hover:translate-x-1"></i>Access Role Management
+            </a>
         </div>
     </div>
 
@@ -84,128 +192,6 @@
         </div>
     </div>
 
-    <!-- Action Cards Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mb-8">
-        <!-- User Management Card -->
-        <div class="bg-white border border-gray-100 rounded-xl p-4 sm:p-5 lg:p-7 transition-all duration-300 hover:shadow-lg hover:border-gray-200 hover:-translate-y-0.5 shadow-sm hover:shadow-xl">
-            <div class="flex items-start justify-between mb-6">
-                <div class="flex items-center">
-                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white shadow-sm transition-all duration-300 hover:scale-110 mr-4">
-                        <i class="fas fa-users-cog text-lg"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900">User Management</h3>
-                        <p class="text-sm text-gray-600 mt-1">Manage user accounts and access</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="space-y-3 mb-6">
-                <div class="bg-gray-50/50 border border-gray-100 rounded-xl p-3 sm:p-4 transition-all duration-300 hover:bg-gray-100/70 hover:border-gray-200 hover:shadow-sm hover:-translate-y-0.5 cursor-pointer group">
-                    <div class="flex items-center">
-                        <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center mr-3">
-                            <i class="fas fa-user-plus text-blue-600 text-sm"></i>
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-gray-900">Add New Users</p>
-                            <p class="text-xs text-gray-500">Create new user accounts</p>
-                        </div>
-                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
-                    </div>
-                </div>
-                
-                <div class="bg-gray-50/50 border border-gray-100 rounded-xl p-3 sm:p-4 transition-all duration-300 hover:bg-gray-100/70 hover:border-gray-200 hover:shadow-sm hover:-translate-y-0.5 cursor-pointer group">
-                    <div class="flex items-center">
-                        <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center mr-3">
-                            <i class="fas fa-user-edit text-blue-600 text-sm"></i>
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-gray-900">Edit User Details</p>
-                            <p class="text-xs text-gray-500">Update user information</p>
-                        </div>
-                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
-                    </div>
-                </div>
-                
-                <div class="bg-gray-50/50 border border-gray-100 rounded-xl p-3 sm:p-4 transition-all duration-300 hover:bg-gray-100/70 hover:border-gray-200 hover:shadow-sm hover:-translate-y-0.5 cursor-pointer group">
-                    <div class="flex items-center">
-                        <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center mr-3">
-                            <i class="fas fa-user-shield text-blue-600 text-sm"></i>
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-gray-900">User Permissions</p>
-                            <p class="text-xs text-gray-500">Manage user access rights</p>
-                        </div>
-                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
-                    </div>
-                </div>
-            </div>
-            
-            <a href="{{ route('partner.settings.user-management') }}" class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-2.5 sm:py-3 px-4 sm:px-6 rounded-xl hover:shadow-lg transition-all duration-300 inline-flex items-center justify-center text-sm font-medium hover:-translate-y-0.5 active:scale-95 relative overflow-hidden group w-full sm:w-auto shadow-blue-600/30 hover:shadow-blue-600/50">
-                <i class="fas fa-arrow-right mr-2 transition-transform duration-300 group-hover:translate-x-1"></i>Access User Management
-            </a>
-        </div>
-
-        <!-- Role Management Card -->
-        <div class="bg-white border border-gray-100 rounded-xl p-4 sm:p-5 lg:p-7 transition-all duration-300 hover:shadow-lg hover:border-gray-200 hover:-translate-y-0.5 shadow-sm hover:shadow-xl">
-            <div class="flex items-start justify-between mb-6">
-                <div class="flex items-center">
-                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white shadow-sm transition-all duration-300 hover:scale-110 mr-4">
-                        <i class="fas fa-user-tag text-lg"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900">Role & Permission Management</h3>
-                        <p class="text-sm text-gray-600 mt-1">Configure roles and permissions</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="space-y-3 mb-6">
-                <div class="bg-gray-50/50 border border-gray-100 rounded-xl p-3 sm:p-4 transition-all duration-300 hover:bg-gray-100/70 hover:border-gray-200 hover:shadow-sm hover:-translate-y-0.5 cursor-pointer group">
-                    <div class="flex items-center">
-                        <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center mr-3">
-                            <i class="fas fa-plus-circle text-emerald-600 text-sm"></i>
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-gray-900">Create Roles</p>
-                            <p class="text-xs text-gray-500">Define new user roles</p>
-                        </div>
-                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
-                    </div>
-                </div>
-                
-                <div class="bg-gray-50/50 border border-gray-100 rounded-xl p-3 sm:p-4 transition-all duration-300 hover:bg-gray-100/70 hover:border-gray-200 hover:shadow-sm hover:-translate-y-0.5 cursor-pointer group">
-                    <div class="flex items-center">
-                        <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center mr-3">
-                            <i class="fas fa-sliders-h text-emerald-600 text-sm"></i>
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-gray-900">Permission Settings</p>
-                            <p class="text-xs text-gray-500">Configure system permissions</p>
-                        </div>
-                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
-                    </div>
-                </div>
-                
-                <div class="bg-gray-50/50 border border-gray-100 rounded-xl p-3 sm:p-4 transition-all duration-300 hover:bg-gray-100/70 hover:border-gray-200 hover:shadow-sm hover:-translate-y-0.5 cursor-pointer group">
-                    <div class="flex items-center">
-                        <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center mr-3">
-                            <i class="fas fa-link text-emerald-600 text-sm"></i>
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-gray-900">Role Assignments</p>
-                            <p class="text-xs text-gray-500">Assign roles to users</p>
-                        </div>
-                        <i class="fas fa-chevron-right text-gray-400 text-xs"></i>
-                    </div>
-                </div>
-            </div>
-            
-            <a href="{{ route('partner.settings.role-permission-management') }}" class="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white py-2.5 sm:py-3 px-4 sm:px-6 rounded-xl hover:shadow-lg transition-all duration-300 inline-flex items-center justify-center text-sm font-medium hover:-translate-y-0.5 active:scale-95 relative overflow-hidden group w-full sm:w-auto shadow-emerald-600/30 hover:shadow-emerald-600/50">
-                <i class="fas fa-arrow-right mr-2 transition-transform duration-300 group-hover:translate-x-1"></i>Access Role Management
-            </a>
-        </div>
-    </div>
 
     <!-- Recent Activity Section -->
     <div class="bg-gradient-to-br from-white via-gray-50/50 to-gray-100/30 border border-gray-200/50 rounded-2xl shadow-lg overflow-hidden backdrop-blur-sm transition-all duration-300 hover:shadow-xl hover:border-gray-200/80">

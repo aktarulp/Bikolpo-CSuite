@@ -2,170 +2,139 @@
 
 @section('title', 'User Management')
 
-@section('styles')
+@push('styles')
 <style>
-    .user-card {
-        transition: all 0.3s ease;
+    @layer utilities {
+        .status-badge {
+            animation: pulse 2s infinite;
+        }
+        
+        .modal-backdrop {
+            backdrop-filter: blur(5px);
+        }
+        
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #6366f1;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
     }
-    .user-card:hover {
-        transform: translateY(-2px);
-    }
-    .status-badge {
-        animation: pulse 2s infinite;
-    }
+    
     @keyframes pulse {
         0% { opacity: 1; }
         50% { opacity: 0.8; }
         100% { opacity: 1; }
     }
-    .stats-card {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-    .stats-card-2 {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    }
-    .stats-card-3 {
-        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    }
-    .stats-card-4 {
-        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-    }
-    .stats-card-5 {
-        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-    }
-    .search-input:focus {
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-    }
-    .table-hover tbody tr:hover {
-        background-color: rgba(99, 102, 241, 0.05);
-    }
-    .modal-backdrop {
-        backdrop-filter: blur(5px);
-    }
-    .loading-spinner {
-        border: 3px solid #f3f3f3;
-        border-top: 3px solid #6366f1;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        animation: spin 1s linear infinite;
-    }
+    
     @keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }
 </style>
-@endsection
+@endpush
 
 @section('content')
-<div class="container-fluid px-4 py-6">
+<div class="px-4 py-6 sm:px-6 lg:px-8">
     <!-- Header Section -->
-    <div class="d-flex justify-content-between align-items-center mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-            <h1 class="h3 mb-1 text-gray-900 dark:text-white">User Management</h1>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">User Management</h1>
             <p class="text-gray-600 dark:text-gray-400">Manage users, roles, and permissions</p>
         </div>
-        <div class="d-flex gap-2">
-            <button type="button" class="btn btn-outline-secondary" onclick="exportUsers()">
-                <i class="fas fa-download me-2"></i>Export
+        <div class="flex gap-2">
+            <button type="button" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200" onclick="exportUsers()">
+                <i class="fas fa-download mr-2"></i>Export
             </button>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
-                <i class="fas fa-plus me-2"></i>Add New User
+            <button type="button" class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                <i class="fas fa-plus mr-2"></i>Add New User
             </button>
         </div>
     </div>
 
     <!-- Statistics Cards -->
-    <div class="row mb-6">
-        <div class="col-xl-2 col-lg-4 col-md-6 mb-4">
-            <div class="card stats-card text-white border-0">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="card-title mb-0">Total Users</h6>
-                            <h3 class="mb-0">{{ $stats['total_users'] }}</h3>
-                        </div>
-                        <div class="fs-2 opacity-75">
-                            <i class="fas fa-users"></i>
-                        </div>
-                    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 mb-6">
+        <!-- Total Users Card -->
+        <div class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl p-6 text-white shadow-lg">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h6 class="text-sm font-medium opacity-90 mb-1">Total Users</h6>
+                    <h3 class="text-2xl font-bold">{{ $stats['total_users'] }}</h3>
+                </div>
+                <div class="text-3xl opacity-75">
+                    <i class="fas fa-users"></i>
                 </div>
             </div>
         </div>
-        <div class="col-xl-2 col-lg-4 col-md-6 mb-4">
-            <div class="card stats-card-2 text-white border-0">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="card-title mb-0">Active</h6>
-                            <h3 class="mb-0">{{ $stats['active_users'] }}</h3>
-                        </div>
-                        <div class="fs-2 opacity-75">
-                            <i class="fas fa-user-check"></i>
-                        </div>
-                    </div>
+        
+        <!-- Active Users Card -->
+        <div class="bg-gradient-to-br from-pink-500 to-red-500 rounded-xl p-6 text-white shadow-lg">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h6 class="text-sm font-medium opacity-90 mb-1">Active</h6>
+                    <h3 class="text-2xl font-bold">{{ $stats['active_users'] }}</h3>
+                </div>
+                <div class="text-3xl opacity-75">
+                    <i class="fas fa-user-check"></i>
                 </div>
             </div>
         </div>
-        <div class="col-xl-2 col-lg-4 col-md-6 mb-4">
-            <div class="card stats-card-3 text-white border-0">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="card-title mb-0">Inactive</h6>
-                            <h3 class="mb-0">{{ $stats['inactive_users'] }}</h3>
-                        </div>
-                        <div class="fs-2 opacity-75">
-                            <i class="fas fa-user-times"></i>
-                        </div>
-                    </div>
+        <!-- Inactive Users Card -->
+        <div class="bg-gradient-to-br from-blue-400 to-cyan-400 rounded-xl p-6 text-white shadow-lg">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h6 class="text-sm font-medium opacity-90 mb-1">Inactive</h6>
+                    <h3 class="text-2xl font-bold">{{ $stats['inactive_users'] }}</h3>
+                </div>
+                <div class="text-3xl opacity-75">
+                    <i class="fas fa-user-times"></i>
                 </div>
             </div>
         </div>
-        <div class="col-xl-2 col-lg-4 col-md-6 mb-4">
-            <div class="card stats-card-4 text-white border-0">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="card-title mb-0">Suspended</h6>
-                            <h3 class="mb-0">{{ $stats['suspended_users'] }}</h3>
-                        </div>
-                        <div class="fs-2 opacity-75">
-                            <i class="fas fa-user-slash"></i>
-                        </div>
-                    </div>
+        
+        <!-- Suspended Users Card -->
+        <div class="bg-gradient-to-br from-emerald-400 to-teal-400 rounded-xl p-6 text-white shadow-lg">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h6 class="text-sm font-medium opacity-90 mb-1">Suspended</h6>
+                    <h3 class="text-2xl font-bold">{{ $stats['suspended_users'] }}</h3>
+                </div>
+                <div class="text-3xl opacity-75">
+                    <i class="fas fa-user-slash"></i>
                 </div>
             </div>
         </div>
-        <div class="col-xl-2 col-lg-4 col-md-6 mb-4">
-            <div class="card stats-card-5 text-white border-0">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="card-title mb-0">Pending</h6>
-                            <h3 class="mb-0">{{ $stats['pending_users'] }}</h3>
-                        </div>
-                        <div class="fs-2 opacity-75">
-                            <i class="fas fa-user-clock"></i>
-                        </div>
-                    </div>
+        
+        <!-- Pending Users Card -->
+        <div class="bg-gradient-to-br from-pink-400 to-yellow-400 rounded-xl p-6 text-white shadow-lg">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h6 class="text-sm font-medium opacity-90 mb-1">Pending</h6>
+                    <h3 class="text-2xl font-bold">{{ $stats['pending_users'] }}</h3>
+                </div>
+                <div class="text-3xl opacity-75">
+                    <i class="fas fa-user-clock"></i>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Filters and Search -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <div class="row g-3">
-                <div class="col-md-4">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-search"></i></span>
-                        <input type="text" class="form-control search-input" id="searchInput" placeholder="Search users..." value="{{ request('search') }}">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                <div class="lg:col-span-2">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                        <input type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200" id="searchInput" placeholder="Search users..." value="{{ request('search') }}">
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <select class="form-select" id="statusFilter">
+                <div>
+                    <select class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200" id="statusFilter">
                         <option value="">All Status</option>
                         <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
                         <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
@@ -173,38 +142,38 @@
                         <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
                     </select>
                 </div>
-                <div class="col-md-2">
-                    <select class="form-select" id="roleFilter">
+                <div>
+                    <select class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200" id="roleFilter">
                         <option value="">All Roles</option>
                         @foreach($roles as $role)
                             <option value="{{ $role->name }}" {{ request('role') == $role->name ? 'selected' : '' }}>{{ $role->display_name }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-2">
-                    <select class="form-select" id="partnerFilter">
+                <div>
+                    <select class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200" id="partnerFilter">
                         <option value="">All Partners</option>
                         @foreach($partners as $partner)
                             <option value="{{ $partner->id }}" {{ request('partner') == $partner->id ? 'selected' : '' }}>{{ $partner->name }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-2">
-                    <button type="button" class="btn btn-outline-secondary w-100" onclick="clearFilters()">
-                        <i class="fas fa-times me-2"></i>Clear
-                    </button>
-                </div>
+            </div>
+            <div class="mt-4 flex justify-end">
+                <button type="button" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200" onclick="clearFilters()">
+                    <i class="fas fa-times mr-2"></i>Clear
+                </button>
             </div>
         </div>
     </div>
 
     <!-- Users Table -->
-    <div class="card">
-        <div class="card-header bg-white py-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Users</h5>
-                <div class="d-flex gap-2">
-                    <select class="form-select form-select-sm" id="sortSelect" style="width: auto;">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <h5 class="text-lg font-semibold text-gray-900 dark:text-white">Users</h5>
+                <div class="flex gap-2">
+                    <select class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 text-sm" id="sortSelect">
                         <option value="created_at-desc" {{ request('sort_by', 'created_at') == 'created_at' && request('sort_order', 'desc') == 'desc' ? 'selected' : '' }}>Newest First</option>
                         <option value="created_at-asc" {{ request('sort_by', 'created_at') == 'created_at' && request('sort_order', 'desc') == 'asc' ? 'selected' : '' }}>Oldest First</option>
                         <option value="name-asc" {{ request('sort_by') == 'name' && request('sort_order') == 'asc' ? 'selected' : '' }}>Name A-Z</option>
@@ -213,93 +182,94 @@
                 </div>
             </div>
         </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th class="px-4 py-3">
-                                <input type="checkbox" class="form-check-input" id="selectAll">
-                            </th>
-                            <th class="px-4 py-3">User</th>
-                            <th class="px-4 py-3">Roles</th>
-                            <th class="px-4 py-3">Partner</th>
-                            <th class="px-4 py-3">Status</th>
-                            <th class="px-4 py-3">Created</th>
-                            <th class="px-4 py-3 text-end">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="usersTableBody">
-                        @foreach($users as $user)
-                            <tr>
-                                <td class="px-4 py-3">
-                                    <input type="checkbox" class="form-check-input user-checkbox" value="{{ $user->id }}">
-                                </td>
-                                <td class="px-4 py-3">
-                                    <div class="d-flex align-items-center">
-                                        <div class="avatar me-3">
-                                            @if($user->avatar)
-                                                <img src="{{ $user->avatar }}" alt="{{ $user->name }}" class="rounded-circle" width="40" height="40">
-                                            @else
-                                                <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center text-white" width="40" height="40">
-                                                    {{ strtoupper(substr($user->name, 0, 1)) }}
-                                                </div>
-                                            @endif
-                                        </div>
-                                        <div>
-                                            <div class="fw-semibold">{{ $user->name }}</div>
-                                            <div class="text-muted small">{{ $user->email }}</div>
-                                            @if($user->phone)
-                                                <div class="text-muted small">{{ $user->phone }}</div>
-                                            @endif
-                                        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead class="bg-gray-50 dark:bg-gray-700">
+                    <tr>
+                        <th class="px-6 py-3 text-left">
+                            <input type="checkbox" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" id="selectAll">
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">User</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Roles</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Partner</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Created</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                    @foreach($users as $user)
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <input type="checkbox" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 user-checkbox" value="{{ $user->id }}">
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="flex-shrink-0 h-10 w-10 mr-3">
+                                        @if($user->avatar)
+                                            <img src="{{ $user->avatar }}" alt="{{ $user->name }}" class="h-10 w-10 rounded-full object-cover">
+                                        @else
+                                            <div class="h-10 w-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold">
+                                                {{ strtoupper(substr($user->name, 0, 1)) }}
+                                            </div>
+                                        @endif
                                     </div>
-                                </td>
-                                <td class="px-4 py-3">
+                                    <div>
+                                        <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $user->name }}</div>
+                                        <div class="text-sm text-gray-500 dark:text-gray-400">{{ $user->email }}</div>
+                                        @if($user->phone)
+                                            <div class="text-sm text-gray-500 dark:text-gray-400">{{ $user->phone }}</div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex flex-wrap gap-1">
                                     @foreach($user->roles as $role)
-                                        <span class="badge bg-secondary me-1">{{ $role->display_name }}</span>
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">{{ $role->display_name }}</span>
                                     @endforeach
-                                </td>
-                                <td class="px-4 py-3">
-                                    {{ $user->partner?->name ?? 'N/A' }}
-                                </td>
-                                <td class="px-4 py-3">
-                                    @php
-                                        $statusClass = match($user->status) {
-                                            'active' => 'bg-success',
-                                            'inactive' => 'bg-secondary',
-                                            'suspended' => 'bg-danger',
-                                            'pending' => 'bg-warning',
-                                            default => 'bg-secondary'
-                                        };
-                                        $statusIcon = match($user->status) {
-                                            'active' => 'fa-check-circle',
-                                            'inactive' => 'fa-minus-circle',
-                                            'suspended' => 'fa-times-circle',
-                                            'pending' => 'fa-clock',
-                                            default => 'fa-question-circle'
-                                        };
-                                    @endphp
-                                    <span class="badge {{ $statusClass }} status-badge">
-                                        <i class="fas {{ $statusIcon }} me-1"></i>
-                                        {{ ucfirst($user->status) }}
-                                    </span>
-                                </td>
-                                <td class="px-4 py-3">
-                                    <div class="text-muted small">{{ $user->created_at->format('M d, Y') }}</div>
-                                    <div class="text-muted smaller">{{ $user->created_at->format('h:i A') }}</div>
-                                </td>
-                                <td class="px-4 py-3 text-end">
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="viewUser({{ $user->id }})">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="editUser({{ $user->id }})">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteUser({{ $user->id }})">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                {{ $user->partner?->name ?? 'N/A' }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @php
+                                    $statusClass = match($user->status) {
+                                        'active' => 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+                                        'inactive' => 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200',
+                                        'suspended' => 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+                                        'pending' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+                                        default => 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+                                    };
+                                    $statusIcon = match($user->status) {
+                                        'active' => 'fa-check-circle',
+                                        'inactive' => 'fa-minus-circle',
+                                        'suspended' => 'fa-times-circle',
+                                        'pending' => 'fa-clock',
+                                        default => 'fa-question-circle'
+                                    };
+                                @endphp
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $statusClass }} status-badge">
+                                    <i class="fas {{ $statusIcon }} mr-1"></i>
+                                    {{ ucfirst($user->status) }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900 dark:text-white">{{ $user->created_at->format('M d, Y') }}</div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400">{{ $user->created_at->format('h:i A') }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <div class="flex items-center justify-end space-x-2">
+                                    <button type="button" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300" onclick="viewUser({{ $user->id }})">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button type="button" class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" onclick="editUser({{ $user->id }})">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button type="button" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300" onclick="deleteUser({{ $user->id }})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                     </div>
                                 </td>
                             </tr>
@@ -308,9 +278,9 @@
                 </table>
             </div>
         </div>
-        <div class="card-footer bg-white py-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="text-muted">
+        <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="text-sm text-gray-700 dark:text-gray-300">
                     Showing {{ $users->firstItem() }} to {{ $users->lastItem() }} of {{ $users->total() }} users
                 </div>
                 <div>
@@ -321,24 +291,24 @@
     </div>
 
     <!-- Bulk Actions -->
-    <div class="card mt-4" id="bulkActionsCard" style="display: none;">
-        <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mt-6" id="bulkActionsCard" style="display: none;">
+        <div class="p-6">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <span class="text-muted">Selected <span id="selectedCount">0</span> users</span>
+                    <span class="text-sm text-gray-700 dark:text-gray-300">Selected <span id="selectedCount" class="font-semibold">0</span> users</span>
                 </div>
-                <div class="d-flex gap-2">
-                    <select class="form-select form-select-sm" id="bulkActionSelect" style="width: auto;">
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <select class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200 text-sm" id="bulkActionSelect">
                         <option value="">Choose Action</option>
                         <option value="activate">Activate</option>
                         <option value="deactivate">Deactivate</option>
                         <option value="suspend">Suspend</option>
                         <option value="delete">Delete</option>
                     </select>
-                    <button type="button" class="btn btn-sm btn-primary" onclick="performBulkAction()">
+                    <button type="button" class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200" onclick="performBulkAction()">
                         Apply
                     </button>
-                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="clearSelection()">
+                    <button type="button" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200" onclick="clearSelection()">
                         Clear
                     </button>
                 </div>
@@ -348,164 +318,187 @@
 </div>
 
 <!-- Add User Modal -->
-<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addUserModalLabel">Add New User</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<div class="fixed inset-0 z-50 overflow-y-auto hidden" id="addUserModal" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity modal-backdrop" data-bs-dismiss="modal"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+        <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
+            <div class="bg-white dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white" id="addUserModalLabel">Add New User</h3>
+                    <button type="button" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" data-bs-dismiss="modal">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
             </div>
-            <div class="modal-body">
+            <div class="px-6 py-4">
                 <form id="addUserForm">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="userName" class="form-label">Full Name *</label>
-                            <input type="text" class="form-control" id="userName" name="name" required>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="userName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Full Name *</label>
+                            <input type="text" class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200" id="userName" name="name" required>
                         </div>
-                        <div class="col-md-6">
-                            <label for="userEmail" class="form-label">Email Address *</label>
-                            <input type="email" class="form-control" id="userEmail" name="email" required>
+                        <div>
+                            <label for="userEmail" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email Address *</label>
+                            <input type="email" class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200" id="userEmail" name="email" required>
                         </div>
-                        <div class="col-md-6">
-                            <label for="userPhone" class="form-label">Phone Number</label>
-                            <input type="tel" class="form-control" id="userPhone" name="phone">
+                        <div>
+                            <label for="userPhone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Phone Number</label>
+                            <input type="tel" class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200" id="userPhone" name="phone">
                         </div>
-                        <div class="col-md-6">
-                            <label for="userPartner" class="form-label">Partner</label>
-                            <select class="form-select" id="userPartner" name="partner_id">
+                        <div>
+                            <label for="userPartner" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Partner</label>
+                            <select class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200" id="userPartner" name="partner_id">
                                 <option value="">Select Partner</option>
                                 @foreach($partners as $partner)
                                     <option value="{{ $partner->id }}">{{ $partner->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-6">
-                            <label for="userPassword" class="form-label">Password *</label>
-                            <input type="password" class="form-control" id="userPassword" name="password" required>
+                        <div>
+                            <label for="userPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password *</label>
+                            <input type="password" class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200" id="userPassword" name="password" required>
                         </div>
-                        <div class="col-md-6">
-                            <label for="userPasswordConfirm" class="form-label">Confirm Password *</label>
-                            <input type="password" class="form-control" id="userPasswordConfirm" name="password_confirmation" required>
+                        <div>
+                            <label for="userPasswordConfirm" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Confirm Password *</label>
+                            <input type="password" class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200" id="userPasswordConfirm" name="password_confirmation" required>
                         </div>
-                        <div class="col-md-6">
-                            <label for="userStatus" class="form-label">Status</label>
-                            <select class="form-select" id="userStatus" name="status">
+                        <div>
+                            <label for="userStatus" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
+                            <select class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200" id="userStatus" name="status">
                                 <option value="active">Active</option>
                                 <option value="inactive">Inactive</option>
                                 <option value="pending">Pending</option>
                             </select>
                         </div>
-                        <div class="col-md-6">
-                            <label for="userRoles" class="form-label">Roles *</label>
-                            <select class="form-select" id="userRoles" name="role_ids[]" multiple required>
+                        <div>
+                            <label for="userRoles" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Roles *</label>
+                            <select class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200" id="userRoles" name="role_ids[]" multiple required>
                                 @foreach($roles as $role)
                                     <option value="{{ $role->id }}">{{ $role->display_name }}</option>
                                 @endforeach
-                            </select>
-                            <div class="form-text">Hold Ctrl/Cmd to select multiple roles</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Hold Ctrl/Cmd to select multiple roles</div>
                         </div>
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="addUser()">
-                    <i class="fas fa-plus me-2"></i>Add User
-                </button>
+            <div class="bg-gray-50 dark:bg-gray-700 px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex justify-end space-x-3">
+                    <button type="button" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200" onclick="addUser()">
+                        <i class="fas fa-plus mr-2"></i>Add User
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <!-- Edit User Modal -->
-<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<div class="fixed inset-0 z-50 overflow-y-auto hidden" id="editUserModal" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity modal-backdrop" data-bs-dismiss="modal"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+        <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
+            <div class="bg-white dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white" id="editUserModalLabel">Edit User</h3>
+                    <button type="button" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" data-bs-dismiss="modal">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
             </div>
-            <div class="modal-body">
+            <div class="px-6 py-4">
                 <form id="editUserForm">
                     <input type="hidden" id="editUserId" name="user_id">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="editUserName" class="form-label">Full Name *</label>
-                            <input type="text" class="form-control" id="editUserName" name="name" required>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="editUserName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Full Name *</label>
+                            <input type="text" class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200" id="editUserName" name="name" required>
                         </div>
-                        <div class="col-md-6">
-                            <label for="editUserEmail" class="form-label">Email Address *</label>
-                            <input type="email" class="form-control" id="editUserEmail" name="email" required>
+                        <div>
+                            <label for="editUserEmail" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email Address *</label>
+                            <input type="email" class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200" id="editUserEmail" name="email" required>
                         </div>
-                        <div class="col-md-6">
-                            <label for="editUserPhone" class="form-label">Phone Number</label>
-                            <input type="tel" class="form-control" id="editUserPhone" name="phone">
+                        <div>
+                            <label for="editUserPhone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Phone Number</label>
+                            <input type="tel" class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200" id="editUserPhone" name="phone">
                         </div>
-                        <div class="col-md-6">
-                            <label for="editUserPartner" class="form-label">Partner</label>
-                            <select class="form-select" id="editUserPartner" name="partner_id">
+                        <div>
+                            <label for="editUserPartner" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Partner</label>
+                            <select class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200" id="editUserPartner" name="partner_id">
                                 <option value="">Select Partner</option>
                                 @foreach($partners as $partner)
                                     <option value="{{ $partner->id }}">{{ $partner->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-6">
-                            <label for="editUserPassword" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="editUserPassword" name="password">
-                            <div class="form-text">Leave blank to keep current password</div>
+                        <div>
+                            <label for="editUserPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password</label>
+                            <input type="password" class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200" id="editUserPassword" name="password">
+                            <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Leave blank to keep current password</div>
                         </div>
-                        <div class="col-md-6">
-                            <label for="editUserPasswordConfirm" class="form-label">Confirm Password</label>
-                            <input type="password" class="form-control" id="editUserPasswordConfirm" name="password_confirmation">
+                        <div>
+                            <label for="editUserPasswordConfirm" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Confirm Password</label>
+                            <input type="password" class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200" id="editUserPasswordConfirm" name="password_confirmation">
                         </div>
-                        <div class="col-md-6">
-                            <label for="editUserStatus" class="form-label">Status</label>
-                            <select class="form-select" id="editUserStatus" name="status">
+                        <div>
+                            <label for="editUserStatus" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
+                            <select class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200" id="editUserStatus" name="status">
                                 <option value="active">Active</option>
                                 <option value="inactive">Inactive</option>
                                 <option value="suspended">Suspended</option>
                                 <option value="pending">Pending</option>
                             </select>
                         </div>
-                        <div class="col-md-6">
-                            <label for="editUserRoles" class="form-label">Roles *</label>
-                            <select class="form-select" id="editUserRoles" name="role_ids[]" multiple required>
+                        <div>
+                            <label for="editUserRoles" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Roles *</label>
+                            <select class="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200" id="editUserRoles" name="role_ids[]" multiple required>
                                 @foreach($roles as $role)
                                     <option value="{{ $role->id }}">{{ $role->display_name }}</option>
                                 @endforeach
                             </select>
-                            <div class="form-text">Hold Ctrl/Cmd to select multiple roles</div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Hold Ctrl/Cmd to select multiple roles</div>
                         </div>
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="updateUser()">
-                    <i class="fas fa-save me-2"></i>Update User
-                </button>
+            <div class="bg-gray-50 dark:bg-gray-700 px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex justify-end space-x-3">
+                    <button type="button" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200" onclick="updateUser()">
+                        <i class="fas fa-save mr-2"></i>Update User
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <!-- View User Modal -->
-<div class="modal fade" id="viewUserModal" tabindex="-1" aria-labelledby="viewUserModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="viewUserModalLabel">User Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<div class="fixed inset-0 z-50 overflow-y-auto hidden" id="viewUserModal" aria-labelledby="viewUserModalLabel" aria-hidden="true">
+    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity modal-backdrop" data-bs-dismiss="modal"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+        <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-6xl sm:w-full">
+            <div class="bg-white dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white" id="viewUserModalLabel">User Details</h3>
+                    <button type="button" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" data-bs-dismiss="modal">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
             </div>
-            <div class="modal-body" id="viewUserContent">
+            <div class="px-6 py-4" id="viewUserContent">
                 <!-- Content will be loaded dynamically -->
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="editUserFromView()">
-                    <i class="fas fa-edit me-2"></i>Edit User
-                </button>
+            <div class="bg-gray-50 dark:bg-gray-700 px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex justify-end space-x-3">
+                    <button type="button" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200" onclick="editUserFromView()">
+                        <i class="fas fa-edit mr-2"></i>Edit User
+                    </button>
+                </div>
             </div>
         </div>
     </div>
