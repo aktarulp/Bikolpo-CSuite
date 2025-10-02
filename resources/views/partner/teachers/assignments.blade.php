@@ -184,23 +184,45 @@
                         </div>
                         <div class="p-6">
                             @if($students->count() > 0)
+                                {{-- Debug: Show student data --}}
+                                @php
+                                    $debugStudents = $students->take(3); // Show first 3 students for debugging
+                                @endphp
+                                <div class="mb-4 p-2 bg-gray-100 dark:bg-gray-800 rounded text-xs">
+                                    <strong>Debug Info:</strong>
+                                    Total Students: {{ $students->count() }} |
+                                    Students with course_id: {{ $students->where('course_id', '!=', null)->count() }} |
+                                    Teacher courses: {{ $teacher->courses->count() }}
+                                </div>
+
                                 <div id="students-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-h-64 overflow-y-auto">
                                     @foreach($students as $student)
-                                        <label class="student-item flex items-center p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                                        @php
+                                            $shouldShow = $student->course_id && $teacher->courses->contains($student->course_id);
+                                            $debugInfo = "Name: {$student->full_name}, CourseID: {$student->course_id}, TeacherCourses: " . $teacher->courses->pluck('id')->implode(',');
+                                        @endphp
+                                        <label class="student-item flex items-center p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer {{ $shouldShow ? '' : 'opacity-50' }}"
                                                data-batch="{{ $student->batch_id ?? '' }}"
                                                data-course-id="{{ $student->course_id ?? '' }}"
-                                               style="display: {{ $teacher->courses->contains($student->course_id) ? 'flex' : 'none' }};">
+                                               style="display: {{ $shouldShow ? 'flex' : 'none' }};"
+                                               title="{{ $debugInfo }}">
                                             <input type="checkbox" name="students[]" value="{{ $student->id }}" 
                                                    {{ $teacher->students->contains($student->id) ? 'checked' : '' }}
                                                    class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500">
                                             <div class="ml-3 flex-1">
-                                                <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $student->name }}</p>
-                                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ $student->student_id }}</p>
-                                                @if($student->batch)
-                                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 mt-1">
-                                                        {{ $student->batch->name }}
-                                                    </span>
-                                                @endif
+                                                <p class="text-sm font-medium text-gray-900 dark:text-white">
+                                                    {{ $student->full_name }}
+                                                </p>
+                                                <div class="flex items-center justify-between">
+                                                    <p class="text-xs text-gray-500 dark:text-gray-400 px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-md font-mono">
+                                                        {{ $student->student_id }}
+                                                    </p>
+                                                    @if($student->batch)
+                                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                                                            {{ $student->batch->name }}
+                                                        </span>
+                                                    @endif
+                                                </div>
                                             </div>
                                         </label>
                                     @endforeach
@@ -397,9 +419,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Initialize subjects visibility on page load
-    // Since no courses are selected initially, hide all subjects
+    // Initialize on page load
     updateSubjectsVisibility();
+
+    // Also initialize students visibility
+    const initialCourseCheckboxes = document.querySelectorAll('input[name="courses[]"]:checked');
+    if (initialCourseCheckboxes.length > 0) {
+        // Trigger course change event to update students
+        const courseChangeEvent = new Event('change');
+        initialCourseCheckboxes[0].dispatchEvent(courseChangeEvent);
+    }
 });
 </script>
 @endsection
