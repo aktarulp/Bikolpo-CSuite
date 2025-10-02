@@ -82,58 +82,6 @@
             </div>
         </div>
 
-        <!-- Search and Filters -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6 mb-6">
-            <form method="GET" action="{{ route('partner.teachers.index') }}" class="space-y-4">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <!-- Search -->
-                    <div class="sm:col-span-2">
-                        <label for="search" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Search Teachers</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i class="fas fa-search text-gray-400"></i>
-                            </div>
-                            <input type="text" name="search" id="search" value="{{ request('search') }}"
-                                   class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                                   placeholder="Search by name, ID, mobile, email...">
-                        </div>
-                    </div>
-
-                    <!-- Status Filter -->
-                    <div>
-                        <label for="status" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
-                        <select name="status" id="status" class="block w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
-                            <option value="">All Status</option>
-                            <option value="Active" {{ request('status') == 'Active' ? 'selected' : '' }}>Active</option>
-                            <option value="Inactive" {{ request('status') == 'Inactive' ? 'selected' : '' }}>Inactive</option>
-                            <option value="On Leave" {{ request('status') == 'On Leave' ? 'selected' : '' }}>On Leave</option>
-                        </select>
-                    </div>
-
-                    <!-- Department Filter -->
-                    <div>
-                        <label for="department" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Department</label>
-                        <select name="department" id="department" class="block w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
-                            <option value="">All Departments</option>
-                            @foreach($departments as $dept)
-                                <option value="{{ $dept }}" {{ request('department') == $dept ? 'selected' : '' }}>{{ $dept }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                <div class="flex flex-col sm:flex-row gap-3">
-                    <button type="submit" class="inline-flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200">
-                        <i class="fas fa-search mr-2"></i>
-                        Search
-                    </button>
-                    <a href="{{ route('partner.teachers.index') }}" class="inline-flex items-center justify-center px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-medium rounded-lg transition-colors duration-200">
-                        <i class="fas fa-times mr-2"></i>
-                        Clear
-                    </a>
-                </div>
-            </form>
-        </div>
 
         <!-- Teachers Grid -->
         @if($teachers->count() > 0)
@@ -171,20 +119,16 @@
                             </div>
 
                             <div class="space-y-2 mb-4">
-                                <div class="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                                    <i class="fas fa-phone w-4 text-center mr-2"></i>
-                                    <span>{{ $teacher->mobile }}</span>
-                                </div>
-                                @if($teacher->email)
-                                    <div class="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                                        <i class="fas fa-envelope w-4 text-center mr-2"></i>
-                                        <span class="truncate">{{ $teacher->email }}</span>
-                                    </div>
-                                @endif
                                 @if($teacher->department)
                                     <div class="flex items-center text-sm text-gray-600 dark:text-gray-400">
                                         <i class="fas fa-building w-4 text-center mr-2"></i>
                                         <span>{{ $teacher->department }}</span>
+                                    </div>
+                                @endif
+                                @if($teacher->subject_specialization)
+                                    <div class="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                                        <i class="fas fa-graduation-cap w-4 text-center mr-2"></i>
+                                        <span class="truncate">{{ $teacher->subject_specialization }}</span>
                                     </div>
                                 @endif
                             </div>
