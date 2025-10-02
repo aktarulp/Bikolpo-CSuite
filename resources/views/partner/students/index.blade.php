@@ -4,24 +4,24 @@
 
 @section('content')
 <div class="space-y-4 md:space-y-6">
-    <!-- Page Header - Mobile First -->
-    <div class="bg-gradient-to-br from-purple-600 via-pink-500 to-orange-500 rounded-2xl shadow-2xl p-4 md:p-6 lg:p-8">
+    <!-- Page Header - Professional Design -->
+    <div class="bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 rounded-2xl shadow-2xl p-4 md:p-6 lg:p-8">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div class="flex-1">
                 <div class="flex items-center space-x-3 mb-2">
-                    <div class="bg-white/20 backdrop-blur-sm p-2 md:p-3 rounded-xl">
+                    <div class="bg-white/10 backdrop-blur-sm p-2 md:p-3 rounded-xl">
                         <svg class="w-6 h-6 md:w-8 md:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
                         </svg>
                     </div>
                     <div>
                         <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold text-white drop-shadow-lg">Students</h1>
-                        <p class="text-white/90 text-sm md:text-base">Manage your student community</p>
+                        <p class="text-slate-200 text-sm md:text-base">Manage your student community</p>
                     </div>
                 </div>
             </div>
             <a href="{{ route('partner.students.create') }}" 
-               class="w-full sm:w-auto bg-white hover:bg-gray-100 text-purple-600 font-semibold px-4 md:px-6 py-2.5 md:py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-2 group">
+               class="w-full sm:w-auto bg-white hover:bg-slate-50 text-slate-900 font-semibold px-4 md:px-6 py-2.5 md:py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-2 group">
                 <svg class="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                 </svg>
@@ -35,14 +35,14 @@
         <div class="p-4 md:p-6 border-b border-gray-200 dark:border-gray-700">
             <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center space-x-2">
-                    <div class="bg-gradient-to-r from-indigo-500 to-purple-500 p-2 rounded-lg">
+                    <div class="bg-gradient-to-r from-slate-600 to-slate-700 p-2 rounded-lg">
                         <svg class="w-4 h-4 md:w-5 md:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
                         </svg>
                     </div>
                     <h2 class="text-base md:text-lg font-bold text-gray-900 dark:text-white">Filters</h2>
                 </div>
-                <button type="button" id="toggle-filters" class="text-sm font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 flex items-center space-x-1 transition-colors">
+                <button type="button" id="toggle-filters" class="text-sm font-medium text-slate-600 hover:text-slate-700 dark:text-slate-400 flex items-center space-x-1 transition-colors">
                     <span id="toggle-text">Hide</span>
                     <svg id="toggle-icon" class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
@@ -141,7 +141,7 @@
                     
                     <div class="flex items-center space-x-3 pt-2">
                         <a href="{{ route('partner.students.index') }}" 
-                           class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white px-4 py-2 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center space-x-2">
+                           class="bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 text-white px-4 py-2 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg flex items-center space-x-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
@@ -155,10 +155,10 @@
 
     <!-- Students List - Mobile Optimized -->
     <div class="bg-white dark:bg-gray-800 rounded-xl md:rounded-2xl shadow-lg border-2 border-gray-100 dark:border-gray-700 overflow-hidden">
-        <div class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 p-4 md:p-6">
+        <div class="bg-gradient-to-r from-slate-800 via-slate-700 to-slate-600 p-4 md:p-6">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-3">
-                    <div class="bg-white/20 backdrop-blur-sm p-2 rounded-lg">
+                    <div class="bg-white/10 backdrop-blur-sm p-2 rounded-lg">
                         <svg class="w-5 h-5 md:w-6 md:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                         </svg>
@@ -167,7 +167,7 @@
                         <h2 class="text-lg md:text-xl font-bold text-white">
                             Student List
                         </h2>
-                        <p class="text-xs md:text-sm text-white/90">
+                        <p class="text-xs md:text-sm text-slate-200">
                             @if(request()->anyFilled(['search', 'status', 'course_id', 'batch_id', 'gender']))
                                 Filtered: {{ $students->total() }} students
                             @else

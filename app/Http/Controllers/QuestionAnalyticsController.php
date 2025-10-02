@@ -12,15 +12,28 @@ class QuestionAnalyticsController extends Controller
 {
     /**
      * Display question analytics dashboard
+     *
+     * SECURITY: All analytics are filtered by current partner to ensure complete data isolation
      */
     public function index()
     {
         try {
-            $totalQuestions = Question::count();
-            $totalAttempts = QuestionStat::count();
-            $totalCorrect = QuestionStat::correct()->count();
-            $totalIncorrect = QuestionStat::incorrect()->count();
-            $totalSkipped = QuestionStat::skipped()->count();
+            $partnerId = $this->getPartnerId();
+
+            // Filter all analytics by current partner
+            $totalQuestions = Question::where('partner_id', $partnerId)->count();
+            $totalAttempts = QuestionStat::whereHas('question', function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId);
+            })->count();
+            $totalCorrect = QuestionStat::whereHas('question', function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId);
+            })->correct()->count();
+            $totalIncorrect = QuestionStat::whereHas('question', function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId);
+            })->incorrect()->count();
+            $totalSkipped = QuestionStat::whereHas('question', function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId);
+            })->skipped()->count();
             
             $overallAccuracy = $totalAttempts > 0 ? round(($totalCorrect / $totalAttempts) * 100, 2) : 0;
             
@@ -31,9 +44,14 @@ class QuestionAnalyticsController extends Controller
                 ->selectRaw('ROUND((SUM(CASE WHEN is_correct = 1 THEN 1 ELSE 0 END) / COUNT(*)) * 100, 2) as accuracy_percentage')
                 ->groupBy('question_id')
                 ->having('total_attempts', '>=', 1)
+                ->whereHas('question', function($query) use ($partnerId) {
+                    $query->where('partner_id', $partnerId);
+                })
+                ->with(['question' => function($query) use ($partnerId) {
+                    $query->where('partner_id', $partnerId);
+                }])
                 ->orderBy('accuracy_percentage', 'desc')
                 ->limit(10)
-                ->with('question')
                 ->get();
             
             // Get worst performing questions (with at least 1 attempt)
@@ -43,15 +61,20 @@ class QuestionAnalyticsController extends Controller
                 ->selectRaw('ROUND((SUM(CASE WHEN is_correct = 1 THEN 1 ELSE 0 END) / COUNT(*)) * 100, 2) as accuracy_percentage')
                 ->groupBy('question_id')
                 ->having('total_attempts', '>=', 1)
+                ->whereHas('question', function($query) use ($partnerId) {
+                    $query->where('partner_id', $partnerId);
+                })
+                ->with(['question' => function($query) use ($partnerId) {
+                    $query->where('partner_id', $partnerId);
+                }])
                 ->orderBy('accuracy_percentage', 'asc')
                 ->limit(10)
-                ->with('question')
                 ->get();
 
             // Get virtual difficulty statistics
             $questionsByDifficulty = $this->getVirtualDifficultyDistribution();
             $difficultyStats = $this->getVirtualDifficultyStats();
-            $questionsWithSufficientData = Question::withEnoughAttempts()->count();
+            $questionsWithSufficientData = Question::where('partner_id', $partnerId)->withEnoughAttempts()->count();
             $questionsNeedingRecalculation = 0; // Not needed with virtual calculation
         
             return view('analytics.questions.index', compact(
@@ -79,8 +102,11 @@ class QuestionAnalyticsController extends Controller
      */
     private function getVirtualDifficultyDistribution()
     {
-        // Get questions with their statistics
-        $questions = Question::withCount('questionStats')
+        $partnerId = $this->getPartnerId();
+
+        // Get questions with their statistics for current partner only
+        $questions = Question::where('partner_id', $partnerId)
+            ->withCount('questionStats')
             ->having('question_stats_count', '>', 0)
             ->get();
 
@@ -127,7 +153,10 @@ class QuestionAnalyticsController extends Controller
      */
     private function getVirtualDifficultyStats()
     {
-        $questionsWithStats = Question::withCount('questionStats')
+        $partnerId = $this->getPartnerId();
+
+        $questionsWithStats = Question::where('partner_id', $partnerId)
+            ->withCount('questionStats')
             ->having('question_stats_count', '>=', 5)
             ->get();
 
@@ -170,10 +199,20 @@ class QuestionAnalyticsController extends Controller
      */
     public function show(Question $question)
     {
+        $partnerId = $this->getPartnerId();
+
+        // Verify question belongs to current partner
+        if ($question->partner_id !== $partnerId) {
+            abort(403, 'Unauthorized access to question analytics.');
+        }
+
         $analytics = QuestionStat::getQuestionAnalytics($question->id);
         
         // Get recent attempts
         $recentAttempts = QuestionStat::forQuestion($question->id)
+            ->whereHas('question', function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId);
+            })
             ->with(['student', 'exam'])
             ->latest()
             ->limit(20)
@@ -186,6 +225,9 @@ class QuestionAnalyticsController extends Controller
             ->selectRaw('SUM(CASE WHEN is_correct = 1 THEN 1 ELSE 0 END) as correct_attempts')
             ->selectRaw('ROUND((SUM(CASE WHEN is_correct = 1 THEN 1 ELSE 0 END) / COUNT(*)) * 100, 2) as accuracy_percentage')
             ->groupBy('exam_id')
+            ->whereHas('exam', function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId);
+            })
             ->with('exam')
             ->orderBy('total_attempts', 'desc')
             ->get();
@@ -195,6 +237,9 @@ class QuestionAnalyticsController extends Controller
         if ($question->question_type === 'mcq') {
             $answerDistribution = QuestionStat::forQuestion($question->id)
                 ->where('is_answered', true)
+                ->whereHas('question', function($query) use ($partnerId) {
+                    $query->where('partner_id', $partnerId);
+                })
                 ->select('student_answer')
                 ->selectRaw('COUNT(*) as count')
                 ->groupBy('student_answer')
@@ -216,6 +261,13 @@ class QuestionAnalyticsController extends Controller
      */
     public function examAnalytics(Exam $exam)
     {
+        $partnerId = $this->getPartnerId();
+
+        // Verify exam belongs to current partner
+        if ($exam->partner_id !== $partnerId) {
+            abort(403, 'Unauthorized access to exam analytics.');
+        }
+
         $analytics = QuestionStat::getExamQuestionAnalytics($exam->id);
         
         // Get question-wise performance
@@ -226,6 +278,9 @@ class QuestionAnalyticsController extends Controller
             ->selectRaw('SUM(CASE WHEN is_skipped = 1 THEN 1 ELSE 0 END) as skipped_attempts')
             ->selectRaw('ROUND((SUM(CASE WHEN is_correct = 1 THEN 1 ELSE 0 END) / COUNT(*)) * 100, 2) as accuracy_percentage')
             ->groupBy('question_id')
+            ->whereHas('question', function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId);
+            })
             ->with('question')
             ->orderBy('question_id')
             ->get();
@@ -238,6 +293,9 @@ class QuestionAnalyticsController extends Controller
             ->selectRaw('SUM(CASE WHEN is_skipped = 1 THEN 1 ELSE 0 END) as skipped_questions')
             ->selectRaw('ROUND((SUM(CASE WHEN is_correct = 1 THEN 1 ELSE 0 END) / COUNT(*)) * 100, 2) as accuracy_percentage')
             ->groupBy('student_id')
+            ->whereHas('student', function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId);
+            })
             ->with('student')
             ->orderBy('accuracy_percentage', 'desc')
             ->get();
@@ -255,7 +313,16 @@ class QuestionAnalyticsController extends Controller
      */
     public function studentAnalytics($studentId)
     {
-        $student = \App\Models\Student::findOrFail($studentId);
+        $partnerId = $this->getPartnerId();
+
+        $student = \App\Models\Student::where('id', $studentId)
+            ->where('partner_id', $partnerId)
+            ->first();
+
+        if (!$student) {
+            abort(404, 'Student not found or access denied.');
+        }
+
         $analytics = QuestionStat::getStudentQuestionAnalytics($studentId);
         
         // Get comprehensive student analytics
@@ -272,6 +339,9 @@ class QuestionAnalyticsController extends Controller
         
         // Get recent performance
         $recentPerformance = QuestionStat::where('student_id', $studentId)
+            ->whereHas('question', function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId);
+            })
             ->with(['question', 'exam'])
             ->latest()
             ->limit(20)
@@ -279,6 +349,9 @@ class QuestionAnalyticsController extends Controller
         
         // Get detailed exam results with question breakdown
         $examResults = $student->examResults()
+            ->whereHas('exam', function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId);
+            })
             ->with(['exam', 'questionStats.question'])
             ->orderBy('completed_at', 'desc')
             ->get();
@@ -326,7 +399,12 @@ class QuestionAnalyticsController extends Controller
      */
     private function getPerformanceTrend($studentId)
     {
+        $partnerId = $this->getPartnerId();
+
         $trends = QuestionStat::where('student_id', $studentId)
+            ->whereHas('question', function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId);
+            })
             ->selectRaw('DATE(created_at) as date')
             ->selectRaw('COUNT(*) as total_questions')
             ->selectRaw('SUM(CASE WHEN is_correct = 1 THEN 1 ELSE 0 END) as correct_answers')
@@ -345,9 +423,16 @@ class QuestionAnalyticsController extends Controller
     public function getQuestionStats(Request $request)
     {
         $questionId = $request->input('question_id');
+        $partnerId = $this->getPartnerId();
         
         if (!$questionId) {
             return response()->json(['error' => 'Question ID is required'], 400);
+        }
+        
+        // Verify question belongs to current partner
+        $question = Question::where('id', $questionId)->where('partner_id', $partnerId)->first();
+        if (!$question) {
+            return response()->json(['error' => 'Question not found or access denied'], 404);
         }
         
         $analytics = QuestionStat::getQuestionAnalytics($questionId);
@@ -361,9 +446,16 @@ class QuestionAnalyticsController extends Controller
     public function getExamStats(Request $request)
     {
         $examId = $request->input('exam_id');
+        $partnerId = $this->getPartnerId();
         
         if (!$examId) {
             return response()->json(['error' => 'Exam ID is required'], 400);
+        }
+        
+        // Verify exam belongs to current partner
+        $exam = Exam::where('id', $examId)->where('partner_id', $partnerId)->first();
+        if (!$exam) {
+            return response()->json(['error' => 'Exam not found or access denied'], 404);
         }
         
         $analytics = QuestionStat::getExamQuestionAnalytics($examId);
@@ -376,9 +468,28 @@ class QuestionAnalyticsController extends Controller
      */
     public function getExamResultDetails($studentId, $examResultId)
     {
-        $student = \App\Models\Student::findOrFail($studentId);
-        $examResult = $student->examResults()->with(['exam', 'questionStats.question'])->findOrFail($examResultId);
-        
+        $partnerId = $this->getPartnerId();
+
+        $student = \App\Models\Student::where('id', $studentId)
+            ->where('partner_id', $partnerId)
+            ->first();
+
+        if (!$student) {
+            return response()->json(['error' => 'Student not found or access denied'], 404);
+        }
+
+        $examResult = $student->examResults()
+            ->where('id', $examResultId)
+            ->whereHas('exam', function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId);
+            })
+            ->with(['exam', 'questionStats.question'])
+            ->first();
+
+        if (!$examResult) {
+            return response()->json(['error' => 'Exam result not found or access denied'], 404);
+        }
+
         $detailedAnalytics = $examResult->getDetailedAnalyticsAttribute();
         
         return response()->json([
@@ -395,8 +506,18 @@ class QuestionAnalyticsController extends Controller
      */
     public function exportQuestionAnalytics(Question $question)
     {
+        $partnerId = $this->getPartnerId();
+
+        // Verify question belongs to current partner
+        if ($question->partner_id !== $partnerId) {
+            abort(403, 'Unauthorized access to question analytics.');
+        }
+
         $analytics = QuestionStat::getQuestionAnalytics($question->id);
         $attempts = QuestionStat::forQuestion($question->id)
+            ->whereHas('question', function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId);
+            })
             ->with(['student', 'exam'])
             ->get();
         

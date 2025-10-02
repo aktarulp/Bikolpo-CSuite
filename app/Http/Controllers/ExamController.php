@@ -1052,6 +1052,14 @@ class ExamController extends Controller
                             ->orWhere('start_date', '<=', now())
                             ->orWhere('end_date', '>=', now());
                       });
+            })
+            ->whereHas('subject', function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId)
+                      ->where('status', 'active');
+            })
+            ->whereHas('topic', function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId)
+                      ->where('status', 'active');
             });
 
         // If exam type is 'online', only load MCQ questions
