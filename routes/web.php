@@ -602,6 +602,7 @@ Route::middleware('auth')->group(function () {
         // User Management Routes
         Route::prefix('settings')->name('settings.')->group(function () {
             Route::get('user-management', [\App\Http\Controllers\UserManagementController::class, 'index'])->name('user-management');
+            Route::get('users', [\App\Http\Controllers\UserManagementController::class, 'index'])->name('users.index');
             Route::get('users/create', [\App\Http\Controllers\UserManagementController::class, 'create'])->name('users.create');
             Route::post('users', [\App\Http\Controllers\UserManagementController::class, 'store'])->name('users.store');
             Route::get('users/{user}', [\App\Http\Controllers\UserManagementController::class, 'show'])->name('users.show');
