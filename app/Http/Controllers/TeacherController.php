@@ -18,16 +18,31 @@ class TeacherController extends Controller
 {
     /**
      * Display a listing of teachers.
+     *
+     * SECURITY: All queries are filtered by partner_id to ensure complete data isolation
+     * between partners. Only teachers belonging to the current partner are accessible.
      */
     public function index(Request $request)
     {
         $partnerId = auth()->user()->partner_id;
         
-        $query = Teacher::with(['courses', 'subjects', 'students', 'batches'])
-                        ->forPartner($partnerId);
-
-        // Search functionality
-        if ($request->filled('search')) {
+        // Load teachers with relationships constrained to current partner
+        $teachers = Teacher::with([
+            'courses' => function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId);
+            },
+            'subjects' => function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId);
+            },
+            'students' => function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId);
+            },
+            'batches' => function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId);
+            }
+        ])
+        ->forPartner($partnerId)
+        ->when($request->filled('search'), function($query) use ($request) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
                 $q->where('full_name_en', 'like', "%{$search}%")
@@ -37,26 +52,17 @@ class TeacherController extends Controller
                   ->orWhere('email', 'like', "%{$search}%")
                   ->orWhere('designation', 'like', "%{$search}%");
             });
-        }
-
-        // Status filter
-        if ($request->filled('status')) {
+        })
+        ->when($request->filled('status'), function($query) use ($request) {
             $query->where('status', $request->status);
-        }
-
-        // Department filter
-        if ($request->filled('department')) {
+        })
+        ->when($request->filled('department'), function($query) use ($request) {
             $query->where('department', $request->department);
-        }
+        })
+        ->orderBy($request->get('sort_by', 'created_at'), $request->get('sort_order', 'desc'))
+        ->paginate(12);
 
-        // Sort
-        $sortBy = $request->get('sort_by', 'created_at');
-        $sortOrder = $request->get('sort_order', 'desc');
-        $query->orderBy($sortBy, $sortOrder);
-
-        $teachers = $query->paginate(12);
-
-        // Get filter options
+        // Get filter options - ensure only current partner's data
         $departments = Teacher::forPartner($partnerId)
                              ->whereNotNull('department')
                              ->distinct()

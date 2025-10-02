@@ -85,6 +85,8 @@
 
         <!-- Teachers Grid -->
         @if($teachers->count() > 0)
+            {{-- SECURITY: All teachers and their relationships are filtered by current partner --}}
+            {{-- Only teachers from partner_id = {{ auth()->user()->partner_id }} are shown --}}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 @foreach($teachers as $teacher)
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-shadow duration-300">
@@ -101,7 +103,7 @@
                             @endif
                             
                             <!-- Status Badge -->
-                            <div class="absolute top-3 right-3">
+                            <div class="absolute top-3 left-3">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $teacher->getStatusBadgeClass() }}">
                                     {{ $teacher->status }}
                                 </span>
@@ -150,12 +152,7 @@
                                 <a href="{{ route('partner.teachers.show', $teacher) }}" 
                                    class="flex-1 inline-flex items-center justify-center px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors duration-200">
                                     <i class="fas fa-eye mr-1"></i>
-                                    View
-                                </a>
-                                <a href="{{ route('partner.teachers.edit', $teacher) }}" 
-                                   class="flex-1 inline-flex items-center justify-center px-3 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors duration-200">
-                                    <i class="fas fa-edit mr-1"></i>
-                                    Edit
+                                    View Details
                                 </a>
                             </div>
                         </div>
