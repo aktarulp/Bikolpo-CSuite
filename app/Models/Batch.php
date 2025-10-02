@@ -16,7 +16,8 @@ class Batch extends Model
         'end_date',
         'status',
         'flag',
-        'partner_id'
+        'partner_id',
+        'created_by',
     ];
 
     protected $casts = [
@@ -26,9 +27,9 @@ class Batch extends Model
     ];
 
     // Relationships
-    public function partner()
+    public function creator()
     {
-        return $this->belongsTo(Partner::class);
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function students()

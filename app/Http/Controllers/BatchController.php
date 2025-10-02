@@ -49,6 +49,7 @@ class BatchController extends Controller
             'year' => $request->year,
             'status' => 'active', // Default to active
             'partner_id' => $this->getPartnerId(),
+            'created_by' => auth()->id(),
         ]);
 
         return redirect()->route('partner.batches.index')
@@ -102,11 +103,7 @@ class BatchController extends Controller
             'status' => 'required|in:active,inactive',
         ]);
 
-        $batch->update([
-            'name' => $request->name,
-            'year' => $request->year,
-            'status' => $request->status,
-        ]);
+        $batch->update($request->only(['name', 'year', 'status']));
 
         return redirect()->route('partner.batches.index')
             ->with('success', 'Batch updated successfully!');
