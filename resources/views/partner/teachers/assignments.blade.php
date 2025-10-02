@@ -130,8 +130,6 @@
                                 @php
                                     // Group subjects by course for better organization
                                     $subjectsByCourse = $subjects->groupBy('course_id');
-                                    // Don't filter by teacher's assigned courses - show all available subjects
-                                    // The JavaScript will handle filtering based on course selection
                                 @endphp
 
                                 @if($subjectsByCourse->count() > 0)
@@ -315,7 +313,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const courseId = section.dataset.courseId;
             const subjectsContainer = courseSubjectsContainers[index];
 
-            if (selectedCourseIds.length === 0 || selectedCourseIds.includes(courseId)) {
+            if (selectedCourseIds.length > 0 && selectedCourseIds.includes(courseId)) {
                 // Show this course section and its subjects
                 section.style.display = 'block';
                 if (subjectsContainer) {
@@ -341,6 +339,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (noSubjectsMessage) {
             if (visibleSubjectsCount === 0 && selectedCourseIds.length > 0) {
                 noSubjectsMessage.classList.remove('hidden');
+                noSubjectsMessage.textContent = 'No subjects available for the selected courses';
+            } else if (selectedCourseIds.length === 0) {
+                noSubjectsMessage.classList.remove('hidden');
+                noSubjectsMessage.textContent = 'Please select courses to see available subjects';
             } else {
                 noSubjectsMessage.classList.add('hidden');
             }
@@ -411,6 +413,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Initialize subjects visibility on page load
+    // Since no courses are selected initially, hide all subjects
     updateSubjectsVisibility();
 });
 </script>
