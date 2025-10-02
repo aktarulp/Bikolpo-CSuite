@@ -188,7 +188,8 @@
                                     @foreach($students as $student)
                                         <label class="student-item flex items-center p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
                                                data-batch="{{ $student->batch_id ?? '' }}"
-                                               data-course-id="{{ $student->course_id ?? '' }}">
+                                               data-course-id="{{ $student->course_id ?? '' }}"
+                                               style="display: {{ $teacher->courses->contains($student->course_id) ? 'flex' : 'none' }};">
                                             <input type="checkbox" name="students[]" value="{{ $student->id }}" 
                                                    {{ $teacher->students->contains($student->id) ? 'checked' : '' }}
                                                    class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500">
@@ -205,7 +206,7 @@
                                     @endforeach
                                 </div>
                                 <div id="no-students-message" class="hidden text-gray-500 dark:text-gray-400 text-center py-4">
-                                    No students found for the selected batch
+                                    No students found for the selected courses
                                 </div>
                             @else
                                 <p class="text-gray-500 dark:text-gray-400 text-center py-4">No students available</p>
@@ -309,8 +310,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
             studentItems.forEach(item => {
                 const itemBatchId = item.dataset.batch;
+                const itemCourseId = item.dataset.courseId;
 
-                if (selectedBatchId === '' || itemBatchId === selectedBatchId) {
+                // Only show students that are currently visible (from selected courses)
+                // and match the selected batch filter
+                if (item.style.display === 'flex' &&
+                    (selectedBatchId === '' || itemBatchId === selectedBatchId)) {
                     item.style.display = 'flex';
                     visibleCount++;
                 } else {
@@ -343,6 +348,18 @@ document.addEventListener('DOMContentLoaded', function() {
                         const subjectCheckbox = subjectItem.querySelector('input[type="checkbox"]');
                         if (subjectCheckbox) {
                             subjectCheckbox.checked = false;
+                        }
+                    }
+                });
+
+                // When unchecking a course, also uncheck all students for that course
+                const studentItems = studentsContainer.querySelectorAll('.student-item');
+                studentItems.forEach(studentItem => {
+                    const studentCourseId = studentItem.dataset.courseId;
+                    if (studentCourseId === courseId) {
+                        const studentCheckbox = studentItem.querySelector('input[type="checkbox"]');
+                        if (studentCheckbox) {
+                            studentCheckbox.checked = false;
                         }
                     }
                 });
