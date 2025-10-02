@@ -332,6 +332,22 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add event listeners to course checkboxes
     courseCheckboxes.forEach(checkbox => {
         checkbox.addEventListener('change', function() {
+            const courseId = this.value;
+            const isChecked = this.checked;
+
+            if (!isChecked) {
+                // When unchecking a course, uncheck all subjects for that course
+                subjectItems.forEach(subjectItem => {
+                    const subjectCourseId = subjectItem.dataset.course;
+                    if (subjectCourseId === courseId) {
+                        const subjectCheckbox = subjectItem.querySelector('input[type="checkbox"]');
+                        if (subjectCheckbox) {
+                            subjectCheckbox.checked = false;
+                        }
+                    }
+                });
+            }
+
             updateSubjectsVisibility();
 
             // Also update students visibility based on selected courses
