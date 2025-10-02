@@ -193,6 +193,168 @@
     </div>
 
 
+    <!-- User Management Section -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden fade-in mb-8">
+        <!-- Header -->
+        <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-750">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="flex-1 min-w-0">
+                    <h5 class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-1">User Management</h5>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Oversee all user accounts and their statuses</p>
+                </div>
+                <a href="{{ route('partner.settings.users.create') }}" class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent rounded-xl text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 transition-all duration-200 shadow-sm hover:shadow-md">
+                    <i class="fas fa-plus mr-2"></i>
+                    <span>Create User</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Users Content -->
+        <div class="p-4 sm:p-6">
+            @if($stats['users'] && $stats['users']->isNotEmpty())
+                <!-- Desktop Table -->
+                <div class="hidden lg:block overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Email</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Role</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                            @foreach($stats['users']->take(5) as $user)
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $user->name }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-500 dark:text-gray-400">{{ $user->email }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $user->status == 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                            {{ ucfirst($user->status) }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        {{ $user->roles->first()->display_name ?? 'N/A' }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Mobile Cards -->
+                <div class="lg:hidden space-y-4">
+                     @foreach($stats['users']->take(5) as $user)
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                            <div class="flex items-center justify-between mb-2">
+                                <h6 class="text-base font-semibold text-gray-900 dark:text-white">{{ $user->name }}</h6>
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $user->status == 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                    {{ ucfirst($user->status) }}
+                                </span>
+                            </div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 truncate">{{ $user->email }}</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Role: {{ $user->roles->first()->display_name ?? 'N/A' }}</p>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <!-- Empty State -->
+                <div class="text-center py-12 sm:py-16">
+                    <div class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 dark:bg-gray-700 rounded-full mb-4">
+                        <i class="fas fa-users text-gray-400 text-2xl sm:text-3xl"></i>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-medium text-gray-900 dark:text-white mb-2">No users found</h3>
+                    <p class="text-sm sm:text-base text-gray-500 dark:text-gray-400 mb-6 max-w-md mx-auto">Users you create will be displayed here.</p>
+                </div>
+            @endif
+        </div>
+    </div>
+
+    <!-- Roles Management Section -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden fade-in mb-8">
+        <!-- Header -->
+        <div class="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-750">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="flex-1 min-w-0">
+                    <h5 class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-1">Roles Management</h5>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Manage user roles and their permissions</p>
+                </div>
+                <a href="{{ route('partner.settings.roles.create') }}" class="inline-flex items-center justify-center px-4 py-2.5 border border-transparent rounded-xl text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800 transition-all duration-200 shadow-sm hover:shadow-md">
+                    <i class="fas fa-plus mr-2"></i>
+                    <span>Create Role</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Roles Content -->
+        <div class="p-4 sm:p-6">
+            @if($stats['roles'] && $stats['roles']->isNotEmpty())
+                <!-- Desktop Table -->
+                <div class="hidden lg:block overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Role</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Level</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Users</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                            @foreach($stats['roles']->take(5) as $role)
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $role->display_name }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        {!! $role->level_badge !!}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        {!! $role->status_badge !!}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="text-sm text-gray-600 dark:text-gray-400">{{ $role->users->count() }}</span>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Mobile Cards -->
+                <div class="lg:hidden space-y-4">
+                    @foreach($stats['roles']->take(5) as $role)
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
+                            <div class="flex items-start justify-between mb-3">
+                                <div class="flex-1 min-w-0">
+                                    <h6 class="text-base font-semibold text-gray-900 dark:text-white mb-1">{{ $role->display_name }}</h6>
+                                    <div class="flex items-center space-x-2">
+                                        {!! $role->level_badge !!}
+                                        {!! $role->status_badge !!}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">{{ $role->users->count() }} Users</div>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <!-- Empty State -->
+                <div class="text-center py-12 sm:py-16">
+                    <div class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 dark:bg-gray-700 rounded-full mb-4">
+                        <i class="fas fa-user-tag text-gray-400 text-2xl sm:text-3xl"></i>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-medium text-gray-900 dark:text-white mb-2">No roles found</h3>
+                    <p class="text-sm sm:text-base text-gray-500 dark:text-gray-400 mb-6 max-w-md mx-auto">Roles will be displayed here once they are created.</p>
+                </div>
+            @endif
+        </div>
+    </div>
+
     <!-- Recent Activity Section -->
     <div class="bg-gradient-to-br from-white via-gray-50/50 to-gray-100/30 border border-gray-200/50 rounded-2xl shadow-lg overflow-hidden backdrop-blur-sm transition-all duration-300 hover:shadow-xl hover:border-gray-200/80">
         <div class="p-6 sm:p-7 border-b border-gray-200/50 bg-gradient-to-r from-indigo-50 via-purple-50/50 to-pink-50/30 relative overflow-hidden">

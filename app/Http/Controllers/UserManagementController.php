@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
 use App\Models\EnhancedUser;
 use App\Models\EnhancedRole;
 use App\Models\EnhancedPermission;
@@ -16,6 +18,7 @@ use Inertia\Inertia;
 
 class UserManagementController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display the user management dashboard.
      */
@@ -63,6 +66,19 @@ class UserManagementController extends Controller
         ];
 
         return view('partner.settings.user-management', compact('users', 'roles', 'partners', 'stats'));
+    }
+
+    /**
+     * Show the form for creating a new user.
+     */
+    public function create()
+    {
+        // $this->authorize('create', EnhancedUser::class);
+
+        $roles = EnhancedRole::active()->orderBy('level')->get();
+        $partners = \App\Models\Partner::all();
+
+        return view('partner.settings.create-user', compact('roles', 'partners'));
     }
 
     /**

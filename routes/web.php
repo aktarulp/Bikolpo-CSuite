@@ -526,19 +526,25 @@ Route::middleware('auth')->group(function () {
                 // Debug: Log the partner data
                 \Log::info('Partner data for settings:', ['partner_id' => $partner->id, 'name' => $partner->name ?? 'No name']);
 
-                $roles = \App\Models\Role::all(); // Fetch all roles
+                $roles = \App\Models\Role::with('users')->get(); // Eager load users for efficiency
 
-                $finalRoleUserCounts = $roles->mapWithKeys(function ($role) {
-                    return [$role->id => \App\Models\User::where('role', $role->name)->count()];
-                });
-                
-                $totalUsers = \App\Models\User::where('partner_id', $partner->id)->count();
-                $activeUsers = \App\Models\User::where('partner_id', $partner->id)->where('status', 'active')->count();
-                $pendingUsers = \App\Models\User::where('partner_id', $partner->id)->where('status', 'pending')->count();
-                $suspendedUsers = \App\Models\User::where('partner_id', $partner->id)->where('status', 'suspended')->count();
-                $users = \App\Models\User::where('partner_id', $partner->id)->with('roles')->get();
+                $stats = [
+                    'total_users' => \App\Models\EnhancedUser::where('partner_id', $partner->id)->count(),
+                    'active_users' => \App\Models\EnhancedUser::where('partner_id', $partner->id)->where('status', 'active')->count(),
+                    'pending_users' => \App\Models\EnhancedUser::where('partner_id', $partner->id)->where('status', 'pending')->count(),
+                    'suspended_users' => \App\Models\EnhancedUser::where('partner_id', $partner->id)->where('status', 'suspended')->count(),
+                    'total_roles' => $roles->count(),
+                    'roles' => $roles,
+                    'users' => \App\Models\EnhancedUser::where('partner_id', $partner->id)
+                        ->where('id', '!=', $partner->user_id) // Exclude the partner's own account to avoid duplicates
+                        ->with('roles')
+                        ->latest()
+                        ->take(4)
+                        ->get()
+                        ->prepend(\App\Models\EnhancedUser::find($partner->user_id)), // Add partner's own account to the start of the list
+                ];
 
-                return view('partner.Settings.partner-settings', compact('partner', 'roles', 'finalRoleUserCounts', 'totalUsers', 'activeUsers', 'pendingUsers', 'suspendedUsers', 'users'));
+                return view('partner.Settings.partner-settings', compact('partner', 'stats'));
             } catch (\Exception $e) {
                 \Log::error('Error in partner settings route: ' . $e->getMessage());
                 return redirect()->route('partner.dashboard')->with('error', 'An error occurred while loading settings.');
@@ -591,6 +597,7 @@ Route::middleware('auth')->group(function () {
         // User Management Routes
         Route::prefix('settings')->name('settings.')->group(function () {
             Route::get('user-management', [\App\Http\Controllers\UserManagementController::class, 'index'])->name('user-management');
+            Route::get('users/create', [\App\Http\Controllers\UserManagementController::class, 'create'])->name('users.create');
             Route::post('users', [\App\Http\Controllers\UserManagementController::class, 'store'])->name('users.store');
             Route::get('users/{user}', [\App\Http\Controllers\UserManagementController::class, 'show'])->name('users.show');
             Route::put('users/{user}', [\App\Http\Controllers\UserManagementController::class, 'update'])->name('users.update');
