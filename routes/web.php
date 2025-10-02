@@ -481,6 +481,11 @@ Route::middleware('auth')->group(function () {
         // Student Management
         Route::resource('students', StudentController::class);
         
+        // Teacher Management
+        Route::resource('teachers', \App\Http\Controllers\TeacherController::class);
+        Route::get('teachers/{teacher}/assignments', [\App\Http\Controllers\TeacherController::class, 'assignments'])->name('teachers.assignments');
+        Route::put('teachers/{teacher}/assignments', [\App\Http\Controllers\TeacherController::class, 'updateAssignments'])->name('teachers.assignments.update');
+        
         // Student Migration Management
         Route::prefix('students')->name('students.')->group(function () {
             Route::get('{student}/migrate', [\App\Http\Controllers\StudentMigrationController::class, 'showMigrationForm'])->name('migrate');

@@ -13,6 +13,7 @@ use App\Models\Topic;
 use App\Models\Student;
 use App\Models\Question;
 use App\Models\Exam;
+use App\Models\Teacher;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -64,6 +65,7 @@ class AppServiceProvider extends ServiceProvider
                 'total_subjects' => $existingStats['total_subjects'] ?? ($partnerId ? Subject::where('partner_id', $partnerId)->count() : 0),
                 'total_topics' => $existingStats['total_topics'] ?? ($partnerId ? Topic::where('partner_id', $partnerId)->count() : 0),
                 'total_students' => $existingStats['total_students'] ?? ($partnerId ? Student::where('partner_id', $partnerId)->count() : 0),
+                'total_teachers' => $existingStats['total_teachers'] ?? ($partnerId ? Teacher::where('partner_id', $partnerId)->count() : 0),
                 'total_questions' => $existingStats['total_questions'] ?? ($partnerId ? Question::where('partner_id', $partnerId)->where('status', 'active')->count() : 0),
                 'total_exams' => $existingStats['total_exams'] ?? ($partnerId ? Exam::where('partner_id', $partnerId)->count() : 0),
                 'total_question_attempts' => $existingStats['total_question_attempts'] ?? 0,
