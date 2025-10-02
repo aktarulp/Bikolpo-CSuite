@@ -7,24 +7,33 @@ use App\Models\ExamResult;
 use App\Models\QuestionStat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Traits\HasPartnerContext;
 
 class ExamReviewController extends Controller
 {
+    use HasPartnerContext;
+
     /**
      * Show exam review page
      */
     public function showReview(Request $request, $examId, $resultId)
     {
-        $exam = Exam::findOrFail($examId);
-        $result = ExamResult::findOrFail($resultId);
+        $partnerId = $this->getPartnerId();
+
+        $exam = Exam::where('id', $examId)->where('partner_id', $partnerId)->first();
+        $result = ExamResult::where('id', $resultId)->where('exam_id', $examId)->first();
+        
+        if (!$exam || !$result) {
+            abort(404, 'Exam or result not found.');
+        }
         
         // Check if user has permission to view this result
         $this->authorizeReview($result);
         
         // Get detailed question statistics for this result
         $questionStats = $result->questionStats()
-            ->with(['question' => function($query) {
-                $query->with(['course', 'subject', 'topic']);
+            ->with(['question' => function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId)->with(['course', 'subject', 'topic']);
             }])
             ->orderBy('question_order')
             ->get();
@@ -53,16 +62,25 @@ class ExamReviewController extends Controller
      */
     public function getReviewData(Request $request, $examId, $resultId)
     {
-        $exam = Exam::findOrFail($examId);
-        $result = ExamResult::findOrFail($resultId);
+        $partnerId = $this->getPartnerId();
+
+        $exam = Exam::where('id', $examId)->where('partner_id', $partnerId)->first();
+        $result = ExamResult::where('id', $resultId)->where('exam_id', $examId)->first();
+        
+        if (!$exam || !$result) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Exam or result not found.'
+            ], 404);
+        }
         
         // Check if user has permission to view this result
         $this->authorizeReview($result);
         
         // Get detailed question statistics
         $questionStats = $result->questionStats()
-            ->with(['question' => function($query) {
-                $query->with(['course', 'subject', 'topic']);
+            ->with(['question' => function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId)->with(['course', 'subject', 'topic']);
             }])
             ->orderBy('question_order')
             ->get();
@@ -94,8 +112,17 @@ class ExamReviewController extends Controller
      */
     public function getQuestionReview(Request $request, $examId, $resultId, $questionId)
     {
-        $exam = Exam::findOrFail($examId);
-        $result = ExamResult::findOrFail($resultId);
+        $partnerId = $this->getPartnerId();
+
+        $exam = Exam::where('id', $examId)->where('partner_id', $partnerId)->first();
+        $result = ExamResult::where('id', $resultId)->where('exam_id', $examId)->first();
+        
+        if (!$exam || !$result) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Exam or result not found.'
+            ], 404);
+        }
         
         // Check if user has permission to view this result
         $this->authorizeReview($result);
@@ -103,8 +130,8 @@ class ExamReviewController extends Controller
         // Get question statistics for this specific question
         $questionStat = $result->questionStats()
             ->where('question_id', $questionId)
-            ->with(['question' => function($query) {
-                $query->with(['course', 'subject', 'topic']);
+            ->with(['question' => function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId)->with(['course', 'subject', 'topic']);
             }])
             ->first();
         
@@ -132,8 +159,17 @@ class ExamReviewController extends Controller
      */
     public function getPerformanceComparison(Request $request, $examId, $resultId)
     {
-        $exam = Exam::findOrFail($examId);
-        $result = ExamResult::findOrFail($resultId);
+        $partnerId = $this->getPartnerId();
+
+        $exam = Exam::where('id', $examId)->where('partner_id', $partnerId)->first();
+        $result = ExamResult::where('id', $resultId)->where('exam_id', $examId)->first();
+        
+        if (!$exam || !$result) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Exam or result not found.'
+            ], 404);
+        }
         
         // Check if user has permission to view this result
         $this->authorizeReview($result);
@@ -185,8 +221,17 @@ class ExamReviewController extends Controller
      */
     public function getExamAnalytics(Request $request, $examId, $resultId)
     {
-        $exam = Exam::findOrFail($examId);
-        $result = ExamResult::findOrFail($resultId);
+        $partnerId = $this->getPartnerId();
+
+        $exam = Exam::where('id', $examId)->where('partner_id', $partnerId)->first();
+        $result = ExamResult::where('id', $resultId)->where('exam_id', $examId)->first();
+        
+        if (!$exam || !$result) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Exam or result not found.'
+            ], 404);
+        }
         
         // Check if user has permission to view this result
         $this->authorizeReview($result);
@@ -219,8 +264,17 @@ class ExamReviewController extends Controller
      */
     public function getImprovementSuggestions(Request $request, $examId, $resultId)
     {
-        $exam = Exam::findOrFail($examId);
-        $result = ExamResult::findOrFail($resultId);
+        $partnerId = $this->getPartnerId();
+
+        $exam = Exam::where('id', $examId)->where('partner_id', $partnerId)->first();
+        $result = ExamResult::where('id', $resultId)->where('exam_id', $examId)->first();
+        
+        if (!$exam || !$result) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Exam or result not found.'
+            ], 404);
+        }
         
         // Check if user has permission to view this result
         $this->authorizeReview($result);

@@ -9,17 +9,33 @@ use App\Models\ExamResult;
 use App\Models\Exam;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Traits\HasPartnerContext;
 
 class AnalyticsController extends Controller
 {
+    use HasPartnerContext;
+
     /**
      * Get question analytics
      */
     public function getQuestionAnalytics(Request $request, $questionId)
     {
-        $question = Question::findOrFail($questionId);
+        $partnerId = $this->getPartnerId();
+
+        // ✅ Ensure question belongs to current partner
+        $question = Question::where('id', $questionId)
+            ->where('partner_id', $partnerId)
+            ->first();
+
+        if (!$question) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Question not found or access denied'
+            ], 404);
+        }
+
         $analytics = QuestionStat::getQuestionDetailedAnalytics($questionId);
-        
+
         return response()->json([
             'success' => true,
             'data' => [
@@ -34,7 +50,20 @@ class AnalyticsController extends Controller
      */
     public function getStudentAnalytics(Request $request, $studentId)
     {
-        $student = Student::findOrFail($studentId);
+        $partnerId = $this->getPartnerId();
+
+        // ✅ Ensure student belongs to current partner
+        $student = Student::where('id', $studentId)
+            ->where('partner_id', $partnerId)
+            ->first();
+
+        if (!$student) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Student not found or access denied'
+            ], 404);
+        }
+
         $analytics = $student->getComprehensiveAnalytics();
         
         return response()->json([
@@ -51,7 +80,20 @@ class AnalyticsController extends Controller
      */
     public function getExamAnalytics(Request $request, $examId)
     {
-        $exam = Exam::findOrFail($examId);
+        $partnerId = $this->getPartnerId();
+
+        // ✅ Ensure exam belongs to current partner
+        $exam = Exam::where('id', $examId)
+            ->where('partner_id', $partnerId)
+            ->first();
+
+        if (!$exam) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Exam not found or access denied'
+            ], 404);
+        }
+
         $analytics = QuestionStat::getExamQuestionAnalytics($examId);
         
         // Get detailed question breakdown
@@ -81,8 +123,32 @@ class AnalyticsController extends Controller
      */
     public function getStudentExamPerformance(Request $request, $studentId, $examId)
     {
-        $student = Student::findOrFail($studentId);
-        $exam = Exam::findOrFail($examId);
+        $partnerId = $this->getPartnerId();
+
+        // ✅ Ensure student belongs to current partner
+        $student = Student::where('id', $studentId)
+            ->where('partner_id', $partnerId)
+            ->first();
+
+        if (!$student) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Student not found or access denied'
+            ], 404);
+        }
+
+        // ✅ Ensure exam belongs to current partner
+        $exam = Exam::where('id', $examId)
+            ->where('partner_id', $partnerId)
+            ->first();
+
+        if (!$exam) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Exam not found or access denied'
+            ], 404);
+        }
+
         $analytics = QuestionStat::getStudentExamAnalytics($studentId, $examId);
         
         return response()->json([
@@ -100,6 +166,8 @@ class AnalyticsController extends Controller
      */
     public function getDifficultyAnalytics(Request $request)
     {
+        $partnerId = $this->getPartnerId();
+
         $difficultyStats = QuestionStat::selectRaw('
             CASE 
                 WHEN (COUNT(CASE WHEN is_correct = 1 THEN 1 END) * 100.0 / COUNT(*)) >= 80 THEN "easy"
@@ -112,6 +180,7 @@ class AnalyticsController extends Controller
             COUNT(CASE WHEN is_skipped = 1 THEN 1 END) as skipped_questions
         ')
         ->join('questions', 'question_statistics.question_id', '=', 'questions.id')
+        ->where('questions.partner_id', $partnerId) // ✅ Filter by current partner
         ->groupBy('difficulty_level')
         ->get();
 
@@ -126,6 +195,8 @@ class AnalyticsController extends Controller
      */
     public function getQuestionTypeAnalytics(Request $request)
     {
+        $partnerId = $this->getPartnerId();
+
         $typeStats = QuestionStat::selectRaw('
             question_type,
             COUNT(*) as total_questions,
@@ -134,6 +205,9 @@ class AnalyticsController extends Controller
             COUNT(CASE WHEN is_skipped = 1 THEN 1 END) as skipped_questions,
             AVG(time_spent_seconds) as average_time_spent
         ')
+        ->whereHas('question', function($query) use ($partnerId) {
+            $query->where('partner_id', $partnerId); // ✅ Filter by current partner
+        })
         ->groupBy('question_type')
         ->get();
 
@@ -148,14 +222,19 @@ class AnalyticsController extends Controller
      */
     public function getTopPerformingStudents(Request $request, $limit = 10)
     {
+        $partnerId = $this->getPartnerId();
+
         $topStudents = Student::select('students.*')
             ->join('question_statistics', 'students.id', '=', 'question_statistics.student_id')
+            ->join('questions', 'question_statistics.question_id', '=', 'questions.id')
             ->selectRaw('
                 students.*,
                 COUNT(*) as total_questions,
                 COUNT(CASE WHEN question_statistics.is_correct = 1 THEN 1 END) as correct_answers,
                 ROUND((COUNT(CASE WHEN question_statistics.is_correct = 1 THEN 1 END) * 100.0 / COUNT(*)), 2) as accuracy_percentage
             ')
+            ->where('students.partner_id', $partnerId) // ✅ Filter by current partner
+            ->where('questions.partner_id', $partnerId) // ✅ Filter questions by current partner
             ->groupBy('students.id')
             ->having('total_questions', '>', 0)
             ->orderBy('accuracy_percentage', 'desc')
@@ -173,6 +252,8 @@ class AnalyticsController extends Controller
      */
     public function getMostDifficultQuestions(Request $request, $limit = 10)
     {
+        $partnerId = $this->getPartnerId();
+
         $difficultQuestions = Question::select('questions.*')
             ->join('question_statistics', 'questions.id', '=', 'question_statistics.question_id')
             ->selectRaw('
@@ -181,6 +262,7 @@ class AnalyticsController extends Controller
                 COUNT(CASE WHEN question_statistics.is_correct = 1 THEN 1 END) as correct_answers,
                 ROUND((COUNT(CASE WHEN question_statistics.is_correct = 1 THEN 1 END) * 100.0 / COUNT(*)), 2) as correct_percentage
             ')
+            ->where('questions.partner_id', $partnerId) // ✅ Filter by current partner
             ->groupBy('questions.id')
             ->having('total_attempts', '>', 0)
             ->orderBy('correct_percentage', 'asc')
@@ -198,7 +280,20 @@ class AnalyticsController extends Controller
      */
     public function getAnswerDistribution(Request $request, $questionId)
     {
-        $question = Question::findOrFail($questionId);
+        $partnerId = $this->getPartnerId();
+
+        // ✅ Ensure question belongs to current partner
+        $question = Question::where('id', $questionId)
+            ->where('partner_id', $partnerId)
+            ->first();
+
+        if (!$question) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Question not found or access denied'
+            ], 404);
+        }
+
         $distribution = QuestionStat::getAnswerDistribution($questionId);
         
         return response()->json([
@@ -215,8 +310,25 @@ class AnalyticsController extends Controller
      */
     public function getStudentsWhoAnsweredCorrectly(Request $request, $questionId)
     {
+        $partnerId = $this->getPartnerId();
+
+        // ✅ Ensure question belongs to current partner
+        $question = Question::where('id', $questionId)
+            ->where('partner_id', $partnerId)
+            ->first();
+
+        if (!$question) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Question not found or access denied'
+            ], 404);
+        }
+
         $students = QuestionStat::where('question_id', $questionId)
             ->where('is_correct', true)
+            ->whereHas('question', function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId); // ✅ Filter by current partner
+            })
             ->with('student')
             ->get()
             ->pluck('student');
@@ -232,9 +344,26 @@ class AnalyticsController extends Controller
      */
     public function getStudentsWhoAnsweredIncorrectly(Request $request, $questionId)
     {
+        $partnerId = $this->getPartnerId();
+
+        // ✅ Ensure question belongs to current partner
+        $question = Question::where('id', $questionId)
+            ->where('partner_id', $partnerId)
+            ->first();
+
+        if (!$question) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Question not found or access denied'
+            ], 404);
+        }
+
         $students = QuestionStat::where('question_id', $questionId)
             ->where('is_correct', false)
             ->where('is_answered', true)
+            ->whereHas('question', function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId); // ✅ Filter by current partner
+            })
             ->with('student')
             ->get()
             ->pluck('student');

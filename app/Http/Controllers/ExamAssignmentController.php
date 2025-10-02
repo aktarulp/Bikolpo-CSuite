@@ -12,6 +12,8 @@ use App\Models\SmsRecord;
 
 class ExamAssignmentController extends Controller
 {
+    use HasPartnerContext;
+
     protected $bulkSmsBdService;
 
     public function __construct(BulkSmsBdService $bulkSmsBdService)
@@ -107,6 +109,13 @@ class ExamAssignmentController extends Controller
      */
     public function assignStudents(Request $request, Exam $exam)
     {
+        $partnerId = $this->getPartnerId();
+
+        // ✅ Ensure exam belongs to current partner
+        if ($exam->partner_id !== $partnerId) {
+            return back()->with('error', 'Unauthorized access to this exam.');
+        }
+
         $request->validate([
             'student_ids' => 'required|array',
             'student_ids.*' => 'exists:students,id',
@@ -115,8 +124,18 @@ class ExamAssignmentController extends Controller
         $studentIds = $request->student_ids;
         $assignedCount = 0;
 
-        DB::transaction(function () use ($exam, $studentIds, &$assignedCount) {
-            foreach ($studentIds as $studentId) {
+        // ✅ Validate that all students belong to current partner
+        $validStudentIds = \App\Models\Student::where('partner_id', $partnerId)
+            ->whereIn('id', $studentIds)
+            ->pluck('id')
+            ->toArray();
+
+        if (count($validStudentIds) !== count($studentIds)) {
+            return back()->with('error', 'Some students do not belong to your institution.');
+        }
+
+        DB::transaction(function () use ($exam, $validStudentIds, &$assignedCount) {
+            foreach ($validStudentIds as $studentId) {
                 // Check if already assigned
                 $existingAssignment = ExamAccessCode::where('exam_id', $exam->id)
                     ->where('student_id', $studentId)
@@ -125,7 +144,7 @@ class ExamAssignmentController extends Controller
                 if (!$existingAssignment) {
                     // Generate unique access code
                     $accessCode = ExamAccessCode::generateUniqueCode();
-                    
+
                     // Create assignment
                     ExamAccessCode::create([
                         'exam_id' => $exam->id,
@@ -134,7 +153,7 @@ class ExamAssignmentController extends Controller
                         'status' => 'active',
                         'expires_at' => $exam->end_time,
                     ]);
-                    
+
                     $assignedCount++;
                 }
             }
@@ -148,9 +167,25 @@ class ExamAssignmentController extends Controller
      */
     public function removeAssignment(Request $request, Exam $exam)
     {
+        $partnerId = $this->getPartnerId();
+
+        // ✅ Ensure exam belongs to current partner
+        if ($exam->partner_id !== $partnerId) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized access to this exam.'], 403);
+        }
+
         $request->validate([
             'student_id' => 'required|exists:students,id',
         ]);
+
+        // ✅ Ensure student belongs to current partner
+        $student = \App\Models\Student::where('id', $request->student_id)
+            ->where('partner_id', $partnerId)
+            ->first();
+
+        if (!$student) {
+            return response()->json(['success' => false, 'message' => 'Student not found or access denied.'], 404);
+        }
 
         $assignment = ExamAccessCode::where('exam_id', $exam->id)
             ->where('student_id', $request->student_id)
@@ -169,9 +204,25 @@ class ExamAssignmentController extends Controller
      */
     public function regenerateCode(Request $request, Exam $exam)
     {
+        $partnerId = $this->getPartnerId();
+
+        // ✅ Ensure exam belongs to current partner
+        if ($exam->partner_id !== $partnerId) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized access to this exam.'], 403);
+        }
+
         $request->validate([
             'student_id' => 'required|exists:students,id',
         ]);
+
+        // ✅ Ensure student belongs to current partner
+        $student = \App\Models\Student::where('id', $request->student_id)
+            ->where('partner_id', $partnerId)
+            ->first();
+
+        if (!$student) {
+            return response()->json(['success' => false, 'message' => 'Student not found or access denied.'], 404);
+        }
 
         $assignment = ExamAccessCode::where('exam_id', $exam->id)
             ->where('student_id', $request->student_id)
@@ -196,6 +247,13 @@ class ExamAssignmentController extends Controller
      */
     public function bulkOperations(Request $request, Exam $exam)
     {
+        $partnerId = $this->getPartnerId();
+
+        // ✅ Ensure exam belongs to current partner
+        if ($exam->partner_id !== $partnerId) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized access to this exam.'], 403);
+        }
+
         $request->validate([
             'action' => 'required|in:assign,remove,regenerate,send_sms',
             'assignment_ids' => 'required|array',
@@ -203,7 +261,7 @@ class ExamAssignmentController extends Controller
         ]);
 
         $action = $request->action;
-        $assignmentIds = $request->assignment_ids; // Changed to assignment_ids
+        $assignmentIds = $request->assignment_ids;
         $count = 0;
         $message = '';
 
@@ -212,19 +270,19 @@ class ExamAssignmentController extends Controller
                 $count = $this->bulkAssign($exam, $assignmentIds); // Assuming student_ids is passed for assignment
                 $message = "Successfully assigned {$count} students to the exam.";
                 break;
-                
+
             case 'remove':
                 $count = $this->bulkRemove($exam, $assignmentIds);
                 $message = "Successfully removed {$count} student assignments.";
                 break;
-                
+
             case 'regenerate':
                 $count = $this->bulkRegenerate($exam, $assignmentIds);
                 $message = "Successfully regenerated {$count} access codes.";
                 break;
-            
+
             case 'send_sms':
-                $count = $this->bulkSendSms($exam, $assignmentIds); 
+                $count = $this->bulkSendSms($exam, $assignmentIds);
                 $message = "Attempted to send SMS to {$count} assignments.";
                 break;
         }
@@ -232,22 +290,6 @@ class ExamAssignmentController extends Controller
         return response()->json(['success' => true, 'message' => $message]);
     }
 
-    /**
-     * Bulk assign students
-     */
-    private function bulkAssign(Exam $exam, array $studentIds)
-    {
-        $count = 0;
-        
-        DB::transaction(function () use ($exam, $studentIds, &$count) {
-            foreach ($studentIds as $studentId) {
-                $existingAssignment = ExamAccessCode::where('exam_id', $exam->id)
-                    ->where('student_id', $studentId)
-                    ->first();
-
-                if (!$existingAssignment) {
-                    $accessCode = ExamAccessCode::generateUniqueCode();
-                    
                     ExamAccessCode::create([
                         'exam_id' => $exam->id,
                         'student_id' => $studentId,
@@ -256,7 +298,7 @@ class ExamAssignmentController extends Controller
                         'expires_at' => $exam->end_time,
                         'sms_status' => 'pending',
                     ]);
-                    
+
                     $count++;
                 }
             }
@@ -281,7 +323,7 @@ class ExamAssignmentController extends Controller
     private function bulkRegenerate(Exam $exam, array $assignmentIds) // Changed to assignmentIds
     {
         $count = 0;
-        
+
         $assignments = ExamAccessCode::where('exam_id', $exam->id)
             ->whereIn('id', $assignmentIds) // Changed to 'id'
             ->get();
@@ -314,13 +356,7 @@ class ExamAssignmentController extends Controller
 
             if ($assignment && $assignment->student && $assignment->student->phone) {
                 $message = "Dear {$assignment->student->full_name},\nYou are assigned to exam {$exam->title} by {$exam->partner->name}, scheduled at {$exam->formatted_start_time} & your access code is: {$assignment->access_code}.\nVisit: " . config('app.url') . "/LiveExam to access the exam.";
-                
-                $smsResponse = $this->bulkSmsBdService->sendSms($assignment->student->phone, $message);
 
-                $smsRecordData = [
-                    'partner_id' => $exam->partner_id,
-                    'recipient' => $assignment->student->phone,
-                    'message' => $message,
                     'provider_response' => $smsResponse,
                     'sent_at' => now(),
                 ];
@@ -393,27 +429,12 @@ class ExamAssignmentController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
-    /**
-     * Send SMS to assigned students.
-     */
-    public function sendAssignmentSms(Request $request, Exam $exam)
-    {
-        $request->validate([
-            'assignment_ids' => 'required|array',
-            'assignment_ids.*' => 'exists:exam_access_codes,id',
-        ]);
-
-        $assignmentIds = $request->assignment_ids;
-        $sentCount = 0;
-        $failedCount = 0;
-
-        foreach ($assignmentIds as $assignmentId) {
             $assignment = ExamAccessCode::with(['student', 'exam.partner'])
                                         ->find($assignmentId);
 
             if ($assignment && $assignment->student && $assignment->student->phone && $assignment->exam && $assignment->exam->partner) {
                 $message = "Dear {$assignment->student->full_name},\nYou are assigned to exam {$assignment->exam->title} by {$assignment->exam->partner->name}, scheduled at {$assignment->exam->formatted_start_time} & your access code is: {$assignment->access_code}.\nVisit: " . config('app.url') . "/LiveExam to access the exam.";
-                
+
                 $smsResponse = $this->bulkSmsBdService->sendSms($assignment->student->phone, $message);
 
                 $smsRecordData = [

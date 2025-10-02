@@ -251,8 +251,8 @@ class ExamController extends Controller
             abort(403);
         }
         
-        $result->load(['student.batch', 'exam.questions' => function($query) {
-            $query->orderBy('pivot_order');
+        $result->load(['student.batch', 'exam.questions' => function($query) use ($partnerId) {
+            $query->where('partner_id', $partnerId)->orderBy('pivot_order');
         }, 'questionStats']);
 
         // Process questions and student answers for display
@@ -366,6 +366,7 @@ class ExamController extends Controller
 
         // Get exam questions with their details
         $questions = $exam->questions()
+            ->where('partner_id', $partnerId)
             ->with(['topic', 'subject'])
             ->orderBy('exam_questions.order')
             ->get();
@@ -628,7 +629,10 @@ class ExamController extends Controller
         }
 
         // Load exam questions
-        $questions = $exam->questions()->orderBy('exam_questions.order')->get();
+        $questions = $exam->questions()
+            ->where('partner_id', $partnerId)
+            ->orderBy('exam_questions.order')
+            ->get();
         $answers = $request->answers;
         
         // Calculate results
@@ -831,6 +835,7 @@ class ExamController extends Controller
     {
         // Get exam questions with their details - order by the pivot table's order column
         $questions = $exam->questions()
+            ->where('partner_id', $partnerId)
             ->with(['topic', 'subject'])
             ->orderBy('exam_questions.order')
             ->get();
@@ -850,7 +855,10 @@ class ExamController extends Controller
     public function paperParameters(Exam $exam)
     {
         // Get exam questions for display purposes
-        $questions = $exam->questions()->with(['topic', 'subject'])->get();
+        $questions = $exam->questions()
+            ->where('partner_id', $partnerId)
+            ->with(['topic', 'subject'])
+            ->get();
         
         // Get saved paper settings or use defaults
         $savedSettings = $exam->paper_settings ?? [];
@@ -892,7 +900,11 @@ class ExamController extends Controller
             $this->validatePDFParameters($parameters);
             
             // Get exam questions for PDF generation
-            $questions = $exam->questions()->with(['topic', 'subject'])->orderBy('exam_questions.order')->get();
+            $questions = $exam->questions()
+                ->where('partner_id', $partnerId)
+                ->with(['topic', 'subject'])
+                ->orderBy('exam_questions.order')
+                ->get();
             
             // Get partner information for footer
             $partner = $exam->partner;
