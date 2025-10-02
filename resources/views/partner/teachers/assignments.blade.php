@@ -127,21 +127,62 @@
                         </div>
                         <div class="p-6">
                             @if($subjects->count() > 0)
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    @foreach($subjects as $subject)
-                                        <label class="flex items-center p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
-                                            <input type="checkbox" name="subjects[]" value="{{ $subject->id }}" 
-                                                   {{ $teacher->subjects->contains($subject->id) ? 'checked' : '' }}
-                                                   class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500">
-                                            <div class="ml-3">
-                                                <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $subject->name }}</p>
-                                                @if($subject->course)
-                                                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ $subject->course->name }}</p>
-                                                @endif
-                                            </div>
-                                        </label>
-                                    @endforeach
-                                </div>
+                                @php
+                                    // Group subjects by course for better organization
+                                    $subjectsByCourse = $subjects->groupBy('course_id');
+                                    // Don't filter by teacher's assigned courses - show all available subjects
+                                    // The JavaScript will handle filtering based on course selection
+                                @endphp
+
+                                @if($subjectsByCourse->count() > 0)
+                                    <div class="space-y-6">
+                                        @foreach($subjectsByCourse as $courseId => $courseSubjects)
+                                            @php
+                                                $course = $courseSubjects->first()->course;
+                                            @endphp
+                                            @if($course)
+                                                <!-- Course Section Header -->
+                                                <div class="course-section bg-gray-50 dark:bg-gray-700/50 px-4 py-2 rounded-lg border-l-4 border-purple-400 transition-all duration-200"
+                                                     data-course-id="{{ $courseId }}" style="display: none;">
+                                                    <div class="flex items-center gap-2">
+                                                        <i class="fas fa-book text-purple-600 dark:text-purple-400 text-sm"></i>
+                                                        <h4 class="font-medium text-gray-900 dark:text-white text-sm">{{ $course->name }}</h4>
+                                                        <span class="text-xs px-2 py-0.5 bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 rounded-full">
+                                                            {{ $courseSubjects->count() }} subjects
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Subjects for this course -->
+                                                <div class="course-subjects grid grid-cols-1 sm:grid-cols-2 gap-3 pl-4 transition-all duration-200"
+                                                     data-course-id="{{ $courseId }}" style="display: none;">
+                                                    @foreach($courseSubjects as $subject)
+                                                        <label class="subject-item flex items-center p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                                                               data-course="{{ $subject->course_id }}">
+                                                            <input type="checkbox" name="subjects[]" value="{{ $subject->id }}"
+                                                                   {{ $teacher->subjects->contains($subject->id) ? 'checked' : '' }}
+                                                                   class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500">
+                                                            <div class="ml-3">
+                                                                <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $subject->name }}</p>
+                                                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ $subject->code }}</p>
+                                                            </div>
+                                                        </label>
+                                                    @endforeach
+                                                </div>
+                                            @endif
+                                        @endforeach
+                                    </div>
+
+                                    <div id="no-subjects-message" class="hidden text-gray-500 dark:text-gray-400 text-center py-4">
+                                        No subjects available for the selected courses
+                                    </div>
+                                @else
+                                    <div class="text-center py-8">
+                                        <i class="fas fa-clipboard-list text-gray-300 text-3xl mb-3"></i>
+                                        <p class="text-gray-500 dark:text-gray-400 mb-2">No subjects available</p>
+                                        <p class="text-sm text-gray-400 dark:text-gray-500">Please assign courses first to see available subjects</p>
+                                    </div>
+                                @endif
                             @else
                                 <p class="text-gray-500 dark:text-gray-400 text-center py-4">No subjects available</p>
                             @endif
@@ -178,7 +219,8 @@
                                 <div id="students-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-h-64 overflow-y-auto">
                                     @foreach($students as $student)
                                         <label class="student-item flex items-center p-3 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
-                                               data-batch="{{ $student->batch_id ?? '' }}">
+                                               data-batch="{{ $student->batch_id ?? '' }}"
+                                               data-course-id="{{ $student->course_id ?? '' }}">
                                             <input type="checkbox" name="students[]" value="{{ $student->id }}" 
                                                    {{ $teacher->students->contains($student->id) ? 'checked' : '' }}
                                                    class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500">
@@ -248,11 +290,62 @@ function assignSubject(teacherId) {
     // Example: window.location.href = `/partner/teachers/${teacherId}/assign-subject`;
 }
 
-// Batch filter functionality
+// Batch filter functionality and course-subject filtering
 document.addEventListener('DOMContentLoaded', function() {
     const batchFilter = document.getElementById('batch-filter');
     const studentsContainer = document.getElementById('students-container');
     const noStudentsMessage = document.getElementById('no-students-message');
+    const courseCheckboxes = document.querySelectorAll('input[name="courses[]"]');
+    const subjectItems = document.querySelectorAll('.subject-item');
+    const noSubjectsMessage = document.getElementById('no-subjects-message');
+
+    // Function to update subjects visibility based on selected courses
+    function updateSubjectsVisibility() {
+        const selectedCourseIds = Array.from(courseCheckboxes)
+            .filter(checkbox => checkbox.checked)
+            .map(checkbox => checkbox.value);
+
+        let visibleSubjectsCount = 0;
+
+        // Handle course sections and their subjects
+        const courseSections = document.querySelectorAll('.course-section');
+        const courseSubjectsContainers = document.querySelectorAll('.course-subjects');
+
+        courseSections.forEach((section, index) => {
+            const courseId = section.dataset.courseId;
+            const subjectsContainer = courseSubjectsContainers[index];
+
+            if (selectedCourseIds.length === 0 || selectedCourseIds.includes(courseId)) {
+                // Show this course section and its subjects
+                section.style.display = 'block';
+                if (subjectsContainer) {
+                    subjectsContainer.style.display = 'grid';
+
+                    // Count visible subjects in this section
+                    const subjectItems = subjectsContainer.querySelectorAll('.subject-item');
+                    subjectItems.forEach(item => {
+                        item.style.display = 'flex';
+                        visibleSubjectsCount++;
+                    });
+                }
+            } else {
+                // Hide this course section and its subjects
+                section.style.display = 'none';
+                if (subjectsContainer) {
+                    subjectsContainer.style.display = 'none';
+                }
+            }
+        });
+
+        // Show/hide no subjects message
+        if (noSubjectsMessage) {
+            if (visibleSubjectsCount === 0 && selectedCourseIds.length > 0) {
+                noSubjectsMessage.classList.remove('hidden');
+            } else {
+                noSubjectsMessage.classList.add('hidden');
+            }
+        }
+    }
 
     if (batchFilter && studentsContainer) {
         batchFilter.addEventListener('change', function() {
@@ -281,6 +374,44 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // Add event listeners to course checkboxes
+    courseCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            updateSubjectsVisibility();
+
+            // Also update students visibility based on selected courses
+            const selectedCourseIds = Array.from(courseCheckboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+
+            const studentItems = studentsContainer.querySelectorAll('.student-item');
+            let visibleStudentsCount = 0;
+
+            studentItems.forEach(item => {
+                const studentCourseId = item.dataset.courseId;
+
+                if (selectedCourseIds.length === 0 || selectedCourseIds.includes(studentCourseId)) {
+                    item.style.display = 'flex';
+                    visibleStudentsCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // Update no students message
+            if (noStudentsMessage) {
+                if (visibleStudentsCount === 0 && selectedCourseIds.length > 0) {
+                    noStudentsMessage.classList.remove('hidden');
+                } else {
+                    noStudentsMessage.classList.add('hidden');
+                }
+            }
+        });
+    });
+
+    // Initialize subjects visibility on page load
+    updateSubjectsVisibility();
 });
 </script>
 @endsection

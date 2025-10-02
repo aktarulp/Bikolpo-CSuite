@@ -300,8 +300,8 @@ class TeacherController extends Controller
         $partnerId = auth()->user()->partner_id;
 
         $courses = Course::where('partner_id', $partnerId)->get();
-        $subjects = Subject::where('partner_id', $partnerId)->get();
-        $students = Student::where('partner_id', $partnerId)->get();
+        $subjects = Subject::where('partner_id', $partnerId)->with('course')->get();
+        $students = Student::where('partner_id', $partnerId)->with(['course', 'batch'])->get();
         $batches = Batch::where('partner_id', $partnerId)->get();
 
         $teacher->load(['courses', 'subjects', 'students', 'batches']);
