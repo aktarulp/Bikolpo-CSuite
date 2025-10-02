@@ -103,19 +103,6 @@
                     </div>
                 </div>
 
-                <!-- Section: Partner Assignment -->
-                <div class="space-y-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-                    <h2 class="text-lg font-semibold text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-3">Partner Assignment</h2>
-                    <div>
-                        <label for="partner_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Assign to Partner (Optional)</label>
-                        <select name="partner_id" id="partner_id" class="block w-full pl-3 pr-10 py-2.5 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-lg dark:bg-gray-700 dark:text-white transition duration-150">
-                            <option value="">None</option>
-                            @foreach($partners as $partner)
-                                <option value="{{ $partner->id }}">{{ $partner->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
 
                 <!-- Form Actions -->
                 <div class="flex items-center justify-end space-x-4 pt-8">

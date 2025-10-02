@@ -75,10 +75,16 @@ class UserManagementController extends Controller
     {
         // $this->authorize('create', EnhancedUser::class);
 
-        $roles = EnhancedRole::active()->orderBy('level')->get();
-        $partners = \App\Models\Partner::all();
+        $currentUser = EnhancedUser::find(auth()->id());
+        $currentUserLevel = $currentUser->getHighestRoleLevel();
+        
+        // Filter roles - only show roles with level >= current user's level (same or lower privilege)
+        $roles = EnhancedRole::active()
+            ->where('level', '>=', $currentUserLevel)
+            ->orderBy('level')
+            ->get();
 
-        return view('partner.settings.create-user', compact('roles', 'partners'));
+        return view('partner.settings.create-user', compact('roles'));
     }
 
     /**
@@ -95,7 +101,6 @@ class UserManagementController extends Controller
             'password' => 'required|string|min:8|confirmed',
             'role_ids' => 'required|array|min:1',
             'role_ids.*' => 'exists:roles,id',
-            'partner_id' => 'nullable|exists:partners,id',
             'status' => ['required', Rule::in(EnhancedUser::getStatuses())],
             'permissions' => 'nullable|array',
             'permissions.*' => 'exists:permissions,id',
@@ -116,7 +121,7 @@ class UserManagementController extends Controller
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'password' => Hash::make($request->password),
-                'partner_id' => $request->partner_id,
+                'partner_id' => auth()->user()->partner_id, // Always assign to current user's partner
                 'status' => $request->status,
                 'created_by' => auth()->id(),
                 'updated_by' => auth()->id(),
