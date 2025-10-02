@@ -51,7 +51,7 @@ class AppServiceProvider extends ServiceProvider
             }
             
             // Get partner for the authenticated user
-            $partner = Partner::where('user_id', $user->id)->first();
+            $partner = Partner::find($user->partner_id);
             $partnerId = $partner?->id;
             
             // If stats are already provided by the controller, merge with defaults
@@ -74,7 +74,8 @@ class AppServiceProvider extends ServiceProvider
             $stats = array_merge($stats, $existingStats);
             
             $view->with('stats', $stats);
-            $view->with('partner', $view->getData()['partner'] ?? $partner);
+            // Always use the partner we fetched, don't fall back to existing data
+            $view->with('partner', $partner);
         });
     }
 }
