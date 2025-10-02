@@ -126,6 +126,8 @@
                             </div>
                         </div>
                         <div class="p-6">
+                            {{-- SECURITY: All data is filtered by partner_id in controller --}}
+                            {{-- Only courses, subjects, students, and batches from current partner are shown --}}
                             @if($subjects->count() > 0)
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     @foreach($subjects as $subject)

@@ -299,12 +299,31 @@ class TeacherController extends Controller
 
         $partnerId = auth()->user()->partner_id;
 
-        $courses = Course::where('partner_id', $partnerId)->with('students')->get();
+        // Ensure teacher belongs to current partner
+        if ($teacher->partner_id !== $partnerId) {
+            abort(403, 'Unauthorized access to teacher assignments.');
+        }
+
+        $courses = Course::where('partner_id', $partnerId)->get();
         $subjects = Subject::where('partner_id', $partnerId)->with('course')->get();
         $students = Student::where('partner_id', $partnerId)->with(['course', 'batch'])->get();
         $batches = Batch::where('partner_id', $partnerId)->get();
 
-        $teacher->load(['courses', 'subjects', 'students', 'batches']);
+        // Load teacher relationships with partner constraint
+        $teacher->load([
+            'courses' => function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId);
+            },
+            'subjects' => function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId);
+            },
+            'students' => function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId);
+            },
+            'batches' => function($query) use ($partnerId) {
+                $query->where('partner_id', $partnerId);
+            }
+        ]);
 
         return view('partner.teachers.assignments', compact('teacher', 'courses', 'subjects', 'students', 'batches'));
     }
@@ -319,15 +338,23 @@ class TeacherController extends Controller
             abort(403);
         }
 
+        $partnerId = auth()->user()->partner_id;
+
+        // Validate that all requested IDs belong to current partner
+        $courses = Course::where('partner_id', $partnerId)->pluck('id')->toArray();
+        $subjects = Subject::where('partner_id', $partnerId)->pluck('id')->toArray();
+        $students = Student::where('partner_id', $partnerId)->pluck('id')->toArray();
+        $batches = Batch::where('partner_id', $partnerId)->pluck('id')->toArray();
+
         $validator = Validator::make($request->all(), [
             'courses' => 'nullable|array',
-            'courses.*' => 'exists:courses,id',
+            'courses.*' => 'in:' . implode(',', $courses),
             'subjects' => 'nullable|array',
-            'subjects.*' => 'exists:subjects,id',
+            'subjects.*' => 'in:' . implode(',', $subjects),
             'students' => 'nullable|array',
-            'students.*' => 'exists:students,id',
+            'students.*' => 'in:' . implode(',', $students),
             'batches' => 'nullable|array',
-            'batches.*' => 'exists:batches,id',
+            'batches.*' => 'in:' . implode(',', $batches),
         ]);
 
         if ($validator->fails()) {
@@ -346,10 +373,14 @@ class TeacherController extends Controller
             if ($request->has('courses')) {
                 $courseData = [];
                 foreach ($request->courses as $courseId) {
-                    $courseData[$courseId] = [
-                        'assigned_by' => $assignedBy,
-                        'assigned_at' => $assignedAt
-                    ];
+                    // Ensure course belongs to current partner
+                    $course = Course::where('id', $courseId)->where('partner_id', $partnerId)->first();
+                    if ($course) {
+                        $courseData[$courseId] = [
+                            'assigned_by' => $assignedBy,
+                            'assigned_at' => $assignedAt
+                        ];
+                    }
                 }
                 $teacher->courses()->sync($courseData);
             } else {
@@ -360,10 +391,14 @@ class TeacherController extends Controller
             if ($request->has('subjects')) {
                 $subjectData = [];
                 foreach ($request->subjects as $subjectId) {
-                    $subjectData[$subjectId] = [
-                        'assigned_by' => $assignedBy,
-                        'assigned_at' => $assignedAt
-                    ];
+                    // Ensure subject belongs to current partner
+                    $subject = Subject::where('id', $subjectId)->where('partner_id', $partnerId)->first();
+                    if ($subject) {
+                        $subjectData[$subjectId] = [
+                            'assigned_by' => $assignedBy,
+                            'assigned_at' => $assignedAt
+                        ];
+                    }
                 }
                 $teacher->subjects()->sync($subjectData);
             } else {
@@ -374,10 +409,14 @@ class TeacherController extends Controller
             if ($request->has('students')) {
                 $studentData = [];
                 foreach ($request->students as $studentId) {
-                    $studentData[$studentId] = [
-                        'assigned_by' => $assignedBy,
-                        'assigned_at' => $assignedAt
-                    ];
+                    // Ensure student belongs to current partner
+                    $student = Student::where('id', $studentId)->where('partner_id', $partnerId)->first();
+                    if ($student) {
+                        $studentData[$studentId] = [
+                            'assigned_by' => $assignedBy,
+                            'assigned_at' => $assignedAt
+                        ];
+                    }
                 }
                 $teacher->students()->sync($studentData);
             } else {
@@ -388,10 +427,14 @@ class TeacherController extends Controller
             if ($request->has('batches')) {
                 $batchData = [];
                 foreach ($request->batches as $batchId) {
-                    $batchData[$batchId] = [
-                        'assigned_by' => $assignedBy,
-                        'assigned_at' => $assignedAt
-                    ];
+                    // Ensure batch belongs to current partner
+                    $batch = Batch::where('id', $batchId)->where('partner_id', $partnerId)->first();
+                    if ($batch) {
+                        $batchData[$batchId] = [
+                            'assigned_by' => $assignedBy,
+                            'assigned_at' => $assignedAt
+                        ];
+                    }
                 }
                 $teacher->batches()->sync($batchData);
             } else {
