@@ -77,14 +77,23 @@ class UserManagementController extends Controller
 
         $currentUser = EnhancedUser::find(auth()->id());
         $currentUserLevel = $currentUser->getHighestRoleLevel();
-        
+
         // Filter roles - only show roles with level >= current user's level (same or lower privilege)
         $roles = EnhancedRole::active()
             ->where('level', '>=', $currentUserLevel)
             ->orderBy('level')
             ->get();
 
-        return view('partner.settings.create-user', compact('roles'));
+        // Get current partner ID
+        $partnerId = auth()->user()->partner_id;
+
+        // Get teachers from current partner
+        $teachers = \App\Models\Teacher::where('partner_id', $partnerId)->get();
+
+        // Get students from current partner
+        $students = \App\Models\Student::where('partner_id', $partnerId)->get();
+
+        return view('partner.settings.create-user', compact('roles', 'teachers', 'students'));
     }
 
     /**
@@ -95,13 +104,16 @@ class UserManagementController extends Controller
         $this->authorize('create', EnhancedUser::class);
 
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'name' => 'required_if:user_type,!=,teacher,!=,student|string|max:255',
+            'email' => 'required_if:user_type,!=,teacher,!=,student|string|email|max:255|unique:users',
             'phone' => 'nullable|string|max:20',
             'password' => 'required|string|min:8|confirmed',
             'role_ids' => 'required|array|min:1',
             'role_ids.*' => 'exists:roles,id',
             'status' => ['required', Rule::in(EnhancedUser::getStatuses())],
+            'user_type' => 'required|in:teacher,student',
+            'teacher_id' => 'nullable|exists:teachers,id',
+            'student_id' => 'nullable|exists:students,id',
             'permissions' => 'nullable|array',
             'permissions.*' => 'exists:permissions,id',
         ]);
@@ -116,30 +128,71 @@ class UserManagementController extends Controller
         try {
             DB::beginTransaction();
 
-            $user = EnhancedUser::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'phone' => $request->phone,
+            // Prepare user data, using linked record data if available
+            $userData = [
                 'password' => Hash::make($request->password),
-                'partner_id' => auth()->user()->partner_id, // Always assign to current user's partner
+                'partner_id' => auth()->user()->partner_id,
                 'status' => $request->status,
                 'created_by' => auth()->id(),
                 'updated_by' => auth()->id(),
-            ]);
+            ];
+
+            // Use data from linked teacher/student if provided, otherwise use form data
+            if ($request->teacher_id) {
+                $teacher = \App\Models\Teacher::where('id', $request->teacher_id)
+                    ->where('partner_id', auth()->user()->partner_id)
+                    ->first();
+
+                if ($teacher) {
+                    $userData['name'] = $teacher->full_name;
+                    $userData['email'] = $teacher->email;
+                    $userData['phone'] = $teacher->mobile;
+                }
+            } elseif ($request->student_id) {
+                $student = \App\Models\Student::where('id', $request->student_id)
+                    ->where('partner_id', auth()->user()->partner_id)
+                    ->first();
+
+                if ($student) {
+                    $userData['name'] = $student->full_name;
+                    $userData['email'] = $student->email;
+                    $userData['phone'] = $student->phone;
+                }
+            } else {
+                // For other roles, use form data
+                $userData['name'] = $request->name;
+                $userData['email'] = $request->email;
+                $userData['phone'] = $request->phone;
+            }
+
+            $user = EnhancedUser::create($userData);
+
+            // Link to existing teacher or student if specified
+            if ($request->user_type === 'teacher' && $request->teacher_id) {
+                $teacher = \App\Models\Teacher::where('id', $request->teacher_id)
+                    ->where('partner_id', auth()->user()->partner_id)
+                    ->first();
+
+                if ($teacher) {
+                    // Link user to teacher
+                    $teacher->update(['user_id' => $user->id]);
+                }
+            } elseif ($request->user_type === 'student' && $request->student_id) {
+                $student = \App\Models\Student::where('id', $request->student_id)
+                    ->where('partner_id', auth()->user()->partner_id)
+                    ->first();
+
+                if ($student) {
+                    // Link user to student
+                    $student->update(['user_id' => $user->id]);
+                }
+            }
 
             // Assign roles
             $user->roles()->attach($request->role_ids, [
                 'assigned_by' => auth()->id(),
                 'assigned_at' => now(),
             ]);
-
-            // Assign direct permissions if any
-            if ($request->permissions) {
-                $user->permissions()->attach($request->permissions, [
-                    'granted_by' => auth()->id(),
-                    'granted_at' => now(),
-                ]);
-            }
 
             // Log activity
             $user->activities()->create([
@@ -149,23 +202,18 @@ class UserManagementController extends Controller
                     'created_by' => auth()->id(),
                     'roles' => $request->role_ids,
                     'permissions' => $request->permissions ?? [],
+                    'user_type' => $request->user_type,
+                    'linked_teacher_id' => $request->teacher_id,
+                    'linked_student_id' => $request->student_id,
                 ],
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
             ]);
 
-            DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'User created successfully',
-                'user' => $user->load(['roles', 'permissions'])
-            ]);
-
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('User creation failed: ' . $e->getMessage());
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to create user: ' . $e->getMessage()
