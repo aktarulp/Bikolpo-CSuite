@@ -64,60 +64,50 @@
                             <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Step 1: Select User Role</h2>
                             <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Choose the type of user account you want to create.</p>
 
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                <!-- Teacher Role -->
-                                <label class="relative">
-                                    <input type="radio" name="user_type" value="teacher" class="sr-only peer">
-                                    <div class="p-4 border-2 border-gray-200 dark:border-gray-600 rounded-lg cursor-pointer peer-checked:border-indigo-500 peer-checked:bg-indigo-50 dark:peer-checked:bg-indigo-900/20 transition duration-200">
-                                        <div class="flex items-center space-x-3">
-                                            <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/50 rounded-lg flex items-center justify-center">
-                                                <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                                </svg>
-                                            </div>
-                                            <div>
-                                                <h3 class="font-medium text-gray-900 dark:text-white">Teacher</h3>
-                                                <p class="text-sm text-gray-500 dark:text-gray-400">Link to existing teacher profile</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </label>
+                            @php
+                                // Define role configurations with default values
+                                $roleIcons = [
+                                    'admin' => 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10',
+                                    'student' => 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2',
+                                    'teacher' => 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253',
+                                    'default' => 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
+                                ];
 
-                                <!-- Student Role -->
-                                <label class="relative">
-                                    <input type="radio" name="user_type" value="student" class="sr-only peer">
-                                    <div class="p-4 border-2 border-gray-200 dark:border-gray-600 rounded-lg cursor-pointer peer-checked:border-indigo-500 peer-checked:bg-indigo-50 dark:peer-checked:bg-indigo-900/20 transition duration-200">
-                                        <div class="flex items-center space-x-3">
-                                            <div class="w-10 h-10 bg-green-100 dark:bg-green-900/50 rounded-lg flex items-center justify-center">
-                                                <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                                </svg>
+                                $roleColors = [
+                                    'admin' => 'purple',
+                                    'student' => 'green',
+                                    'teacher' => 'blue',
+                                    'default' => 'indigo'
+                                ];
+                            @endphp
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-{{ min(count($roles), 3) }} gap-4">
+                                @foreach($roles as $role)
+                                    @php
+                                        $roleKey = strtolower($role->name);
+                                        $icon = $roleIcons[$roleKey] ?? $roleIcons['default'];
+                                        $bgColor = $roleColors[$roleKey] ?? $roleColors['default'];
+                                        $description = $role->description ?? 'User with ' . ucfirst(str_replace('_', ' ', $role->name)) . ' role';
+                                    @endphp
+                                    <div class="relative">
+                                        <input type="radio" name="role_id" id="role_{{ $role->id }}" value="{{ $role->id }}" class="sr-only peer" {{ $loop->first ? 'checked' : '' }}>
+                                        <label for="role_{{ $role->id }}" class="block cursor-pointer">
+                                            <div class="p-4 border-2 border-gray-200 dark:border-gray-600 rounded-lg transition duration-200 h-full peer-checked:border-{{ $bgColor }}-500 peer-checked:ring-2 peer-checked:ring-{{ $bgColor }}-200 dark:peer-checked:ring-{{ $bgColor }}-900/20 peer-checked:bg-{{ $bgColor }}-50/50 dark:peer-checked:bg-{{ $bgColor }}-900/10 hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                                <div class="flex items-center space-x-3">
+                                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-{{ $bgColor }}-100 dark:bg-{{ $bgColor }}-900/50">
+                                                        <svg class="w-6 h-6 text-{{ $bgColor }}-600 dark:text-{{ $bgColor }}-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $icon }}" />
+                                                        </svg>
+                                                    </div>
+                                                    <div>
+                                                        <h3 class="font-medium text-gray-900 dark:text-white">{{ $role->display_name ?? ucfirst(str_replace('_', ' ', $role->name)) }}</h3>
+                                                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ $description }}</p>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <h3 class="font-medium text-gray-900 dark:text-white">Student</h3>
-                                                <p class="text-sm text-gray-500 dark:text-gray-400">Link to existing student profile</p>
-                                            </div>
-                                        </div>
+                                        </label>
                                     </div>
-                                </label>
-
-                                <!-- Other Role -->
-                                <label class="relative">
-                                    <input type="radio" name="user_type" value="operator" class="sr-only peer">
-                                    <div class="p-4 border-2 border-gray-200 dark:border-gray-600 rounded-lg cursor-pointer peer-checked:border-indigo-500 peer-checked:bg-indigo-50 dark:peer-checked:bg-indigo-900/20 transition duration-200">
-                                        <div class="flex items-center space-x-3">
-                                            <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900/50 rounded-lg flex items-center justify-center">
-                                                <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                                </svg>
-                                            </div>
-                                            <div>
-                                                <h3 class="font-medium text-gray-900 dark:text-white">Other</h3>
-                                                <p class="text-sm text-gray-500 dark:text-gray-400">Create custom user account</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </label>
+                                @endforeach
                             </div>
                         </div>
 
@@ -135,37 +125,10 @@
 
                 <!-- Step 2: User Details -->
                 <div id="step2" class="px-6 py-6 sm:px-8" style="display: none;">
-                    <!-- Teacher Selection Section -->
-                    <div id="teacher_selection" class="space-y-4 mb-6">
-                        <div>
-                            <h3 class="text-md font-medium text-gray-900 dark:text-white mb-2">Select Teacher</h3>
-                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Choose an existing teacher account to link this user to.</p>
-
-                            <label for="teacher_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Available Teachers</label>
-                            <select name="teacher_id" id="teacher_id"
-                                    class="block w-full px-3 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white transition duration-200">
-                                <option value="">Select a teacher...</option>
-                                @foreach($teachers as $teacher)
-                                    <option value="{{ $teacher->id }}">{{ $teacher->full_name }} ({{ $teacher->email }})</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Student Selection Section -->
-                    <div id="student_selection" class="space-y-4 mb-6">
-                        <div>
-                            <h3 class="text-md font-medium text-gray-900 dark:text-white mb-2">Select Student</h3>
-                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Choose an existing student account to link this user to.</p>
-
-                            <label for="student_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Available Students</label>
-                            <select name="student_id" id="student_id"
-                                    class="block w-full px-3 py-2.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white transition duration-200">
-                                <option value="">Select a student...</option>
-                                @foreach($students as $student)
-                                    <option value="{{ $student->id }}">{{ $student->full_name }} ({{ $student->student_id }})</option>
-                                @endforeach
-                            </select>
+                    <!-- Dynamic Entity Selection Section -->
+                    <div id="entity_selection" class="space-y-4 mb-6" style="display: none;">
+                        <div id="entity_selection_content">
+                            <!-- Will be populated dynamically based on role -->
                         </div>
                     </div>
 
@@ -354,81 +317,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle role selection in step 1
     function handleRoleSelection() {
-        const selectedRoleInput = document.querySelector('input[name="user_type"]:checked');
+        const selectedRoleInput = document.querySelector('input[name="role_id"]:checked');
         if (selectedRoleInput) {
             selectedRole = selectedRoleInput.value;
-
-            // Show appropriate selection section
-            if (selectedRole === 'teacher') {
-                teacherSelection.style.display = 'block';
-                studentSelection.style.display = 'none';
-            } else if (selectedRole === 'student') {
-                teacherSelection.style.display = 'none';
-                studentSelection.style.display = 'block';
-            } else {
-                teacherSelection.style.display = 'none';
-                studentSelection.style.display = 'none';
-                userInfoSection.style.display = 'block';
-            }
-
+            // All roles use the same user info section
+            userInfoSection.style.display = 'block';
             nextToStep2Btn.disabled = false;
         } else {
             nextToStep2Btn.disabled = true;
         }
     }
 
-    // Populate form fields when teacher is selected
-    function populateTeacherFields() {
-        const teacherId = document.getElementById('teacher_id').value;
-        if (teacherId) {
-            const selectedOption = document.getElementById('teacher_id').querySelector(`option[value="${teacherId}"]`);
-            if (selectedOption) {
-                const optionText = selectedOption.textContent;
-                const match = optionText.match(/(.+?)\s*\(([^)]+)\)/);
-                if (match) {
-                    nameInput.value = match[1].trim();
+    // Generic function to populate form fields from selected entity
+    function populateEntityFields(selectId, emailField = '') {
+        const select = document.getElementById(selectId);
+        if (!select) return;
+        
+        const selectedOption = select.options[select.selectedIndex];
+        if (selectedOption && selectedOption.value) {
+            const optionText = selectedOption.textContent;
+            // Match name (and optionally ID/email) in format: "Name (ID/Email)"
+            const match = optionText.match(/(.+?)(?:\s*\(([^)]+)\))?$/);
+            
+            if (match) {
+                nameInput.value = match[1].trim();
+                
+                // If we have a second group and it looks like an email, use it
+                if (match[2] && match[2].includes('@')) {
                     emailInput.value = match[2].trim();
-                    phoneInput.value = '';
-
-                    document.getElementById('name-source').style.display = 'inline';
-                    document.getElementById('email-source').style.display = 'inline';
-                    document.getElementById('phone-source').style.display = 'inline';
                 }
+                
+                document.getElementById('name-source').style.display = 'inline';
+                document.getElementById('email-source').style.display = match[2] && match[2].includes('@') ? 'inline' : 'none';
             }
         } else {
             nameInput.value = '';
             emailInput.value = '';
             phoneInput.value = '';
-
-            document.getElementById('name-source').style.display = 'none';
-            document.getElementById('email-source').style.display = 'none';
-            document.getElementById('phone-source').style.display = 'none';
-        }
-    }
-
-    // Populate form fields when student is selected
-    function populateStudentFields() {
-        const studentId = document.getElementById('student_id').value;
-        if (studentId) {
-            const selectedOption = document.getElementById('student_id').querySelector(`option[value="${studentId}"]`);
-            if (selectedOption) {
-                const optionText = selectedOption.textContent;
-                const match = optionText.match(/(.+?)\s*\(([^)]+)\)/);
-                if (match) {
-                    nameInput.value = match[1].trim();
-                    emailInput.value = '';
-                    phoneInput.value = '';
-
-                    document.getElementById('name-source').style.display = 'inline';
-                    document.getElementById('email-source').style.display = 'inline';
-                    document.getElementById('phone-source').style.display = 'inline';
-                }
-            }
-        } else {
-            nameInput.value = '';
-            emailInput.value = '';
-            phoneInput.value = '';
-
+            
             document.getElementById('name-source').style.display = 'none';
             document.getElementById('email-source').style.display = 'none';
             document.getElementById('phone-source').style.display = 'none';
@@ -490,15 +416,20 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Event Listeners
-    userTypeInputs.forEach(input => {
+    document.querySelectorAll('input[name="role_id"]').forEach(input => {
         input.addEventListener('change', handleRoleSelection);
     });
 
-    document.getElementById('teacher_id').addEventListener('change', populateTeacherFields);
-    document.getElementById('student_id').addEventListener('change', populateStudentFields);
+    // Add change listeners to any entity selection dropdowns
+    const entitySelects = document.querySelectorAll('select[id$="_id"]');
+    entitySelects.forEach(select => {
+        select.addEventListener('change', () => populateEntityFields(select.id));
+    });
 
     nextToStep2Btn.addEventListener('click', function() {
-        if (selectedRole) {
+        const selectedRoleInput = document.querySelector('input[name="role_id"]:checked');
+        if (selectedRoleInput) {
+            selectedRole = selectedRoleInput.value;
             showStep(2);
         }
     });
@@ -506,7 +437,7 @@ document.addEventListener('DOMContentLoaded', function() {
     backToStep1Btn.addEventListener('click', function() {
         showStep(1);
         selectedRole = '';
-        const checkedInput = document.querySelector('input[name="user_type"]:checked');
+        const checkedInput = document.querySelector('input[name="role_id"]:checked');
         if (checkedInput) {
             checkedInput.checked = false;
         }
@@ -521,35 +452,19 @@ document.addEventListener('DOMContentLoaded', function() {
         let isValid = true;
         let errorMessage = '';
 
-        // Validate based on selected role
-        if (selectedRole === 'teacher' || selectedRole === 'student') {
-            if (selectedRole === 'teacher' && !document.getElementById('teacher_id').value) {
-                isValid = false;
-                errorMessage = 'Please select a teacher to link this user account to.';
-            } else if (selectedRole === 'student' && !document.getElementById('student_id').value) {
-                isValid = false;
-                errorMessage = 'Please select a student to link this user account to.';
-            } else if (selectedRole === 'teacher' && (!nameInput.value.trim() || !emailInput.value.trim())) {
-                isValid = false;
-                errorMessage = 'Please select a teacher first to populate the required information.';
-            } else if (selectedRole === 'student' && !nameInput.value.trim()) {
-                isValid = false;
-                errorMessage = 'Please select a student first to populate the required information.';
-            }
-        } else {
-            if (!nameInput.value.trim()) {
-                isValid = false;
-                errorMessage = 'Please enter a full name.';
-            } else if (!emailInput.value.trim()) {
-                isValid = false;
-                errorMessage = 'Please enter an email address.';
-            } else if (!document.getElementById('password').value) {
-                isValid = false;
-                errorMessage = 'Please enter a password.';
-            } else if (document.getElementById('password').value !== document.getElementById('password_confirmation').value) {
-                isValid = false;
-                errorMessage = 'Password confirmation does not match.';
-            }
+        // Basic validation for all roles
+        if (!nameInput.value.trim()) {
+            isValid = false;
+            errorMessage = 'Please enter a full name.';
+        } else if (!emailInput.value.trim()) {
+            isValid = false;
+            errorMessage = 'Please enter an email address.';
+        } else if (!document.getElementById('password').value) {
+            isValid = false;
+            errorMessage = 'Please enter a password.';
+        } else if (document.getElementById('password').value !== document.getElementById('password_confirmation').value) {
+            isValid = false;
+            errorMessage = 'Password confirmation does not match.';
         }
 
         if (!isValid) {
