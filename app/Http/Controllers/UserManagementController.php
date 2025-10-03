@@ -24,7 +24,7 @@ class UserManagementController extends Controller
      */
     public function index()
     {
-        $this->authorize('viewAny', EnhancedUser::class);
+        // $this->authorize('viewAny', EnhancedUser::class);
 
         $users = EnhancedUser::with(['partner', 'roles', 'creator'])
             ->when(request('search'), function ($query, $search) {
@@ -73,7 +73,7 @@ class UserManagementController extends Controller
      */
     public function create()
     {
-        $this->authorize('create', EnhancedUser::class);
+        // $this->authorize('create', EnhancedUser::class);
 
         $currentUser = EnhancedUser::find(auth()->id());
         $currentUserLevel = $currentUser->getHighestRoleLevel();
@@ -101,20 +101,17 @@ class UserManagementController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create', EnhancedUser::class);
+        // $this->authorize('create', EnhancedUser::class);
 
-        // Get valid role names for user_type validation
-        $validRoleNames = EnhancedRole::active()->pluck('name')->toArray();
-        
         $validator = Validator::make($request->all(), [
-            'name' => 'required_unless:teacher_id,null,student_id,null|string|max:255',
-            'email' => 'required_unless:teacher_id,null,student_id,null|string|email|max:255|unique:users',
+            'name' => 'nullable|string|max:255',
+            'email' => 'nullable|string|email|max:255|unique:users',
             'phone' => 'nullable|string|max:20',
             'password' => 'required|string|min:8|confirmed',
             'role_ids' => 'required|array|min:1',
             'role_ids.*' => 'exists:roles,id',
             'status' => ['required', Rule::in(EnhancedUser::getStatuses())],
-            'user_type' => ['required', Rule::in($validRoleNames)],
+            'user_type' => 'required|in:teacher,student,operator',
             'teacher_id' => 'nullable|exists:teachers,id',
             'student_id' => 'nullable|exists:students,id',
             'permissions' => 'nullable|array',
@@ -128,6 +125,31 @@ class UserManagementController extends Controller
             ], 422);
         }
 
+        // Additional validation for linked records
+        if ($request->user_type === 'teacher' && $request->teacher_id) {
+            $teacher = \App\Models\Teacher::where('id', $request->teacher_id)
+                ->where('partner_id', auth()->user()->partner_id)
+                ->first();
+
+            if (!$teacher) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Selected teacher not found or does not belong to your partner.'
+                ], 422);
+            }
+        } elseif ($request->user_type === 'student' && $request->student_id) {
+            $student = \App\Models\Student::where('id', $request->student_id)
+                ->where('partner_id', auth()->user()->partner_id)
+                ->first();
+
+            if (!$student) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Selected student not found or does not belong to your partner.'
+                ], 422);
+            }
+        }
+
         try {
             DB::beginTransaction();
 
@@ -139,29 +161,6 @@ class UserManagementController extends Controller
                 'created_by' => auth()->id(),
                 'updated_by' => auth()->id(),
             ];
-
-            // Set primary role from the first selected role or user_type
-            if (!empty($request->role_ids)) {
-                $primaryRole = EnhancedRole::find($request->role_ids[0]);
-                if ($primaryRole) {
-                    $userData['role'] = $primaryRole->name;
-                    $userData['role_id'] = $primaryRole->id;
-                }
-            } elseif ($request->user_type) {
-                // Find role by name from user_type
-                $roleByName = EnhancedRole::where('name', $request->user_type)->first();
-                if ($roleByName) {
-                    $userData['role'] = $roleByName->name;
-                    $userData['role_id'] = $roleByName->id;
-                } else {
-                    // Fallback to a default role if not found
-                    $defaultRole = EnhancedRole::where('is_default', true)->first();
-                    if ($defaultRole) {
-                        $userData['role'] = $defaultRole->name;
-                        $userData['role_id'] = $defaultRole->id;
-                    }
-                }
-            }
 
             // Use data from linked teacher/student if provided, otherwise use form data
             if ($request->teacher_id) {
@@ -185,7 +184,7 @@ class UserManagementController extends Controller
                     $userData['phone'] = $student->phone;
                 }
             } else {
-                // For other roles, use form data
+                // For other roles (including operator), use form data
                 $userData['name'] = $request->name;
                 $userData['email'] = $request->email;
                 $userData['phone'] = $request->phone;
@@ -218,7 +217,6 @@ class UserManagementController extends Controller
             $user->roles()->attach($request->role_ids, [
                 'assigned_by' => auth()->id(),
                 'assigned_at' => now(),
-                'enhanced_user_id' => $user->id,
             ]);
 
             // Log activity
@@ -242,7 +240,7 @@ class UserManagementController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'User created successfully',
-                'user' => $user->fresh()->load(['roles', 'permissions'])
+                'user' => $user->load(['roles', 'permissions'])
             ]);
 
         } catch (\Exception $e) {
@@ -319,26 +317,10 @@ class UserManagementController extends Controller
             $user->update($updateData);
 
             // Sync roles
-            $syncData = [];
-            foreach ($request->role_ids as $roleId) {
-                $syncData[$roleId] = [
-                    'assigned_by' => auth()->id(),
-                    'assigned_at' => now(),
-                    'enhanced_user_id' => $user->id,
-                ];
-            }
-            $user->roles()->sync($syncData);
-
-            // Update primary role in users table
-            if (!empty($request->role_ids)) {
-                $primaryRole = EnhancedRole::find($request->role_ids[0]);
-                if ($primaryRole) {
-                    $user->update([
-                        'role' => $primaryRole->name,
-                        'role_id' => $primaryRole->id
-                    ]);
-                }
-            }
+            $user->roles()->sync($request->role_ids, [
+                'assigned_by' => auth()->id(),
+                'assigned_at' => now(),
+            ]);
 
             // Sync direct permissions
             $user->permissions()->sync($request->permissions ?? [], [

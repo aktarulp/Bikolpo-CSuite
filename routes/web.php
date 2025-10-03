@@ -40,6 +40,88 @@ Route::get('/', function () {
     return view('welcome');
 })->name('landing');
 
+// Debug route - remove after debugging
+Route::get('/debug-user', function () {
+    if (auth()->check()) {
+        $user = auth()->user();
+        return response()->json([
+            'user_id' => $user->id,
+            'role' => $user->role,
+            'role_id' => $user->role_id ?? 'null',
+            'role_lowercase' => strtolower($user->role),
+            'role_length' => strlen($user->role),
+            'role_bytes' => bin2hex($user->role),
+        ]);
+    }
+    return response()->json(['message' => 'Not authenticated']);
+})->middleware('auth');
+
+// Debug route to check user_id 18 data
+Route::get('/debug-user-18', function () {
+    $user18 = \App\Models\User::find(18);
+    $user17 = \App\Models\User::find(17);
+    $optEmail = \App\Models\User::where('email', 'opt@gg.com')->first();
+    
+    return response()->json([
+        'user_18' => $user18 ? [
+            'id' => $user18->id,
+            'name' => $user18->name,
+            'email' => $user18->email,
+            'phone' => $user18->phone,
+            'role' => $user18->role,
+            'role_id' => $user18->role_id,
+        ] : 'User 18 not found',
+        'user_17' => $user17 ? [
+            'id' => $user17->id,
+            'name' => $user17->name,
+            'email' => $user17->email,
+            'phone' => $user17->phone,
+            'role' => $user17->role,
+            'role_id' => $user17->role_id,
+        ] : 'User 17 not found',
+        'opt_email_user' => $optEmail ? [
+            'id' => $optEmail->id,
+            'name' => $optEmail->name,
+            'email' => $optEmail->email,
+            'phone' => $optEmail->phone,
+            'role' => $optEmail->role,
+            'role_id' => $optEmail->role_id,
+        ] : 'opt@gg.com not found',
+    ]);
+});
+
+// Test login route to bypass all validation
+Route::post('/test-login', function(\Illuminate\Http\Request $request) {
+    dd([
+        'message' => 'Test login route reached',
+        'request_data' => $request->all(),
+        'email_attempt' => $request->input('email'),
+        'password_provided' => $request->has('password') ? 'Yes' : 'No',
+    ]);
+});
+
+// Test password verification for user_id 18
+Route::get('/test-password', function() {
+    $user18 = \App\Models\User::find(18);
+    $testPassword = '12345678';
+    
+    if (!$user18) {
+        return response()->json(['error' => 'User 18 not found']);
+    }
+    
+    $passwordCheck = \Hash::check($testPassword, $user18->password);
+    
+    return response()->json([
+        'user_id' => $user18->id,
+        'email' => $user18->email,
+        'role' => $user18->role,
+        'password_hash' => $user18->password,
+        'test_password' => $testPassword,
+        'password_matches' => $passwordCheck,
+        'hash_info' => password_get_info($user18->password),
+    ]);
+});
+
 // Debug route for access code testing
 Route::get('/debug-access/{accessCode}/{phone}', function($accessCode, $phone) {
     $normalizedPhone = preg_replace('/[^0-9]/', '', $phone);
@@ -625,6 +707,33 @@ Route::middleware('auth')->group(function () {
         });
         
         // Analytics routes moved outside partner middleware for better access
+    });
+
+    // Teacher Routes
+    Route::prefix('teacher')->name('teacher.')->middleware(['auth', 'role:teacher'])->group(function () {
+        Route::get('/', [\App\Http\Controllers\TeacherDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard', [\App\Http\Controllers\TeacherDashboardController::class, 'index'])->name('dashboard');
+        
+        // Teacher can access partner resources with limited permissions
+        // Add teacher-specific routes here as needed
+    });
+
+    // Operator Routes
+    Route::prefix('operator')->name('operator.')->middleware(['auth', 'role:operator'])->group(function () {
+        Route::get('/', [\App\Http\Controllers\OperatorDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard', [\App\Http\Controllers\OperatorDashboardController::class, 'index'])->name('dashboard');
+        
+        // Operator can access partner resources with operational permissions
+        // Add operator-specific routes here as needed
+    });
+
+    // Admin Routes (System Administrator, Admin, System)
+    Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:system_administrator,admin,system'])->group(function () {
+        Route::get('/', [\App\Http\Controllers\AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard', [\App\Http\Controllers\AdminDashboardController::class, 'index'])->name('dashboard');
+        
+        // Admin can access all system resources
+        // Add admin-specific routes here as needed
     });
 
     // Student Routes

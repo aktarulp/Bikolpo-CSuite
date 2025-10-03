@@ -24,8 +24,6 @@ class EnhancedUser extends Authenticatable
         'phone',
         'avatar',
         'status',
-        'role',
-        'role_id',
         'email_verified_at',
         'last_login_at',
         'last_login_ip',
@@ -70,14 +68,6 @@ class EnhancedUser extends Authenticatable
     }
 
     /**
-     * Get the primary role of the user.
-     */
-    public function role(): BelongsTo
-    {
-        return $this->belongsTo(EnhancedRole::class, 'role_id');
-    }
-
-    /**
      * Get the roles assigned to the user.
      */
     public function roles(): BelongsToMany
@@ -102,7 +92,7 @@ class EnhancedUser extends Authenticatable
      */
     public function activities(): HasMany
     {
-        return $this->hasMany(UserActivity::class, 'user_id');
+        return $this->hasMany(UserActivity::class);
     }
 
     /**
@@ -361,24 +351,9 @@ class EnhancedUser extends Authenticatable
     }
 
     /**
-     * Get status badge HTML.
-     */
-    public function getStatusBadgeAttribute()
-    {
-        $badges = [
-            self::STATUS_ACTIVE => '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">🟢 Active</span>',
-            self::STATUS_INACTIVE => '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200">⚪ Inactive</span>',
-            self::STATUS_SUSPENDED => '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">🟡 Suspended</span>',
-            self::STATUS_PENDING => '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">🔵 Pending</span>',
-        ];
-
-        return $badges[$this->status] ?? '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200">⚪ Unknown</span>';
-    }
-
-    /**
      * Get all available user statuses.
      */
-    public static function getStatuses()
+    public static function getStatuses(): array
     {
         return [
             self::STATUS_ACTIVE,

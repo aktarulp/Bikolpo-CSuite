@@ -260,29 +260,31 @@
           if (existingEmail) existingEmail.remove();
           if (existingPhone) existingPhone.remove();
           
-          // Add appropriate hidden input
+          // Add appropriate hidden input based on detection
           if (inputType === 'email') {
+            // Email can be used by: Partner, Teacher, Operator, System Administrator, System
             const emailInput = document.createElement('input');
             emailInput.type = 'hidden';
             emailInput.name = 'email';
             emailInput.value = inputValue;
             loginForm.appendChild(emailInput);
-            loginTypeInput.value = 'partner';
+            loginTypeInput.value = 'email_based';
           } else if (inputType === 'phone') {
+            // Phone is primarily used by Students
             const phoneInput = document.createElement('input');
             phoneInput.type = 'hidden';
             phoneInput.name = 'phone';
             phoneInput.value = inputValue;
             loginForm.appendChild(phoneInput);
-            loginTypeInput.value = 'student';
+            loginTypeInput.value = 'phone_based';
           } else {
-            // If we can't detect, try email first
+            // If we can't detect, try email first (covers most roles)
             const emailInput = document.createElement('input');
             emailInput.type = 'hidden';
             emailInput.name = 'email';
             emailInput.value = inputValue;
             loginForm.appendChild(emailInput);
-            loginTypeInput.value = 'auto';
+            loginTypeInput.value = 'auto_detected';
           }
         });
       });

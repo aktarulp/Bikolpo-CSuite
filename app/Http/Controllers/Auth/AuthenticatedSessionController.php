@@ -31,71 +31,125 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        \Log::info('AuthenticatedSessionController: Login attempt started', [
+            'request_data' => $request->only(['email', 'phone', 'login_credential', 'login_type']),
+            'session_id' => $request->session()->getId(),
+        ]);
+
+        // Authenticate the user
         $request->authenticate();
 
+        // Regenerate session
         $request->session()->regenerate();
 
-        // Get the user and their role from the database
+        // Get the authenticated user
         $user = Auth::user();
-        $loginType = $request->input('login_type', 'auto');
         
-        // Allow login for all roles - automatic detection based on credentials
-        
-        // Log role and intended redirect for debugging
-        Log::info('User logged in', [
+        // Debug: Log the authenticated user
+        \Log::info('User authenticated', [
             'user_id' => $user->id,
-            'user_role' => $user->role,
-            'login_type' => $loginType,
+            'email' => $user->email,
+            'role' => $user->role,
         ]);
 
-        Log::debug('Login Debug: User Role and Login Type', [
-            'user_id' => $user->id,
-            'user_role' => $user->role,
-            'login_type' => $loginType,
-            'redirect_target' => 'student.dashboard'
-        ]);
-
-        // Redirect based on user's actual role in database
-        switch ($user->role) {
+        // Redirect based on role
+        switch (strtolower($user->role)) {
+            case 'operator':
+                return redirect()->route('operator.dashboard');
+                
             case 'student':
-            case 'Student':
-                Log::info('Redirecting to student dashboard', ['user_id' => $user->id]);
                 return redirect()->route('student.dashboard');
                 
-            case 'partner':
-            case 'Partner':
-                Log::info('Redirecting to partner dashboard', ['user_id' => $user->id]);
-                return redirect()->route('partner.dashboard');
-                
             case 'teacher':
-            case 'Teacher':
-                Log::info('Redirecting to teacher dashboard', ['user_id' => $user->id]);
                 return redirect()->route('teacher.dashboard');
                 
             case 'admin':
-            case 'Admin':
-            case 'System':
-                Log::info('Redirecting to admin dashboard', ['user_id' => $user->id]);
+            case 'system_administrator':
                 return redirect()->route('admin.dashboard');
                 
             default:
-                // For other roles, redirect to partner dashboard as fallback
-                Log::info('Unknown role, redirecting to partner dashboard', ['user_id' => $user->id, 'role' => $user->role]);
-                return redirect()->route('partner.dashboard');
+                \Log::warning('Unknown role detected, attempting intelligent redirect', [
+                    'user_id' => $user->id, 
+                    'role' => $user->role,
+                    'role_lowercase' => strtolower($user->role),
+                    'role_id' => $user->role_id ?? 'null'
+                ]);
+                
+                // Try to determine appropriate dashboard based on role_id if role string doesn't match
+                if ($user->role_id) {
+                    switch ($user->role_id) {
+                        case 1: // System Administrator
+                        case 2: // Admin  
+                            Log::info('Redirecting to admin dashboard via role_id', ['user_id' => $user->id, 'role_id' => $user->role_id]);
+                            return redirect()->route('admin.dashboard');
+                        case 3: // Partner
+                            Log::info('Redirecting to partner dashboard via role_id', ['user_id' => $user->id, 'role_id' => $user->role_id]);
+                            return redirect()->route('partner.dashboard');
+                        case 4: // Teacher
+                            Log::info('Redirecting to teacher dashboard via role_id', ['user_id' => $user->id, 'role_id' => $user->role_id]);
+                            return redirect()->route('teacher.dashboard');
+                        case 5: // Operator
+                            Log::info('Redirecting to operator dashboard via role_id', ['user_id' => $user->id, 'role_id' => $user->role_id]);
+                            return redirect()->route('operator.dashboard');
+                        case 6: // Student
+                            Log::info('Redirecting to student dashboard via role_id', ['user_id' => $user->id, 'role_id' => $user->role_id]);
+                            return redirect()->route('student.dashboard');
+                    }
+                }
+                
+                // Try to determine appropriate dashboard based on login type and role string
+                if (in_array(strtolower($user->role), ['partner_admin', 'institution_admin'])) {
+                    Log::info('Redirecting to partner dashboard via role string match', ['user_id' => $user->id]);
+                    return redirect()->route('partner.dashboard');
+                } elseif (str_contains(strtolower($user->role), 'admin') || str_contains(strtolower($user->role), 'system')) {
+                    Log::info('Redirecting to admin dashboard via role string match', ['user_id' => $user->id]);
+                    return redirect()->route('admin.dashboard');
+                } elseif ($loginType === 'phone_based') {
+                    Log::info('Redirecting to student dashboard via phone login type', ['user_id' => $user->id]);
+                    return redirect()->route('student.dashboard');
+                } else {
+                    // Default fallback to partner dashboard
+                    Log::info('Redirecting to partner dashboard as final fallback', ['user_id' => $user->id]);
+                    return redirect()->route('partner.dashboard');
+                }
         }
+
+        return redirect('/');
     }
 
     /**
-     * Destroy an authenticated session.
+     * Log the user out of the application.
      */
     public function destroy(Request $request): RedirectResponse
     {
+        // Get user info before logging out
+        $user = Auth::user();
+        $userId = $user ? $user->id : null;
+        $userRole = $user ? $user->role : null;
+        
+        // Log the logout attempt
+        Log::info('User logging out', [
+            'user_id' => $userId,
+            'role' => $userRole,
+            'session_id' => $request->session()->getId()
+        ]);
+
+        // Logout the user
         Auth::guard('web')->logout();
 
+        // Invalidate the session
         $request->session()->invalidate();
 
+        // Regenerate CSRF token
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        // Log successful logout
+        Log::info('User logged out successfully', [
+            'user_id' => $userId,
+            'session_id' => $request->session()->getId()
+        ]);
+
+        // Redirect to login page
+        return redirect('/login');
     }
 }

@@ -43,29 +43,90 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        // Try authentication with email first, then phone
-        $credentials = ['password' => $this->password];
+        $authenticated = false;
         $fieldName = 'email';
-        
-        if ($this->email) {
-            $credentials['email'] = $this->email;
-            $fieldName = 'email';
-        } elseif ($this->phone) {
-            $credentials['phone'] = $this->phone;
-            $fieldName = 'phone';
-        } else {
-            // Fallback to email if neither is provided
-            $credentials['email'] = $this->login_credential ?? '';
-            $fieldName = 'email';
+        $lastError = null;
+
+        // Try authentication with multiple methods
+        $password = $this->password;
+        $remember = $this->boolean('remember');
+
+        // Debug for opt@gg.com
+        if ($this->email === 'opt@gg.com') {
+            \Log::info('LoginRequest: Attempting authentication for opt@gg.com', [
+                'email' => $this->email,
+                'password_length' => strlen($password),
+                'remember' => $remember,
+            ]);
         }
 
-        if (! Auth::attempt($credentials, $this->boolean('remember'))) {
+        // Method 1: Try with email if provided
+        if ($this->email) {
+            $credentials = ['email' => $this->email, 'password' => $password];
+            $fieldName = 'email';
+            
+            // Debug for opt@gg.com
+            if ($this->email === 'opt@gg.com') {
+                \Log::info('LoginRequest: Trying email authentication', [
+                    'credentials' => ['email' => $this->email, 'password' => '[HIDDEN]'],
+                ]);
+            }
+            
+            if (Auth::attempt($credentials, $remember)) {
+                $authenticated = true;
+                if ($this->email === 'opt@gg.com') {
+                    \Log::info('LoginRequest: Email authentication SUCCESS for opt@gg.com');
+                }
+            } else {
+                if ($this->email === 'opt@gg.com') {
+                    \Log::warning('LoginRequest: Email authentication FAILED for opt@gg.com');
+                }
+            }
+        }
+
+        // Method 2: Try with phone if provided and email failed
+        if (!$authenticated && $this->phone) {
+            $credentials = ['phone' => $this->phone, 'password' => $password];
+            $fieldName = 'phone';
+            if (Auth::attempt($credentials, $remember)) {
+                $authenticated = true;
+            }
+        }
+
+        // Method 3: Try with login_credential as email if no specific field worked
+        if (!$authenticated && $this->login_credential) {
+            // First try as email
+            $credentials = ['email' => $this->login_credential, 'password' => $password];
+            $fieldName = 'email';
+            if (Auth::attempt($credentials, $remember)) {
+                $authenticated = true;
+            }
+            
+            // Then try as phone if email failed
+            if (!$authenticated) {
+                $credentials = ['phone' => $this->login_credential, 'password' => $password];
+                $fieldName = 'phone';
+                if (Auth::attempt($credentials, $remember)) {
+                    $authenticated = true;
+                }
+            }
+        }
+
+        if (!$authenticated) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
                 $fieldName => trans('auth.failed'),
             ]);
         }
+
+        // Debug: Log successful authentication
+        \Log::info('LoginRequest: Authentication successful', [
+            'authenticated_user_id' => Auth::user()->id,
+            'authenticated_user_role' => Auth::user()->role,
+            'authenticated_user_email' => Auth::user()->email ?? 'null',
+            'authenticated_user_phone' => Auth::user()->phone ?? 'null',
+        ]);
 
         RateLimiter::clear($this->throttleKey());
     }
