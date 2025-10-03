@@ -10,7 +10,7 @@
             <div class="flex items-center justify-between h-16">
                 <!-- Back Navigation -->
                 <div class="flex items-center space-x-4">
-                    <a href="{{ route('partner.settings.user-management') }}"
+                    <a href="{{ url('/partner/settings') }}"
                        class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 rounded-lg transition duration-200">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
