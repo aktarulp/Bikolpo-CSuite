@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Partner Login | Bikolpo-LQ</title>
+  <title>Login | Bikolpo-LQ</title>
   
   <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
@@ -28,7 +28,14 @@
             'fade-in': 'fadeIn 0.5s ease-in-out',
             'slide-up': 'slideUp 0.6s ease-out',
             'bounce-slow': 'bounce 2s infinite',
-            'pulse-slow': 'pulse 3s infinite'
+            'pulse-slow': 'pulse 3s infinite',
+            'float': 'float 6s ease-in-out infinite'
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-20px)' }
+            }
           }
         }
       }
@@ -37,7 +44,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Nikosh:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
-<body class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 font-bangla">
+<body class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 font-bangla overflow-x-hidden">
     @include('navigation-layout')
     
     <!-- Enhanced Background Decorative Elements -->
@@ -65,257 +72,221 @@
 
 
 
-    <div class="relative min-h-screen flex items-center justify-center p-4">
-    
-    <!-- Two Column Layout -->
-    <div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+    <!-- Main Content -->
+    <div class="relative min-h-screen flex items-center justify-center px-4 py-8">
+      <div class="w-full max-w-md mx-auto">
       
-      <!-- Left Column: Promotional Content -->
-      <div class="text-center lg:text-left space-y-6">
+        <!-- Login Card -->
+        <div class="relative bg-white/95 backdrop-blur-lg shadow-2xl rounded-3xl p-8 border border-white/50 overflow-hidden animate-fade-in">
         
-        <!-- Hero Section -->
-        <div class="space-y-4">
+          <!-- Decorative elements -->
+          <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-blue-100/40 to-transparent rounded-full -translate-y-10 translate-x-10"></div>
+          <div class="absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-purple-100/40 to-transparent rounded-full translate-y-8 -translate-x-8"></div>
           
-          <h1 class="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-primaryGreen via-primaryBlue to-primaryPurple bg-clip-text text-transparent leading-tight">
-            Welcome Back to Bikolpo LQ
-          </h1>
-          
-          <p class="text-lg text-gray-600 max-w-lg mx-auto lg:mx-0 leading-relaxed">
-            Access your partner dashboard and continue empowering students with quality education through our smart exam platform
-          </p>
-        </div>
-
-        <!-- Features Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl mx-auto lg:mx-0">
-          
-          <div class="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mx-auto lg:mx-0 mb-3">
-              <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          <!-- Header Section -->
+          <div class="relative text-center mb-8">
+            <!-- Logo/Icon -->
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primaryBlue to-primaryPurple rounded-2xl shadow-lg mb-4 animate-float">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
               </svg>
             </div>
-            <h3 class="text-base font-bold text-gray-800 mb-2">Student Management</h3>
-            <p class="text-gray-600 text-sm leading-relaxed">Easily manage your student roster and track progress</p>
-          </div>
-          
-          <div class="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto lg:mx-0 mb-3">
-              <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
-                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
-              </svg>
-            </div>
-            <h3 class="text-base font-bold text-gray-800 mb-2">Exam Creation</h3>
-            <p class="text-gray-600 text-sm leading-relaxed">Create and customize exams for your students</p>
-          </div>
-          
-          <div class="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto lg:mx-0 mb-3">
-              <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-1.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
-              </svg>
-            </div>
-            <h3 class="text-base font-bold text-gray-800 mb-2">Analytics Dashboard</h3>
-            <p class="text-gray-600 text-sm leading-relaxed">Get insights into student performance and trends</p>
-          </div>
-          
-          <div class="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center mx-auto lg:mx-0 mb-3">
-              <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
-                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
-              </svg>
-            </div>
-            <h3 class="text-base font-bold text-gray-800 mb-2">24/7 Support</h3>
-            <p class="text-gray-600 text-sm leading-relaxed">Round-the-clock assistance for your success</p>
-          </div>
-        </div>
-
-        <!-- Trust Indicators -->
-        <div class="pt-4">
-          <p class="text-sm text-gray-500 mb-4 text-center lg:text-left">Trusted by 1000+ educational institutions</p>
-          <div class="flex items-center justify-center lg:justify-start space-x-6">
-            <div class="flex items-center space-x-2">
-              <div class="w-2 h-2 bg-primaryGreen rounded-full animate-pulse"></div>
-              <span class="text-sm text-gray-600 font-medium">99.9% Uptime</span>
-            </div>
-            <div class="flex items-center space-x-2">
-              <div class="w-2 h-2 bg-primaryGreen rounded-full animate-pulse"></div>
-              <span class="text-sm text-gray-600 font-medium">SSL Secured</span>
-            </div>
-            <div class="flex items-center space-x-2">
-              <div class="w-2 h-2 bg-primaryGreen rounded-full animate-pulse"></div>
-              <span class="text-sm text-gray-600 font-medium">GDPR Compliant</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right Column: Enhanced Login Card -->
-      <div class="flex justify-center lg:justify-end">
-        <div class="relative w-full max-w-lg">
-          <!-- Abstract shapes around the card -->
-          <div class="absolute -top-8 -left-8 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-transparent rounded-full blur-xl"></div>
-          <div class="absolute -bottom-8 -right-8 w-28 h-28 bg-gradient-to-tl from-purple-400/20 to-transparent rounded-full blur-xl"></div>
-          <div class="absolute top-1/2 -right-10 w-20 h-20 bg-gradient-to-r from-green-400/20 to-transparent rounded-full blur-lg"></div>
-          <div class="absolute top-1/3 -left-6 w-16 h-16 bg-gradient-to-l from-pink-400/20 to-transparent rounded-full blur-md"></div>
-          
-          <!-- Main login card -->
-          <div class="relative bg-white/95 backdrop-blur-sm shadow-2xl rounded-3xl p-8 border border-white/30 overflow-hidden">
-            <!-- Decorative elements inside the card -->
-            <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-blue-100/30 to-transparent rounded-full -translate-y-12 translate-x-12"></div>
-            <div class="absolute bottom-0 left-0 w-20 h-20 bg-gradient-to-tr from-purple-100/30 to-transparent rounded-full translate-y-10 -translate-x-10"></div>
             
-            <!-- Subtle geometric accent -->
-            <div class="absolute top-3 right-3 w-6 h-6 border-2 border-blue-200/30 rounded-lg rotate-45"></div>
-            <div class="absolute bottom-3 left-3 w-5 h-5 border-2 border-purple-200/30 rounded-full"></div>
+            <!-- Title -->
+            <h1 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-gray-800 via-primaryBlue to-primaryPurple bg-clip-text text-transparent mb-2">
+              Welcome Back
+            </h1>
+            <p class="text-gray-600 text-sm md:text-base">Sign in to access your dashboard</p>
+          </div>
+
+          <!-- Login Form -->
+          <form method="POST" action="{{ route('login') }}" class="relative space-y-6" id="loginForm">
+            @csrf
             
-            <!-- Title with enhanced styling -->
-            <div class="relative text-center mb-6">
-              <div class="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl shadow-lg mb-3">
-                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2l1 1h2l1-1h2a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                </svg>
-              </div>
-              <h2 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-green-600 bg-clip-text text-transparent">
-                Partner Login
-              </h2>
-              <p class="text-gray-500 mt-1 text-sm">Access your dashboard</p>
-            </div>
-
-            <!-- Enhanced Form -->
-            <form method="POST" action="{{ route('login') }}" class="relative space-y-4">
-              @csrf
-              <input type="hidden" name="login_type" value="partner">
-              
-              <!-- Email with enhanced styling -->
+            <!-- Hidden input for login type - will be set automatically -->
+            <input type="hidden" name="login_type" value="auto" id="loginTypeInput">
+          
+            <!-- Email/Phone Input -->
+            <div class="relative">
+              <label class="block text-sm font-semibold text-gray-700 mb-2">
+                Email Address or Phone Number
+              </label>
               <div class="relative">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
-                <div class="relative">
-                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
-                    </svg>
-                  </div>
-                  <input type="email" name="email" required 
-                    class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-gray-50/50 transition-all duration-200" 
-                    placeholder="Enter your email"
-                    value="{{ old('email') }}">
-                </div>
-                @error('email')
-                  <p class="mt-2 text-sm text-red-600 flex items-center">
-                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                    </svg>
-                    {{ $message }}
-                  </p>
-                @enderror
-              </div>
-
-              <!-- Password with enhanced styling -->
-              <div class="relative">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
-                <div class="relative">
-                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                    </svg>
-                  </div>
-                  <input type="password" name="password" required 
-                    class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500/20 focus:border-green-500 bg-gray-50/50 transition-all duration-200" 
-                    placeholder="Enter your password">
-                </div>
-                @error('password')
-                  <p class="mt-2 text-sm text-red-600 flex items-center">
-                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                    </svg>
-                    {{ $message }}
-                  </p>
-                @enderror
-              </div>
-
-              <!-- Remember Me and Forgot Password -->
-              <div class="flex items-center justify-between">
-                <label class="flex items-center cursor-pointer group">
-                  <div class="relative">
-                    <input type="checkbox" name="remember" class="sr-only">
-                    <div class="w-5 h-5 border-2 border-gray-300 rounded-md group-hover:border-green-500 transition-colors duration-200"></div>
-                    <div class="absolute inset-0 w-5 h-5 bg-green-500 rounded-md scale-0 transition-transform duration-200 peer-checked:scale-100"></div>
-                  </div>
-                  <span class="ml-3 text-sm text-gray-700 group-hover:text-gray-900 transition-colors duration-200">Remember me</span>
-                </label>
-                @if (Route::has('password.request'))
-                  <a href="{{ route('password.request') }}" class="text-sm text-green-600 hover:text-green-700 hover:underline transition-colors duration-200">
-                    Forgot password?
-                  </a>
-                @endif
-              </div>
-
-              <!-- Enhanced Submit Button -->
-              <button type="submit" 
-                class="relative w-full py-3 px-6 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 overflow-hidden group">
-                <!-- Button background animation -->
-                <div class="absolute inset-0 bg-gradient-to-r from-green-400 to-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-                <!-- Button content -->
-                <span class="relative flex items-center justify-center">
-                  Sign In
-                  <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="inputIcon">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
                   </svg>
-                </span>
-              </button>
-
-              <!-- Registration link -->
-              <div class="text-center pt-4">
-                <p class="text-sm text-gray-600 mb-3">
-                  Don't have an account?
-                </p>
-                <a href="{{ route('register') }}" class="inline-block px-6 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-800 rounded-lg border border-gray-200 hover:border-gray-300 transition-all duration-200 font-medium text-sm">
-                  Register Now
-                </a>
+                </div>
+                <input type="text" name="login_credential" id="loginInput" required 
+                  class="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-200 focus:ring-2 focus:ring-primaryBlue/20 focus:border-primaryBlue bg-gray-50/50 transition-all duration-200 text-base" 
+                  placeholder="Enter your email or phone number"
+                  value="{{ old('login_credential', old('email', old('phone'))) }}">
               </div>
-            </form>
+              @error('email')
+                <p class="mt-2 text-sm text-red-600 flex items-center">
+                  <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                  </svg>
+                  {{ $message }}
+                </p>
+              @enderror
+              @error('phone')
+                <p class="mt-2 text-sm text-red-600 flex items-center">
+                  <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                  </svg>
+                  {{ $message }}
+                </p>
+              @enderror
+              @error('login_credential')
+                <p class="mt-2 text-sm text-red-600 flex items-center">
+                  <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                  </svg>
+                  {{ $message }}
+                </p>
+              @enderror
+            </div>
+          
+            <!-- Password Input -->
+            <div class="relative">
+              <label class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                  </svg>
+                </div>
+                <input type="password" name="password" required 
+                  class="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-200 focus:ring-2 focus:ring-primaryBlue/20 focus:border-primaryBlue bg-gray-50/50 transition-all duration-200 text-base" 
+                  placeholder="Enter your password">
+              </div>
+              @error('password')
+                <p class="mt-2 text-sm text-red-600 flex items-center">
+                  <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                  </svg>
+                  {{ $message }}
+                </p>
+              @enderror
+            </div>
+            <!-- Remember Me and Forgot Password -->
+            <div class="flex items-center justify-between text-sm">
+              <label class="flex items-center cursor-pointer group">
+                <input type="checkbox" name="remember" class="w-4 h-4 text-primaryBlue border-gray-300 rounded focus:ring-primaryBlue/20 focus:ring-2">
+                <span class="ml-2 text-gray-700 group-hover:text-gray-900 transition-colors duration-200">Remember me</span>
+              </label>
+              @if (Route::has('password.request'))
+                <a href="{{ route('password.request') }}" class="text-primaryBlue hover:text-primaryBlue/80 hover:underline transition-colors duration-200">
+                  Forgot password?
+                </a>
+              @endif
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" 
+              class="relative w-full py-4 px-6 bg-gradient-to-r from-primaryBlue to-primaryPurple hover:from-primaryBlue/90 hover:to-primaryPurple/90 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 overflow-hidden group text-base">
+              <span class="relative flex items-center justify-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                </svg>
+                Sign In
+              </span>
+            </button>
+          </form>
+
+          <!-- Registration Link -->
+          <div class="text-center pt-6 border-t border-gray-200/50">
+            <p class="text-gray-600 text-sm mb-3">
+              Don't have an account?
+            </p>
+            <a href="{{ route('register') }}" class="inline-flex items-center px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-800 rounded-xl border border-gray-200 hover:border-gray-300 transition-all duration-200 font-medium text-sm">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+              </svg>
+              Create Account
+            </a>
+          </div>
+
+          <!-- Trust Indicators -->
+          <div class="text-center pt-6">
+            <div class="flex items-center justify-center space-x-6 text-xs text-gray-500">
+              <div class="flex items-center space-x-1">
+                <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span>Secure Login</span>
+              </div>
+              <div class="flex items-center space-x-1">
+                <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <span>SSL Protected</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- JavaScript for Header Functionality -->
-  <script>
-    // Dark Mode Toggle
-    const darkToggle = document.getElementById('darkToggle');
-    const html = document.documentElement;
-    
-    // Check for saved theme preference
-    if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      html.classList.add('dark');
-    }
-    
-    darkToggle.addEventListener('click', () => {
-      html.classList.toggle('dark');
-      localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
-    });
+    <!-- JavaScript for Auto-Detection -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const loginForm = document.getElementById('loginForm');
+        const loginInput = document.getElementById('loginInput');
+        const loginTypeInput = document.getElementById('loginTypeInput');
 
-    // Mobile Menu Toggle
-    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    const mobileMenu = document.getElementById('mobileMenu');
-    
-    mobileMenuBtn.addEventListener('click', () => {
-      mobileMenu.classList.toggle('hidden');
-    });
+        // Function to detect if input is email or phone
+        function detectInputType(value) {
+          // Check if it looks like an email
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          // Check if it looks like a Bangladeshi phone number
+          const phoneRegex = /^01[3-9][0-9]{8}$/;
+          
+          if (emailRegex.test(value)) {
+            return 'email';
+          } else if (phoneRegex.test(value.replace(/\D/g, ''))) {
+            return 'phone';
+          }
+          return 'auto';
+        }
 
-    // Header scroll effect
-    const header = document.querySelector('header');
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 100) {
-        header.classList.add('shadow-lg', 'bg-white/95', 'dark:bg-gray-900/95');
-      } else {
-        header.classList.remove('shadow-lg', 'bg-white/95', 'dark:bg-gray-900/95');
-      }
-    });
-  </script>
-
+        // Before form submission, detect the input type and set appropriate fields
+        loginForm.addEventListener('submit', function(e) {
+          const inputValue = loginInput.value.trim();
+          const inputType = detectInputType(inputValue);
+          
+          // Create hidden inputs based on detected type
+          const existingEmail = loginForm.querySelector('input[name="email"]');
+          const existingPhone = loginForm.querySelector('input[name="phone"]');
+          
+          // Remove existing hidden inputs
+          if (existingEmail) existingEmail.remove();
+          if (existingPhone) existingPhone.remove();
+          
+          // Add appropriate hidden input
+          if (inputType === 'email') {
+            const emailInput = document.createElement('input');
+            emailInput.type = 'hidden';
+            emailInput.name = 'email';
+            emailInput.value = inputValue;
+            loginForm.appendChild(emailInput);
+            loginTypeInput.value = 'partner';
+          } else if (inputType === 'phone') {
+            const phoneInput = document.createElement('input');
+            phoneInput.type = 'hidden';
+            phoneInput.name = 'phone';
+            phoneInput.value = inputValue;
+            loginForm.appendChild(phoneInput);
+            loginTypeInput.value = 'student';
+          } else {
+            // If we can't detect, try email first
+            const emailInput = document.createElement('input');
+            emailInput.type = 'hidden';
+            emailInput.name = 'email';
+            emailInput.value = inputValue;
+            loginForm.appendChild(emailInput);
+            loginTypeInput.value = 'auto';
+          }
+        });
+      });
+    </script> 
 </body>
 </html>
+

@@ -37,18 +37,9 @@ class AuthenticatedSessionController extends Controller
 
         // Get the user and their role from the database
         $user = Auth::user();
-        $loginType = $request->input('login_type', 'partner');
+        $loginType = $request->input('login_type', 'auto');
         
-        // Check if the user's role matches the login type
-        if ($user->role !== $loginType) {
-            Auth::logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
-            
-            return back()->withErrors([
-                'email' => 'Invalid credentials for ' . ucfirst($loginType) . ' account.',
-            ]);
-        }
+        // Allow login for all roles - automatic detection based on credentials
         
         // Log role and intended redirect for debugging
         Log::info('User logged in', [
@@ -65,29 +56,33 @@ class AuthenticatedSessionController extends Controller
         ]);
 
         // Redirect based on user's actual role in database
-        if ($user->role === 'student') {
-            Log::info('Redirecting to student dashboard', ['user_id' => $user->id]);
-            return redirect()->route('student.dashboard');
-        } elseif ($user->role === 'partner') {
-            Log::info('Redirecting to partner dashboard', ['user_id' => $user->id]);
-            Log::debug('Login Debug: User Role and Login Type', [
-            'user_id' => $user->id,
-            'user_role' => $user->role,
-            'login_type' => $loginType,
-            'redirect_target' => 'partner.dashboard'
-        ]);
-            return redirect()->route('partner.dashboard');
+        switch ($user->role) {
+            case 'student':
+            case 'Student':
+                Log::info('Redirecting to student dashboard', ['user_id' => $user->id]);
+                return redirect()->route('student.dashboard');
+                
+            case 'partner':
+            case 'Partner':
+                Log::info('Redirecting to partner dashboard', ['user_id' => $user->id]);
+                return redirect()->route('partner.dashboard');
+                
+            case 'teacher':
+            case 'Teacher':
+                Log::info('Redirecting to teacher dashboard', ['user_id' => $user->id]);
+                return redirect()->route('teacher.dashboard');
+                
+            case 'admin':
+            case 'Admin':
+            case 'System':
+                Log::info('Redirecting to admin dashboard', ['user_id' => $user->id]);
+                return redirect()->route('admin.dashboard');
+                
+            default:
+                // For other roles, redirect to partner dashboard as fallback
+                Log::info('Unknown role, redirecting to partner dashboard', ['user_id' => $user->id, 'role' => $user->role]);
+                return redirect()->route('partner.dashboard');
         }
-
-        // Unknown role: log and redirect to welcome (safe) page
-        Log::warning('User role unknown during login redirect, sending to welcome', ['user_id' => $user->id, 'role' => $user->role]);
-        Log::debug('Login Debug: User Role and Login Type', [
-            'user_id' => $user->id,
-            'user_role' => $user->role,
-            'login_type' => $loginType,
-            'redirect_target' => '/'
-        ]);
-        return redirect('/');
     }
 
     /**

@@ -27,7 +27,9 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            'email' => ['nullable', 'string', 'email'],
+            'phone' => ['nullable', 'string'],
+            'login_credential' => ['nullable', 'string'],
             'password' => ['required', 'string'],
         ];
     }
@@ -41,11 +43,27 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        // Try authentication with email first, then phone
+        $credentials = ['password' => $this->password];
+        $fieldName = 'email';
+        
+        if ($this->email) {
+            $credentials['email'] = $this->email;
+            $fieldName = 'email';
+        } elseif ($this->phone) {
+            $credentials['phone'] = $this->phone;
+            $fieldName = 'phone';
+        } else {
+            // Fallback to email if neither is provided
+            $credentials['email'] = $this->login_credential ?? '';
+            $fieldName = 'email';
+        }
+
+        if (! Auth::attempt($credentials, $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                $fieldName => trans('auth.failed'),
             ]);
         }
 
@@ -80,6 +98,7 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        $identifier = $this->email ?? $this->phone ?? $this->login_credential ?? 'unknown';
+        return Str::transliterate(Str::lower($identifier).'|'.$this->ip());
     }
 }
