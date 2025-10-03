@@ -87,11 +87,26 @@ class UserManagementController extends Controller
         // Get current partner ID
         $partnerId = $this->getPartnerId();
 
-        // Get teachers from current partner
-        $teachers = \App\Models\Teacher::where('partner_id', $partnerId)->get();
+        // Get teachers from current partner (prioritize those without user accounts)
+        $teachers = \App\Models\Teacher::where('partner_id', $partnerId)
+            ->orderByRaw('user_id IS NULL DESC') // Show teachers without user accounts first
+            ->orderBy('full_name_en')
+            ->get();
 
-        // Get students from current partner
-        $students = \App\Models\Student::where('partner_id', $partnerId)->get();
+        // Get students from current partner (prioritize those without user accounts)
+        $students = \App\Models\Student::where('partner_id', $partnerId)
+            ->orderByRaw('user_id IS NULL DESC') // Show students without user accounts first
+            ->orderBy('full_name')
+            ->get();
+
+        // Debug: Log the counts
+        \Log::info('UserManagementController create method', [
+            'partner_id' => $partnerId,
+            'teachers_count' => $teachers->count(),
+            'students_count' => $students->count(),
+            'teachers_without_users' => $teachers->whereNull('user_id')->count(),
+            'students_without_users' => $students->whereNull('user_id')->count()
+        ]);
 
         // Get the default role (first role in the filtered list)
         $defaultRole = $roles->first();

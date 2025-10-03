@@ -1,5 +1,5 @@
 <!-- Teacher-Specific Information Section -->
-<div id="teacher-form-section" class="hidden space-y-6 mb-6">
+<div class="space-y-6 mb-6">
     <div>
         <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
             <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -7,6 +7,7 @@
             </svg>
             Teacher Information
         </h2>
+
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <!-- Full Name (English) -->

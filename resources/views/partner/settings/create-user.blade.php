@@ -61,58 +61,131 @@
                         </div>
                     </div>
 
-                    <div class="max-w-md">
-                        <label for="role_id" class="block text-sm font-medium text-gray-700 mb-2">
-                            User Role <span class="text-red-500">*</span>
-                        </label>
-                        <div class="relative">
-                            <select name="role_id" id="role_id" required
-                                    class="block w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 bg-white">
-                                <option value="">Select a role</option>
-                                @foreach($roles as $role)
-                                    @php
-                                        $roleName = strtolower($role->name);
-                                        $isTeacher = str_contains($roleName, 'teacher');
-                                        $isStudent = str_contains($roleName, 'student');
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Role Selection -->
+                        <div>
+                            <label for="role_id" class="block text-sm font-medium text-gray-700 mb-2">
+                                User Role <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <select name="role_id" id="role_id" required
+                                        class="block w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 bg-white">
+                                    <option value="">Select a role</option>
+                                    @foreach($roles as $role)
+                                        @php
+                                            $roleName = strtolower($role->name);
+                                            $isTeacher = str_contains($roleName, 'teacher');
+                                            $isStudent = str_contains($roleName, 'student');
+                                            
+                                            if ($isTeacher) {
+                                                $userType = 'teacher';
+                                                $icon = '📚';
+                                            } elseif ($isStudent) {
+                                                $userType = 'student';
+                                                $icon = '🎓';
+                                            } else {
+                                                $userType = 'operator';
+                                                $icon = '👤';
+                                            }
+                                            
+                                            $displayName = $role->display_name ?? ucfirst(str_replace('_', ' ', $role->name));
+                                        @endphp
                                         
-                                        if ($isTeacher) {
-                                            $userType = 'teacher';
-                                            $icon = '📚';
-                                        } elseif ($isStudent) {
-                                            $userType = 'student';
-                                            $icon = '🎓';
-                                        } else {
-                                            $userType = 'operator';
-                                            $icon = '👤';
-                                        }
-                                        
-                                        $displayName = $role->display_name ?? ucfirst(str_replace('_', ' ', $role->name));
-                                    @endphp
-                                    
-                                    <option value="{{ $role->id }}" 
-                                            data-name="{{ $role->name }}" 
-                                            data-user-type="{{ $userType }}"
-                                            data-icon="{{ $icon }}">
-                                        {{ $icon }} {{ $displayName }}
-                                        @if($role->description) - {{ $role->description }}@endif
-                                    </option>
-                                @endforeach
-                            </select>
-                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                </svg>
+                                        <option value="{{ $role->id }}" 
+                                                data-name="{{ $role->name }}" 
+                                                data-user-type="{{ $userType }}"
+                                                data-icon="{{ $icon }}">
+                                            {{ $icon }} {{ $displayName }}
+                                            @if($role->description) - {{ $role->description }}@endif
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </div>
                             </div>
                         </div>
-                        
-                        <!-- Role Type Indicator -->
-                        <div id="roleTypeIndicator" class="mt-3 hidden">
-                            <div class="flex items-center space-x-2 p-3 rounded-lg border">
-                                <div id="roleIcon" class="text-2xl"></div>
-                                <div>
-                                    <div id="roleTypeName" class="text-sm font-medium text-gray-900"></div>
-                                    <div id="roleTypeDescription" class="text-xs text-gray-500"></div>
+
+                        <!-- Quick Teacher/Student Selection -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Quick Select Existing Record
+                            </label>
+                            
+                            <!-- Teacher Quick Select -->
+                            <div id="teacherQuickSelect" class="hidden">
+                                <div class="flex space-x-2">
+                                    <div class="flex-1">
+                                        <select id="quick_teacher_select" class="block w-full px-3 py-3 text-sm border border-blue-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                                            <option value="">-- Select existing teacher --</option>
+                                            @forelse($teachers as $teacher)
+                                                <option value="{{ $teacher->id }}" 
+                                                        data-name="{{ $teacher->full_name_en ?? $teacher->full_name_bn }}"
+                                                        data-email="{{ $teacher->email }}"
+                                                        data-phone="{{ $teacher->mobile }}"
+                                                        data-teacher-data="{{ json_encode($teacher->toArray()) }}">
+                                                    {{ $teacher->full_name_en ?? $teacher->full_name_bn }} 
+                                                    @if($teacher->teacher_id) ({{ $teacher->teacher_id }}) @endif
+                                                    @if($teacher->user_id) - ⚠️ Has account @endif
+                                                </option>
+                                            @empty
+                                                <option value="" disabled>No teachers found</option>
+                                            @endforelse
+                                        </select>
+                                    </div>
+                                    <button type="button" id="quick_populate_teacher_btn" class="px-4 py-3 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                                        </svg>
+                                    </button>
                                 </div>
+                            </div>
+
+                            <!-- Student Quick Select -->
+                            <div id="studentQuickSelect" class="hidden">
+                                <div class="flex space-x-2">
+                                    <div class="flex-1">
+                                        <select id="quick_student_select" class="block w-full px-3 py-3 text-sm border border-green-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-200">
+                                            <option value="">-- Select existing student --</option>
+                                            @forelse($students as $student)
+                                                <option value="{{ $student->id }}" 
+                                                        data-name="{{ $student->full_name }}"
+                                                        data-email="{{ $student->email }}"
+                                                        data-phone="{{ $student->phone }}"
+                                                        data-student-data="{{ json_encode($student->toArray()) }}">
+                                                    {{ $student->full_name }} 
+                                                    @if($student->student_id) ({{ $student->student_id }}) @endif
+                                                    @if($student->user_id) - ⚠️ Has account @endif
+                                                </option>
+                                            @empty
+                                                <option value="" disabled>No students found</option>
+                                            @endforelse
+                                        </select>
+                                    </div>
+                                    <button type="button" id="quick_populate_student_btn" class="px-4 py-3 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Default message when no teacher/student role selected -->
+                            <div id="noQuickSelect" class="text-sm text-gray-500 italic py-3">
+                                Select a teacher or student role to see quick selection options
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Role Type Indicator -->
+                    <div id="roleTypeIndicator" class="mt-6 hidden">
+                        <div class="flex items-center space-x-2 p-3 rounded-lg border">
+                            <div id="roleIcon" class="text-2xl"></div>
+                            <div>
+                                <div id="roleTypeName" class="text-sm font-medium text-gray-900"></div>
+                                <div id="roleTypeDescription" class="text-xs text-gray-500"></div>
                             </div>
                         </div>
                     </div>
@@ -195,14 +268,7 @@
                     </div>
                 </div>
 
-                <!-- Dynamic Sections for Teacher/Student -->
-                <div id="teacherSection" class="p-6 sm:p-8 hidden">
-                    @include('partner.settings.partials.teacher-form')
-                </div>
 
-                <div id="studentSection" class="p-6 sm:p-8 hidden">
-                    @include('partner.settings.partials.student-form')
-                </div>
 
                 <!-- Form Actions -->
                 <div class="px-6 py-4 sm:px-8 bg-gray-50 flex items-center justify-between">
@@ -243,8 +309,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('createUserForm');
     const userTypeInputs = document.querySelectorAll('input[name="user_type"]');
-    const teacherSection = document.getElementById('teacherSection');
-    const studentSection = document.getElementById('studentSection');
     const submitBtn = document.getElementById('submitBtn');
     const submitText = document.getElementById('submitText');
     const submitIcon = document.getElementById('submitIcon');
@@ -272,6 +336,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Debug: Log the values
             console.log('Selected role:', selectedOption.value);
             console.log('User type from data attribute:', userType);
+            console.log('Role name:', roleName);
+            console.log('Selected option:', selectedOption);
             
             // Update hidden field - ensure it's set
             if (userType) {
@@ -317,23 +383,35 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             roleTypeDescription.textContent = description;
             
-            // Hide all sections first
-            teacherSection.classList.add('hidden');
-            studentSection.classList.add('hidden');
 
             // Show relevant section based on detected user type
+            console.log('Final user type:', finalUserType);
+            
+            // Handle quick selection visibility
+            const teacherQuickSelect = document.getElementById('teacherQuickSelect');
+            const studentQuickSelect = document.getElementById('studentQuickSelect');
+            const noQuickSelect = document.getElementById('noQuickSelect');
+            
+            // Hide all quick selects first
+            teacherQuickSelect.classList.add('hidden');
+            studentQuickSelect.classList.add('hidden');
+            noQuickSelect.classList.add('hidden');
+            
             if (finalUserType === 'teacher') {
-                teacherSection.classList.remove('hidden');
+                console.log('Teacher role selected - showing quick select only');
+                teacherQuickSelect.classList.remove('hidden');
             } else if (finalUserType === 'student') {
-                studentSection.classList.remove('hidden');
+                console.log('Student role selected - showing quick select only');
+                studentQuickSelect.classList.remove('hidden');
+            } else {
+                console.log('No specific section to show for user type:', finalUserType);
+                noQuickSelect.classList.remove('hidden');
             }
         } else {
             // Hide indicator and sections if no role selected
             roleTypeIndicator.classList.add('hidden');
             debugUserType.classList.add('hidden');
             userTypeField.value = '';
-            teacherSection.classList.add('hidden');
-            studentSection.classList.add('hidden');
             console.log('No role selected, user type cleared');
         }
     }
@@ -416,12 +494,125 @@ document.addEventListener('DOMContentLoaded', function() {
     resetBtn.addEventListener('click', function() {
         if (confirm('Are you sure you want to reset the form? All entered data will be lost.')) {
             form.reset();
-            teacherSection.classList.add('hidden');
-            studentSection.classList.add('hidden');
             // Reset to operator as default
             document.querySelector('input[name="user_type"][value="operator"]').checked = true;
         }
     });
+
+    // Handle quick teacher selection (top section)
+    const quickTeacherSelect = document.getElementById('quick_teacher_select');
+    const quickPopulateTeacherBtn = document.getElementById('quick_populate_teacher_btn');
+    
+    if (quickTeacherSelect && quickPopulateTeacherBtn) {
+        quickTeacherSelect.addEventListener('change', function() {
+            quickPopulateTeacherBtn.disabled = !this.value;
+        });
+        
+        quickPopulateTeacherBtn.addEventListener('click', function() {
+            const selectedOption = quickTeacherSelect.options[quickTeacherSelect.selectedIndex];
+            if (selectedOption.value) {
+                populateTeacherData(selectedOption);
+            }
+        });
+    }
+
+    
+    // Handle quick student selection (top section)
+    const quickStudentSelect = document.getElementById('quick_student_select');
+    const quickPopulateStudentBtn = document.getElementById('quick_populate_student_btn');
+    
+    if (quickStudentSelect && quickPopulateStudentBtn) {
+        quickStudentSelect.addEventListener('change', function() {
+            quickPopulateStudentBtn.disabled = !this.value;
+        });
+        
+        quickPopulateStudentBtn.addEventListener('click', function() {
+            const selectedOption = quickStudentSelect.options[quickStudentSelect.selectedIndex];
+            if (selectedOption.value) {
+                populateStudentData(selectedOption);
+            }
+        });
+    }
+
+    // Reusable function to populate teacher data
+    function populateTeacherData(selectedOption) {
+        try {
+            const teacherData = JSON.parse(selectedOption.getAttribute('data-teacher-data'));
+            
+            // Populate main form fields
+            document.getElementById('name').value = teacherData.full_name_en || teacherData.full_name_bn || '';
+            document.getElementById('email').value = teacherData.email || '';
+            document.getElementById('phone').value = teacherData.mobile || '';
+            
+            // Populate teacher-specific fields
+            const teacherFields = {
+                'teacher_full_name_en': teacherData.full_name_en,
+                'teacher_full_name_bn': teacherData.full_name_bn,
+                'teacher_gender': teacherData.gender,
+                'teacher_date_of_birth': teacherData.date_of_birth,
+                'teacher_mobile': teacherData.mobile,
+                'teacher_email': teacherData.email,
+                'teacher_address': teacherData.address,
+                'teacher_designation': teacherData.designation,
+                'teacher_department': teacherData.department,
+                'teacher_qualification': teacherData.qualification,
+                'teacher_experience': teacherData.experience,
+                'teacher_joining_date': teacherData.joining_date,
+                'teacher_salary': teacherData.salary
+            };
+            
+            Object.keys(teacherFields).forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field && teacherFields[fieldId]) {
+                    field.value = teacherFields[fieldId];
+                }
+            });
+            
+            showNotification('Teacher data populated successfully!', 'success');
+        } catch (error) {
+            console.error('Error parsing teacher data:', error);
+            showNotification('Error populating teacher data', 'error');
+        }
+    }
+
+    // Reusable function to populate student data
+    function populateStudentData(selectedOption) {
+        try {
+            const studentData = JSON.parse(selectedOption.getAttribute('data-student-data'));
+            
+            // Populate main form fields
+            document.getElementById('name').value = studentData.full_name || '';
+            document.getElementById('email').value = studentData.email || '';
+            document.getElementById('phone').value = studentData.phone || '';
+            
+            // Populate student-specific fields
+            const studentFields = {
+                'student_full_name': studentData.full_name,
+                'student_date_of_birth': studentData.date_of_birth,
+                'student_gender': studentData.gender,
+                'student_phone': studentData.phone,
+                'student_email': studentData.email,
+                'student_address': studentData.address,
+                'student_city': studentData.city,
+                'student_school_college': studentData.school_college,
+                'student_class_grade': studentData.class_grade,
+                'student_parent_name': studentData.parent_name,
+                'student_parent_phone': studentData.parent_phone
+            };
+            
+            Object.keys(studentFields).forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field && studentFields[fieldId]) {
+                    field.value = studentFields[fieldId];
+                }
+            });
+            
+            showNotification('Student data populated successfully!', 'success');
+        } catch (error) {
+            console.error('Error parsing student data:', error);
+            showNotification('Error populating student data', 'error');
+        }
+    }
 
     // Notification function
     function showNotification(message, type = 'info') {
