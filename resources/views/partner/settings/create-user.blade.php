@@ -15,7 +15,7 @@
                         <svg class="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                         </svg>
-                        Back to Users
+                        Back to Settings
                     </a>
                 </div>
                 <div class="text-right">
@@ -234,35 +234,38 @@
                                    placeholder="Enter email address">
                         </div>
 
-                        <!-- Phone -->
-                        <div>
-                            <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
-                                Phone Number <span class="text-red-500">*</span>
-                            </label>
-                            <input type="tel" name="phone" id="phone" required
-                                   class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
-                                   placeholder="Enter phone number">
-                        </div>
-
-                        <!-- Password -->
-                        <div>
-                            <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
-                                Password <span class="text-red-500">*</span>
-                            </label>
-                            <input type="password" name="password" id="password" required
-                                   class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
-                                   placeholder="Enter password">
-                        </div>
-
-                        <!-- Confirm Password -->
+                        <!-- Phone, Password, Confirm Password - 3 Column Grid -->
                         <div class="md:col-span-2">
-                            <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-2">
-                                Confirm Password <span class="text-red-500">*</span>
-                            </label>
-                            <div class="max-w-md">
-                                <input type="password" name="password_confirmation" id="password_confirmation" required
-                                       class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
-                                       placeholder="Confirm password">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <!-- Phone Number -->
+                                <div>
+                                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
+                                        Phone Number <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="tel" name="phone" id="phone" required
+                                           class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                                           placeholder="Enter phone number">
+                                </div>
+                                
+                                <!-- Password -->
+                                <div>
+                                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+                                        Password <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="password" name="password" id="password" required
+                                           class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                                           placeholder="Enter password">
+                                </div>
+                                
+                                <!-- Confirm Password -->
+                                <div>
+                                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-2">
+                                        Confirm Password <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="password" name="password_confirmation" id="password_confirmation" required
+                                           class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                                           placeholder="Confirm password">
+                                </div>
                             </div>
                         </div>
                     </div>
