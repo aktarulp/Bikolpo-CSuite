@@ -696,6 +696,13 @@ Route::middleware('auth')->group(function () {
             Route::get('users/export', [\App\Http\Controllers\UserManagementController::class, 'export'])->name('users.export');
             Route::get('users/statistics', [\App\Http\Controllers\UserManagementController::class, 'getStatistics'])->name('users.statistics');
             Route::get('users/assignable-roles-permissions', [\App\Http\Controllers\UserManagementController::class, 'getAssignableRolesAndPermissions'])->name('users.assignable-roles-permissions');
+            Route::get('users/get-students', [\App\Http\Controllers\UserManagementController::class, 'getStudents'])->name('users.get-students');
+            Route::get('users/get-teachers', [\App\Http\Controllers\UserManagementController::class, 'getTeachers'])->name('users.get-teachers');
+            
+            // Test route
+            Route::get('test-route', function() {
+                return response()->json(['message' => 'Test route working']);
+            })->name('test.route');
             
             // Role & Permission Management Routes
             Route::get('role-permission-management', [\App\Http\Controllers\RolePermissionController::class, 'index'])->name('role-permission-management');

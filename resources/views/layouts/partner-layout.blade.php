@@ -14,8 +14,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Nikosh:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="{{ asset('css/fonts.css') }}" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -25,7 +24,7 @@
     <style>
         /* Bengali Font */
         .font-bengali {
-            font-family: 'Nikosh', 'Noto Sans Bengali', 'Noto Sans', 'Arial Unicode MS', sans-serif;
+            font-family: 'Hind Siliguri', 'Noto Sans Bengali', 'Noto Sans', 'Arial Unicode MS', sans-serif;
         }
 
         /* Mobile-First Sidebar - Hidden by default on mobile */

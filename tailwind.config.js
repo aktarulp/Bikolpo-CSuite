@@ -51,5 +51,10 @@ export default {
         },
     },
 
-    plugins: [forms],
+    plugins: [
+        forms,
+        function({ addVariant }) {
+            addVariant('peer-checked', '&:checked ~ * &');
+        }
+    ],
 };
