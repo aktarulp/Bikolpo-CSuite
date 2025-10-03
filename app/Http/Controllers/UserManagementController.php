@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
+use App\Models\EnhancedUser;
 use App\Models\EnhancedRole;
 use App\Models\EnhancedPermission;
 use App\Models\UserActivity;
