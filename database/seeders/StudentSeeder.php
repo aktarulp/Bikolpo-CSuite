@@ -59,6 +59,7 @@ class StudentSeeder extends Seeder
             'user_id' => $user->id,
             'course_id' => $course->id,
             'batch_id' => $batch->id,
+            'created_by' => $user->id,
         ]);
 
         Student::create([
@@ -79,6 +80,7 @@ class StudentSeeder extends Seeder
             'user_id' => $user->id,
             'course_id' => $course->id,
             'batch_id' => $batch->id,
+            'created_by' => $user->id,
         ]);
 
         Student::create([
@@ -99,6 +101,7 @@ class StudentSeeder extends Seeder
             'user_id' => $user->id,
             'course_id' => $course->id,
             'batch_id' => $batch->id,
+            'created_by' => $user->id,
         ]);
 
         $this->command->info('Students have been created successfully!');

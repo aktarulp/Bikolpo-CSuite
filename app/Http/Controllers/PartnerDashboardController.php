@@ -281,6 +281,8 @@ class PartnerDashboardController extends Controller
 
             // Create students
             foreach ($demoStudents as $studentData) {
+                // Add created_by field to track who created the demo student
+                $studentData['created_by'] = auth()->id();
                 Student::create($studentData);
             }
 

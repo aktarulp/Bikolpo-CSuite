@@ -130,6 +130,7 @@ class DemoStudentsSeeder extends Seeder
                     'blood_group' => $this->generateBloodGroup(),
                     'religion' => $this->generateReligion(),
                     'status' => 'active',
+                    'created_by' => $user->id,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);

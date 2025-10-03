@@ -110,6 +110,9 @@ class StudentController extends Controller
 
         // Get the authenticated user's partner ID using the trait
         $data['partner_id'] = $this->getPartnerId();
+        
+        // Set the created_by field to the current authenticated user
+        $data['created_by'] = auth()->id();
 
         if ($request->hasFile('photo')) {
             $data['photo'] = $request->file('photo')->store('students', 'public');

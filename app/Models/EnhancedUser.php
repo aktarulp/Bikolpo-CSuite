@@ -28,6 +28,8 @@ class EnhancedUser extends Authenticatable
         'last_login_at',
         'last_login_ip',
         'partner_id',
+        'role',
+        'role_id',
         'created_by',
         'updated_by',
         'preferences',

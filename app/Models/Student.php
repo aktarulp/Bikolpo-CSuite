@@ -36,13 +36,41 @@ class Student extends Model
         'blood_group',
         'religion',
         'status',
+        'enable_login',
+        'created_by',
+        'default_role',
     ];
 
     protected $casts = [
         'enroll_date' => 'date',
         'date_of_birth' => 'date',
         'status' => 'string',
+        'enable_login' => 'string',
     ];
+
+    /**
+     * Check if login is enabled for this student
+     */
+    public function isLoginEnabled()
+    {
+        return $this->enable_login === 'y';
+    }
+
+    /**
+     * Enable login for this student
+     */
+    public function enableLogin()
+    {
+        $this->update(['enable_login' => 'y']);
+    }
+
+    /**
+     * Disable login for this student
+     */
+    public function disableLogin()
+    {
+        $this->update(['enable_login' => 'n']);
+    }
 
     // Relationships
     /**
@@ -88,6 +116,22 @@ class Student extends Model
     public function batch()
     {
         return $this->belongsTo(Batch::class);
+    }
+
+    /**
+     * Get the user who created this student.
+     */
+    public function creator()
+    {
+        return $this->belongsTo(EnhancedUser::class, 'created_by');
+    }
+
+    /**
+     * Get the default role for this student.
+     */
+    public function defaultRole()
+    {
+        return $this->belongsTo(EnhancedRole::class, 'default_role', 'name');
     }
 
     /**

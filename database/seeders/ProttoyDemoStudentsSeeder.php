@@ -33,6 +33,7 @@ class ProttoyDemoStudentsSeeder extends Seeder
                 'parent_name' => null,
                 'parent_phone' => null,
                 'status' => 'active',
+                'created_by' => $partner->user_id,
                 'created_at' => $timestamp,
                 'updated_at' => $timestamp,
             ]);

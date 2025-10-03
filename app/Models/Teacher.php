@@ -46,6 +46,8 @@ class Teacher extends Model
         'partner_id',
         'created_by',
         'updated_by',
+        'enable_login',
+        'default_role',
     ];
 
     protected $casts = [
@@ -55,7 +57,32 @@ class Teacher extends Model
         'rating' => 'decimal:2',
         'documents' => 'array',
         'experience_years' => 'integer',
+        'enable_login' => 'string',
     ];
+
+    /**
+     * Check if login is enabled for this teacher
+     */
+    public function isLoginEnabled()
+    {
+        return $this->enable_login === 'y';
+    }
+
+    /**
+     * Enable login for this teacher
+     */
+    public function enableLogin()
+    {
+        $this->update(['enable_login' => 'y']);
+    }
+
+    /**
+     * Disable login for this teacher
+     */
+    public function disableLogin()
+    {
+        $this->update(['enable_login' => 'n']);
+    }
 
 
     // Relationships
@@ -106,6 +133,14 @@ class Teacher extends Model
         return $this->belongsToMany(Batch::class, 'teacher_batches')
                     ->withPivot('assigned_at', 'assigned_by')
                     ->withTimestamps();
+    }
+
+    /**
+     * Get the default role for this teacher.
+     */
+    public function defaultRole()
+    {
+        return $this->belongsTo(EnhancedRole::class, 'default_role', 'name');
     }
 
     // Scopes

@@ -93,159 +93,201 @@ class UserManagementController extends Controller
         // Get students from current partner
         $students = \App\Models\Student::where('partner_id', $partnerId)->get();
 
-        return view('partner.settings.create-user', compact('roles', 'teachers', 'students'));
+        // Get the default role (first role in the filtered list)
+        $defaultRole = $roles->first();
+
+        return view('partner.settings.create-user', compact('roles', 'teachers', 'students', 'defaultRole'));
     }
 
     /**
-     * Store a newly created user.
+     * Store a newly created user with comprehensive teacher/student data.
      */
     public function store(Request $request)
     {
-        // $this->authorize('create', EnhancedUser::class);
-
-        $validator = Validator::make($request->all(), [
-            'name' => 'nullable|string|max:255',
-            'email' => 'nullable|string|email|max:255|unique:users',
-            'phone' => 'nullable|string|max:20',
+        // Base validation rules
+        $rules = [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'phone' => 'required|string|max:20|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role_ids' => 'required|array|min:1',
-            'role_ids.*' => 'exists:roles,id',
-            'status' => ['required', Rule::in(EnhancedUser::getStatuses())],
+            'role_id' => 'required|exists:roles,id',
             'user_type' => 'required|in:teacher,student,operator',
-            'teacher_id' => 'nullable|exists:teachers,id',
-            'student_id' => 'nullable|exists:students,id',
-            'permissions' => 'nullable|array',
-            'permissions.*' => 'exists:permissions,id',
-        ]);
+        ];
 
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors()
-            ], 422);
+        // Add teacher-specific validation rules
+        if ($request->user_type === 'teacher') {
+            $rules = array_merge($rules, [
+                'teacher.full_name_en' => 'required|string|max:255',
+                'teacher.full_name_bn' => 'nullable|string|max:255',
+                'teacher.gender' => 'required|in:male,female,other',
+                'teacher.dob' => 'required|date',
+                'teacher.mobile' => 'required|string|max:20',
+                'teacher.designation' => 'required|string|max:255',
+                'teacher.department' => 'nullable|string|max:255',
+                'teacher.joining_date' => 'required|date',
+                'teacher.present_address' => 'nullable|string|max:500',
+                'teacher.blood_group' => 'nullable|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
+                'teacher.default_role' => 'nullable|exists:roles,name',
+            ]);
         }
 
-        // Additional validation for linked records
-        if ($request->user_type === 'teacher' && $request->teacher_id) {
-            $teacher = \App\Models\Teacher::where('id', $request->teacher_id)
-                ->where('partner_id', auth()->user()->partner_id)
-                ->first();
-
-            if (!$teacher) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Selected teacher not found or does not belong to your partner.'
-                ], 422);
-            }
-        } elseif ($request->user_type === 'student' && $request->student_id) {
-            $student = \App\Models\Student::where('id', $request->student_id)
-                ->where('partner_id', auth()->user()->partner_id)
-                ->first();
-
-            if (!$student) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Selected student not found or does not belong to your partner.'
-                ], 422);
-            }
+        // Add student-specific validation rules
+        if ($request->user_type === 'student') {
+            $rules = array_merge($rules, [
+                'student.full_name' => 'required|string|max:255',
+                'student.date_of_birth' => 'required|date',
+                'student.gender' => 'required|in:male,female,other',
+                'student.address' => 'nullable|string|max:500',
+                'student.city' => 'nullable|string|max:100',
+                'student.school_college' => 'nullable|string|max:255',
+                'student.class_grade' => 'nullable|string|max:50',
+                'student.father_name' => 'nullable|string|max:255',
+                'student.mother_name' => 'nullable|string|max:255',
+                'student.blood_group' => 'nullable|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
+                'student.religion' => 'nullable|in:Islam,Hinduism,Christianity,Buddhism',
+                'student.default_role' => 'nullable|exists:roles,name',
+            ]);
         }
+
+        $validated = $request->validate($rules);
+
+        DB::beginTransaction();
 
         try {
-            DB::beginTransaction();
+            // Create the user
+            $user = new EnhancedUser();
+            $user->name = $validated['name'];
+            $user->email = $validated['email'];
+            $user->phone = $validated['phone'];
+            $user->password = Hash::make($validated['password']);
+            $user->role_id = $validated['role_id'];
+            
+            // Also set the role name for compatibility
+            $selectedRole = EnhancedRole::find($validated['role_id']);
+            if ($selectedRole) {
+                $user->role = $selectedRole->name;
+            }
+            
+            $user->partner_id = auth()->user()->partner_id;
+            $user->status = 'active';
+            $user->email_verified_at = now(); // Set as verified for admin-created users
+            $user->created_by = auth()->id();
+            $user->updated_by = auth()->id();
+            $user->save();
 
-            // Prepare user data, using linked record data if available
-            $userData = [
-                'password' => Hash::make($request->password),
-                'partner_id' => auth()->user()->partner_id,
-                'status' => $request->status,
-                'created_by' => auth()->id(),
-                'updated_by' => auth()->id(),
-            ];
+            // Create teacher record if user_type is teacher
+            if ($validated['user_type'] === 'teacher' && isset($validated['teacher'])) {
+                $teacherData = $validated['teacher'];
+                $teacherData['user_id'] = $user->id;
+                $teacherData['partner_id'] = auth()->user()->partner_id;
+                $teacherData['created_by'] = auth()->id();
+                $teacherData['updated_by'] = auth()->id();
+                $teacherData['status'] = 'Active';
+                $teacherData['enable_login'] = 'y';
+                
+                // Generate teacher ID
+                $lastTeacher = \App\Models\Teacher::where('partner_id', auth()->user()->partner_id)
+                    ->whereNotNull('teacher_id')
+                    ->orderBy('id', 'desc')
+                    ->first();
+                
+                $nextNumber = $lastTeacher ? (int)substr($lastTeacher->teacher_id, -3) + 1 : 1;
+                $teacherData['teacher_id'] = 'TCH-' . date('Y') . '-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
 
-            // Use data from linked teacher/student if provided, otherwise use form data
-            if ($request->teacher_id) {
+                \App\Models\Teacher::create($teacherData);
+            }
+
+            // Create student record if user_type is student
+            if ($validated['user_type'] === 'student' && isset($validated['student'])) {
+                $studentData = $validated['student'];
+                $studentData['user_id'] = $user->id;
+                $studentData['partner_id'] = auth()->user()->partner_id;
+                $studentData['created_by'] = auth()->id();
+                $studentData['status'] = 'active';
+                $studentData['enable_login'] = 'y';
+                $studentData['enroll_date'] = now();
+                
+                // Generate student ID
+                $lastStudent = \App\Models\Student::where('partner_id', auth()->user()->partner_id)
+                    ->whereNotNull('student_id')
+                    ->orderBy('id', 'desc')
+                    ->first();
+                
+                $nextNumber = $lastStudent ? (int)substr($lastStudent->student_id, -3) + 1 : 1;
+                $studentData['student_id'] = 'STU-' . date('Y') . '-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+
+                \App\Models\Student::create($studentData);
+            }
+
+            // Link to existing teacher or student if specified (backward compatibility)
+            if ($validated['user_type'] === 'teacher' && $request->has('teacher_id') && !isset($validated['teacher'])) {
                 $teacher = \App\Models\Teacher::where('id', $request->teacher_id)
                     ->where('partner_id', auth()->user()->partner_id)
                     ->first();
 
                 if ($teacher) {
-                    $userData['name'] = $teacher->full_name;
-                    $userData['email'] = $teacher->email;
-                    $userData['phone'] = $teacher->mobile;
+                    $teacher->user_id = $user->id;
+                    $teacher->save();
                 }
-            } elseif ($request->student_id) {
+            } elseif ($validated['user_type'] === 'student' && $request->has('student_id') && !isset($validated['student'])) {
                 $student = \App\Models\Student::where('id', $request->student_id)
                     ->where('partner_id', auth()->user()->partner_id)
                     ->first();
 
                 if ($student) {
-                    $userData['name'] = $student->full_name;
-                    $userData['email'] = $student->email;
-                    $userData['phone'] = $student->phone;
-                }
-            } else {
-                // For other roles (including operator), use form data
-                $userData['name'] = $request->name;
-                $userData['email'] = $request->email;
-                $userData['phone'] = $request->phone;
-            }
-
-            $user = EnhancedUser::create($userData);
-
-            // Link to existing teacher or student if specified
-            if ($request->user_type === 'teacher' && $request->teacher_id) {
-                $teacher = \App\Models\Teacher::where('id', $request->teacher_id)
-                    ->where('partner_id', auth()->user()->partner_id)
-                    ->first();
-
-                if ($teacher) {
-                    // Link user to teacher
-                    $teacher->update(['user_id' => $user->id]);
-                }
-            } elseif ($request->user_type === 'student' && $request->student_id) {
-                $student = \App\Models\Student::where('id', $request->student_id)
-                    ->where('partner_id', auth()->user()->partner_id)
-                    ->first();
-
-                if ($student) {
-                    // Link user to student
-                    $student->update(['user_id' => $user->id]);
+                    $student->user_id = $user->id;
+                    $student->save();
                 }
             }
 
-            // Assign roles
-            $user->roles()->attach($request->role_ids, [
-                'assigned_by' => auth()->id(),
-                'assigned_at' => now(),
-            ]);
+            // Role is already assigned in the users table (line 163)
+            // No need for additional pivot table assignment
 
-            // Log activity
-            $user->activities()->create([
-                'action' => 'user_created',
-                'description' => 'User account created',
-                'metadata' => [
-                    'created_by' => auth()->id(),
-                    'roles' => $request->role_ids,
-                    'permissions' => $request->permissions ?? [],
-                    'user_type' => $request->user_type,
-                    'linked_teacher_id' => $request->teacher_id,
-                    'linked_student_id' => $request->student_id,
-                ],
-                'ip_address' => $request->ip(),
-                'user_agent' => $request->userAgent(),
-            ]);
+            // Log the activity (if activity logging is available)
+            try {
+                if (function_exists('activity')) {
+                    activity()
+                        ->causedBy(auth()->user())
+                        ->performedOn($user)
+                        ->withProperties([
+                            'role_id' => $validated['role_id'],
+                            'user_type' => $validated['user_type'],
+                            'comprehensive_data' => isset($validated['teacher']) || isset($validated['student'])
+                        ])
+                        ->log('User account created with comprehensive data');
+                } else {
+                    // Fallback: Simple log entry
+                    Log::info('User account created', [
+                        'user_id' => $user->id,
+                        'user_name' => $user->name,
+                        'user_email' => $user->email,
+                        'role_id' => $validated['role_id'],
+                        'user_type' => $validated['user_type'],
+                        'created_by' => auth()->id()
+                    ]);
+                }
+            } catch (\Exception $e) {
+                // If activity logging fails, just log it and continue
+                Log::warning('Activity logging failed during user creation', [
+                    'error' => $e->getMessage(),
+                    'user_id' => $user->id
+                ]);
+            }
 
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'message' => 'User created successfully',
-                'user' => $user->load(['roles', 'permissions'])
+                'message' => 'User created successfully with ' . $validated['user_type'] . ' profile',
+                'redirect' => route('partner.settings.index')
             ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('User creation failed: ' . $e->getMessage());
+            Log::error('User creation failed: ' . $e->getMessage(), [
+                'user_type' => $request->user_type,
+                'request_data' => $request->except(['password', 'password_confirmation'])
+            ]);
 
             return response()->json([
                 'success' => false,
@@ -343,13 +385,13 @@ class UserManagementController extends Controller
             ]);
 
             DB::commit();
-
+            
             return response()->json([
                 'success' => true,
                 'message' => 'User updated successfully',
                 'user' => $user->load(['roles', 'permissions'])
             ]);
-
+            
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('User update failed: ' . $e->getMessage());
@@ -724,5 +766,115 @@ class UserManagementController extends Controller
             'success' => true,
             'activities' => $activities
         ]);
+    }
+
+    /**
+     * Get students for auto-population in create user form.
+     */
+    public function getStudents()
+    {
+        try {
+            // Debug: Check if user is authenticated
+            if (!auth()->check()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User not authenticated'
+                ], 401);
+            }
+
+            $partnerId = auth()->user()->partner_id;
+            
+            // If no partner_id, try to get students from all partners (for testing)
+            if (!$partnerId) {
+                $students = \App\Models\Student::where('user_id', null)
+                    ->where('status', 'active')
+                    ->where('flag', 'active')
+                    ->where('enable_login', 'y') // Only students with login enabled
+                    ->select('id', 'full_name as name', 'email', 'phone', 'partner_id')
+                    ->orderBy('full_name')
+                    ->limit(50) // Limit to prevent too many results
+                    ->get();
+            } else {
+                $students = \App\Models\Student::where('partner_id', $partnerId)
+                    ->where('user_id', null) // Only students without user accounts
+                    ->where('status', 'active')
+                    ->where('flag', 'active') // Also check the flag field
+                    ->where('enable_login', 'y') // Only students with login enabled
+                    ->select('id', 'full_name as name', 'email', 'phone')
+                    ->orderBy('full_name')
+                    ->get();
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $students,
+                'debug' => [
+                    'partner_id' => $partnerId,
+                    'count' => $students->count(),
+                    'message' => $partnerId ? "Found students for partner {$partnerId}" : "Found students from all partners (no partner_id set)"
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error fetching students: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch students: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get teachers for auto-population in create user form.
+     */
+    public function getTeachers()
+    {
+        try {
+            // Debug: Check if user is authenticated
+            if (!auth()->check()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User not authenticated'
+                ], 401);
+            }
+
+            $partnerId = auth()->user()->partner_id;
+            
+            // If no partner_id, try to get teachers from all partners (for testing)
+            if (!$partnerId) {
+                $teachers = \App\Models\Teacher::where('user_id', null)
+                    ->where('status', 'Active')
+                    ->where('enable_login', 'y') // Only teachers with login enabled
+                    ->select('id', 'full_name_en as name', 'email', 'mobile as phone', 'partner_id')
+                    ->orderBy('full_name_en')
+                    ->limit(50) // Limit to prevent too many results
+                    ->get();
+            } else {
+                $teachers = \App\Models\Teacher::where('partner_id', $partnerId)
+                    ->where('user_id', null) // Only teachers without user accounts
+                    ->where('status', 'Active')
+                    ->where('enable_login', 'y') // Only teachers with login enabled
+                    ->select('id', 'full_name_en as name', 'email', 'mobile as phone')
+                    ->orderBy('full_name_en')
+                    ->get();
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $teachers,
+                'debug' => [
+                    'partner_id' => $partnerId,
+                    'count' => $teachers->count(),
+                    'message' => $partnerId ? "Found teachers for partner {$partnerId}" : "Found teachers from all partners (no partner_id set)"
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error fetching teachers: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch teachers: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }
