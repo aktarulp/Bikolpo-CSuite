@@ -215,36 +215,75 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Full Name -->
-                        <div>
+                        <div class="relative">
                             <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
                                 Full Name <span class="text-red-500">*</span>
+                                <span id="name_lock_indicator" class="hidden ml-2 text-xs text-green-600 font-medium">
+                                    <svg class="w-3 h-3 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    Auto-populated
+                                </span>
                             </label>
-                            <input type="text" name="name" id="name" required
-                                   class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
-                                   placeholder="Enter full name">
+                            <div class="relative">
+                                <input type="text" name="name" id="name" required
+                                       class="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                                       placeholder="Enter full name">
+                                <button type="button" id="name_unlock_btn" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600" title="Unlock field for editing">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
 
                         <!-- Email -->
-                        <div>
+                        <div class="relative">
                             <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
                                 Email Address <span class="text-red-500">*</span>
+                                <span id="email_lock_indicator" class="hidden ml-2 text-xs text-green-600 font-medium">
+                                    <svg class="w-3 h-3 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    Auto-populated
+                                </span>
                             </label>
-                            <input type="email" name="email" id="email" required
-                                   class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
-                                   placeholder="Enter email address">
+                            <div class="relative">
+                                <input type="email" name="email" id="email" required
+                                       class="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                                       placeholder="Enter email address">
+                                <button type="button" id="email_unlock_btn" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600" title="Unlock field for editing">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
 
                         <!-- Phone, Password, Confirm Password - 3 Column Grid -->
                         <div class="md:col-span-2">
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <!-- Phone Number -->
-                                <div>
+                                <div class="relative">
                                     <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
                                         Phone Number <span class="text-red-500">*</span>
+                                        <span id="phone_lock_indicator" class="hidden ml-2 text-xs text-green-600 font-medium">
+                                            <svg class="w-3 h-3 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
+                                            </svg>
+                                            Auto-populated
+                                        </span>
                                     </label>
-                                    <input type="tel" name="phone" id="phone" required
-                                           class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
-                                           placeholder="Enter phone number">
+                                    <div class="relative">
+                                        <input type="tel" name="phone" id="phone" required
+                                               class="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
+                                               placeholder="Enter phone number">
+                                        <button type="button" id="phone_unlock_btn" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600" title="Unlock field for editing">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
                                 
                                 <!-- Password -->
@@ -269,9 +308,25 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Auto-populated Data Controls -->
+                    <div id="autoPopulatedControls" class="hidden mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="text-sm font-medium text-green-800">Data auto-populated from existing record</span>
+                            </div>
+                            <button type="button" id="clearAutoPopulatedBtn" class="px-3 py-1 text-xs font-medium text-red-600 bg-white border border-red-300 rounded hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200">
+                                Clear & Edit Manually
+                            </button>
+                        </div>
+                        <p class="mt-2 text-xs text-green-700">
+                            Fields are locked to prevent accidental changes. Click the unlock button next to each field or use "Clear & Edit Manually" to modify the data.
+                        </p>
+                    </div>
                 </div>
-
-
 
                 <!-- Form Actions -->
                 <div class="px-6 py-4 sm:px-8 bg-gray-50 flex items-center justify-between">
@@ -537,6 +592,65 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Field locking functionality
+    function lockField(fieldId) {
+        const field = document.getElementById(fieldId);
+        const lockIndicator = document.getElementById(fieldId + '_lock_indicator');
+        const unlockBtn = document.getElementById(fieldId + '_unlock_btn');
+        
+        if (field && lockIndicator && unlockBtn) {
+            field.readOnly = true;
+            field.classList.add('bg-gray-50', 'text-gray-600', 'cursor-not-allowed');
+            field.classList.remove('focus:ring-2', 'focus:ring-blue-500', 'focus:border-blue-500');
+            lockIndicator.classList.remove('hidden');
+            unlockBtn.classList.remove('hidden');
+        }
+    }
+    
+    function unlockField(fieldId) {
+        const field = document.getElementById(fieldId);
+        const lockIndicator = document.getElementById(fieldId + '_lock_indicator');
+        const unlockBtn = document.getElementById(fieldId + '_unlock_btn');
+        
+        if (field && lockIndicator && unlockBtn) {
+            field.readOnly = false;
+            field.classList.remove('bg-gray-50', 'text-gray-600', 'cursor-not-allowed');
+            field.classList.add('focus:ring-2', 'focus:ring-blue-500', 'focus:border-blue-500');
+            lockIndicator.classList.add('hidden');
+            unlockBtn.classList.add('hidden');
+        }
+    }
+    
+    function showAutoPopulatedControls() {
+        document.getElementById('autoPopulatedControls').classList.remove('hidden');
+    }
+    
+    function hideAutoPopulatedControls() {
+        document.getElementById('autoPopulatedControls').classList.add('hidden');
+    }
+    
+    function clearAllAutoPopulatedData() {
+        // Unlock and clear all fields
+        ['name', 'email', 'phone'].forEach(fieldId => {
+            unlockField(fieldId);
+            document.getElementById(fieldId).value = '';
+        });
+        
+        // Remove hidden teacher/student ID fields
+        document.querySelectorAll('input[name="teacher_id"], input[name="student_id"]').forEach(field => field.remove());
+        
+        // Hide controls
+        hideAutoPopulatedControls();
+        
+        // Reset quick selects
+        const quickTeacherSelect = document.getElementById('quick_teacher_select');
+        const quickStudentSelect = document.getElementById('quick_student_select');
+        if (quickTeacherSelect) quickTeacherSelect.value = '';
+        if (quickStudentSelect) quickStudentSelect.value = '';
+        
+        showNotification('Auto-populated data cleared. You can now edit fields manually.', 'info');
+    }
+
     // Reusable function to populate teacher data
     function populateTeacherData(selectedOption) {
         try {
@@ -548,6 +662,14 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('email').value = teacherData.email || '';
             document.getElementById('phone').value = teacherData.mobile || '';
             
+            // Lock the populated fields
+            lockField('name');
+            lockField('email');
+            lockField('phone');
+            
+            // Show auto-populated controls
+            showAutoPopulatedControls();
+            
             // Remove existing teacher hidden fields
             document.querySelectorAll('input[name^="teacher"]').forEach(field => field.remove());
             
@@ -558,7 +680,7 @@ document.addEventListener('DOMContentLoaded', function() {
             teacherIdField.value = teacherId;
             form.appendChild(teacherIdField);
             
-            showNotification('Teacher data populated successfully! Will link to existing teacher record.', 'success');
+            showNotification('Teacher data populated successfully! Fields are locked to prevent accidental changes.', 'success');
         } catch (error) {
             console.error('Error parsing teacher data:', error);
             showNotification('Error populating teacher data', 'error');
@@ -576,6 +698,14 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('email').value = studentData.email || '';
             document.getElementById('phone').value = studentData.phone || '';
             
+            // Lock the populated fields
+            lockField('name');
+            lockField('email');
+            lockField('phone');
+            
+            // Show auto-populated controls
+            showAutoPopulatedControls();
+            
             // Remove existing student hidden fields
             document.querySelectorAll('input[name^="student"]').forEach(field => field.remove());
             
@@ -586,12 +716,35 @@ document.addEventListener('DOMContentLoaded', function() {
             studentIdField.value = studentId;
             form.appendChild(studentIdField);
             
-            showNotification('Student data populated successfully! Will link to existing student record.', 'success');
+            showNotification('Student data populated successfully! Fields are locked to prevent accidental changes.', 'success');
         } catch (error) {
             console.error('Error parsing student data:', error);
             showNotification('Error populating student data', 'error');
         }
     }
+    
+    // Event listeners for unlock buttons
+    document.getElementById('name_unlock_btn').addEventListener('click', function() {
+        unlockField('name');
+        showNotification('Name field unlocked for editing', 'info');
+    });
+    
+    document.getElementById('email_unlock_btn').addEventListener('click', function() {
+        unlockField('email');
+        showNotification('Email field unlocked for editing', 'info');
+    });
+    
+    document.getElementById('phone_unlock_btn').addEventListener('click', function() {
+        unlockField('phone');
+        showNotification('Phone field unlocked for editing', 'info');
+    });
+    
+    // Event listener for clear auto-populated data button
+    document.getElementById('clearAutoPopulatedBtn').addEventListener('click', function() {
+        if (confirm('Are you sure you want to clear all auto-populated data? This will unlock all fields for manual editing.')) {
+            clearAllAutoPopulatedData();
+        }
+    });
 
     // Notification function
     function showNotification(message, type = 'info') {
