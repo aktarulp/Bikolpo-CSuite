@@ -131,37 +131,49 @@ class UserManagementController extends Controller
 
         // Add teacher-specific validation rules
         if ($request->user_type === 'teacher') {
-            $rules = array_merge($rules, [
-                'teacher.full_name_en' => 'required|string|max:255',
-                'teacher.full_name_bn' => 'nullable|string|max:255',
-                'teacher.gender' => 'required|in:male,female,other',
-                'teacher.dob' => 'required|date',
-                'teacher.mobile' => 'required|string|max:20',
-                'teacher.designation' => 'required|string|max:255',
-                'teacher.department' => 'nullable|string|max:255',
-                'teacher.joining_date' => 'required|date',
-                'teacher.present_address' => 'nullable|string|max:500',
-                'teacher.blood_group' => 'nullable|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
-                'teacher.default_role' => 'nullable|exists:roles,name',
-            ]);
+            if ($request->has('teacher_id')) {
+                // Linking to existing teacher - only validate teacher_id
+                $rules['teacher_id'] = 'required|exists:teachers,id';
+            } else {
+                // Creating new teacher - validate all teacher fields
+                $rules = array_merge($rules, [
+                    'teacher.full_name_en' => 'required|string|max:255',
+                    'teacher.full_name_bn' => 'nullable|string|max:255',
+                    'teacher.gender' => 'required|in:male,female,other',
+                    'teacher.dob' => 'required|date',
+                    'teacher.mobile' => 'required|string|max:20',
+                    'teacher.designation' => 'required|string|max:255',
+                    'teacher.department' => 'nullable|string|max:255',
+                    'teacher.joining_date' => 'required|date',
+                    'teacher.present_address' => 'nullable|string|max:500',
+                    'teacher.blood_group' => 'nullable|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
+                    'teacher.default_role' => 'nullable|exists:roles,name',
+                ]);
+            }
         }
 
         // Add student-specific validation rules
         if ($request->user_type === 'student') {
-            $rules = array_merge($rules, [
-                'student.full_name' => 'required|string|max:255',
-                'student.date_of_birth' => 'required|date',
-                'student.gender' => 'required|in:male,female,other',
-                'student.address' => 'nullable|string|max:500',
-                'student.city' => 'nullable|string|max:100',
-                'student.school_college' => 'nullable|string|max:255',
-                'student.class_grade' => 'nullable|string|max:50',
-                'student.father_name' => 'nullable|string|max:255',
-                'student.mother_name' => 'nullable|string|max:255',
-                'student.blood_group' => 'nullable|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
-                'student.religion' => 'nullable|in:Islam,Hinduism,Christianity,Buddhism',
-                'student.default_role' => 'nullable|exists:roles,name',
-            ]);
+            if ($request->has('student_id')) {
+                // Linking to existing student - only validate student_id
+                $rules['student_id'] = 'required|exists:students,id';
+            } else {
+                // Creating new student - validate all student fields
+                $rules = array_merge($rules, [
+                    'student.full_name' => 'required|string|max:255',
+                    'student.date_of_birth' => 'required|date',
+                    'student.gender' => 'required|in:male,female,other',
+                    'student.address' => 'nullable|string|max:500',
+                    'student.city' => 'nullable|string|max:100',
+                    'student.school_college' => 'nullable|string|max:255',
+                    'student.class_grade' => 'nullable|string|max:50',
+                    'student.father_name' => 'nullable|string|max:255',
+                    'student.mother_name' => 'nullable|string|max:255',
+                    'student.blood_group' => 'nullable|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
+                    'student.religion' => 'nullable|in:Islam,Hinduism,Christianity,Buddhism',
+                    'student.default_role' => 'nullable|exists:roles,name',
+                ]);
+            }
         }
 
         $validated = $request->validate($rules);

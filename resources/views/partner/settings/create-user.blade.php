@@ -538,37 +538,24 @@ document.addEventListener('DOMContentLoaded', function() {
     function populateTeacherData(selectedOption) {
         try {
             const teacherData = JSON.parse(selectedOption.getAttribute('data-teacher-data'));
+            const teacherId = selectedOption.value;
             
             // Populate main form fields
             document.getElementById('name').value = teacherData.full_name_en || teacherData.full_name_bn || '';
             document.getElementById('email').value = teacherData.email || '';
             document.getElementById('phone').value = teacherData.mobile || '';
             
-            // Populate teacher-specific fields
-            const teacherFields = {
-                'teacher_full_name_en': teacherData.full_name_en,
-                'teacher_full_name_bn': teacherData.full_name_bn,
-                'teacher_gender': teacherData.gender,
-                'teacher_date_of_birth': teacherData.date_of_birth,
-                'teacher_mobile': teacherData.mobile,
-                'teacher_email': teacherData.email,
-                'teacher_address': teacherData.address,
-                'teacher_designation': teacherData.designation,
-                'teacher_department': teacherData.department,
-                'teacher_qualification': teacherData.qualification,
-                'teacher_experience': teacherData.experience,
-                'teacher_joining_date': teacherData.joining_date,
-                'teacher_salary': teacherData.salary
-            };
+            // Remove existing teacher hidden fields
+            document.querySelectorAll('input[name^="teacher"]').forEach(field => field.remove());
             
-            Object.keys(teacherFields).forEach(fieldId => {
-                const field = document.getElementById(fieldId);
-                if (field && teacherFields[fieldId]) {
-                    field.value = teacherFields[fieldId];
-                }
-            });
+            // Create hidden field with existing teacher ID (for linking, not creating new record)
+            const teacherIdField = document.createElement('input');
+            teacherIdField.type = 'hidden';
+            teacherIdField.name = 'teacher_id';
+            teacherIdField.value = teacherId;
+            form.appendChild(teacherIdField);
             
-            showNotification('Teacher data populated successfully!', 'success');
+            showNotification('Teacher data populated successfully! Will link to existing teacher record.', 'success');
         } catch (error) {
             console.error('Error parsing teacher data:', error);
             showNotification('Error populating teacher data', 'error');
@@ -579,35 +566,24 @@ document.addEventListener('DOMContentLoaded', function() {
     function populateStudentData(selectedOption) {
         try {
             const studentData = JSON.parse(selectedOption.getAttribute('data-student-data'));
+            const studentId = selectedOption.value;
             
             // Populate main form fields
             document.getElementById('name').value = studentData.full_name || '';
             document.getElementById('email').value = studentData.email || '';
             document.getElementById('phone').value = studentData.phone || '';
             
-            // Populate student-specific fields
-            const studentFields = {
-                'student_full_name': studentData.full_name,
-                'student_date_of_birth': studentData.date_of_birth,
-                'student_gender': studentData.gender,
-                'student_phone': studentData.phone,
-                'student_email': studentData.email,
-                'student_address': studentData.address,
-                'student_city': studentData.city,
-                'student_school_college': studentData.school_college,
-                'student_class_grade': studentData.class_grade,
-                'student_parent_name': studentData.parent_name,
-                'student_parent_phone': studentData.parent_phone
-            };
+            // Remove existing student hidden fields
+            document.querySelectorAll('input[name^="student"]').forEach(field => field.remove());
             
-            Object.keys(studentFields).forEach(fieldId => {
-                const field = document.getElementById(fieldId);
-                if (field && studentFields[fieldId]) {
-                    field.value = studentFields[fieldId];
-                }
-            });
+            // Create hidden field with existing student ID (for linking, not creating new record)
+            const studentIdField = document.createElement('input');
+            studentIdField.type = 'hidden';
+            studentIdField.name = 'student_id';
+            studentIdField.value = studentId;
+            form.appendChild(studentIdField);
             
-            showNotification('Student data populated successfully!', 'success');
+            showNotification('Student data populated successfully! Will link to existing student record.', 'success');
         } catch (error) {
             console.error('Error parsing student data:', error);
             showNotification('Error populating student data', 'error');
