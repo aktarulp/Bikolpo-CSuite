@@ -45,18 +45,20 @@ class RegisteredUserController extends Controller
         // Add conditional validation based on registration type
         if ($registerType === 'partner') {
             $rules['name'] = ['required', 'string', 'max:255'];
-            $rules['email'] = ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class];
+            $rules['email'] = ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'];
         } else {
             $rules['phone'] = [
                 'required', 
                 'string', 
                 'regex:/^01[3-9][0-9]{8}$/', 
-                'unique:'.User::class
+                'unique:users,phone'
             ];
         }
 
         $request->validate($rules, [
             'phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
+            'phone.unique' => 'This phone number is already registered. Please use a different phone number or try logging in.',
+            'email.unique' => 'This email address is already registered. Please use a different email address or try logging in.',
             'name.required' => 'Organization Name is required.',
             'name.string' => 'Organization Name must be a valid text.',
             'name.max' => 'Organization Name cannot exceed 255 characters.',
@@ -93,17 +95,30 @@ class RegisteredUserController extends Controller
 
         // For student registration, continue with existing logic
         try {
-            // Prepare user data
-            $userData = [
-                'password' => Hash::make($request->password),
-                'role' => $registerType,
-            ];
-
-            if ($registerType === 'student') {
-                $userData['phone'] = $request->phone;
+            // Find the Student role
+            $studentRole = \App\Models\EnhancedRole::where('name', 'Student')->first();
+            if (!$studentRole) {
+                // Fallback to a default role if Student role doesn't exist
+                $studentRole = \App\Models\EnhancedRole::where('is_default', true)->first();
             }
 
-            $user = User::create($userData);
+            // Get system user ID for registration tracking
+            $systemUser = \App\Models\EnhancedUser::where('email', 'system@bikolpo.com')->first();
+            $systemUserId = $systemUser ? $systemUser->id : null;
+
+            // Prepare user data with all required fields
+            $userData = [
+                'phone' => $request->phone,
+                'password' => Hash::make($request->password),
+                'role' => $studentRole ? $studentRole->name : 'Student',
+                'role_id' => $studentRole ? $studentRole->id : null,
+                'status' => 'active',
+                'partner_id' => null, // Students don't belong to a partner initially
+                'created_by' => $systemUserId, // Web Registration System
+                'updated_by' => $systemUserId,
+            ];
+
+            $user = \App\Models\EnhancedUser::create($userData);
 
             event(new Registered($user));
             Auth::login($user);

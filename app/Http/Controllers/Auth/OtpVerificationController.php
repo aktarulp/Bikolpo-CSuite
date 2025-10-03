@@ -56,26 +56,58 @@ class OtpVerificationController extends Controller
             return redirect()->route('register')->withErrors(['email' => 'Registration session expired. Please try again.']);
         }
 
+        // Double-check email uniqueness before creating user (safety check)
+        $existingUser = \App\Models\EnhancedUser::where('email', $email)->first();
+        if ($existingUser) {
+            // Mark the verification code as used to prevent reuse
+            $verificationCode->markAsUsed();
+            
+            // Clear session data
+            $request->session()->forget(['registration_email', 'registration_data']);
+            
+            return redirect()->route('register')->withErrors([
+                'email' => 'This email address is already registered. Please use a different email address or try logging in.'
+            ]);
+        }
+
         try {
             DB::beginTransaction();
 
-            // Create user
-            $user = User::create([
-                'name' => $registrationData['name'],
-                'email' => $email,
-                'password' => Hash::make($registrationData['password']),
-                'role' => 'partner',
-                'email_verified_at' => now(), // Mark as verified since OTP is verified
-            ]);
-
-            // Create partner
+            // First create the partner to get partner_id
             $partner = Partner::create([
                 'name' => $registrationData['name'],
                 'email' => $email,
-                'user_id' => $user->id,
                 'status' => 'active',
                 'flag' => 'active',
             ]);
+
+            // Find the Partner role
+            $partnerRole = \App\Models\EnhancedRole::where('name', 'Partner')->first();
+            if (!$partnerRole) {
+                // Fallback to a default role if Partner role doesn't exist
+                $partnerRole = \App\Models\EnhancedRole::where('is_default', true)->first();
+            }
+
+            // Get system user ID for registration tracking
+            $systemUser = \App\Models\EnhancedUser::where('email', 'system@bikolpo.com')->first();
+            $systemUserId = $systemUser ? $systemUser->id : null;
+
+            // Create user with all required fields
+            $user = \App\Models\EnhancedUser::create([
+                'name' => $registrationData['name'],
+                'email' => $email,
+                'password' => Hash::make($registrationData['password']),
+                'role' => $partnerRole ? $partnerRole->name : 'Partner',
+                'role_id' => $partnerRole ? $partnerRole->id : null,
+                'status' => 'active',
+                'partner_id' => $partner->id,
+                'email_verified_at' => now(), // Mark as verified since OTP is verified
+                'created_by' => $systemUserId, // Web Registration System
+                'updated_by' => $systemUserId,
+            ]);
+
+            // Update partner with user_id
+            $partner->update(['user_id' => $user->id]);
 
             // Mark OTP as used
             $verificationCode->markAsUsed();
@@ -91,7 +123,28 @@ class OtpVerificationController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            dd($e);
+            
+            // Log the error for debugging
+            \Log::error('Partner registration failed: ' . $e->getMessage(), [
+                'email' => $email,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            // Clear session data
+            $request->session()->forget(['registration_email', 'registration_data']);
+            
+            // Check if it's a duplicate email error
+            if (str_contains($e->getMessage(), 'Duplicate entry') && str_contains($e->getMessage(), 'email')) {
+                return redirect()->route('register')->withErrors([
+                    'email' => 'This email address is already registered. Please use a different email address or try logging in.'
+                ]);
+            }
+            
+            // Generic error message for other issues
+            return redirect()->route('register')->withErrors([
+                'email' => 'Registration failed due to a technical issue. Please try again or contact support if the problem persists.'
+            ]);
         }
     }
 
