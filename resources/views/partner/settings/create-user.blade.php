@@ -81,7 +81,7 @@
                                 ];
                             @endphp
                             
-                            <div class="grid grid-cols-1 sm:grid-cols-{{ min(count($roles), 3) }} gap-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 @foreach($roles as $role)
                                     @php
                                         $roleKey = strtolower($role->name);
