@@ -40,7 +40,7 @@ class RoleSeeder extends Seeder
             [
                 'name' => 'partner_admin',
                 'display_name' => 'Partner Admin',
-                'description' => 'Main administrator of each partner organization',
+                'description' => 'Main administrator of each partner',
                 'level' => 2,
                 'parent_role_id' => null, // Will be set to system_administrator after creation
                 'status' => 'active',
