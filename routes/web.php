@@ -40,21 +40,7 @@ Route::get('/', function () {
     return view('welcome');
 })->name('landing');
 
-// Debug route - remove after debugging
-Route::get('/debug-user', function () {
-    if (auth()->check()) {
-        $user = auth()->user();
-        return response()->json([
-            'user_id' => $user->id,
-            'role' => $user->role,
-            'role_id' => $user->role_id ?? 'null',
-            'role_lowercase' => strtolower($user->role),
-            'role_length' => strlen($user->role),
-            'role_bytes' => bin2hex($user->role),
-        ]);
-    }
-    return response()->json(['message' => 'Not authenticated']);
-})->middleware('auth');
+// Debug routes removed - partner context issue resolved
 
 // Debug route to check user_id 18 data
 Route::get('/debug-user-18', function () {

@@ -4,21 +4,20 @@ namespace App\Http\Controllers;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
-use App\Models\EnhancedUser;
 use App\Models\EnhancedRole;
 use App\Models\EnhancedPermission;
 use App\Models\UserActivity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use App\Traits\HasPartnerContext;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class UserManagementController extends Controller
 {
-    use AuthorizesRequests;
+    use AuthorizesRequests, HasPartnerContext;
     /**
      * Display the user management dashboard.
      */
@@ -85,7 +84,7 @@ class UserManagementController extends Controller
             ->get();
 
         // Get current partner ID
-        $partnerId = auth()->user()->partner_id;
+        $partnerId = $this->getPartnerId();
 
         // Get teachers from current partner
         $teachers = \App\Models\Teacher::where('partner_id', $partnerId)->get();
@@ -168,7 +167,7 @@ class UserManagementController extends Controller
                 $user->role = strtolower($selectedRole->name);
             }
             
-            $user->partner_id = auth()->user()->partner_id;
+            $user->partner_id = $this->getPartnerId();
             $user->status = 'active';
             $user->email_verified_at = now(); // Set as verified for admin-created users
             $user->created_by = auth()->id();
@@ -179,14 +178,14 @@ class UserManagementController extends Controller
             if ($validated['user_type'] === 'teacher' && isset($validated['teacher'])) {
                 $teacherData = $validated['teacher'];
                 $teacherData['user_id'] = $user->id;
-                $teacherData['partner_id'] = auth()->user()->partner_id;
+                $teacherData['partner_id'] = $this->getPartnerId();
                 $teacherData['created_by'] = auth()->id();
                 $teacherData['updated_by'] = auth()->id();
                 $teacherData['status'] = 'Active';
                 $teacherData['enable_login'] = 'y';
                 
                 // Generate teacher ID
-                $lastTeacher = \App\Models\Teacher::where('partner_id', auth()->user()->partner_id)
+                $lastTeacher = \App\Models\Teacher::where('partner_id', $this->getPartnerId())
                     ->whereNotNull('teacher_id')
                     ->orderBy('id', 'desc')
                     ->first();
@@ -201,14 +200,14 @@ class UserManagementController extends Controller
             if ($validated['user_type'] === 'student' && isset($validated['student'])) {
                 $studentData = $validated['student'];
                 $studentData['user_id'] = $user->id;
-                $studentData['partner_id'] = auth()->user()->partner_id;
+                $studentData['partner_id'] = $this->getPartnerId();
                 $studentData['created_by'] = auth()->id();
                 $studentData['status'] = 'active';
                 $studentData['enable_login'] = 'y';
                 $studentData['enroll_date'] = now();
                 
                 // Generate student ID
-                $lastStudent = \App\Models\Student::where('partner_id', auth()->user()->partner_id)
+                $lastStudent = \App\Models\Student::where('partner_id', $this->getPartnerId())
                     ->whereNotNull('student_id')
                     ->orderBy('id', 'desc')
                     ->first();
@@ -222,7 +221,7 @@ class UserManagementController extends Controller
             // Link to existing teacher or student if specified (backward compatibility)
             if ($validated['user_type'] === 'teacher' && $request->has('teacher_id') && !isset($validated['teacher'])) {
                 $teacher = \App\Models\Teacher::where('id', $request->teacher_id)
-                    ->where('partner_id', auth()->user()->partner_id)
+                    ->where('partner_id', $this->getPartnerId())
                     ->first();
 
                 if ($teacher) {
@@ -231,7 +230,7 @@ class UserManagementController extends Controller
                 }
             } elseif ($validated['user_type'] === 'student' && $request->has('student_id') && !isset($validated['student'])) {
                 $student = \App\Models\Student::where('id', $request->student_id)
-                    ->where('partner_id', auth()->user()->partner_id)
+                    ->where('partner_id', $this->getPartnerId())
                     ->first();
 
                 if ($student) {
