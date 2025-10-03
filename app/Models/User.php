@@ -25,6 +25,8 @@ class User extends Authenticatable
         'phone',
         'partner_id',
         'status',
+        'created_by',
+        'updated_by',
     ];
 
     /**
@@ -55,7 +57,10 @@ class User extends Authenticatable
      */
     public function isPartner()
     {
-        return $this->role === 'partner';
+        if (is_string($this->role)) {
+            return $this->role === 'partner';
+        }
+        return $this->role && $this->role->name === 'partner';
     }
 
     /**
@@ -65,7 +70,10 @@ class User extends Authenticatable
      */
     public function isStudent()
     {
-        return $this->role === 'student';
+        if (is_string($this->role)) {
+            return $this->role === 'student';
+        }
+        return $this->role && $this->role->name === 'student';
     }
 
     /**
@@ -83,6 +91,30 @@ class User extends Authenticatable
     public function partner()
     {
         return $this->hasOne(Partner::class);
+    }
+
+    /**
+     * Get the user who created this user
+     */
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Get the user who last updated this user
+     */
+    public function updater()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    /**
+     * Get users created by this user
+     */
+    public function createdUsers()
+    {
+        return $this->hasMany(User::class, 'created_by');
     }
 
     /**
@@ -114,6 +146,10 @@ class User extends Authenticatable
      */
     public function isSystemAdministrator(): bool
     {
+        // Check if role is stored as string or relationship
+        if (is_string($this->role)) {
+            return $this->role === 'system_administrator';
+        }
         return $this->role && $this->role->name === 'system_administrator';
     }
 
@@ -122,7 +158,11 @@ class User extends Authenticatable
      */
     public function isPartnerAdmin(): bool
     {
-        return $this->role && $this->role->name === 'partner_admin';
+        // Check if role is stored as string or relationship
+        if (is_string($this->role)) {
+            return $this->role === 'partner_admin' || $this->role === 'partner';
+        }
+        return $this->role && ($this->role->name === 'partner_admin' || $this->role->name === 'partner');
     }
 
     /**
@@ -130,6 +170,9 @@ class User extends Authenticatable
      */
     public function isStudentRole(): bool
     {
+        if (is_string($this->role)) {
+            return $this->role === 'student';
+        }
         return $this->role && $this->role->name === 'student';
     }
 
@@ -138,6 +181,9 @@ class User extends Authenticatable
      */
     public function isTeacherRole(): bool
     {
+        if (is_string($this->role)) {
+            return $this->role === 'teacher';
+        }
         return $this->role && $this->role->name === 'teacher';
     }
 
@@ -146,6 +192,9 @@ class User extends Authenticatable
      */
     public function isOperatorRole(): bool
     {
+        if (is_string($this->role)) {
+            return $this->role === 'operator';
+        }
         return $this->role && $this->role->name === 'operator';
     }
 

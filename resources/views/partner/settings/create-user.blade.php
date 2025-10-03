@@ -39,7 +39,7 @@
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <!-- Create User Form -->
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <form action="{{ route('partner.settings.users.store') }}" method="POST" class="divide-y divide-gray-200 dark:divide-gray-700">
+            <form action="{{ route('partner.settings.users.store') }}" method="POST" class="divide-y divide-gray-200 dark:divide-gray-700" id="create-user-form">
                 @csrf
 
                 <!-- User Role Selection -->
@@ -191,6 +191,32 @@
                     </div>
                 </div>
 
+                <!-- Role Assignment Section -->
+                <div class="px-6 py-6 sm:px-8">
+                    <div class="space-y-4">
+                        <div>
+                            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Role Assignment <span class="text-red-500">*</span></h2>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Select one or more roles for this user. At least one role is required.</p>
+
+                            <div class="space-y-3">
+                                @foreach($roles as $role)
+                                <div class="flex items-center">
+                                    <input type="checkbox" name="role_ids[]" value="{{ $role->id }}" id="role_{{ $role->id }}"
+                                           data-role-name="{{ $role->name }}"
+                                           class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 dark:border-gray-600 rounded">
+                                    <label for="role_{{ $role->id }}" class="ml-3 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        {{ $role->display_name }}
+                                        @if($role->description)
+                                            <span class="text-gray-500 dark:text-gray-400">- {{ $role->description }}</span>
+                                        @endif
+                                    </label>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Account Status Section -->
                 <div class="px-6 py-6 sm:px-8">
                     <div class="space-y-4">
@@ -220,7 +246,7 @@
                             Cancel
                         </a>
 
-                        <button type="submit"
+                        <button type="submit" id="submit-btn"
                                 class="inline-flex items-center justify-center px-6 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 rounded-lg shadow-sm hover:shadow-md transition duration-200">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
@@ -264,6 +290,24 @@ document.addEventListener('DOMContentLoaded', function() {
         emailInput.value = '';
         phoneInput.value = '';
 
+        // Clear all role checkboxes first
+        const roleCheckboxes = document.querySelectorAll('input[name="role_ids[]"]');
+        roleCheckboxes.forEach(checkbox => checkbox.checked = false);
+
+        // Auto-select corresponding role checkbox based on user_type
+        if (selectedRole) {
+            const matchingRoleCheckbox = document.querySelector(`input[name="role_ids[]"][data-role-name="${selectedRole}"]`);
+            if (matchingRoleCheckbox) {
+                matchingRoleCheckbox.checked = true;
+            } else {
+                // If no exact match, try to find a similar role or select the first available role
+                const firstRoleCheckbox = document.querySelector('input[name="role_ids[]"]');
+                if (firstRoleCheckbox) {
+                    firstRoleCheckbox.checked = true;
+                }
+            }
+        }
+
         // Show appropriate section and hide user info section based on selected role
         if (selectedRole === 'teacher' || selectedRole === 'teacher_role') {
             teacherSelection.style.display = 'block';
@@ -276,6 +320,102 @@ document.addEventListener('DOMContentLoaded', function() {
 
     userTypeSelect.addEventListener('change', toggleSections);
     toggleSections();
+
+    // Success message function
+    function showSuccessMessage(message) {
+        // Create toast notification
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
+        toast.innerHTML = `
+            <div class="flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                ${message}
+            </div>
+        `;
+        
+        document.body.appendChild(toast);
+        
+        // Animate in
+        setTimeout(() => {
+            toast.classList.remove('translate-x-full');
+        }, 100);
+        
+        // Remove after delay
+        setTimeout(() => {
+            toast.classList.add('translate-x-full');
+            setTimeout(() => {
+                document.body.removeChild(toast);
+            }, 300);
+        }, 3000);
+    }
+
+    // Form submission validation
+    const form = document.getElementById('create-user-form');
+    const submitBtn = document.getElementById('submit-btn');
+    
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Check if at least one role is selected
+        const checkedRoles = document.querySelectorAll('input[name="role_ids[]"]:checked');
+        
+        if (checkedRoles.length === 0) {
+            alert('Please select at least one role for the user.');
+            return false;
+        }
+        
+        // Show loading state
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<svg class="animate-spin -ml-1 mr-3 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Creating...';
+        
+        // Submit form via AJAX
+        const formData = new FormData(form);
+        
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || document.querySelector('input[name="_token"]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show success message and redirect
+                showSuccessMessage('User created successfully!');
+                setTimeout(() => {
+                    window.location.href = '{{ route("partner.settings.index") }}';
+                }, 1500);
+            } else {
+                // Show error message
+                let errorMsg = 'Failed to create user.';
+                if (data.errors) {
+                    errorMsg += '\n\nErrors:\n';
+                    Object.keys(data.errors).forEach(key => {
+                        errorMsg += `- ${data.errors[key].join(', ')}\n`;
+                    });
+                } else if (data.message) {
+                    errorMsg = data.message;
+                }
+                alert(errorMsg);
+                
+                // Reset button state
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Create User';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while creating the user. Please try again.');
+            
+            // Reset button state
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Create User';
+        });
+    });
 });
 </script>
 @endsection

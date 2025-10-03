@@ -24,6 +24,8 @@ class EnhancedUser extends Authenticatable
         'phone',
         'avatar',
         'status',
+        'role',
+        'role_id',
         'email_verified_at',
         'last_login_at',
         'last_login_ip',
@@ -68,6 +70,14 @@ class EnhancedUser extends Authenticatable
     }
 
     /**
+     * Get the primary role of the user.
+     */
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(EnhancedRole::class, 'role_id');
+    }
+
+    /**
      * Get the roles assigned to the user.
      */
     public function roles(): BelongsToMany
@@ -92,7 +102,7 @@ class EnhancedUser extends Authenticatable
      */
     public function activities(): HasMany
     {
-        return $this->hasMany(UserActivity::class);
+        return $this->hasMany(UserActivity::class, 'user_id');
     }
 
     /**
@@ -363,5 +373,18 @@ class EnhancedUser extends Authenticatable
         ];
 
         return $badges[$this->status] ?? '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200">⚪ Unknown</span>';
+    }
+
+    /**
+     * Get all available user statuses.
+     */
+    public static function getStatuses()
+    {
+        return [
+            self::STATUS_ACTIVE,
+            self::STATUS_INACTIVE,
+            self::STATUS_SUSPENDED,
+            self::STATUS_PENDING,
+        ];
     }
 }
