@@ -39,14 +39,16 @@ class RedirectIfAuthenticated
 
                 // Redirect based on user role for other guest-only pages.
                 // Use safe fallbacks to avoid redirect loops.
-                if ($user->role === 'student') {
+                $userRole = strtolower($user->role);
+                
+                if ($userRole === 'student') {
                     Log::info('Redirecting student to student dashboard');
                     // If current route already points to student.dashboard, avoid redirect
                     if (!$request->routeIs('student.dashboard')) {
                         return redirect()->route('student.dashboard');
                     }
-                } elseif ($user->role === 'partner') {
-                    Log::info('Redirecting partner to partner dashboard');
+                } elseif (in_array($userRole, ['partner', 'partner_admin', 'institution_admin'])) {
+                    Log::info('Redirecting partner to partner dashboard', ['role' => $user->role]);
                     if (!$request->routeIs('partner.dashboard')) {
                         return redirect()->route('partner.dashboard');
                     }

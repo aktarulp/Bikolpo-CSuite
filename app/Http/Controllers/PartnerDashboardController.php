@@ -135,6 +135,9 @@ class PartnerDashboardController extends Controller
             return view('partner.dashboard', [
                 'stats' => [
                     'total_questions' => 0,
+                    'mcq_questions' => 0,
+                    'descriptive_questions' => 0,
+                    'true_false_questions' => 0,
                     'total_exams' => 0,
                     'total_students' => 0,
                     'total_courses' => 0,

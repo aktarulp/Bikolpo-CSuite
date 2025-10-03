@@ -50,10 +50,16 @@ class AuthenticatedSessionController extends Controller
             'user_id' => $user->id,
             'email' => $user->email,
             'role' => $user->role,
+            'role_id' => $user->role_id,
+            'status' => $user->status,
         ]);
 
         // Redirect based on role
         switch (strtolower($user->role)) {
+            case 'partner':
+            case 'partner_admin':
+                return redirect()->route('partner.dashboard');
+                
             case 'operator':
                 return redirect()->route('operator.dashboard');
                 
@@ -77,6 +83,7 @@ class AuthenticatedSessionController extends Controller
                 
                 // Try to determine appropriate dashboard based on role_id if role string doesn't match
                 if ($user->role_id) {
+                    Log::info('Attempting redirect via role_id', ['user_id' => $user->id, 'role_id' => $user->role_id, 'role' => $user->role]);
                     switch ($user->role_id) {
                         case 1: // System Administrator
                         case 2: // Admin  

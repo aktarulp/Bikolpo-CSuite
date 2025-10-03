@@ -162,10 +162,10 @@ class UserManagementController extends Controller
             $user->password = Hash::make($validated['password']);
             $user->role_id = $validated['role_id'];
             
-            // Also set the role name for compatibility
+            // Also set the role name for compatibility (ensure lowercase)
             $selectedRole = EnhancedRole::find($validated['role_id']);
             if ($selectedRole) {
-                $user->role = $selectedRole->name;
+                $user->role = strtolower($selectedRole->name);
             }
             
             $user->partner_id = auth()->user()->partner_id;
