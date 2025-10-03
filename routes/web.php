@@ -691,13 +691,6 @@ Route::middleware('auth')->group(function () {
                 return response()->json(['message' => 'Test route working']);
             })->name('test.route');
             
-            // Role & Permission Management Routes
-            Route::get('role-permission-management', [\App\Http\Controllers\RolePermissionController::class, 'index'])->name('role-permission-management');
-            Route::get('roles/create', [\App\Http\Controllers\RolePermissionController::class, 'create'])->name('roles.create');
-            Route::get('permission-grid', [\App\Http\Controllers\RolePermissionController::class, 'getPermissionGrid'])->name('permission-grid');
-            Route::post('permissions/bulk-update', [\App\Http\Controllers\RolePermissionController::class, 'bulkUpdatePermissions'])->name('permissions.bulk-update');
-            Route::get('role-hierarchy', [\App\Http\Controllers\RolePermissionController::class, 'getHierarchy'])->name('role-hierarchy');
-            Route::get('real-time-updates', [\App\Http\Controllers\RolePermissionController::class, 'getRealTimeUpdates'])->name('real-time-updates');
         });
         
         // Analytics routes moved outside partner middleware for better access
@@ -830,22 +823,6 @@ Route::prefix('api')->group(function () {
     
     // Role and Permission API routes
     Route::middleware(['auth', 'role:partner'])->group(function () {
-        // Role API routes
-        Route::get('/roles', [\App\Http\Controllers\RolePermissionController::class, 'getRoles'])->name('api.roles.index');
-        Route::post('/roles', [\App\Http\Controllers\RolePermissionController::class, 'storeRole'])->name('api.roles.store');
-        Route::get('/roles/{id}', [\App\Http\Controllers\RolePermissionController::class, 'getRole'])->name('api.roles.show');
-        Route::put('/roles/{id}', [\App\Http\Controllers\RolePermissionController::class, 'updateRole'])->name('api.roles.update');
-        Route::delete('/roles/{id}', [\App\Http\Controllers\RolePermissionController::class, 'deleteRole'])->name('api.roles.destroy');
-        Route::post('/roles/{id}/clone', [\App\Http\Controllers\RolePermissionController::class, 'cloneRole'])->name('api.roles.clone');
-        Route::get('/roles/export', [\App\Http\Controllers\RolePermissionController::class, 'exportRoles'])->name('api.roles.export');
-        
-        // Permission API routes
-        Route::get('/permissions', [\App\Http\Controllers\RolePermissionController::class, 'getPermissions'])->name('api.permissions.index');
-        Route::post('/permissions', [\App\Http\Controllers\RolePermissionController::class, 'storePermission'])->name('api.permissions.store');
-        Route::get('/permissions/{id}', [\App\Http\Controllers\RolePermissionController::class, 'getPermission'])->name('api.permissions.show');
-        Route::put('/permissions/{id}', [\App\Http\Controllers\RolePermissionController::class, 'updatePermission'])->name('api.permissions.update');
-        Route::delete('/permissions/{id}', [\App\Http\Controllers\RolePermissionController::class, 'deletePermission'])->name('api.permissions.destroy');
-        Route::get('/permissions/export', [\App\Http\Controllers\RolePermissionController::class, 'exportPermissions'])->name('api.permissions.export');
         
         // User Management API routes
         Route::get('/users', [\App\Http\Controllers\UserManagementController::class, 'getUsers'])->name('api.users.index');
