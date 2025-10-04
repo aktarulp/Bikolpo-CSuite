@@ -55,6 +55,16 @@ class AccessControlController extends Controller
     }
 
     /**
+     * Show the form for editing role permissions.
+     */
+    public function editRole(Role $role)
+    {
+        $permissionConfig = config('permissions.menus', []);
+        
+        return view('partner.access-control.edit-role', compact('role', 'permissionConfig'));
+    }
+
+    /**
      * Store a newly created role.
      */
     public function storeRole(Request $request)

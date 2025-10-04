@@ -763,6 +763,7 @@ Route::middleware('auth')->group(function () {
         Route::prefix('access-control')->name('access-control.')->group(function () {
             Route::get('/', [AccessControlController::class, 'index'])->name('index');
             Route::get('/create-role', [AccessControlController::class, 'createRole'])->name('create-role');
+            Route::get('/roles/{role}/edit', [AccessControlController::class, 'editRole'])->name('edit-role');
             Route::post('/roles', [AccessControlController::class, 'storeRole'])->name('store-role');
             Route::get('/roles/{role}/permissions', [AccessControlController::class, 'getRolePermissions'])->name('role-permissions');
             Route::put('/roles/{role}/permissions', [AccessControlController::class, 'updateRolePermissions'])->name('update-role-permissions');
