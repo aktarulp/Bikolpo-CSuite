@@ -78,6 +78,11 @@ class UserManagementController extends Controller
         $currentUser = EnhancedUser::find(auth()->id());
         $currentUserLevel = $currentUser->getHighestRoleLevel();
 
+        // If currentUserLevel is null, default to a high level (show all roles)
+        if ($currentUserLevel === null) {
+            $currentUserLevel = 1; // Default to highest privilege level
+        }
+
         // Filter roles - only show roles with level >= current user's level (same or lower privilege)
         $roles = EnhancedRole::active()
             ->where('level', '>=', $currentUserLevel)
@@ -892,7 +897,7 @@ class UserManagementController extends Controller
             
             // If no partner_id, try to get students from all partners (for testing)
             if (!$partnerId) {
-                $students = \App\Models\Student::where('user_id', null)
+                $students = \App\Models\Student::whereNull('user_id')
                     ->where('status', 'active')
                     ->where('flag', 'active')
                     ->where('enable_login', 'y') // Only students with login enabled
@@ -902,7 +907,7 @@ class UserManagementController extends Controller
                     ->get();
             } else {
                 $students = \App\Models\Student::where('partner_id', $partnerId)
-                    ->where('user_id', null) // Only students without user accounts
+                    ->whereNull('user_id') // Only students without user accounts
                     ->where('status', 'active')
                     ->where('flag', 'active') // Also check the flag field
                     ->where('enable_login', 'y') // Only students with login enabled
@@ -948,7 +953,7 @@ class UserManagementController extends Controller
             
             // If no partner_id, try to get teachers from all partners (for testing)
             if (!$partnerId) {
-                $teachers = \App\Models\Teacher::where('user_id', null)
+                $teachers = \App\Models\Teacher::whereNull('user_id')
                     ->where('status', 'Active')
                     ->where('enable_login', 'y') // Only teachers with login enabled
                     ->select('id', 'full_name_en as name', 'email', 'mobile as phone', 'partner_id')
@@ -957,7 +962,7 @@ class UserManagementController extends Controller
                     ->get();
             } else {
                 $teachers = \App\Models\Teacher::where('partner_id', $partnerId)
-                    ->where('user_id', null) // Only teachers without user accounts
+                    ->whereNull('user_id') // Only teachers without user accounts
                     ->where('status', 'Active')
                     ->where('enable_login', 'y') // Only teachers with login enabled
                     ->select('id', 'full_name_en as name', 'email', 'mobile as phone')
