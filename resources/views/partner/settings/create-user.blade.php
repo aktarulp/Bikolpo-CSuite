@@ -84,7 +84,7 @@
                                                 $userType = 'student';
                                                 $icon = '🎓';
                                             } else {
-                                                $userType = 'operator';
+                                                $userType = 'teacher'; // Default to teacher for other roles
                                                 $icon = '👤';
                                             }
                                             

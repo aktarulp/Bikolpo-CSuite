@@ -135,7 +135,7 @@ class UserManagementController extends Controller
             'phone' => 'required|string|max:20|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'role_id' => 'required|exists:roles,id',
-            'user_type' => 'required|in:teacher,student,operator',
+            'user_type' => 'required|in:teacher,student',
         ];
         
         // Ensure role_id is properly cast to integer

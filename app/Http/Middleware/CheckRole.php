@@ -34,9 +34,7 @@ class CheckRole
         } elseif ($requiredRole === 'student') {
             // Student role variations
             $roleMatches = in_array($userRole, ['student', 'learner']);
-        } elseif ($requiredRole === 'operator') {
-            // Operator role variations
-            $roleMatches = in_array($userRole, ['operator', 'staff']);
+        // Operator role removed from system
         } else {
             // Exact match for other roles
             $roleMatches = ($userRole === $requiredRole);
@@ -62,8 +60,7 @@ class CheckRole
                 return redirect()->route('partner.dashboard');
             } elseif (in_array($actualRole, ['teacher', 'instructor'])) {
                 return redirect()->route('teacher.dashboard');
-            } elseif (in_array($actualRole, ['operator', 'staff'])) {
-                return redirect()->route('operator.dashboard');
+            // Operator role removed - redirect to partner dashboard
             } elseif (in_array($actualRole, ['system_administrator', 'admin', 'system'])) {
                 return redirect()->route('admin.dashboard');
             } else {

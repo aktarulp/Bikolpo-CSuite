@@ -60,8 +60,9 @@ class AuthenticatedSessionController extends Controller
             case 'partner_admin':
                 return redirect()->route('partner.dashboard');
                 
+            // Operator role removed - redirect to partner dashboard as fallback
             case 'operator':
-                return redirect()->route('operator.dashboard');
+                return redirect()->route('partner.dashboard');
                 
             case 'student':
                 return redirect()->route('student.dashboard');
@@ -95,9 +96,9 @@ class AuthenticatedSessionController extends Controller
                         case 4: // Teacher
                             Log::info('Redirecting to teacher dashboard via role_id', ['user_id' => $user->id, 'role_id' => $user->role_id]);
                             return redirect()->route('teacher.dashboard');
-                        case 5: // Operator
-                            Log::info('Redirecting to operator dashboard via role_id', ['user_id' => $user->id, 'role_id' => $user->role_id]);
-                            return redirect()->route('operator.dashboard');
+                        case 5: // Operator (removed - redirect to partner dashboard)
+                            Log::info('Operator role detected but removed, redirecting to partner dashboard', ['user_id' => $user->id, 'role_id' => $user->role_id]);
+                            return redirect()->route('partner.dashboard');
                         case 6: // Student
                             Log::info('Redirecting to student dashboard via role_id', ['user_id' => $user->id, 'role_id' => $user->role_id]);
                             return redirect()->route('student.dashboard');
