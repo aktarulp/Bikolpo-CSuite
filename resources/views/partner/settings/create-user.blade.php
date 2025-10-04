@@ -194,8 +194,8 @@
                     <input type="hidden" name="user_type" id="user_type" value="">
                     
                     <!-- Debug: Show current user type (remove in production) -->
-                    <div id="debugUserType" class="mt-2 text-xs text-gray-500 hidden">
-                        Current user type: <span id="debugUserTypeValue" class="font-mono bg-gray-100 px-1 rounded"></span>
+                    <div id="debugUserType" class="mt-2 text-xs text-gray-500">
+                        <strong>Debug - Current user type:</strong> <span id="debugUserTypeValue" class="font-mono bg-yellow-100 px-2 py-1 rounded font-bold">[Not set yet]</span>
                     </div>
                 </div>
 
@@ -365,6 +365,8 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Script loaded and DOM ready!');
+    
     const form = document.getElementById('createUserForm');
     const userTypeInputs = document.querySelectorAll('input[name="user_type"]');
     const submitBtn = document.getElementById('submitBtn');
@@ -377,6 +379,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const roleSelect = document.getElementById('role_id');
     const userTypeField = document.getElementById('user_type');
     const roleTypeIndicator = document.getElementById('roleTypeIndicator');
+    
+    console.log('Elements found:', {
+        roleSelect: roleSelect ? 'YES' : 'NO',
+        userTypeField: userTypeField ? 'YES' : 'NO',
+        form: form ? 'YES' : 'NO'
+    });
     const roleIcon = document.getElementById('roleIcon');
     const roleTypeName = document.getElementById('roleTypeName');
     const roleTypeDescription = document.getElementById('roleTypeDescription');
@@ -384,56 +392,54 @@ document.addEventListener('DOMContentLoaded', function() {
     const debugUserTypeValue = document.getElementById('debugUserTypeValue');
     
     function handleRoleChange() {
+        console.log('=== handleRoleChange called ===');
         const selectedOption = roleSelect.options[roleSelect.selectedIndex];
+        console.log('Selected option:', selectedOption);
+        console.log('Selected value:', selectedOption.value);
         
         if (selectedOption.value && selectedOption.value !== '') {
             const userType = selectedOption.getAttribute('data-user-type');
-            
-            // Ensure user type is set correctly
-            if (userType) {
-                userTypeField.value = userType;
-                document.getElementById('debugUserTypeValue').textContent = userType;
-            }
             const icon = selectedOption.getAttribute('data-icon');
-            const roleName = selectedOption.textContent.replace(icon, '').trim();
+            const roleName = selectedOption.getAttribute('data-name');
             
-            // Debug: Log the values
-            console.log('Selected role:', selectedOption.value);
-            console.log('User type from data attribute:', userType);
-            console.log('Role name:', roleName);
-            console.log('Selected option:', selectedOption);
+            console.log('Data attributes:', {
+                userType: userType,
+                icon: icon,
+                roleName: roleName
+            });
             
-            // Update hidden field - ensure it's set
-            if (userType) {
-                userTypeField.value = userType;
-                console.log('User type field set to:', userTypeField.value);
-            } else {
+            // CRITICAL: Set user type immediately
+            let finalUserType = userType;
+            
+            if (!finalUserType) {
                 // Fallback: determine user type from role name
-                const roleName = selectedOption.getAttribute('data-name') || selectedOption.textContent.toLowerCase();
-                let detectedType = 'operator'; // default
+                const nameToCheck = (roleName || selectedOption.textContent).toLowerCase();
+                console.log('Checking role name:', nameToCheck);
                 
-                if (roleName.includes('teacher')) {
-                    detectedType = 'teacher';
-                } else if (roleName.includes('student')) {
-                    detectedType = 'student';
+                if (nameToCheck.includes('teacher')) {
+                    finalUserType = 'teacher';
+                } else if (nameToCheck.includes('student')) {
+                    finalUserType = 'student';
+                } else {
+                    finalUserType = 'operator';
                 }
-                
-                userTypeField.value = detectedType;
-                console.log('Fallback user type set to:', detectedType);
+                console.log('Fallback user type detected:', finalUserType);
             }
             
-            // Show debug info
-            debugUserType.classList.remove('hidden');
-            debugUserTypeValue.textContent = userTypeField.value;
+            // SET THE USER TYPE FIELD
+            userTypeField.value = finalUserType;
+            debugUserTypeValue.textContent = finalUserType;
+            
+            console.log('✓✓✓ User type field NOW set to:', userTypeField.value);
+            console.log('✓✓✓ Debug display NOW shows:', debugUserTypeValue.textContent);
             
             // Show role type indicator
             roleTypeIndicator.classList.remove('hidden');
             roleIcon.textContent = icon || '👤';
-            roleTypeName.textContent = roleName;
+            roleTypeName.textContent = roleName || selectedOption.textContent.trim();
             
             // Set description based on user type
             let description = '';
-            const finalUserType = userTypeField.value;
             
             if (finalUserType === 'teacher') {
                 description = 'Can manage courses, create questions, and view student progress';
@@ -480,23 +486,27 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    roleSelect.addEventListener('change', handleRoleChange);
+    roleSelect.addEventListener('change', function() {
+        console.log('Role changed to:', roleSelect.value);
+        handleRoleChange();
+    });
     
     // Initialize on page load if there's a selected value
     if (roleSelect.value) {
+        console.log('Initial role value:', roleSelect.value);
         handleRoleChange();
     }
+    
+    // Also trigger on any interaction
+    roleSelect.addEventListener('click', function() {
+        console.log('Role select clicked');
+    });
 
     // Form submission
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // Debug: Log form data before submission
-        const formData = new FormData(form);
-        console.log('Form data before submission:');
-        for (let [key, value] of formData.entries()) {
-            console.log(key + ': ' + value);
-        }
+        console.log('Form submit triggered');
         
         // Ensure a role is selected
         if (!roleSelect.value) {
@@ -505,16 +515,35 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         }
         
-        // Ensure user_type is set before submission
-        if (!userTypeField.value && roleSelect.value) {
-            // Try to get user type from selected role
+        // CRITICAL: Ensure user_type is ALWAYS set before submission
+        if (roleSelect.value) {
             const selectedOption = roleSelect.options[roleSelect.selectedIndex];
             const userType = selectedOption.getAttribute('data-user-type');
+            
             if (userType) {
                 userTypeField.value = userType;
+                console.log('✓ User type set to:', userType);
+            } else {
+                // Fallback: detect from role name
+                const roleName = (selectedOption.getAttribute('data-name') || selectedOption.textContent).toLowerCase();
+                let detectedType = 'operator';
+                
+                if (roleName.includes('teacher')) {
+                    detectedType = 'teacher';
+                } else if (roleName.includes('student')) {
+                    detectedType = 'student';
+                }
+                
+                userTypeField.value = detectedType;
+                console.log('✓ User type detected and set to:', detectedType);
             }
-            console.log('User type not set, trying to detect from selected role...');
-            handleRoleChange(); // Try to set it again
+        }
+        
+        // Final validation: user_type MUST be set
+        if (!userTypeField.value) {
+            alert('Error: User type could not be determined. Please select a role again.');
+            roleSelect.focus();
+            return false;
         }
         
         // Debug: Log form data before submission
