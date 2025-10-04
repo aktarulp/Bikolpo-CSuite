@@ -200,12 +200,13 @@ class EnhancedUser extends Authenticatable
     }
 
     /**
-     * Assign a role to the user.
+     * Assign a role to the user with additional metadata.
+     * Note: This conflicts with Spatie's assignRole, so we'll use a different name.
      */
-    public function assignRole($role, $assignedBy = null, $expiresAt = null)
+    public function assignRoleWithMetadata($role, $assignedBy = null, $expiresAt = null)
     {
         if (is_string($role)) {
-            $role = Role::where('name', $role)->first();
+            $role = \App\Models\EnhancedRole::where('name', $role)->first();
         }
 
         if (!$role) {
@@ -221,11 +222,12 @@ class EnhancedUser extends Authenticatable
 
     /**
      * Remove a role from the user.
+     * Note: This conflicts with Spatie's methods, using different name.
      */
-    public function removeRole($role)
+    public function removeRoleWithMetadata($role)
     {
         if (is_string($role)) {
-            $role = Role::where('name', $role)->first();
+            $role = \App\Models\EnhancedRole::where('name', $role)->first();
         }
 
         if (!$role) {
@@ -351,6 +353,20 @@ class EnhancedUser extends Authenticatable
     {
         $userLevel = $this->getHighestRoleLevel();
         return $userLevel !== null && $roleLevel >= $userLevel;
+    }
+
+    /**
+     * Laravel's authorization method - check if user can perform an action.
+     */
+    public function can($ability, $arguments = []): bool
+    {
+        // If it's a permission check, use our custom permission system
+        if (is_string($ability)) {
+            return $this->hasPermission($ability);
+        }
+        
+        // Fall back to Laravel's default authorization
+        return parent::can($ability, $arguments);
     }
 
     /**

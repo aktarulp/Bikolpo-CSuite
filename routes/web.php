@@ -14,6 +14,7 @@ use App\Http\Controllers\ExamController;
 use App\Http\Controllers\StudentExamController;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\SmsRecordController;
+use App\Http\Controllers\Partner\AccessControlController;
 
 // Include Auth Routes
 require __DIR__.'/auth.php';
@@ -756,6 +757,17 @@ Route::middleware('auth')->group(function () {
                 return response()->json(['message' => 'Test route working']);
             })->name('test.route');
             
+        });
+
+        // Access Control Routes
+        Route::prefix('access-control')->name('access-control.')->group(function () {
+            Route::get('/', [AccessControlController::class, 'index'])->name('index');
+            Route::get('/create-role', [AccessControlController::class, 'createRole'])->name('create-role');
+            Route::post('/roles', [AccessControlController::class, 'storeRole'])->name('store-role');
+            Route::get('/roles/{role}/permissions', [AccessControlController::class, 'getRolePermissions'])->name('role-permissions');
+            Route::put('/roles/{role}/permissions', [AccessControlController::class, 'updateRolePermissions'])->name('update-role-permissions');
+            Route::delete('/roles/{role}', [AccessControlController::class, 'destroyRole'])->name('destroy-role');
+            Route::get('/permission-structure', [AccessControlController::class, 'getPermissionStructure'])->name('permission-structure');
         });
         
         // Analytics routes moved outside partner middleware for better access

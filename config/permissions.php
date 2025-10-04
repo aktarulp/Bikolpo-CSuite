@@ -139,6 +139,10 @@ return [
             'description' => 'Full system access with all permissions',
             'permissions' => 'all', // Special case: all permissions
         ],
+        'partner' => [
+            'description' => 'Organization super user with full access control within their institution',
+            'permissions' => 'all', // Special case: all permissions for organization-level control
+        ],
         'Teacher' => [
             'description' => 'Teacher access with limited permissions',
             'permissions' => [

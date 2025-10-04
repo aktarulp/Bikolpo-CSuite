@@ -64,7 +64,7 @@ class AssignRolesToUsers extends Command
                 }
                 
                 // Check if role exists
-                $role = Role::where('name', $roleName)->first();
+                $role = Role::where('name', $roleName)->where('guard_name', 'web')->first();
                 
                 if (!$role) {
                     $this->error("Role '{$roleName}' not found for user: {$user->name}");
@@ -78,7 +78,7 @@ class AssignRolesToUsers extends Command
                 }
                 
                 // Assign the role
-                $user->assignRole($role);
+                $user->assignRole($roleName);
                 
                 $this->info("✓ Assigned '{$roleName}' role to {$user->name}");
                 $processed++;
@@ -112,7 +112,7 @@ class AssignRolesToUsers extends Command
             'administrator' => 'Admin',
             'system_administrator' => 'Admin',
             'system' => 'Admin',
-            'partner' => 'Admin', // Partners get admin access
+            'partner' => 'partner', // Partners get full organization-level access (lowercase to match database)
             'teacher' => 'Teacher',
             'instructor' => 'Teacher',
             'student' => 'Student',
