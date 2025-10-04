@@ -16,11 +16,6 @@ class AccessControlController extends Controller
      */
     public function index()
     {
-        // Check permissions
-        if (!auth()->user()->can('menu-settings')) {
-            abort(403, 'Access denied. You do not have permission to access settings.');
-        }
-
         $roles = Role::with('permissions')->get();
         $permissions = Permission::all()->groupBy(function($permission) {
             // Group permissions by menu (extract menu name from permission name)
@@ -42,11 +37,6 @@ class AccessControlController extends Controller
      */
     public function createRole()
     {
-        // Check permissions
-        if (!auth()->user()->can('users-manage-roles')) {
-            abort(403, 'Access denied. You do not have permission to create roles.');
-        }
-
         $permissions = Permission::all()->groupBy(function($permission) {
             if (str_starts_with($permission->name, 'menu-')) {
                 return substr($permission->name, 5);
@@ -66,11 +56,6 @@ class AccessControlController extends Controller
      */
     public function storeRole(Request $request)
     {
-        // Check permissions
-        if (!auth()->user()->can('users-manage-roles')) {
-            abort(403, 'Access denied. You do not have permission to create roles.');
-        }
-
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255|unique:' . config('permission.table_names.roles') . ',name',
             'description' => 'nullable|string|max:500',
@@ -123,11 +108,6 @@ class AccessControlController extends Controller
      */
     public function updateRolePermissions(Request $request, Role $role)
     {
-        // Check permissions
-        if (!auth()->user()->can('users-manage-roles')) {
-            abort(403, 'Access denied. You do not have permission to manage role permissions.');
-        }
-
         $validator = Validator::make($request->all(), [
             'permissions' => 'array',
             'permissions.*' => 'exists:' . config('permission.table_names.permissions') . ',name'
@@ -164,11 +144,6 @@ class AccessControlController extends Controller
      */
     public function getRolePermissions(Role $role)
     {
-        // Check permissions
-        if (!auth()->user()->can('users-manage-roles')) {
-            abort(403, 'Access denied.');
-        }
-
         $rolePermissions = $role->permissions->pluck('name')->toArray();
         
         return response()->json([
@@ -182,11 +157,6 @@ class AccessControlController extends Controller
      */
     public function destroyRole(Role $role)
     {
-        // Check permissions
-        if (!auth()->user()->can('users-manage-roles')) {
-            abort(403, 'Access denied. You do not have permission to delete roles.');
-        }
-
         // Prevent deletion of critical roles
         $protectedRoles = ['Admin', 'Super Admin'];
         if (in_array($role->name, $protectedRoles)) {
