@@ -95,7 +95,12 @@ class OtpVerificationController extends Controller
                 try {
                     $partnerRole = \App\Models\EnhancedRole::create([
                         'name' => 'partner',
-                        'description' => 'Partner role with basic permissions'
+                        'display_name' => 'Partner',
+                        'description' => 'Partner role with basic permissions',
+                        'level' => 2, // Partner level
+                        'status' => 'active',
+                        'created_by' => 1, // System user (will be updated after user creation)
+                        'updated_by' => 1,
                     ]);
                 } catch (\Exception $e) {
                     \Log::error('Failed to create partner role: ' . $e->getMessage());

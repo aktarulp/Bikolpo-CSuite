@@ -606,9 +606,33 @@ Route::middleware('auth')->group(function () {
                         throw new \Exception('EnhancedRole class not found');
                     }
 
-                    // Debug: Get roles with users
-                    $roles = \App\Models\EnhancedRole::with('users')->get();
-                    \Log::info('Roles loaded successfully', ['count' => $roles->count()]);
+                    // Get current user's level to determine which roles to show
+                    $currentUser = \App\Models\EnhancedUser::find(auth()->id());
+                    $currentUserLevel = $currentUser->getHighestRoleLevel() ?? 1;
+                    
+                    // Get roles for partner: default roles + partner-created roles
+                    // 1. Get all default roles (visible to all partners)
+                    // 2. Get roles created by the current partner
+                    $roles = \App\Models\EnhancedRole::with(['users' => function($query) use ($partner) {
+                        // Only count users that belong to this partner
+                        $query->where('ac_users.partner_id', $partner->id)
+                              ->orWhere('ac_users.id', $partner->user_id); // Include main partner user
+                    }])
+                    ->where('status', 'active')
+                    ->where('level', '>=', $currentUserLevel) // Same or lower privilege roles
+                    ->where(function($query) use ($partner) {
+                        $query->where('is_default', 1) // Default roles
+                              ->orWhere('created_by', $partner->user_id) // Roles created by this partner
+                              ->orWhereNull('created_by'); // Legacy roles without creator
+                    })
+                    ->get();
+                    
+                    \Log::info('Partner-relevant roles loaded', [
+                        'count' => $roles->count(),
+                        'current_user_level' => $currentUserLevel,
+                        'partner_id' => $partner->id,
+                        'roles' => $roles->pluck('name', 'level')->toArray()
+                    ]);
 
                     // Debug: Check if partner_id column exists
                     $hasPartnerIdColumn = \Schema::hasColumn('ac_users', 'partner_id');
@@ -618,12 +642,16 @@ Route::middleware('auth')->group(function () {
                         'user_id' => $partner->user_id
                     ]);
 
-                    // Get user counts - handle case where partner_id column might not exist
+                    // Get user counts - only for users belonging to this partner
                     $userQuery = \App\Models\EnhancedUser::query();
                     if ($hasPartnerIdColumn) {
-                        $userQuery->where('partner_id', $partner->id);
+                        // Include users with this partner_id + main partner user
+                        $userQuery->where(function($query) use ($partner) {
+                            $query->where('partner_id', $partner->id)
+                                  ->orWhere('id', $partner->user_id);
+                        });
                     } else {
-                        // Fallback to user_id if partner_id column doesn't exist
+                        // Fallback: only show main partner user if partner_id column doesn't exist
                         $userQuery->where('id', $partner->user_id);
                     }
                     
@@ -639,7 +667,7 @@ Route::middleware('auth')->group(function () {
                         'suspended' => $suspendedUsers
                     ]);
 
-                    // Get all users for the partner (not just recent ones) to show complete user management
+                    // Get all users for the partner (only users belonging to this partner)
                     $allUsersQuery = \App\Models\EnhancedUser::query()
                         ->with(['roles' => function($query) {
                             $query->select('ac_roles.id', 'ac_roles.name', 'ac_roles.display_name');
@@ -647,26 +675,22 @@ Route::middleware('auth')->group(function () {
                         ->latest()
                         ->take(10); // Show up to 10 users instead of 4
 
-                    // Add partner_id condition if the column exists
+                    // Filter by partner context
                     if ($hasPartnerIdColumn) {
-                        $allUsersQuery->where('partner_id', $partner->id);
+                        // Include users with this partner_id + main partner user
+                        $allUsersQuery->where(function($query) use ($partner) {
+                            $query->where('partner_id', $partner->id)
+                                  ->orWhere('id', $partner->user_id);
+                        });
                     } else {
-                        // If no partner_id column, show all users (for development/testing)
-                        // In production, you might want to limit this further
-                        $allUsersQuery->limit(10);
+                        // Fallback: only show main partner user if partner_id column doesn't exist
+                        $allUsersQuery->where('id', $partner->user_id);
                     }
 
                     $allUsers = $allUsersQuery->get();
                     \Log::info('All users loaded', ['count' => $allUsers->count()]);
 
-                    // Always include partner's own account at the top if not already included
-                    $partnerUser = \App\Models\EnhancedUser::with(['roles' => function($query) {
-                        $query->select('ac_roles.id', 'ac_roles.name', 'ac_roles.display_name');
-                    }])->find($partner->user_id);
-                    
-                    if ($partnerUser && !$allUsers->contains('id', $partnerUser->id)) {
-                        $allUsers->prepend($partnerUser);
-                    }
+                    // Partner's main user is already included in the query above
                     
                     // Debug: Log role information for each user
                     foreach ($allUsers as $user) {

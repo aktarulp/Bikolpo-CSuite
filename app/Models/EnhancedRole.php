@@ -104,6 +104,14 @@ class EnhancedRole extends Model
     }
 
     /**
+     * Get the user who last updated this role.
+     */
+    public function updater(): BelongsTo
+    {
+        return $this->belongsTo(EnhancedUser::class, 'updated_by');
+    }
+
+    /**
      * Scope a query to only include active roles.
      */
     public function scopeActive($query)

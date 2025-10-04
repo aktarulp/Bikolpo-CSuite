@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Partner;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
+use App\Models\EnhancedRole;
+use App\Models\EnhancedPermission;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -44,7 +44,7 @@ class AccessControlController extends Controller
             ->orderBy('level')
             ->get();
         
-        $permissions = Permission::all()->groupBy(function($permission) {
+        $permissions = EnhancedPermission::all()->groupBy(function($permission) {
             if (str_starts_with($permission->name, 'menu-')) {
                 return substr($permission->name, 5);
             }
@@ -61,7 +61,7 @@ class AccessControlController extends Controller
     /**
      * Show the form for editing role permissions.
      */
-    public function editRole(Role $role)
+    public function editRole(EnhancedRole $role)
     {
         $permissionConfig = config('permissions.menus', []);
         
@@ -74,10 +74,11 @@ class AccessControlController extends Controller
     public function storeRole(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255|unique:' . config('permission.table_names.roles') . ',name',
+            'name' => 'required|string|max:255|unique:ac_roles,name',
+            'display_name' => 'nullable|string|max:255',
             'description' => 'nullable|string|max:500',
             'permissions' => 'array',
-            'permissions.*' => 'exists:' . config('permission.table_names.permissions') . ',name'
+            'permissions.*' => 'exists:ac_permissions,name'
         ]);
 
         if ($validator->fails()) {
@@ -91,15 +92,24 @@ class AccessControlController extends Controller
         try {
             DB::beginTransaction();
 
-            // Create the role
-            $role = Role::create([
+            // Get current user's level to set appropriate role level
+            $currentUser = \App\Models\EnhancedUser::find(auth()->id());
+            $currentUserLevel = $currentUser->getHighestRoleLevel() ?? 1;
+            
+            // Create the role with our custom fields
+            $role = EnhancedRole::create([
                 'name' => $request->name,
-                'guard_name' => 'web'
+                'display_name' => $request->display_name ?? $request->name,
+                'description' => $request->description,
+                'level' => $currentUserLevel + 1, // New role should be one level below current user
+                'status' => 'active',
+                'created_by' => auth()->id(),
+                'updated_by' => auth()->id(),
             ]);
 
             // Assign permissions to the role
             if ($request->has('permissions') && is_array($request->permissions)) {
-                $role->givePermissionTo($request->permissions);
+                $role->syncPermissions($request->permissions);
             }
 
             DB::commit();
@@ -136,6 +146,9 @@ class AccessControlController extends Controller
             
             // Sync permissions (this will remove old permissions and add new ones)
             $role->syncPermissions($validPermissions);
+            
+            // Update the updated_by field to track who made the changes
+            $role->update(['updated_by' => auth()->id()]);
 
             // If this is an AJAX/JSON request, return JSON; otherwise redirect back with a flash message
             if ($request->expectsJson() || $request->wantsJson() || $request->ajax()) {
@@ -160,7 +173,7 @@ class AccessControlController extends Controller
     /**
      * Delete a role.
      */
-    public function destroyRole(Role $role)
+    public function destroyRole(EnhancedRole $role)
     {
         // Prevent deletion of critical roles
         $protectedRoles = ['Admin', 'Super Admin'];

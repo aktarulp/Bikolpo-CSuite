@@ -116,16 +116,29 @@
                 </div>
 
                 <div class="p-4 sm:p-6 space-y-6">
+                    <!-- Hidden role name field - auto-generated from display name -->
+                    <input type="hidden" 
+                           id="role_name" 
+                           x-model="form.name">
+
                     <div>
-                        <label for="role_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <label for="role_display_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Role Name <span class="text-red-500">*</span>
                         </label>
                         <input type="text" 
-                               id="role_name" 
-                               x-model="form.name"
+                               id="role_display_name" 
+                               x-model="form.display_name"
+                               @input="updateRoleName()"
                                class="form-input w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                                placeholder="Enter role name (e.g., Content Manager, Teacher Assistant)"
                                required>
+                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            System name will be auto-generated: <span x-text="form.name || 'role_name_here'" class="font-mono text-blue-600 dark:text-blue-400"></span>
+                        </p>
+                        <div x-show="errors.display_name" class="mt-2 text-sm text-red-600" x-text="errors.display_name"></div>
                         <div x-show="errors.name" class="mt-2 text-sm text-red-600" x-text="errors.name"></div>
                     </div>
 
@@ -194,12 +207,27 @@ function roleCreationManager() {
         copyFromRole: '',
         form: {
             name: '',
+            display_name: '',
             description: '',
             permissions: []
         },
         errors: {},
         permissionConfig: @json($permissionConfig),
         existingRoles: @json($existingRoles),
+
+        updateRoleName() {
+            // Convert display name to lowercase role name
+            // Remove special characters, replace spaces with underscores
+            if (this.form.display_name) {
+                this.form.name = this.form.display_name
+                    .toLowerCase()
+                    .replace(/[^a-z0-9\s]/g, '') // Remove special characters except spaces
+                    .trim()
+                    .replace(/\s+/g, '_'); // Replace spaces with underscores
+            } else {
+                this.form.name = '';
+            }
+        },
 
         async createRole() {
             this.loading = true;
