@@ -769,11 +769,8 @@ Route::middleware('auth')->group(function () {
             
         });
 
-        // Access Control Routes
+        // Access Control Routes (Role Management Only)
         Route::prefix('access-control')->name('access-control.')->group(function () {
-            // Main access control page
-            Route::get('/', [AccessControlController::class, 'index'])->name('index');
-            
             // Manual sync of menu/button permissions from config
             Route::post('/permissions/sync', [AccessControlController::class, 'syncPermissions'])->name('permissions.sync');
             

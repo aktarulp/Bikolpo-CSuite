@@ -11,44 +11,8 @@ use Illuminate\Support\Facades\Validator;
 
 class AccessControlController extends Controller
 {
-    /**
-     * Display the access control dashboard.
-     */
-    public function index()
-    {
-        // Get current user's highest role level
-        $currentUser = \App\Models\EnhancedUser::find(auth()->id());
-        $currentUserLevel = $currentUser->getHighestRoleLevel() ?? 1;
-        
-        // Get roles with same or higher level
-        $roles = \App\Models\EnhancedRole::with('permissions')
-            ->where('level', '>=', $currentUserLevel)
-            ->orderBy('level')
-            ->get();
-
-        // Build normalized permission structure for the UI from config
-        $menusConfig = config('permissions.menus', []);
-        $permissionStructure = [];
-        foreach ($menusConfig as $menuKey => $menuConfig) {
-            $entry = [
-                'label' => $menuConfig['label'] ?? ucfirst($menuKey),
-                'menu_permission' => "menu-{$menuKey}",
-                'buttons' => []
-            ];
-            foreach (($menuConfig['buttons'] ?? []) as $buttonKey => $buttonLabel) {
-                $entry['buttons'][$buttonKey] = [
-                    'label' => $buttonLabel,
-                    'permission' => "{$menuKey}-{$buttonKey}",
-                ];
-            }
-            $permissionStructure[$menuKey] = $entry;
-        }
-
-        return view('partner.access-control.index', [
-            'roles' => $roles,
-            'permissionStructure' => $permissionStructure,
-        ]);
-    }
+    // Note: Index method removed as the view /partner/access-control is no longer used.
+    // All access control functionality is now managed through /partner/settings
 
     /**
      * Get role permissions
@@ -135,7 +99,7 @@ class AccessControlController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Role created successfully',
-                'redirect' => route('partner.access-control.index')
+                'redirect' => route('partner.settings.index')
             ]);
 
         } catch (\Exception $e) {
@@ -174,7 +138,7 @@ class AccessControlController extends Controller
             }
 
             return redirect()
-                ->route('partner.access-control.index')
+                ->route('partner.settings.index')
                 ->with('success', 'Role permissions updated successfully.');
 
         } catch (\Exception $e) {
