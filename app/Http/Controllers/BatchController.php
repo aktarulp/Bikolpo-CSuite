@@ -6,6 +6,7 @@ use App\Models\Batch;
 use App\Traits\HasPartnerContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class BatchController extends Controller
@@ -39,8 +40,14 @@ class BatchController extends Controller
      */
     public function store(Request $request)
     {
+        $partnerId = $this->getPartnerId();
+
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => [
+                'required','string','max:255',
+                Rule::unique('batches', 'name')->where(fn($q) => $q->where('partner_id', $partnerId)
+                                                       ->where('year', $request->input('year'))),
+            ],
             'year' => 'required|integer|min:2000|max:2030',
         ]);
 
@@ -48,7 +55,7 @@ class BatchController extends Controller
             'name' => $request->name,
             'year' => $request->year,
             'status' => 'active', // Default to active
-            'partner_id' => $this->getPartnerId(),
+            'partner_id' => $partnerId,
             'created_by' => auth()->id(),
         ]);
 
@@ -97,8 +104,16 @@ class BatchController extends Controller
             abort(403, 'Unauthorized access to this batch.');
         }
         
+        $partnerId = $this->getPartnerId();
+
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => [
+                'required','string','max:255',
+                Rule::unique('batches', 'name')
+                    ->ignore($batch->id, 'id')
+                    ->where(fn($q) => $q->where('partner_id', $partnerId)
+                                       ->where('year', $request->input('year'))),
+            ],
             'year' => 'required|integer|min:2000|max:2030',
             'status' => 'required|in:active,inactive',
         ]);

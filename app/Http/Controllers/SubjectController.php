@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Subject;
+use Illuminate\Validation\Rule;
 use App\Models\Course;
 use App\Traits\HasPartnerContext;
 use Illuminate\Http\Request;
@@ -43,15 +44,21 @@ class SubjectController extends Controller
 
     public function store(Request $request)
     {
+        // Get partner first for scoped unique rule
+        $partnerId = $this->getPartnerId();
+
         $request->validate([
             'course_id' => 'required|exists:courses,id',
             'name' => 'required|string|max:255',
-            'code' => 'required|string|max:50|unique:subjects,code',
+            'code' => [
+                'required',
+                'string',
+                'max:50',
+                Rule::unique('subjects', 'code')->where(fn($q) => $q->where('partner_id', $partnerId)),
+            ],
             'description' => 'nullable|string',
         ]);
 
-        // Get the authenticated user's partner ID using the trait
-        $partnerId = $this->getPartnerId();
         $userId = auth()->id();
 
         // Create subject with direct course relationship
@@ -93,7 +100,14 @@ class SubjectController extends Controller
         $request->validate([
             'course_id' => 'required|exists:courses,id',
             'name' => 'required|string|max:255',
-            'code' => 'required|string|max:50|unique:subjects,code,' . $subject->id,
+            'code' => [
+                'required',
+                'string',
+                'max:50',
+                Rule::unique('subjects', 'code')
+                    ->ignore($subject->id, 'id')
+                    ->where(fn($q) => $q->where('partner_id', $this->getPartnerId())),
+            ],
             'description' => 'nullable|string',
         ]);
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
+use Illuminate\Validation\Rule;
 use App\Traits\HasPartnerContext;
 use Illuminate\Http\Request;
 
@@ -32,14 +33,20 @@ class CourseController extends Controller
 
     public function store(Request $request)
     {
+        // Get the authenticated user's partner ID using the trait (needed for scoped unique rule)
+        $partnerId = $this->getPartnerId();
+
         $request->validate([
             'name' => 'required|string|max:255',
-            'code' => 'required|string|max:50|unique:courses,code',
+            'code' => [
+                'required',
+                'string',
+                'max:50',
+                Rule::unique('courses', 'code')->where(fn($q) => $q->where('partner_id', $partnerId)),
+            ],
             'description' => 'nullable|string',
         ]);
 
-        // Get the authenticated user's partner ID using the trait
-        $partnerId = $this->getPartnerId();
         $userId = auth()->id();
 
         // Create course with partner_id and created_by
@@ -92,11 +99,18 @@ class CourseController extends Controller
         
         $request->validate([
             'name' => 'required|string|max:255',
-            'code' => 'required|string|max:50|unique:courses,code,' . $course->id,
+            'code' => [
+                'required',
+                'string',
+                'max:50',
+                Rule::unique('courses', 'code')
+                    ->ignore($course->id, 'id')
+                    ->where(fn($q) => $q->where('partner_id', $partnerId)),
+            ],
             'description' => 'nullable|string',
         ]);
 
-        $course->update($request->all());
+        $course->update($request->only(['name','code','description']));
 
         return redirect()->route('partner.courses.index')
             ->with('success', 'Course updated successfully.');

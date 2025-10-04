@@ -95,8 +95,7 @@
                                                 data-name="{{ $role->name }}" 
                                                 data-user-type="{{ $userType }}"
                                                 data-icon="{{ $icon }}">
-                                            {{ $icon }} {{ $displayName }}
-                                            @if($role->description) - {{ $role->description }}@endif
+                                            {{ $displayName }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -467,14 +466,18 @@ document.addEventListener('DOMContentLoaded', function() {
             studentQuickSelect.classList.add('hidden');
             noQuickSelect.classList.add('hidden');
             
-            if (finalUserType === 'teacher') {
+            const visibleText = (selectedOption.textContent || '').toLowerCase();
+            const isTeacherRole = visibleText.includes('teacher');
+            const isStudentRole = visibleText.includes('student');
+
+            if (isTeacherRole) {
                 console.log('Teacher role selected - showing quick select only');
                 teacherQuickSelect.classList.remove('hidden');
-            } else if (finalUserType === 'student') {
+            } else if (isStudentRole) {
                 console.log('Student role selected - showing quick select only');
                 studentQuickSelect.classList.remove('hidden');
             } else {
-                console.log('No specific section to show for user type:', finalUserType);
+                console.log('No specific section to show for role:', visibleText);
                 noQuickSelect.classList.remove('hidden');
             }
         } else {

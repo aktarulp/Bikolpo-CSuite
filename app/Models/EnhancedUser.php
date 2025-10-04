@@ -25,6 +25,7 @@ class EnhancedUser extends Authenticatable
         'phone',
         'avatar',
         'status',
+        'flag',
         'email_verified_at',
         'last_login_at',
         'last_login_ip',
@@ -55,6 +56,11 @@ class EnhancedUser extends Authenticatable
     const STATUS_INACTIVE = 'inactive';
     const STATUS_SUSPENDED = 'suspended';
     const STATUS_PENDING = 'pending';
+
+    // Flag constants
+    const FLAG_ACTIVE = 'active';
+    const FLAG_INACTIVE = 'inactive';
+    const FLAG_DELETED = 'deleted';
 
     // User type constants
     const TYPE_ADMIN = 'admin';
@@ -373,5 +379,81 @@ class EnhancedUser extends Authenticatable
             self::STATUS_SUSPENDED,
             self::STATUS_PENDING,
         ];
+    }
+
+    /**
+     * Get all available user flags.
+     */
+    public static function getFlags(): array
+    {
+        return [
+            self::FLAG_ACTIVE,
+            self::FLAG_INACTIVE,
+            self::FLAG_DELETED,
+        ];
+    }
+
+    /**
+     * Check if user flag is active.
+     */
+    public function isFlagActive(): bool
+    {
+        return $this->flag === self::FLAG_ACTIVE;
+    }
+
+    /**
+     * Check if user flag is inactive.
+     */
+    public function isFlagInactive(): bool
+    {
+        return $this->flag === self::FLAG_INACTIVE;
+    }
+
+    /**
+     * Check if user flag is deleted.
+     */
+    public function isFlagDeleted(): bool
+    {
+        return $this->flag === self::FLAG_DELETED;
+    }
+
+    /**
+     * Scope a query to only include users with active flag.
+     */
+    public function scopeFlagActive($query)
+    {
+        return $query->where('flag', self::FLAG_ACTIVE);
+    }
+
+    /**
+     * Scope a query to only include users with inactive flag.
+     */
+    public function scopeFlagInactive($query)
+    {
+        return $query->where('flag', self::FLAG_INACTIVE);
+    }
+
+    /**
+     * Scope a query to exclude deleted users.
+     */
+    public function scopeNotDeleted($query)
+    {
+        return $query->where('flag', '!=', self::FLAG_DELETED);
+    }
+
+    /**
+     * Soft delete user by setting flag to deleted.
+     */
+    public function softDelete()
+    {
+        return $this->update(['flag' => self::FLAG_DELETED]);
+    }
+
+    /**
+     * Restore soft deleted user by setting flag to active.
+     */
+    public function restore()
+    {
+        return $this->update(['flag' => self::FLAG_ACTIVE]);
     }
 }

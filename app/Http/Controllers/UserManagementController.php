@@ -83,14 +83,22 @@ class UserManagementController extends Controller
             $currentUserLevel = 1; // Default to highest privilege level
         }
 
-        // Filter roles - only show roles with level >= current user's level (same or lower privilege)
+
+        // Get current partner and partner ID
+        $partner = $this->getPartner();
+        $partnerId = $this->getPartnerId();
+
+        // Filter roles: only default roles and roles created by this partner (or legacy without creator),
+        // and only roles at or below current user's privilege level
         $roles = EnhancedRole::active()
             ->where('level', '>=', $currentUserLevel)
+            ->where(function ($query) use ($partner) {
+                $query->where('is_default', 1)
+                      ->orWhere('created_by', $partner->user_id)
+                      ->orWhereNull('created_by');
+            })
             ->orderBy('level')
             ->get();
-
-        // Get current partner ID
-        $partnerId = $this->getPartnerId();
 
         // Get teachers from current partner
         $teachers = \App\Models\Teacher::where('partner_id', $partnerId)
@@ -131,10 +139,10 @@ class UserManagementController extends Controller
         // Base validation rules
         $rules = [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'phone' => 'required|string|max:20|unique:users',
+'email' => 'required|string|email|max:255|unique:ac_users,email',
+            'phone' => 'required|string|max:20|unique:ac_users,phone',
             'password' => 'required|string|min:8|confirmed',
-            'role_id' => 'required|exists:roles,id',
+            'role_id' => 'required|exists:ac_roles,id',
             'user_type' => 'required|in:teacher,student',
         ];
         
@@ -161,7 +169,7 @@ class UserManagementController extends Controller
                     'teacher.joining_date' => 'required|date',
                     'teacher.present_address' => 'nullable|string|max:500',
                     'teacher.blood_group' => 'nullable|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
-                    'teacher.default_role' => 'nullable|exists:roles,name',
+'teacher.default_role' => 'nullable|exists:ac_roles,name',
                 ]);
             }
         }
@@ -185,7 +193,7 @@ class UserManagementController extends Controller
                     'student.mother_name' => 'nullable|string|max:255',
                     'student.blood_group' => 'nullable|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
                     'student.religion' => 'nullable|in:Islam,Hinduism,Christianity,Buddhism',
-                    'student.default_role' => 'nullable|exists:roles,name',
+'student.default_role' => 'nullable|exists:ac_roles,name',
                 ]);
             }
         }
@@ -268,6 +276,17 @@ class UserManagementController extends Controller
             // Save the user with error handling
             if (!$user->save()) {
                 throw new \Exception('Failed to save user');
+            }
+
+            // Attach role to pivot so roles relation is populated
+            try {
+                $user->assignRole($roleId, auth()->id());
+            } catch (\Throwable $e) {
+                \Log::error('Failed to assign role to user pivot', [
+                    'user_id' => $user->id,
+                    'role_id' => $roleId,
+                    'error' => $e->getMessage()
+                ]);
             }
             
             // Ensure the user is properly loaded with the role
@@ -433,15 +452,15 @@ class UserManagementController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
-            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+ 'email' => ['required', 'string', 'email', 'max:255', Rule::unique('ac_users', 'email')->ignore($user->id, 'id')],
             'phone' => 'nullable|string|max:20',
             'password' => 'nullable|string|min:8|confirmed',
             'role_ids' => 'required|array|min:1',
-            'role_ids.*' => 'exists:roles,id',
+'role_ids.*' => 'exists:ac_roles,id',
             'partner_id' => 'nullable|exists:partners,id',
             'status' => ['required', Rule::in(EnhancedUser::getStatuses())],
             'permissions' => 'nullable|array',
-            'permissions.*' => 'exists:permissions,id',
+'permissions.*' => 'exists:ac_permissions,id',
         ]);
 
         if ($validator->fails()) {
@@ -575,10 +594,10 @@ class UserManagementController extends Controller
 
         $validator = Validator::make($request->all(), [
             'user_ids' => 'required|array|min:1',
-            'user_ids.*' => 'exists:users,id',
+'user_ids.*' => 'exists:ac_users,id',
             'action' => 'required|string|in:activate,deactivate,suspend,assign_role,remove_role,assign_permission,remove_permission',
-            'role_id' => 'required_if:action,assign_role,remove_role|exists:roles,id',
-            'permission_id' => 'required_if:action,assign_permission,remove_permission|exists:permissions,id',
+'role_id' => 'required_if:action,assign_role,remove_role|exists:ac_roles,id',
+'permission_id' => 'required_if:action,assign_permission,remove_permission|exists:ac_permissions,id',
         ]);
 
         if ($validator->fails()) {

@@ -669,9 +669,7 @@ Route::middleware('auth')->group(function () {
 
                     // Get all users for the partner (only users belonging to this partner)
                     $allUsersQuery = \App\Models\EnhancedUser::query()
-                        ->with(['roles' => function($query) {
-                            $query->select('ac_roles.id', 'ac_roles.name', 'ac_roles.display_name');
-                        }])
+                        ->with('roles')
                         ->latest()
                         ->take(10); // Show up to 10 users instead of 4
 
