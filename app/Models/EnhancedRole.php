@@ -77,7 +77,7 @@ class EnhancedRole extends Model
     {
         return $this->belongsToMany(
                     EnhancedPermission::class,
-                    'role_permissions',
+                    'ac_role_permissions',
                     'enhanced_role_id',
                     'enhanced_permission_id'
                 )

@@ -26,19 +26,28 @@ class AccessControlController extends Controller
             ->orderBy('level')
             ->get();
 
-        // Get permission structure from config
-        $permissionStructure = config('permissions.menus', []);
-        
-        // Get all permissions grouped by module
-        $permissions = \App\Models\EnhancedPermission::all()->groupBy(function($permission) {
-            if (str_starts_with($permission->name, 'menu-')) {
-                return substr($permission->name, 5);
+        // Build normalized permission structure for the UI from config
+        $menusConfig = config('permissions.menus', []);
+        $permissionStructure = [];
+        foreach ($menusConfig as $menuKey => $menuConfig) {
+            $entry = [
+                'label' => $menuConfig['label'] ?? ucfirst($menuKey),
+                'menu_permission' => "menu-{$menuKey}",
+                'buttons' => []
+            ];
+            foreach (($menuConfig['buttons'] ?? []) as $buttonKey => $buttonLabel) {
+                $entry['buttons'][$buttonKey] = [
+                    'label' => $buttonLabel,
+                    'permission' => "{$menuKey}-{$buttonKey}",
+                ];
             }
-            $parts = explode('-', $permission->name, 2);
-            return $parts[0] ?? 'other';
-        });
+            $permissionStructure[$menuKey] = $entry;
+        }
 
-        return view('partner.access-control.index', compact('roles', 'permissions', 'permissionStructure'));
+        return view('partner.access-control.index', [
+            'roles' => $roles,
+            'permissionStructure' => $permissionStructure,
+        ]);
     }
 
     /**
@@ -156,10 +165,17 @@ class AccessControlController extends Controller
             // Sync permissions (this will remove old permissions and add new ones)
             $role->syncPermissions($validPermissions);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Role permissions updated successfully'
-            ]);
+            // If this is an AJAX/JSON request, return JSON; otherwise redirect back with a flash message
+            if ($request->expectsJson() || $request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Role permissions updated successfully'
+                ]);
+            }
+
+            return redirect()
+                ->route('partner.access-control.index')
+                ->with('success', 'Role permissions updated successfully.');
 
         } catch (\Exception $e) {
             return response()->json([
@@ -248,5 +264,24 @@ class AccessControlController extends Controller
     private function getPartnerId()
     {
         return auth()->user()->partner_id ?? 1;
+    }
+
+    /**
+     * Manually sync menu and button permissions from config into ac_permissions.
+     */
+    public function syncPermissions(Request $request)
+    {
+        try {
+            \App\Services\PermissionSyncService::syncMenus();
+            return response()->json([
+                'success' => true,
+                'message' => 'Permissions synchronized from config.'
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sync failed: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

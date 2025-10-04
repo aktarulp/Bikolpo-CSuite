@@ -37,7 +37,7 @@ class UserRole extends Pivot
      */
     public function role()
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsTo(\App\Models\EnhancedRole::class, 'role_id');
     }
 
     /**

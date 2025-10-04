@@ -17,6 +17,18 @@ class MenuPermissionService
         if (!$user) {
             return false;
         }
+
+        // Early allow: partner super users get all menus
+        $isPartner = false;
+        try {
+            $isPartner = ($user->roles()->where('name', 'partner')->exists()) ||
+                         (strtolower($user->role ?? '') === 'partner');
+        } catch (\Throwable $e) {
+            $isPartner = (strtolower($user->role ?? '') === 'partner');
+        }
+        if ($isPartner) {
+            return true;
+        }
         
         // Cache key for user permissions
         $cacheKey = "user_menu_permissions_{$user->id}";

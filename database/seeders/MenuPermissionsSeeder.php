@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class MenuPermissionsSeeder extends Seeder
 {
@@ -12,59 +13,31 @@ class MenuPermissionsSeeder extends Seeder
      */
     public function run(): void
     {
-        $menuPermissions = [
-            // Main Menus
-            ['name' => 'menu-dashboard', 'display_name' => 'Dashboard Menu', 'description' => 'Access to dashboard menu'],
-            ['name' => 'menu-students', 'display_name' => 'Students Menu', 'description' => 'Access to students menu'],
-            ['name' => 'menu-teachers', 'display_name' => 'Teachers Menu', 'description' => 'Access to teachers menu'],
-            ['name' => 'menu-courses', 'display_name' => 'Courses Menu', 'description' => 'Access to courses menu'],
-            ['name' => 'menu-subjects', 'display_name' => 'Subjects Menu', 'description' => 'Access to subjects menu'],
-            ['name' => 'menu-topics', 'display_name' => 'Topics Menu', 'description' => 'Access to topics menu'],
-            ['name' => 'menu-batches', 'display_name' => 'Batches Menu', 'description' => 'Access to batches menu'],
-            ['name' => 'menu-questions', 'display_name' => 'Questions Menu', 'description' => 'Access to questions menu'],
-            ['name' => 'menu-exams', 'display_name' => 'Exams Menu', 'description' => 'Access to exams menu'],
-            ['name' => 'menu-results', 'display_name' => 'Results Menu', 'description' => 'Access to results menu'],
-            ['name' => 'menu-analytics', 'display_name' => 'Analytics Menu', 'description' => 'Access to analytics menu'],
-            ['name' => 'menu-reports', 'display_name' => 'Reports Menu', 'description' => 'Access to reports menu'],
-            ['name' => 'menu-sms', 'display_name' => 'SMS Menu', 'description' => 'Access to SMS menu'],
-            ['name' => 'menu-settings', 'display_name' => 'Settings Menu', 'description' => 'Access to settings menu'],
-            ['name' => 'menu-users', 'display_name' => 'Users Menu', 'description' => 'Access to users menu'],
-            ['name' => 'menu-access-control', 'display_name' => 'Access Control Menu', 'description' => 'Access to access control menu'],
-        ];
+        $menus = config('permissions.menus', []);
+        $created = 0; $updated = 0; $skipped = 0;
 
-        foreach ($menuPermissions as $permission) {
-            try {
-                // Check if permission already exists
-                $exists = DB::table('ac_permissions')->where('name', $permission['name'])->exists();
-                
-                if (!$exists) {
-                    DB::table('ac_permissions')->insert([
-                        'name' => $permission['name'],
-                        'display_name' => $permission['display_name'],
-                        'description' => $permission['description'],
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
-                    
-                    $this->command->info("✓ Created: {$permission['name']}");
-                } else {
-                    $this->command->info("○ Exists: {$permission['name']}");
-                }
-            } catch (\Exception $e) {
-                $this->command->warn("✗ Error with {$permission['name']}: " . $e->getMessage());
+        foreach ($menus as $menuKey => $menuConfig) {
+            $menuName = 'menu-' . $menuKey;
+            $menuDisplay = $menuConfig['label'] ?? ucfirst($menuKey);
+            $this->upsertPermission($menuName, $menuDisplay, "Access to {$menuDisplay} menu", $created, $updated, $skipped);
+
+            $buttons = $menuConfig['buttons'] ?? [];
+            foreach ($buttons as $buttonKey => $buttonLabel) {
+                $permName = $menuKey . '-' . $buttonKey;
+                $this->upsertPermission($permName, $buttonLabel, "$buttonLabel permission for {$menuDisplay}", $created, $updated, $skipped);
             }
         }
-        
-        $this->command->info("\n✅ Menu permissions seeded successfully!");
-        
-        // Assign all menu permissions to Partner role
-        $this->assignMenuPermissionsToPartner();
+
+        $this->command->info("\n✅ Menu and button permissions seeded. Created: {$created}, Updated: {$updated}, Skipped: {$skipped}\n");
+
+        // Assign all permissions for menus to Partner role by default
+        $this->assignAllMenuPermissionsToPartner();
     }
     
     /**
      * Assign all menu permissions to Partner role
      */
-    protected function assignMenuPermissionsToPartner(): void
+    protected function assignAllMenuPermissionsToPartner(): void
     {
         try {
             $partnerRole = DB::table('ac_roles')->where('name', 'partner')->first();
@@ -74,16 +47,19 @@ class MenuPermissionsSeeder extends Seeder
                 return;
             }
             
-            $menuPermissions = DB::table('ac_permissions')
-                ->where('name', 'LIKE', 'menu-%')
+            // All permissions related to menus and their buttons
+            $permissions = DB::table('ac_permissions')
+                ->where(function($q){
+                    $q->where('name', 'LIKE', 'menu-%')
+                      ->orWhereRaw("LOCATE('-', name) > 0");
+                })
                 ->get();
             
             $assigned = 0;
             $skipped = 0;
             
-            foreach ($menuPermissions as $permission) {
+            foreach ($permissions as $permission) {
                 try {
-                    // Check if already assigned
                     $exists = DB::table('ac_role_permissions')
                         ->where('enhanced_role_id', $partnerRole->id)
                         ->where('enhanced_permission_id', $permission->id)
@@ -105,9 +81,60 @@ class MenuPermissionsSeeder extends Seeder
                 }
             }
             
-            $this->command->info("✅ Assigned {$assigned} menu permissions to Partner role (skipped {$skipped} existing)");
+            $this->command->info("✅ Assigned {$assigned} menu-related permissions to Partner role (skipped {$skipped} existing)");
         } catch (\Exception $e) {
-            $this->command->error("Error in assignMenuPermissionsToPartner: " . $e->getMessage());
+            $this->command->error("Error in assignAllMenuPermissionsToPartner: " . $e->getMessage());
         }
+    }
+    /**
+     * Upsert helper with counters
+     */
+    private function upsertPermission(string $name, string $displayName, ?string $description, int &$created, int &$updated, int &$skipped): void
+    {
+        try {
+            [$module, $action, $resource] = $this->deriveMeta($name);
+            $exists = DB::table('ac_permissions')->where('name', $name)->first();
+            $payload = [
+                'name' => $name,
+                'display_name' => $displayName,
+                'description' => $description,
+                'updated_at' => now(),
+            ];
+            if (Schema::hasColumn('ac_permissions', 'module')) {
+                $payload['module'] = $module;
+            }
+            if (Schema::hasColumn('ac_permissions', 'action')) {
+                $payload['action'] = $action;
+            }
+            if (Schema::hasColumn('ac_permissions', 'resource')) {
+                $payload['resource'] = $resource;
+            }
+            if (!$exists) {
+                $payload['created_at'] = now();
+                DB::table('ac_permissions')->insert($payload);
+                $this->command->info("✓ Created: {$name}");
+                $created++;
+            } else {
+                DB::table('ac_permissions')->where('id', $exists->id)->update($payload);
+                $this->command->info("○ Updated: {$name}");
+                $updated++;
+            }
+        } catch (\Exception $e) {
+            $this->command->warn("✗ Error with {$name}: " . $e->getMessage());
+            $skipped++;
+        }
+    }
+
+    private function deriveMeta(string $name): array
+    {
+        if (str_starts_with($name, 'menu-')) {
+            $resource = substr($name, 5) ?: 'menu';
+            return ['menu', 'view', $resource];
+        }
+        if (strpos($name, '-') !== false) {
+            [$module, $action] = explode('-', $name, 2);
+            return [$module ?: 'system', $action ?: 'view', $module ?: 'system'];
+        }
+        return ['system', 'view', $name];
     }
 }

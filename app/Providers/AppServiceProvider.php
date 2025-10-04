@@ -31,6 +31,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Auto-sync menu permissions from config to ac_permissions (idempotent)
+        try {
+            \App\Services\PermissionSyncService::syncMenus();
+        } catch (\Throwable $e) {
+            // swallow errors to not block app boot
+        }
+
         // Share stats with partner layout
         View::composer('layouts.partner-layout', function ($view) {
             $user = Auth::user();

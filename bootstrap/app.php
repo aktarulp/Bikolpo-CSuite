@@ -10,6 +10,10 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
+    ->withProviders([
+        \App\Providers\MenuServiceProvider::class,
+        \App\Providers\PermissionServiceProvider::class,
+    ])
     ->withMiddleware(function (Middleware $middleware): void {
         // Add global middleware for partner full access
         $middleware->web(append: [
@@ -18,8 +22,9 @@ return Application::configure(basePath: dirname(__DIR__))
         
         $middleware->alias([
             'role' => \App\Http\Middleware\CheckRole::class,
-            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
-            'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+            'permission' => \App\Http\Middleware\CheckPermission::class,
+            'role_or_permission' => \App\Http\Middleware\RoleOrPermission::class,
+            // Keep explicit alias if you still want to call Spatie's role for any legacy route
             'spatie_role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
             'refresh.csrf' => \App\Http\Middleware\RefreshCSRFToken::class,

@@ -47,14 +47,20 @@
                     </div>
                     <h1 class="text-xl font-bold text-gray-900 dark:text-white">Access Control</h1>
                 </div>
-                @can('users-manage-roles')
+                <button id="refreshPermissionsBtnMobile"
+                        type="button"
+                        class="p-2 bg-gray-100 hover:bg-gray-200 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 rounded-lg shadow-sm transition-colors"
+                        title="Refresh permissions from config">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582M20 20v-5h-.581M5.5 9.5A7.5 7.5 0 0119 12m0 0a7.5 7.5 0 01-13.5 2.5" />
+                    </svg>
+                </button>
                 <a href="{{ route('partner.access-control.create-role') }}" 
                    class="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
                 </a>
-                @endcan
             </div>
 
             <!-- Desktop Header -->
@@ -70,15 +76,23 @@
                         <p class="text-gray-600 dark:text-gray-400 mt-1">Manage roles and permissions for your organization</p>
                     </div>
                 </div>
-                @can('users-manage-roles')
-                <a href="{{ route('partner.access-control.create-role') }}" 
-                   class="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
-                    <span>Create Role</span>
-                </a>
-                @endcan
+                <div class="flex items-center space-x-2">
+                    <button id="refreshPermissionsBtn"
+                            type="button"
+                            class="inline-flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 text-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 font-medium px-4 py-3 rounded-lg shadow-sm transition-all duration-200">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582M20 20v-5h-.581M5.5 9.5A7.5 7.5 0 0119 12m0 0a7.5 7.5 0 01-13.5 2.5" />
+                        </svg>
+                        <span>Refresh Permissions</span>
+                    </button>
+                    <a href="{{ route('partner.access-control.create-role') }}" 
+                       class="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m-6 0H6" />
+                        </svg>
+                        <span>Create Role</span>
+                    </a>
+                </div>
             </div>
 
             <!-- Mobile Description -->
@@ -151,57 +165,59 @@
         <div x-show="!loading && filteredRoles.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             @foreach($roles as $role)
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover-lift transition-all duration-300">
-                <!-- Role Header -->
-                <div class="p-4 sm:p-6 border-b border-gray-100 dark:border-gray-700">
-                    <div class="flex items-start justify-between mb-4">
-                        <div class="flex items-center space-x-3 flex-1 min-w-0">
-                            <div class="p-2 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30">
-                                <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                                </svg>
-                            </div>
-                            <div class="min-w-0 flex-1">
-                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white truncate">{{ $role->display_name ?? ucfirst(str_replace('_', ' ', $role->name)) }}</h3>
-                                <div class="flex flex-wrap items-center gap-2 mt-1">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ in_array($role->name, ['Admin', 'Super Admin']) ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-200' : ($role->name === 'Partner' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200' : ($role->name === 'Teacher' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200' : ($role->name === 'Student' ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-200' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'))) }}">
-                                        {{ $role->users_count ?? 0 }} users
-                                    </span>
-                                    <span class="text-xs text-gray-500 dark:text-gray-400">{{ $role->permissions_count ?? 0 }} permissions</span>
-                                </div>
-                            </div>
+                <!-- Role Header (Redesigned) -->
+                <div class="p-5 border-b border-gray-100 dark:border-gray-700">
+                    <div class="flex items-start justify-between">
+                        <div class="min-w-0 flex-1">
+                            <div class="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Role</div>
+                            <h3 class="mt-1 text-2xl font-bold text-gray-900 dark:text-white break-words">{{ $role->display_name ?? ucwords(str_replace('_', ' ', $role->name)) }}</h3>
+                            <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">System name: <span class="font-mono">{{ $role->name }}</span></div>
+                            @if($role->description)
+                                <p class="mt-3 text-sm text-gray-600 dark:text-gray-400">{{ $role->description }}</p>
+                            @endif
                         </div>
-                        @can('users-manage-roles')
-                        <div class="flex items-center space-x-1 ml-2">
+                        <div class="ml-4 text-right space-y-2">
+                            @if(method_exists($role, 'getLevelBadgeAttribute'))
+                                <div class="inline-block">{!! $role->level_badge !!}</div>
+                            @endif
+                            @if(method_exists($role, 'getStatusBadgeAttribute'))
+                                <div class="inline-block">{!! $role->status_badge !!}</div>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="mt-4 flex flex-wrap items-center gap-2">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
+                            👥 {{ $role->users_count ?? ($role->users->count() ?? 0) }} Users
+                        </span>
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                            🔐 {{ $role->permissions->count() }} Permissions
+                        </span>
+
+                        <div class="ml-auto flex items-center space-x-2">
                             <button @click="editRolePermissions({{ $role->id }}, '{{ $role->name }}')" 
-                                    class="p-2 text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20 rounded-lg transition-colors duration-200"
+                                    class="px-3 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors duration-200 inline-flex items-center space-x-2"
                                     title="Edit Permissions">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>
+                                <span class="hidden sm:inline">Edit Permissions</span>
                             </button>
                             <a href="{{ route('partner.access-control.edit-role', $role) }}" 
-                               class="p-2 text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-900/20 rounded-lg transition-colors duration-200"
+                               class="px-3 py-2 bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200"
                                title="Edit Role">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                </svg>
+                                Edit Role
                             </a>
                             @if(!in_array($role->name, ['Admin', 'Super Admin']))
                             <button @click="deleteRole({{ $role->id }}, '{{ $role->name }}')" 
-                                    class="p-2 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 rounded-lg transition-colors duration-200"
+                                    class="px-3 py-2 bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 rounded-lg transition-colors duration-200"
                                     title="Delete Role">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                </svg>
+                                Delete
                             </button>
                             @endif
                         </div>
-                        @endcan
                     </div>
-                    @if($role->description)
-                    <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">{{ $role->description }}</p>
-                    @endif
                 </div>
 
                 <!-- Permission Summary -->
@@ -266,12 +282,10 @@
                             </svg>
                         </div>
                         <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">No permissions assigned yet</p>
-                        @can('users-manage-roles')
                         <button @click="editRolePermissions({{ $role->id }}, '{{ $role->name }}')" 
                                 class="text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200">
                             Assign permissions
                         </button>
-                        @endcan
                     </div>
                     @endif
                 </div>
@@ -698,5 +712,39 @@ function accessControlManager() {
         }
     }
 }
+</script>
+
+<script>
+(function(){
+    function csrfToken(){
+        var m = document.querySelector('meta[name="csrf-token"]');
+        return m ? m.getAttribute('content') : '';
+    }
+    async function doSync(btn){
+        if(!btn) return;
+        btn.disabled = true;
+        const original = btn.innerHTML;
+        btn.innerHTML = '<svg class="animate-spin -ml-1 mr-2 h-4 w-4 inline" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Syncing...';
+        try{
+            const resp = await fetch('{{ route('partner.access-control.permissions.sync') }}', {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': csrfToken(), 'Accept':'application/json' }
+            });
+            const data = await resp.json();
+            if(!resp.ok || !data.success){ throw new Error(data.message || 'Sync failed'); }
+            // Reload to reflect any new permissions/menus
+            location.reload();
+        } catch(e){
+            alert('Permission sync error: ' + e.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = original;
+        }
+    }
+    const btn = document.getElementById('refreshPermissionsBtn');
+    const btnM = document.getElementById('refreshPermissionsBtnMobile');
+    if(btn){ btn.addEventListener('click', () => doSync(btn)); }
+    if(btnM){ btnM.addEventListener('click', () => doSync(btnM)); }
+})();
 </script>
 @endsection

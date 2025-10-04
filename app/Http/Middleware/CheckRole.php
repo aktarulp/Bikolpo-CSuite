@@ -13,60 +13,64 @@ class CheckRole
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, string $role): Response
+    public function handle(Request $request, Closure $next, string ...$roles): Response
     {
         if (!auth()->check()) {
             return redirect()->route('login');
         }
 
-        $userRole = strtolower(auth()->user()->role);
-        $requiredRole = strtolower($role);
-        
-        // Handle role variations and aliases
-        $roleMatches = false;
-        
-        if ($requiredRole === 'partner') {
-            // Partner role variations (case-insensitive)
-            $roleMatches = in_array($userRole, ['partner', 'partner_admin', 'institution_admin']);
-        } elseif ($requiredRole === 'teacher') {
-            // Teacher role variations
-            $roleMatches = in_array($userRole, ['teacher', 'instructor']);
-        } elseif ($requiredRole === 'student') {
-            // Student role variations
-            $roleMatches = in_array($userRole, ['student', 'learner']);
-        // Operator role removed from system
-        } else {
-            // Exact match for other roles
-            $roleMatches = ($userRole === $requiredRole);
-        }
-        
-        if (!$roleMatches) {
-            // Log role mismatch for debugging
-            \Log::warning('Role mismatch in CheckRole middleware', [
-                'user_id' => auth()->user()->id,
-                'user_role' => auth()->user()->role,
-                'required_role' => $role,
-                'url' => $request->url()
-            ]);
-            
-            // Redirect based on user's actual role when possible.
-            // Avoid redirecting to the same protected route which can cause infinite loops.
-            $actualRole = strtolower(auth()->user()->role);
+        $user = auth()->user();
 
-            // Use the same role matching logic for redirects
-            if (in_array($actualRole, ['student', 'learner'])) {
-                return redirect()->route('student.dashboard');
-            } elseif (in_array($actualRole, ['partner', 'partner_admin', 'institution_admin'])) {
-                return redirect()->route('partner.dashboard');
-            } elseif (in_array($actualRole, ['teacher', 'instructor'])) {
-                return redirect()->route('teacher.dashboard');
-            // Operator role removed - redirect to partner dashboard
-            } elseif (in_array($actualRole, ['system_administrator', 'admin', 'system'])) {
-                return redirect()->route('admin.dashboard');
-            } else {
-                // Fallback: send to home page to avoid loops for unexpected roles
-                return redirect('/');
+        // Flatten role parameters: supports comma or pipe separated lists
+        $required = [];
+        foreach ($roles as $r) {
+            foreach (preg_split('/[|,]/', $r) as $part) {
+                $part = trim(strtolower($part));
+                if ($part !== '') {
+                    $required[] = $part;
+                }
             }
+        }
+        $required = array_values(array_unique($required));
+
+        // Map common aliases to canonical role names if you use them in ac_roles
+        $aliasMap = [
+            'partner_admin' => 'partner',
+            'institution_admin' => 'partner',
+            'instructor' => 'teacher',
+            'learner' => 'student',
+            'system' => 'system_administrator',
+        ];
+        $normalizedRequired = array_map(function ($name) use ($aliasMap) {
+            return $aliasMap[$name] ?? $name;
+        }, $required);
+
+        // Check via ac_user_roles pivot (EnhancedUser/User -> roles relation)
+        $hasRole = $user->roles()->whereIn('name', $normalizedRequired)->exists();
+
+        // Legacy string role fallback (for users not yet assigned via pivot)
+        if (!$hasRole) {
+            $stringRole = strtolower($user->role ?? '');
+            $stringRole = $aliasMap[$stringRole] ?? $stringRole;
+            if ($stringRole !== '' && in_array($stringRole, $normalizedRequired, true)) {
+                $hasRole = true;
+            }
+        }
+
+        if (!$hasRole) {
+            \Log::warning('RBAC role denied', [
+                'user_id' => $user->id,
+                'user_roles' => $user->roles()->pluck('name')->toArray(),
+                'user_string_role' => $user->role ?? null,
+                'required' => $normalizedRequired,
+                'url' => $request->url(),
+            ]);
+
+            // Avoid loops: show 403 or send to neutral landing
+            if (function_exists('abort')) {
+                return abort(403, 'Insufficient role');
+            }
+            return redirect()->route('landing');
         }
 
         return $next($request);

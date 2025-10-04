@@ -774,6 +774,9 @@ Route::middleware('auth')->group(function () {
             // Main access control page
             Route::get('/', [AccessControlController::class, 'index'])->name('index');
             
+            // Manual sync of menu/button permissions from config
+            Route::post('/permissions/sync', [AccessControlController::class, 'syncPermissions'])->name('permissions.sync');
+            
             // Role management
             Route::get('/create-role', [AccessControlController::class, 'createRole'])->name('create-role');
             Route::post('/roles', [AccessControlController::class, 'storeRole'])->name('store-role');
