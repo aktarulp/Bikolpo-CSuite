@@ -80,15 +80,8 @@ class EnhancedUser extends Authenticatable
                     ->withTimestamps();
     }
 
-    /**
-     * Get the permissions assigned to the user.
-     */
-    public function permissions(): BelongsToMany
-    {
-        return $this->belongsToMany(EnhancedPermission::class, 'user_permissions', 'user_id', 'permission_id')
-                    ->withPivot('granted_by', 'granted_at', 'expires_at')
-                    ->withTimestamps();
-    }
+    // Direct user permissions removed - using role-based permissions only
+    // Permissions are now accessed through: user → roles → role_permissions → permissions
 
     /**
      * Get the user activities.

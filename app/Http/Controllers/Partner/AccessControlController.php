@@ -16,7 +16,21 @@ class AccessControlController extends Controller
      */
     public function index()
     {
-        $roles = Role::with('permissions')->get();
+        // Get current user's highest role level
+        $currentUser = \App\Models\EnhancedUser::find(auth()->id());
+        $currentUserLevel = $currentUser->getHighestRoleLevel();
+        
+        // If currentUserLevel is null, default to highest privilege level
+        if ($currentUserLevel === null) {
+            $currentUserLevel = 1;
+        }
+        
+        // Filter roles - only show roles with level >= current user's level (same or lower privilege)
+        $roles = Role::with('permissions')
+            ->where('level', '>=', $currentUserLevel)
+            ->orderBy('level')
+            ->get();
+            
         $permissions = Permission::all()->groupBy(function($permission) {
             // Group permissions by menu (extract menu name from permission name)
             if (str_starts_with($permission->name, 'menu-')) {

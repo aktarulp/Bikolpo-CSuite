@@ -92,15 +92,8 @@ class EnhancedPermission extends Model
                     ->withTimestamps();
     }
 
-    /**
-     * Get the users that have this permission directly.
-     */
-    public function users(): BelongsToMany
-    {
-        return $this->belongsToMany(EnhancedUser::class, 'user_permissions')
-                    ->withPivot('granted_by', 'granted_at', 'expires_at')
-                    ->withTimestamps();
-    }
+    // Direct user-permission relationship removed - using role-based permissions only
+    // Users access permissions through: user → roles → role_permissions → permissions
 
     /**
      * Get the creator of this permission.

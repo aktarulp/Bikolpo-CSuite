@@ -54,7 +54,7 @@
                 <div class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-600 hover:shadow-lg transition-all duration-300">
                     <div class="flex items-start justify-between mb-4">
                         <div class="flex-1">
-                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-1">{{ $role->name }}</h3>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-1">{{ $role->display_name ?? ucfirst(str_replace('_', ' ', $role->name)) }}</h3>
                             <p class="text-sm text-gray-600 dark:text-gray-400">{{ $role->permissions->count() }} permissions</p>
                         </div>
                         <div class="flex items-center space-x-2">
