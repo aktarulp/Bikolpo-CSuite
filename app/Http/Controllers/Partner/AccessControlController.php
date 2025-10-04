@@ -33,8 +33,16 @@ class AccessControlController extends Controller
      */
     public function createRole()
     {
-        // Get all existing roles for copying permissions
-        $existingRoles = Role::with('permissions')->get();
+        // Get current user's highest role level
+        $currentUser = \App\Models\EnhancedUser::find(auth()->id());
+        $currentUserLevel = $currentUser->getHighestRoleLevel() ?? 1;
+        
+        // Get existing roles that are at the same level or lower (higher level number) than current user
+        // This prevents users from copying permissions from higher-level roles they don't have access to
+        $existingRoles = \App\Models\EnhancedRole::with('permissions')
+            ->where('level', '>=', $currentUserLevel)
+            ->orderBy('level')
+            ->get();
         
         $permissions = Permission::all()->groupBy(function($permission) {
             if (str_starts_with($permission->name, 'menu-')) {

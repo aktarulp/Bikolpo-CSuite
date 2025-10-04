@@ -80,13 +80,38 @@
             <!-- Basic Information Card -->
             <div class="form-card bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
                 <div class="bg-gray-50 dark:bg-gray-700 px-4 py-4 sm:px-6 border-b border-gray-200 dark:border-gray-600">
-                    <div class="flex items-center space-x-3">
-                        <div class="p-2 bg-green-50 dark:bg-green-900/30 rounded-lg">
-                            <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="p-2 bg-green-50 dark:bg-green-900/30 rounded-lg">
+                                <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                            </div>
+                            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Role Information</h2>
                         </div>
-                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Role Information</h2>
+                        <div class="flex items-center space-x-3">
+                            <a href="{{ route('partner.settings.index') }}" 
+                               class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors">
+                                Cancel
+                            </a>
+                            <button type="submit" 
+                                    :disabled="loading"
+                                    class="px-6 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors shadow-sm hover:shadow-md">
+                                <span x-show="!loading" class="flex items-center">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                    Create Role
+                                </span>
+                                <span x-show="loading" class="flex items-center">
+                                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 718-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 714 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Creating...
+                                </span>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -119,7 +144,7 @@
 
                     <div>
                         <label for="copy_from" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Copy Permissions From Existing Role
+                            Copy Permission From
                         </label>
                         <select 
                                id="copy_from" 
@@ -128,7 +153,7 @@
                                class="form-input w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
                             <option value="">Start with blank permissions</option>
                             @foreach($existingRoles as $role)
-                            <option value="{{ $role->id }}">{{ $role->name }}</option>
+                            <option value="{{ $role->id }}">{{ $role->display_name ?? ucwords(str_replace('_', ' ', $role->name)) }}</option>
                             @endforeach
                         </select>
                         <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
@@ -156,33 +181,6 @@
                             If you selected a role to copy from above, those permissions will be automatically applied to your new role.
                         </p>
                     </div>
-                </div>
-            </div>
-
-            <!-- Form Actions -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
-                <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-end space-y-3 sm:space-y-0 sm:space-x-3">
-                <a href="{{ route('partner.settings.index') }}" 
-                   class="w-full sm:w-auto px-6 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors text-center">
-                    Cancel
-                </a>
-                <button type="submit" 
-                        :disabled="loading"
-                        class="w-full sm:w-auto px-8 py-3 text-sm font-medium text-white bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors shadow-sm hover:shadow-md">
-                    <span x-show="!loading" class="flex items-center justify-center">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                        </svg>
-                        Create Role
-                    </span>
-                    <span x-show="loading" class="flex items-center justify-center">
-                        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Creating...
-                    </span>
-                </button>
                 </div>
             </div>
         </form>
