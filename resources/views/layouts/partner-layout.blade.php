@@ -372,19 +372,6 @@
                                             </svg>
                                         </a>
                                         
-                                        <a href="{{ route('partner.profile.edit-partnar') }}" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-orange-100 dark:hover:bg-orange-900/30 hover:text-orange-700 dark:hover:text-orange-400 rounded-lg transition-colors duration-150">
-                                            <div class="w-7 h-7 bg-orange-100 dark:bg-orange-900/50 rounded-md flex items-center justify-center mr-2 group-hover:scale-110 transition-transform duration-200">
-                                                <svg class="w-3.5 h-3.5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                                </svg>
-                                            </div>
-                                            <div class="flex-1">
-                                                <p class="font-medium">Edit Institution</p>
-                                            </div>
-                                            <svg class="w-4 h-4 text-gray-400 group-hover:text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                            </svg>
-                                        </a>
                                     </div>
                                 </div>
                                 
@@ -406,33 +393,7 @@
                                             </svg>
                                         </a>
                                         
-                                        <a href="{{ route('partner.profile.edit-user-profile') }}" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-purple-900/30 hover:text-purple-700 dark:hover:text-purple-400 rounded-lg transition-colors duration-150">
-                                            <div class="w-7 h-7 bg-purple-100 dark:bg-purple-900/50 rounded-md flex items-center justify-center mr-2 group-hover:scale-110 transition-transform duration-200">
-                                                <svg class="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                                </svg>
-                                            </div>
-                                            <div class="flex-1">
-                                                <p class="font-medium">Edit User Profile</p>
-                                            </div>
-                                            <svg class="w-4 h-4 text-gray-400 group-hover:text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                            </svg>
-                                        </a>
                                         
-                                        <a href="#" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-green-100 dark:hover:bg-green-900/30 hover:text-green-700 dark:hover:text-green-400 rounded-lg transition-colors duration-150">
-                                            <div class="w-7 h-7 bg-green-100 dark:bg-green-900/50 rounded-md flex items-center justify-center mr-2 group-hover:scale-110 transition-transform duration-200">
-                                                <svg class="w-3.5 h-3.5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                                </svg>
-                                            </div>
-                                            <div class="flex-1">
-                                                <p class="font-medium">Teacher</p>
-                                            </div>
-                                            <svg class="w-4 h-4 text-gray-400 group-hover:text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                            </svg>
-                                        </a>
                                     </div>
                                 </div>
                                 
@@ -586,10 +547,6 @@
                                         </p>
                                     </div>
                                     
-                                    <!-- Dropdown Arrow -->
-                                    <svg class="w-5 h-5 text-gray-400 group-hover:text-primaryGreen dark:group-hover:text-emerald-400 transition-all duration-300 transform group-hover:rotate-180" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                    </svg>
                                 </button>
 
                                 <!-- Enhanced Dropdown Menu -->
@@ -623,19 +580,6 @@
                                                     </svg>
                                                 </a>
                                                 
-                                                <a href="{{ route('partner.profile.edit-partnar') }}" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-orange-100 dark:hover:bg-orange-900/30 hover:text-orange-700 dark:hover:text-orange-400 rounded-lg transition-colors duration-150">
-                                                    <div class="w-7 h-7 bg-orange-100 dark:bg-orange-900/50 rounded-md flex items-center justify-center mr-2 group-hover:scale-110 transition-transform duration-200">
-                                                        <svg class="w-3.5 h-3.5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                                        </svg>
-                                                    </div>
-                                                    <div class="flex-1">
-                                                        <p class="font-medium">Edit Institution</p>
-                                                    </div>
-                                                    <svg class="w-4 h-4 text-gray-400 group-hover:text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                                    </svg>
-                                                </a>
                                             </div>
                                         </div>
                                         
@@ -657,33 +601,7 @@
                                                     </svg>
                                                 </a>
                                                 
-                                                <a href="{{ route('partner.profile.edit-user-profile') }}" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-purple-900/30 hover:text-purple-700 dark:hover:text-purple-400 rounded-lg transition-colors duration-150">
-                                                    <div class="w-7 h-7 bg-purple-100 dark:bg-purple-900/50 rounded-md flex items-center justify-center mr-2 group-hover:scale-110 transition-transform duration-200">
-                                                        <svg class="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                                        </svg>
-                                                    </div>
-                                                    <div class="flex-1">
-                                                        <p class="font-medium">Edit User Profile</p>
-                                                    </div>
-                                                    <svg class="w-4 h-4 text-gray-400 group-hover:text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                                    </svg>
-                                                </a>
                                                 
-                                                <a href="#" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-green-100 dark:hover:bg-green-900/30 hover:text-green-700 dark:hover:text-green-400 rounded-lg transition-colors duration-150">
-                                                    <div class="w-7 h-7 bg-green-100 dark:bg-green-900/50 rounded-md flex items-center justify-center mr-2 group-hover:scale-110 transition-transform duration-200">
-                                                        <svg class="w-3.5 h-3.5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                                        </svg>
-                                                    </div>
-                                                    <div class="flex-1">
-                                                        <p class="font-medium">Teacher</p>
-                                                    </div>
-                                                    <svg class="w-4 h-4 text-gray-400 group-hover:text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                                    </svg>
-                                                </a>
                                             </div>
                                         </div>
                                         

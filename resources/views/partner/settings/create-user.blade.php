@@ -84,7 +84,8 @@
                                                 $userType = 'student';
                                                 $icon = '🎓';
                                             } else {
-                                                $userType = 'teacher'; // Default to teacher for other roles
+                                                // For non-teacher/student roles, do not set a user type
+                                                $userType = '';
                                                 $icon = '👤';
                                             }
                                             
@@ -420,14 +421,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else if (nameToCheck.includes('student')) {
                     finalUserType = 'student';
                 } else {
-                    finalUserType = 'operator';
+                    // For non-teacher/student roles, set user_type to 'other'
+                    finalUserType = 'other';
                 }
                 console.log('Fallback user type detected:', finalUserType);
             }
             
-            // SET THE USER TYPE FIELD
+            // SET THE USER TYPE FIELD (hidden)
             userTypeField.value = finalUserType;
-            debugUserTypeValue.textContent = finalUserType;
+
+            // For debug display, show 'teacher'/'student' if those roles are detected, otherwise 'other'
+            const debugVisibleText = (selectedOption.textContent || '').toLowerCase();
+            const debugIsTeacher = debugVisibleText.includes('teacher');
+            const debugIsStudent = debugVisibleText.includes('student');
+            const debugType = debugIsTeacher ? 'teacher' : (debugIsStudent ? 'student' : 'other');
+            debugUserType.classList.remove('hidden');
+            debugUserTypeValue.textContent = debugType;
             
             console.log('✓✓✓ User type field NOW set to:', userTypeField.value);
             console.log('✓✓✓ Debug display NOW shows:', debugUserTypeValue.textContent);
@@ -477,8 +486,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Student role selected - showing quick select only');
                 studentQuickSelect.classList.remove('hidden');
             } else {
-                console.log('No specific section to show for role:', visibleText);
+                console.log('Other role selected - clearing any auto-populated data and showing info message');
                 noQuickSelect.classList.remove('hidden');
+                // Clear any previously populated teacher/student data and unlock fields
+                if (typeof clearAllAutoPopulatedData === 'function') {
+                    clearAllAutoPopulatedData();
+                }
             }
         } else {
             // Hide indicator and sections if no role selected
@@ -529,12 +542,15 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 // Fallback: detect from role name
                 const roleName = (selectedOption.getAttribute('data-name') || selectedOption.textContent).toLowerCase();
-                let detectedType = 'operator';
+                let detectedType = '';
                 
                 if (roleName.includes('teacher')) {
                     detectedType = 'teacher';
                 } else if (roleName.includes('student')) {
                     detectedType = 'student';
+                } else {
+                    // Non-teacher/student role: set to 'other'
+                    detectedType = 'other';
                 }
                 
                 userTypeField.value = detectedType;
@@ -542,12 +558,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        // Final validation: user_type MUST be set
-        if (!userTypeField.value) {
-            alert('Error: User type could not be determined. Please select a role again.');
-            roleSelect.focus();
-            return false;
-        }
         
         // Debug: Log form data before submission
         const formData = new FormData(form);
