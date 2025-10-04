@@ -47,7 +47,7 @@
 
         <form @submit.prevent="createRole()" class="p-4 md:p-6">
             <!-- Basic Information -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="space-y-6 mb-8">
                 <div>
                     <label for="role_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Role Name <span class="text-red-500">*</span>
@@ -65,80 +65,46 @@
                     <label for="role_description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Description
                     </label>
-                    <input type="text" 
+                    <textarea 
                            id="role_description" 
                            x-model="form.description"
+                           rows="3"
                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200"
-                           placeholder="Brief description of the role">
+                           placeholder="Brief description of the role"></textarea>
                     <div x-show="errors.description" class="mt-1 text-sm text-red-600" x-text="errors.description"></div>
+                </div>
+
+                <div>
+                    <label for="copy_from" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Copy Access Control From
+                    </label>
+                    <select 
+                           id="copy_from" 
+                           x-model="copyFromRole"
+                           @change="handleCopyFromChange()"
+                           class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200">
+                        <option value="">Manual Setup</option>
+                        @foreach($existingRoles as $role)
+                        <option value="{{ $role->id }}">{{ $role->name }}</option>
+                        @endforeach
+                    </select>
+                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Select an existing role to copy its permissions, or choose "Manual Setup" to configure manually</p>
                 </div>
             </div>
 
-            <!-- Permissions Selection -->
-            <div class="mb-8">
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Permissions</h3>
-                    <div class="flex items-center space-x-4">
-                        <button type="button" 
-                                @click="selectAllPermissions()"
-                                class="text-sm text-green-600 hover:text-green-800 font-medium">
-                            Select All
-                        </button>
-                        <button type="button" 
-                                @click="deselectAllPermissions()"
-                                class="text-sm text-red-600 hover:text-red-800 font-medium">
-                            Deselect All
-                        </button>
+            <!-- Info Message -->
+            <div class="mb-8 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                <div class="flex items-start">
+                    <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div>
+                        <h4 class="text-sm font-semibold text-blue-900 dark:text-blue-200 mb-1">Permission Assignment</h4>
+                        <p class="text-sm text-blue-800 dark:text-blue-300">
+                            After creating the role, you can assign permissions from the Access Control page. 
+                            If you selected "Copy Access Control From" above, permissions will be automatically copied from that role.
+                        </p>
                     </div>
-                </div>
-
-                <div class="space-y-6">
-                    @foreach($permissionConfig as $menuKey => $menuConfig)
-                    <div class="bg-gray-50 dark:bg-gray-700 rounded-xl p-4">
-                        <div class="flex items-center justify-between mb-4">
-                            <h4 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $menuConfig['label'] }}</h4>
-                            <div class="flex items-center space-x-2">
-                                <label class="flex items-center">
-                                    <input type="checkbox" 
-                                           @change="toggleModulePermissions('{{ $menuKey }}', $event.target.checked)"
-                                           :checked="isModuleFullySelected('{{ $menuKey }}')"
-                                           class="rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50">
-                                    <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Select All</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                            <!-- Menu Permission -->
-                            <label class="flex items-center p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors cursor-pointer">
-                                <input type="checkbox" 
-                                       name="permissions[]"
-                                       value="menu-{{ $menuKey }}"
-                                       x-model="form.permissions"
-                                       class="rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50">
-                                <div class="ml-3">
-                                    <div class="text-sm font-medium text-gray-900 dark:text-white">Menu Access</div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400">menu-{{ $menuKey }}</div>
-                                </div>
-                            </label>
-
-                            <!-- Button Permissions -->
-                            @foreach($menuConfig['buttons'] as $buttonKey => $buttonLabel)
-                            <label class="flex items-center p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors cursor-pointer">
-                                <input type="checkbox" 
-                                       name="permissions[]"
-                                       value="{{ $menuKey }}-{{ $buttonKey }}"
-                                       x-model="form.permissions"
-                                       class="rounded border-gray-300 text-green-600 shadow-sm focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50">
-                                <div class="ml-3">
-                                    <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $buttonLabel }}</div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ $menuKey }}-{{ $buttonKey }}</div>
-                                </div>
-                            </label>
-                            @endforeach
-                        </div>
-                    </div>
-                    @endforeach
                 </div>
             </div>
 
@@ -169,6 +135,7 @@
 function roleCreationManager() {
     return {
         loading: false,
+        copyFromRole: '',
         form: {
             name: '',
             description: '',
@@ -176,6 +143,7 @@ function roleCreationManager() {
         },
         errors: {},
         permissionConfig: @json($permissionConfig),
+        existingRoles: @json($existingRoles),
 
         async createRole() {
             this.loading = true;
@@ -228,6 +196,21 @@ function roleCreationManager() {
 
         deselectAllPermissions() {
             this.form.permissions = [];
+        },
+
+        handleCopyFromChange() {
+            if (!this.copyFromRole) {
+                // Manual setup - clear permissions
+                this.form.permissions = [];
+                return;
+            }
+
+            // Find the selected role
+            const selectedRole = this.existingRoles.find(role => role.id == this.copyFromRole);
+            if (selectedRole && selectedRole.permissions) {
+                // Copy all permissions from the selected role
+                this.form.permissions = selectedRole.permissions.map(p => p.name);
+            }
         },
 
         isModuleFullySelected(moduleKey) {

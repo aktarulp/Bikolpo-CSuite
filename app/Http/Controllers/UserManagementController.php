@@ -87,17 +87,21 @@ class UserManagementController extends Controller
         // Get current partner ID
         $partnerId = $this->getPartnerId();
 
-        // Get teachers from current partner (prioritize those without user accounts)
+        // Get teachers from current partner
         $teachers = \App\Models\Teacher::where('partner_id', $partnerId)
-            ->orderByRaw('user_id IS NULL DESC') // Show teachers without user accounts first
             ->orderBy('full_name_en')
-            ->get();
+            ->get()
+            ->sortBy(function($teacher) {
+                return $teacher->user_id ? 1 : 0; // NULL user_id comes first
+            });
 
-        // Get students from current partner (prioritize those without user accounts)
+        // Get students from current partner
         $students = \App\Models\Student::where('partner_id', $partnerId)
-            ->orderByRaw('user_id IS NULL DESC') // Show students without user accounts first
             ->orderBy('full_name')
-            ->get();
+            ->get()
+            ->sortBy(function($student) {
+                return $student->user_id ? 1 : 0; // NULL user_id comes first
+            });
 
         // Debug: Log the counts
         \Log::info('UserManagementController create method', [

@@ -37,6 +37,9 @@ class AccessControlController extends Controller
      */
     public function createRole()
     {
+        // Get all existing roles for copying permissions
+        $existingRoles = Role::with('permissions')->get();
+        
         $permissions = Permission::all()->groupBy(function($permission) {
             if (str_starts_with($permission->name, 'menu-')) {
                 return substr($permission->name, 5);
@@ -48,7 +51,7 @@ class AccessControlController extends Controller
 
         $permissionConfig = config('permissions.menus', []);
 
-        return view('partner.access-control.create-role', compact('permissions', 'permissionConfig'));
+        return view('partner.access-control.create-role', compact('permissions', 'permissionConfig', 'existingRoles'));
     }
 
     /**
