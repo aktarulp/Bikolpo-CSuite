@@ -160,6 +160,7 @@
 
                 <!-- Navigation -->
                 <nav class="flex-1 px-2 py-3 lg:px-3 space-y-1">
+                    @can('menu-dashboard')
                     <a href="{{ route('partner.dashboard') }}"
                        class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.dashboard') ? 'bg-gradient-to-r from-primaryGreen/10 to-emerald-50 text-primaryGreen border border-primaryGreen/20 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
                         <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.dashboard') ? 'bg-primaryGreen/10' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-primaryGreen/10' }} flex items-center justify-center transition-all duration-200">
@@ -169,8 +170,9 @@
                         </div>
                         <span class="ml-2 flex-1">Dashboard</span>
                     </a>
+                    @endcan
 
-                    
+                    @can('menu-courses')
                     <a href="{{ route('partner.courses.index') }}"
                        class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.courses.*') ? 'bg-gradient-to-r from-orange-50 to-orange-100 text-orange-700 border border-orange-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-orange-50/50 hover:to-orange-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-orange-700 dark:hover:text-white' }}">
                         <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.courses.*') ? 'bg-orange-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-orange-50' }} flex items-center justify-center transition-all duration-200">
@@ -181,8 +183,10 @@
                         <span class="ml-2 flex-1">Courses</span>
                         <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300 border border-orange-300 dark:border-orange-700">{{ $stats['total_courses'] ?? 0 }}</span>
                     </a>
+                    @endcan
                     
 
+                    @can('menu-subjects')
                     <a href="{{ route('partner.subjects.index') }}"
                        class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.subjects.*') ? 'bg-gradient-to-r from-purple-50 to-purple-100 text-purple-700 border border-purple-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-purple-50/50 hover:to-purple-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-purple-700 dark:hover:text-white' }}">
                         <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.subjects.*') ? 'bg-purple-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-purple-50' }} flex items-center justify-center transition-all duration-200">
@@ -193,6 +197,7 @@
                         <span class="ml-2 flex-1">Subjects</span>
                         <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300 border border-purple-300 dark:border-purple-700">{{ $stats['total_subjects'] ?? 0 }}</span>
                     </a>
+                    @endcan
 
                     <a href="{{ route('partner.topics.index') }}"
                        class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.topics.*') ? 'bg-gradient-to-r from-pink-50 to-pink-100 text-pink-700 border border-pink-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-pink-50/50 hover:to-pink-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-pink-700 dark:hover:text-white' }}">
@@ -214,6 +219,7 @@
                         <span class="ml-2 flex-1">Batches</span>
                         <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-700">{{ $stats['total_batches'] ?? 0 }}</span>
                     </a>
+                    @can('menu-students')
                     <a href="{{ route('partner.students.index') }}"
                        class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.students.*') ? 'bg-gradient-to-r from-emerald-50 to-emerald-100 text-emerald-700 border border-emerald-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-emerald-50/50 hover:to-emerald-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-emerald-700 dark:hover:text-white' }}">
                         <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.students.*') ? 'bg-emerald-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-emerald-50' }} flex items-center justify-center transition-all duration-200">
@@ -224,6 +230,8 @@
                         <span class="ml-2 flex-1">Students</span>
                         <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700">{{ $stats['total_students'] ?? 0 }}</span>
                     </a>
+                    @endcan
+                    @can('menu-teachers')
                     <a href="{{ route('partner.teachers.index') }}"
                        class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.teachers.*') ? 'bg-gradient-to-r from-teal-50 to-teal-100 text-teal-700 border border-teal-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-teal-50/50 hover:to-teal-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-teal-700 dark:hover:text-white' }}">
                         <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.teachers.*') ? 'bg-teal-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-teal-50' }} flex items-center justify-center transition-all duration-200">
@@ -234,6 +242,8 @@
                         <span class="ml-2 flex-1">Teachers</span>
                         <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-teal-100 text-teal-700 dark:bg-teal-900/50 dark:text-teal-300 border border-teal-300 dark:border-teal-700">{{ $stats['total_teachers'] ?? 0 }}</span>
                     </a>
+                    @endcan
+                    @can('menu-questions')
                     <a href="{{ route('partner.questions.all') }}"
                        class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.questions.*') ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 border border-blue-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-blue-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-blue-700 dark:hover:text-white' }}">
                         <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.questions.*') ? 'bg-blue-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-blue-50' }} flex items-center justify-center transition-all duration-200">
@@ -244,8 +254,10 @@
                         <span class="ml-2 flex-1">Questions</span>
                         <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 border border-blue-300 dark:border-blue-700">{{ $stats['total_questions'] ?? 0 }}</span>
                     </a>
+                    @endcan
 
 
+                    @can('menu-exams')
                     <a href="{{ route('partner.exams.index') }}"
                        class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.exams.*') ? 'bg-gradient-to-r from-cyan-50 to-cyan-100 text-cyan-700 border border-cyan-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-cyan-50/50 hover:to-cyan-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-cyan-700 dark:hover:text-white' }}">
                         <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.exams.*') ? 'bg-cyan-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-cyan-50' }} flex items-center justify-center transition-all duration-200">
@@ -256,6 +268,7 @@
                         <span class="ml-2 flex-1">Exams</span>
                         <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-cyan-100 text-cyan-700 dark:bg-cyan-900/50 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-700">{{ $stats['total_exams'] ?? 0 }}</span>
                     </a>
+                    @endcan
 
                     <a href="{{ route('analytics.questions.index') }}"
                        class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('analytics.questions.*') ? 'bg-gradient-to-r from-violet-50 to-violet-100 text-violet-700 border border-violet-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-violet-50/50 hover:to-violet-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-violet-700 dark:hover:text-white' }}">
