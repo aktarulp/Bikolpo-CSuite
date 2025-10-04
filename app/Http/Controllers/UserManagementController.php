@@ -128,6 +128,11 @@ class UserManagementController extends Controller
             'role_id' => 'required|exists:roles,id',
             'user_type' => 'required|in:teacher,student,operator',
         ];
+        
+        // Ensure role_id is properly cast to integer
+        if ($request->has('role_id')) {
+            $request->merge(['role_id' => (int)$request->role_id]);
+        }
 
         // Add teacher-specific validation rules
         if ($request->user_type === 'teacher') {
@@ -176,31 +181,155 @@ class UserManagementController extends Controller
             }
         }
 
+        // Ensure role_id is properly cast to integer
+        $request->merge(['role_id' => (int)$request->role_id]);
+        
         $validated = $request->validate($rules);
+        
+        // Log the validated data for debugging
+        \Log::info('Creating user with validated data:', [
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'role_id' => $validated['role_id'],
+            'role_id_type' => gettype($validated['role_id']),
+            'user_type' => $validated['user_type']
+        ]);
 
         DB::beginTransaction();
 
         try {
+            // Log the incoming request data for debugging
+            \Log::info('User creation request data:', [
+                'validated' => $validated,
+                'request_all' => $request->all()
+            ]);
+            
+            // Get the role with error handling
+            $roleId = (int)$validated['role_id'];
+            
+            // Log the role ID and its type
+            \Log::info('Role ID and type:', [
+                'role_id' => $roleId,
+                'role_id_type' => gettype($roleId),
+                'role_id_value' => $roleId
+            ]);
+            
+            $selectedRole = EnhancedRole::find($roleId);
+            
+            if (!$selectedRole) {
+                throw new \Exception("Role with ID {$roleId} not found");
+            }
+            
+            // Log role information with detailed type information
+            \Log::info('Using role:', [
+                'id' => $selectedRole->id,
+                'id_type' => gettype($selectedRole->id),
+                'name' => $selectedRole->name,
+                'name_type' => gettype($selectedRole->name),
+                'role_object' => $selectedRole->toArray()
+            ]);
+            
             // Create the user
             $user = new EnhancedUser();
             $user->name = $validated['name'];
             $user->email = $validated['email'];
             $user->phone = $validated['phone'];
             $user->password = Hash::make($validated['password']);
-            $user->role_id = $validated['role_id'];
-            
-            // Also set the role name for compatibility (ensure lowercase)
-            $selectedRole = EnhancedRole::find($validated['role_id']);
-            if ($selectedRole) {
-                $user->role = strtolower($selectedRole->name);
+            $user->role_id = $roleId;
+            // Safely get role name with type checking
+            $roleName = $selectedRole->name;
+            if (!is_string($roleName)) {
+                if (is_object($roleName) && method_exists($roleName, '__toString')) {
+                    $roleName = (string)$roleName;
+                } else {
+                    $roleName = 'user';
+                    \Log::warning('Invalid role name type, defaulting to "user"', [
+                        'role_name' => $roleName,
+                        'role_name_type' => gettype($roleName)
+                    ]);
+                }
             }
-            
+            $user->role = strtolower($roleName);
             $user->partner_id = $this->getPartnerId();
             $user->status = 'active';
-            $user->email_verified_at = now(); // Set as verified for admin-created users
+            $user->email_verified_at = now();
             $user->created_by = auth()->id();
             $user->updated_by = auth()->id();
-            $user->save();
+            
+            // Save the user with error handling
+            if (!$user->save()) {
+                throw new \Exception('Failed to save user');
+            }
+            
+            // Ensure the user is properly loaded with the role
+            $user->load('roles');
+            
+            \Log::info('User created successfully', ['user_id' => $user->id]);
+            
+            // Create teacher record if user_type is teacher
+            if ($validated['user_type'] === 'teacher' && isset($validated['teacher'])) {
+                $teacherData = $validated['teacher'];
+                $teacherData['user_id'] = $user->id;
+                $teacherData['partner_id'] = $this->getPartnerId();
+                $teacherData['created_by'] = auth()->id();
+                $teacherData['updated_by'] = auth()->id();
+                $teacherData['status'] = 'Active';
+                $teacherData['enable_login'] = 'y';
+                
+                // Generate teacher ID
+                $lastTeacher = \App\Models\Teacher::where('partner_id', $this->getPartnerId())
+                    ->whereNotNull('teacher_id')
+                    ->orderBy('id', 'desc')
+                    ->first();
+                
+                $nextNumber = $lastTeacher ? (int)substr($lastTeacher->teacher_id, -3) + 1 : 1;
+                $teacherData['teacher_id'] = 'TCH-' . date('Y') . '-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+
+                \App\Models\Teacher::create($teacherData);
+            }
+
+            // Create student record if user_type is student
+            if ($validated['user_type'] === 'student' && isset($validated['student'])) {
+                $studentData = $validated['student'];
+                $studentData['user_id'] = $user->id;
+                $studentData['partner_id'] = $this->getPartnerId();
+                $studentData['created_by'] = auth()->id();
+                $studentData['status'] = 'active';
+                $studentData['enable_login'] = 'y';
+                $studentData['enroll_date'] = now();
+                
+                // Generate student ID
+                $lastStudent = \App\Models\Student::where('partner_id', $this->getPartnerId())
+                    ->whereNotNull('student_id')
+                    ->orderBy('id', 'desc')
+                    ->first();
+                
+                $nextNumber = $lastStudent ? (int)substr($lastStudent->student_id, -3) + 1 : 1;
+                $studentData['student_id'] = 'STU-' . date('Y') . '-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+
+                \App\Models\Student::create($studentData);
+            }
+
+            // Link to existing teacher or student if specified
+            if ($validated['user_type'] === 'teacher' && $request->has('teacher_id') && !isset($validated['teacher'])) {
+                $teacher = \App\Models\Teacher::where('id', $request->teacher_id)
+                    ->where('partner_id', $this->getPartnerId())
+                    ->first();
+
+                if ($teacher) {
+                    $teacher->user_id = $user->id;
+                    $teacher->save();
+                }
+            } elseif ($validated['user_type'] === 'student' && $request->has('student_id') && !isset($validated['student'])) {
+                $student = \App\Models\Student::where('id', $request->student_id)
+                    ->where('partner_id', $this->getPartnerId())
+                    ->first();
+
+                if ($student) {
+                    $student->user_id = $user->id;
+                    $student->save();
+                }
+            }
 
             // Create teacher record if user_type is teacher
             if ($validated['user_type'] === 'teacher' && isset($validated['teacher'])) {
@@ -246,79 +375,25 @@ class UserManagementController extends Controller
                 \App\Models\Student::create($studentData);
             }
 
-            // Link to existing teacher or student if specified (backward compatibility)
-            if ($validated['user_type'] === 'teacher' && $request->has('teacher_id') && !isset($validated['teacher'])) {
-                $teacher = \App\Models\Teacher::where('id', $request->teacher_id)
-                    ->where('partner_id', $this->getPartnerId())
-                    ->first();
-
-                if ($teacher) {
-                    $teacher->user_id = $user->id;
-                    $teacher->save();
-                }
-            } elseif ($validated['user_type'] === 'student' && $request->has('student_id') && !isset($validated['student'])) {
-                $student = \App\Models\Student::where('id', $request->student_id)
-                    ->where('partner_id', $this->getPartnerId())
-                    ->first();
-
-                if ($student) {
-                    $student->user_id = $user->id;
-                    $student->save();
-                }
-            }
-
-            // Role is already assigned in the users table (line 163)
-            // No need for additional pivot table assignment
-
-            // Log the activity (if activity logging is available)
-            try {
-                if (function_exists('activity')) {
-                    activity()
-                        ->causedBy(auth()->user())
-                        ->performedOn($user)
-                        ->withProperties([
-                            'role_id' => $validated['role_id'],
-                            'user_type' => $validated['user_type'],
-                            'comprehensive_data' => isset($validated['teacher']) || isset($validated['student'])
-                        ])
-                        ->log('User account created with comprehensive data');
-                } else {
-                    // Fallback: Simple log entry
-                    Log::info('User account created', [
-                        'user_id' => $user->id,
-                        'user_name' => $user->name,
-                        'user_email' => $user->email,
-                        'role_id' => $validated['role_id'],
-                        'user_type' => $validated['user_type'],
-                        'created_by' => auth()->id()
-                    ]);
-                }
-            } catch (\Exception $e) {
-                // If activity logging fails, just log it and continue
-                Log::warning('Activity logging failed during user creation', [
-                    'error' => $e->getMessage(),
-                    'user_id' => $user->id
-                ]);
-            }
-
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'message' => 'User created successfully with ' . $validated['user_type'] . ' profile',
-                'redirect' => route('partner.settings.index')
+                'message' => 'User created successfully',
+                'redirect' => route('partner.settings.users.index')
             ]);
 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('User creation failed: ' . $e->getMessage(), [
-                'user_type' => $request->user_type,
-                'request_data' => $request->except(['password', 'password_confirmation'])
+            \Log::error('Error creating user: ' . $e->getMessage(), [
+                'exception' => $e,
+                'trace' => $e->getTraceAsString()
             ]);
-
+            
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to create user: ' . $e->getMessage()
+                'message' => 'Error creating user: ' . $e->getMessage(),
+                'user_data' => isset($user) ? $user->toArray() : null
             ], 500);
         }
     }

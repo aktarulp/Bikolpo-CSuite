@@ -388,6 +388,12 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (selectedOption.value && selectedOption.value !== '') {
             const userType = selectedOption.getAttribute('data-user-type');
+            
+            // Ensure user type is set correctly
+            if (userType) {
+                userTypeField.value = userType;
+                document.getElementById('debugUserTypeValue').textContent = userType;
+            }
             const icon = selectedOption.getAttribute('data-icon');
             const roleName = selectedOption.textContent.replace(icon, '').trim();
             
@@ -485,8 +491,28 @@ document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         
+        // Debug: Log form data before submission
+        const formData = new FormData(form);
+        console.log('Form data before submission:');
+        for (let [key, value] of formData.entries()) {
+            console.log(key + ': ' + value);
+        }
+        
+        // Ensure a role is selected
+        if (!roleSelect.value) {
+            alert('Please select a user role');
+            roleSelect.focus();
+            return false;
+        }
+        
         // Ensure user_type is set before submission
         if (!userTypeField.value && roleSelect.value) {
+            // Try to get user type from selected role
+            const selectedOption = roleSelect.options[roleSelect.selectedIndex];
+            const userType = selectedOption.getAttribute('data-user-type');
+            if (userType) {
+                userTypeField.value = userType;
+            }
             console.log('User type not set, trying to detect from selected role...');
             handleRoleChange(); // Try to set it again
         }

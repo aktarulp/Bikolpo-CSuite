@@ -9,6 +9,7 @@ use App\Models\Partner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
 
 class OtpVerificationController extends Controller
@@ -81,32 +82,58 @@ class OtpVerificationController extends Controller
                 'flag' => 'active',
             ]);
 
-            // Find the Partner role
-            $partnerRole = \App\Models\EnhancedRole::where('name', 'Partner')->first();
+            // Find the partner role
+            $partnerRole = \App\Models\EnhancedRole::where('name', 'partner')->first();
+            
+            // If partner role not found, try to find any role
             if (!$partnerRole) {
-                // Fallback to a default role if Partner role doesn't exist
-                $partnerRole = \App\Models\EnhancedRole::where('is_default', true)->first();
+                $partnerRole = \App\Models\EnhancedRole::first();
+            }
+            
+            // If still no role found, create a default partner role with only the fields that exist in the database
+            if (!$partnerRole) {
+                try {
+                    $partnerRole = \App\Models\EnhancedRole::create([
+                        'name' => 'partner',
+                        'description' => 'Partner role with basic permissions'
+                    ]);
+                } catch (\Exception $e) {
+                    \Log::error('Failed to create partner role: ' . $e->getMessage());
+                    throw new \RuntimeException('Failed to create partner role. Please contact support.');
+                }
             }
 
             // Get system user ID for registration tracking
             $systemUser = \App\Models\EnhancedUser::where('email', 'system@bikolpo.com')->first();
             $systemUserId = $systemUser ? $systemUser->id : null;
 
-            // Create user with all required fields
-            $user = \App\Models\EnhancedUser::create([
-                'name' => $registrationData['name'],
-                'email' => $email,
-                'password' => Hash::make($registrationData['password']),
-                'role' => $partnerRole ? $partnerRole->name : 'Partner',
-                'role_id' => $partnerRole ? $partnerRole->id : null,
-                'status' => 'active',
-                'partner_id' => $partner->id,
-                'email_verified_at' => now(), // Mark as verified since OTP is verified
-                'created_by' => $systemUserId, // Web Registration System
-                'updated_by' => $systemUserId,
-            ]);
+                // Create user with only the fields that exist in the database
+                $userData = [
+                    'name' => $registrationData['name'],
+                    'email' => $email,
+                    'password' => Hash::make($registrationData['password']),
+                    'email_verified_at' => now(),
+                    'role' => $partnerRole->name,
+                ];
+                
+                // Add optional fields if they exist in the database
+                if (Schema::hasColumn('users', 'status')) {
+                    $userData['status'] = 'active';
+                }
+                if (Schema::hasColumn('users', 'partner_id')) {
+                    $userData['partner_id'] = $partner->id;
+                }
+                if (Schema::hasColumn('users', 'created_by') && $systemUserId) {
+                    $userData['created_by'] = $systemUserId;
+                }
+                if (Schema::hasColumn('users', 'updated_by') && $systemUserId) {
+                    $userData['updated_by'] = $systemUserId;
+                }
+                
+                // Create the user
+                $user = \App\Models\EnhancedUser::create($userData);
 
-            // Update partner with user_id
+                // Update partner with user_id
             $partner->update(['user_id' => $user->id]);
 
             // Mark OTP as used
@@ -124,26 +151,39 @@ class OtpVerificationController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             
-            // Log the error for debugging
-            \Log::error('Partner registration failed: ' . $e->getMessage(), [
-                'email' => $email,
-                'error' => $e->getMessage(),
+            // Get detailed error information
+            $errorMessage = $e->getMessage();
+            $errorDetails = [
+                'message' => $errorMessage,
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString()
-            ]);
+            ];
+            
+            // Log the error for debugging
+            \Log::error('Partner registration failed', $errorDetails);
             
             // Clear session data
             $request->session()->forget(['registration_email', 'registration_data']);
             
-            // Check if it's a duplicate email error
-            if (str_contains($e->getMessage(), 'Duplicate entry') && str_contains($e->getMessage(), 'email')) {
+            // Check specific error types
+            if (str_contains($errorMessage, 'Duplicate entry') && str_contains($errorMessage, 'email')) {
                 return redirect()->route('register')->withErrors([
                     'email' => 'This email address is already registered. Please use a different email address or try logging in.'
                 ]);
             }
             
-            // Generic error message for other issues
+            // For development, show detailed error
+            if (config('app.debug')) {
+                return redirect()->route('register')
+                    ->withErrors([
+                        'email' => 'Registration error: ' . $errorMessage . ' in ' . $e->getFile() . ' on line ' . $e->getLine()
+                    ]);
+            }
+            
+            // Production error message
             return redirect()->route('register')->withErrors([
-                'email' => 'Registration failed due to a technical issue. Please try again or contact support if the problem persists.'
+                'email' => 'Registration failed due to a technical issue. Please try again or contact support if the problem persists. Error: ' . $errorMessage
             ]);
         }
     }

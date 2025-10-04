@@ -599,28 +599,93 @@ Route::middleware('auth')->group(function () {
                 // Debug: Log the partner data
                 \Log::info('Partner data for settings:', ['partner_id' => $partner->id, 'name' => $partner->name ?? 'No name']);
 
-                $roles = \App\Models\Role::with('users')->get(); // Eager load users for efficiency
+                try {
+                    // Debug: Check if EnhancedRole exists
+                    if (!class_exists('App\\Models\\EnhancedRole')) {
+                        throw new \Exception('EnhancedRole class not found');
+                    }
 
-                $stats = [
-                    'total_users' => \App\Models\EnhancedUser::where('partner_id', $partner->id)->count(),
-                    'active_users' => \App\Models\EnhancedUser::where('partner_id', $partner->id)->where('status', 'active')->count(),
-                    'pending_users' => \App\Models\EnhancedUser::where('partner_id', $partner->id)->where('status', 'pending')->count(),
-                    'suspended_users' => \App\Models\EnhancedUser::where('partner_id', $partner->id)->where('status', 'suspended')->count(),
-                    'total_roles' => $roles->count(),
-                    'roles' => $roles,
-                    'users' => \App\Models\EnhancedUser::where('partner_id', $partner->id)
-                        ->where('id', '!=', $partner->user_id) // Exclude the partner's own account to avoid duplicates
+                    // Debug: Get roles with users
+                    $roles = \App\Models\EnhancedRole::with('users')->get();
+                    \Log::info('Roles loaded successfully', ['count' => $roles->count()]);
+
+                    // Debug: Check if partner_id column exists
+                    $hasPartnerIdColumn = \Schema::hasColumn('users', 'partner_id');
+                    \Log::info('Database check', [
+                        'has_partner_id_column' => $hasPartnerIdColumn,
+                        'partner_id' => $partner->id,
+                        'user_id' => $partner->user_id
+                    ]);
+
+                    // Get user counts - handle case where partner_id column might not exist
+                    $userQuery = \App\Models\EnhancedUser::query();
+                    if ($hasPartnerIdColumn) {
+                        $userQuery->where('partner_id', $partner->id);
+                    } else {
+                        // Fallback to user_id if partner_id column doesn't exist
+                        $userQuery->where('id', $partner->user_id);
+                    }
+                    
+                    $totalUsers = $userQuery->count();
+                    $activeUsers = (clone $userQuery)->where('status', 'active')->count();
+                    $pendingUsers = (clone $userQuery)->where('status', 'pending')->count();
+                    $suspendedUsers = (clone $userQuery)->where('status', 'suspended')->count();
+                    
+                    \Log::info('User counts', [
+                        'total' => $totalUsers,
+                        'active' => $activeUsers,
+                        'pending' => $pendingUsers,
+                        'suspended' => $suspendedUsers
+                    ]);
+
+                    // Get recent users
+                    $recentUsersQuery = \App\Models\EnhancedUser::query()
+                        ->where('id', '!=', $partner->user_id)
                         ->with('roles')
                         ->latest()
-                        ->take(4)
-                        ->get()
-                        ->prepend(\App\Models\EnhancedUser::find($partner->user_id)), // Add partner's own account to the start of the list
-                ];
+                        ->take(4);
 
-                return view('partner.Settings.partner-settings', compact('partner', 'stats'));
+                    // Add partner_id condition if the column exists
+                    if ($hasPartnerIdColumn) {
+                        $recentUsersQuery->where('partner_id', $partner->id);
+                    } else {
+                        // If no partner_id column, only show the partner's own user
+                        $recentUsersQuery->where('id', $partner->user_id);
+                    }
+
+                    $recentUsers = $recentUsersQuery->get();
+                    \Log::info('Recent users loaded', ['count' => $recentUsers->count()]);
+
+                    // Add partner's own account if not already included
+                    $partnerUser = \App\Models\EnhancedUser::find($partner->user_id);
+                    if ($partnerUser && !$recentUsers->contains('id', $partnerUser->id)) {
+                        $recentUsers->prepend($partnerUser);
+                    }
+
+                    $stats = [
+                        'total_users' => $totalUsers,
+                        'active_users' => $activeUsers,
+                        'pending_users' => $pendingUsers,
+                        'suspended_users' => $suspendedUsers,
+                        'total_roles' => $roles->count(),
+                        'roles' => $roles,
+                        'users' => $recentUsers,
+                    ];
+
+                    // Debug: Check if view exists
+                    if (!view()->exists('partner.settings.partner-settings')) {
+                        throw new \Exception('View not found: partner.settings.partner-settings');
+                    }
+
+                    return view('partner.settings.partner-settings', compact('partner', 'stats'));
+                } catch (\Exception $e) {
+                    \Log::error('Error preparing data for settings view: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
+                    throw $e; // Re-throw to be caught by the outer try-catch
+                }
             } catch (\Exception $e) {
-                \Log::error('Error in partner settings route: ' . $e->getMessage());
-                return redirect()->route('partner.dashboard')->with('error', 'An error occurred while loading settings.');
+                \Log::error('Error in partner settings route: ' . $e->getMessage() . '\n' . $e->getTraceAsString());
+                return redirect()->route('partner.dashboard')
+                    ->with('error', 'An error occurred while loading settings: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
             }
         })->name('settings.index');
         
@@ -633,7 +698,7 @@ Route::middleware('auth')->group(function () {
                     return redirect()->route('partner.dashboard')->with('error', 'Partner profile not found. Please complete your profile first.');
                 }
                 
-                return view('partner.Settings.test-settings', compact('partner'));
+                return view('partner.settings.test-settings', compact('partner'));
             } catch (\Exception $e) {
                 \Log::error('Error in test settings route: ' . $e->getMessage());
                 return redirect()->route('partner.dashboard')->with('error', 'An error occurred while loading test settings.');
