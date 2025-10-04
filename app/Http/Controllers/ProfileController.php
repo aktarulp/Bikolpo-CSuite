@@ -116,7 +116,7 @@ class ProfileController extends Controller
         
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
+            'email' => 'required|email|unique:ac_users,email,' . $user->id,
             'phone' => 'nullable|string|max:20',
             'current_password' => 'nullable|string',
             'new_password' => 'nullable|string|min:8|confirmed',

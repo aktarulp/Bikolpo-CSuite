@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\EnhancedUser;
 use App\Models\Partner;
 use App\Models\VerificationCode;
 use App\Notifications\OtpVerificationNotification;
@@ -45,13 +45,13 @@ class RegisteredUserController extends Controller
         // Add conditional validation based on registration type
         if ($registerType === 'partner') {
             $rules['name'] = ['required', 'string', 'max:255'];
-            $rules['email'] = ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'];
+            $rules['email'] = ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:ac_users,email'];
         } else {
             $rules['phone'] = [
                 'required', 
                 'string', 
                 'regex:/^01[3-9][0-9]{8}$/', 
-                'unique:users,phone'
+                'unique:ac_users,phone'
             ];
         }
 
@@ -135,7 +135,7 @@ class RegisteredUserController extends Controller
     private function sendOtpEmail(string $email, string $otp): void
     {
         try {
-            $user = new User(['email' => $email]);
+            $user = new EnhancedUser(['email' => $email]);
             $user->notify(new OtpVerificationNotification($otp));
         } catch (\Exception $e) {
             \Log::error('Failed to send OTP email: ' . $e->getMessage());

@@ -55,8 +55,8 @@ class StudentController extends Controller
 
         $validated = $request->validate([
             'full_name' => 'required|string|max:255',
-            'email' => 'nullable|email|unique:users,email',
-            'phone' => 'required|string|unique:users,phone',
+            'email' => 'nullable|email|unique:ac_users,email',
+            'phone' => 'required|string|unique:ac_users,phone',
             'date_of_birth' => 'required|date',
             'gender' => 'required|in:male,female,other',
             'address' => 'nullable|string|max:500',
@@ -148,8 +148,8 @@ class StudentController extends Controller
 
         $validated = $request->validate([
             'full_name' => 'required|string|max:255',
-            'email' => 'nullable|email|unique:users,email,' . $student->user_id,
-            'phone' => 'required|string|unique:users,phone,' . $student->user_id,
+            'email' => 'nullable|email|unique:ac_users,email,' . $student->user_id,
+            'phone' => 'required|string|unique:ac_users,phone,' . $student->user_id,
             'date_of_birth' => 'required|date',
             'gender' => 'required|in:male,female,other',
             'address' => 'nullable|string|max:500',

@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
-use App\Models\User;
+use App\Models\EnhancedUser;
 use App\Models\Partner;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -34,7 +34,7 @@ class PartnerRegistrationTest extends TestCase
         ]);
 
         // Check that user was NOT created yet
-        $this->assertDatabaseMissing('users', [
+        $this->assertDatabaseMissing('ac_users', [
             'email' => 'test@institute.com',
         ]);
 
@@ -71,13 +71,13 @@ class PartnerRegistrationTest extends TestCase
         $response->assertRedirect('/login');
 
         // Check that user was created
-        $this->assertDatabaseHas('users', [
+        $this->assertDatabaseHas('ac_users', [
             'name' => 'Test Institute',
             'email' => 'test@institute.com',
             'role' => 'partner',
         ]);
 
-        $user = User::where('email', 'test@institute.com')->first();
+        $user = EnhancedUser::where('email', 'test@institute.com')->first();
         $this->assertNotNull($user);
 
         // Check that partner was created

@@ -639,28 +639,43 @@ Route::middleware('auth')->group(function () {
                         'suspended' => $suspendedUsers
                     ]);
 
-                    // Get recent users
-                    $recentUsersQuery = \App\Models\EnhancedUser::query()
-                        ->where('id', '!=', $partner->user_id)
-                        ->with('roles')
+                    // Get all users for the partner (not just recent ones) to show complete user management
+                    $allUsersQuery = \App\Models\EnhancedUser::query()
+                        ->with(['roles' => function($query) {
+                            $query->select('ac_roles.id', 'ac_roles.name', 'ac_roles.display_name');
+                        }])
                         ->latest()
-                        ->take(4);
+                        ->take(10); // Show up to 10 users instead of 4
 
                     // Add partner_id condition if the column exists
                     if ($hasPartnerIdColumn) {
-                        $recentUsersQuery->where('partner_id', $partner->id);
+                        $allUsersQuery->where('partner_id', $partner->id);
                     } else {
-                        // If no partner_id column, only show the partner's own user
-                        $recentUsersQuery->where('id', $partner->user_id);
+                        // If no partner_id column, show all users (for development/testing)
+                        // In production, you might want to limit this further
+                        $allUsersQuery->limit(10);
                     }
 
-                    $recentUsers = $recentUsersQuery->get();
-                    \Log::info('Recent users loaded', ['count' => $recentUsers->count()]);
+                    $allUsers = $allUsersQuery->get();
+                    \Log::info('All users loaded', ['count' => $allUsers->count()]);
 
-                    // Add partner's own account if not already included
-                    $partnerUser = \App\Models\EnhancedUser::find($partner->user_id);
-                    if ($partnerUser && !$recentUsers->contains('id', $partnerUser->id)) {
-                        $recentUsers->prepend($partnerUser);
+                    // Always include partner's own account at the top if not already included
+                    $partnerUser = \App\Models\EnhancedUser::with(['roles' => function($query) {
+                        $query->select('ac_roles.id', 'ac_roles.name', 'ac_roles.display_name');
+                    }])->find($partner->user_id);
+                    
+                    if ($partnerUser && !$allUsers->contains('id', $partnerUser->id)) {
+                        $allUsers->prepend($partnerUser);
+                    }
+                    
+                    // Debug: Log role information for each user
+                    foreach ($allUsers as $user) {
+                        \Log::info('User role debug', [
+                            'user_id' => $user->id,
+                            'user_email' => $user->email,
+                            'roles_count' => $user->roles->count(),
+                            'roles' => $user->roles->pluck('name', 'id')->toArray()
+                        ]);
                     }
 
                     $stats = [
@@ -670,7 +685,7 @@ Route::middleware('auth')->group(function () {
                         'suspended_users' => $suspendedUsers,
                         'total_roles' => $roles->count(),
                         'roles' => $roles,
-                        'users' => $recentUsers,
+                        'users' => $allUsers,
                     ];
 
                     // Debug: Check if view exists

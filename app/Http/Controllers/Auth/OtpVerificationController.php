@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\VerificationCode;
-use App\Models\User;
+use App\Models\EnhancedUser;
 use App\Models\Partner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -134,6 +134,18 @@ class OtpVerificationController extends Controller
                 $user->updated_by = $user->id;
             }
             $user->save();
+            
+            // Create role assignment in pivot table
+            if ($partnerRole && Schema::hasTable('ac_user_roles')) {
+                DB::table('ac_user_roles')->insert([
+                    'user_id' => $user->id,
+                    'role_id' => $partnerRole->id,
+                    'assigned_by' => $user->id,
+                    'assigned_at' => now(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
 
                 // Update partner with user_id
             $partner->update(['user_id' => $user->id]);
@@ -206,7 +218,7 @@ class OtpVerificationController extends Controller
 
         // Send email with new OTP using our custom notification
         try {
-            $user = new User(['email' => $email]);
+            $user = new EnhancedUser(['email' => $email]);
             $user->notify(new \App\Notifications\OtpVerificationNotification($verificationCode->code));
             
             return back()->with('status', 'A new verification code has been sent to your email.');

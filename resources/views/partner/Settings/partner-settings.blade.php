@@ -143,9 +143,19 @@
                                         </span>
                                     </td>
                                     <td class="px-5 py-4 whitespace-nowrap">
-                                        <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-50 text-blue-700">
-                                            {{ $user->roles->first()->display_name ?? 'N/A' }}
-                                        </span>
+                                        @if($user->roles->isNotEmpty())
+                                            <div class="flex flex-wrap gap-1">
+                                                @foreach($user->roles as $role)
+                                                    <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-50 text-blue-700">
+                                                        {{ $role->display_name ?? ucwords(str_replace('_', ' ', $role->name)) }}
+                                                    </span>
+                                                @endforeach
+                                            </div>
+                                        @else
+                                            <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-600">
+                                                No Role
+                                            </span>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach
@@ -172,9 +182,19 @@
                                 </span>
                             </div>
                             <div class="mt-3 flex items-center justify-between">
-                                <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-50 text-blue-700">
-                                    {{ $user->roles->first()->display_name ?? 'N/A' }}
-                                </span>
+                                <div class="flex flex-wrap gap-1">
+                                    @if($user->roles->isNotEmpty())
+                                        @foreach($user->roles as $role)
+                                            <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-50 text-blue-700">
+                                                {{ $role->display_name ?? ucwords(str_replace('_', ' ', $role->name)) }}
+                                            </span>
+                                        @endforeach
+                                    @else
+                                        <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-600">
+                                            No Role
+                                        </span>
+                                    @endif
+                                </div>
                                 <a href="#" class="text-xs font-medium text-blue-600 hover:text-blue-800">View</a>
                             </div>
                         </div>
