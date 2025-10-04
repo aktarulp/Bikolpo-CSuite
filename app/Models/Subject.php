@@ -14,6 +14,7 @@ class Subject extends Model
         'code',
         'description',
         'status',
+        'flag',
         'course_id',
         'partner_id',
         'created_by',

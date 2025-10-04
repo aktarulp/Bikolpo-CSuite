@@ -1146,7 +1146,7 @@ class ExamController extends Controller
             'assignedQuestionsWithMarks' => $exam->questions->pluck('pivot.marks', 'id'),
             'assignedQuestionsWithOrder' => $assignedQuestionsWithOrder,
             'courses' => \App\Models\Course::where('partner_id', $partnerId)->where('status', 'active')->get(),
-            'subjects' => \App\Models\Subject::where('partner_id', $partnerId)->where('status', 'active')->get(),
+            'subjects' => \App\Models\Subject::where('partner_id', $partnerId)->where('status', 'active')->where('flag', 'active')->get(),
             'topics' => \App\Models\Topic::where('partner_id', $partnerId)->where('status', 'active')->get(),
             'questionTypes' => \App\Models\Question::where('partner_id', $partnerId)
                 ->where('status', 'active')

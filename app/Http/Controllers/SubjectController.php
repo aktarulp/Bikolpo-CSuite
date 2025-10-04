@@ -20,6 +20,7 @@ class SubjectController extends Controller
         $subjects = Subject::with(['course'])
             ->where('partner_id', $partnerId)
             ->where('status', 'active')
+            ->where('flag', 'active')
             ->withCount('topics')
             ->latest()
             ->paginate(15);
@@ -131,7 +132,7 @@ class SubjectController extends Controller
         }
         
         // No child items, mark as deleted instead of hard delete
-        $subject->update(['status' => 'deleted']);
+        $subject->update(['flag' => 'deleted']);
 
         return redirect()->route('partner.subjects.index')
             ->with('success', 'Subject deleted successfully.');

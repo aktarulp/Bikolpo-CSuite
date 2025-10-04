@@ -76,6 +76,7 @@ class TopicController extends Controller
     {
         $partnerId = $this->getPartnerId();
         $subjects = Subject::where('status', 'active')
+            ->where('flag', 'active')
             ->with('course')
             ->where('partner_id', $partnerId)
             ->get();

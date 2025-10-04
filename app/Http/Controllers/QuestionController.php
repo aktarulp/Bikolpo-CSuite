@@ -59,7 +59,7 @@ class QuestionController extends Controller
 
         $questions = $query->latest()->paginate(15);
         $courses = Course::where('status', 'active')->where('partner_id', $partnerId)->get();
-        $subjects = Subject::where('status', 'active')->where('partner_id', $partnerId)->get();
+        $subjects = Subject::where('status', 'active')->where('flag', 'active')->where('partner_id', $partnerId)->get();
         $topics = Topic::where('status', 'active')->where('partner_id', $partnerId)->get();
         $questionTypes = QuestionType::where('status', 'active')->orderBy('sort_order')->get();
 
@@ -390,6 +390,7 @@ class QuestionController extends Controller
             if ($courseId) {
                 // Get subjects that belong to this course for this partner
                 $subjects = Subject::where('status', 'active')
+                    ->where('flag', 'active')
                     ->where('partner_id', $partnerId)
                     ->where('course_id', $courseId)
                     ->select('id', 'name')
@@ -398,6 +399,7 @@ class QuestionController extends Controller
             } else {
                 // Get all subjects for this partner
                 $subjects = Subject::where('status', 'active')
+                    ->where('flag', 'active')
                     ->where('partner_id', $partnerId)
                     ->select('id', 'name')
                     ->orderBy('name')
@@ -543,6 +545,7 @@ class QuestionController extends Controller
             
             $subjects = $course->subjects()
                 ->where('status', 'active')
+                ->where('flag', 'active')
                 ->where('partner_id', $partnerId)
                 ->orderBy('name')
                 ->get(['id', 'name']);
@@ -558,7 +561,7 @@ class QuestionController extends Controller
     {
         $partnerId = $this->getPartnerId();
         $courses = Course::where('status', 'active')->where('partner_id', $partnerId)->get();
-        $subjects = Subject::where('status', 'active')->where('partner_id', $partnerId)->with('course')->get();
+        $subjects = Subject::where('status', 'active')->where('flag', 'active')->where('partner_id', $partnerId)->with('course')->get();
         $topics = Topic::where('status', 'active')->where('partner_id', $partnerId)->with('subject')->get();
 
         return view('partner.questions.create', compact('courses', 'subjects', 'topics'));
@@ -1192,7 +1195,7 @@ class QuestionController extends Controller
 
         $mcqType = \App\Models\QuestionType::where('q_type_code', 'MCQ')->first();
         $courses = \App\Models\Course::where('status', 'active')->where('partner_id', $partner->id)->get();
-        $subjectsByCourse = \App\Models\Subject::where('status', 'active')->where('partner_id', $partner->id)->get()->groupBy('course_id');
+        $subjectsByCourse = \App\Models\Subject::where('status', 'active')->where('flag', 'active')->where('partner_id', $partner->id)->get()->groupBy('course_id');
         $topicsBySubject = \App\Models\Topic::where('status', 'active')->where('partner_id', $partner->id)->get()->groupBy('subject_id');
 
         if ($courses->isEmpty()) {
@@ -1217,7 +1220,7 @@ class QuestionController extends Controller
         for ($i = 1; $i <= $count; $i++) {
             $course = $courses->random();
             $subjects = $subjectsByCourse->get($course->id) ?? collect();
-            $subject = $subjects->isNotEmpty() ? $subjects->random() : \App\Models\Subject::where('status', 'active')->inRandomOrder()->first();
+            $subject = $subjects->isNotEmpty() ? $subjects->random() : \App\Models\Subject::where('status', 'active')->where('flag', 'active')->inRandomOrder()->first();
             $topics = $subject ? ($topicsBySubject->get($subject->id) ?? collect()) : collect();
             $topic = $topics->isNotEmpty() ? $topics->random() : (\App\Models\Topic::where('status', 'active')->inRandomOrder()->first());
 
@@ -1331,7 +1334,7 @@ class QuestionController extends Controller
                 return redirect()->back()->with('error', 'No active courses found. Please create courses first.');
             }
 
-            $subjectsByCourse = Subject::where('status', 'active')->where('partner_id', $partner->id)->get()->groupBy('course_id');
+            $subjectsByCourse = Subject::where('status', 'active')->where('flag', 'active')->where('partner_id', $partner->id)->get()->groupBy('course_id');
             $topicsBySubject = Topic::where('status', 'active')->where('partner_id', $partner->id)->get()->groupBy('subject_id');
 
             // Enhanced sample question templates with explanations
@@ -1364,7 +1367,7 @@ class QuestionController extends Controller
             for ($i = 1; $i <= $count; $i++) {
                 $course = $courses->random();
                 $subjects = $subjectsByCourse->get($course->id) ?? collect();
-                $subject = $subjects->isNotEmpty() ? $subjects->random() : Subject::where('status', 'active')->inRandomOrder()->first();
+                $subject = $subjects->isNotEmpty() ? $subjects->random() : Subject::where('status', 'active')->where('flag', 'active')->inRandomOrder()->first();
                 $topics = $subject ? ($topicsBySubject->get($subject->id) ?? collect()) : collect();
                 $topic = $topics->isNotEmpty() ? $topics->random() : (Topic::where('status', 'active')->inRandomOrder()->first());
 

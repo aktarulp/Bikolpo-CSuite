@@ -223,54 +223,71 @@
         <!-- Roles Content -->
         <div class="p-6">
             @if($stats['roles'] && $stats['roles']->isNotEmpty())
-                <!-- Desktop Table -->
-                <div class="hidden sm:block overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Level</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Users</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            @foreach($stats['roles']->take(5) as $role)
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-medium text-gray-900">{{ $role->display_name }}</div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        {!! $role->level_badge !!}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        {!! $role->status_badge !!}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="text-sm text-gray-600">{{ $role->users->count() }}</span>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                
-                <!-- Mobile Cards -->
-                <div class="sm:hidden space-y-3">
-                    @foreach($stats['roles']->take(5) as $role)
-                        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                @php
+                    $currentLevel = Auth::user()?->getHighestRoleLevel();
+                    if ($currentLevel === null) { $currentLevel = 1; }
+                    $rolesCollection = $stats['roles']->filter(function($r) use ($currentLevel) {
+                        return ($r->level ?? PHP_INT_MAX) >= $currentLevel;
+                    });
+                @endphp
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    @forelse($rolesCollection as $role)
+                    <div class="group bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden">
+                        <div class="p-4">
                             <div class="flex items-start justify-between mb-2">
-                                <div class="flex-1">
-                                    <h4 class="text-sm font-medium text-gray-900 mb-1">{{ $role->display_name }}</h4>
-                                    <div class="flex items-center space-x-2">
-                                        {!! $role->level_badge !!}
-                                        {!! $role->status_badge !!}
-                                    </div>
+                                <div class="min-w-0">
+                                    <div class="text-xs uppercase tracking-wide text-gray-500">Role</div>
+                                    <h4 class="mt-0.5 text-lg font-semibold text-gray-900 truncate">{{ $role->display_name ?? ucwords(str_replace('_',' ',$role->name)) }}</h4>
+                                    <div class="text-xs text-gray-500">System: <span class="font-mono">{{ $role->name }}</span></div>
+                                </div>
+                                <a href="{{ route('partner.access-control.edit-role', $role) }}"
+                                   class="p-2 rounded-lg text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                                   title="Edit Role">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                </a>
+                            </div>
+
+                            <div class="flex items-center space-x-2 mb-3">
+                                {!! $role->level_badge !!}
+                                {!! $role->status_badge !!}
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2 text-sm">
+                                <div class="bg-gray-50 rounded-lg p-2 border border-gray-100 flex items-center justify-between">
+                                    <span class="text-gray-600">Users</span>
+                                    <span class="font-semibold text-gray-900">{{ $role->users->count() }}</span>
+                                </div>
+                                <div class="bg-gray-50 rounded-lg p-2 border border-gray-100 flex items-center justify-between">
+                                    <span class="text-gray-600">Perms</span>
+                                    <span class="font-semibold text-gray-900">{{ $role->permissions->count() }}</span>
                                 </div>
                             </div>
-                            <div class="text-xs text-gray-500">{{ $role->users->count() }} Users</div>
+
+                            <div class="mt-3 flex items-center justify-between">
+                                <a href="{{ route('partner.access-control.edit-role', $role) }}"
+                                   class="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors">
+                                    Edit Permissions
+                                </a>
+                                <a href="{{ route('partner.access-control.index') }}" class="text-xs text-gray-500 hover:text-gray-700">Access Control</a>
+                            </div>
                         </div>
-                    @endforeach
+                    </div>
+                    @empty
+                        <div class="col-span-full">
+                            <div class="text-center py-12">
+                                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="text-lg font-medium text-gray-900 mb-2">No roles available</h3>
+                                <p class="text-gray-600 mb-4">No roles at or below your permission level to display.</p>
+                            </div>
+                        </div>
+                    @endforelse
                 </div>
             @else
                 <!-- Empty State -->
