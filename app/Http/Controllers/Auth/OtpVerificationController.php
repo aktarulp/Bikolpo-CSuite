@@ -103,35 +103,37 @@ class OtpVerificationController extends Controller
                 }
             }
 
-            // Get system user ID for registration tracking
-            $systemUser = \App\Models\EnhancedUser::where('email', 'system@bikolpo.com')->first();
-            $systemUserId = $systemUser ? $systemUser->id : null;
-
-                // Create user with only the fields that exist in the database
-                $userData = [
-                    'name' => $registrationData['name'],
-                    'email' => $email,
-                    'password' => Hash::make($registrationData['password']),
-                    'email_verified_at' => now(),
-                    'role' => $partnerRole->name,
-                ];
-                
-                // Add optional fields if they exist in the database
-                if (Schema::hasColumn('users', 'status')) {
-                    $userData['status'] = 'active';
-                }
-                if (Schema::hasColumn('users', 'partner_id')) {
-                    $userData['partner_id'] = $partner->id;
-                }
-                if (Schema::hasColumn('users', 'created_by') && $systemUserId) {
-                    $userData['created_by'] = $systemUserId;
-                }
-                if (Schema::hasColumn('users', 'updated_by') && $systemUserId) {
-                    $userData['updated_by'] = $systemUserId;
-                }
-                
-                // Create the user
-                $user = \App\Models\EnhancedUser::create($userData);
+            // Create user with only the fields that exist in the database
+            $userData = [
+                'name' => $registrationData['name'],
+                'email' => $email,
+                'password' => Hash::make($registrationData['password']),
+                'email_verified_at' => now(),
+                'role' => $partnerRole->name,
+            ];
+            
+            // Add optional fields if they exist in the database
+            if (Schema::hasColumn('users', 'status')) {
+                $userData['status'] = 'active';
+            }
+            if (Schema::hasColumn('users', 'partner_id')) {
+                $userData['partner_id'] = $partner->id;
+            }
+            if (Schema::hasColumn('users', 'role_id')) {
+                $userData['role_id'] = $partnerRole->id;
+            }
+            
+            // Create the user first
+            $user = \App\Models\EnhancedUser::create($userData);
+            
+            // Now update created_by and updated_by with the user's own ID (self-registration)
+            if (Schema::hasColumn('users', 'created_by')) {
+                $user->created_by = $user->id;
+            }
+            if (Schema::hasColumn('users', 'updated_by')) {
+                $user->updated_by = $user->id;
+            }
+            $user->save();
 
                 // Update partner with user_id
             $partner->update(['user_id' => $user->id]);
