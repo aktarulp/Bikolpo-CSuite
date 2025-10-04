@@ -37,7 +37,7 @@ class MenuPermissionService
     protected function getUserMenuPermissions(int $userId): array
     {
         // Get user's roles
-        $roleIds = DB::table('user_roles')
+        $roleIds = DB::table('ac_user_roles')
             ->where('user_id', $userId)
             ->pluck('role_id')
             ->toArray();
@@ -47,11 +47,11 @@ class MenuPermissionService
         }
         
         // Get permissions for these roles
-        $permissions = DB::table('role_permissions')
-            ->join('permissions', 'role_permissions.enhanced_permission_id', '=', 'permissions.id')
-            ->whereIn('role_permissions.enhanced_role_id', $roleIds)
-            ->where('permissions.name', 'LIKE', 'menu-%')
-            ->pluck('permissions.name')
+        $permissions = DB::table('ac_role_permissions')
+            ->join('ac_permissions', 'ac_role_permissions.enhanced_permission_id', '=', 'ac_permissions.id')
+            ->whereIn('ac_role_permissions.enhanced_role_id', $roleIds)
+            ->where('ac_permissions.name', 'LIKE', 'menu-%')
+            ->pluck('ac_permissions.name')
             ->unique()
             ->toArray();
         

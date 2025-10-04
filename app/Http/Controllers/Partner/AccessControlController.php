@@ -18,33 +18,42 @@ class AccessControlController extends Controller
     {
         // Get current user's highest role level
         $currentUser = \App\Models\EnhancedUser::find(auth()->id());
-        $currentUserLevel = $currentUser->getHighestRoleLevel();
+        $currentUserLevel = $currentUser->getHighestRoleLevel() ?? 1;
         
-        // If currentUserLevel is null, default to highest privilege level
-        if ($currentUserLevel === null) {
-            $currentUserLevel = 1;
-        }
-        
-        // Filter roles - only show roles with level >= current user's level (same or lower privilege)
-        $roles = Role::with('permissions')
+        // Get roles with same or higher level
+        $roles = \App\Models\EnhancedRole::with('permissions')
             ->where('level', '>=', $currentUserLevel)
             ->orderBy('level')
             ->get();
-            
-        $permissions = Permission::all()->groupBy(function($permission) {
-            // Group permissions by menu (extract menu name from permission name)
+
+        // Get permission structure from config
+        $permissionStructure = config('permissions.menus', []);
+        
+        // Get all permissions grouped by module
+        $permissions = \App\Models\EnhancedPermission::all()->groupBy(function($permission) {
             if (str_starts_with($permission->name, 'menu-')) {
-                return substr($permission->name, 5); // Remove 'menu-' prefix
+                return substr($permission->name, 5);
             }
-            
             $parts = explode('-', $permission->name, 2);
             return $parts[0] ?? 'other';
         });
 
-        $permissionConfig = config('permissions.menus', []);
-
-        return view('partner.access-control.index', compact('roles', 'permissions', 'permissionConfig'));
+        return view('partner.access-control.index', compact('roles', 'permissions', 'permissionStructure'));
     }
+
+    /**
+     * Get role permissions
+     */
+    public function getRolePermissions($roleId)
+    {
+        $role = \App\Models\EnhancedRole::findOrFail($roleId);
+        return response()->json([
+            'success' => true,
+            'permissions' => $role->permissions->pluck('name')->toArray()
+        ]);
+    }
+
+    
 
     /**
      * Show the form for creating a new role.
@@ -133,25 +142,19 @@ class AccessControlController extends Controller
     /**
      * Update role permissions.
      */
-    public function updateRolePermissions(Request $request, Role $role)
+    public function updateRolePermissions(Request $request, $roleId)
     {
-        $validator = Validator::make($request->all(), [
-            'permissions' => 'array',
-            'permissions.*' => 'exists:' . config('permission.table_names.permissions') . ',name'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
         try {
-            // Sync permissions (this will remove old permissions and add new ones)
+            $role = \App\Models\EnhancedRole::findOrFail($roleId);
             $permissions = $request->input('permissions', []);
-            $role->syncPermissions($permissions);
+            
+            // Validate permissions exist
+            $validPermissions = \App\Models\EnhancedPermission::whereIn('name', $permissions)
+                ->pluck('name')
+                ->toArray();
+            
+            // Sync permissions (this will remove old permissions and add new ones)
+            $role->syncPermissions($validPermissions);
 
             return response()->json([
                 'success' => true,
@@ -164,19 +167,6 @@ class AccessControlController extends Controller
                 'message' => 'Error updating role permissions: ' . $e->getMessage()
             ], 500);
         }
-    }
-
-    /**
-     * Get role permissions for editing.
-     */
-    public function getRolePermissions(Role $role)
-    {
-        $rolePermissions = $role->permissions->pluck('name')->toArray();
-        
-        return response()->json([
-            'success' => true,
-            'permissions' => $rolePermissions
-        ]);
     }
 
     /**
@@ -232,9 +222,8 @@ class AccessControlController extends Controller
             $menuPermission = "menu-{$menuKey}";
             
             $structure[$menuKey] = [
-                'label' => $menuConfig['label'],
+                'name' => $menuConfig['label'] ?? ucfirst($menuKey),
                 'menu_permission' => $menuPermission,
-                'menu_exists' => $permissions->has($menuPermission),
                 'buttons' => []
             ];
             
@@ -242,8 +231,7 @@ class AccessControlController extends Controller
                 $buttonPermission = "{$menuKey}-{$buttonKey}";
                 $structure[$menuKey]['buttons'][$buttonKey] = [
                     'label' => $buttonLabel,
-                    'permission' => $buttonPermission,
-                    'exists' => $permissions->has($buttonPermission)
+                    'permission' => $buttonPermission
                 ];
             }
         }

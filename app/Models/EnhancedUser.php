@@ -16,7 +16,7 @@ class EnhancedUser extends Authenticatable
 {
     use HasFactory, Notifiable, HasApiTokens, HasRoles;
 
-    protected $table = 'users';
+    protected $table = 'ac_users';
     
     protected $fillable = [
         'name',
@@ -75,7 +75,7 @@ class EnhancedUser extends Authenticatable
      */
     public function roles(): BelongsToMany
     {
-        return $this->belongsToMany(EnhancedRole::class, 'user_roles', 'user_id', 'role_id')
+        return $this->belongsToMany(EnhancedRole::class, 'ac_user_roles', 'user_id', 'role_id')
                     ->withPivot('assigned_by', 'assigned_at', 'expires_at')
                     ->withTimestamps();
     }

@@ -12,7 +12,7 @@ class EnhancedRole extends Model
 {
     use HasFactory;
 
-    protected $table = 'roles';
+    protected $table = 'ac_roles';
     
     protected $fillable = [
         'name',
@@ -90,7 +90,7 @@ class EnhancedRole extends Model
      */
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'user_roles', 'role_id', 'user_id')
+        return $this->belongsToMany(EnhancedUser::class, 'ac_user_roles', 'role_id', 'user_id')
                     ->withPivot('assigned_by', 'assigned_at', 'expires_at')
                     ->withTimestamps();
     }

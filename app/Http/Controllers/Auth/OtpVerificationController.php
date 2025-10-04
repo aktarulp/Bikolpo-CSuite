@@ -113,13 +113,13 @@ class OtpVerificationController extends Controller
             ];
             
             // Add optional fields if they exist in the database
-            if (Schema::hasColumn('users', 'status')) {
+            if (Schema::hasColumn('ac_users', 'status')) {
                 $userData['status'] = 'active';
             }
-            if (Schema::hasColumn('users', 'partner_id')) {
+            if (Schema::hasColumn('ac_users', 'partner_id')) {
                 $userData['partner_id'] = $partner->id;
             }
-            if (Schema::hasColumn('users', 'role_id')) {
+            if (Schema::hasColumn('ac_users', 'role_id')) {
                 $userData['role_id'] = $partnerRole->id;
             }
             
@@ -127,10 +127,10 @@ class OtpVerificationController extends Controller
             $user = \App\Models\EnhancedUser::create($userData);
             
             // Now update created_by and updated_by with the user's own ID (self-registration)
-            if (Schema::hasColumn('users', 'created_by')) {
+            if (Schema::hasColumn('ac_users', 'created_by')) {
                 $user->created_by = $user->id;
             }
-            if (Schema::hasColumn('users', 'updated_by')) {
+            if (Schema::hasColumn('ac_users', 'updated_by')) {
                 $user->updated_by = $user->id;
             }
             $user->save();

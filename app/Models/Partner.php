@@ -74,7 +74,7 @@ class Partner extends Model
     // Relationships
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(EnhancedUser::class);
     }
 
     public function questions()
@@ -127,7 +127,7 @@ class Partner extends Model
 
     public function users()
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(EnhancedUser::class);
     }
 
     // Accessors

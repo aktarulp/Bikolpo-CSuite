@@ -11,7 +11,7 @@ class EnhancedPermission extends Model
 {
     use HasFactory;
 
-    protected $table = 'permissions';
+    protected $table = 'ac_permissions';
     
     protected $fillable = [
         'name',
@@ -84,7 +84,7 @@ class EnhancedPermission extends Model
     {
         return $this->belongsToMany(
                     EnhancedRole::class,
-                    'role_permissions',
+                    'ac_role_permissions',
                     'enhanced_permission_id',
                     'enhanced_role_id'
                 )

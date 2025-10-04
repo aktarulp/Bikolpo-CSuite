@@ -12,6 +12,8 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
+    protected $table = 'ac_users';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -333,7 +335,7 @@ class User extends Authenticatable
      */
     public function roles()
     {
-        return $this->belongsToMany(EnhancedRole::class, 'user_roles', 'user_id', 'role_id')
+        return $this->belongsToMany(EnhancedRole::class, 'ac_user_roles', 'user_id', 'role_id')
                     ->withPivot('assigned_by', 'assigned_at', 'expires_at')
                     ->withTimestamps();
     }

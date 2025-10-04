@@ -611,7 +611,7 @@ Route::middleware('auth')->group(function () {
                     \Log::info('Roles loaded successfully', ['count' => $roles->count()]);
 
                     // Debug: Check if partner_id column exists
-                    $hasPartnerIdColumn = \Schema::hasColumn('users', 'partner_id');
+                    $hasPartnerIdColumn = \Schema::hasColumn('ac_users', 'partner_id');
                     \Log::info('Database check', [
                         'has_partner_id_column' => $hasPartnerIdColumn,
                         'partner_id' => $partner->id,
@@ -706,6 +706,16 @@ Route::middleware('auth')->group(function () {
             }
         })->name('test-settings.index');
         
+        // Backup & Restore Routes
+        Route::get('backup-restore', [App\Http\Controllers\Partner\BackupRestoreController::class, 'index'])->name('settings.backup-restore');
+        Route::post('backup/database', [App\Http\Controllers\Partner\BackupRestoreController::class, 'createDatabaseBackup'])->name('settings.backup.database');
+        Route::post('backup/config', [App\Http\Controllers\Partner\BackupRestoreController::class, 'createConfigBackup'])->name('settings.backup.config');
+        Route::post('backup/uploads', [App\Http\Controllers\Partner\BackupRestoreController::class, 'createUploadsBackup'])->name('settings.backup.uploads');
+        Route::post('restore/database', [App\Http\Controllers\Partner\BackupRestoreController::class, 'restoreDatabase'])->name('settings.restore.database');
+        Route::get('backup/history', [App\Http\Controllers\Partner\BackupRestoreController::class, 'getBackupHistory'])->name('settings.backup.history');
+        Route::get('backup/download/{filename}', [App\Http\Controllers\Partner\BackupRestoreController::class, 'downloadBackup'])->name('settings.backup.download');
+        Route::delete('backup/delete', [App\Http\Controllers\Partner\BackupRestoreController::class, 'deleteBackup'])->name('settings.backup.delete');
+        
         // Demo Data Seeding
         Route::post('seed-demo-students', [\App\Http\Controllers\PartnerDashboardController::class, 'seedDemoStudents'])->name('seed-demo-students');
         Route::get('refresh-stats', [\App\Http\Controllers\PartnerDashboardController::class, 'refreshStats'])->name('refresh-stats');
@@ -761,14 +771,24 @@ Route::middleware('auth')->group(function () {
 
         // Access Control Routes
         Route::prefix('access-control')->name('access-control.')->group(function () {
+            // Main access control page
             Route::get('/', [AccessControlController::class, 'index'])->name('index');
+            
+            // Role management
             Route::get('/create-role', [AccessControlController::class, 'createRole'])->name('create-role');
-            Route::get('/roles/{role}/edit', [AccessControlController::class, 'editRole'])->name('edit-role');
             Route::post('/roles', [AccessControlController::class, 'storeRole'])->name('store-role');
-            Route::get('/roles/{role}/permissions', [AccessControlController::class, 'getRolePermissions'])->name('role-permissions');
-            Route::put('/roles/{role}/permissions', [AccessControlController::class, 'updateRolePermissions'])->name('update-role-permissions');
+            Route::get('/roles/{role}/edit', [AccessControlController::class, 'editRole'])->name('edit-role');
             Route::delete('/roles/{role}', [AccessControlController::class, 'destroyRole'])->name('destroy-role');
-            Route::get('/permission-structure', [AccessControlController::class, 'getPermissionStructure'])->name('permission-structure');
+            
+            // Permission management
+            Route::get('/roles/{role}/permissions', [AccessControlController::class, 'getRolePermissions'])
+                ->name('role-permissions');
+            Route::put('/roles/{role}/permissions', [AccessControlController::class, 'updateRolePermissions'])
+                ->name('update-role-permissions');
+                
+            // Permission structure
+            Route::get('/permission-structure', [AccessControlController::class, 'getPermissionStructure'])
+                ->name('permission-structure');
         });
         
         // Analytics routes moved outside partner middleware for better access

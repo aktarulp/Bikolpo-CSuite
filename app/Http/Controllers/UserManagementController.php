@@ -57,10 +57,10 @@ class UserManagementController extends Controller
             'inactive_users' => EnhancedUser::where('status', EnhancedUser::STATUS_INACTIVE)->count(),
             'suspended_users' => EnhancedUser::where('status', EnhancedUser::STATUS_SUSPENDED)->count(),
             'pending_users' => EnhancedUser::where('status', EnhancedUser::STATUS_PENDING)->count(),
-            'users_by_role' => EnhancedUser::join('user_roles', 'users.id', '=', 'user_roles.user_id')
-                ->join('roles', 'user_roles.role_id', '=', 'roles.id')
-                ->groupBy('roles.name')
-                ->selectRaw('roles.name as role_name, count(*) as count')
+            'users_by_role' => EnhancedUser::join('ac_user_roles', 'ac_users.id', '=', 'ac_user_roles.user_id')
+                ->join('ac_roles', 'ac_user_roles.role_id', '=', 'ac_roles.id')
+                ->groupBy('ac_roles.name')
+                ->selectRaw('ac_roles.name as role_name, count(*) as count')
                 ->pluck('count', 'role_name')
                 ->toArray(),
         ];
@@ -773,13 +773,13 @@ class UserManagementController extends Controller
             'inactive_users' => EnhancedUser::where('status', EnhancedUser::STATUS_INACTIVE)->count(),
             'suspended_users' => EnhancedUser::where('status', EnhancedUser::STATUS_SUSPENDED)->count(),
             'pending_users' => EnhancedUser::where('status', EnhancedUser::STATUS_PENDING)->count(),
-            'users_by_role' => EnhancedUser::join('user_roles', 'users.id', '=', 'user_roles.user_id')
-                ->join('roles', 'user_roles.role_id', '=', 'roles.id')
-                ->groupBy('roles.name')
-                ->selectRaw('roles.name as role_name, count(*) as count')
+            'users_by_role' => EnhancedUser::join('ac_user_roles', 'ac_users.id', '=', 'ac_user_roles.user_id')
+                ->join('ac_roles', 'ac_user_roles.role_id', '=', 'ac_roles.id')
+                ->groupBy('ac_roles.name')
+                ->selectRaw('ac_roles.name as role_name, count(*) as count')
                 ->pluck('count', 'role_name')
                 ->toArray(),
-            'users_by_partner' => EnhancedUser::join('partners', 'users.partner_id', '=', 'partners.id')
+            'users_by_partner' => EnhancedUser::join('partners', 'ac_users.partner_id', '=', 'partners.id')
                 ->groupBy('partners.name')
                 ->selectRaw('partners.name as partner_name, count(*) as count')
                 ->pluck('count', 'partner_name')

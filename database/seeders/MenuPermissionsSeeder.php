@@ -35,10 +35,10 @@ class MenuPermissionsSeeder extends Seeder
         foreach ($menuPermissions as $permission) {
             try {
                 // Check if permission already exists
-                $exists = DB::table('permissions')->where('name', $permission['name'])->exists();
+                $exists = DB::table('ac_permissions')->where('name', $permission['name'])->exists();
                 
                 if (!$exists) {
-                    DB::table('permissions')->insert([
+                    DB::table('ac_permissions')->insert([
                         'name' => $permission['name'],
                         'display_name' => $permission['display_name'],
                         'description' => $permission['description'],
@@ -67,14 +67,14 @@ class MenuPermissionsSeeder extends Seeder
     protected function assignMenuPermissionsToPartner(): void
     {
         try {
-            $partnerRole = DB::table('roles')->where('name', 'partner')->first();
+            $partnerRole = DB::table('ac_roles')->where('name', 'partner')->first();
             
             if (!$partnerRole) {
                 $this->command->warn("⚠ Partner role not found. Skipping permission assignment.");
                 return;
             }
             
-            $menuPermissions = DB::table('permissions')
+            $menuPermissions = DB::table('ac_permissions')
                 ->where('name', 'LIKE', 'menu-%')
                 ->get();
             
@@ -84,13 +84,13 @@ class MenuPermissionsSeeder extends Seeder
             foreach ($menuPermissions as $permission) {
                 try {
                     // Check if already assigned
-                    $exists = DB::table('role_permissions')
+                    $exists = DB::table('ac_role_permissions')
                         ->where('enhanced_role_id', $partnerRole->id)
                         ->where('enhanced_permission_id', $permission->id)
                         ->exists();
                     
                     if (!$exists) {
-                        DB::table('role_permissions')->insert([
+                        DB::table('ac_role_permissions')->insert([
                             'enhanced_role_id' => $partnerRole->id,
                             'enhanced_permission_id' => $permission->id,
                             'created_at' => now(),
