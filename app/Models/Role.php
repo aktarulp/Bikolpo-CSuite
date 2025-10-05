@@ -11,6 +11,9 @@ class Role extends Model
 {
     use HasFactory;
 
+    // Map to new table name to avoid querying legacy `roles` table
+    protected $table = 'ac_roles';
+
     protected $fillable = [
         'name',
         'display_name',

@@ -128,14 +128,14 @@ class AuthenticatedSessionController extends Controller
                     Log::info('Redirecting to student dashboard via phone login type', ['user_id' => $user->id]);
                     return redirect()->route('student.dashboard');
                 } else {
-                    // Default fallback to partner dashboard
-                    Log::info('Redirecting to partner dashboard as final fallback', ['user_id' => $user->id]);
-                    return redirect()->route('partner.dashboard');
+                    // Default fallback to neutral dashboard (auth-only)
+                    Log::info('Redirecting to neutral dashboard as final fallback', ['user_id' => $user->id]);
+                    return redirect()->route('dashboard');
                 }
         }
 
-        // As a final safety net, send authenticated users to partner dashboard
-        return redirect()->route('partner.dashboard');
+        // As a final safety net, send authenticated users to neutral dashboard
+        return redirect()->route('dashboard');
     }
 
     /**

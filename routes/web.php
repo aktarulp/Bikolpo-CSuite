@@ -15,6 +15,7 @@ use App\Http\Controllers\StudentExamController;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\SmsRecordController;
 use App\Http\Controllers\Partner\AccessControlController;
+use App\Http\Controllers\Partner\PartnerPermissionsController;
 
 // Include Auth Routes
 require __DIR__.'/auth.php';
@@ -43,6 +44,9 @@ Route::get('/', function () {
 
 // Authenticated dashboards (fix missing named routes after login)
 Route::middleware('auth')->group(function () {
+    // Neutral Dashboard (auth-only, no role) for safe fallback
+    Route::get('/dashboard', [PartnerDashboardController::class, 'index'])->name('dashboard');
+
     // Partner Dashboard
     Route::get('/partner/dashboard', [PartnerDashboardController::class, 'index'])->name('partner.dashboard');
 
@@ -415,8 +419,11 @@ Route::middleware('auth')->group(function () {
     //     return redirect()->route('partner.dashboard');
     // });
 
-    // Partner Routes (Coaching Center)
+// Partner Routes (Coaching Center)
     Route::prefix('partner')->name('partner.')->middleware(['auth', 'role:partner'])->group(function () {
+// Nav-only Permissions management (11 sidebar items) - use distinct path to avoid conflicts
+        Route::get('nav-permissions', [PartnerPermissionsController::class, 'index'])->name('nav-permissions.index');
+        Route::put('nav-permissions/{enhancedRole}', [PartnerPermissionsController::class, 'update'])->name('nav-permissions.update');
         Route::get('/', [PartnerDashboardController::class, 'index'])->name('dashboard');
         Route::get('/dashboard', [PartnerDashboardController::class, 'index'])->name('dashboard');
         

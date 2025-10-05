@@ -68,9 +68,9 @@ class RedirectIfAuthenticated
                         return redirect()->route('admin.dashboard');
                     }
                 } else {
-                    // Unknown role: send to partner dashboard as safe default
-                    Log::warning('Authenticated user has unknown role, redirecting to partner dashboard', ['role' => $user->role, 'effectiveRole' => $effectiveRole]);
-                    return redirect()->route('partner.dashboard');
+                    // Unknown role: send to neutral dashboard to avoid 403 loops
+                    Log::warning('Authenticated user has unknown role, redirecting to neutral dashboard', ['role' => $user->role, 'effectiveRole' => $effectiveRole]);
+                    return redirect()->route('dashboard');
                 }
             }
         }
