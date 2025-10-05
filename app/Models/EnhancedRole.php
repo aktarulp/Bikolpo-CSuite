@@ -247,7 +247,7 @@ class EnhancedRole extends Model
     public function grantPermissionWithCrud($permission, array $crudFlags = [], $grantedBy = null, $expiresAt = null)
     {
         if (is_string($permission)) {
-            $permission = EnhancedPermission::where('name', $permission)->first();
+            $permission = EnhancedPermission::where('module_name', $permission)->first();
         }
 
         if (!$permission) {
@@ -255,6 +255,7 @@ class EnhancedRole extends Model
         }
 
         $pivot = [
+            'module_name' => $permission->module_name,
             'granted_by' => $grantedBy ?? auth()->id(),
             'granted_at' => now(),
             'expires_at' => $expiresAt,
@@ -270,7 +271,7 @@ class EnhancedRole extends Model
     public function revokePermission($permission)
     {
         if (is_string($permission)) {
-            $permission = EnhancedPermission::where('name', $permission)->first();
+            $permission = EnhancedPermission::where('module_name', $permission)->first();
         }
 
         if (!$permission) {
@@ -285,22 +286,26 @@ class EnhancedRole extends Model
      */
     public function syncPermissions($permissions, $grantedBy = null)
     {
-        $permissionIds = [];
+        $permissionRecords = [];
         
         foreach ($permissions as $permission) {
             if (is_string($permission)) {
-                $perm = EnhancedPermission::where('name', $permission)->first();
+                $perm = EnhancedPermission::where('module_name', $permission)->first();
                 if ($perm) {
-                    $permissionIds[] = $perm->id;
+                    $permissionRecords[$perm->id] = $perm->module_name;
                 }
             } elseif (is_int($permission)) {
-                $permissionIds[] = $permission;
+                $perm = EnhancedPermission::find($permission);
+                if ($perm) {
+                    $permissionRecords[$perm->id] = $perm->module_name;
+                }
             }
         }
 
         $syncData = [];
-        foreach ($permissionIds as $permissionId) {
+        foreach ($permissionRecords as $permissionId => $moduleName) {
             $syncData[$permissionId] = [
+                'module_name' => $moduleName,
                 'granted_by' => $grantedBy ?? auth()->id(),
                 'granted_at' => now(),
             ];
@@ -319,15 +324,18 @@ class EnhancedRole extends Model
 
         foreach ($permissionFlags as $key => $flags) {
             $permissionId = null;
+            $permModel = null;
             if (is_int($key)) {
                 $permissionId = $key;
+                $permModel = EnhancedPermission::find($permissionId);
             } elseif (is_string($key)) {
-                $perm = EnhancedPermission::where('name', $key)->first();
-                if ($perm) { $permissionId = $perm->id; }
+                $permModel = EnhancedPermission::where('module_name', $key)->first();
+                if ($permModel) { $permissionId = $permModel->id; }
             }
-            if (!$permissionId) { continue; }
+            if (!$permissionId || !$permModel) { continue; }
 
             $syncData[$permissionId] = array_merge([
+                'module_name' => $permModel->module_name,
                 'granted_by' => $grantedBy ?? auth()->id(),
                 'granted_at' => now(),
             ], $this->normalizeCrudFlags($flags));

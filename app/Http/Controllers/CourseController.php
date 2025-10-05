@@ -20,6 +20,7 @@ class CourseController extends Controller
         $courses = Course::withCount('subjects')
             ->where('partner_id', $partnerId)
             ->where('status', 'active')
+            ->where('flag', 'active')
             ->latest()
             ->paginate(15);
             
@@ -118,8 +119,9 @@ class CourseController extends Controller
                 ->with('error', "Cannot delete this course. It has {$subjectsCount} subject(s) associated with it. Please delete or move the subjects first.");
         }
         
-        // Soft delete by changing status to 'deleted'
-        $course->update(['status' => 'deleted']);
+        // Soft delete by changing flag to 'deleted'
+        $course->flag = 'deleted';
+        $course->save();
 
         return redirect()->route('partner.courses.index')
             ->with('success', 'Course deleted successfully.');

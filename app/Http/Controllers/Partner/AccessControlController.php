@@ -279,7 +279,6 @@ $validSelected = \App\Models\EnhancedPermission::whereIn('module_name', $selecte
         }
 
         try {
-            // Check if role is assigned to any users
             $userCount = $role->users()->count();
             if ($userCount > 0) {
                 return response()->json([
@@ -294,13 +293,90 @@ $validSelected = \App\Models\EnhancedPermission::whereIn('module_name', $selecte
                 'success' => true,
                 'message' => 'Role deleted successfully'
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Error deleting role: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Show simple permission assignment (CRUD flags per module) for a role.
+     */
+    public function assignCrud(EnhancedRole $role)
+    {
+        // Ensure visibility like editRole
+        $currentUser = \App\Models\EnhancedUser::find(auth()->id());
+        $currentUserLevel = $currentUser?->getHighestRoleLevel() ?? 1;
+        if (($role->level ?? PHP_INT_MAX) < $currentUserLevel) {
+            abort(403, 'You cannot manage a higher-privilege role.');
+        }
+        $partner = \App\Models\Partner::where('user_id', auth()->id())->first();
+        $partnerUserId = $partner?->user_id;
+        if (!($role->is_default || is_null($role->created_by) || ($partnerUserId && $role->created_by == $partnerUserId))) {
+            abort(403, 'You cannot manage roles outside your organization.');
+        }
+
+        $permissionConfig = config('permissions.menus', []);
+
+        // Derive modules from config keys
+        $modules = collect($permissionConfig)->map(function ($cfg, $key) {
+            return [
+                'key' => $key,
+                'label' => $cfg['label'] ?? ucfirst($key),
+            ];
+        })->values();
+
+        // Current pivot flags mapped by menu permission key: 'menu-{key}'
+        $flagsByKey = [];
+        foreach ($modules as $m) {
+            $permName = 'menu-' . $m['key'];
+            $perm = \App\Models\EnhancedPermission::where('module_name', $permName)->first();
+            $pivot = null;
+            if ($perm) {
+                $pivot = $role->permissions()->where('ac_modules.id', $perm->id)->first()?->pivot;
+            }
+            $flagsByKey[$m['key']] = [
+                'create' => (bool)($pivot?->can_create ?? false),
+                'read' => (bool)($pivot?->can_read ?? false),
+                'update' => (bool)($pivot?->can_update ?? false),
+                'delete' => (bool)($pivot?->can_delete ?? false),
+            ];
+        }
+
+        return view('partner.permissions.assign', [
+            'role' => $role,
+            'modules' => $modules,
+            'flagsByKey' => $flagsByKey,
+        ]);
+    }
+
+    /**
+     * Save CRUD flags per module for the role.
+     */
+    public function saveCrud(Request $request, EnhancedRole $role)
+    {
+        $payload = $request->input('modules', []); // expected: modules[key][create|read|update|delete] => 'on'
+        if (!is_array($payload)) { $payload = []; }
+
+        $map = [];
+        foreach ($payload as $key => $flags) {
+            $map['menu-' . $key] = [
+                'create' => !empty($flags['create']),
+                'read' => !empty($flags['read']),
+                'update' => !empty($flags['update']),
+                'delete' => !empty($flags['delete']),
+            ];
+        }
+
+        // Sync while preserving any other permissions already attached
+        $role->syncPermissionsWithCrud($map, auth()->id());
+        $role->update(['updated_by' => auth()->id()]);
+
+        return redirect()
+            ->route('partner.access-control.role.assign', $role)
+            ->with('success', 'Permissions updated.');
     }
 
     /**

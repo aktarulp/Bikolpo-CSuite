@@ -683,13 +683,13 @@ Route::middleware('auth')->group(function () {
                     }
                     
                     // Get recent users with error handling using EnhancedUser model
-                    $users = \App\Models\EnhancedUser::where('partner_id', $partner->id)
-                        ->orWhere('id', $partner->user_id)
-                        ->with(['roles' => function($query) {
-                            $query->select('id', 'name', 'display_name');
-                        }])
-                        ->latest()
-                        ->take(10)
+                    $users = \App\Models\EnhancedUser::with('roles:id,name,display_name')
+                        ->where(function ($q) use ($partner) {
+                            $q->where('partner_id', $partner->id)
+                              ->orWhere('id', $partner->user_id);
+                        })
+                        ->orderByDesc('created_at')
+                        ->limit(10)
                         ->get();
                     
                     // Ensure users is always a collection
@@ -838,6 +838,10 @@ Route::middleware('auth')->group(function () {
                 ->name('role-permissions');
             Route::put('/roles/{role}/permissions', [AccessControlController::class, 'updateRolePermissions'])
                 ->name('update-role-permissions');
+
+            // Simple Permission Assignment (CRUD flags)
+            Route::get('/roles/{role}/assign', [AccessControlController::class, 'assignCrud'])->name('role.assign');
+            Route::put('/roles/{role}/assign', [AccessControlController::class, 'saveCrud'])->name('role.assign.save');
                 
             // Permission structure
             Route::get('/permission-structure', [AccessControlController::class, 'getPermissionStructure'])
