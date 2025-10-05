@@ -420,7 +420,7 @@ Route::middleware('auth')->group(function () {
     // });
 
 // Partner Routes (Coaching Center)
-    Route::prefix('partner')->name('partner.')->middleware(['auth', 'role:partner'])->group(function () {
+    Route::prefix('partner')->name('partner.')->middleware(['auth', 'role_or_permission:partner,menu-dashboard,menu-courses,menu-subjects,menu-topics,menu-batches,menu-students,menu-teachers,menu-questions,menu-exams,menu-analytics,menu-sms'])->group(function () {
 // Nav-only Permissions management (11 sidebar items) - use distinct path to avoid conflicts
         Route::get('nav-permissions', [PartnerPermissionsController::class, 'index'])->name('nav-permissions.index');
         Route::put('nav-permissions/{enhancedRole}', [PartnerPermissionsController::class, 'update'])->name('nav-permissions.update');

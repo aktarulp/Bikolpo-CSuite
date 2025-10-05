@@ -59,13 +59,69 @@ class AccessControlController extends Controller
     }
 
     /**
-     * Show the form for editing role permissions.
+     * Show the form for editing role permissions (action-level only; excludes menu-*).
      */
     public function editRole(EnhancedRole $role)
     {
+        // Enforce visibility rules: role must be at or below current user's level and belong to this partner or be default/legacy
+        $currentUser = \App\Models\EnhancedUser::find(auth()->id());
+        $currentUserLevel = $currentUser?->getHighestRoleLevel() ?? 1;
+        if (($role->level ?? PHP_INT_MAX) < $currentUserLevel) {
+            abort(403, 'You cannot manage a higher-privilege role.');
+        }
+        $partner = \App\Models\Partner::where('user_id', auth()->id())->first();
+        $partnerUserId = $partner?->user_id;
+        if (!($role->is_default || is_null($role->created_by) || ($partnerUserId && $role->created_by == $partnerUserId))) {
+            abort(403, 'You cannot manage roles outside your organization.');
+        }
+
         $permissionConfig = config('permissions.menus', []);
-        
-        return view('partner.access-control.edit-role', compact('role', 'permissionConfig'));
+
+        // Current role permissions and allowed modules by menu-* grants
+        $currentPerms = $role->permissions->pluck('name')->toArray();
+        $allowedModules = collect($currentPerms)
+            ->filter(fn($n) => str_starts_with($n, 'menu-'))
+            ->map(fn($n) => substr($n, 5))
+            ->filter(fn($k) => isset($permissionConfig[$k]))
+            ->unique()
+            ->values()
+            ->all();
+
+        // Build action-only structure (exclude menu-*), filtered by allowed modules only
+        $modules = collect($permissionConfig)
+            ->filter(function ($cfg, $key) use ($allowedModules) {
+                return in_array($key, $allowedModules, true);
+            })
+            ->map(function ($cfg, $key) {
+                $buttons = $cfg['buttons'] ?? [];
+                return [
+                    'key' => $key,
+                    'label' => $cfg['label'] ?? ucfirst($key),
+                    'buttons' => $buttons,
+                ];
+            })
+            ->values();
+
+        // Extract only action permission names for allowed modules from config for comparison
+        $actionNames = [];
+        foreach ($allowedModules as $menuKey) {
+            $cfg = $permissionConfig[$menuKey] ?? [];
+            foreach (($cfg['buttons'] ?? []) as $buttonKey => $label) {
+                $actionNames[] = $menuKey . '-' . $buttonKey;
+            }
+        }
+
+        // Map to boolean checked states
+        $checked = [];
+        foreach ($actionNames as $name) {
+            $checked[$name] = in_array($name, $currentPerms, true);
+        }
+
+        return view('partner.access-control.edit-role', [
+            'role' => $role,
+            'modules' => $modules,
+            'checked' => $checked,
+        ]);
     }
 
     /**
@@ -137,17 +193,55 @@ class AccessControlController extends Controller
     {
         try {
             $role = \App\Models\EnhancedRole::findOrFail($roleId);
+
+            // Enforce visibility rules similar to edit
+            $currentUser = \App\Models\EnhancedUser::find(auth()->id());
+            $currentUserLevel = $currentUser?->getHighestRoleLevel() ?? 1;
+            if (($role->level ?? PHP_INT_MAX) < $currentUserLevel) {
+                return response()->json(['success' => false, 'message' => 'Cannot modify a higher-privilege role.'], 403);
+            }
+            $partner = \App\Models\Partner::where('user_id', auth()->id())->first();
+            $partnerUserId = $partner?->user_id;
+            if (!($role->is_default || is_null($role->created_by) || ($partnerUserId && $role->created_by == $partnerUserId))) {
+                return response()->json(['success' => false, 'message' => 'Cannot modify roles outside your organization.'], 403);
+            }
+
             $permissions = $request->input('permissions', []);
-            
-            // Validate permissions exist
-            $validPermissions = \App\Models\EnhancedPermission::whereIn('name', $permissions)
-                ->pluck('name')
-                ->toArray();
-            
-            // Sync permissions (this will remove old permissions and add new ones)
-            $role->syncPermissions($validPermissions);
-            
-            // Update the updated_by field to track who made the changes
+            if (!is_array($permissions)) { $permissions = []; }
+
+            // Keep existing menu-* permissions intact
+            $existing = $role->permissions()->pluck('name')->all();
+            $keepMenus = array_values(array_filter($existing, fn($n) => str_starts_with($n, 'menu-')));
+
+            // Validate only action permissions from config, restricted to allowed modules by menu-*
+            $permissionConfig = config('permissions.menus', []);
+
+            // Determine allowed modules for this role from its current menu-* grants
+            $allowedModules = collect($existing)
+                ->filter(fn($n) => str_starts_with($n, 'menu-'))
+                ->map(fn($n) => substr($n, 5))
+                ->filter(fn($k) => isset($permissionConfig[$k]))
+                ->unique()
+                ->values()
+                ->all();
+
+            $validActionSet = [];
+            foreach ($allowedModules as $menuKey) {
+                $cfg = $permissionConfig[$menuKey] ?? [];
+                foreach (($cfg['buttons'] ?? []) as $buttonKey => $label) {
+                    $validActionSet[] = $menuKey . '-' . $buttonKey;
+                }
+            }
+            $selectedActions = array_values(array_intersect($permissions, $validActionSet));
+
+            // Ensure those names exist in ac_permissions
+            $validSelected = \App\Models\EnhancedPermission::whereIn('name', $selectedActions)->pluck('name')->all();
+
+            // Final permissions = keepMenus + validSelected
+            $final = array_values(array_unique(array_merge($keepMenus, $validSelected)));
+
+            // Sync
+            $role->syncPermissions($final);
             $role->update(['updated_by' => auth()->id()]);
 
             // If this is an AJAX/JSON request, return JSON; otherwise redirect back with a flash message

@@ -11,12 +11,11 @@ return [
     |
     */
 
-    'menus' => [
+'menus' => [
         'dashboard' => [
             'label' => 'Dashboard',
             'buttons' => [
                 'view-stats' => 'View Statistics',
-                'export-data' => 'Export Data',
             ]
         ],
         'students' => [
@@ -26,10 +25,6 @@ return [
                 'edit' => 'Edit Student',
                 'delete' => 'Delete Student',
                 'view' => 'View Student Details',
-                'export' => 'Export Students',
-                'import' => 'Import Students',
-                'assign-course' => 'Assign Course',
-                'manage-grades' => 'Manage Grades',
             ]
         ],
         'teachers' => [
@@ -39,10 +34,6 @@ return [
                 'edit' => 'Edit Teacher',
                 'delete' => 'Delete Teacher',
                 'view' => 'View Teacher Details',
-                'export' => 'Export Teachers',
-                'import' => 'Import Teachers',
-                'assign-course' => 'Assign Course',
-                'assign-subject' => 'Assign Subject',
             ]
         ],
         'courses' => [
@@ -52,23 +43,34 @@ return [
                 'edit' => 'Edit Course',
                 'delete' => 'Delete Course',
                 'view' => 'View Course Details',
-                'assign-student' => 'Assign Student',
-                'assign-teacher' => 'Assign Teacher',
-                'manage-content' => 'Manage Content',
-                'export' => 'Export Courses',
+                'manage-content' => 'Manage Content'
             ]
         ],
-        'exams' => [
-            'label' => 'Exams',
+        'subjects' => [
+            'label' => 'Subjects',
             'buttons' => [
-                'add' => 'Add Exam',
-                'edit' => 'Edit Exam',
-                'delete' => 'Delete Exam',
-                'view' => 'View Exam Details',
-                'manage-questions' => 'Manage Questions',
-                'view-results' => 'View Results',
-                'export-results' => 'Export Results',
-                'schedule' => 'Schedule Exam',
+                'add' => 'Add Subject',
+                'edit' => 'Edit Subject',
+                'delete' => 'Delete Subject',
+                'view' => 'View Subject Details'
+            ]
+        ],
+        'topics' => [
+            'label' => 'Topics',
+            'buttons' => [
+                'add' => 'Add Topic',
+                'edit' => 'Edit Topic',
+                'delete' => 'Delete Topic',
+                'view' => 'View Topic Details'
+            ]
+        ],
+        'batches' => [
+            'label' => 'Batches',
+            'buttons' => [
+                'add' => 'Add Batch',
+                'edit' => 'Edit Batch',
+                'delete' => 'Delete Batch',
+                'view' => 'View Batch Details'
             ]
         ],
         'questions' => [
@@ -78,30 +80,27 @@ return [
                 'edit' => 'Edit Question',
                 'delete' => 'Delete Question',
                 'view' => 'View Question Details',
-                'import' => 'Import Questions',
-                'export' => 'Export Questions',
-                'categorize' => 'Categorize Questions',
             ]
         ],
-        'results' => [
-            'label' => 'Results',
+        'exams' => [
+            'label' => 'Exams',
             'buttons' => [
-                'view' => 'View Results',
-                'export' => 'Export Results',
-                'analyze' => 'Analyze Performance',
-                'generate-reports' => 'Generate Reports',
+                'add' => 'Add Exam',
+                'edit' => 'Edit Exam',
+                'delete' => 'Delete Exam',
+                'view' => 'View Exam Details',
             ]
         ],
-        'users' => [
-            'label' => 'User Management',
+        'analytics' => [
+            'label' => 'Analytics',
             'buttons' => [
-                'add' => 'Add User',
-                'edit' => 'Edit User',
-                'delete' => 'Delete User',
-                'view' => 'View User Details',
-                'manage-roles' => 'Manage Roles',
-                'manage-permissions' => 'Manage Permissions',
-                'export' => 'Export Users',
+                'view' => 'View Analytics',
+            ]
+        ],
+        'sms' => [
+            'label' => 'SMS',
+            'buttons' => [
+                'view' => 'View SMS',
             ]
         ],
         'settings' => [
@@ -111,16 +110,6 @@ return [
                 'edit' => 'Edit Settings',
                 'backup' => 'Backup System',
                 'restore' => 'Restore System',
-                'manage-integrations' => 'Manage Integrations',
-            ]
-        ],
-        'reports' => [
-            'label' => 'Reports',
-            'buttons' => [
-                'view' => 'View Reports',
-                'generate' => 'Generate Reports',
-                'export' => 'Export Reports',
-                'schedule' => 'Schedule Reports',
             ]
         ],
     ],
