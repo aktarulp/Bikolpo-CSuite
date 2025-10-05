@@ -323,7 +323,10 @@
                     @endif
                 </nav>
 
-                <!-- Sidebar Footer -->
+                <!-- ======================
+                     SIDEBAR USER MENU 
+                     (Visible on all screen sizes)
+                     ====================== -->
                 <div class="flex-shrink-0 p-2 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
                     <div class="relative" x-data="{ open: false }" @click.away="open = false">
                         <!-- User Menu Button -->
@@ -531,7 +534,10 @@
                                 </div>
                             </div>
 
-                            <!-- Enhanced User Menu -->
+                            <!-- ======================
+                                 TOP BAR USER MENU 
+                                 (Visible on large screens only - lg breakpoint and up)
+                                 ====================== -->
                             <div class="relative" x-data="{ open: false }" @click.away="open = false">
                                 <!-- User Menu Button -->
                                 <button @click="open = !open" class="group flex items-center space-x-3 p-2.5 bg-gradient-to-r from-white to-gray-50 dark:from-gray-800 dark:to-gray-700 hover:from-primaryGreen/5 hover:to-primaryGreen/10 dark:hover:from-primaryGreen/10 dark:hover:to-primaryGreen/20 rounded-xl border border-gray-200 dark:border-gray-600 hover:border-primaryGreen/30 dark:hover:border-primaryGreen/50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primaryGreen/20 shadow-sm hover:shadow-md">

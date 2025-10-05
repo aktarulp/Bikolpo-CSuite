@@ -280,7 +280,8 @@ class UserManagementController extends Controller
 
             // Attach role to pivot so roles relation is populated
             try {
-                $user->assignRole($roleId, auth()->id());
+                // Attach to custom pivot (ac_user_roles) with metadata
+                $user->assignRoleWithMetadata($selectedRole, auth()->id());
             } catch (\Throwable $e) {
                 \Log::error('Failed to assign role to user pivot', [
                     'user_id' => $user->id,
@@ -631,7 +632,7 @@ class UserManagementController extends Controller
                         break;
                     
                     case 'assign_role':
-                        $user->assignRole($request->role_id, auth()->id());
+                        $user->assignRoleWithMetadata($request->role_id, auth()->id());
                         $updatedCount++;
                         break;
                     
