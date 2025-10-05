@@ -63,20 +63,6 @@ class CourseController extends Controller
             ->with('success', 'Course created successfully.');
     }
 
-    public function show(Course $course)
-    {
-        // Ensure the course belongs to the logged-in partner
-        $partnerId = $this->getPartnerId();
-        if ($course->partner_id !== $partnerId) {
-            abort(403, 'Unauthorized access to this course.');
-        }
-        
-        // Load relationships with counts
-        $course->load(['subjects.topics', 'students.batch']);
-        $course->loadCount(['subjects', 'students', 'questions']);
-        
-        return view('partner.courses.show', compact('course'));
-    }
 
     public function edit(Course $course)
     {

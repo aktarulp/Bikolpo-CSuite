@@ -430,7 +430,7 @@ Route::middleware('auth')->group(function () {
         // Partner Management
         
         // Course Management
-        Route::resource('courses', CourseController::class);
+        Route::resource('courses', CourseController::class)->except(['show']);
         
         // Subject Management
         Route::resource('subjects', SubjectController::class);
