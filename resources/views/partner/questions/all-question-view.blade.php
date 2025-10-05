@@ -82,13 +82,25 @@
                                 <div class="py-2">
                                     <!-- Multiple Choice -->
 <a href="{{ route('partner.questions.mcq.create') }}" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
-                                        <img src="{{ asset('images/mcq.png') }}" alt="MCQ" class="w-5 h-5 mr-3" loading="lazy" decoding="async" width="20" height="20">
+                                        <svg class="w-5 h-5 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                            <circle cx="5" cy="7" r="1.5" stroke-width="2"></circle>
+                                            <line x1="9" y1="7" x2="19" y2="7" stroke-width="2" stroke-linecap="round"></line>
+                                            <circle cx="5" cy="12" r="1.5" stroke-width="2"></circle>
+                                            <line x1="9" y1="12" x2="19" y2="12" stroke-width="2" stroke-linecap="round"></line>
+                                            <circle cx="5" cy="17" r="1.5" stroke-width="2"></circle>
+                                            <line x1="9" y1="17" x2="19" y2="17" stroke-width="2" stroke-linecap="round"></line>
+                                        </svg>
                                         <span class="font-medium">Multiple Choice</span>
                                     </a>
                                     
                                     <!-- Descriptive -->
 <a href="{{ route('partner.questions.descriptive.create') }}" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors">
-                                        <img src="{{ asset('images/cq.png') }}" alt="CQ" class="w-5 h-5 mr-3" loading="lazy" decoding="async" width="20" height="20">
+                                        <svg class="w-5 h-5 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                            <rect x="6" y="4" width="12" height="16" rx="2" ry="2" stroke-width="2"></rect>
+                                            <line x1="9" y1="9" x2="15" y2="9" stroke-width="2" stroke-linecap="round"></line>
+                                            <line x1="9" y1="13" x2="17" y2="13" stroke-width="2" stroke-linecap="round"></line>
+                                            <line x1="9" y1="17" x2="14" y2="17" stroke-width="2" stroke-linecap="round"></line>
+                                        </svg>
                                         <span class="font-medium">Descriptive</span>
                                     </a>
                                     
@@ -139,7 +151,14 @@
 <div class="rounded-xl p-3 sm:p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-200 hover:shadow hover:-translate-y-0.5">
                         <div class="flex items-center justify-between">
                             <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-<img src="{{ asset('images/mcq.png') }}" alt="MCQ" class="w-5 h-5 sm:w-6 sm:h-6" loading="lazy" decoding="async" width="24" height="24">
+<svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                    <circle cx="5" cy="7" r="1.5" stroke-width="2"></circle>
+                                    <line x1="9" y1="7" x2="19" y2="7" stroke-width="2" stroke-linecap="round"></line>
+                                    <circle cx="5" cy="12" r="1.5" stroke-width="2"></circle>
+                                    <line x1="9" y1="12" x2="19" y2="12" stroke-width="2" stroke-linecap="round"></line>
+                                    <circle cx="5" cy="17" r="1.5" stroke-width="2"></circle>
+                                    <line x1="9" y1="17" x2="19" y2="17" stroke-width="2" stroke-linecap="round"></line>
+                                </svg>
                             </div>
                             <div class="text-right">
                                 <div class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">{{ $questions->where('question_type', 'mcq')->count() }}</div>
@@ -152,7 +171,12 @@
 <div class="rounded-xl p-3 sm:p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-200 hover:shadow hover:-translate-y-0.5">
                         <div class="flex items-center justify-between">
                             <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
-<img src="{{ asset('images/cq.png') }}" alt="CQ" class="w-5 h-5 sm:w-6 sm:h-6" loading="lazy" decoding="async" width="24" height="24">
+<svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                    <rect x="6" y="4" width="12" height="16" rx="2" ry="2" stroke-width="2"></rect>
+                                    <line x1="9" y1="9" x2="15" y2="9" stroke-width="2" stroke-linecap="round"></line>
+                                    <line x1="9" y1="13" x2="17" y2="13" stroke-width="2" stroke-linecap="round"></line>
+                                    <line x1="9" y1="17" x2="14" y2="17" stroke-width="2" stroke-linecap="round"></line>
+                                </svg>
                             </div>
                             <div class="text-right">
                                 <div class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">{{ $questions->where('question_type', 'descriptive')->count() }}</div>
@@ -296,9 +320,21 @@
                                             <div class="w-6 h-6 rounded-md flex items-center justify-center
                                                 {{ $question->question_type === 'mcq' ? 'bg-blue-100 dark:bg-blue-900/30' : ($question->question_type === 'true_false' ? 'bg-orange-100 dark:bg-orange-900/30' : 'bg-green-100 dark:bg-green-900/30') }}">
                                                 @if($question->question_type === 'mcq')
-<img src="{{ asset('images/mcq.png') }}" alt="MCQ" class="w-4 h-4" loading="lazy" decoding="async" width="16" height="16">
+<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                                    <circle cx="5" cy="7" r="1.5" stroke-width="2"></circle>
+                                                    <line x1="9" y1="7" x2="19" y2="7" stroke-width="2" stroke-linecap="round"></line>
+                                                    <circle cx="5" cy="12" r="1.5" stroke-width="2"></circle>
+                                                    <line x1="9" y1="12" x2="19" y2="12" stroke-width="2" stroke-linecap="round"></line>
+                                                    <circle cx="5" cy="17" r="1.5" stroke-width="2"></circle>
+                                                    <line x1="9" y1="17" x2="19" y2="17" stroke-width="2" stroke-linecap="round"></line>
+                                                </svg>
                                                 @elseif($question->question_type === 'descriptive')
-<img src="{{ asset('images/cq.png') }}" alt="CQ" class="w-4 h-4" loading="lazy" decoding="async" width="16" height="16">
+<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                                    <rect x="6" y="4" width="12" height="16" rx="2" ry="2" stroke-width="2"></rect>
+                                                    <line x1="9" y1="9" x2="15" y2="9" stroke-width="2" stroke-linecap="round"></line>
+                                                    <line x1="9" y1="13" x2="17" y2="13" stroke-width="2" stroke-linecap="round"></line>
+                                                    <line x1="9" y1="17" x2="14" y2="17" stroke-width="2" stroke-linecap="round"></line>
+                                                </svg>
                                                 @else
                                                     <svg class="w-4 h-4 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -595,11 +631,23 @@
                         </p>
                         <div class="flex flex-wrap gap-3 justify-center">
 <a href="{{ route('partner.questions.mcq.create') }}" class="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 flex items-center gap-2 font-medium">
-                            <img src="{{ asset('images/mcq.png') }}" alt="MCQ" class="w-4 h-4" loading="lazy" decoding="async" width="16" height="16">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                <circle cx="5" cy="7" r="1.5" stroke-width="2"></circle>
+                                <line x1="9" y1="7" x2="19" y2="7" stroke-width="2" stroke-linecap="round"></line>
+                                <circle cx="5" cy="12" r="1.5" stroke-width="2"></circle>
+                                <line x1="9" y1="12" x2="19" y2="12" stroke-width="2" stroke-linecap="round"></line>
+                                <circle cx="5" cy="17" r="1.5" stroke-width="2"></circle>
+                                <line x1="9" y1="17" x2="19" y2="17" stroke-width="2" stroke-linecap="round"></line>
+                            </svg>
                                 Create MCQ
                             </a>
 <a href="{{ route('partner.questions.descriptive.create') }}" class="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-all duration-200 flex items-center gap-2 font-medium">
-                            <img src="{{ asset('images/cq.png') }}" alt="CQ" class="w-4 h-4" loading="lazy" decoding="async" width="16" height="16">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                <rect x="6" y="4" width="12" height="16" rx="2" ry="2" stroke-width="2"></rect>
+                                <line x1="9" y1="9" x2="15" y2="9" stroke-width="2" stroke-linecap="round"></line>
+                                <line x1="9" y1="13" x2="17" y2="13" stroke-width="2" stroke-linecap="round"></line>
+                                <line x1="9" y1="17" x2="14" y2="17" stroke-width="2" stroke-linecap="round"></line>
+                            </svg>
                                 Create Descriptive
                             </a>
                             <a href="{{ route('partner.questions.tf.create') }}" class="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-all duration-200 flex items-center gap-2 font-medium">

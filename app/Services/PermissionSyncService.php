@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Schema;
 class PermissionSyncService
 {
     /**
-    * Ensure all menu and button permissions defined in config/permissions.php exist in ac_permissions.
+    * Ensure all menu and button permissions defined in config/permissions.php exist in ac_modules.
     * Idempotent operation safe to call on boot.
     */
     public static function syncMenus(): void
@@ -47,30 +47,30 @@ class PermissionSyncService
     {
         [$module, $action, $resource] = self::deriveMeta($name);
 
-        $exists = DB::table('ac_permissions')->where('name', $name)->first();
+        $exists = DB::table('ac_modules')->where('module_name', $name)->first();
         $now = now();
         $payload = [
-            'name' => $name,
+            'module_name' => $name,
             'display_name' => $displayName,
             'description' => $description,
             'updated_at' => $now,
         ];
         // Conditionally include columns based on schema
-        if (Schema::hasColumn('ac_permissions', 'module')) {
+        if (Schema::hasColumn('ac_modules', 'module')) {
             $payload['module'] = $module;
         }
-        if (Schema::hasColumn('ac_permissions', 'action')) {
+        if (Schema::hasColumn('ac_modules', 'action')) {
             $payload['action'] = $action;
         }
-        if (Schema::hasColumn('ac_permissions', 'resource')) {
+        if (Schema::hasColumn('ac_modules', 'resource')) {
             $payload['resource'] = $resource;
         }
 
         if (!$exists) {
             $payload['created_at'] = $now;
-            DB::table('ac_permissions')->insert($payload);
+            DB::table('ac_modules')->insert($payload);
         } else {
-            DB::table('ac_permissions')->where('id', $exists->id)->update($payload);
+            DB::table('ac_modules')->where('id', $exists->id)->update($payload);
         }
     }
 

@@ -78,10 +78,11 @@ class EnhancedRole extends Model
         return $this->belongsToMany(
                     EnhancedPermission::class,
                     'ac_role_permissions',
-                    'enhanced_role_id',
-                    'enhanced_permission_id'
+                    'role_id',
+                    'module_id'
                 )
-                    ->withPivot('granted_by', 'granted_at', 'expires_at')
+                    ->using(\App\Models\Pivots\RolePermission::class)
+                    ->withPivot('module_name','can_create','can_read','can_update','can_delete','is_default','created_by','granted_by','granted_at','expires_at')
                     ->withTimestamps();
     }
 
@@ -237,6 +238,14 @@ class EnhancedRole extends Model
      */
     public function grantPermission($permission, $grantedBy = null, $expiresAt = null)
     {
+        return $this->grantPermissionWithCrud($permission, [], $grantedBy, $expiresAt);
+    }
+
+    /**
+     * Grant a permission to this role with optional CRUD flags.
+     */
+    public function grantPermissionWithCrud($permission, array $crudFlags = [], $grantedBy = null, $expiresAt = null)
+    {
         if (is_string($permission)) {
             $permission = EnhancedPermission::where('name', $permission)->first();
         }
@@ -245,11 +254,14 @@ class EnhancedRole extends Model
             return false;
         }
 
-        return $this->permissions()->attach($permission->id, [
+        $pivot = [
             'granted_by' => $grantedBy ?? auth()->id(),
             'granted_at' => now(),
-            'expires_at' => $expiresAt
-        ]);
+            'expires_at' => $expiresAt,
+        ];
+        $pivot = array_merge($pivot, $this->normalizeCrudFlags($crudFlags));
+
+        return $this->permissions()->attach($permission->id, $pivot);
     }
 
     /**
@@ -295,6 +307,66 @@ class EnhancedRole extends Model
         }
 
         return $this->permissions()->sync($syncData);
+    }
+
+    /**
+     * Sync permissions with CRUD flags. Accepts an associative array where key is permission id or name,
+     * and value is an array like ['create' => bool, 'read' => bool, 'update' => bool, 'delete' => bool, 'is_default' => bool].
+     */
+    public function syncPermissionsWithCrud(array $permissionFlags, $grantedBy = null)
+    {
+        $syncData = [];
+
+        foreach ($permissionFlags as $key => $flags) {
+            $permissionId = null;
+            if (is_int($key)) {
+                $permissionId = $key;
+            } elseif (is_string($key)) {
+                $perm = EnhancedPermission::where('name', $key)->first();
+                if ($perm) { $permissionId = $perm->id; }
+            }
+            if (!$permissionId) { continue; }
+
+            $syncData[$permissionId] = array_merge([
+                'granted_by' => $grantedBy ?? auth()->id(),
+                'granted_at' => now(),
+            ], $this->normalizeCrudFlags($flags));
+        }
+
+        if (empty($syncData)) {
+            return false;
+        }
+
+        return $this->permissions()->sync($syncData);
+    }
+
+    /**
+     * Ensure CRUD flags are in expected keys and normalized to 'Y'/'N' via pivot mutators.
+     */
+    protected function normalizeCrudFlags(array $flags): array
+    {
+        // Map common aliases to our pivot attributes
+        $map = [
+            'create' => 'can_create',
+            'read' => 'can_read',
+            'view' => 'can_read',
+            'update' => 'can_update',
+            'edit' => 'can_update',
+            'delete' => 'can_delete',
+            'remove' => 'can_delete',
+            'is_default' => 'is_default',
+            'default' => 'is_default',
+        ];
+        $out = [];
+        foreach ($flags as $k => $v) {
+            $k = strtolower((string)$k);
+            if (isset($map[$k])) {
+                $out[$map[$k]] = $v;
+            } elseif (in_array($k, ['can_create','can_read','can_update','can_delete','is_default'], true)) {
+                $out[$k] = $v;
+            }
+        }
+        return $out;
     }
 
     /**

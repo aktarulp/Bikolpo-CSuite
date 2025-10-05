@@ -461,7 +461,7 @@ class UserManagementController extends Controller
             'partner_id' => 'nullable|exists:partners,id',
             'status' => ['required', Rule::in(EnhancedUser::getStatuses())],
             'permissions' => 'nullable|array',
-'permissions.*' => 'exists:ac_permissions,id',
+'permissions.*' => 'exists:ac_modules,id',
         ]);
 
         if ($validator->fails()) {
@@ -598,7 +598,7 @@ class UserManagementController extends Controller
 'user_ids.*' => 'exists:ac_users,id',
             'action' => 'required|string|in:activate,deactivate,suspend,assign_role,remove_role,assign_permission,remove_permission',
 'role_id' => 'required_if:action,assign_role,remove_role|exists:ac_roles,id',
-'permission_id' => 'required_if:action,assign_permission,remove_permission|exists:ac_permissions,id',
+'permission_id' => 'required_if:action,assign_permission,remove_permission|exists:ac_modules,id',
         ]);
 
         if ($validator->fails()) {

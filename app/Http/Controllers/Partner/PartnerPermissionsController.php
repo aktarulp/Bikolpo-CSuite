@@ -49,7 +49,7 @@ class PartnerPermissionsController extends Controller
         if ($requestedRoleId) {
             // Load only the specific role with permissions
             $role = EnhancedRole::with(['permissions' => function ($q) {
-                    $q->whereIn('name', self::MENUS);
+                    $q->whereIn('module_name', self::MENUS);
                 }])
                 ->active()
                 ->where('id', $requestedRoleId)
@@ -70,7 +70,7 @@ class PartnerPermissionsController extends Controller
             }
 
             // Build permissions array for the single role
-            $granted = $role->permissions->pluck('name')->all();
+            $granted = $role->permissions->pluck('module_name')->all();
             $permissions = [];
             foreach (self::MENUS as $perm) {
                 $permissions[$perm] = in_array($perm, $granted, true);
@@ -85,7 +85,7 @@ class PartnerPermissionsController extends Controller
 
         // Load all roles for the main permissions matrix view
         $roles = EnhancedRole::with(['permissions' => function ($q) {
-                $q->whereIn('name', self::MENUS);
+                $q->whereIn('module_name', self::MENUS);
             }])
             ->active()
             ->where('level', '>=', $currentUserLevel)
@@ -100,7 +100,7 @@ class PartnerPermissionsController extends Controller
             ->get();
 
         $permissionsByRole = $roles->mapWithKeys(function ($role) {
-            $granted = $role->permissions->pluck('name')->all();
+            $granted = $role->permissions->pluck('module_name')->all();
             $row = [];
             foreach (self::MENUS as $perm) {
                 $row[$perm] = in_array($perm, $granted, true);
@@ -128,11 +128,11 @@ public function update(Request $request, EnhancedRole $enhancedRole, MenuPermiss
         $requestedNames = array_keys(array_filter($requested, fn ($v) => (bool)$v));
         $requestedNames = array_values(array_intersect(self::MENUS, $requestedNames));
 
-        // Validate requested permissions exist in ac_permissions
-        $valid = EnhancedPermission::whereIn('name', $requestedNames)->pluck('name')->all();
+        // Validate requested permissions exist in ac_modules
+        $valid = EnhancedPermission::whereIn('module_name', $requestedNames)->pluck('module_name')->all();
 
         // Keep existing non-menu permissions; replace menu ones with requested
-$current = $enhancedRole->permissions()->pluck('name')->all();
+$current = $enhancedRole->permissions()->pluck('module_name')->all();
         $keepActions = array_values(array_filter($current, fn ($name) => !in_array($name, self::MENUS, true)));
         $final = array_values(array_unique(array_merge($keepActions, $valid)));
 

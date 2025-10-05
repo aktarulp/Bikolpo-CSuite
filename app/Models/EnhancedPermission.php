@@ -11,10 +11,10 @@ class EnhancedPermission extends Model
 {
     use HasFactory;
 
-    protected $table = 'ac_permissions';
+    protected $table = 'ac_modules';
     
     protected $fillable = [
-        'name',
+        'module_name',
         'display_name',
         'description',
         'module',
@@ -28,6 +28,17 @@ class EnhancedPermission extends Model
         'updated_by',
         'metadata'
     ];
+
+    // Backward-compat attribute accessors for legacy 'name'
+    public function getNameAttribute(): ?string
+    {
+        return $this->attributes['module_name'] ?? null;
+    }
+
+    public function setNameAttribute($value): void
+    {
+        $this->attributes['module_name'] = $value;
+    }
 
     protected $casts = [
         'is_system' => 'boolean',
@@ -85,10 +96,11 @@ class EnhancedPermission extends Model
         return $this->belongsToMany(
                     EnhancedRole::class,
                     'ac_role_permissions',
-                    'enhanced_permission_id',
-                    'enhanced_role_id'
+                    'module_id',
+                    'role_id'
                 )
-                    ->withPivot('granted_by', 'granted_at', 'expires_at')
+                    ->using(\App\Models\Pivots\RolePermission::class)
+                    ->withPivot('module_name','can_create','can_read','can_update','can_delete','is_default','created_by','granted_by','granted_at','expires_at')
                     ->withTimestamps();
     }
 

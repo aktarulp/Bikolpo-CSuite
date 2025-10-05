@@ -160,13 +160,11 @@ class EnhancedUser extends Authenticatable
     public function hasPermission($permission): bool
     {
         if (is_string($permission)) {
-            return $this->permissions()->where('name', $permission)->exists() ||
-                   $this->hasPermissionThroughRole($permission);
+            return $this->hasPermissionThroughRole($permission);
         }
         
         if (is_int($permission)) {
-            return $this->permissions()->where('id', $permission)->exists() ||
-                   $this->hasPermissionThroughRoleById($permission);
+            return $this->hasPermissionThroughRoleById($permission);
         }
 
         return false;
@@ -277,13 +275,12 @@ class EnhancedUser extends Authenticatable
      */
     public function getAllPermissions()
     {
-        $directPermissions = $this->permissions;
         $rolePermissions = $this->roles()->with('permissions')->get()
             ->pluck('permissions')
             ->flatten()
             ->unique('id');
 
-        return $directPermissions->merge($rolePermissions)->unique('id');
+        return $rolePermissions;
     }
 
     /**

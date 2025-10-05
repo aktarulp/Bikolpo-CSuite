@@ -134,7 +134,7 @@ class AccessControlController extends Controller
             'display_name' => 'nullable|string|max:255',
             'description' => 'nullable|string|max:500',
             'permissions' => 'array',
-            'permissions.*' => 'exists:ac_permissions,name'
+'permissions.*' => 'exists:ac_modules,module_name'
         ]);
 
         if ($validator->fails()) {
@@ -235,7 +235,7 @@ class AccessControlController extends Controller
             $selectedActions = array_values(array_intersect($permissions, $validActionSet));
 
             // Ensure those names exist in ac_permissions
-            $validSelected = \App\Models\EnhancedPermission::whereIn('name', $selectedActions)->pluck('name')->all();
+$validSelected = \App\Models\EnhancedPermission::whereIn('module_name', $selectedActions)->pluck('module_name')->all();
 
             // Final permissions = keepMenus + validSelected
             $final = array_values(array_unique(array_merge($keepMenus, $validSelected)));

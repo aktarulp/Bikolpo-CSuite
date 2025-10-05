@@ -60,10 +60,10 @@ class MenuPermissionService
         
         // Get permissions for these roles
         $permissions = DB::table('ac_role_permissions')
-            ->join('ac_permissions', 'ac_role_permissions.enhanced_permission_id', '=', 'ac_permissions.id')
-            ->whereIn('ac_role_permissions.enhanced_role_id', $roleIds)
-            ->where('ac_permissions.name', 'LIKE', 'menu-%')
-            ->pluck('ac_permissions.name')
+            ->join('ac_modules', 'ac_role_permissions.module_id', '=', 'ac_modules.id')
+            ->whereIn('ac_role_permissions.role_id', $roleIds)
+            ->where('ac_modules.module_name', 'LIKE', 'menu-%')
+            ->pluck('ac_modules.module_name')
             ->unique()
             ->toArray();
         
