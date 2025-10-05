@@ -433,13 +433,13 @@ Route::middleware('auth')->group(function () {
         Route::resource('courses', CourseController::class)->except(['show']);
         
         // Subject Management
-        Route::resource('subjects', SubjectController::class);
+        Route::resource('subjects', SubjectController::class)->except(['show']);
         
         // Topic Management
-        Route::resource('topics', TopicController::class);
+        Route::resource('topics', TopicController::class)->except(['show']);
         
         // Batch Management
-        Route::resource('batches', \App\Http\Controllers\BatchController::class);
+        Route::resource('batches', \App\Http\Controllers\BatchController::class)->except(['show']);
         Route::get('batches/trashed', [\App\Http\Controllers\BatchController::class, 'trashed'])->name('batches.trashed');
         Route::post('batches/{id}/restore', [\App\Http\Controllers\BatchController::class, 'restore'])->name('batches.restore');
         

@@ -125,6 +125,9 @@
     </style>
 </head>
 <body class="h-full font-sans antialiased bg-gray-50 dark:bg-gray-900">
+    <!-- SVG Sprites -->
+    @include('partials.svg-sprites')
+    
     <!-- Mobile Backdrop -->
     <div id="sidebar-backdrop" class="sidebar-backdrop lg:hidden"></div>
 
