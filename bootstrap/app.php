@@ -18,6 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
         // Add global middleware for partner full access
         $middleware->web(append: [
             \App\Http\Middleware\PartnerFullAccessMiddleware::class,
+            // Local-only request timing (very low overhead when disabled)
+            \App\Http\Middleware\RequestTimingMiddleware::class,
         ]);
         
         $middleware->alias([

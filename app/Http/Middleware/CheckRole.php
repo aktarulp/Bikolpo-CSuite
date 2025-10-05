@@ -45,8 +45,15 @@ class CheckRole
             return $aliasMap[$name] ?? $name;
         }, $required);
 
-        // Check via ac_user_roles pivot (EnhancedUser/User -> roles relation)
-        $hasRole = $user->roles()->whereIn('name', $normalizedRequired)->exists();
+        // Load roles once to avoid multiple DB hits
+        $user->loadMissing('roles');
+        $userRoleNames = collect($user->roles)->pluck('name')->map(function ($n) use ($aliasMap) {
+            $n = strtolower($n);
+            return $aliasMap[$n] ?? $n;
+        })->values()->all();
+
+        // Check in-memory intersection
+        $hasRole = count(array_intersect($userRoleNames, $normalizedRequired)) > 0;
 
         // Legacy string role fallback (for users not yet assigned via pivot)
         if (!$hasRole) {
@@ -58,13 +65,15 @@ class CheckRole
         }
 
         if (!$hasRole) {
-            \Log::warning('RBAC role denied', [
-                'user_id' => $user->id,
-                'user_roles' => $user->roles()->pluck('name')->toArray(),
-                'user_string_role' => $user->role ?? null,
-                'required' => $normalizedRequired,
-                'url' => $request->url(),
-            ]);
+            if ((bool) env('BKL_LOG_RBAC_DENY', false)) {
+                \Log::warning('RBAC role denied', [
+                    'user_id' => $user->id,
+                    'user_roles' => $userRoleNames,
+                    'user_string_role' => $user->role ?? null,
+                    'required' => $normalizedRequired,
+                    'url' => $request->url(),
+                ]);
+            }
 
             // Avoid loops: show 403 or send to neutral landing
             if (function_exists('abort')) {

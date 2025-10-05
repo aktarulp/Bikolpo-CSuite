@@ -33,7 +33,7 @@ class PartnerPermissionsController extends Controller
     /**
      * Show menu permissions matrix (nav-only) per role.
      */
-    public function index()
+    public function index(Request $request)
     {
         // Determine current user's highest role level
         $currentUser = EnhancedUser::find(auth()->id());
@@ -43,9 +43,47 @@ class PartnerPermissionsController extends Controller
         $partner = Partner::where('user_id', auth()->id())->first();
         $partnerUserId = $partner?->user_id;
 
-        // Load roles with only menu permissions, filtered by visibility rules:
-        // - Only roles at or below current user's privilege (level >= currentUserLevel)
-        // - Only default roles OR roles created by current partner (or legacy null)
+        // Check if a specific role is requested
+        $requestedRoleId = $request->get('role');
+        
+        if ($requestedRoleId) {
+            // Load only the specific role with permissions
+            $role = EnhancedRole::with(['permissions' => function ($q) {
+                    $q->whereIn('name', self::MENUS);
+                }])
+                ->active()
+                ->where('id', $requestedRoleId)
+                ->where('level', '>=', $currentUserLevel)
+                ->where(function ($query) use ($partnerUserId) {
+                    $query->where('is_default', 1)
+                          ->orWhereNull('created_by');
+                    if ($partnerUserId) {
+                        $query->orWhere('created_by', $partnerUserId);
+                    }
+                })
+                ->first();
+
+            // If role not found or access denied, redirect to main permissions page
+            if (!$role) {
+                return redirect()->route('partner.nav-permissions.index')
+                    ->with('error', 'Role not found or access denied.');
+            }
+
+            // Build permissions array for the single role
+            $granted = $role->permissions->pluck('name')->all();
+            $permissions = [];
+            foreach (self::MENUS as $perm) {
+                $permissions[$perm] = in_array($perm, $granted, true);
+            }
+
+            return view('partner.permissions.single-role', [
+                'role' => $role,
+                'permissions' => $permissions,
+                'menuKeys' => self::MENUS,
+            ]);
+        }
+
+        // Load all roles for the main permissions matrix view
         $roles = EnhancedRole::with(['permissions' => function ($q) {
                 $q->whereIn('name', self::MENUS);
             }])
@@ -69,7 +107,7 @@ class PartnerPermissionsController extends Controller
             }
             return [$role->id => $row];
         });
-
+        
         return view('partner.permissions.menus', [
             'roles' => $roles,
             'permissionsByRole' => $permissionsByRole,
@@ -113,6 +151,13 @@ $userIds = $enhancedRole->users()->pluck('ac_users.id')->all();
 'role_id' => $enhancedRole->id,
                 'error' => $e->getMessage(),
             ]);
+        }
+
+        // Check if we came from a single role view
+        $referer = request()->header('referer');
+        if ($referer && str_contains($referer, 'role=' . $enhancedRole->id)) {
+            return redirect()->route('partner.nav-permissions.index', ['role' => $enhancedRole->id])
+                ->with('success', 'Menu permissions updated.');
         }
 
 return redirect()->route('partner.nav-permissions.index')->with('success', 'Menu permissions updated.');

@@ -614,140 +614,132 @@ Route::middleware('auth')->group(function () {
         // Partner Settings
         Route::get('settings', function () {
             try {
-                $partner = \App\Models\Partner::where('user_id', auth()->id())->first();
+                // Enable detailed error reporting
+                \DB::enableQueryLog();
+                \Log::info('Starting partner settings load');
                 
-                // If no partner found, create a default one or redirect with error
-                if (!$partner) {
-                    return redirect()->route('partner.dashboard')->with('error', 'Partner profile not found. Please complete your profile first.');
+                // Get the authenticated user with partner relationship
+                $user = auth()->user()->load('partner');
+                if (!$user) {
+                    throw new \Exception('User not authenticated');
+                }
+                \Log::info('User authenticated', ['user_id' => $user->id]);
+                
+                // Check if user has a partner relationship
+                if (!$user->partner) {
+                    return redirect()->route('partner.profile.edit')
+                        ->with('error', 'Please complete your partner profile first.');
                 }
                 
-                // Debug: Log the partner data
-                \Log::info('Partner data for settings:', ['partner_id' => $partner->id, 'name' => $partner->name ?? 'No name']);
-
+                // Get the partner record with relationships
+                $partner = $user->partner->load(['user', 'exams']);
+                \Log::info('Partner data loaded', ['partner_id' => $partner->id]);
+                
+                // Basic stats with fallbacks
+                $stats = [
+                    'total_users' => 0,
+                    'active_users' => 0,
+                    'pending_users' => 0,
+                    'suspended_users' => 0,
+                    'total_roles' => 0,
+                    'roles' => collect(),
+                    'users' => collect(),
+                ];
+                
                 try {
-                    // Debug: Check if EnhancedRole exists
-                    if (!class_exists('App\\Models\\EnhancedRole')) {
-                        throw new \Exception('EnhancedRole class not found');
-                    }
-
-                    // Get current user's level to determine which roles to show
-                    $currentUser = \App\Models\EnhancedUser::find(auth()->id());
-                    $currentUserLevel = $currentUser->getHighestRoleLevel() ?? 1;
+                    // Get user counts with error handling using EnhancedUser model
+                    $stats['total_users'] = \App\Models\EnhancedUser::where('partner_id', $partner->id)
+                        ->orWhere('id', $partner->user_id)
+                        ->count();
                     
-                    // Get roles for partner: default roles + partner-created roles
-                    // 1. Get all default roles (visible to all partners)
-                    // 2. Get roles created by the current partner
-                    $roles = \App\Models\EnhancedRole::with(['users' => function($query) use ($partner) {
-                        // Only count users that belong to this partner
-                        $query->where('ac_users.partner_id', $partner->id)
-                              ->orWhere('ac_users.id', $partner->user_id); // Include main partner user
-                    }])
-                    ->where('status', 'active')
-                    ->where('level', '>=', $currentUserLevel) // Same or lower privilege roles
-                    ->where(function($query) use ($partner) {
-                        $query->where('is_default', 1) // Default roles
-                              ->orWhere('created_by', $partner->user_id) // Roles created by this partner
-                              ->orWhereNull('created_by'); // Legacy roles without creator
-                    })
-                    ->get();
-                    
-                    \Log::info('Partner-relevant roles loaded', [
-                        'count' => $roles->count(),
-                        'current_user_level' => $currentUserLevel,
-                        'partner_id' => $partner->id,
-                        'roles' => $roles->pluck('name', 'level')->toArray()
-                    ]);
-
-                    // Debug: Check if partner_id column exists
-                    $hasPartnerIdColumn = \Schema::hasColumn('ac_users', 'partner_id');
-                    \Log::info('Database check', [
-                        'has_partner_id_column' => $hasPartnerIdColumn,
-                        'partner_id' => $partner->id,
-                        'user_id' => $partner->user_id
-                    ]);
-
-                    // Get user counts - only for users belonging to this partner
-                    $userQuery = \App\Models\EnhancedUser::query();
-                    if ($hasPartnerIdColumn) {
-                        // Include users with this partner_id + main partner user
-                        $userQuery->where(function($query) use ($partner) {
+                    $stats['active_users'] = \App\Models\EnhancedUser::where('status', 'active')
+                        ->where(function($query) use ($partner) {
                             $query->where('partner_id', $partner->id)
                                   ->orWhere('id', $partner->user_id);
-                        });
-                    } else {
-                        // Fallback: only show main partner user if partner_id column doesn't exist
-                        $userQuery->where('id', $partner->user_id);
+                        })
+                        ->count();
+                    
+                    $stats['pending_users'] = \App\Models\EnhancedUser::where('status', 'pending')
+                        ->where('partner_id', $partner->id)
+                        ->count();
+                    
+                    $stats['suspended_users'] = \App\Models\EnhancedUser::where('status', 'suspended')
+                        ->where('partner_id', $partner->id)
+                        ->count();
+                    
+                    // Get roles with error handling using EnhancedRole
+                    try {
+                        $rolesQuery = \App\Models\EnhancedRole::query();
+                        if (\Schema::hasColumn('ac_roles', 'partner_id')) {
+                            $rolesQuery->where('partner_id', $partner->id)
+                                     ->orWhere('is_default', true);
+                        }
+                        $stats['roles'] = $rolesQuery->withCount('users')->get() ?: collect();
+                        $stats['total_roles'] = $stats['roles']->count();
+                    } catch (\Exception $e) {
+                        \Log::error('Error loading roles: ' . $e->getMessage());
+                        $stats['roles'] = collect();
+                        $stats['total_roles'] = 0;
                     }
                     
-                    $totalUsers = $userQuery->count();
-                    $activeUsers = (clone $userQuery)->where('status', 'active')->count();
-                    $pendingUsers = (clone $userQuery)->where('status', 'pending')->count();
-                    $suspendedUsers = (clone $userQuery)->where('status', 'suspended')->count();
-                    
-                    \Log::info('User counts', [
-                        'total' => $totalUsers,
-                        'active' => $activeUsers,
-                        'pending' => $pendingUsers,
-                        'suspended' => $suspendedUsers
-                    ]);
-
-                    // Get all users for the partner (only users belonging to this partner)
-                    $allUsersQuery = \App\Models\EnhancedUser::query()
-                        ->with('roles')
+                    // Get recent users with error handling using EnhancedUser model
+                    $users = \App\Models\EnhancedUser::where('partner_id', $partner->id)
+                        ->orWhere('id', $partner->user_id)
+                        ->with(['roles' => function($query) {
+                            $query->select('id', 'name', 'display_name');
+                        }])
                         ->latest()
-                        ->take(10); // Show up to 10 users instead of 4
-
-                    // Filter by partner context
-                    if ($hasPartnerIdColumn) {
-                        // Include users with this partner_id + main partner user
-                        $allUsersQuery->where(function($query) use ($partner) {
-                            $query->where('partner_id', $partner->id)
-                                  ->orWhere('id', $partner->user_id);
-                        });
-                    } else {
-                        // Fallback: only show main partner user if partner_id column doesn't exist
-                        $allUsersQuery->where('id', $partner->user_id);
-                    }
-
-                    $allUsers = $allUsersQuery->get();
-                    \Log::info('All users loaded', ['count' => $allUsers->count()]);
-
-                    // Partner's main user is already included in the query above
+                        ->take(10)
+                        ->get();
                     
-                    // Debug: Log role information for each user
-                    foreach ($allUsers as $user) {
-                        \Log::info('User role debug', [
-                            'user_id' => $user->id,
-                            'user_email' => $user->email,
-                            'roles_count' => $user->roles->count(),
-                            'roles' => $user->roles->pluck('name', 'id')->toArray()
-                        ]);
+                    // Ensure users is always a collection
+                    $stats['users'] = $users ?: collect();
+                    
+                    // Ensure roles is always a collection
+                    if (!isset($stats['roles'])) {
+                        $stats['roles'] = collect();
                     }
-
-                    $stats = [
-                        'total_users' => $totalUsers,
-                        'active_users' => $activeUsers,
-                        'pending_users' => $pendingUsers,
-                        'suspended_users' => $suspendedUsers,
-                        'total_roles' => $roles->count(),
-                        'roles' => $roles,
-                        'users' => $allUsers,
-                    ];
-
-                    // Debug: Check if view exists
-                    if (!view()->exists('partner.settings.partner-settings')) {
-                        throw new \Exception('View not found: partner.settings.partner-settings');
-                    }
-
-                    return view('partner.settings.partner-settings', compact('partner', 'stats'));
+                    
+                    // Safely log stats with null checks
+                    \Log::info('Stats data prepared', [
+                        'total_users' => $stats['total_users'] ?? 0,
+                        'active_users' => $stats['active_users'] ?? 0,
+                        'roles_count' => $stats['total_roles'] ?? 0,
+                        'recent_users' => isset($stats['users']) ? (is_countable($stats['users']) ? count($stats['users']) : 0) : 0
+                    ]);
+                    
+                    // Log queries for debugging
+                    \Log::info('Database queries:', \DB::getQueryLog());
+                    
+                    // Return the view with the stats as array to match view expectations
+                    return view('partner.settings.partner-settings', [
+                        'partner' => $partner,
+                        'stats' => $stats  // Keep as array since view expects array access
+                    ]);
                 } catch (\Exception $e) {
-                    \Log::error('Error preparing data for settings view: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
-                    throw $e; // Re-throw to be caught by the outer try-catch
+                    \Log::error('Error preparing stats data: ' . $e->getMessage(), [
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine(),
+                        'trace' => $e->getTraceAsString(),
+                        'queries' => \DB::getQueryLog()
+                    ]);
+                    
+                    // Return view with empty stats if data loading fails
+                    return view('partner.settings.partner-settings', [
+                        'partner' => $partner,
+                        'stats' => $stats,  // Keep as array
+                        'error' => 'Some data could not be loaded. Please try again.'
+                    ]);
                 }
             } catch (\Exception $e) {
-                \Log::error('Error in partner settings route: ' . $e->getMessage() . '\n' . $e->getTraceAsString());
+                \Log::error('Critical error in partner settings route: ' . $e->getMessage(), [
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+                
                 return redirect()->route('partner.dashboard')
-                    ->with('error', 'An error occurred while loading settings: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
+                    ->with('error', 'An error occurred while loading settings. Please try again or contact support if the issue persists.');
             }
         })->name('settings.index');
         

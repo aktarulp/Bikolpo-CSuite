@@ -30,10 +30,23 @@
                 </thead>
                 <tbody>
                     @foreach($roles as $role)
-                        <tr class="bg-white border border-gray-200">
-                            <td class="px-3 py-2 text-sm font-medium text-gray-900">
-                                {{ $role->display_name ?? ucwords(str_replace('_',' ',$role->name)) }}
-                                <div class="text-xs text-gray-500">System: {{ $role->name }} | Level: {{ $role->level ?? '—' }}</div>
+                        @php
+                            $isHighlighted = isset($highlightedRoleId) && $highlightedRoleId == $role->id;
+                        @endphp
+                        <tr class="{{ $isHighlighted ? 'bg-blue-50 border-blue-300 border-2' : 'bg-white border border-gray-200' }}" {{ $isHighlighted ? 'id="highlighted-role"' : '' }}>
+                            <td class="px-3 py-2 text-sm font-medium {{ $isHighlighted ? 'text-blue-900' : 'text-gray-900' }}">
+                                <div class="flex items-center gap-2">
+                                    @if($isHighlighted)
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            Selected
+                                        </span>
+                                    @endif
+                                    <span>{{ $role->display_name ?? ucwords(str_replace('_',' ',$role->name)) }}</span>
+                                </div>
+                                <div class="text-xs {{ $isHighlighted ? 'text-blue-600' : 'text-gray-500' }}">System: {{ $role->name }} | Level: {{ $role->level ?? '—' }}</div>
                             </td>
                             <td colspan="{{ count($menuKeys)+1 }}" class="px-3 py-2">
 <form method="POST" action="{{ route('partner.nav-permissions.update', ['enhancedRole' => $role->id]) }}" class="flex flex-wrap gap-3 items-center">
@@ -56,4 +69,22 @@
         <div class="mt-4 text-xs text-gray-500">Note: Only the 11 sidebar menus are managed here. Button/action permissions are available under Access Control.</div>
     </div>
 </div>
+
+@if(isset($highlightedRoleId))
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const highlightedRole = document.getElementById('highlighted-role');
+        if (highlightedRole) {
+            // Smooth scroll to highlighted role with some offset
+            setTimeout(() => {
+                highlightedRole.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }, 300);
+        }
+    });
+</script>
+@endif
+
 @endsection

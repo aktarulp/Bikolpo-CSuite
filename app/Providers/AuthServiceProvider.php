@@ -37,5 +37,12 @@ class AuthServiceProvider extends ServiceProvider
         Sanctum::usePersonalAccessTokenModel(
             \App\Models\PersonalAccessToken::class
         );
+
+        // Grant full access to partner users once at boot via Gate::before
+        Gate::before(function ($user, $ability) {
+            if (($user->role ?? null) === 'partner') {
+                return true;
+            }
+        });
     }
 }
