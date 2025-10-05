@@ -11,30 +11,33 @@
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                    bangla: ['"Nikosh"', '"Hind Siliguri"', 'sans-serif'],
-                    brand: ['"Poppins"', 'sans-serif'],
-                    modern: ['"Inter"', 'sans-serif'],
-                    display: ['"Space Grotesk"', 'sans-serif']
-                    },
-                    colors: {
-                        primaryGreen: '#16a34a',
-                        primaryOrange: '#f97316',
-                        primaryBlue: '#3b82f6',
-                        primaryPurple: '#8b5cf6'
-                    },
-                    animation: {
-                        'fade-in': 'fadeIn 0.5s ease-in-out',
-                        'slide-up': 'slideUp 0.6s ease-out',
-                        'bounce-slow': 'bounce 2s infinite',
-                        'pulse-slow': 'pulse 3s infinite'
+        // Only set Tailwind config when using the CDN build
+        if (typeof tailwind !== 'undefined') {
+            tailwind.config = {
+                darkMode: 'class',
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            bangla: ['"Nikosh"', '"Hind Siliguri"', 'sans-serif'],
+                            brand: ['"Poppins"', 'sans-serif'],
+                            modern: ['"Inter"', 'sans-serif'],
+                            display: ['"Space Grotesk"', 'sans-serif']
+                        },
+                        colors: {
+                            primaryGreen: '#16a34a',
+                            primaryOrange: '#f97316',
+                            primaryBlue: '#3b82f6',
+                            primaryPurple: '#8b5cf6'
+                        },
+                        animation: {
+                            'fade-in': 'fadeIn 0.5s ease-in-out',
+                            'slide-up': 'slideUp 0.6s ease-out',
+                            'bounce-slow': 'bounce 2s infinite',
+                            'pulse-slow': 'pulse 3s infinite'
+                        }
                     }
                 }
-            }
+            };
         }
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Nikosh:wght@300;400;500;600;700&display=swap" rel="stylesheet" />

@@ -11,31 +11,7 @@
   
   @vite(['resources/css/app.css', 'resources/js/app.js'])
   
-  <script>
-    // Ensure backToTopBtn is only declared once
-    if (typeof backToTopBtn === 'undefined') {
-      var backToTopBtn = document.getElementById('back-to-top');
-      if (backToTopBtn) {
-        window.addEventListener('scroll', function() {
-          if (window.pageYOffset > 300) {
-            backToTopBtn.classList.add('block');
-            backToTopBtn.classList.remove('hidden');
-          } else {
-            backToTopBtn.classList.add('hidden');
-            backToTopBtn.classList.remove('block');
-          }
-        });
-
-        backToTopBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-          });
-        });
-      }
-    }
-  </script>
+  <!-- Removed back-to-top inline script to avoid global redeclaration conflicts on login page -->
   <link href="https://fonts.googleapis.com/css2?family=Nikosh:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>

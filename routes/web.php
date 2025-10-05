@@ -41,6 +41,23 @@ Route::get('/', function () {
     return view('welcome');
 })->name('landing');
 
+// Authenticated dashboards (fix missing named routes after login)
+Route::middleware('auth')->group(function () {
+    // Partner Dashboard
+    Route::get('/partner/dashboard', [PartnerDashboardController::class, 'index'])->name('partner.dashboard');
+
+    // Student Dashboard
+    Route::get('/student/dashboard', [\App\Http\Controllers\StudentDashboardController::class, 'index'])->name('student.dashboard');
+
+    // Teacher Dashboard
+    Route::get('/teacher/dashboard', [\App\Http\Controllers\TeacherDashboardController::class, 'index'])->name('teacher.dashboard');
+
+    // Admin Dashboard (fallback to partner settings if no admin dashboard yet)
+    Route::get('/admin/dashboard', function () {
+        return redirect()->route('partner.settings.index');
+    })->name('admin.dashboard');
+});
+
 // Debug routes removed - partner context issue resolved
 
 // Debug route to check user_id 18 data

@@ -45,6 +45,18 @@ class AuthenticatedSessionController extends Controller
         // Get the authenticated user
         $user = Auth::user();
         
+        // Determine login type for fallback logic
+        $loginType = $request->input('login_type', 'auto');
+        
+        // Determine effective role (prefer string role, fallback to first assigned role)
+        $effectiveRole = strtolower((string)($user->role ?? ''));
+        if ($effectiveRole === '' && method_exists($user, 'roles')) {
+            $firstRole = $user->roles()->orderBy('level')->first();
+            if ($firstRole) {
+                $effectiveRole = strtolower($firstRole->name ?? '');
+            }
+        }
+        
         // Debug: Log the authenticated user
         \Log::info('User authenticated', [
             'user_id' => $user->id,
@@ -55,7 +67,7 @@ class AuthenticatedSessionController extends Controller
         ]);
 
         // Redirect based on role
-        switch (strtolower($user->role)) {
+        switch ($effectiveRole) {
             case 'partner':
             case 'partner_admin':
                 return redirect()->route('partner.dashboard');
@@ -112,7 +124,7 @@ class AuthenticatedSessionController extends Controller
                 } elseif (str_contains(strtolower($user->role), 'admin') || str_contains(strtolower($user->role), 'system')) {
                     Log::info('Redirecting to admin dashboard via role string match', ['user_id' => $user->id]);
                     return redirect()->route('admin.dashboard');
-                } elseif ($loginType === 'phone_based') {
+                } elseif (isset($loginType) && $loginType === 'phone_based') {
                     Log::info('Redirecting to student dashboard via phone login type', ['user_id' => $user->id]);
                     return redirect()->route('student.dashboard');
                 } else {
@@ -122,7 +134,8 @@ class AuthenticatedSessionController extends Controller
                 }
         }
 
-        return redirect('/');
+        // As a final safety net, send authenticated users to partner dashboard
+        return redirect()->route('partner.dashboard');
     }
 
     /**
