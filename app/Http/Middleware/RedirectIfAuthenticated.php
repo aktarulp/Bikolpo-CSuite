@@ -62,6 +62,11 @@ class RedirectIfAuthenticated
                     if (!$request->routeIs('teacher.dashboard')) {
                         return redirect()->route('teacher.dashboard');
                     }
+                } elseif ($effectiveRole === 'operator') {
+                    Log::info('Redirecting operator to operator dashboard');
+                    if (!$request->routeIs('operator.dashboard')) {
+                        return redirect()->route('operator.dashboard');
+                    }
                 } elseif (in_array($effectiveRole, ['admin', 'system_administrator'])) {
                     Log::info('Redirecting admin to admin dashboard');
                     if (!$request->routeIs('admin.dashboard')) {

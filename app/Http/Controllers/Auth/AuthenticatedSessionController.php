@@ -74,7 +74,7 @@ class AuthenticatedSessionController extends Controller
                 
             // Operator role removed - redirect to partner dashboard as fallback
             case 'operator':
-                return redirect()->route('partner.dashboard');
+                return redirect()->route('operator.dashboard');
                 
             case 'student':
                 return redirect()->route('student.dashboard');

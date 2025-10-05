@@ -125,6 +125,20 @@
     </style>
 </head>
 <body class="h-full font-sans antialiased bg-gray-50 dark:bg-gray-900">
+    @php
+        $user = Auth::user();
+        $role = strtolower($user->role ?? '');
+        $homeRouteName = 'partner.dashboard';
+        if (str_contains($role, 'admin') || str_contains($role, 'system')) {
+            $homeRouteName = 'admin.dashboard';
+        } elseif ($role === 'student') {
+            $homeRouteName = 'student.dashboard';
+        } elseif ($role === 'teacher') {
+            $homeRouteName = 'teacher.dashboard';
+        } elseif ($role === 'operator') {
+            $homeRouteName = 'operator.dashboard';
+        }
+    @endphp
     <!-- SVG Sprites -->
     @include('partials.svg-sprites')
     
@@ -139,7 +153,7 @@
                 <!-- Sidebar Header -->
                 <div class="relative px-3 py-3 lg:py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-br from-primaryGreen/5 to-emerald-50 dark:from-primaryGreen/10 dark:to-gray-900">
                     <div class="flex items-center justify-between">
-                        <a href="{{ route('partner.dashboard') }}" class="flex items-center space-x-2 group flex-1 min-w-0">
+<a href="{{ route($homeRouteName) }}" class="flex items-center space-x-2 group flex-1 min-w-0">
                             <div class="relative flex-shrink-0">
                                 <div class="w-14 h-14 bg-white dark:bg-gray-800 rounded-xl flex items-center justify-center shadow-lg ring-2 ring-primaryGreen/20 group-hover:ring-primaryGreen/40 transition-all duration-300 group-hover:scale-105 overflow-hidden">
                                     <img src="{{ asset('images/only_logo.png') }}" alt="Bikolpo Live Question" class="w-full h-full object-contain p-1">
@@ -165,10 +179,10 @@
                 <nav class="flex-1 px-2 py-3 lg:px-3 space-y-1">
                     @if(auth()->check())
                     @canAccessMenu('dashboard')
-                    <a href="{{ route('partner.dashboard') }}"
-                       class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.dashboard') ? 'bg-gradient-to-r from-primaryGreen/10 to-emerald-50 text-primaryGreen border border-primaryGreen/20 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-                        <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.dashboard') ? 'bg-primaryGreen/10' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-primaryGreen/10' }} flex items-center justify-center transition-all duration-200">
-                            <svg class="h-4 w-4 {{ request()->routeIs('partner.dashboard') ? 'text-primaryGreen' : 'text-gray-500 group-hover:text-primaryGreen' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+<a href="{{ route($homeRouteName) }}"
+                       class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs($homeRouteName) ? 'bg-gradient-to-r from-primaryGreen/10 to-emerald-50 text-primaryGreen border border-primaryGreen/20 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
+<div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs($homeRouteName) ? 'bg-primaryGreen/10' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-primaryGreen/10' }} flex items-center justify-center transition-all duration-200">
+<svg class="h-4 w-4 {{ request()->routeIs($homeRouteName) ? 'text-primaryGreen' : 'text-gray-500 group-hover:text-primaryGreen' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                             </svg>
                         </div>
