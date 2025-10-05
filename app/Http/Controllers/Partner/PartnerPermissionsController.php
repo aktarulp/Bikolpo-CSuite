@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Partner;
 use App\Http\Controllers\Controller;
 use App\Models\EnhancedPermission;
 use App\Models\EnhancedRole;
+use App\Models\EnhancedUser;
+use App\Models\Partner;
 use App\Services\MenuPermissionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -33,10 +35,31 @@ class PartnerPermissionsController extends Controller
      */
     public function index()
     {
-        // Load roles with only menu permissions eager loaded
+        // Determine current user's highest role level
+        $currentUser = EnhancedUser::find(auth()->id());
+        $currentUserLevel = $currentUser?->getHighestRoleLevel() ?? 1;
+
+        // Determine partner context (roles created by this partner)
+        $partner = Partner::where('user_id', auth()->id())->first();
+        $partnerUserId = $partner?->user_id;
+
+        // Load roles with only menu permissions, filtered by visibility rules:
+        // - Only roles at or below current user's privilege (level >= currentUserLevel)
+        // - Only default roles OR roles created by current partner (or legacy null)
         $roles = EnhancedRole::with(['permissions' => function ($q) {
-            $q->whereIn('name', self::MENUS);
-        }])->orderBy('level')->get();
+                $q->whereIn('name', self::MENUS);
+            }])
+            ->active()
+            ->where('level', '>=', $currentUserLevel)
+            ->where(function ($query) use ($partnerUserId) {
+                $query->where('is_default', 1)
+                      ->orWhereNull('created_by');
+                if ($partnerUserId) {
+                    $query->orWhere('created_by', $partnerUserId);
+                }
+            })
+            ->orderBy('level')
+            ->get();
 
         $permissionsByRole = $roles->mapWithKeys(function ($role) {
             $granted = $role->permissions->pluck('name')->all();
