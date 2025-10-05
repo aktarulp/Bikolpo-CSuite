@@ -129,14 +129,10 @@
         $user = Auth::user();
         $role = strtolower($user->role ?? '');
         $homeRouteName = 'partner.dashboard';
-        if (str_contains($role, 'admin') || str_contains($role, 'system')) {
-            $homeRouteName = 'admin.dashboard';
-        } elseif ($role === 'student') {
+        if ($role === 'student') {
             $homeRouteName = 'student.dashboard';
         } elseif ($role === 'teacher') {
             $homeRouteName = 'teacher.dashboard';
-        } elseif ($role === 'operator') {
-            $homeRouteName = 'operator.dashboard';
         }
     @endphp
     <!-- SVG Sprites -->

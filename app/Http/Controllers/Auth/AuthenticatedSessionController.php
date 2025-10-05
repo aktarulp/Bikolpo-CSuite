@@ -74,7 +74,8 @@ class AuthenticatedSessionController extends Controller
                 
             // Operator role removed - redirect to partner dashboard as fallback
             case 'operator':
-                return redirect()->route('operator.dashboard');
+                // Operator role omitted; fall back to partner dashboard
+                return redirect()->route('partner.dashboard');
                 
             case 'student':
                 return redirect()->route('student.dashboard');
@@ -82,9 +83,6 @@ class AuthenticatedSessionController extends Controller
             case 'teacher':
                 return redirect()->route('teacher.dashboard');
                 
-            case 'admin':
-            case 'system_administrator':
-                return redirect()->route('admin.dashboard');
                 
             default:
                 \Log::warning('Unknown role detected, attempting intelligent redirect', [
@@ -98,22 +96,18 @@ class AuthenticatedSessionController extends Controller
                 if ($user->role_id) {
                     Log::info('Attempting redirect via role_id', ['user_id' => $user->id, 'role_id' => $user->role_id, 'role' => $user->role]);
                     switch ($user->role_id) {
-                        case 1: // System Administrator
-                        case 2: // Admin  
-                            Log::info('Redirecting to admin dashboard via role_id', ['user_id' => $user->id, 'role_id' => $user->role_id]);
-                            return redirect()->route('admin.dashboard');
                         case 3: // Partner
                             Log::info('Redirecting to partner dashboard via role_id', ['user_id' => $user->id, 'role_id' => $user->role_id]);
                             return redirect()->route('partner.dashboard');
                         case 4: // Teacher
                             Log::info('Redirecting to teacher dashboard via role_id', ['user_id' => $user->id, 'role_id' => $user->role_id]);
                             return redirect()->route('teacher.dashboard');
-                        case 5: // Operator (removed - redirect to partner dashboard)
-                            Log::info('Operator role detected but removed, redirecting to partner dashboard', ['user_id' => $user->id, 'role_id' => $user->role_id]);
-                            return redirect()->route('partner.dashboard');
                         case 6: // Student
                             Log::info('Redirecting to student dashboard via role_id', ['user_id' => $user->id, 'role_id' => $user->role_id]);
                             return redirect()->route('student.dashboard');
+                        default:
+                            Log::info('Unknown role_id, redirecting to partner dashboard', ['user_id' => $user->id, 'role_id' => $user->role_id]);
+                            return redirect()->route('partner.dashboard');
                     }
                 }
                 
@@ -121,21 +115,18 @@ class AuthenticatedSessionController extends Controller
                 if (in_array(strtolower($user->role), ['partner_admin', 'institution_admin'])) {
                     Log::info('Redirecting to partner dashboard via role string match', ['user_id' => $user->id]);
                     return redirect()->route('partner.dashboard');
-                } elseif (str_contains(strtolower($user->role), 'admin') || str_contains(strtolower($user->role), 'system')) {
-                    Log::info('Redirecting to admin dashboard via role string match', ['user_id' => $user->id]);
-                    return redirect()->route('admin.dashboard');
                 } elseif (isset($loginType) && $loginType === 'phone_based') {
                     Log::info('Redirecting to student dashboard via phone login type', ['user_id' => $user->id]);
                     return redirect()->route('student.dashboard');
                 } else {
-                    // Default fallback to neutral dashboard (auth-only)
-                    Log::info('Redirecting to neutral dashboard as final fallback', ['user_id' => $user->id]);
-                    return redirect()->route('dashboard');
+                    // Default fallback to partner dashboard for any other role
+                    Log::info('Redirecting to partner dashboard as final fallback', ['user_id' => $user->id]);
+                    return redirect()->route('partner.dashboard');
                 }
         }
 
-        // As a final safety net, send authenticated users to neutral dashboard
-        return redirect()->route('dashboard');
+        // As a final safety net, send authenticated users to partner dashboard
+        return redirect()->route('partner.dashboard');
     }
 
     /**

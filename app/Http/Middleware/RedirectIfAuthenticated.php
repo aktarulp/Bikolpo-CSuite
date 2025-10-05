@@ -52,31 +52,21 @@ class RedirectIfAuthenticated
                     if (!$request->routeIs('student.dashboard')) {
                         return redirect()->route('student.dashboard');
                     }
-                } elseif (in_array($effectiveRole, ['partner', 'partner_admin', 'institution_admin'])) {
-                    Log::info('Redirecting partner to partner dashboard', ['role' => $user->role, 'effectiveRole' => $effectiveRole]);
-                    if (!$request->routeIs('partner.dashboard')) {
-                        return redirect()->route('partner.dashboard');
-                    }
                 } elseif ($effectiveRole === 'teacher') {
                     Log::info('Redirecting teacher to teacher dashboard');
                     if (!$request->routeIs('teacher.dashboard')) {
                         return redirect()->route('teacher.dashboard');
                     }
-                } elseif ($effectiveRole === 'operator') {
-                    Log::info('Redirecting operator to operator dashboard');
-                    if (!$request->routeIs('operator.dashboard')) {
-                        return redirect()->route('operator.dashboard');
-                    }
-                } elseif (in_array($effectiveRole, ['admin', 'system_administrator'])) {
-                    Log::info('Redirecting admin to admin dashboard');
-                    if (!$request->routeIs('admin.dashboard')) {
-                        return redirect()->route('admin.dashboard');
-                    }
                 } else {
-                    // Unknown role: send to neutral dashboard to avoid 403 loops
-                    Log::warning('Authenticated user has unknown role, redirecting to neutral dashboard', ['role' => $user->role, 'effectiveRole' => $effectiveRole]);
-                    return redirect()->route('dashboard');
+                    // Partner and any other roles fall back to partner dashboard
+                    Log::info('Redirecting to partner dashboard', ['role' => $user->role, 'effectiveRole' => $effectiveRole]);
+                    if (!$request->routeIs('partner.dashboard')) {
+                        return redirect()->route('partner.dashboard');
+                    }
                 }
+                    // Unknown role or custom role: send to partner dashboard
+                    Log::warning('Authenticated user has unknown role, redirecting to partner dashboard', ['role' => $user->role, 'effectiveRole' => $effectiveRole]);
+                    return redirect()->route('partner.dashboard');
             }
         }
 

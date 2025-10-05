@@ -56,10 +56,6 @@ Route::middleware('auth')->group(function () {
     // Teacher Dashboard
     Route::get('/teacher/dashboard', [\App\Http\Controllers\TeacherDashboardController::class, 'index'])->name('teacher.dashboard');
 
-    // Admin Dashboard (fallback to partner settings if no admin dashboard yet)
-    Route::get('/admin/dashboard', function () {
-        return redirect()->route('partner.settings.index');
-    })->name('admin.dashboard');
 });
 
 // Debug routes removed - partner context issue resolved
@@ -860,23 +856,7 @@ Route::middleware('auth')->group(function () {
         // Add teacher-specific routes here as needed
     });
 
-    // Operator Routes
-    Route::prefix('operator')->name('operator.')->middleware(['auth', 'role:operator'])->group(function () {
-        Route::get('/', [\App\Http\Controllers\OperatorDashboardController::class, 'index'])->name('dashboard');
-        Route::get('/dashboard', [\App\Http\Controllers\OperatorDashboardController::class, 'index'])->name('dashboard');
-        
-        // Operator can access partner resources with operational permissions
-        // Add operator-specific routes here as needed
-    });
 
-    // Admin Routes (System Administrator, Admin, System)
-    Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:system_administrator,admin,system'])->group(function () {
-        Route::get('/', [\App\Http\Controllers\AdminDashboardController::class, 'index'])->name('dashboard');
-        Route::get('/dashboard', [\App\Http\Controllers\AdminDashboardController::class, 'index'])->name('dashboard');
-        
-        // Admin can access all system resources
-        // Add admin-specific routes here as needed
-    });
 
     // Student Routes
     Route::prefix('student')->name('student.')->middleware(['auth', 'role:student'])->group(function () {
