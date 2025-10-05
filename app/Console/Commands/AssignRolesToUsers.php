@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\EnhancedUser;
-use Spatie\Permission\Models\Role;
+use App\Models\EnhancedRole;
 
 class AssignRolesToUsers extends Command
 {
@@ -20,7 +20,7 @@ class AssignRolesToUsers extends Command
      *
      * @var string
      */
-    protected $description = 'Assign Spatie roles to existing users based on their current role field';
+    protected $description = 'Assign roles to existing users based on their current role field';
 
     /**
      * Execute the console command.
@@ -64,7 +64,7 @@ class AssignRolesToUsers extends Command
                 }
                 
                 // Check if role exists
-                $role = Role::where('name', $roleName)->where('guard_name', 'web')->first();
+                $role = EnhancedRole::where('name', $roleName)->first();
                 
                 if (!$role) {
                     $this->error("Role '{$roleName}' not found for user: {$user->name}");
@@ -74,11 +74,11 @@ class AssignRolesToUsers extends Command
                 
                 // Remove existing roles if force is enabled
                 if ($force) {
-                    $user->syncRoles([]);
+                    $user->roles()->sync([]);
                 }
                 
-                // Assign the role
-                $user->assignRole($roleName);
+                // Assign the role using custom pivot
+                $user->assignRoleWithMetadata($role, auth()->id());
                 
                 $this->info("✓ Assigned '{$roleName}' role to {$user->name}");
                 $processed++;

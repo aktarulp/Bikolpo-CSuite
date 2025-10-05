@@ -20,12 +20,6 @@ class MenuPermissionsSeeder extends Seeder
             $menuName = 'menu-' . $menuKey;
             $menuDisplay = $menuConfig['label'] ?? ucfirst($menuKey);
             $this->upsertPermission($menuName, $menuDisplay, "Access to {$menuDisplay} menu", $created, $updated, $skipped);
-
-            $buttons = $menuConfig['buttons'] ?? [];
-            foreach ($buttons as $buttonKey => $buttonLabel) {
-                $permName = $menuKey . '-' . $buttonKey;
-                $this->upsertPermission($permName, $buttonLabel, "$buttonLabel permission for {$menuDisplay}", $created, $updated, $skipped);
-            }
         }
 
         $this->command->info("\n✅ Menu and button permissions seeded. Created: {$created}, Updated: {$updated}, Skipped: {$skipped}\n");

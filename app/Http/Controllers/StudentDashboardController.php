@@ -53,7 +53,7 @@ class StudentDashboardController extends Controller
         // Get subject performance
         $subjectPerformance = $this->getSubjectPerformance($studentId);
 
-        return view('student.dashboard', compact(
+        return view('student.dashboard.student-dashboard', compact(
             'user', 
             'student', 
             'availableExams', 

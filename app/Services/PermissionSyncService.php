@@ -23,20 +23,11 @@ class PermissionSyncService
             $now = now();
 
             foreach ($menus as $menuKey => $menuConfig) {
-                // Ensure the main menu permission exists (menu-*)
+                // Ensure ONLY the main menu permission exists (menu-*). Action/button permissions are not created.
                 $menuPermName = "menu-{$menuKey}";
                 $menuDisplay = $menuConfig['label'] ?? ucfirst($menuKey);
 
                 self::upsertPermission($menuPermName, $menuDisplay, "Access to {$menuDisplay} menu");
-
-                // Ensure CRUD/button permissions
-                $buttons = $menuConfig['buttons'] ?? [];
-                foreach ($buttons as $buttonKey => $buttonLabel) {
-                    $permName = "$menuKey-$buttonKey";
-                    $display = $buttonLabel;
-                    $desc = "$buttonLabel permission for {$menuDisplay}";
-                    self::upsertPermission($permName, $display, $desc);
-                }
             }
         } catch (\Throwable $e) {
             Log::warning('PermissionSyncService syncMenus failed: ' . $e->getMessage());

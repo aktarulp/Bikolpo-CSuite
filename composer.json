@@ -14,10 +14,8 @@
         "laravel/framework": "^12.0",
         "laravel/sanctum": "*",
         "laravel/tinker": "^2.10.1",
-        "maatwebsite/excel": "*",
         "pestphp/pest": "*",
-        "spatie/browsershot": "*",
-        "spatie/laravel-permission": "^6.21"
+        "spatie/browsershot": "*"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.16",

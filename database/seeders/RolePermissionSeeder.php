@@ -4,9 +4,9 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\DB;
+use App\Models\EnhancedRole;
+use App\Models\EnhancedPermission;
 
 class RolePermissionSeeder extends Seeder
 {
@@ -15,8 +15,7 @@ class RolePermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        // Clear cache before seeding
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        // Using custom EnhancedPermission/EnhancedRole system; no Spatie cache to clear
 
         // Get permission configuration
         $config = config('permissions');
@@ -45,8 +44,8 @@ class RolePermissionSeeder extends Seeder
             // Create menu permission
             $menuPermission = "menu-{$menuKey}";
             $permissions[] = [
-                'name' => $menuPermission,
-                'guard_name' => 'web',
+'module_name' => $menuPermission,
+                'status' => 'active',
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
@@ -55,8 +54,8 @@ class RolePermissionSeeder extends Seeder
             foreach ($menuConfig['buttons'] as $buttonKey => $buttonLabel) {
                 $buttonPermission = "{$menuKey}-{$buttonKey}";
                 $permissions[] = [
-                    'name' => $buttonPermission,
-                    'guard_name' => 'web',
+'module_name' => $buttonPermission,
+                    'status' => 'active',
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
@@ -66,7 +65,7 @@ class RolePermissionSeeder extends Seeder
         // Batch insert permissions for better performance
         $chunks = array_chunk($permissions, 100);
         foreach ($chunks as $chunk) {
-            DB::table(config('permission.table_names.permissions'))->insertOrIgnore($chunk);
+DB::table('ac_modules')->insertOrIgnore($chunk);
         }
         
         $this->command->info('Created ' . count($permissions) . ' permissions.');
@@ -83,26 +82,29 @@ class RolePermissionSeeder extends Seeder
             $this->command->info("Processing role: {$roleName}");
             
             // Create or get the role
-            $role = Role::firstOrCreate([
-                'name' => $roleName,
-                'guard_name' => 'web'
-            ]);
+            $role = EnhancedRole::firstOrCreate(
+                ['name' => $roleName],
+                [
+                    'display_name' => ucfirst($roleName),
+                    'status' => 'active',
+                    'level' => 3,
+                ]
+            );
             
-            // Clear existing permissions for this role
-            $role->permissions()->detach();
-            
-            // Assign permissions
-            if ($roleConfig['permissions'] === 'all') {
+            // Assign permissions using custom system
+            if (($roleConfig['permissions'] ?? null) === 'all') {
                 // Assign all permissions to this role
                 $allPermissions = $this->getAllPermissionNames($menus);
-                $role->givePermissionTo($allPermissions);
+                $role->syncPermissions($allPermissions);
                 $this->command->info("  - Assigned ALL permissions to {$roleName}");
             } else {
                 // Assign specific permissions
-                $validPermissions = $this->validatePermissions($roleConfig['permissions'], $menus);
+                $validPermissions = $this->validatePermissions($roleConfig['permissions'] ?? [], $menus);
                 if (!empty($validPermissions)) {
-                    $role->givePermissionTo($validPermissions);
+                    $role->syncPermissions($validPermissions);
                     $this->command->info("  - Assigned " . count($validPermissions) . " permissions to {$roleName}");
+                } else {
+                    $role->syncPermissions([]);
                 }
             }
         }

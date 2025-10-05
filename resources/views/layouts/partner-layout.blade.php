@@ -174,7 +174,6 @@
                 <!-- Navigation -->
                 <nav class="flex-1 px-2 py-3 lg:px-3 space-y-1">
                     @if(auth()->check())
-                    @canAccessMenu('dashboard')
 <a href="{{ route($homeRouteName) }}"
                        class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs($homeRouteName) ? 'bg-gradient-to-r from-primaryGreen/10 to-emerald-50 text-primaryGreen border border-primaryGreen/20 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
 <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs($homeRouteName) ? 'bg-primaryGreen/10' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-primaryGreen/10' }} flex items-center justify-center transition-all duration-200">
@@ -184,7 +183,6 @@
                         </div>
                         <span class="ml-2 flex-1">Dashboard</span>
                     </a>
-                    @endcanAccessMenu
                     @endif
 
                     @if(auth()->check())
@@ -345,8 +343,58 @@
                         <!-- User Menu Button -->
                         <button @click="open = !open" class="w-full group flex items-center space-x-2 p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200">
                             <div class="flex-shrink-0">
-                                <div class="w-8 h-8 bg-gradient-to-br from-primaryGreen to-emerald-600 rounded-full flex items-center justify-center ring-2 ring-white dark:ring-gray-800">
-                                    <span class="text-xs font-bold text-white">{{ substr(Auth::user()->name ?? 'P', 0, 1) }}</span>
+                                <div class="w-8 h-8 bg-gradient-to-br from-primaryGreen to-emerald-600 rounded-full flex items-center justify-center ring-2 ring-white dark:ring-gray-800 overflow-hidden">
+                                    @php
+                                        $authUser = Auth::user();
+                                        $roleName = strtolower($authUser->role ?? $role ?? '');
+                                        $studentPhoto = null;
+                                        $teacherPhoto = null;
+                                        $partnerLogoSidebar = null;
+
+                                        // Resolve student photo
+                                        if ($roleName === 'student') {
+                                            $studentPhoto = optional($authUser->student)->photo;
+                                        }
+
+                                        // Resolve teacher photo
+                                        if ($roleName === 'teacher') {
+                                            try {
+                                                $teacherPhoto = \App\Models\Teacher::where('user_id', $authUser->id)->value('photo');
+                                            } catch (\Exception $e) {
+                                                $teacherPhoto = null;
+                                            }
+                                        }
+
+                                        // Resolve partner logo for partner or other non-default roles
+                                        if (in_array($roleName, ['partner','partner_admin','admin','operator',''])) {
+                                            $partnerLogoSidebar = $partner?->logo ?? null;
+                                        }
+
+                                        $displayImage = null;
+                                        if (!empty($studentPhoto)) {
+                                            $displayImage = asset('storage/' . $studentPhoto);
+                                        } elseif (!empty($teacherPhoto)) {
+                                            $displayImage = asset('storage/' . $teacherPhoto);
+                                        } elseif (!empty($partnerLogoSidebar)) {
+                                            $displayImage = asset('storage/' . $partnerLogoSidebar);
+                                        }
+
+                                        // Compute initials as fallback
+                                        $name = $authUser->name ?? 'User';
+                                        $initials = '';
+                                        $nameParts = array_filter(explode(' ', $name));
+                                        if (count($nameParts) >= 2) {
+                                            $initials = strtoupper(substr($nameParts[0], 0, 1) . substr(end($nameParts), 0, 1));
+                                        } else {
+                                            $initials = strtoupper(substr($name, 0, 2));
+                                        }
+                                    @endphp
+
+                                    @if($displayImage)
+                                        <img src="{{ $displayImage }}" alt="Profile" class="w-full h-full object-cover rounded-full">
+                                    @else
+                                        <span class="text-xs font-bold text-white">{{ $initials }}</span>
+                                    @endif
                                 </div>
                             </div>
                             <div class="flex-1 min-w-0 text-left">

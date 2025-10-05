@@ -17,7 +17,6 @@ class PartnerPermissionsController extends Controller
      * Canonical list of sidebar menu permissions (exactly 11).
      */
     private const MENUS = [
-        'menu-dashboard',
         'menu-courses',
         'menu-subjects',
         'menu-topics',

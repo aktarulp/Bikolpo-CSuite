@@ -69,23 +69,16 @@ class PermissionServiceProvider extends ServiceProvider
 
     /**
      * Check if user has a specific permission
+     * Note: Direct user permissions have been removed. We now rely solely on role-based permissions.
      */
     private function userHasPermission(EnhancedUser $user, string $permission): bool
     {
-        // Check direct user permissions
-        $userPermissions = $user->permissions()->where('name', $permission)->exists();
-        if ($userPermissions) {
-            return true;
-        }
-
-        // Check role-based permissions
-        $rolePermissions = $user->roles()
+        // Check role-based permissions only
+        return $user->roles()
             ->whereHas('permissions', function ($query) use ($permission) {
-                $query->where('name', $permission);
+                $query->where('module_name', $permission)->orWhere('name', $permission);
             })
             ->exists();
-
-        return $rolePermissions;
     }
 
     /**

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.partner-layout')
 
 @section('title', 'Exam Result - ' . $exam->title)
 

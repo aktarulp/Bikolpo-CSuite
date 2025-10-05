@@ -3,6 +3,7 @@
 @section('title', 'Add Course')
 
 @section('content')
+@can('courses-add')
 <!-- Professional Mobile-First Design -->
 <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-slate-900 dark:to-gray-900 py-4 sm:py-6 lg:py-8">
     <div class="max-w-3xl mx-auto space-y-6">
@@ -199,4 +200,5 @@
         </div>
     </div>
 </div>
+@endcan
 @endsection 

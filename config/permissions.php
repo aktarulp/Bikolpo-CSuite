@@ -12,12 +12,6 @@ return [
     */
 
 'menus' => [
-        'dashboard' => [
-            'label' => 'Dashboard',
-            'buttons' => [
-                'view-stats' => 'View Statistics',
-            ]
-        ],
         'students' => [
             'label' => 'Students',
             'buttons' => [
@@ -180,11 +174,10 @@ return [
                 'results-generate-reports',
             ]
         ],
-        'Student' => [
-            'description' => 'Student access with limited permissions',
-            'permissions' => [
-                // Menu permissions
-                'menu-dashboard',
+'Student' => [
+        'description' => 'Student access with limited permissions',
+        'permissions' => [
+                // Menu permissions (dashboard implicit for all users)
                 'menu-courses',
                 'menu-exams',
                 'menu-results',

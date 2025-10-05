@@ -11,6 +11,7 @@ class CourseController extends Controller
 {
     use HasPartnerContext;
 
+
     public function index()
     {
         // Get the authenticated user's partner ID using the trait

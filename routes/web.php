@@ -416,7 +416,7 @@ Route::middleware('auth')->group(function () {
     // });
 
 // Partner Routes (Coaching Center)
-    Route::prefix('partner')->name('partner.')->middleware(['auth', 'role_or_permission:partner,menu-dashboard,menu-courses,menu-subjects,menu-topics,menu-batches,menu-students,menu-teachers,menu-questions,menu-exams,menu-analytics,menu-sms'])->group(function () {
+Route::prefix('partner')->name('partner.')->middleware(['auth'])->group(function () {
 // Nav-only Permissions management (11 sidebar items) - use distinct path to avoid conflicts
         Route::get('nav-permissions', [PartnerPermissionsController::class, 'index'])->name('nav-permissions.index');
         Route::put('nav-permissions/{enhancedRole}', [PartnerPermissionsController::class, 'update'])->name('nav-permissions.update');
@@ -848,7 +848,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // Teacher Routes
-    Route::prefix('teacher')->name('teacher.')->middleware(['auth', 'role:teacher'])->group(function () {
+Route::prefix('teacher')->name('teacher.')->middleware(['auth'])->group(function () {
         Route::get('/', [\App\Http\Controllers\TeacherDashboardController::class, 'index'])->name('dashboard');
         Route::get('/dashboard', [\App\Http\Controllers\TeacherDashboardController::class, 'index'])->name('dashboard');
         
@@ -859,7 +859,7 @@ Route::middleware('auth')->group(function () {
 
 
     // Student Routes
-    Route::prefix('student')->name('student.')->middleware(['auth', 'role:student'])->group(function () {
+Route::prefix('student')->name('student.')->middleware(['auth'])->group(function () {
         Route::get('/', [StudentDashboardController::class, 'index'])->name('dashboard');
         Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
         
@@ -957,7 +957,7 @@ Route::prefix('api')->group(function () {
     Route::get('/exam-review/{examId}/{resultId}/suggestions', [\App\Http\Controllers\ExamReviewController::class, 'getImprovementSuggestions'])->name('api.exam-review.suggestions');
     
     // Role and Permission API routes
-    Route::middleware(['auth', 'role:partner'])->group(function () {
+Route::middleware(['auth'])->group(function () {
         
         // User Management API routes
         Route::get('/users', [\App\Http\Controllers\UserManagementController::class, 'getUsers'])->name('api.users.index');

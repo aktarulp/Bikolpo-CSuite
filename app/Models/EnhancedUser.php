@@ -10,11 +10,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
-use Spatie\Permission\Traits\HasRoles;
 
 class EnhancedUser extends Authenticatable
 {
-    use HasFactory, Notifiable, HasApiTokens, HasRoles;
+    use HasFactory, Notifiable, HasApiTokens;
 
     protected $table = 'ac_users';
     
@@ -234,41 +233,6 @@ class EnhancedUser extends Authenticatable
         return $this->roles()->detach($role->id);
     }
 
-    /**
-     * Grant a permission to the user.
-     */
-    public function grantPermission($permission, $grantedBy = null, $expiresAt = null)
-    {
-        if (is_string($permission)) {
-            $permission = Permission::where('name', $permission)->first();
-        }
-
-        if (!$permission) {
-            return false;
-        }
-
-        return $this->permissions()->attach($permission->id, [
-            'granted_by' => $grantedBy ?? auth()->id(),
-            'granted_at' => now(),
-            'expires_at' => $expiresAt
-        ]);
-    }
-
-    /**
-     * Revoke a permission from the user.
-     */
-    public function revokePermission($permission)
-    {
-        if (is_string($permission)) {
-            $permission = Permission::where('name', $permission)->first();
-        }
-
-        if (!$permission) {
-            return false;
-        }
-
-        return $this->permissions()->detach($permission->id);
-    }
 
     /**
      * Get all permissions (direct + through roles).
