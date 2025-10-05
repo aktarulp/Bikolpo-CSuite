@@ -495,13 +495,17 @@
                             </div>
                             <div>
                                 <h2 class="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white">
-                                    Welcome back, <span class="text-transparent bg-clip-text bg-gradient-to-r from-primaryGreen to-emerald-600 dark:from-emerald-400 dark:to-primaryGreen">{{ $partner?->name ?? Auth::user()->name ?? 'Partner' }}</span>
+                                    Welcome back, <span class="text-transparent bg-clip-text bg-gradient-to-r from-primaryGreen to-emerald-600 dark:from-emerald-400 dark:to-primaryGreen">{{ in_array($role, ['student','teacher']) ? (Auth::user()->name ?? 'User') : ($partner?->name ?? Auth::user()->name ?? 'Partner') }}</span>
                                 </h2>
                                 <p class="text-gray-600 dark:text-gray-400 text-sm flex items-center mt-1">
                                     <svg class="w-4 h-4 mr-1.5 text-primaryGreen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
-                                    Manage your exam system efficiently
+                                    @if($role === 'student')
+                                        Enhance Your Learning Experience
+                                    @else
+                                        Manage your exam system efficiently
+                                    @endif
                                 </p>
                             </div>
                         </div>
@@ -554,10 +558,45 @@
                             <div class="relative" x-data="{ open: false }" @click.away="open = false">
                                 <!-- User Menu Button - Square Profile Image Only -->
                                 <button @click="open = !open" class="p-1.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg border-0 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primaryGreen/20 shadow-sm hover:shadow-md">
-                                    <!-- Square Profile Image -->
+                                    <!-- Square Profile Image (conditional: student/teacher photo, partner logo, or initials) -->
                                     <div class="w-10 h-10 bg-gradient-to-br from-primaryGreen to-emerald-600 flex items-center justify-center rounded-md overflow-hidden border-0 border-white dark:border-gray-700 shadow-sm">
                                         @php
-                                            $name = Auth::user()->name ?? 'User';
+                                            $authUser = Auth::user();
+                                            $roleName = strtolower($authUser->role ?? $role ?? '');
+                                            $studentPhoto = null;
+                                            $teacherPhoto = null;
+                                            $partnerLogoTop = null;
+
+                                            // Attempt to resolve student photo if role is student
+                                            if ($roleName === 'student') {
+                                                $studentPhoto = optional($authUser->student)->photo;
+                                            }
+
+                                            // Attempt to resolve teacher photo if role is teacher
+                                            if ($roleName === 'teacher') {
+                                                try {
+                                                    $teacherPhoto = \App\Models\Teacher::where('user_id', $authUser->id)->value('photo');
+                                                } catch (\Exception $e) {
+                                                    $teacherPhoto = null;
+                                                }
+                                            }
+
+                                            // Resolve partner logo for partner or non-default partner roles
+                                            if (in_array($roleName, ['partner','partner_admin','admin','operator',''])) {
+                                                $partnerLogoTop = $partner->logo ?? null;
+                                            }
+
+                                            $displayImage = null;
+                                            if (!empty($studentPhoto)) {
+                                                $displayImage = asset('storage/' . $studentPhoto);
+                                            } elseif (!empty($teacherPhoto)) {
+                                                $displayImage = asset('storage/' . $teacherPhoto);
+                                            } elseif (!empty($partnerLogoTop)) {
+                                                $displayImage = asset('storage/' . $partnerLogoTop);
+                                            }
+
+                                            // Compute initials as fallback
+                                            $name = $authUser->name ?? 'User';
                                             $initials = '';
                                             $nameParts = array_filter(explode(' ', $name));
                                             if (count($nameParts) >= 2) {
@@ -566,7 +605,12 @@
                                                 $initials = strtoupper(substr($name, 0, 2));
                                             }
                                         @endphp
-                                        <span class="text-sm font-bold text-white">{{ $initials }}</span>
+
+                                        @if($displayImage)
+                                            <img src="{{ $displayImage }}" alt="Profile" class="w-full h-full object-cover">
+                                        @else
+                                            <span class="text-sm font-bold text-white">{{ $initials }}</span>
+                                        @endif
                                     </div>
                                 </button>
 
@@ -587,14 +631,19 @@
                                         <div class="mb-1">
                                             <p class="px-3 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Institution</p>
                                             <div class="space-y-1">
-                                                <a href="{{ route('partner.profile.show-partnar') }}" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-primaryGreen/10 dark:hover:bg-primaryGreen/20 hover:text-primaryGreen dark:hover:text-emerald-400 rounded-lg transition-colors duration-150">
+                                                @php
+                                                    $profileRoute = in_array($role ?? strtolower(Auth::user()->role ?? ''), ['student', 'teacher'])
+                                                        ? route('partner.profile.show-user-profile')
+                                                        : route('partner.profile.show-partnar');
+                                                @endphp
+                                                <a href="{{ $profileRoute }}" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-primaryGreen/10 dark:hover:bg-primaryGreen/20 hover:text-primaryGreen dark:hover:text-emerald-400 rounded-lg transition-colors duration-150">
                                                     <div class="w-7 h-7 bg-primaryGreen/10 dark:bg-primaryGreen/20 rounded-md flex items-center justify-center mr-2 group-hover:scale-110 transition-transform duration-200">
                                                         <svg class="w-3.5 h-3.5 text-primaryGreen dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                                                         </svg>
                                                     </div>
                                                     <div class="flex-1">
-                                                        <p class="font-medium">Institution Profile</p>
+                                                        <p class="font-medium">Profile</p>
                                                     </div>
                                                     <svg class="w-4 h-4 text-gray-400 group-hover:text-primaryGreen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
