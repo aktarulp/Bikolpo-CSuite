@@ -572,7 +572,7 @@
                     <!-- Social Media Sharing Section -->
                     <div class="bg-blue-50 rounded-lg sm:rounded-xl p-4 sm:p-6 mb-6 sm:mb-8 border border-blue-200">
                         <h3 class="text-base sm:text-lg font-semibold text-gray-800 mb-2 sm:mb-3 text-center">Share Your Achievement</h3>
-                        <p class="text-xs sm:text-sm text-gray-600 text-center mb-3 sm:mb-4 px-2">Let your friends know about your performance and inspire them to try Bikolpo LQ!</p>
+                        <p class="text-xs sm:text-sm text-gray-600 text-center mb-3 sm:mb-4 px-2">Let your friends know about your performance and inspire them to try Bikolpo Live!</p>
                         
                         <div class="grid grid-cols-2 sm:flex sm:flex-wrap justify-center gap-2 sm:gap-3">
                             <!-- Facebook Share -->
@@ -677,7 +677,7 @@
             <div class="text-center text-gray-600 mb-4 sm:mb-6 lg:mb-8">
                 <div class="inline-flex items-center px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full shadow-lg">
                     <i class="fas fa-star text-yellow-300 mr-2 text-sm sm:text-base"></i>
-                    <span class="text-white font-semibold text-sm sm:text-base">Powered by Bikolpo LQ</span>
+                    <span class="text-white font-semibold text-sm sm:text-base">Powered by Bikolpo Live</span>
                 </div>
                 <p class="text-xs sm:text-sm mt-3 sm:mt-4 text-gray-500 px-2">
                     Report generated on {{ now()->format('M d, Y g:i A') }}
@@ -803,26 +803,26 @@
         // Social Media Sharing Functions
         function shareOnFacebook() {
             const url = encodeURIComponent(window.location.href);
-            const text = encodeURIComponent(`I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo LQ.`);
+            const text = encodeURIComponent(`I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo Live.`);
             const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`;
             window.open(facebookUrl, '_blank', 'width=600,height=400');
         }
         
         function shareOnWhatsApp() {
-            const text = `I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo LQ. ${window.location.href}`;
+            const text = `I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo Live. ${window.location.href}`;
             const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
             window.open(whatsappUrl, '_blank');
         }
         
         function shareOnTwitter() {
-            const text = `I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo LQ.`;
+            const text = `I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo Live.`;
             const url = window.location.href;
             const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
             window.open(twitterUrl, '_blank', 'width=600,height=400');
         }
         
         function copyToClipboard() {
-            const text = `I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo LQ. ${window.location.href}`;
+            const text = `I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo Live. ${window.location.href}`;
             
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(text).then(() => {
