@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', 'Privacy Policy - Bikolpo LQ')
+@section('title', 'Privacy Policy - Bikolpo Live')
 
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
@@ -48,7 +48,7 @@
                         </h2>
                         <div class="bg-blue-50 border-l-4 border-primaryBlue p-6 mb-6">
                             <p class="text-gray-700 leading-relaxed">
-                                Bikolpo LQ ("we," "our," or "us") is committed to protecting your privacy and personal information. 
+                                Bikolpo Live ("we," "our," or "us") is committed to protecting your privacy and personal information. 
                                 This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use 
                                 our online examination platform and related services.
                             </p>

@@ -71,7 +71,7 @@
     <!-- Logo -->
     <div class="relative">
         <div class="{{ $logoSize }} {{ $variant['logoBg'] }} rounded-2xl flex items-center justify-center shadow-lg overflow-hidden">
-            <img src="{{ asset('images/lq-logo.png') }}" alt="Bikolpo LQ Logo" class="{{ $logoSize }} object-contain">
+            <img src="{{ asset('images/BikolpoLive.svg') }}" alt="Bikolpo Live Logo" class="{{ $logoSize }} object-contain">
         </div>
         @if($variant === 'default')
             <div class="absolute -top-1 -right-1 w-3 h-3 bg-primaryOrange rounded-full animate-pulse"></div>
@@ -81,7 +81,7 @@
     <!-- Brand Text -->
     <div class="brand-text">
         <h1 class="brand-name {{ $config['brand'] }} {{ $variant['brand'] }} leading-tight">
-            Bikolpo LQ
+            Bikolpo Live
         </h1>
         @if($showTagline)
             <p class="brand-tagline {{ $config['tagline'] }} {{ $variant['tagline'] }} mt-1">

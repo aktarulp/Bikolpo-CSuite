@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', 'Terms of Service - Bikolpo LQ')
+@section('title', 'Terms of Service - Bikolpo Live')
 
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
@@ -49,12 +49,12 @@
                         </h2>
                         <div class="bg-blue-50 border-l-4 border-primaryBlue p-6 mb-6">
                             <p class="text-gray-700 leading-relaxed">
-                                By accessing and using Bikolpo LQ's online examination platform, you accept and agree to be bound by the terms 
+                                By accessing and using Bikolpo Live's online examination platform, you accept and agree to be bound by the terms 
                                 and provision of this agreement. If you do not agree to abide by the above, please do not use this service.
                             </p>
                         </div>
                         <p class="text-gray-700 leading-relaxed">
-                            These Terms of Service ("Terms") govern your use of our website and services operated by Bikolpo LQ. 
+                            These Terms of Service ("Terms") govern your use of our website and services operated by Bikolpo Live. 
                             Your use of our service is also subject to our Privacy Policy.
                         </p>
                     </section>
@@ -73,7 +73,7 @@
                                     Online Examination Platform
                                 </h3>
                                 <p class="text-gray-700 leading-relaxed">
-                                    Bikolpo LQ provides a comprehensive online examination platform that enables educational institutions 
+                                    Bikolpo Live provides a comprehensive online examination platform that enables educational institutions 
                                     to conduct secure, reliable, and efficient online assessments for their students.
                                 </p>
                             </div>
@@ -203,8 +203,8 @@
                             <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
                                 <h3 class="text-xl font-semibold text-blue-800 mb-3">Our Rights</h3>
                                 <p class="text-gray-700 leading-relaxed mb-4">
-                                    The Bikolpo LQ platform, including its design, functionality, and content, is protected by intellectual property laws. 
-                                    All rights, title, and interest in the platform remain with Bikolpo LQ.
+                                    The Bikolpo Live platform, including its design, functionality, and content, is protected by intellectual property laws. 
+                                    All rights, title, and interest in the platform remain with Bikolpo Live.
                                 </p>
                                 <ul class="text-gray-700 space-y-1">
                                     <li>• Platform software and code</li>
@@ -250,7 +250,7 @@
                                 Limitation of Damages
                             </h3>
                             <p class="text-gray-700 leading-relaxed">
-                                To the maximum extent permitted by law, Bikolpo LQ shall not be liable for any indirect, incidental, 
+                                To the maximum extent permitted by law, Bikolpo Live shall not be liable for any indirect, incidental, 
                                 special, consequential, or punitive damages, including but not limited to loss of profits, data, or 
                                 business opportunities, arising from your use of our services.
                             </p>

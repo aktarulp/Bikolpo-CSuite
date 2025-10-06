@@ -21,7 +21,7 @@
             <div class="flex items-center space-x-3">
                 <x-brand-logo 
                     size="lg" 
-                    variant="default" 
+                    variant="minimal" 
                     :href="route('landing')" 
                     :show-tagline="true" 
                 />

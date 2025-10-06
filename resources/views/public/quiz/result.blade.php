@@ -4,24 +4,24 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Online Test Result - {{ $exam->title }} | Bikolpo LQ</title>
+    <title>Online Test Result - {{ $exam->title }} | Bikolpo Live</title>
     
     <!-- SEO Meta Tags for Social Sharing -->
-    <meta name="description" content="I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo LQ.">
-    <meta name="keywords" content="online test, exam, result, {{ $exam->title }}, Bikolpo LQ, education, learning">
+    <meta name="description" content="I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo Live.">
+    <meta name="keywords" content="online test, exam, result, {{ $exam->title }}, Bikolpo Live, education, learning">
     
     <!-- Open Graph Meta Tags for Social Media -->
-    <meta property="og:title" content="Online Test Result - {{ $exam->title }} | Bikolpo LQ">
-    <meta property="og:description" content="I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo LQ.">
+    <meta property="og:title" content="Online Test Result - {{ $exam->title }} | Bikolpo Live">
+    <meta property="og:description" content="I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo Live.">
     <meta property="og:image" content="{{ asset('images/online-test-result-share.png') }}">
     <meta property="og:url" content="{{ request()->url() }}">
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="Bikolpo LQ">
+    <meta property="og:site_name" content="Bikolpo Live">
     
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Online Test Result - {{ $exam->title }} | Bikolpo LQ">
-    <meta name="twitter:description" content="I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo LQ.">
+    <meta name="twitter:title" content="Online Test Result - {{ $exam->title }} | Bikolpo Live">
+    <meta name="twitter:description" content="I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo Live.">
     <meta name="twitter:image" content="{{ asset('images/online-test-result-share.png') }}">
     
     <!-- Favicon -->
@@ -85,12 +85,12 @@
                 <div class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-full shadow-2xl mb-3 sm:mb-4 lg:mb-6 transform hover:scale-105 transition-all duration-300">
                     <i class="fas fa-trophy text-xl sm:text-2xl lg:text-3xl text-white"></i>
                 </div>
-                <h1 class="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black text-gray-800 mb-2 sm:mb-3 px-2">
-                    Congratulations on completing Bikolpo LQ Online Test!
+                    <h1 class="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black text-gray-800 mb-2 sm:mb-3 px-2">
+                    Congratulations on completing Bikolpo Live Online Test!
                 </h1>
                 <div class="mt-3 sm:mt-4 inline-flex items-center px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full shadow-lg">
                     <i class="fas fa-star text-yellow-300 mr-2 text-sm sm:text-base"></i>
-                    <span class="text-white font-bold text-sm sm:text-base">Powered by Bikolpo LQ</span>
+                    <span class="text-white font-bold text-sm sm:text-base">Powered by Bikolpo Live</span>
                 </div>
             </div>
 

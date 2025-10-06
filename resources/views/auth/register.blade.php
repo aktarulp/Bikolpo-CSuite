@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bikolpo LQ - Partner Registration</title>
+  <title>Bikolpo Live - Partner Registration</title>
   
   <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
@@ -138,18 +138,18 @@
               <div class="text-center mb-8">
                 <div class="flex justify-center mb-4">
                   <div class="w-32 h-32 bg-white/20 rounded-2xl shadow-lg flex items-center justify-center">
-                    <img src="{{ asset('images/Bikolpo_LQ_Transparent.png') }}" alt="Bikolpo LQ Logo" class="w-64 h-64 object-contain">
+                    <img src="{{ asset('images/Bikolpo_LQ_Transparent.png') }}" alt="Bikolpo Live Logo" class="w-64 h-64 object-contain">
                   </div>
                 </div>
                 <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">
-                  Join Bikolpo LQ
+                  Join Bikolpo Live
                 </h1>
                 <p class="text-lg text-green-100 max-w-2xl mx-auto">
                   Transform your educational institution with our comprehensive online testing platform
                 </p>
               </div>
 
-              <h2 class="text-2xl lg:text-3xl font-bold mb-6">Why Choose Bikolpo LQ?</h2>
+              <h2 class="text-2xl lg:text-3xl font-bold mb-6">Why Choose Bikolpo Live?</h2>
               
               <div class="space-y-6">
                 <!-- Benefit 1 -->

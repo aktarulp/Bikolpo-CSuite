@@ -4,7 +4,7 @@ This file provides guidance to WARP (warp.dev) when working with code in this re
 
 ## Project Overview
 
-This is **Bikolpo LQ**, a comprehensive Laravel-based educational quiz and exam management system designed for coaching institutes and educational partners. The system features multi-role architecture with Partners (educators/coaching centers) and Students, advanced quiz management, real-time analytics, and a public quiz system.
+This is **Bikolpo Live**, a comprehensive Laravel-based educational quiz and exam management system designed for coaching institutes and educational partners. The system features multi-role architecture with Partners (educators/coaching centers) and Students, advanced quiz management, real-time analytics, and a public quiz system.
 
 ## Essential Development Commands
 

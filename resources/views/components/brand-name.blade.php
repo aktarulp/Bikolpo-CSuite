@@ -49,7 +49,7 @@
 
 <div class="brand-name-container {{ $classes['container'] }}">
     <h1 class="brand-name {{ $classes['brand'] }} {{ $variantStyles['brand'] }} leading-tight">
-        Bikolpo LQ
+        Bikolpo Live
     </h1>
     @if($showTagline)
         <p class="brand-tagline {{ $classes['tagline'] }} {{ $variantStyles['tagline'] }} mt-1">

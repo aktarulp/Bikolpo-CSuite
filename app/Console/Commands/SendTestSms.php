@@ -35,7 +35,7 @@ class SendTestSms extends Command
     public function handle()
     {
         $testNumber = '8801XXXXXXXXX'; // Replace with a valid test number (e.g., your own phone number)
-        $testMessage = 'This is a test SMS from Bikolpo LQ.';
+        $testMessage = 'This is a test SMS from Bikolpo Live.';
 
         $this->info("Attempting to send SMS to {$testNumber} with message: '{$testMessage}'");
 

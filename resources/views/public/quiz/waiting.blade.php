@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Bikolpo-LQ | {{ $exam->title }}</title>
+    <title>Bikolpo Live | {{ $exam->title }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,7 +40,7 @@
             <div class="glass-effect rounded-xl p-4 border border-white/20">
                 <p class="text-lg md:text-xl text-gray-200 font-medium">
                     This Exam is hosted by <br/>
-                    <span class="text-white font-bold text-xl md:text-2xl">{{ $exam->partner->name ?? 'Bikolpo LQ' }}</span>
+                    <span class="text-white font-bold text-xl md:text-2xl">{{ $exam->partner->name ?? 'Bikolpo Live' }}</span>
                 </p>
             </div>
         </div>

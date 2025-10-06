@@ -14,8 +14,10 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Nikosh', 'Figtree', ...defaultTheme.fontFamily.sans],
-                bangla: ['"Nikosh"', '"Hind Siliguri"', 'sans-serif'],
+                // Default: Inter for Latin; Hind Siliguri available for Bengali glyphs
+                sans: ['"Inter"', '"Hind Siliguri"', ...defaultTheme.fontFamily.sans],
+                // Utility: font-bangla
+                bangla: ['"Hind Siliguri"', 'sans-serif'],
                 brand: ['"Poppins"', 'sans-serif'],
                 modern: ['"Inter"', 'sans-serif'],
                 display: ['"Space Grotesk"', 'sans-serif']

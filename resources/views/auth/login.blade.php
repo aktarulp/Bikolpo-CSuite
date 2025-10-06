@@ -3,19 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login | Bikolpo-LQ</title>
+  <title>Login | Bikolpo Live</title>
   
   <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
   <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
   
+  <script>
+    (() => {
+      const html = document.documentElement;
+      const stored = localStorage.getItem('darkMode');
+      if (stored === 'true' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        html.classList.add('dark');
+      } else {
+        html.classList.remove('dark');
+      }
+    })();
+  </script>
   @vite(['resources/css/app.css', 'resources/js/app.js'])
   
   <!-- Removed back-to-top inline script to avoid global redeclaration conflicts on login page -->
   <link href="https://fonts.googleapis.com/css2?family=Nikosh:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
-<body class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 font-bangla overflow-x-hidden">
+<body class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-950 text-gray-900 dark:text-gray-100 font-bangla overflow-x-hidden">
     @include('navigation-layout')
     
     <!-- Enhanced Background Decorative Elements -->
@@ -48,7 +59,7 @@
       <div class="w-full max-w-md mx-auto">
       
         <!-- Login Card -->
-        <div class="relative bg-white/95 backdrop-blur-lg shadow-2xl rounded-3xl p-8 border border-white/50 overflow-hidden animate-fade-in">
+        <div class="relative bg-white/95 dark:bg-gray-800/90 backdrop-blur-lg shadow-2xl rounded-3xl p-8 border border-white/50 dark:border-gray-700/50 overflow-hidden animate-fade-in">
         
           <!-- Decorative elements -->
           <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-blue-100/40 to-transparent rounded-full -translate-y-10 translate-x-10"></div>
@@ -67,7 +78,7 @@
             <h1 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-gray-800 via-primaryBlue to-primaryPurple bg-clip-text text-transparent mb-2">
               Welcome Back
             </h1>
-            <p class="text-gray-600 text-sm md:text-base">Sign in to access your dashboard</p>
+            <p class="text-gray-600 dark:text-gray-300 text-sm md:text-base">Sign in to access your dashboard</p>
           </div>
 
           <!-- Login Form -->
@@ -79,7 +90,7 @@
           
             <!-- Email/Phone Input -->
             <div class="relative">
-              <label class="block text-sm font-semibold text-gray-700 mb-2">
+              <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                 Email Address or Phone Number
               </label>
               <div class="relative">
@@ -89,7 +100,7 @@
                   </svg>
                 </div>
                 <input type="text" name="login_credential" id="loginInput" required 
-                  class="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-200 focus:ring-2 focus:ring-primaryBlue/20 focus:border-primaryBlue bg-gray-50/50 transition-all duration-200 text-base" 
+                  class="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-primaryBlue/30 focus:border-primaryBlue dark:focus:border-primaryBlue bg-gray-50/50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 transition-all duration-200 text-base" 
                   placeholder="Enter your email or phone number"
                   value="{{ old('login_credential', old('email', old('phone'))) }}">
               </div>
@@ -121,7 +132,7 @@
           
             <!-- Password Input -->
             <div class="relative">
-              <label class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+              <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Password</label>
               <div class="relative">
                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -129,7 +140,7 @@
                   </svg>
                 </div>
                 <input type="password" name="password" required 
-                  class="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-200 focus:ring-2 focus:ring-primaryBlue/20 focus:border-primaryBlue bg-gray-50/50 transition-all duration-200 text-base" 
+                  class="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-primaryBlue/30 focus:border-primaryBlue dark:focus:border-primaryBlue bg-gray-50/50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 transition-all duration-200 text-base" 
                   placeholder="Enter your password">
               </div>
               @error('password')
@@ -145,7 +156,7 @@
             <div class="flex items-center justify-between text-sm">
               <label class="flex items-center cursor-pointer group">
                 <input type="checkbox" name="remember" class="w-4 h-4 text-primaryBlue border-gray-300 rounded focus:ring-primaryBlue/20 focus:ring-2">
-                <span class="ml-2 text-gray-700 group-hover:text-gray-900 transition-colors duration-200">Remember me</span>
+                <span class="ml-2 text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-200">Remember me</span>
               </label>
               @if (Route::has('password.request'))
                 <a href="{{ route('password.request') }}" class="text-primaryBlue hover:text-primaryBlue/80 hover:underline transition-colors duration-200">
@@ -167,11 +178,11 @@
           </form>
 
           <!-- Registration Link -->
-          <div class="text-center pt-6 border-t border-gray-200/50">
-            <p class="text-gray-600 text-sm mb-3">
+          <div class="text-center pt-6 border-t border-gray-200/50 dark:border-gray-700/50">
+            <p class="text-gray-600 dark:text-gray-300 text-sm mb-3">
               Don't have an account?
             </p>
-            <a href="{{ route('register') }}" class="inline-flex items-center px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-800 rounded-xl border border-gray-200 hover:border-gray-300 transition-all duration-200 font-medium text-sm">
+            <a href="{{ route('register') }}" class="inline-flex items-center px-6 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 hover:text-gray-800 dark:hover:text-white rounded-xl border border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 transition-all duration-200 font-medium text-sm">
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
               </svg>
@@ -181,7 +192,7 @@
 
           <!-- Trust Indicators -->
           <div class="text-center pt-6">
-            <div class="flex items-center justify-center space-x-6 text-xs text-gray-500">
+            <div class="flex items-center justify-center space-x-6 text-xs text-gray-500 dark:text-gray-400">
               <div class="flex items-center space-x-1">
                 <div class="w-2 h-2 bg-green-500 rounded-full"></div>
                 <span>Secure Login</span>

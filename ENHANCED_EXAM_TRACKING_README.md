@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Bikolpo LQ system has been enhanced with comprehensive exam tracking capabilities that provide detailed analytics for questions, students, and exam performance. This system enables better tracking of student progress, question difficulty analysis, and detailed review functionality.
+The Bikolpo Live system has been enhanced with comprehensive exam tracking capabilities that provide detailed analytics for questions, students, and exam performance. This system enables better tracking of student progress, question difficulty analysis, and detailed review functionality.
 
 ## Key Features
 
