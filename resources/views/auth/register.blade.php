@@ -138,7 +138,7 @@
               <div class="text-center mb-8">
                 <div class="flex justify-center mb-4">
                   <div class="w-32 h-32 bg-white/20 rounded-2xl shadow-lg flex items-center justify-center">
-                    <img src="{{ asset('images/Bikolpo_LQ_Transparent.png') }}" alt="Bikolpo Live Logo" class="w-64 h-64 object-contain">
+                    <img src="{{ asset('images/bikolpoLive_TR.png') }}" alt="Bikolpo Live Logo" class="w-64 h-64 object-contain">
                   </div>
                 </div>
                 <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">
