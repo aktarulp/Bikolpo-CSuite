@@ -18,7 +18,7 @@ export default {
                 sans: ['"Inter"', '"Hind Siliguri"', ...defaultTheme.fontFamily.sans],
                 // Utility: font-bangla
                 bangla: ['"Hind Siliguri"', 'sans-serif'],
-                brand: ['"Poppins"', 'sans-serif'],
+                brand: ['"Fredoka"', 'sans-serif'],
                 modern: ['"Inter"', 'sans-serif'],
                 display: ['"Space Grotesk"', 'sans-serif']
             },

@@ -68,7 +68,6 @@
                 <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-gray-900 dark:text-white mb-4 leading-tight">
                     <div class="brand-visible font-brand tracking-wide flex flex-col items-center">
                         <img src="{{ asset('images/Bikolpo_LQ_Transparent.png') }}" alt="Bikolpo Live" class="h-48 md:h-32 lg:h-40 mb-1">
-                        <span class="text-4xl md:text-5xl lg:text-6xl font-black font-brand tracking-wider bg-gradient-to-r from-primaryGreen via-primaryBlue to-primaryPurple bg-clip-text text-transparent drop-shadow-lg">Bikolpo Live</span>
                         <span class="text-4xl md:text-5xl lg:text-6xl text-gray-700 dark:text-gray-300 font-light font-modern mt-2">
                             Your Smart Exam Partner
                         </span>
