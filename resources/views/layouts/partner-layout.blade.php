@@ -224,7 +224,7 @@
 <a href="{{ route($homeRouteName) }}" class="flex items-center space-x-2 group flex-1 min-w-0">
                             <div class="relative flex-shrink-0">
                                 <div class="w-14 h-14 bg-white dark:bg-gray-800 rounded-xl flex items-center justify-center shadow-lg ring-2 ring-primaryGreen/20 group-hover:ring-primaryGreen/40 transition-all duration-300 group-hover:scale-105 overflow-hidden">
-                                    <img src="{{ asset('images/BikolpoLive.svg') }}" alt="Bikolpo Live Question" class="w-full h-full object-contain p-1">
+                                    <img src="{{ asset('images/BikolpoLive.svg') }}" alt="Bikolpo Live" class="w-full h-full object-contain p-1">
                                 </div>
                                 <div class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full animate-pulse"></div>
                             </div>

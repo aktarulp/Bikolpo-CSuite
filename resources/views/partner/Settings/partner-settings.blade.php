@@ -1,6 +1,6 @@
 @extends('layouts.partner-layout')
 
-@section('title', 'Partner Settings')
+@section('title', 'BikolpoLive|Partner Settings')
 
 @section('content')
 <div class="min-h-screen bg-gray-50/50 p-4 sm:p-6">
