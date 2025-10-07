@@ -8,14 +8,13 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TopicController;
 use App\Http\Controllers\QuestionController;
-
 use App\Http\Controllers\QuestionHistoryController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\StudentExamController;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\SmsRecordController;
 use App\Http\Controllers\Partner\AccessControlController;
-// Permission controller removed
+use App\Http\Controllers\PartnerController; // Add this missing import
 
 // Include Auth Routes
 require __DIR__.'/auth.php';
