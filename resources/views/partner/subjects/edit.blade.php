@@ -4,16 +4,12 @@
 
 @section('content')
 <!-- Professional Mobile-First Design -->
-<div class="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 dark:from-gray-900 dark:via-purple-900/20 dark:to-gray-900 py-4 sm:py-6 lg:py-8">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-4">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
         
         <!-- Header Card with Glassmorphism -->
-        <div class="relative overflow-hidden bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 sm:p-8">
-            <!-- Animated Background -->
-            <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
-            <div class="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-violet-500/10 to-fuchsia-500/10 rounded-full blur-3xl -ml-24 -mb-24"></div>
-            
-            <div class="relative z-10 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-4">
+            <div class="flex items-center justify-between gap-3">
                 <!-- Title Section -->
                 <div class="flex items-center space-x-4">
                     <div class="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-purple-600 via-violet-600 to-fuchsia-600 rounded-2xl flex items-center justify-center shadow-xl transform rotate-3 hover:rotate-6 transition-transform duration-300">
@@ -29,27 +25,33 @@
                     </div>
                 </div>
 
-                <!-- Back Button -->
-                <a href="{{ route('partner.subjects.index') }}" 
-                   class="group relative inline-flex items-center justify-center gap-2 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white px-5 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                    <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                    </svg>
-                    <span class="hidden sm:inline">Back</span>
-                </a>
+                <div class="flex items-center gap-2">
+                    <a href="{{ route('partner.subjects.index') }}" class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        <span>Back</span>
+                    </a>
+                    <button type="submit" form="subjectEditForm" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span>Update</span>
+                    </button>
+                </div>
             </div>
         </div>
 
         <!-- Form Card -->
-        <div class="relative overflow-hidden bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700">
             <!-- Decorative Elements -->
             <div class="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-purple-500/5 to-pink-500/5 rounded-full blur-2xl"></div>
             
             <!-- Current Subject Badge -->
-            <div class="bg-gradient-to-r from-purple-50 to-fuchsia-50 dark:from-purple-900/20 dark:to-fuchsia-900/20 px-6 sm:px-8 py-4 border-b border-purple-100/50 dark:border-purple-700/50">
+            <div class="px-4 sm:px-6 py-3 border-b border-gray-200 dark:border-gray-700">
                 <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-gradient-to-br from-purple-600 to-fuchsia-600 rounded-xl flex items-center justify-center shadow-lg">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center text-white">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
                     </div>
@@ -60,8 +62,8 @@
                 </div>
             </div>
             
-            <div class="relative z-10 p-6 sm:p-8 lg:p-10">
-                <form action="{{ route('partner.subjects.update', $subject) }}" method="POST" class="space-y-6">
+            <div class="p-4 sm:p-6">
+                <form id="subjectEditForm" action="{{ route('partner.subjects.update', $subject) }}" method="POST" class="space-y-5">
                 @csrf
                 @method('PUT')
 

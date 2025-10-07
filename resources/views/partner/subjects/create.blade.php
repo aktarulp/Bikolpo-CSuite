@@ -4,12 +4,12 @@
 
 @section('content')
 <!-- Mobile-First Professional Subject Create -->
-<div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-    <div class="max-w-4xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div class="max-w-4xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
         
         <!-- Header Section -->
-        <div class="mb-6">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="mb-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <!-- Title & Breadcrumb -->
                 <div class="flex-1">
                     <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-2">
@@ -34,37 +34,35 @@
                     <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-2">Create a new subject and assign it to a course</p>
                 </div>
                 
-                <!-- Back Button -->
-                <a href="{{ route('partner.subjects.index') }}" 
-                   class="inline-flex items-center justify-center gap-2 px-4 py-2.5 sm:px-6 sm:py-3 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-semibold transition-all duration-300 shadow-md hover:shadow-lg active:scale-95">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                    </svg>
-                    <span class="hidden sm:inline">Back to Subjects</span>
-                    <span class="sm:hidden">Back</span>
-                </a>
+                <div class="flex items-center gap-2">
+                    <a href="{{ route('partner.subjects.index') }}" 
+                       class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        <span>Back</span>
+                    </a>
+                    <button type="submit" form="subjectCreateForm" 
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        <span>Create</span>
+                    </button>
+                </div>
             </div>
         </div>
 
         <!-- Form Card -->
-        <div class="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 overflow-hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 overflow-hidden">
             <!-- Form Header -->
-            <div class="bg-gradient-to-r from-blue-500 to-indigo-500 px-6 py-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-bold text-white">Subject Information</h2>
-                        <p class="text-white/80 text-sm">Fill in the details below</p>
-                    </div>
-                </div>
+            <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+                <h2 class="text-base font-semibold text-gray-900 dark:text-white">Subject Information</h2>
+                <p class="text-xs text-gray-600 dark:text-gray-400">Fill in the details below</p>
             </div>
 
             <!-- Form Body -->
-            <form action="{{ route('partner.subjects.store') }}" method="POST" class="p-6 sm:p-8 space-y-6">
+            <form id="subjectCreateForm" action="{{ route('partner.subjects.store') }}" method="POST" class="p-4 sm:p-6 space-y-5">
                 @csrf
 
                 <!-- Course Selection -->
@@ -169,27 +167,20 @@
                 </div>
 
                 <!-- Form Actions -->
-                <div class="flex flex-col-reverse sm:flex-row gap-3 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex justify-end pt-4 border-t border-gray-200 dark:border-gray-700">
                     <a href="{{ route('partner.subjects.index') }}" 
-                       class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-6 py-3 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-semibold transition-all duration-300 shadow-md hover:shadow-lg active:scale-95">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
                         Cancel
                     </a>
-                    <button type="submit" 
-                            class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                        </svg>
-                        Add Subject
-                    </button>
                 </div>
             </form>
         </div>
 
         <!-- Help Card -->
-        <div class="mt-6 bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-4 border border-blue-200 dark:border-blue-800">
+        <div class="mt-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
             <div class="flex items-start gap-3">
                 <div class="flex-shrink-0 w-10 h-10 bg-blue-100 dark:bg-blue-900/50 rounded-lg flex items-center justify-center">
                     <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

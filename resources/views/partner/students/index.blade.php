@@ -30,26 +30,7 @@
                     <span>Add Student</span>
                 </a>
                 @endcan
-
-                @can('students-import')
-                <button type="button" 
-                        class="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 md:px-6 py-2.5 md:py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-2 group">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
-                    </svg>
-                    <span>Import</span>
-                </button>
-                @endcan
-
-                @can('students-export')
-                <button type="button" 
-                        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 md:px-6 py-2.5 md:py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-2 group">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                    </svg>
-                    <span>Export</span>
-                </button>
-                @endcan
+                
             </div>
         </div>
     </div>
@@ -217,9 +198,26 @@
                         <div class="flex items-start space-x-3">
                             <div class="flex-shrink-0">
                                 @if($student->photo)
+                                    @php
+                                        $raw = $student->photo;
+                                        if (preg_match('/^https?:\/\//i', $raw)) {
+                                            $photoUrl = $raw;
+                                        } elseif (str_starts_with($raw, '/storage/') || str_starts_with($raw, 'storage/')) {
+                                            $photoUrl = asset(ltrim($raw, '/'));
+                                        } elseif (str_starts_with($raw, 'public/')) {
+                                            $photoUrl = Storage::disk('public')->url(substr($raw, 7));
+                                        } else {
+                                            $photoUrl = Storage::disk('public')->url($raw);
+                                        }
+                                    @endphp
                                     <img class="h-14 w-14 rounded-xl object-cover shadow-lg ring-2 ring-purple-500" 
-                                         src="{{ Storage::url($student->photo) }}" 
-                                         alt="{{ $student->full_name }}">
+                                         src="{{ $photoUrl }}" 
+                                         alt="{{ $student->full_name }}"
+                                         onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,\
+                                         <svg xmlns=\'http://www.w3.org/2000/svg\' width=\'56\' height=\'56\' viewBox=\'0 0 56 56\'>\
+                                           <rect width=\'56\' height=\'56\' rx=\'12\' fill=\'%236b7280\'/>\
+                                           <text x=\'50%\' y=\'54%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'white\' font-size=\'22\' font-family=\'Inter, Arial, sans-serif\'>{{ urlencode(Str::substr($student->full_name,0,1)) }}</text>\
+                                         </svg>'">
                                 @else
                                     <div class="h-14 w-14 rounded-xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg ring-2 ring-purple-500">
                                         <span class="text-xl font-bold text-white">{{ substr($student->full_name, 0, 1) }}</span>
@@ -352,9 +350,26 @@
                                 <div class="flex items-center">
                                     <div class="flex-shrink-0 h-10 w-10">
                                         @if($student->photo)
+                                            @php
+                                                $raw = $student->photo;
+                                                if (preg_match('/^https?:\/\//i', $raw)) {
+                                                    $photoUrl = $raw;
+                                                } elseif (str_starts_with($raw, '/storage/') || str_starts_with($raw, 'storage/')) {
+                                                    $photoUrl = asset(ltrim($raw, '/'));
+                                                } elseif (str_starts_with($raw, 'public/')) {
+                                                    $photoUrl = Storage::disk('public')->url(substr($raw, 7));
+                                                } else {
+                                                    $photoUrl = Storage::disk('public')->url($raw);
+                                                }
+                                            @endphp
                                             <img class="h-10 w-10 rounded-full object-cover shadow-lg group-hover:scale-110 transition-transform duration-200" 
-                                                 src="{{ Storage::url($student->photo) }}" 
-                                                 alt="{{ $student->full_name }}">
+                                                 src="{{ $photoUrl }}" 
+                                                 alt="{{ $student->full_name }}"
+                                                 onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,\
+                                                 <svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\' viewBox=\'0 0 40 40\'>\
+                                                   <rect width=\'40\' height=\'40\' rx=\'20\' fill=\'%236b7280\'/>\
+                                                   <text x=\'50%\' y=\'52%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'white\' font-size=\'14\' font-family=\'Inter, Arial, sans-serif\'>{{ urlencode(Str::substr($student->full_name,0,1)) }}</text>\
+                                                 </svg>'">
                                         @else
                                             <div class="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-200">
                                                 <span class="text-base font-bold text-white">{{ substr($student->full_name, 0, 1) }}</span>
