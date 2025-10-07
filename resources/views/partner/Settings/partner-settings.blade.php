@@ -143,11 +143,11 @@
                                         </span>
                                     </td>
                                     <td class="px-5 py-4 whitespace-nowrap">
-                                        @if($user->roles->isNotEmpty())
+                                        @if(isset($user->roles) && $user->roles && $user->roles->isNotEmpty())
                                             <div class="flex flex-wrap gap-1">
                                                 @foreach($user->roles as $role)
                                                     <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-50 text-blue-700">
-                                                        {{ $role->display_name ?? ucwords(str_replace('_', ' ', $role->name)) }}
+                                                        {{ $role->display_name ?? ucwords(str_replace('_', ' ', $role->name ?? '')) }}
                                                     </span>
                                                 @endforeach
                                             </div>
@@ -183,10 +183,10 @@
                             </div>
                             <div class="mt-3 flex items-center justify-between">
                                 <div class="flex flex-wrap gap-1">
-                                    @if($user->roles->isNotEmpty())
+                                    @if(isset($user->roles) && $user->roles && $user->roles->isNotEmpty())
                                         @foreach($user->roles as $role)
                                             <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-50 text-blue-700">
-                                                {{ $role->display_name ?? ucwords(str_replace('_', ' ', $role->name)) }}
+                                                {{ $role->display_name ?? ucwords(str_replace('_', ' ', $role->name ?? '')) }}
                                             </span>
                                         @endforeach
                                     @else
@@ -224,26 +224,12 @@
                     <h3 class="text-lg font-semibold text-gray-900">Roles Management</h3>
                     <p class="text-sm text-gray-600 mt-1">Manage user roles and permissions</p>
                 </div>
-<div class="flex flex-wrap gap-2">
-<a href="{{ route('partner.nav-permissions.index') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                        </svg>
-                        Permissions (Nav)
-                    </a>
-                    <a href="{{ route('partner.access-control.create-role') }}" class="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                        </svg>
-                        Create Role
-                    </a>
-                </div>
             </div>
         </div>
         
         <!-- Roles Content -->
         <div class="p-6">
-            @if($stats['roles'] && $stats['roles']->isNotEmpty())
+            @if(isset($stats['roles']) && $stats['roles'] && $stats['roles']->isNotEmpty())
                 @php
                     $currentLevel = Auth::user()?->getHighestRoleLevel();
                     if ($currentLevel === null) { $currentLevel = 1; }
@@ -258,27 +244,19 @@
                             <div class="flex items-start justify-between mb-2">
                                 <div class="min-w-0">
                                     <div class="text-xs uppercase tracking-wide text-gray-500">Role</div>
-                                    <h4 class="mt-0.5 text-lg font-semibold text-gray-900 truncate">{{ $role->display_name ?? ucwords(str_replace('_',' ',$role->name)) }}</h4>
-                                    <div class="text-xs text-gray-500">System: <span class="font-mono">{{ $role->name }}</span></div>
+                                    <h4 class="mt-0.5 text-lg font-semibold text-gray-900 truncate">{{ $role->display_name ?? ucwords(str_replace('_',' ',$role->name ?? '')) }}</h4>
+                                    <div class="text-xs text-gray-500">System: <span class="font-mono">{{ $role->name ?? 'N/A' }}</span></div>
                                 </div>
-                                <a href="{{ route('partner.access-control.role.assign', $role) }}"
-                                   class="p-2 rounded-lg text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-colors"
-                                   title="Assign Permissions">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    </svg>
-                                </a>
                             </div>
 
                             <div class="grid grid-cols-2 gap-2 text-sm">
                                 <div class="bg-gray-50 rounded-lg p-2 border border-gray-100 flex items-center justify-between">
                                     <span class="text-gray-600">Users</span>
-                                    <span class="font-semibold text-gray-900">{{ $role->users->count() }}</span>
+                                    <span class="font-semibold text-gray-900">{{ $role->users->count() ?? 0 }}</span>
                                 </div>
                                 <div class="bg-gray-50 rounded-lg p-2 border border-gray-100 flex items-center justify-between">
                                     <span class="text-gray-600">Perms</span>
-                                    <span class="font-semibold text-gray-900">{{ $role->permissions->count() }}</span>
+                                    <span class="font-semibold text-gray-900">{{ $role->permissions->count() ?? 0 }}</span>
                                 </div>
                             </div>
                         </div>
@@ -458,7 +436,9 @@ function loadPermissionsCount() {
         })
         .catch(error => {
             console.error('Error loading permissions count:', error);
-            document.getElementById('totalPermissionsCount').textContent = 'Error';
+            if (document.getElementById('totalPermissionsCount')) {
+                document.getElementById('totalPermissionsCount').textContent = 'N/A';
+            }
         });
 }
 
@@ -469,7 +449,14 @@ function loadRecentActivity() {
         .then(data => {
             const tbody = document.getElementById('recentActivityTable');
             const cards = document.getElementById('recentActivityCards');
-            if (data.success && data.activities.length > 0) {
+            
+            // Check if elements exist before trying to update them
+            if (!tbody || !cards) {
+                console.warn('Activity elements not found in DOM');
+                return;
+            }
+            
+            if (data.success && data.activities && data.activities.length > 0) {
                 tbody.innerHTML = data.activities.slice(0, 10).map(activity => `
                     <tr class="activity-row">
                         <td class="py-4 px-6 whitespace-nowrap">
@@ -487,7 +474,7 @@ function loadRecentActivity() {
                             <span class="px-3 py-1 text-xs font-medium rounded-full ${getActionBadgeColor(activity.action)}">${formatAction(activity.action || '')}</span>
                         </td>
                         <td class="py-4 px-6 hidden sm:table-cell">
-                            <p class="text-sm text-gray-900 max-w-xs truncate">${activity.description}</p>
+                            <p class="text-sm text-gray-900 max-w-xs truncate">${activity.description || ''}</p>
                         </td>
                         <td class="py-4 px-6 hidden sm:table-cell">
                             <code class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-md">${activity.ip_address || 'N/A'}</code>
@@ -500,7 +487,7 @@ function loadRecentActivity() {
 
                 // Render mobile cards
                 cards.innerHTML = data.activities.slice(0, 10).map(activity => `
-                    <div class="activity-card">
+                    <div class="activity-card bg-gray-50 border border-gray-200 rounded-lg p-4">
                         <div class="flex items-center mb-2">
                             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gray-400 to-gray-500 flex items-center justify-center mr-3 flex-shrink-0 shadow-sm">
                                 <i class="fas fa-user text-white text-sm"></i>
@@ -531,7 +518,7 @@ function loadRecentActivity() {
                     </tr>
                 `;
                 cards.innerHTML = `
-                    <div class="activity-card">
+                    <div class="activity-card bg-gray-50 border border-gray-200 rounded-lg p-4">
                         <div class="flex items-center mb-2">
                             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gray-400 to-gray-500 flex items-center justify-center mr-3 flex-shrink-0 shadow-sm">
                                 <i class="fas fa-inbox text-white text-sm"></i>
@@ -547,30 +534,38 @@ function loadRecentActivity() {
         })
         .catch(error => {
             console.error('Error loading recent activity:', error);
-            document.getElementById('recentActivityTable').innerHTML = `
-                <tr>
-                    <td colspan="5" class="text-center py-12 text-gray-500">
-                        <div class="flex flex-col items-center">
-                            <i class="fas fa-exclamation-triangle text-3xl text-gray-300 mb-3"></i>
-                            <p class="text-base font-medium text-gray-900">Unable to load activity</p>
-                            <p class="text-sm text-gray-500">Please check your connection and try again</p>
-                        </div>
-                    </td>
-                </tr>
-            `;
-            document.getElementById('recentActivityCards').innerHTML = `
-                <div class="activity-card">
-                    <div class="flex items-center mb-2">
-                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-400 to-red-500 flex items-center justify-center mr-3 flex-shrink-0 shadow-sm">
-                            <i class="fas fa-exclamation-triangle text-white text-sm"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-gray-900">Unable to load activity</p>
-                            <p class="text-xs text-gray-500">Please check your connection and try again</p>
+            const tbody = document.getElementById('recentActivityTable');
+            const cards = document.getElementById('recentActivityCards');
+            
+            if (tbody) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center py-12 text-gray-500">
+                            <div class="flex flex-col items-center">
+                                <i class="fas fa-exclamation-triangle text-3xl text-gray-300 mb-3"></i>
+                                <p class="text-base font-medium text-gray-900">Unable to load activity</p>
+                                <p class="text-sm text-gray-500">Please check your connection and try again</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+            
+            if (cards) {
+                cards.innerHTML = `
+                    <div class="activity-card bg-gray-50 border border-gray-200 rounded-lg p-4">
+                        <div class="flex items-center mb-2">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-400 to-red-500 flex items-center justify-center mr-3 flex-shrink-0 shadow-sm">
+                                <i class="fas fa-exclamation-triangle text-white text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">Unable to load activity</p>
+                                <p class="text-xs text-gray-500">Please check your connection and try again</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `;
+                `;
+            }
         });
 }
 

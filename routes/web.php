@@ -604,16 +604,11 @@ Route::prefix('partner')->name('partner.')->middleware(['auth'])->group(function
         // Partner Settings
         Route::get('settings', function () {
             try {
-                // Enable detailed error reporting
-                \DB::enableQueryLog();
-                \Log::info('Starting partner settings load');
-                
                 // Get the authenticated user with partner relationship
-                $user = auth()->user()->load('partner');
+                $user = auth()->user();
                 if (!$user) {
                     throw new \Exception('User not authenticated');
                 }
-                \Log::info('User authenticated', ['user_id' => $user->id]);
                 
                 // Check if user has a partner relationship
                 if (!$user->partner) {
@@ -622,10 +617,9 @@ Route::prefix('partner')->name('partner.')->middleware(['auth'])->group(function
                 }
                 
                 // Get the partner record with relationships
-                $partner = $user->partner->load(['user', 'exams']);
-                \Log::info('Partner data loaded', ['partner_id' => $partner->id]);
+                $partner = $user->partner;
                 
-                // Basic stats with fallbacks
+                // Prepare basic stats with safe defaults
                 $stats = [
                     'total_users' => 0,
                     'active_users' => 0,
@@ -657,10 +651,6 @@ Route::prefix('partner')->name('partner.')->middleware(['auth'])->group(function
                         ->where('partner_id', $partner->id)
                         ->count();
                     
-                    // Role loading disabled
-                    $stats['roles'] = collect();
-                    $stats['total_roles'] = 0;
-                    
                     // Get recent users with error handling using EnhancedUser model
                     $users = \App\Models\EnhancedUser::where(function ($q) use ($partner) {
                             $q->where('partner_id', $partner->id)
@@ -673,40 +663,22 @@ Route::prefix('partner')->name('partner.')->middleware(['auth'])->group(function
                     // Ensure users is always a collection
                     $stats['users'] = $users ?: collect();
                     
-                    // Ensure roles is always a collection
-                    if (!isset($stats['roles'])) {
-                        $stats['roles'] = collect();
-                    }
-                    
-                    // Safely log stats with null checks
-                    \Log::info('Stats data prepared', [
-                        'total_users' => $stats['total_users'] ?? 0,
-                        'active_users' => $stats['active_users'] ?? 0,
-                        'roles_count' => $stats['total_roles'] ?? 0,
-                        'recent_users' => isset($stats['users']) ? (is_countable($stats['users']) ? count($stats['users']) : 0) : 0
-                    ]);
-                    
-                    // Log queries for debugging
-                    \Log::info('Database queries:', \DB::getQueryLog());
-                    
-                    // Return the view with the stats as array to match view expectations
+                    // Return the view with the stats
                     return view('partner.settings.partner-settings', [
                         'partner' => $partner,
-                        'stats' => $stats  // Keep as array since view expects array access
+                        'stats' => $stats
                     ]);
                 } catch (\Exception $e) {
                     \Log::error('Error preparing stats data: ' . $e->getMessage(), [
                         'file' => $e->getFile(),
                         'line' => $e->getLine(),
-                        'trace' => $e->getTraceAsString(),
-                        'queries' => \DB::getQueryLog()
+                        'trace' => $e->getTraceAsString()
                     ]);
                     
                     // Return view with empty stats if data loading fails
                     return view('partner.settings.partner-settings', [
                         'partner' => $partner,
-                        'stats' => $stats,  // Keep as array
-                        'error' => 'Some data could not be loaded. Please try again.'
+                        'stats' => $stats
                     ]);
                 }
             } catch (\Exception $e) {
