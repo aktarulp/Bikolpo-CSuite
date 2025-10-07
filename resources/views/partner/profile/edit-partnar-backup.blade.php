@@ -562,18 +562,7 @@
                         @enderror
                     </div>
 
-                    <div>
-                        <label for="total_teachers" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Total Teachers
-                        </label>
-                        <input type="number" id="total_teachers" name="total_teachers"
-                               value="{{ old('total_teachers', $partner->total_teachers ?? '') }}"
-                               min="0"
-                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primaryGreen focus:border-transparent">
-                        @error('total_teachers')
-                            <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
+
 
                     <div>
                         <label for="total_students" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">

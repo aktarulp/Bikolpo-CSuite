@@ -1,0 +1,88 @@
+/* Font Fix CSS - Ensures proper font loading and rendering */
+/* Priority: This file should load first to prevent FOUC and ensure proper fonts */
+
+/* CRITICAL: Prevent any weird font icons from showing as default text */
+:root {
+    --font-primary: 'Inter', 'Hind Siliguri', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-system: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-bengali: 'Hind Siliguri', 'Kalpurush', 'Vrinda', 'Shonar Bangla', serif;
+}
+
+/* Immediate fallback: keep rendering sane without overriding every element */
+html, body {
+    font-synthesis: none;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+/* Core elements with primary font stack */
+body, html {
+    font-family: var(--font-primary) !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    text-rendering: optimizeLegibility !important;
+    font-feature-settings: "kern" 1, "liga" 1 !important;
+    font-variant-ligatures: common-ligatures !important;
+}
+
+/* Text elements */
+h1, h2, h3, h4, h5, h6,
+p, span, div, a, button, input, textarea, select, label,
+.text-xs, .text-sm, .text-base, .text-lg, .text-xl, .text-2xl, .text-3xl, .text-4xl, .text-5xl,
+.font-sans, .font-normal, .font-medium, .font-semibold, .font-bold, .font-extrabold {
+    font-family: var(--font-primary) !important;
+}
+
+/* Bangla/Bengali specific elements */
+.font-bangla, .font-bengali,
+[lang="bn"], [lang="bn-BD"],
+.bengali-text {
+    font-family: var(--font-bengali) !important;
+}
+
+/* English specific elements */
+.font-english, .font-inter, .english-text {
+    font-family: 'Inter', var(--font-system) !important;
+}
+
+/* Windows-specific font rendering fixes */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+    html, body {
+        font-weight: inherit;
+    }
+    body {
+        -webkit-font-smoothing: antialiased;
+    }
+}
+
+/* Do NOT force any font-family into SVGs; preserve their own styling */
+svg, svg text, svg tspan, svg foreignObject {
+    font-family: initial !important;
+}
+
+/* Emergency fallback class */
+.font-fallback {
+    font-family: var(--font-system) !important;
+}
+
+/* Debug helper - shows if fonts are not loading */
+@supports (font-display: swap) {
+    .font-debug::after {
+        content: ' [Font: ' attr(data-font) ']';
+        font-size: 0.7em;
+        opacity: 0.5;
+        color: red;
+    }
+}
+
+/* CRITICAL: Ensure SVG icons don't use font-family at all */
+use, symbol {
+    font-family: none !important;
+}
+
+/* Prevent any potential font icons from appearing as text */
+[class*="icon-"]::before,
+[class*="icon-"]::after {
+    font-family: inherit !important;
+    content: none !important;
+}

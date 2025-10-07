@@ -31,20 +31,7 @@ class ExamAssignmentController extends Controller
         
         // Get the authenticated user's partner ID
         $user = auth()->user();
-        $partnerId = $user->partner->id ?? null;
-        
-        if (!$partnerId) {
-            // If no partner record exists, create one
-            $partner = new \App\Models\Partner();
-            $partner->user_id = $user->id;
-            $partner->name = $user->name;
-            $partner->email = $user->email;
-            $partner->status = 'active';
-            $partner->partner_category = 'Institution';
-            $partner->save();
-            
-            $partnerId = $partner->id;
-        }
+        $partnerId = $user->partner_id ?? null;
         
         // Check if the user has access to this exam
         if ($exam->partner_id && $exam->partner_id !== $partnerId) {
@@ -93,7 +80,6 @@ class ExamAssignmentController extends Controller
 
         // Debug information
         \Log::info('Exam Assignment Debug', [
-            'user_id' => $user->id,
             'partner_id' => $partnerId,
             'exam_partner_id' => $exam->partner_id,
             'total_students' => Student::where('partner_id', $partnerId)->count(),

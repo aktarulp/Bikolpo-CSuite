@@ -121,7 +121,12 @@ class PartnerDashboardController extends Controller
             ->get();
 
             // Get the partner data for the layout
-            $partner = Partner::where('user_id', auth()->id())->first();
+            $user = auth()->user();
+            $partner = null;
+            
+            if ($user && $user->partner_id) {
+                $partner = Partner::find($user->partner_id);
+            }
 
             return view('partner.dashboard', compact('stats', 'recent_exams', 'recent_results', 'partner'));
             
@@ -176,7 +181,10 @@ class PartnerDashboardController extends Controller
             }
 
             // Get the partner associated with the authenticated user
-            $partner = Partner::where('user_id', $user->id)->first();
+            $partner = null;
+            if ($user->partner_id) {
+                $partner = Partner::find($user->partner_id);
+            }
             
             if (!$partner) {
                 return response()->json([
@@ -212,7 +220,6 @@ class PartnerDashboardController extends Controller
                     'parent_phone' => '+880 1812345678',
                     'status' => 'active',
                     'partner_id' => $partner->id,
-                    'user_id' => null,
                 ],
                 [
                     'full_name' => 'ফাতেমা খাতুন',
@@ -229,7 +236,6 @@ class PartnerDashboardController extends Controller
                     'parent_phone' => '+880 1823456789',
                     'status' => 'active',
                     'partner_id' => $partner->id,
-                    'user_id' => null,
                 ],
                 [
                     'full_name' => 'সাবরিনা আক্তার',
@@ -246,7 +252,6 @@ class PartnerDashboardController extends Controller
                     'parent_phone' => '+880 1834567890',
                     'status' => 'active',
                     'partner_id' => $partner->id,
-                    'user_id' => null,
                 ],
                 [
                     'full_name' => 'রাকিব হাসান',

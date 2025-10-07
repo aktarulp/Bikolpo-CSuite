@@ -14,10 +14,13 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                // Default: Inter for Latin; Hind Siliguri available for Bengali glyphs
-                sans: ['"Inter"', '"Hind Siliguri"', ...defaultTheme.fontFamily.sans],
-                // Utility: font-bangla
-                bangla: ['"Hind Siliguri"', 'sans-serif'],
+                // Default: Inter for Latin text, Hind Siliguri for Bengali - with proper fallbacks
+                sans: ['"Inter"', '"Hind Siliguri"', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif'],
+                // Language-specific utilities
+                english: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                bangla: ['"Hind Siliguri"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                mixed: ['"Inter"', '"Hind Siliguri"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                // Brand fonts
                 brand: ['"Fredoka"', 'sans-serif'],
                 modern: ['"Inter"', 'sans-serif'],
                 display: ['"Space Grotesk"', 'sans-serif']

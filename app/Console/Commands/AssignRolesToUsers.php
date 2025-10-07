@@ -113,8 +113,6 @@ class AssignRolesToUsers extends Command
             'system_administrator' => 'Admin',
             'system' => 'Admin',
             'partner' => 'partner', // Partners get full organization-level access (lowercase to match database)
-            'teacher' => 'Teacher',
-            'instructor' => 'Teacher',
             'student' => 'Student',
             'learner' => 'Student',
             'operator' => 'Operator',

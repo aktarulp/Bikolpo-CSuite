@@ -15,7 +15,7 @@ use App\Http\Controllers\StudentExamController;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\SmsRecordController;
 use App\Http\Controllers\Partner\AccessControlController;
-use App\Http\Controllers\Partner\PartnerPermissionsController;
+// Permission controller removed
 
 // Include Auth Routes
 require __DIR__.'/auth.php';
@@ -53,8 +53,7 @@ Route::middleware('auth')->group(function () {
     // Student Dashboard
     Route::get('/student/dashboard', [\App\Http\Controllers\StudentDashboardController::class, 'index'])->name('student.dashboard');
 
-    // Teacher Dashboard
-    Route::get('/teacher/dashboard', [\App\Http\Controllers\TeacherDashboardController::class, 'index'])->name('teacher.dashboard');
+    
 
 });
 
@@ -417,9 +416,7 @@ Route::middleware('auth')->group(function () {
 
 // Partner Routes (Coaching Center)
 Route::prefix('partner')->name('partner.')->middleware(['auth'])->group(function () {
-// Nav-only Permissions management (11 sidebar items) - use distinct path to avoid conflicts
-        Route::get('nav-permissions', [PartnerPermissionsController::class, 'index'])->name('nav-permissions.index');
-        Route::put('nav-permissions/{enhancedRole}', [PartnerPermissionsController::class, 'update'])->name('nav-permissions.update');
+// Permission management removed
         Route::get('/', [PartnerDashboardController::class, 'index'])->name('dashboard');
         Route::get('/dashboard', [PartnerDashboardController::class, 'index'])->name('dashboard');
         
@@ -570,10 +567,7 @@ Route::prefix('partner')->name('partner.')->middleware(['auth'])->group(function
         // Student Management
         Route::resource('students', StudentController::class);
         
-        // Teacher Management
-        Route::resource('teachers', \App\Http\Controllers\TeacherController::class);
-        Route::get('teachers/{teacher}/assignments', [\App\Http\Controllers\TeacherController::class, 'assignments'])->name('teachers.assignments');
-        Route::put('teachers/{teacher}/assignments', [\App\Http\Controllers\TeacherController::class, 'updateAssignments'])->name('teachers.assignments.update');
+        
         
         // Student Migration Management
         Route::prefix('students')->name('students.')->group(function () {
@@ -663,24 +657,12 @@ Route::prefix('partner')->name('partner.')->middleware(['auth'])->group(function
                         ->where('partner_id', $partner->id)
                         ->count();
                     
-                    // Get roles with error handling using EnhancedRole
-                    try {
-                        $rolesQuery = \App\Models\EnhancedRole::query();
-                        if (\Schema::hasColumn('ac_roles', 'partner_id')) {
-                            $rolesQuery->where('partner_id', $partner->id)
-                                     ->orWhere('is_default', true);
-                        }
-                        $stats['roles'] = $rolesQuery->withCount('users')->get() ?: collect();
-                        $stats['total_roles'] = $stats['roles']->count();
-                    } catch (\Exception $e) {
-                        \Log::error('Error loading roles: ' . $e->getMessage());
-                        $stats['roles'] = collect();
-                        $stats['total_roles'] = 0;
-                    }
+                    // Role loading disabled
+                    $stats['roles'] = collect();
+                    $stats['total_roles'] = 0;
                     
                     // Get recent users with error handling using EnhancedUser model
-                    $users = \App\Models\EnhancedUser::with('roles:id,name,display_name')
-                        ->where(function ($q) use ($partner) {
+                    $users = \App\Models\EnhancedUser::where(function ($q) use ($partner) {
                             $q->where('partner_id', $partner->id)
                               ->orWhere('id', $partner->user_id);
                         })
@@ -742,7 +724,12 @@ Route::prefix('partner')->name('partner.')->middleware(['auth'])->group(function
         // Test Settings Route
         Route::get('test-settings', function () {
             try {
-                $partner = \App\Models\Partner::where('user_id', auth()->id())->first();
+                $user = auth()->user();
+                $partner = null;
+                
+                if ($user && $user->partner_id) {
+                    $partner = \App\Models\Partner::find($user->partner_id);
+                }
                 
                 if (!$partner) {
                     return redirect()->route('partner.dashboard')->with('error', 'Partner profile not found. Please complete your profile first.');
@@ -774,17 +761,7 @@ Route::prefix('partner')->name('partner.')->middleware(['auth'])->group(function
         Route::post('seed-mcq-questions', [\App\Http\Controllers\QuestionController::class, 'seedMcqQuestions'])->name('seed-mcq-questions');
         Route::get('check-session', [\App\Http\Controllers\QuestionController::class, 'checkSession'])->name('check-session');
         
-        // Permission Management
-        Route::prefix('permissions')->name('permissions.')->group(function () {
-            Route::get('/', [\App\Http\Controllers\PermissionController::class, 'index'])->name('index');
-            Route::post('/roles', [\App\Http\Controllers\PermissionController::class, 'storeRole'])->name('store-role');
-            Route::put('/roles/{role}', [\App\Http\Controllers\PermissionController::class, 'updateRole'])->name('update-role');
-            Route::delete('/roles/{role}', [\App\Http\Controllers\PermissionController::class, 'destroyRole'])->name('destroy-role');
-            Route::post('/settings', [\App\Http\Controllers\PermissionController::class, 'saveSettings'])->name('save-settings');
-            Route::post('/reset', [\App\Http\Controllers\PermissionController::class, 'resetToDefaults'])->name('reset');
-            Route::get('/export', [\App\Http\Controllers\PermissionController::class, 'export'])->name('export');
-            Route::post('/import', [\App\Http\Controllers\PermissionController::class, 'import'])->name('import');
-        });
+        // Permission Management removed
         
         // SMS Management
         Route::prefix('sms')->name('sms.')->group(function () {
@@ -804,12 +781,12 @@ Route::prefix('partner')->name('partner.')->middleware(['auth'])->group(function
             Route::delete('users/{user}', [\App\Http\Controllers\UserManagementController::class, 'destroy'])->name('users.destroy');
             Route::post('users/bulk-update', [\App\Http\Controllers\UserManagementController::class, 'bulkUpdate'])->name('users.bulk-update');
             Route::get('users/{user}/activities', [\App\Http\Controllers\UserManagementController::class, 'getActivities'])->name('users.activities');
-            Route::get('users/{user}/permissions', [\App\Http\Controllers\UserManagementController::class, 'getPermissions'])->name('users.permissions');
+            // Permission route removed
             Route::get('users/export', [\App\Http\Controllers\UserManagementController::class, 'export'])->name('users.export');
             Route::get('users/statistics', [\App\Http\Controllers\UserManagementController::class, 'getStatistics'])->name('users.statistics');
-            Route::get('users/assignable-roles-permissions', [\App\Http\Controllers\UserManagementController::class, 'getAssignableRolesAndPermissions'])->name('users.assignable-roles-permissions');
+            // Permission route removed
             Route::get('users/get-students', [\App\Http\Controllers\UserManagementController::class, 'getStudents'])->name('users.get-students');
-            Route::get('users/get-teachers', [\App\Http\Controllers\UserManagementController::class, 'getTeachers'])->name('users.get-teachers');
+            
             
             // Test route
             Route::get('test-route', function() {
@@ -818,43 +795,13 @@ Route::prefix('partner')->name('partner.')->middleware(['auth'])->group(function
             
         });
 
-        // Access Control Routes (Role Management Only)
-        Route::prefix('access-control')->name('access-control.')->group(function () {
-            // Manual sync of menu/button permissions from config
-            Route::post('/permissions/sync', [AccessControlController::class, 'syncPermissions'])->name('permissions.sync');
-            
-            // Role management
-            Route::get('/create-role', [AccessControlController::class, 'createRole'])->name('create-role');
-            Route::post('/roles', [AccessControlController::class, 'storeRole'])->name('store-role');
-            Route::get('/roles/{role}/edit', [AccessControlController::class, 'editRole'])->name('edit-role');
-            Route::delete('/roles/{role}', [AccessControlController::class, 'destroyRole'])->name('destroy-role');
-            
-            // Permission management
-            Route::get('/roles/{role}/permissions', [AccessControlController::class, 'getRolePermissions'])
-                ->name('role-permissions');
-            Route::put('/roles/{role}/permissions', [AccessControlController::class, 'updateRolePermissions'])
-                ->name('update-role-permissions');
-
-            // Simple Permission Assignment (CRUD flags)
-            Route::get('/roles/{role}/assign', [AccessControlController::class, 'assignCrud'])->name('role.assign');
-            Route::put('/roles/{role}/assign', [AccessControlController::class, 'saveCrud'])->name('role.assign.save');
-                
-            // Permission structure
-            Route::get('/permission-structure', [AccessControlController::class, 'getPermissionStructure'])
-                ->name('permission-structure');
-        });
+        // Access Control Routes - Disabled
+        // Role and permission management completely removed
         
         // Analytics routes moved outside partner middleware for better access
     });
 
-    // Teacher Routes
-Route::prefix('teacher')->name('teacher.')->middleware(['auth'])->group(function () {
-        Route::get('/', [\App\Http\Controllers\TeacherDashboardController::class, 'index'])->name('dashboard');
-        Route::get('/dashboard', [\App\Http\Controllers\TeacherDashboardController::class, 'index'])->name('dashboard');
-        
-        // Teacher can access partner resources with limited permissions
-        // Add teacher-specific routes here as needed
-    });
+    
 
 
 
@@ -900,6 +847,11 @@ Route::prefix('student')->name('student.')->middleware(['auth'])->group(function
     Route::get('/typing-passages/get/{language?}/{difficulty?}', [\App\Http\Controllers\TypingPassageController::class, 'getPassages'])->name('typing-passages.get');
     Route::post('/typing-passages/{typingPassage}/stats', [\App\Http\Controllers\TypingPassageController::class, 'updateStats'])->name('typing-passages.stats');
     Route::patch('/typing-passages/{typingPassage}/toggle', [\App\Http\Controllers\TypingPassageController::class, 'toggleStatus'])->name('typing-passages.toggle');
+    
+    // Font Test Route
+    Route::get('/font-test', function () {
+        return view('font-test');
+    })->name('font.test');
 
 });
 
@@ -956,17 +908,17 @@ Route::prefix('api')->group(function () {
     Route::get('/exam-review/{examId}/{resultId}/analytics', [\App\Http\Controllers\ExamReviewController::class, 'getExamAnalytics'])->name('api.exam-review.analytics');
     Route::get('/exam-review/{examId}/{resultId}/suggestions', [\App\Http\Controllers\ExamReviewController::class, 'getImprovementSuggestions'])->name('api.exam-review.suggestions');
     
-    // Role and Permission API routes
+    // Role and permission API routes - All disabled
 Route::middleware(['auth'])->group(function () {
         
         // User Management API routes
         Route::get('/users', [\App\Http\Controllers\UserManagementController::class, 'getUsers'])->name('api.users.index');
         Route::get('/users/{id}', [\App\Http\Controllers\UserManagementController::class, 'getUser'])->name('api.users.show');
         Route::get('/users/{id}/activities', [\App\Http\Controllers\UserManagementController::class, 'getActivities'])->name('api.users.activities');
-        Route::get('/users/{id}/permissions', [\App\Http\Controllers\UserManagementController::class, 'getPermissions'])->name('api.users.permissions');
+        // Permission route removed
         Route::get('/users/export', [\App\Http\Controllers\UserManagementController::class, 'export'])->name('api.users.export');
         Route::get('/users/statistics', [\App\Http\Controllers\UserManagementController::class, 'getStatistics'])->name('api.users.statistics');
-        Route::get('/users/assignable-roles-permissions', [\App\Http\Controllers\UserManagementController::class, 'getAssignableRolesAndPermissions'])->name('api.users.assignable-roles-permissions');
+        // Permission route removed
         Route::get('/users/recent-activity', [\App\Http\Controllers\UserManagementController::class, 'getRecentActivity'])->name('api.users.recent-activity');
     });
 });

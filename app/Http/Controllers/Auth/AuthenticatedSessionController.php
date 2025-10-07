@@ -80,8 +80,6 @@ class AuthenticatedSessionController extends Controller
             case 'student':
                 return redirect()->route('student.dashboard');
                 
-            case 'teacher':
-                return redirect()->route('teacher.dashboard');
                 
                 
             default:
@@ -99,9 +97,6 @@ class AuthenticatedSessionController extends Controller
                         case 3: // Partner
                             Log::info('Redirecting to partner dashboard via role_id', ['user_id' => $user->id, 'role_id' => $user->role_id]);
                             return redirect()->route('partner.dashboard');
-                        case 4: // Teacher
-                            Log::info('Redirecting to teacher dashboard via role_id', ['user_id' => $user->id, 'role_id' => $user->role_id]);
-                            return redirect()->route('teacher.dashboard');
                         case 6: // Student
                             Log::info('Redirecting to student dashboard via role_id', ['user_id' => $user->id, 'role_id' => $user->role_id]);
                             return redirect()->route('student.dashboard');

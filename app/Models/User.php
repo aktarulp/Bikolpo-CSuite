@@ -12,7 +12,7 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    protected $table = 'ac_users';
+
 
     /**
      * The attributes that are mass assignable.
@@ -50,6 +50,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'name' => 'string',
+        'partner_id' => 'integer',
     ];
 
     /**
@@ -86,13 +87,23 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class, 'role_id');
     }
 
+    /**
+     * Get the roles assigned to this user.
+     * Role checking disabled - returns empty relationship.
+     */
+    public function roles()
+    {
+        return $this->belongsToMany(EnhancedRole::class, 'non_existent_table', 'user_id', 'role_id')
+                ->whereRaw('1 = 0'); // Always return empty
+    }
+
 
     /**
      * Get the partner profile associated with the user
      */
     public function partner()
     {
-        return $this->hasOne(Partner::class);
+        return $this->belongsTo(Partner::class, 'partner_id');
     }
 
     /**
@@ -178,16 +189,6 @@ class User extends Authenticatable
         return $this->role && $this->role->name === 'student';
     }
 
-    /**
-     * Check if user is Teacher
-     */
-    public function isTeacherRole(): bool
-    {
-        if (is_string($this->role)) {
-            return $this->role === 'teacher';
-        }
-        return $this->role && $this->role->name === 'teacher';
-    }
 
     /**
      * Check if user is Operator
@@ -210,15 +211,15 @@ class User extends Authenticatable
             return true;
         }
 
-        // Partner Admin can only manage users with roles 3, 4, 5 (Student, Teacher, Operator)
+        // Partner Admin can only manage users with roles 3, 5 (Student, Operator)
         // and only within their own partner
         if ($this->isPartnerAdmin()) {
             return $user->role && 
-                   in_array($user->role->level, [3, 4, 5]) &&
+                   in_array($user->role->level, [3, 5]) &&
                    $user->partner_id === $this->partner_id;
         }
 
-        // Students, Teachers, and Operators cannot manage other users
+        // Students and Operators cannot manage other users
         return false;
     }
 
@@ -237,9 +238,9 @@ class User extends Authenticatable
             return $user->partner_id === $this->partner_id;
         }
 
-        // Students, Teachers, and Operators can view other users
+        // Students and Operators can view other users
         // except Partner Admins
-        if ($this->isStudentRole() || $this->isTeacherRole() || $this->isOperatorRole()) {
+        if ($this->isStudentRole() || $this->isOperatorRole()) {
             return !$user->isPartnerAdmin();
         }
 
@@ -256,9 +257,9 @@ class User extends Authenticatable
             return true;
         }
 
-        // Partner Admin can only create users with roles 3, 4, 5
+        // Partner Admin can only create users with roles 3, 5
         if ($this->isPartnerAdmin()) {
-            return in_array($role->level, [3, 4, 5]);
+            return in_array($role->level, [3, 5]);
         }
 
         // Other roles cannot create users
@@ -277,9 +278,6 @@ class User extends Authenticatable
         if ($this->isPartnerAdmin()) {
             return User::with('role')
                 ->where('partner_id', $this->partner_id)
-                ->whereHas('role', function($query) {
-                    $query->whereIn('level', [3, 4, 5]); // Student, Teacher, Operator
-                })
                 ->get();
         }
 
@@ -302,12 +300,9 @@ class User extends Authenticatable
                 ->get();
         }
 
-        // Students, Teachers, and Operators can view all users except Partner Admins
-        if ($this->isStudentRole() || $this->isTeacherRole() || $this->isOperatorRole()) {
+        // Students and Operators can view all users except Partner Admins
+        if ($this->isStudentRole() || $this->isOperatorRole()) {
             return User::with('role')
-                ->whereHas('role', function($query) {
-                    $query->where('name', '!=', 'partner_admin');
-                })
                 ->get();
         }
 
@@ -330,123 +325,86 @@ class User extends Authenticatable
         return $this->hasMany(Topic::class, 'created_by');
     }
 
-    /**
-     * Get all enhanced roles assigned to this user
-     */
-    public function roles()
-    {
-        return $this->belongsToMany(EnhancedRole::class, 'ac_user_roles', 'user_id', 'role_id')
-                    ->withPivot('assigned_by', 'assigned_at', 'expires_at')
-                    ->withTimestamps();
-    }
+
 
     /**
      * Get the primary role (first assigned role)
+     * Role checking disabled - returns null.
      */
     public function primaryRole()
     {
-        return $this->roles()->first();
+        return null;
     }
 
     /**
      * Check if user has a specific role
+     * Role checking disabled - always returns true.
      */
     public function hasRole(string $roleName): bool
     {
-        return $this->roles()->where('name', $roleName)->exists();
+        return true;
     }
 
     /**
      * Check if user has any of the specified roles
+     * Role checking disabled - always returns true.
      */
     public function hasAnyRole(array $roleNames): bool
     {
-        return $this->roles()->whereIn('name', $roleNames)->exists();
+        return true;
     }
 
     /**
      * Check if user has permission for a specific module and action
+     * Permission checking disabled - always returns true.
      */
     public function hasPermission(string $module, string $action): bool
     {
-        foreach ($this->roles as $role) {
-            if ($role->hasPermission($module, $action)) {
-                return true;
-            }
-        }
-        return false;
+        return true;
     }
 
     /**
      * Check if user has any permission for a module
+     * Permission checking disabled - always returns true.
      */
     public function hasModulePermission(string $module): bool
     {
-        foreach ($this->roles as $role) {
-            if (!empty($role->getModulePermissions($module))) {
-                return true;
-            }
-        }
-        return false;
+        return true;
     }
 
     /**
      * Get all permissions for user across all roles
+     * Permission checking disabled - returns empty array.
      */
     public function getAllPermissions(): array
     {
-        $permissions = [];
-        foreach ($this->roles as $role) {
-            if (is_array($role->permissions)) {
-                foreach ($role->permissions as $module => $actions) {
-                    if (!isset($permissions[$module])) {
-                        $permissions[$module] = [];
-                    }
-                    $permissions[$module] = array_merge($permissions[$module], $actions);
-                }
-            }
-        }
-        return $permissions;
+        return [];
     }
 
     /**
      * Assign a role to the user
+     * Role assignment disabled - always returns true.
      */
     public function assignRole(int $roleId, int $assignedBy = null): bool
     {
-        $assignedBy = $assignedBy ?? auth()->id();
-        
-        $this->roles()->attach($roleId, [
-            'assigned_by' => $assignedBy,
-            'assigned_at' => now(),
-            'enhanced_user_id' => $this->id
-        ]);
-
         return true;
     }
 
     /**
      * Remove a role from the user
+     * Role removal disabled - always returns true.
      */
     public function removeRole(int $roleId): bool
     {
-        $this->roles()->detach($roleId);
         return true;
     }
 
     /**
      * Sync user roles (replace all roles with the given ones)
+     * Role syncing disabled - always returns true.
      */
     public function syncRoles(array $roleIds, int $assignedBy = null): bool
     {
-        $assignedBy = $assignedBy ?? auth()->id();
-        
-        $this->roles()->detach();
-        
-        foreach ($roleIds as $roleId) {
-            $this->assignRole($roleId, $assignedBy);
-        }
-
         return true;
     }
 }

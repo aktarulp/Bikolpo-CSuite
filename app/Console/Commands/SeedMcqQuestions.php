@@ -48,7 +48,12 @@ class SeedMcqQuestions extends Command
 
         if (!$partnerId) {
             // Find partner for the user
-            $partner = Partner::where('user_id', $userId)->first();
+            $user = EnhancedUser::find($userId);
+        if (!$user || !$user->partner_id) {
+            $this->error("User or partner not found for user ID: {$userId}");
+            return;
+        }
+        $partner = Partner::find($user->partner_id);
             if (!$partner) {
                 $this->error("No partner found for user ID {$userId}. Please create a partner first.");
                 return 1;

@@ -14,20 +14,89 @@
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/apple-touch-icon-180x180.png') }}">
     <link rel="mask-icon" href="{{ asset('images/BikolpoLive.svg') }}" color="#10b981">
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
-    <link href="{{ asset('css/fonts.css') }}" rel="stylesheet">
+    <!-- Fonts - Using our custom Inter + HindSiliguri setup -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
+    <!-- Font Fix CSS (load first) -->
+    <link href="{{ asset('css/font-fix.css') }}" rel="stylesheet">
+    
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <!-- Font Loading Debug & Fix -->
+    <script>
+        // Enhanced font loading detection and debugging
+        document.addEventListener('DOMContentLoaded', function() {
+            // Test content for font verification
+            const testText = 'Test আমি বাংলায় গান গাই English 123';
+            console.log('🎨 Font Debug: Testing text = ', testText);
+            
+            // Check if browser supports font loading API
+            if (document.fonts) {
+                document.fonts.ready.then(function() {
+                    console.log('✅ Font API: All fonts loaded successfully');
+                    
+                    // Additional verification
+                    const testDiv = document.createElement('div');
+                    testDiv.style.fontFamily = "Inter, 'Hind Siliguri', system-ui, sans-serif";
+                    testDiv.textContent = testText;
+                    testDiv.style.position = 'absolute';
+                    testDiv.style.visibility = 'hidden';
+                    document.body.appendChild(testDiv);
+                    
+                    const computedStyle = window.getComputedStyle(testDiv);
+                    console.log('🎭 Computed font-family:', computedStyle.fontFamily);
+                    
+                    document.body.removeChild(testDiv);
+                }).catch(function(error) {
+                    console.error('❌ Font loading error:', error);
+                    document.body.classList.add('font-fallback');
+                });
+            } else {
+                console.warn('⚠️ Font Loading API not supported, using fallback detection');
+                
+                // Fallback detection for older browsers
+                setTimeout(function() {
+                    console.log('🔄 Applying safety fallback fonts');
+                    document.body.classList.add('font-fallback');
+                }, 3000);
+            }
+            
+            // Debug SVG icons
+            const svgElements = document.querySelectorAll('svg use');
+            console.log(`🎯 Found ${svgElements.length} SVG icons`);
+            
+            // Report any text nodes that might be showing symbols
+            setTimeout(function() {
+                const allText = document.body.innerText;
+                const hasWeirdSymbols = /[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/u.test(allText);
+                if (hasWeirdSymbols) {
+                    console.warn('⚠️ Potential symbol/emoji detected in text - check for font loading issues');
+                }
+            }, 1000);
+        });
+    </script>
+    
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <style>
-        /* Bengali Font */
-        .font-bengali {
-            font-family: 'Hind Siliguri', 'Noto Sans Bengali', 'Noto Sans', 'Arial Unicode MS', sans-serif;
+        /* Force proper font rendering */
+        body, html {
+            font-family: 'Inter', 'Hind Siliguri', ui-sans-serif, system-ui, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+        
+        /* Bengali/Bangla Font */
+        .font-bengali, .font-bangla {
+            font-family: 'Hind Siliguri', ui-sans-serif, system-ui, sans-serif;
+        }
+        
+        /* English Font */
+        .font-english {
+            font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
         }
 
         /* Mobile-First Sidebar - Hidden by default on mobile */
@@ -115,10 +184,11 @@
             user-select: none;
         }
 
-        /* Smooth transitions */
+        /* Smooth transitions for elements */
         * {
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
         }
 
         /* Alpine.js cloak */
@@ -127,15 +197,14 @@
         }
     </style>
 </head>
-<body class="h-full font-sans antialiased bg-gray-50 dark:bg-gray-900">
+<body class="h-full bg-gray-50 dark:bg-gray-900">
     @php
         $user = Auth::user();
         $role = strtolower($user->role ?? '');
         $homeRouteName = 'partner.dashboard';
         if ($role === 'student') {
             $homeRouteName = 'student.dashboard';
-        } elseif ($role === 'teacher') {
-            $homeRouteName = 'teacher.dashboard';
+
         }
     @endphp
     <!-- SVG Sprites -->
@@ -189,7 +258,7 @@
                     @endif
 
                     @if(auth()->check())
-                    @canAccessMenu('courses')
+                    {{-- Permission checking disabled --}}
                     <a href="{{ route('partner.courses.index') }}"
                        class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.courses.*') ? 'bg-gradient-to-r from-orange-50 to-orange-100 text-orange-700 border border-orange-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-orange-50/50 hover:to-orange-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-orange-700 dark:hover:text-white' }}">
                         <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.courses.*') ? 'bg-orange-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-orange-50' }} flex items-center justify-center transition-all duration-200">
@@ -200,12 +269,11 @@
                         <span class="ml-2 flex-1">Courses</span>
                         <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300 border border-orange-300 dark:border-orange-700">{{ $stats['total_courses'] ?? 0 }}</span>
                     </a>
-                    @endcanAccessMenu
                     @endif
                     
 
                     @if(auth()->check())
-                    @canAccessMenu('subjects')
+                    {{-- Permission checking disabled --}}
                     <a href="{{ route('partner.subjects.index') }}"
                        class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.subjects.*') ? 'bg-gradient-to-r from-purple-50 to-purple-100 text-purple-700 border border-purple-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-purple-50/50 hover:to-purple-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-purple-700 dark:hover:text-white' }}">
                         <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.subjects.*') ? 'bg-purple-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-purple-50' }} flex items-center justify-center transition-all duration-200">
@@ -216,11 +284,10 @@
                         <span class="ml-2 flex-1">Subjects</span>
                         <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300 border border-purple-300 dark:border-purple-700">{{ $stats['total_subjects'] ?? 0 }}</span>
                     </a>
-                    @endcanAccessMenu
                     @endif
 
                     @if(auth()->check())
-                    @canAccessMenu('topics')
+                    {{-- Permission checking disabled --}}
                     <a href="{{ route('partner.topics.index') }}"
                        class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.topics.*') ? 'bg-gradient-to-r from-pink-50 to-pink-100 text-pink-700 border border-pink-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-pink-50/50 hover:to-pink-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-pink-700 dark:hover:text-white' }}">
                         <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.topics.*') ? 'bg-pink-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-pink-50' }} flex items-center justify-center transition-all duration-200">
@@ -231,10 +298,9 @@
                         <span class="ml-2 flex-1">Topics</span>
                         <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-pink-100 text-pink-700 dark:bg-pink-900/50 dark:text-pink-300 border border-pink-300 dark:border-pink-700">{{ $stats['total_topics'] ?? 0 }}</span>
                     </a>
-                    @endcanAccessMenu
                     @endif
                     @if(auth()->check())
-                    @canAccessMenu('batches')
+                    {{-- Permission checking disabled --}}
                     <a href="{{ route('partner.batches.index') }}"
                        class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.batches.*') ? 'bg-gradient-to-r from-indigo-50 to-indigo-100 text-indigo-700 border border-indigo-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-indigo-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-indigo-700 dark:hover:text-white' }}">
                         <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.batches.*') ? 'bg-indigo-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-indigo-50' }} flex items-center justify-center transition-all duration-200">
@@ -245,10 +311,9 @@
                         <span class="ml-2 flex-1">Batches</span>
                         <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-700">{{ $stats['total_batches'] ?? 0 }}</span>
                     </a>
-                    @endcanAccessMenu
                     @endif
                     @if(auth()->check())
-                    @canAccessMenu('students')
+                    {{-- Permission checking disabled --}}
                     <a href="{{ route('partner.students.index') }}"
                        class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.students.*') ? 'bg-gradient-to-r from-emerald-50 to-emerald-100 text-emerald-700 border border-emerald-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-emerald-50/50 hover:to-emerald-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-emerald-700 dark:hover:text-white' }}">
                         <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.students.*') ? 'bg-emerald-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-emerald-50' }} flex items-center justify-center transition-all duration-200">
@@ -259,24 +324,10 @@
                         <span class="ml-2 flex-1">Students</span>
                         <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700">{{ $stats['total_students'] ?? 0 }}</span>
                     </a>
-                    @endcanAccessMenu
                     @endif
+                    
                     @if(auth()->check())
-                    @canAccessMenu('teachers')
-                    <a href="{{ route('partner.teachers.index') }}"
-                       class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.teachers.*') ? 'bg-gradient-to-r from-teal-50 to-teal-100 text-teal-700 border border-teal-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-teal-50/50 hover:to-teal-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-teal-700 dark:hover:text-white' }}">
-                        <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.teachers.*') ? 'bg-teal-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-teal-50' }} flex items-center justify-center transition-all duration-200">
-                            <svg class="h-4 w-4 {{ request()->routeIs('partner.teachers.*') ? 'text-teal-600' : 'text-gray-500 group-hover:text-teal-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"></path>
-                            </svg>
-                        </div>
-                        <span class="ml-2 flex-1">Teachers</span>
-                        <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-teal-100 text-teal-700 dark:bg-teal-900/50 dark:text-teal-300 border border-teal-300 dark:border-teal-700">{{ $stats['total_teachers'] ?? 0 }}</span>
-                    </a>
-                    @endcanAccessMenu
-                    @endif
-                    @if(auth()->check())
-                    @canAccessMenu('questions')
+                    {{-- Permission checking disabled --}}
                     <a href="{{ route('partner.questions.all') }}"
                        class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.questions.*') ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 border border-blue-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-blue-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-blue-700 dark:hover:text-white' }}">
                         <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.questions.*') ? 'bg-blue-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-blue-50' }} flex items-center justify-center transition-all duration-200">
@@ -287,12 +338,11 @@
                         <span class="ml-2 flex-1">Questions</span>
                         <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 border border-blue-300 dark:border-blue-700">{{ $stats['total_questions'] ?? 0 }}</span>
                     </a>
-                    @endcanAccessMenu
                     @endif
 
 
                     @if(auth()->check())
-                    @canAccessMenu('exams')
+                    {{-- Permission checking disabled --}}
                     <a href="{{ route('partner.exams.index') }}"
                        class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.exams.*') ? 'bg-gradient-to-r from-cyan-50 to-cyan-100 text-cyan-700 border border-cyan-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-cyan-50/50 hover:to-cyan-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-cyan-700 dark:hover:text-white' }}">
                         <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.exams.*') ? 'bg-cyan-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-cyan-50' }} flex items-center justify-center transition-all duration-200">
@@ -303,11 +353,10 @@
                         <span class="ml-2 flex-1">Exams</span>
                         <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-cyan-100 text-cyan-700 dark:bg-cyan-900/50 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-700">{{ $stats['total_exams'] ?? 0 }}</span>
                     </a>
-                    @endcanAccessMenu
                     @endif
 
                     @if(auth()->check())
-                    @canAccessMenu('analytics')
+                    {{-- Permission checking disabled --}}
                     <a href="{{ route('analytics.questions.index') }}"
                        class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('analytics.questions.*') ? 'bg-gradient-to-r from-violet-50 to-violet-100 text-violet-700 border border-violet-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-violet-50/50 hover:to-violet-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-violet-700 dark:hover:text-white' }}">
                         <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('analytics.questions.*') ? 'bg-violet-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-violet-50' }} flex items-center justify-center transition-all duration-200">
@@ -318,11 +367,10 @@
                         <span class="ml-2 flex-1">Analytics</span>
                         <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-violet-100 text-violet-700 dark:bg-violet-900/50 dark:text-violet-300 border border-violet-300 dark:border-violet-700">{{ $stats['total_question_attempts'] ?? 0 }}</span>
                     </a>
-                    @endcanAccessMenu
                     @endif
 
                     @if(auth()->check())
-                    @canAccessMenu('sms')
+                    {{-- Permission checking disabled --}}
                     <a href="{{ route('partner.sms.index') }}"
                        class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.sms.*') ? 'bg-gradient-to-r from-teal-50 to-teal-100 text-teal-700 border border-teal-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-teal-50/50 hover:to-teal-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-teal-700 dark:hover:text-white' }}">
                         <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.sms.*') ? 'bg-teal-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-teal-50' }} flex items-center justify-center transition-all duration-200">
@@ -333,7 +381,6 @@
                         <span class="ml-2 flex-1">SMS</span>
                         <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-teal-100 text-teal-700 dark:bg-teal-900/50 dark:text-teal-300 border border-teal-300 dark:border-teal-700">{{ $stats['total_sms'] ?? 0 }}</span>
                     </a>
-                    @endcanAccessMenu
                     @endif
                 </nav>
 
@@ -351,7 +398,7 @@
                                         $authUser = Auth::user();
                                         $roleName = strtolower($authUser->role ?? $role ?? '');
                                         $studentPhoto = null;
-                                        $teacherPhoto = null;
+                                        
                                         $partnerLogoSidebar = null;
 
                                         // Resolve student photo
@@ -359,14 +406,7 @@
                                             $studentPhoto = optional($authUser->student)->photo;
                                         }
 
-                                        // Resolve teacher photo
-                                        if ($roleName === 'teacher') {
-                                            try {
-                                                $teacherPhoto = \App\Models\Teacher::where('user_id', $authUser->id)->value('photo');
-                                            } catch (\Exception $e) {
-                                                $teacherPhoto = null;
-                                            }
-                                        }
+                                        
 
                                         // Resolve partner logo for partner or other non-default roles
                                         if (in_array($roleName, ['partner','partner_admin','admin','operator',''])) {
@@ -376,8 +416,7 @@
                                         $displayImage = null;
                                         if (!empty($studentPhoto)) {
                                             $displayImage = asset('storage/' . $studentPhoto);
-                                        } elseif (!empty($teacherPhoto)) {
-                                            $displayImage = asset('storage/' . $teacherPhoto);
+
                                         } elseif (!empty($partnerLogoSidebar)) {
                                             $displayImage = asset('storage/' . $partnerLogoSidebar);
                                         }
@@ -437,7 +476,7 @@
                                             <svg class="w-4 h-4 text-gray-400 group-hover:text-primaryGreen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                                             </svg>
-                                        </a>
+            
                                         
                                     </div>
                                 </div>
@@ -468,7 +507,7 @@
                                 <div class="mb-1">
                                     <p class="px-3 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">System</p>
                                     <div class="space-y-1">
-                                        @canAccessMenu('settings')
+                                        {{-- Permission checking disabled --}}
                                         <a href="{{ route('partner.settings.index') }}" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white rounded-lg transition-colors duration-150">
                                             <div class="w-7 h-7 bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center mr-2 group-hover:scale-110 transition-transform duration-200">
                                                 <svg class="w-3.5 h-3.5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -483,7 +522,6 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                                             </svg>
                                         </a>
-                                        @endcanAccessMenu
                                     </div>
                                 </div>
                                 
@@ -546,7 +584,7 @@
                             </div>
                             <div>
                                 <h2 class="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white">
-                                    Welcome back, <span class="text-transparent bg-clip-text bg-gradient-to-r from-primaryGreen to-emerald-600 dark:from-emerald-400 dark:to-primaryGreen">{{ in_array($role, ['student','teacher']) ? (Auth::user()->name ?? 'User') : ($partner?->name ?? Auth::user()->name ?? 'Partner') }}</span>
+                                    Welcome back, <span class="text-transparent bg-clip-text bg-gradient-to-r from-primaryGreen to-emerald-600 dark:from-emerald-400 dark:to-primaryGreen">{{ in_array($role, ['student']) ? (Auth::user()->name ?? 'User') : ($partner?->name ?? Auth::user()->name ?? 'Partner') }}</span>
                                 </h2>
                                 <p class="text-gray-600 dark:text-gray-400 text-sm flex items-center mt-1">
                                     <svg class="w-4 h-4 mr-1.5 text-primaryGreen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -609,7 +647,7 @@
                             <div class="relative" x-data="{ open: false }" @click.away="open = false">
                                 <!-- User Menu Button - Square Profile Image Only -->
                                 <button @click="open = !open" class="p-1.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg border-0 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primaryGreen/20 shadow-sm hover:shadow-md">
-                                    <!-- Square Profile Image (conditional: student/teacher photo, partner logo, or initials) -->
+                                    
                                     <div class="w-10 h-10 bg-gradient-to-br from-primaryGreen to-emerald-600 flex items-center justify-center rounded-md overflow-hidden border-0 border-white dark:border-gray-700 shadow-sm">
                                         @php
                                             $authUser = Auth::user();
@@ -623,14 +661,7 @@
                                                 $studentPhoto = optional($authUser->student)->photo;
                                             }
 
-                                            // Attempt to resolve teacher photo if role is teacher
-                                            if ($roleName === 'teacher') {
-                                                try {
-                                                    $teacherPhoto = \App\Models\Teacher::where('user_id', $authUser->id)->value('photo');
-                                                } catch (\Exception $e) {
-                                                    $teacherPhoto = null;
-                                                }
-                                            }
+
 
                                             // Resolve partner logo for partner or non-default partner roles
                                             if (in_array($roleName, ['partner','partner_admin','admin','operator',''])) {
@@ -640,8 +671,7 @@
                                             $displayImage = null;
                                             if (!empty($studentPhoto)) {
                                                 $displayImage = asset('storage/' . $studentPhoto);
-                                            } elseif (!empty($teacherPhoto)) {
-                                                $displayImage = asset('storage/' . $teacherPhoto);
+
                                             } elseif (!empty($partnerLogoTop)) {
                                                 $displayImage = asset('storage/' . $partnerLogoTop);
                                             }
@@ -683,7 +713,7 @@
                                             <p class="px-3 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Institution</p>
                                             <div class="space-y-1">
                                                 @php
-                                                    $profileRoute = in_array($role ?? strtolower(Auth::user()->role ?? ''), ['student', 'teacher'])
+                                                    $profileRoute = in_array($role ?? strtolower(Auth::user()->role ?? ''), ['student'])
                                                         ? route('partner.profile.show-user-profile')
                                                         : route('partner.profile.show-partnar');
                                                 @endphp

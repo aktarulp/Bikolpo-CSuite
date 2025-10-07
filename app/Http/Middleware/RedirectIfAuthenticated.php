@@ -26,8 +26,7 @@ class RedirectIfAuthenticated
                 // Log the request for debugging
                 Log::info('RedirectIfAuthenticated middleware', [
                     'route' => $request->route()->getName(),
-                    'user_id' => $user->id,
-                    'user_role' => $user->role,
+                    'user_role' => $user->role ?? 'none',
                     'is_login_route' => $request->routeIs('login') || $request->routeIs('partner.login') || $request->routeIs('student.login')
                 ]);
                 
@@ -37,36 +36,21 @@ class RedirectIfAuthenticated
                     return $next($request);
                 }
 
-                // Redirect based on user role for other guest-only pages.
-                // Use safe fallbacks to avoid redirect loops.
-                $effectiveRole = strtolower((string)($user->role ?? ''));
-                if ($effectiveRole === '' && method_exists($user, 'roles')) {
-                    $firstRole = $user->roles()->orderBy('level')->first();
-                    if ($firstRole) {
-                        $effectiveRole = strtolower($firstRole->name ?? '');
-                    }
-                }
-
+                // Redirect authenticated users to partner dashboard by default
+                $effectiveRole = strtolower((string)($user->role ?? 'partner'));
+                
                 if ($effectiveRole === 'student') {
                     Log::info('Redirecting student to student dashboard');
                     if (!$request->routeIs('student.dashboard')) {
                         return redirect()->route('student.dashboard');
                     }
-                } elseif ($effectiveRole === 'teacher') {
-                    Log::info('Redirecting teacher to teacher dashboard');
-                    if (!$request->routeIs('teacher.dashboard')) {
-                        return redirect()->route('teacher.dashboard');
-                    }
                 } else {
-                    // Partner and any other roles fall back to partner dashboard
+                    // All other users (including partner and undefined roles) go to partner dashboard
                     Log::info('Redirecting to partner dashboard', ['role' => $user->role, 'effectiveRole' => $effectiveRole]);
                     if (!$request->routeIs('partner.dashboard')) {
                         return redirect()->route('partner.dashboard');
                     }
                 }
-                    // Unknown role or custom role: send to partner dashboard
-                    Log::warning('Authenticated user has unknown role, redirecting to partner dashboard', ['role' => $user->role, 'effectiveRole' => $effectiveRole]);
-                    return redirect()->route('partner.dashboard');
             }
         }
 

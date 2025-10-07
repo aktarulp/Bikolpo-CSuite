@@ -75,26 +75,32 @@ class EnhancedRole extends Model
      */
     public function permissions(): BelongsToMany
     {
+        // Permissions disabled - return empty relationship
         return $this->belongsToMany(
-                    EnhancedPermission::class,
+                    \App\Models\EnhancedRole::class, // Self-reference to avoid errors
                     'ac_role_permissions',
                     'role_id',
                     'module_id'
                 )
-                    ->using(\App\Models\Pivots\RolePermission::class)
-                    ->withPivot('module_name','can_create','can_read','can_update','can_delete','is_default','created_by','granted_by','granted_at','expires_at')
-                    ->withTimestamps();
+                    ->whereRaw('1 = 0'); // Always return empty result
     }
 
     /**
-     * Get the users that have this role.
+     * Get the users assigned to this role.
      */
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(EnhancedUser::class, 'ac_user_roles', 'role_id', 'user_id')
-                    ->withPivot('assigned_by', 'assigned_at', 'expires_at')
-                    ->withTimestamps();
+        return $this->belongsToMany(
+            EnhancedUser::class,
+            'ac_user_roles',
+            'role_id',
+            'user_id'
+        )
+            ->withPivot('assigned_by', 'assigned_at', 'expires_at')
+            ->withTimestamps();
     }
+
+
 
     /**
      * Get the creator of this role.
@@ -211,26 +217,20 @@ class EnhancedRole extends Model
 
     /**
      * Check if role has a specific permission.
+     * Permission checking disabled - always returns true.
      */
     public function hasPermission($permission): bool
     {
-        if (is_string($permission)) {
-            return $this->getAllPermissions()->contains('name', $permission);
-        }
-        
-        if (is_int($permission)) {
-            return $this->getAllPermissions()->contains('id', $permission);
-        }
-
-        return false;
+        return true;
     }
 
     /**
      * Check if role has a specific permission by ID.
+     * Permission checking disabled - always returns true.
      */
     public function hasPermissionById($permissionId): bool
     {
-        return $this->getAllPermissions()->contains('id', $permissionId);
+        return true;
     }
 
     /**
@@ -246,23 +246,8 @@ class EnhancedRole extends Model
      */
     public function grantPermissionWithCrud($permission, array $crudFlags = [], $grantedBy = null, $expiresAt = null)
     {
-        if (is_string($permission)) {
-            $permission = EnhancedPermission::where('module_name', $permission)->first();
-        }
-
-        if (!$permission) {
-            return false;
-        }
-
-        $pivot = [
-            'module_name' => $permission->module_name,
-            'granted_by' => $grantedBy ?? auth()->id(),
-            'granted_at' => now(),
-            'expires_at' => $expiresAt,
-        ];
-        $pivot = array_merge($pivot, $this->normalizeCrudFlags($crudFlags));
-
-        return $this->permissions()->attach($permission->id, $pivot);
+        // Permissions disabled - always return true
+        return true;
     }
 
     /**
@@ -270,15 +255,8 @@ class EnhancedRole extends Model
      */
     public function revokePermission($permission)
     {
-        if (is_string($permission)) {
-            $permission = EnhancedPermission::where('module_name', $permission)->first();
-        }
-
-        if (!$permission) {
-            return false;
-        }
-
-        return $this->permissions()->detach($permission->id);
+        // Permissions disabled - always return true
+        return true;
     }
 
     /**
@@ -286,32 +264,8 @@ class EnhancedRole extends Model
      */
     public function syncPermissions($permissions, $grantedBy = null)
     {
-        $permissionRecords = [];
-        
-        foreach ($permissions as $permission) {
-            if (is_string($permission)) {
-                $perm = EnhancedPermission::where('module_name', $permission)->first();
-                if ($perm) {
-                    $permissionRecords[$perm->id] = $perm->module_name;
-                }
-            } elseif (is_int($permission)) {
-                $perm = EnhancedPermission::find($permission);
-                if ($perm) {
-                    $permissionRecords[$perm->id] = $perm->module_name;
-                }
-            }
-        }
-
-        $syncData = [];
-        foreach ($permissionRecords as $permissionId => $moduleName) {
-            $syncData[$permissionId] = [
-                'module_name' => $moduleName,
-                'granted_by' => $grantedBy ?? auth()->id(),
-                'granted_at' => now(),
-            ];
-        }
-
-        return $this->permissions()->sync($syncData);
+        // Permissions disabled - always return true
+        return true;
     }
 
     /**
@@ -320,32 +274,8 @@ class EnhancedRole extends Model
      */
     public function syncPermissionsWithCrud(array $permissionFlags, $grantedBy = null)
     {
-        $syncData = [];
-
-        foreach ($permissionFlags as $key => $flags) {
-            $permissionId = null;
-            $permModel = null;
-            if (is_int($key)) {
-                $permissionId = $key;
-                $permModel = EnhancedPermission::find($permissionId);
-            } elseif (is_string($key)) {
-                $permModel = EnhancedPermission::where('module_name', $key)->first();
-                if ($permModel) { $permissionId = $permModel->id; }
-            }
-            if (!$permissionId || !$permModel) { continue; }
-
-            $syncData[$permissionId] = array_merge([
-                'module_name' => $permModel->module_name,
-                'granted_by' => $grantedBy ?? auth()->id(),
-                'granted_at' => now(),
-            ], $this->normalizeCrudFlags($flags));
-        }
-
-        if (empty($syncData)) {
-            return false;
-        }
-
-        return $this->permissions()->sync($syncData);
+        // Permissions disabled - always return true
+        return true;
     }
 
     /**

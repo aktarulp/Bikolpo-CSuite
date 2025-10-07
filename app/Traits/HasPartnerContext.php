@@ -30,12 +30,6 @@ trait HasPartnerContext
             return (int) $user->partner_id;
         }
         
-        // Fallback: Check if user is the main partner user (find partner by user_id)
-        $partner = \App\Models\Partner::where('user_id', $userId)->first();
-        if ($partner) {
-            return (int) $partner->id;
-        }
-        
         throw new \Exception('Partner profile not found for user ID: ' . $userId);
     }
 
@@ -64,12 +58,6 @@ trait HasPartnerContext
             if ($partner) {
                 return $partner;
             }
-        }
-        
-        // Fallback: Check if user is the main partner user (find partner by user_id)
-        $partner = \App\Models\Partner::where('user_id', $userId)->first();
-        if ($partner) {
-            return $partner;
         }
         
         throw new \Exception('Partner profile not found. Please contact administrator.');

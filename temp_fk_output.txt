@@ -1,0 +1,6 @@
+array (
+  0 => 
+  (object) array(
+     'CONSTRAINT_NAME' => 'question_history_created_by_foreign',
+  ),
+)

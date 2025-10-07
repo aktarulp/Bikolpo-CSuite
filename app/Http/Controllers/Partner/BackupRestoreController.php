@@ -50,7 +50,7 @@ class BackupRestoreController extends Controller
             
             if ($type === 'access-control') {
                 // Backup only access control tables
-                $tables = ['ac_users', 'ac_roles', 'ac_permissions', 'ac_user_roles', 'ac_role_permissions'];
+                $tables = ['ac_users', 'ac_roles', 'ac_permissions', 'ac_role_permissions'];
                 $tablesList = implode(' ', $tables);
                 $command = "mysqldump --host={$host} --port={$port} --user={$username} --password={$password} {$database} {$tablesList} > {$filePath}";
             } else {

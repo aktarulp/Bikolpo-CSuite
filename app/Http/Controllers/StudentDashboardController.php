@@ -20,7 +20,7 @@ class StudentDashboardController extends Controller
 
         // Resolve the Student record for this user
         $student = Student::with(['course', 'batch'])
-            ->where('user_id', $user->id)
+            ->where('id', $user->student_id)
             ->first();
 
         // Defensive fallback if no Student record yet

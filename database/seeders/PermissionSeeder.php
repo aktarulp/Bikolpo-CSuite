@@ -48,23 +48,6 @@ class PermissionSeeder extends Seeder
             'updated_by' => 1
         ]);
 
-        // Teacher role
-        $teacherRole = Role::create([
-            'name' => 'Teacher',
-            'display_name' => 'Teacher',
-            'slug' => 'teacher',
-            'description' => 'Course and student management',
-            'permissions' => [
-                'dashboard' => ['full'],
-                'students' => ['full'],
-                'courses' => ['full'],
-                'exams' => ['full'],
-                'reports' => ['limited'],
-                'settings' => ['none']
-            ],
-            'created_by' => 1,
-            'updated_by' => 1
-        ]);
 
         // Assistant role
         $assistantRole = Role::create([
@@ -102,7 +85,7 @@ class PermissionSeeder extends Seeder
             'updated_by' => 1
         ]);
 
-        $this->command->info('Created 4 default roles: Administrator, Teacher, Assistant, Viewer');
+        $this->command->info('Created 3 default roles: Administrator, Assistant, Viewer');
     }
 
     /**

@@ -14,7 +14,7 @@
                         Manage your course catalog
                     </p>
                 </div>
-                @can('courses-add')
+                {{-- Permission checking disabled --}}
                 <a href="{{ route('partner.courses.create') }}" 
                    class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -22,7 +22,6 @@
                     </svg>
                     Add Course
                 </a>
-                @endcan
             </div>
         </div>
     </header>
@@ -114,15 +113,14 @@
                     </div>
                     
                     <div class="flex gap-2">
-                        @can('courses-edit')
+                        {{-- Permission checking disabled --}}
                         <a href="{{ route('partner.courses.edit', $course) }}" 
                            class="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                             </svg>
                         </a>
-                        @endcan
-                        @can('courses-delete')
+                        {{-- Permission checking disabled --}}
                         <form action="{{ route('partner.courses.destroy', $course) }}" method="POST" onsubmit="return confirm('Are you sure?')">
                             @csrf
                             @method('DELETE')
@@ -133,7 +131,6 @@
                                 </svg>
                             </button>
                         </form>
-                        @endcan
                     </div>
                 </div>
             </div>
@@ -171,7 +168,7 @@
             <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">No courses</h3>
             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Get started by creating a new course.</p>
             <div class="mt-6">
-                @can('courses-add')
+                {{-- Permission checking disabled --}}
                 <a href="{{ route('partner.courses.create') }}" 
                    class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -179,7 +176,6 @@
                     </svg>
                     New Course
                 </a>
-                @endcan
             </div>
         </div>
         @endif

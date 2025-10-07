@@ -158,9 +158,9 @@ class Role extends Model
             return true;
         }
 
-        // Partner Admin can manage roles 3, 4, 5 (Student, Teacher, Operator)
+        // Partner Admin can manage roles 3, 5 (Student, Operator)
         if ($this->name === 'partner_admin') {
-            return in_array($role->level, [3, 4, 5]);
+            return in_array($role->level, [3, 5]);
         }
 
         // Other roles cannot manage roles

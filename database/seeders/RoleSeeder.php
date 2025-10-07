@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Role;
+use App\Models\EnhancedRole;
 use Illuminate\Database\Seeder;
 
 class RoleSeeder extends Seeder
@@ -13,7 +13,7 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         // Clear existing roles
-        Role::query()->delete();
+        EnhancedRole::query()->delete();
 
         // Create the 5 hierarchical roles
         $roles = [
@@ -31,7 +31,6 @@ class RoleSeeder extends Seeder
                     'permissions' => ['full'],
                     'partners' => ['full'],
                     'students' => ['full'],
-                    'teachers' => ['full'],
                     'operators' => ['full'],
                     'reports' => ['full'],
                     'settings' => ['full']
@@ -47,7 +46,6 @@ class RoleSeeder extends Seeder
                 'permissions' => [
                     'users' => ['full'],
                     'students' => ['full'],
-                    'teachers' => ['full'],
                     'operators' => ['full'],
                     'reports' => ['full'],
                     'settings' => ['limited']
@@ -69,22 +67,6 @@ class RoleSeeder extends Seeder
                 ]
             ],
             [
-                'name' => 'teacher',
-                'display_name' => 'Teacher',
-                'description' => 'Teacher role with course management access',
-                'level' => 4,
-                'parent_role_id' => null, // Will be set to partner_admin after creation
-                'status' => 'active',
-                'permissions' => [
-                    'profile' => ['full'],
-                    'courses' => ['full'],
-                    'students' => ['limited'],
-                    'assignments' => ['full'],
-                    'grades' => ['full'],
-                    'reports' => ['limited']
-                ]
-            ],
-            [
                 'name' => 'operator',
                 'display_name' => 'Operator',
                 'description' => 'Operator role with operational access',
@@ -95,7 +77,6 @@ class RoleSeeder extends Seeder
                     'profile' => ['full'],
                     'users' => ['read'],
                     'students' => ['read'],
-                    'teachers' => ['read'],
                     'reports' => ['read'],
                     'settings' => ['read']
                 ]
@@ -105,7 +86,7 @@ class RoleSeeder extends Seeder
         // Create roles and store references
         $createdRoles = [];
         foreach ($roles as $roleData) {
-            $createdRoles[$roleData['name']] = Role::create($roleData);
+            $createdRoles[$roleData['name']] = EnhancedRole::create(['permissions' => json_encode($roleData['permissions'])] + $roleData);
         }
 
         // Update parent relationships
@@ -117,14 +98,9 @@ class RoleSeeder extends Seeder
             'parent_role_id' => $createdRoles['partner_admin']->id
         ]);
 
-        $createdRoles['teacher']->update([
-            'parent_role_id' => $createdRoles['partner_admin']->id
-        ]);
 
         $createdRoles['operator']->update([
             'parent_role_id' => $createdRoles['partner_admin']->id
         ]);
-
-        $this->command->info('Default hierarchical roles created successfully!');
     }
 }
