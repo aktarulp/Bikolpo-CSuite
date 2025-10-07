@@ -1055,33 +1055,9 @@ class ExamController extends Controller
         $questionsQuery = \App\Models\Question::query()
             ->where('partner_id', $partnerId)
             ->where('status', 'active')
-            ->with('course', 'subject', 'topic', 'questionType')
-            ->whereHas('course', function($query) use ($partnerId) {
-                $query->where('partner_id', $partnerId)
-                      ->where('status', 'active')
-                      ->where(function($q) {
-                          $q->whereNull('start_date')
-                            ->orWhere('start_date', '<=', now())
-                            ->orWhere('end_date', '>=', now());
-                      });
-            })
-            ->whereHas('subject', function($query) use ($partnerId) {
-                $query->where('partner_id', $partnerId)
-                      ->where('status', 'active');
-            })
-            ->whereHas('topic', function($query) use ($partnerId) {
-                $query->where('partner_id', $partnerId)
-                      ->where('status', 'active');
-            });
+            ->with('course', 'subject', 'topic', 'questionType');
 
-        // If exam type is 'online', only load MCQ questions
-        if ($exam->exam_type === 'online') {
-            $questionsQuery->where('question_type', 'mcq');
-        } elseif ($exam->exam_type === 'offline') {
-            $questionsQuery->where('question_type', 'descriptive');
-        }
-
-        // Apply filters based on the request
+        // Apply less restrictive filters
         if ($request->filled('search')) {
             $search = $request->input('search');
             $questionsQuery->where(function ($query) use ($search) {
