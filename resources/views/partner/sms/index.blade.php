@@ -35,7 +35,11 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
                                 {{ $smsRecord->recipient_name ?? optional($smsRecord->student)->full_name ?? 'N/A' }}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm {{ $smsRecord->status === 'delivered' ? 'text-green-600' : ($smsRecord->status === 'failed' ? 'text-red-600' : 'text-yellow-600') }} dark:text-{{ $smsRecord->status === 'delivered' ? 'green-400' : ($smsRecord->status === 'failed' ? 'red-400' : 'yellow-400') }}">{{ ucfirst($smsRecord->status) }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm 
+                                @if($smsRecord->status === 'delivered') text-green-600 dark:text-green-400
+                                @elseif($smsRecord->status === 'failed') text-red-600 dark:text-red-400
+                                @else text-yellow-600 dark:text-yellow-400
+                                @endif">{{ ucfirst($smsRecord->status) }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">{{ $smsRecord->provider_response }}</td>
                         </tr>
                     @empty

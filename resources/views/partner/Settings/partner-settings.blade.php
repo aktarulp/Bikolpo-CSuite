@@ -76,8 +76,26 @@
                     </p>
                     <p class="text-xs text-gray-400 mt-1">{{ $card['subtitle'] }}</p>
                 </div>
-                <div class="w-12 h-12 bg-{{ $card['color'] }}-50 rounded-xl flex items-center justify-center ml-4 flex-shrink-0">
-                    <svg class="w-6 h-6 text-{{ $card['color'] }}-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="w-12 h-12 rounded-xl flex items-center justify-center ml-4 flex-shrink-0
+                    @if($card['color'] === 'blue') bg-blue-50
+                    @elseif($card['color'] === 'green') bg-green-50
+                    @elseif($card['color'] === 'purple') bg-purple-50
+                    @elseif($card['color'] === 'orange') bg-orange-50
+                    @elseif($card['color'] === 'red') bg-red-50
+                    @elseif($card['color'] === 'yellow') bg-yellow-50
+                    @elseif($card['color'] === 'indigo') bg-indigo-50
+                    @else bg-gray-50
+                    @endif">
+                    <svg class="w-6 h-6 
+                        @if($card['color'] === 'blue') text-blue-600
+                        @elseif($card['color'] === 'green') text-green-600
+                        @elseif($card['color'] === 'purple') text-purple-600
+                        @elseif($card['color'] === 'orange') text-orange-600
+                        @elseif($card['color'] === 'red') text-red-600
+                        @elseif($card['color'] === 'yellow') text-yellow-600
+                        @elseif($card['color'] === 'indigo') text-indigo-600
+                        @else text-gray-600
+                        @endif" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $card['icon'] }}"></path>
                     </svg>
                 </div>

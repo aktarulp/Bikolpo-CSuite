@@ -1895,7 +1895,7 @@
                                     <div class="bg-gray-50 rounded-lg p-3">
                                         <div class="flex items-center justify-between mb-2">
                                             <div class="flex items-center space-x-2">
-                                                <span class="w-6 h-6 bg-{{ $isCorrect ? 'green' : 'gray' }}-100 text-{{ $isCorrect ? 'green' : 'gray' }}-800 rounded flex items-center justify-center text-xs font-medium">
+                                                <span class="w-6 h-6 rounded flex items-center justify-center text-xs font-medium {{ $isCorrect ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
                                                     {{ strtoupper($answer) }}
                                                 </span>
                                                 <span class="text-sm font-medium text-gray-900 truncate">
@@ -1913,7 +1913,7 @@
                                             </div>
                                         </div>
                                         <div class="w-full bg-gray-200 rounded-full h-1.5">
-                                            <div class="bg-{{ $isCorrect ? 'green' : 'blue' }}-500 h-1.5 rounded-full transition-all duration-300" style="width: {{ $percentage }}%"></div>
+                                            <div class="h-1.5 rounded-full transition-all duration-300 {{ $isCorrect ? 'bg-green-500' : 'bg-blue-500' }}" style="width: {{ $percentage }}%"></div>
                                         </div>
                                     </div>
                                 @endforeach
