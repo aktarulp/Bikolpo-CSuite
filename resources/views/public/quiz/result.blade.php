@@ -4,24 +4,24 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Online Test Result - {{ $exam->title }} | Bikolpo LQ</title>
+    <title>Online Test Result - {{ $exam->title }} | Bikolpo Live</title>
     
     <!-- SEO Meta Tags for Social Sharing -->
-    <meta name="description" content="I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo LQ.">
-    <meta name="keywords" content="online test, exam, result, {{ $exam->title }}, Bikolpo LQ, education, learning">
+    <meta name="description" content="I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo Live.">
+    <meta name="keywords" content="online test, exam, result, {{ $exam->title }}, Bikolpo Live, education, learning">
     
     <!-- Open Graph Meta Tags for Social Media -->
-    <meta property="og:title" content="Online Test Result - {{ $exam->title }} | Bikolpo LQ">
-    <meta property="og:description" content="I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo LQ.">
+    <meta property="og:title" content="Online Test Result - {{ $exam->title }} | Bikolpo Live">
+    <meta property="og:description" content="I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo Live.">
     <meta property="og:image" content="{{ asset('images/online-test-result-share.png') }}">
     <meta property="og:url" content="{{ request()->url() }}">
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="Bikolpo LQ">
+    <meta property="og:site_name" content="Bikolpo Live">
     
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Online Test Result - {{ $exam->title }} | Bikolpo LQ">
-    <meta name="twitter:description" content="I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo LQ.">
+    <meta name="twitter:title" content="Online Test Result - {{ $exam->title }} | Bikolpo Live">
+    <meta name="twitter:description" content="I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo Live.">
     <meta name="twitter:image" content="{{ asset('images/online-test-result-share.png') }}">
     
     <!-- Favicon -->
@@ -85,12 +85,12 @@
                 <div class="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-full shadow-2xl mb-3 sm:mb-4 lg:mb-6 transform hover:scale-105 transition-all duration-300">
                     <i class="fas fa-trophy text-xl sm:text-2xl lg:text-3xl text-white"></i>
                 </div>
-                <h1 class="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black text-gray-800 mb-2 sm:mb-3 px-2">
-                    Congratulations on completing Bikolpo LQ Online Test!
+                    <h1 class="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black text-gray-800 mb-2 sm:mb-3 px-2">
+                    Congratulations on completing Bikolpo Live Online Test!
                 </h1>
                 <div class="mt-3 sm:mt-4 inline-flex items-center px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full shadow-lg">
                     <i class="fas fa-star text-yellow-300 mr-2 text-sm sm:text-base"></i>
-                    <span class="text-white font-bold text-sm sm:text-base">Powered by Bikolpo LQ</span>
+                    <span class="text-white font-bold text-sm sm:text-base">Powered by Bikolpo Live</span>
                 </div>
             </div>
 
@@ -572,7 +572,7 @@
                     <!-- Social Media Sharing Section -->
                     <div class="bg-blue-50 rounded-lg sm:rounded-xl p-4 sm:p-6 mb-6 sm:mb-8 border border-blue-200">
                         <h3 class="text-base sm:text-lg font-semibold text-gray-800 mb-2 sm:mb-3 text-center">Share Your Achievement</h3>
-                        <p class="text-xs sm:text-sm text-gray-600 text-center mb-3 sm:mb-4 px-2">Let your friends know about your performance and inspire them to try Bikolpo LQ!</p>
+                        <p class="text-xs sm:text-sm text-gray-600 text-center mb-3 sm:mb-4 px-2">Let your friends know about your performance and inspire them to try Bikolpo Live!</p>
                         
                         <div class="grid grid-cols-2 sm:flex sm:flex-wrap justify-center gap-2 sm:gap-3">
                             <!-- Facebook Share -->
@@ -677,7 +677,7 @@
             <div class="text-center text-gray-600 mb-4 sm:mb-6 lg:mb-8">
                 <div class="inline-flex items-center px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full shadow-lg">
                     <i class="fas fa-star text-yellow-300 mr-2 text-sm sm:text-base"></i>
-                    <span class="text-white font-semibold text-sm sm:text-base">Powered by Bikolpo LQ</span>
+                    <span class="text-white font-semibold text-sm sm:text-base">Powered by Bikolpo Live</span>
                 </div>
                 <p class="text-xs sm:text-sm mt-3 sm:mt-4 text-gray-500 px-2">
                     Report generated on {{ now()->format('M d, Y g:i A') }}
@@ -803,26 +803,26 @@
         // Social Media Sharing Functions
         function shareOnFacebook() {
             const url = encodeURIComponent(window.location.href);
-            const text = encodeURIComponent(`I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo LQ.`);
+            const text = encodeURIComponent(`I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo Live.`);
             const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`;
             window.open(facebookUrl, '_blank', 'width=600,height=400');
         }
         
         function shareOnWhatsApp() {
-            const text = `I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo LQ. ${window.location.href}`;
+            const text = `I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo Live. ${window.location.href}`;
             const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
             window.open(whatsappUrl, '_blank');
         }
         
         function shareOnTwitter() {
-            const text = `I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo LQ.`;
+            const text = `I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo Live.`;
             const url = window.location.href;
             const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
             window.open(twitterUrl, '_blank', 'width=600,height=400');
         }
         
         function copyToClipboard() {
-            const text = `I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo LQ. ${window.location.href}`;
+            const text = `I scored {{ number_format($result->percentage ?? 0, 1) }}% on {{ $exam->title }} online test! Check out my performance on Bikolpo Live. ${window.location.href}`;
             
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(text).then(() => {

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Student Features - Bikolpo LQ</title>
+    <title>Student Features - Bikolpo Live</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script>
         tailwind.config = {
@@ -586,7 +586,7 @@
         <div class="mt-16 bg-gradient-to-r from-primaryBlue to-blue-600 rounded-3xl p-8 text-white text-center">
             <h3 class="text-3xl font-bold mb-6">Ready to Start Your Learning Journey?</h3>
             <p class="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
-                Join thousands of students already using Bikolpo LQ to excel in their exams and achieve their academic goals.
+                Join thousands of students already using Bikolpo Live to excel in their exams and achieve their academic goals.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
                 <a href="{{ route('student.dashboard') }}" class="bg-white text-primaryBlue px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors duration-200 transform hover:scale-105 shadow-lg">

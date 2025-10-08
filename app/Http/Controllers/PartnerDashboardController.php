@@ -27,7 +27,7 @@ class PartnerDashboardController extends Controller
             // Test database connection first
             try {
                 \DB::connection()->getPdo();
-                \Log::info('Database connection successful');
+                if (env('BKL_VERBOSE_DEBUG', false)) { \Log::debug('Database connection successful'); }
             } catch (\Exception $e) {
                 \Log::error('Database connection failed: ' . $e->getMessage());
                 throw new \Exception('Database connection failed: ' . $e->getMessage());
@@ -37,7 +37,7 @@ class PartnerDashboardController extends Controller
             $partnerId = $this->getPartnerId();
             
             // Debug: Log the partner ID and student counts
-            \Log::info('PartnerDashboardController - Partner ID: ' . $partnerId);
+            if (env('BKL_VERBOSE_DEBUG', false)) { \Log::debug('PartnerDashboardController - Partner ID: ' . $partnerId); }
             
             // Get student count with debugging
             $totalStudents = Student::where('partner_id', $partnerId)->count();
@@ -45,16 +45,18 @@ class PartnerDashboardController extends Controller
                 $query->where('partner_id', $partnerId);
             })->distinct()->count();
             
-            \Log::info('PartnerDashboardController - Total Students: ' . $totalStudents . ', Students with Exams: ' . $studentsWithExams);
+            if (env('BKL_VERBOSE_DEBUG', false)) { \Log::debug('PartnerDashboardController - Total Students: ' . $totalStudents . ', Students with Exams: ' . $studentsWithExams); }
             
             // Also log the raw SQL query for debugging
             $studentQuery = Student::where('partner_id', $partnerId);
-            \Log::info('Student Query SQL: ' . $studentQuery->toSql());
-            \Log::info('Student Query Bindings: ' . json_encode($studentQuery->getBindings()));
+            if (env('BKL_VERBOSE_DEBUG', false)) {
+                \Log::debug('Student Query SQL: ' . $studentQuery->toSql());
+                \Log::debug('Student Query Bindings: ' . json_encode($studentQuery->getBindings()));
+            }
             
             // Test direct database query
             $directCount = \DB::table('students')->where('partner_id', $partnerId)->count();
-            \Log::info('Direct DB Query Count: ' . $directCount);
+            if (env('BKL_VERBOSE_DEBUG', false)) { \Log::debug('Direct DB Query Count: ' . $directCount); }
             
             // Get question analytics for this partner
             $questionAnalytics = QuestionStat::whereHas('exam', function($query) use ($partnerId) {
@@ -119,7 +121,12 @@ class PartnerDashboardController extends Controller
             ->get();
 
             // Get the partner data for the layout
-            $partner = Partner::where('user_id', auth()->id())->first();
+            $user = auth()->user();
+            $partner = null;
+            
+            if ($user && $user->partner_id) {
+                $partner = Partner::find($user->partner_id);
+            }
 
             return view('partner.dashboard', compact('stats', 'recent_exams', 'recent_results', 'partner'));
             
@@ -174,7 +181,10 @@ class PartnerDashboardController extends Controller
             }
 
             // Get the partner associated with the authenticated user
-            $partner = Partner::where('user_id', $user->id)->first();
+            $partner = null;
+            if ($user->partner_id) {
+                $partner = Partner::find($user->partner_id);
+            }
             
             if (!$partner) {
                 return response()->json([
@@ -210,7 +220,6 @@ class PartnerDashboardController extends Controller
                     'parent_phone' => '+880 1812345678',
                     'status' => 'active',
                     'partner_id' => $partner->id,
-                    'user_id' => null,
                 ],
                 [
                     'full_name' => 'ফাতেমা খাতুন',
@@ -227,7 +236,6 @@ class PartnerDashboardController extends Controller
                     'parent_phone' => '+880 1823456789',
                     'status' => 'active',
                     'partner_id' => $partner->id,
-                    'user_id' => null,
                 ],
                 [
                     'full_name' => 'সাবরিনা আক্তার',
@@ -244,7 +252,6 @@ class PartnerDashboardController extends Controller
                     'parent_phone' => '+880 1834567890',
                     'status' => 'active',
                     'partner_id' => $partner->id,
-                    'user_id' => null,
                 ],
                 [
                     'full_name' => 'রাকিব হাসান',

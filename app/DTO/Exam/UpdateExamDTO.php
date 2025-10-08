@@ -57,7 +57,6 @@ class UpdateExamDTO extends FormRequest
 
     public function authorize(): bool
     {
-        // Only authenticated partners can update exams
-        return auth()->check() && auth()->user()->role === 'partner';
+        return true;
     }
 }

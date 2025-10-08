@@ -8,13 +8,13 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TopicController;
 use App\Http\Controllers\QuestionController;
-
 use App\Http\Controllers\QuestionHistoryController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\StudentExamController;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\SmsRecordController;
 use App\Http\Controllers\Partner\AccessControlController;
+use App\Http\Controllers\PartnerController; // Add this missing import
 
 // Include Auth Routes
 require __DIR__.'/auth.php';
@@ -43,19 +43,17 @@ Route::get('/', function () {
 
 // Authenticated dashboards (fix missing named routes after login)
 Route::middleware('auth')->group(function () {
+    // Neutral Dashboard (auth-only, no role) for safe fallback
+    Route::get('/dashboard', [PartnerDashboardController::class, 'index'])->name('dashboard');
+
     // Partner Dashboard
     Route::get('/partner/dashboard', [PartnerDashboardController::class, 'index'])->name('partner.dashboard');
 
     // Student Dashboard
     Route::get('/student/dashboard', [\App\Http\Controllers\StudentDashboardController::class, 'index'])->name('student.dashboard');
 
-    // Teacher Dashboard
-    Route::get('/teacher/dashboard', [\App\Http\Controllers\TeacherDashboardController::class, 'index'])->name('teacher.dashboard');
+    
 
-    // Admin Dashboard (fallback to partner settings if no admin dashboard yet)
-    Route::get('/admin/dashboard', function () {
-        return redirect()->route('partner.settings.index');
-    })->name('admin.dashboard');
 });
 
 // Debug routes removed - partner context issue resolved
@@ -415,24 +413,25 @@ Route::middleware('auth')->group(function () {
     //     return redirect()->route('partner.dashboard');
     // });
 
-    // Partner Routes (Coaching Center)
-    Route::prefix('partner')->name('partner.')->middleware(['auth', 'role:partner'])->group(function () {
+// Partner Routes (Coaching Center)
+Route::prefix('partner')->name('partner.')->middleware(['auth'])->group(function () {
+// Permission management removed
         Route::get('/', [PartnerDashboardController::class, 'index'])->name('dashboard');
         Route::get('/dashboard', [PartnerDashboardController::class, 'index'])->name('dashboard');
         
         // Partner Management
         
         // Course Management
-        Route::resource('courses', CourseController::class);
+        Route::resource('courses', CourseController::class)->except(['show']);
         
         // Subject Management
-        Route::resource('subjects', SubjectController::class);
+        Route::resource('subjects', SubjectController::class)->except(['show']);
         
         // Topic Management
-        Route::resource('topics', TopicController::class);
+        Route::resource('topics', TopicController::class)->except(['show']);
         
         // Batch Management
-        Route::resource('batches', \App\Http\Controllers\BatchController::class);
+        Route::resource('batches', \App\Http\Controllers\BatchController::class)->except(['show']);
         Route::get('batches/trashed', [\App\Http\Controllers\BatchController::class, 'trashed'])->name('batches.trashed');
         Route::post('batches/{id}/restore', [\App\Http\Controllers\BatchController::class, 'restore'])->name('batches.restore');
         
@@ -567,10 +566,7 @@ Route::middleware('auth')->group(function () {
         // Student Management
         Route::resource('students', StudentController::class);
         
-        // Teacher Management
-        Route::resource('teachers', \App\Http\Controllers\TeacherController::class);
-        Route::get('teachers/{teacher}/assignments', [\App\Http\Controllers\TeacherController::class, 'assignments'])->name('teachers.assignments');
-        Route::put('teachers/{teacher}/assignments', [\App\Http\Controllers\TeacherController::class, 'updateAssignments'])->name('teachers.assignments.update');
+        
         
         // Student Migration Management
         Route::prefix('students')->name('students.')->group(function () {
@@ -607,147 +603,104 @@ Route::middleware('auth')->group(function () {
         // Partner Settings
         Route::get('settings', function () {
             try {
-                $partner = \App\Models\Partner::where('user_id', auth()->id())->first();
-                
-                // If no partner found, create a default one or redirect with error
-                if (!$partner) {
-                    return redirect()->route('partner.dashboard')->with('error', 'Partner profile not found. Please complete your profile first.');
+                // Get the authenticated user with partner relationship
+                $user = auth()->user();
+                if (!$user) {
+                    throw new \Exception('User not authenticated');
                 }
                 
-                // Debug: Log the partner data
-                \Log::info('Partner data for settings:', ['partner_id' => $partner->id, 'name' => $partner->name ?? 'No name']);
-
+                // Check if user has a partner relationship
+                if (!$user->partner) {
+                    return redirect()->route('partner.profile.edit')
+                        ->with('error', 'Please complete your partner profile first.');
+                }
+                
+                // Get the partner record with relationships
+                $partner = $user->partner;
+                
+                // Prepare basic stats with safe defaults
+                $stats = [
+                    'total_users' => 0,
+                    'active_users' => 0,
+                    'pending_users' => 0,
+                    'suspended_users' => 0,
+                    'total_roles' => 0,
+                    'roles' => collect(),
+                    'users' => collect(),
+                ];
+                
                 try {
-                    // Debug: Check if EnhancedRole exists
-                    if (!class_exists('App\\Models\\EnhancedRole')) {
-                        throw new \Exception('EnhancedRole class not found');
-                    }
-
-                    // Get current user's level to determine which roles to show
-                    $currentUser = \App\Models\EnhancedUser::find(auth()->id());
-                    $currentUserLevel = $currentUser->getHighestRoleLevel() ?? 1;
+                    // Get user counts with error handling using EnhancedUser model
+                    $stats['total_users'] = \App\Models\EnhancedUser::where('partner_id', $partner->id)
+                        ->orWhere('id', $partner->user_id)
+                        ->count();
                     
-                    // Get roles for partner: default roles + partner-created roles
-                    // 1. Get all default roles (visible to all partners)
-                    // 2. Get roles created by the current partner
-                    $roles = \App\Models\EnhancedRole::with(['users' => function($query) use ($partner) {
-                        // Only count users that belong to this partner
-                        $query->where('ac_users.partner_id', $partner->id)
-                              ->orWhere('ac_users.id', $partner->user_id); // Include main partner user
-                    }])
-                    ->where('status', 'active')
-                    ->where('level', '>=', $currentUserLevel) // Same or lower privilege roles
-                    ->where(function($query) use ($partner) {
-                        $query->where('is_default', 1) // Default roles
-                              ->orWhere('created_by', $partner->user_id) // Roles created by this partner
-                              ->orWhereNull('created_by'); // Legacy roles without creator
-                    })
-                    ->get();
-                    
-                    \Log::info('Partner-relevant roles loaded', [
-                        'count' => $roles->count(),
-                        'current_user_level' => $currentUserLevel,
-                        'partner_id' => $partner->id,
-                        'roles' => $roles->pluck('name', 'level')->toArray()
-                    ]);
-
-                    // Debug: Check if partner_id column exists
-                    $hasPartnerIdColumn = \Schema::hasColumn('ac_users', 'partner_id');
-                    \Log::info('Database check', [
-                        'has_partner_id_column' => $hasPartnerIdColumn,
-                        'partner_id' => $partner->id,
-                        'user_id' => $partner->user_id
-                    ]);
-
-                    // Get user counts - only for users belonging to this partner
-                    $userQuery = \App\Models\EnhancedUser::query();
-                    if ($hasPartnerIdColumn) {
-                        // Include users with this partner_id + main partner user
-                        $userQuery->where(function($query) use ($partner) {
+                    $stats['active_users'] = \App\Models\EnhancedUser::where('status', 'active')
+                        ->where(function($query) use ($partner) {
                             $query->where('partner_id', $partner->id)
                                   ->orWhere('id', $partner->user_id);
-                        });
-                    } else {
-                        // Fallback: only show main partner user if partner_id column doesn't exist
-                        $userQuery->where('id', $partner->user_id);
-                    }
+                        })
+                        ->count();
                     
-                    $totalUsers = $userQuery->count();
-                    $activeUsers = (clone $userQuery)->where('status', 'active')->count();
-                    $pendingUsers = (clone $userQuery)->where('status', 'pending')->count();
-                    $suspendedUsers = (clone $userQuery)->where('status', 'suspended')->count();
+                    $stats['pending_users'] = \App\Models\EnhancedUser::where('status', 'pending')
+                        ->where('partner_id', $partner->id)
+                        ->count();
                     
-                    \Log::info('User counts', [
-                        'total' => $totalUsers,
-                        'active' => $activeUsers,
-                        'pending' => $pendingUsers,
-                        'suspended' => $suspendedUsers
+                    $stats['suspended_users'] = \App\Models\EnhancedUser::where('status', 'suspended')
+                        ->where('partner_id', $partner->id)
+                        ->count();
+                    
+                    // Get recent users with error handling using EnhancedUser model
+                    $users = \App\Models\EnhancedUser::where(function ($q) use ($partner) {
+                            $q->where('partner_id', $partner->id)
+                              ->orWhere('id', $partner->user_id);
+                        })
+                        ->orderByDesc('created_at')
+                        ->limit(10)
+                        ->get();
+                    
+                    // Ensure users is always a collection
+                    $stats['users'] = $users ?: collect();
+                    
+                    // Return the view with the stats
+                    return view('partner.settings.partner-settings', [
+                        'partner' => $partner,
+                        'stats' => $stats
                     ]);
-
-                    // Get all users for the partner (only users belonging to this partner)
-                    $allUsersQuery = \App\Models\EnhancedUser::query()
-                        ->with('roles')
-                        ->latest()
-                        ->take(10); // Show up to 10 users instead of 4
-
-                    // Filter by partner context
-                    if ($hasPartnerIdColumn) {
-                        // Include users with this partner_id + main partner user
-                        $allUsersQuery->where(function($query) use ($partner) {
-                            $query->where('partner_id', $partner->id)
-                                  ->orWhere('id', $partner->user_id);
-                        });
-                    } else {
-                        // Fallback: only show main partner user if partner_id column doesn't exist
-                        $allUsersQuery->where('id', $partner->user_id);
-                    }
-
-                    $allUsers = $allUsersQuery->get();
-                    \Log::info('All users loaded', ['count' => $allUsers->count()]);
-
-                    // Partner's main user is already included in the query above
-                    
-                    // Debug: Log role information for each user
-                    foreach ($allUsers as $user) {
-                        \Log::info('User role debug', [
-                            'user_id' => $user->id,
-                            'user_email' => $user->email,
-                            'roles_count' => $user->roles->count(),
-                            'roles' => $user->roles->pluck('name', 'id')->toArray()
-                        ]);
-                    }
-
-                    $stats = [
-                        'total_users' => $totalUsers,
-                        'active_users' => $activeUsers,
-                        'pending_users' => $pendingUsers,
-                        'suspended_users' => $suspendedUsers,
-                        'total_roles' => $roles->count(),
-                        'roles' => $roles,
-                        'users' => $allUsers,
-                    ];
-
-                    // Debug: Check if view exists
-                    if (!view()->exists('partner.settings.partner-settings')) {
-                        throw new \Exception('View not found: partner.settings.partner-settings');
-                    }
-
-                    return view('partner.settings.partner-settings', compact('partner', 'stats'));
                 } catch (\Exception $e) {
-                    \Log::error('Error preparing data for settings view: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
-                    throw $e; // Re-throw to be caught by the outer try-catch
+                    \Log::error('Error preparing stats data: ' . $e->getMessage(), [
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine(),
+                        'trace' => $e->getTraceAsString()
+                    ]);
+                    
+                    // Return view with empty stats if data loading fails
+                    return view('partner.settings.partner-settings', [
+                        'partner' => $partner,
+                        'stats' => $stats
+                    ]);
                 }
             } catch (\Exception $e) {
-                \Log::error('Error in partner settings route: ' . $e->getMessage() . '\n' . $e->getTraceAsString());
+                \Log::error('Critical error in partner settings route: ' . $e->getMessage(), [
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+                
                 return redirect()->route('partner.dashboard')
-                    ->with('error', 'An error occurred while loading settings: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
+                    ->with('error', 'An error occurred while loading settings. Please try again or contact support if the issue persists.');
             }
         })->name('settings.index');
         
         // Test Settings Route
         Route::get('test-settings', function () {
             try {
-                $partner = \App\Models\Partner::where('user_id', auth()->id())->first();
+                $user = auth()->user();
+                $partner = null;
+                
+                if ($user && $user->partner_id) {
+                    $partner = \App\Models\Partner::find($user->partner_id);
+                }
                 
                 if (!$partner) {
                     return redirect()->route('partner.dashboard')->with('error', 'Partner profile not found. Please complete your profile first.');
@@ -779,17 +732,7 @@ Route::middleware('auth')->group(function () {
         Route::post('seed-mcq-questions', [\App\Http\Controllers\QuestionController::class, 'seedMcqQuestions'])->name('seed-mcq-questions');
         Route::get('check-session', [\App\Http\Controllers\QuestionController::class, 'checkSession'])->name('check-session');
         
-        // Permission Management
-        Route::prefix('permissions')->name('permissions.')->group(function () {
-            Route::get('/', [\App\Http\Controllers\PermissionController::class, 'index'])->name('index');
-            Route::post('/roles', [\App\Http\Controllers\PermissionController::class, 'storeRole'])->name('store-role');
-            Route::put('/roles/{role}', [\App\Http\Controllers\PermissionController::class, 'updateRole'])->name('update-role');
-            Route::delete('/roles/{role}', [\App\Http\Controllers\PermissionController::class, 'destroyRole'])->name('destroy-role');
-            Route::post('/settings', [\App\Http\Controllers\PermissionController::class, 'saveSettings'])->name('save-settings');
-            Route::post('/reset', [\App\Http\Controllers\PermissionController::class, 'resetToDefaults'])->name('reset');
-            Route::get('/export', [\App\Http\Controllers\PermissionController::class, 'export'])->name('export');
-            Route::post('/import', [\App\Http\Controllers\PermissionController::class, 'import'])->name('import');
-        });
+        // Permission Management removed
         
         // SMS Management
         Route::prefix('sms')->name('sms.')->group(function () {
@@ -809,12 +752,12 @@ Route::middleware('auth')->group(function () {
             Route::delete('users/{user}', [\App\Http\Controllers\UserManagementController::class, 'destroy'])->name('users.destroy');
             Route::post('users/bulk-update', [\App\Http\Controllers\UserManagementController::class, 'bulkUpdate'])->name('users.bulk-update');
             Route::get('users/{user}/activities', [\App\Http\Controllers\UserManagementController::class, 'getActivities'])->name('users.activities');
-            Route::get('users/{user}/permissions', [\App\Http\Controllers\UserManagementController::class, 'getPermissions'])->name('users.permissions');
+            // Permission route removed
             Route::get('users/export', [\App\Http\Controllers\UserManagementController::class, 'export'])->name('users.export');
             Route::get('users/statistics', [\App\Http\Controllers\UserManagementController::class, 'getStatistics'])->name('users.statistics');
-            Route::get('users/assignable-roles-permissions', [\App\Http\Controllers\UserManagementController::class, 'getAssignableRolesAndPermissions'])->name('users.assignable-roles-permissions');
+            // Permission route removed
             Route::get('users/get-students', [\App\Http\Controllers\UserManagementController::class, 'getStudents'])->name('users.get-students');
-            Route::get('users/get-teachers', [\App\Http\Controllers\UserManagementController::class, 'getTeachers'])->name('users.get-teachers');
+            
             
             // Test route
             Route::get('test-route', function() {
@@ -823,60 +766,18 @@ Route::middleware('auth')->group(function () {
             
         });
 
-        // Access Control Routes (Role Management Only)
-        Route::prefix('access-control')->name('access-control.')->group(function () {
-            // Manual sync of menu/button permissions from config
-            Route::post('/permissions/sync', [AccessControlController::class, 'syncPermissions'])->name('permissions.sync');
-            
-            // Role management
-            Route::get('/create-role', [AccessControlController::class, 'createRole'])->name('create-role');
-            Route::post('/roles', [AccessControlController::class, 'storeRole'])->name('store-role');
-            Route::get('/roles/{role}/edit', [AccessControlController::class, 'editRole'])->name('edit-role');
-            Route::delete('/roles/{role}', [AccessControlController::class, 'destroyRole'])->name('destroy-role');
-            
-            // Permission management
-            Route::get('/roles/{role}/permissions', [AccessControlController::class, 'getRolePermissions'])
-                ->name('role-permissions');
-            Route::put('/roles/{role}/permissions', [AccessControlController::class, 'updateRolePermissions'])
-                ->name('update-role-permissions');
-                
-            // Permission structure
-            Route::get('/permission-structure', [AccessControlController::class, 'getPermissionStructure'])
-                ->name('permission-structure');
-        });
+        // Access Control Routes - Disabled
+        // Role and permission management completely removed
         
         // Analytics routes moved outside partner middleware for better access
     });
 
-    // Teacher Routes
-    Route::prefix('teacher')->name('teacher.')->middleware(['auth', 'role:teacher'])->group(function () {
-        Route::get('/', [\App\Http\Controllers\TeacherDashboardController::class, 'index'])->name('dashboard');
-        Route::get('/dashboard', [\App\Http\Controllers\TeacherDashboardController::class, 'index'])->name('dashboard');
-        
-        // Teacher can access partner resources with limited permissions
-        // Add teacher-specific routes here as needed
-    });
+    
 
-    // Operator Routes
-    Route::prefix('operator')->name('operator.')->middleware(['auth', 'role:operator'])->group(function () {
-        Route::get('/', [\App\Http\Controllers\OperatorDashboardController::class, 'index'])->name('dashboard');
-        Route::get('/dashboard', [\App\Http\Controllers\OperatorDashboardController::class, 'index'])->name('dashboard');
-        
-        // Operator can access partner resources with operational permissions
-        // Add operator-specific routes here as needed
-    });
 
-    // Admin Routes (System Administrator, Admin, System)
-    Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:system_administrator,admin,system'])->group(function () {
-        Route::get('/', [\App\Http\Controllers\AdminDashboardController::class, 'index'])->name('dashboard');
-        Route::get('/dashboard', [\App\Http\Controllers\AdminDashboardController::class, 'index'])->name('dashboard');
-        
-        // Admin can access all system resources
-        // Add admin-specific routes here as needed
-    });
 
     // Student Routes
-    Route::prefix('student')->name('student.')->middleware(['auth', 'role:student'])->group(function () {
+Route::prefix('student')->name('student.')->middleware(['auth'])->group(function () {
         Route::get('/', [StudentDashboardController::class, 'index'])->name('dashboard');
         Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
         
@@ -917,6 +818,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/typing-passages/get/{language?}/{difficulty?}', [\App\Http\Controllers\TypingPassageController::class, 'getPassages'])->name('typing-passages.get');
     Route::post('/typing-passages/{typingPassage}/stats', [\App\Http\Controllers\TypingPassageController::class, 'updateStats'])->name('typing-passages.stats');
     Route::patch('/typing-passages/{typingPassage}/toggle', [\App\Http\Controllers\TypingPassageController::class, 'toggleStatus'])->name('typing-passages.toggle');
+    
+    // Font Test Route
+    Route::get('/font-test', function () {
+        return view('font-test');
+    })->name('font.test');
 
 });
 
@@ -973,17 +879,17 @@ Route::prefix('api')->group(function () {
     Route::get('/exam-review/{examId}/{resultId}/analytics', [\App\Http\Controllers\ExamReviewController::class, 'getExamAnalytics'])->name('api.exam-review.analytics');
     Route::get('/exam-review/{examId}/{resultId}/suggestions', [\App\Http\Controllers\ExamReviewController::class, 'getImprovementSuggestions'])->name('api.exam-review.suggestions');
     
-    // Role and Permission API routes
-    Route::middleware(['auth', 'role:partner'])->group(function () {
+    // Role and permission API routes - All disabled
+Route::middleware(['auth'])->group(function () {
         
         // User Management API routes
         Route::get('/users', [\App\Http\Controllers\UserManagementController::class, 'getUsers'])->name('api.users.index');
         Route::get('/users/{id}', [\App\Http\Controllers\UserManagementController::class, 'getUser'])->name('api.users.show');
         Route::get('/users/{id}/activities', [\App\Http\Controllers\UserManagementController::class, 'getActivities'])->name('api.users.activities');
-        Route::get('/users/{id}/permissions', [\App\Http\Controllers\UserManagementController::class, 'getPermissions'])->name('api.users.permissions');
+        // Permission route removed
         Route::get('/users/export', [\App\Http\Controllers\UserManagementController::class, 'export'])->name('api.users.export');
         Route::get('/users/statistics', [\App\Http\Controllers\UserManagementController::class, 'getStatistics'])->name('api.users.statistics');
-        Route::get('/users/assignable-roles-permissions', [\App\Http\Controllers\UserManagementController::class, 'getAssignableRolesAndPermissions'])->name('api.users.assignable-roles-permissions');
+        // Permission route removed
         Route::get('/users/recent-activity', [\App\Http\Controllers\UserManagementController::class, 'getRecentActivity'])->name('api.users.recent-activity');
     });
 });

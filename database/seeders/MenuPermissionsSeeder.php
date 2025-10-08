@@ -20,12 +20,6 @@ class MenuPermissionsSeeder extends Seeder
             $menuName = 'menu-' . $menuKey;
             $menuDisplay = $menuConfig['label'] ?? ucfirst($menuKey);
             $this->upsertPermission($menuName, $menuDisplay, "Access to {$menuDisplay} menu", $created, $updated, $skipped);
-
-            $buttons = $menuConfig['buttons'] ?? [];
-            foreach ($buttons as $buttonKey => $buttonLabel) {
-                $permName = $menuKey . '-' . $buttonKey;
-                $this->upsertPermission($permName, $buttonLabel, "$buttonLabel permission for {$menuDisplay}", $created, $updated, $skipped);
-            }
         }
 
         $this->command->info("\n✅ Menu and button permissions seeded. Created: {$created}, Updated: {$updated}, Skipped: {$skipped}\n");
@@ -48,10 +42,10 @@ class MenuPermissionsSeeder extends Seeder
             }
             
             // All permissions related to menus and their buttons
-            $permissions = DB::table('ac_permissions')
+            $permissions = DB::table('ac_modules')
                 ->where(function($q){
-                    $q->where('name', 'LIKE', 'menu-%')
-                      ->orWhereRaw("LOCATE('-', name) > 0");
+                    $q->where('module_name', 'LIKE', 'menu-%')
+                      ->orWhereRaw("LOCATE('-', module_name) > 0");
                 })
                 ->get();
             
@@ -61,14 +55,14 @@ class MenuPermissionsSeeder extends Seeder
             foreach ($permissions as $permission) {
                 try {
                     $exists = DB::table('ac_role_permissions')
-                        ->where('enhanced_role_id', $partnerRole->id)
-                        ->where('enhanced_permission_id', $permission->id)
+                        ->where('role_id', $partnerRole->id)
+                        ->where('module_id', $permission->id)
                         ->exists();
                     
                     if (!$exists) {
                         DB::table('ac_role_permissions')->insert([
-                            'enhanced_role_id' => $partnerRole->id,
-                            'enhanced_permission_id' => $permission->id,
+                            'role_id' => $partnerRole->id,
+                            'module_id' => $permission->id,
                             'created_at' => now(),
                             'updated_at' => now(),
                         ]);
@@ -77,7 +71,7 @@ class MenuPermissionsSeeder extends Seeder
                         $skipped++;
                     }
                 } catch (\Exception $e) {
-                    $this->command->warn("Error assigning {$permission->name}: " . $e->getMessage());
+                    $this->command->warn("Error assigning {$permission->module_name}: " . $e->getMessage());
                 }
             }
             
@@ -93,29 +87,29 @@ class MenuPermissionsSeeder extends Seeder
     {
         try {
             [$module, $action, $resource] = $this->deriveMeta($name);
-            $exists = DB::table('ac_permissions')->where('name', $name)->first();
+            $exists = DB::table('ac_modules')->where('module_name', $name)->first();
             $payload = [
-                'name' => $name,
+                'module_name' => $name,
                 'display_name' => $displayName,
                 'description' => $description,
                 'updated_at' => now(),
             ];
-            if (Schema::hasColumn('ac_permissions', 'module')) {
+            if (Schema::hasColumn('ac_modules', 'module')) {
                 $payload['module'] = $module;
             }
-            if (Schema::hasColumn('ac_permissions', 'action')) {
+            if (Schema::hasColumn('ac_modules', 'action')) {
                 $payload['action'] = $action;
             }
-            if (Schema::hasColumn('ac_permissions', 'resource')) {
+            if (Schema::hasColumn('ac_modules', 'resource')) {
                 $payload['resource'] = $resource;
             }
             if (!$exists) {
                 $payload['created_at'] = now();
-                DB::table('ac_permissions')->insert($payload);
+                DB::table('ac_modules')->insert($payload);
                 $this->command->info("✓ Created: {$name}");
                 $created++;
             } else {
-                DB::table('ac_permissions')->where('id', $exists->id)->update($payload);
+                DB::table('ac_modules')->where('id', $exists->id)->update($payload);
                 $this->command->info("○ Updated: {$name}");
                 $updated++;
             }

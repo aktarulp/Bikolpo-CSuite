@@ -61,10 +61,6 @@
                                 </div>
                             </div>
                             <div class="flex flex-wrap gap-2">
-                                <a href="{{ route('partner.batches.show', $batch) }}" 
-                                   class="flex-1 min-w-[100px] text-center bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-md hover:shadow-lg transition-all duration-200">
-                                    👁️ View
-                                </a>
                                 <a href="{{ route('partner.batches.edit', $batch) }}" 
                                    class="flex-1 min-w-[100px] text-center bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-md hover:shadow-lg transition-all duration-200">
                                     ✏️ Edit
@@ -123,10 +119,6 @@
                                     </td>
                                     <td class="px-6 py-3 text-sm font-medium">
                                         <div class="flex gap-2">
-                                            <a href="{{ route('partner.batches.show', $batch) }}" 
-                                               class="inline-flex items-center gap-1 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-md hover:shadow-lg transition-all duration-200">
-                                                👁️ View
-                                            </a>
                                             <a href="{{ route('partner.batches.edit', $batch) }}" 
                                                class="inline-flex items-center gap-1 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-md hover:shadow-lg transition-all duration-200">
                                                 ✏️ Edit

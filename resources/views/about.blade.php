@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>About Us - Bikolpo LQ</title>
+    <title>About Us - Bikolpo Live</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
@@ -56,14 +56,14 @@
             <div class="animate-fade-in">
                 <div class="inline-flex items-center px-6 py-3 rounded-full bg-primaryGreen/10 border border-primaryGreen/20 mb-8">
                     <i class="fas fa-info-circle text-primaryGreen mr-3 text-lg"></i>
-                    <span class="text-sm font-medium text-primaryGreen">About Bikolpo LQ</span>
+                    <span class="text-sm font-medium text-primaryGreen">About Bikolpo Live</span>
                 </div>
                 
                 <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-primaryGreen to-primaryBlue dark:from-white dark:via-primaryGreen dark:to-primaryBlue bg-clip-text text-transparent">
                     About Us
                 </h1>
                 <p class="text-xl text-gray-600 dark:text-gray-400 max-w-4xl mx-auto leading-relaxed">
-                    Discover the story behind Bikolpo LQ and our mission to revolutionize education in Bangladesh through innovative online testing technology.
+                    Discover the story behind Bikolpo Live and our mission to revolutionize education in Bangladesh through innovative online testing technology.
                 </p>
             </div>
         </div>
@@ -106,7 +106,7 @@
                         Proudly Rangpur Born
                     </h2>
                     <p class="text-lg text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
-                        Bikolpo LQ was conceived and born in the vibrant city of Rangpur, a place known for its rich cultural heritage and commitment to education. This northern city of Bangladesh has always been a hub of learning and innovation, making it the perfect birthplace for our educational technology revolution.
+                        Bikolpo Live was conceived and born in the vibrant city of Rangpur, a place known for its rich cultural heritage and commitment to education. This northern city of Bangladesh has always been a hub of learning and innovation, making it the perfect birthplace for our educational technology revolution.
                     </p>
                     <p class="text-lg text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
                         From our humble beginnings in Rangpur, we have grown to serve students and institutions across the entire country. Our connection to this historic city reminds us of our mission to bring quality education to every corner of Bangladesh, starting from the north and reaching every student nationwide.
@@ -139,7 +139,7 @@
                         Our Story
                     </h2>
                     <p class="text-lg text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
-                        Bikolpo LQ was born from a simple yet powerful vision: to make quality education accessible to every student in Bangladesh. Founded by a team of passionate educators and technology experts, we recognized the need for a comprehensive, user-friendly online testing platform that could bridge the gap between traditional learning and modern technology.
+                        Bikolpo Live was born from a simple yet powerful vision: to make quality education accessible to every student in Bangladesh. Founded by a team of passionate educators and technology experts, we recognized the need for a comprehensive, user-friendly online testing platform that could bridge the gap between traditional learning and modern technology.
                     </p>
                     <p class="text-lg text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
                         Since our inception, we have been committed to providing cutting-edge educational solutions that empower both students and educators. Our platform combines advanced technology with pedagogical expertise to create an environment where learning thrives and success is inevitable.
@@ -302,7 +302,7 @@
                     Our Team
                 </h2>
                 <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-                    Meet the passionate individuals behind Bikolpo LQ
+                    Meet the passionate individuals behind Bikolpo Live
                 </p>
             </div>
 
@@ -315,7 +315,7 @@
                     <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">CEO & Founder</h3>
                     <p class="text-primaryGreen font-semibold mb-4">Leadership Team</p>
                     <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-                        Leading the vision and strategic direction of Bikolpo LQ with over 10 years of experience in educational technology.
+                        Leading the vision and strategic direction of Bikolpo Live with over 10 years of experience in educational technology.
                     </p>
                 </div>
 
@@ -354,7 +354,7 @@
                 Ready to Join Our Educational Revolution?
             </h2>
             <p class="text-xl text-green-100 mb-8 max-w-3xl mx-auto">
-                Be part of the future of education in Bangladesh. Start your journey with Bikolpo LQ today.
+                Be part of the future of education in Bangladesh. Start your journey with Bikolpo Live today.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
                 <a href="{{ route('register') }}" class="bg-white text-primaryGreen px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors duration-200">

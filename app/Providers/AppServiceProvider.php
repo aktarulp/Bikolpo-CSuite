@@ -14,7 +14,6 @@ use App\Models\Topic;
 use App\Models\Student;
 use App\Models\Question;
 use App\Models\Exam;
-use App\Models\Teacher;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -73,17 +72,12 @@ class AppServiceProvider extends ServiceProvider
                 'total_subjects' => $existingStats['total_subjects'] ?? ($partnerId ? Subject::where('partner_id', $partnerId)->count() : 0),
                 'total_topics' => $existingStats['total_topics'] ?? ($partnerId ? Topic::where('partner_id', $partnerId)->count() : 0),
                 'total_students' => $existingStats['total_students'] ?? ($partnerId ? Student::where('partner_id', $partnerId)->count() : 0),
-                'total_teachers' => $existingStats['total_teachers'] ?? 0, // Default to 0 if teachers table doesn't exist
                 'total_questions' => $existingStats['total_questions'] ?? ($partnerId ? Question::where('partner_id', $partnerId)->where('status', 'active')->count() : 0),
                 'total_exams' => $existingStats['total_exams'] ?? ($partnerId ? Exam::where('partner_id', $partnerId)->count() : 0),
                 'total_question_attempts' => $existingStats['total_question_attempts'] ?? 0,
                 'total_sms' => $existingStats['total_sms'] ?? 0,
             ];
             
-            // Only try to get teacher count if the teachers table exists
-            if ($partnerId && Schema::hasTable('teachers')) {
-                $stats['total_teachers'] = $existingStats['total_teachers'] ?? Teacher::where('partner_id', $partnerId)->count();
-            }
             
             // Merge with any additional stats from controller
             $stats = array_merge($stats, $existingStats);

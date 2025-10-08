@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>যোগাযোগ করুন - Bikolpo LQ</title>
+  <title>যোগাযোগ করুন - Bikolpo Live</title>
   
   <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
@@ -73,7 +73,7 @@
           </div>
           <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">WhatsApp</h3>
           <p class="text-gray-600 dark:text-gray-300 mb-6">দ্রুত যোগাযোগের জন্য WhatsApp ব্যবহার করুন</p>
-                          <a href="https://wa.me/8801610800060?text=Hello! I would like to know more about Bikolpo LQ services." 
+          <a href="https://wa.me/8801610800060?text=Hello! I would like to know more about Bikolpo Live services." 
              target="_blank" 
              class="inline-flex items-center justify-center w-full bg-green-500 hover:bg-green-600 text-white font-bold px-6 py-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105">
             <i class="fab fa-whatsapp mr-2"></i>

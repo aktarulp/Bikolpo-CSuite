@@ -66,20 +66,6 @@ class BatchController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Batch $batch)
-    {
-        // Ensure the batch belongs to the logged-in partner
-        if ($batch->partner_id !== $this->getPartnerId()) {
-            abort(403, 'Unauthorized access to this batch.');
-        }
-        
-        // Load students relationship
-        $batch->load(['students' => function($query) {
-            $query->orderBy('full_name');
-        }]);
-        
-        return view('partner.batches.show', compact('batch'));
-    }
 
     /**
      * Show the form for editing the specified resource.

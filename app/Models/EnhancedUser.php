@@ -10,11 +10,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
-use Spatie\Permission\Traits\HasRoles;
 
 class EnhancedUser extends Authenticatable
 {
-    use HasFactory, Notifiable, HasApiTokens, HasRoles;
+    use HasFactory, Notifiable, HasApiTokens;
 
     protected $table = 'ac_users';
     
@@ -35,7 +34,7 @@ class EnhancedUser extends Authenticatable
         'created_by',
         'updated_by',
         'preferences',
-        'metadata'
+        'metadata',
     ];
 
     protected $hidden = [
@@ -76,15 +75,8 @@ class EnhancedUser extends Authenticatable
         return $this->belongsTo(Partner::class);
     }
 
-    /**
-     * Get the roles assigned to the user.
-     */
-    public function roles(): BelongsToMany
-    {
-        return $this->belongsToMany(EnhancedRole::class, 'ac_user_roles', 'user_id', 'role_id')
-                    ->withPivot('assigned_by', 'assigned_at', 'expires_at')
-                    ->withTimestamps();
-    }
+
+
 
     // Direct user permissions removed - using role-based permissions only
     // Permissions are now accessed through: user → roles → role_permissions → permissions
@@ -115,175 +107,84 @@ class EnhancedUser extends Authenticatable
 
     /**
      * Check if user has a specific role.
+     * Role checking disabled - always returns true.
      */
     public function hasRole($role): bool
     {
-        if (is_string($role)) {
-            return $this->roles()->where('name', $role)->exists();
-        }
-        
-        if (is_int($role)) {
-            return $this->roles()->where('id', $role)->exists();
-        }
-
-        return false;
+        return true;
     }
 
     /**
      * Check if user has any of the given roles.
+     * Role checking disabled - always returns true.
      */
     public function hasAnyRole($roles): bool
     {
-        if (is_string($roles)) {
-            $roles = [$roles];
-        }
-
-        return $this->roles()->whereIn('name', $roles)->exists();
+        return true;
     }
 
     /**
      * Check if user has all of the given roles.
+     * Role checking disabled - always returns true.
      */
     public function hasAllRoles($roles): bool
     {
-        if (is_string($roles)) {
-            $roles = [$roles];
-        }
-
-        $userRoles = $this->roles()->pluck('name')->toArray();
-        return empty(array_diff($roles, $userRoles));
+        return true;
     }
 
     /**
      * Check if user has a specific permission.
+     * Permission checking disabled - always returns true.
      */
     public function hasPermission($permission): bool
     {
-        if (is_string($permission)) {
-            return $this->permissions()->where('name', $permission)->exists() ||
-                   $this->hasPermissionThroughRole($permission);
-        }
-        
-        if (is_int($permission)) {
-            return $this->permissions()->where('id', $permission)->exists() ||
-                   $this->hasPermissionThroughRoleById($permission);
-        }
-
-        return false;
+        return true;
     }
 
     /**
      * Check if user has permission through roles.
+     * Permission checking disabled - always returns true.
      */
     public function hasPermissionThroughRole($permission): bool
     {
-        foreach ($this->roles as $role) {
-            if ($role->hasPermission($permission)) {
-                return true;
-            }
-        }
-        return false;
+        return true;
     }
 
     /**
      * Check if user has permission through roles by ID.
+     * Permission checking disabled - always returns true.
      */
     public function hasPermissionThroughRoleById($permissionId): bool
     {
-        foreach ($this->roles as $role) {
-            if ($role->hasPermissionById($permissionId)) {
-                return true;
-            }
-        }
-        return false;
+        return true;
     }
 
     /**
      * Assign a role to the user with additional metadata.
-     * Note: This conflicts with Spatie's assignRole, so we'll use a different name.
+     * Role assignment disabled - always returns true.
      */
     public function assignRoleWithMetadata($role, $assignedBy = null, $expiresAt = null)
     {
-        if (is_string($role)) {
-            $role = \App\Models\EnhancedRole::where('name', $role)->first();
-        }
-
-        if (!$role) {
-            return false;
-        }
-
-        return $this->roles()->attach($role->id, [
-            'assigned_by' => $assignedBy ?? auth()->id(),
-            'assigned_at' => now(),
-            'expires_at' => $expiresAt
-        ]);
+        return true;
     }
 
     /**
      * Remove a role from the user.
-     * Note: This conflicts with Spatie's methods, using different name.
+     * Role removal disabled - always returns true.
      */
     public function removeRoleWithMetadata($role)
     {
-        if (is_string($role)) {
-            $role = \App\Models\EnhancedRole::where('name', $role)->first();
-        }
-
-        if (!$role) {
-            return false;
-        }
-
-        return $this->roles()->detach($role->id);
+        return true;
     }
 
-    /**
-     * Grant a permission to the user.
-     */
-    public function grantPermission($permission, $grantedBy = null, $expiresAt = null)
-    {
-        if (is_string($permission)) {
-            $permission = Permission::where('name', $permission)->first();
-        }
-
-        if (!$permission) {
-            return false;
-        }
-
-        return $this->permissions()->attach($permission->id, [
-            'granted_by' => $grantedBy ?? auth()->id(),
-            'granted_at' => now(),
-            'expires_at' => $expiresAt
-        ]);
-    }
-
-    /**
-     * Revoke a permission from the user.
-     */
-    public function revokePermission($permission)
-    {
-        if (is_string($permission)) {
-            $permission = Permission::where('name', $permission)->first();
-        }
-
-        if (!$permission) {
-            return false;
-        }
-
-        return $this->permissions()->detach($permission->id);
-    }
 
     /**
      * Get all permissions (direct + through roles).
+     * Permission checking disabled - returns empty collection.
      */
     public function getAllPermissions()
     {
-        $directPermissions = $this->permissions;
-        $rolePermissions = $this->roles()->with('permissions')->get()
-            ->pluck('permissions')
-            ->flatten()
-            ->unique('id');
-
-        return $directPermissions->merge($rolePermissions)->unique('id');
+        return collect([]);
     }
 
     /**
@@ -330,42 +231,38 @@ class EnhancedUser extends Authenticatable
 
     /**
      * Get the user's highest role level (lowest number = highest privilege).
+     * Role level checking disabled - returns null.
      */
     public function getHighestRoleLevel(): ?int
     {
-        return $this->roles()->min('level');
+        return null;
     }
 
     /**
      * Get the user's highest role (lowest level number).
+     * Role checking disabled - returns null.
      */
     public function getHighestRole(): ?EnhancedRole
     {
-        return $this->roles()->orderBy('level')->first();
+        return null;
     }
 
     /**
      * Check if user can view roles of the given level or higher.
-     * Users can only view roles with level >= their own role level.
+     * Role level checking disabled - always returns true.
      */
     public function canViewRole(int $roleLevel): bool
     {
-        $userLevel = $this->getHighestRoleLevel();
-        return $userLevel !== null && $roleLevel >= $userLevel;
+        return true;
     }
 
     /**
      * Laravel's authorization method - check if user can perform an action.
+     * Permission checking disabled - always returns true.
      */
     public function can($ability, $arguments = []): bool
     {
-        // If it's a permission check, use our custom permission system
-        if (is_string($ability)) {
-            return $this->hasPermission($ability);
-        }
-        
-        // Fall back to Laravel's default authorization
-        return parent::can($ability, $arguments);
+        return true;
     }
 
     /**

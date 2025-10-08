@@ -1,9 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Nikosh:wght@300;400;500;600;700;800;900&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Keep existing visual utility */
 .bubble {
     position: absolute;
     border-radius: 9999px;
@@ -11,51 +10,214 @@
     background-color: blue !important;
 }
 
-/* Global font loading for Bengali characters */
-@font-face {
-  font-family: 'Nikosh';
-  src: url('https://fonts.googleapis.com/css2?family=Nikosh:wght@300;400;500;600;700;800;900&display=swap');
-  font-display: swap;
-  unicode-range: U+0980-09FF; /* Bengali Unicode range */
+/*
+  Font setup - Multi-language support
+  - Inter for Latin scripts (English) via unicode-range
+  - Hind Siliguri for Bengali (Bangla) via unicode-range
+  - Fonts are loaded from /public/fonts
+  - Unicode ranges ensure proper fallback behavior
+*/
+@layer base {
+  /* Inter Font Family - Latin Scripts (English, European languages) */
+  /* Extra Light */
+  @font-face {
+    font-family: 'Inter';
+    src: url('/fonts/Inter-ExtraLight.woff2') format('woff2');
+    font-weight: 200;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0000-00FF, U+0100-024F, U+1E00-1EFF, U+2000-206F, U+20A0-20CF;
+  }
+  
+  /* Light */
+  @font-face {
+    font-family: 'Inter';
+    src: url('/fonts/Inter-Light.woff2') format('woff2');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0000-00FF, U+0100-024F, U+1E00-1EFF, U+2000-206F, U+20A0-20CF;
+  }
+  @font-face {
+    font-family: 'Inter';
+    src: url('/fonts/Inter-LightItalic.woff2') format('woff2');
+    font-weight: 300;
+    font-style: italic;
+    font-display: swap;
+    unicode-range: U+0000-00FF, U+0100-024F, U+1E00-1EFF, U+2000-206F, U+20A0-20CF;
+  }
+  
+  /* Regular */
+  @font-face {
+    font-family: 'Inter';
+    src: url('/fonts/Inter-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0000-00FF, U+0100-024F, U+1E00-1EFF, U+2000-206F, U+20A0-20CF;
+  }
+  @font-face {
+    font-family: 'Inter';
+    src: url('/fonts/Inter-Italic.woff2') format('woff2');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+    unicode-range: U+0000-00FF, U+0100-024F, U+1E00-1EFF, U+2000-206F, U+20A0-20CF;
+  }
+  
+  /* Medium */
+  @font-face {
+    font-family: 'Inter';
+    src: url('/fonts/Inter-Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0000-00FF, U+0100-024F, U+1E00-1EFF, U+2000-206F, U+20A0-20CF;
+  }
+  @font-face {
+    font-family: 'Inter';
+    src: url('/fonts/Inter-MediumItalic.woff2') format('woff2');
+    font-weight: 500;
+    font-style: italic;
+    font-display: swap;
+    unicode-range: U+0000-00FF, U+0100-024F, U+1E00-1EFF, U+2000-206F, U+20A0-20CF;
+  }
+  
+  /* SemiBold */
+  @font-face {
+    font-family: 'Inter';
+    src: url('/fonts/Inter-SemiBold.woff2') format('woff2');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0000-00FF, U+0100-024F, U+1E00-1EFF, U+2000-206F, U+20A0-20CF;
+  }
+  @font-face {
+    font-family: 'Inter';
+    src: url('/fonts/Inter-SemiBoldItalic.woff2') format('woff2');
+    font-weight: 600;
+    font-style: italic;
+    font-display: swap;
+    unicode-range: U+0000-00FF, U+0100-024F, U+1E00-1EFF, U+2000-206F, U+20A0-20CF;
+  }
+  
+  /* Bold */
+  @font-face {
+    font-family: 'Inter';
+    src: url('/fonts/Inter-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0000-00FF, U+0100-024F, U+1E00-1EFF, U+2000-206F, U+20A0-20CF;
+  }
+  @font-face {
+    font-family: 'Inter';
+    src: url('/fonts/Inter-BoldItalic.woff2') format('woff2');
+    font-weight: 700;
+    font-style: italic;
+    font-display: swap;
+    unicode-range: U+0000-00FF, U+0100-024F, U+1E00-1EFF, U+2000-206F, U+20A0-20CF;
+  }
+  
+  /* Extra Bold */
+  @font-face {
+    font-family: 'Inter';
+    src: url('/fonts/Inter-ExtraBold.woff2') format('woff2');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0000-00FF, U+0100-024F, U+1E00-1EFF, U+2000-206F, U+20A0-20CF;
+  }
+
+  /* Hind Siliguri Font Family - Bengali Script */
+  /* Light */
+  @font-face {
+    font-family: 'Hind Siliguri';
+    src: url('/fonts/HindSiliguri-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0980-09FF, U+200C-200D, U+25CC;
+  }
+  
+  /* Regular */
+  @font-face {
+    font-family: 'Hind Siliguri';
+    src: url('/fonts/HindSiliguri-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0980-09FF, U+200C-200D, U+25CC;
+  }
+  
+  /* Medium */
+  @font-face {
+    font-family: 'Hind Siliguri';
+    src: url('/fonts/HindSiliguri-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0980-09FF, U+200C-200D, U+25CC;
+  }
+  
+  /* SemiBold */
+  @font-face {
+    font-family: 'Hind Siliguri';
+    src: url('/fonts/HindSiliguri-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0980-09FF, U+200C-200D, U+25CC;
+  }
+  
+  /* Bold */
+  @font-face {
+    font-family: 'Hind Siliguri';
+    src: url('/fonts/HindSiliguri-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0980-09FF, U+200C-200D, U+25CC;
+  }
+
+  /* Apply default font stack to html element */
+  html { 
+    font-family: theme('fontFamily.sans');
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  
+  /* Emergency fallback if fonts fail to load */
+  .font-fallback {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
+  }
+  
+  /* Ensure proper font rendering for different scripts */
+  body {
+    font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+  }
 }
 
-/* Global Bengali Font Application */
-/* Apply Nikosh as default font for all elements */
-* {
-  font-family: 'Nikosh', 'Noto Sans Bengali', 'Arial Unicode MS', sans-serif;
+/* Language-specific utility classes */
+@layer utilities {
+  /* Force Inter for English text */
+  .font-english {
+    font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  }
+  
+  /* Force Hind Siliguri for Bangla text */
+  .font-bangla {
+    font-family: 'Hind Siliguri', ui-sans-serif, system-ui, sans-serif;
+  }
+  
+  /* Mixed text with proper font cascading */
+  .font-mixed {
+    font-family: 'Inter', 'Hind Siliguri', ui-sans-serif, system-ui, sans-serif;
+  }
 }
 
-/* Override for specific elements that should use default fonts */
-.font-mono,
-.font-sans,
-.font-serif,
-.font-display,
-.font-brand,
-.font-modern,
-.font-figtree,
-code,
-pre,
-kbd,
-samp,
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="tel"],
-input[type="url"],
-input[type="search"],
-textarea,
-select {
-  font-family: inherit;
-}
-
-/* Ensure Bengali characters specifically use Nikosh */
-[lang="bn"],
-[lang="bn-BD"],
-.font-bengali,
-.font-bangla {
-  font-family: 'Nikosh', 'Noto Sans Bengali', 'Arial Unicode MS', sans-serif !important;
-}
-
+/* Remove browser spinners for number inputs */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -65,13 +227,4 @@ input[type="number"]::-webkit-inner-spin-button {
 /* Firefox */
 input[type="number"] {
   -moz-appearance: textfield;
-}
-
-/* Additional Bengali Character Support */
-/* Force Bengali characters to use Nikosh font */
-[lang="bn"],
-[lang="bn-BD"],
-.font-bengali,
-.font-bangla {
-  font-family: 'Nikosh', 'Noto Sans Bengali', 'Arial Unicode MS', sans-serif !important;
 }

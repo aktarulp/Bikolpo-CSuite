@@ -1,132 +1,8 @@
 @extends('layouts.partner-layout')
 
-@section('title', 'All Questions - Bikolpo LQ')
+@section('title', 'All Questions - Bikolpo Live')
 
 @section('content')
-<style>
-    .question-card {
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        border: 1px solid #e5e7eb;
-    }
-    
-    .question-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        border-color: #3b82f6;
-    }
-    
-    .question-type-badge {
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .question-type-badge::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-        transition: left 0.6s;
-    }
-    
-    .question-type-badge:hover::before {
-        left: 100%;
-    }
-    
-    .filter-section {
-        backdrop-filter: blur(10px);
-        background: rgba(255, 255, 255, 0.8);
-    }
-    
-    .dark .filter-section {
-        background: rgba(31, 41, 55, 0.8);
-    }
-    
-    .stats-card {
-        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-        transition: all 0.3s ease;
-    }
-    
-    .stats-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    }
-    
-    .dark .stats-card {
-        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-        border: 1px solid #374151;
-        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
-    }
-    
-    .dark .stats-card:hover {
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-    }
-    
-    /* Professional Filter Section Styling */
-    .filter-section {
-        background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(248,250,252,0.8));
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,255,255,0.2);
-    }
-    
-    .dark .filter-section {
-        background: linear-gradient(135deg, rgba(31,41,55,0.9), rgba(17,24,39,0.8));
-        border: 1px solid rgba(255,255,255,0.1);
-    }
-    
-    .filter-select {
-        background: linear-gradient(135deg, #ffffff, #f8fafc);
-        border: 2px solid #e2e8f0;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    .filter-select:hover {
-        border-color: #3b82f6;
-        box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1);
-        transform: translateY(-1px);
-    }
-    
-    .filter-select:focus {
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 4px 6px -1px rgba(59, 130, 246, 0.1);
-        transform: translateY(-1px);
-    }
-    
-    .dark .filter-select {
-        background: linear-gradient(135deg, #1f2937, #111827);
-        border-color: #374151;
-    }
-    
-    .dark .filter-select:hover {
-        border-color: #60a5fa;
-        box-shadow: 0 4px 6px -1px rgba(96, 165, 250, 0.1);
-    }
-    
-    .dark .filter-select:focus {
-        border-color: #60a5fa;
-        box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1), 0 4px 6px -1px rgba(96, 165, 250, 0.1);
-    }
-    
-    .loading-shimmer {
-        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-        background-size: 200% 100%;
-        animation: shimmer 1.5s infinite;
-    }
-    
-    @keyframes shimmer {
-        0% { background-position: -200% 0; }
-        100% { background-position: 200% 0; }
-    }
-    
-    .dark .loading-shimmer {
-        background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
-        background-size: 200% 100%;
-    }
-</style>
 <div class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
     <!-- Success/Error Messages -->
     @if (session('success'))
@@ -205,14 +81,26 @@
                             <div class="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50">
                                 <div class="py-2">
                                     <!-- Multiple Choice -->
-                                    <a href="{{ route('partner.questions.mcq.create') }}" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
-                                        <img src="{{ asset('images/mcq.png') }}" alt="MCQ" class="w-5 h-5 mr-3">
+<a href="{{ route('partner.questions.mcq.create') }}" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
+                                        <svg class="w-5 h-5 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                            <circle cx="5" cy="7" r="1.5" stroke-width="2"></circle>
+                                            <line x1="9" y1="7" x2="19" y2="7" stroke-width="2" stroke-linecap="round"></line>
+                                            <circle cx="5" cy="12" r="1.5" stroke-width="2"></circle>
+                                            <line x1="9" y1="12" x2="19" y2="12" stroke-width="2" stroke-linecap="round"></line>
+                                            <circle cx="5" cy="17" r="1.5" stroke-width="2"></circle>
+                                            <line x1="9" y1="17" x2="19" y2="17" stroke-width="2" stroke-linecap="round"></line>
+                                        </svg>
                                         <span class="font-medium">Multiple Choice</span>
                                     </a>
                                     
                                     <!-- Descriptive -->
-                                    <a href="{{ route('partner.questions.descriptive.create') }}" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors">
-                                        <img src="{{ asset('images/cq.png') }}" alt="CQ" class="w-5 h-5 mr-3">
+<a href="{{ route('partner.questions.descriptive.create') }}" class="flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors">
+                                        <svg class="w-5 h-5 mr-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                            <rect x="6" y="4" width="12" height="16" rx="2" ry="2" stroke-width="2"></rect>
+                                            <line x1="9" y1="9" x2="15" y2="9" stroke-width="2" stroke-linecap="round"></line>
+                                            <line x1="9" y1="13" x2="17" y2="13" stroke-width="2" stroke-linecap="round"></line>
+                                            <line x1="9" y1="17" x2="14" y2="17" stroke-width="2" stroke-linecap="round"></line>
+                                        </svg>
                                         <span class="font-medium">Descriptive</span>
                                     </a>
                                     
@@ -245,7 +133,7 @@
             <div class="py-2 px-4 sm:px-6">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
                     <!-- Total Questions Card -->
-                    <div class="stats-card rounded-xl p-3 sm:p-4">
+<div class="rounded-xl p-3 sm:p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-200 hover:shadow hover:-translate-y-0.5">
                         <div class="flex items-center justify-between">
                             <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
                                 <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -260,10 +148,17 @@
                     </div>
                     
                     <!-- MCQ Card -->
-                    <div class="stats-card rounded-xl p-3 sm:p-4">
+<div class="rounded-xl p-3 sm:p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-200 hover:shadow hover:-translate-y-0.5">
                         <div class="flex items-center justify-between">
                             <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-                                <img src="{{ asset('images/mcq.png') }}" alt="MCQ" class="w-5 h-5 sm:w-6 sm:h-6">
+<svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                    <circle cx="5" cy="7" r="1.5" stroke-width="2"></circle>
+                                    <line x1="9" y1="7" x2="19" y2="7" stroke-width="2" stroke-linecap="round"></line>
+                                    <circle cx="5" cy="12" r="1.5" stroke-width="2"></circle>
+                                    <line x1="9" y1="12" x2="19" y2="12" stroke-width="2" stroke-linecap="round"></line>
+                                    <circle cx="5" cy="17" r="1.5" stroke-width="2"></circle>
+                                    <line x1="9" y1="17" x2="19" y2="17" stroke-width="2" stroke-linecap="round"></line>
+                                </svg>
                             </div>
                             <div class="text-right">
                                 <div class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">{{ $questions->where('question_type', 'mcq')->count() }}</div>
@@ -273,10 +168,15 @@
                     </div>
                     
                     <!-- Descriptive Card -->
-                    <div class="stats-card rounded-xl p-3 sm:p-4">
+<div class="rounded-xl p-3 sm:p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-200 hover:shadow hover:-translate-y-0.5">
                         <div class="flex items-center justify-between">
                             <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
-                                <img src="{{ asset('images/cq.png') }}" alt="CQ" class="w-5 h-5 sm:w-6 sm:h-6">
+<svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                    <rect x="6" y="4" width="12" height="16" rx="2" ry="2" stroke-width="2"></rect>
+                                    <line x1="9" y1="9" x2="15" y2="9" stroke-width="2" stroke-linecap="round"></line>
+                                    <line x1="9" y1="13" x2="17" y2="13" stroke-width="2" stroke-linecap="round"></line>
+                                    <line x1="9" y1="17" x2="14" y2="17" stroke-width="2" stroke-linecap="round"></line>
+                                </svg>
                             </div>
                             <div class="text-right">
                                 <div class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">{{ $questions->where('question_type', 'descriptive')->count() }}</div>
@@ -286,7 +186,7 @@
                     </div>
                     
                     <!-- True/False Card -->
-                    <div class="stats-card rounded-xl p-3 sm:p-4">
+<div class="rounded-xl p-3 sm:p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-200 hover:shadow hover:-translate-y-0.5">
                         <div class="flex items-center justify-between">
                             <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
                                 <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -314,37 +214,37 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                         <div class="space-y-2">
                             <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Course</label>
-                            <select name="course_filter" id="course_filter" class="filter-select w-full rounded-xl p-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
+<select name="course_filter" id="course_filter" class="w-full rounded-xl p-3 text-gray-900 dark:text-white bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
                                 <option value="">All Courses</option>
                             </select>
                         </div>
                         
                         <div class="space-y-2">
                             <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Subject</label>
-                            <select name="subject_filter" id="subject_filter" class="filter-select w-full rounded-xl p-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
+<select name="subject_filter" id="subject_filter" class="w-full rounded-xl p-3 text-gray-900 dark:text-white bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
                                 <option value="">All Subjects</option>
                             </select>
                         </div>
                         
                         <div class="space-y-2">
                             <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Topic</label>
-                            <select name="topic_filter" id="topic_filter" class="filter-select w-full rounded-xl p-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
+<select name="topic_filter" id="topic_filter" class="w-full rounded-xl p-3 text-gray-900 dark:text-white bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
                                 <option value="">All Topics</option>
                             </select>
                         </div>
                         
                         <div class="space-y-2">
                             <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Question Type</label>
-                            <select name="question_type_filter" id="question_type_filter" class="filter-select w-full rounded-xl p-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
+<select name="question_type_filter" id="question_type_filter" class="w-full rounded-xl p-3 text-gray-900 dark:text-white bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
                                 <option value="">All Types</option>
                             </select>
                         </div>
                         
                         <div class="space-y-2">
                             <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Date Created</label>
-                            <select name="date_filter" 
+<select name="date_filter" 
                                     id="date_filter" 
-                                    class="filter-select w-full rounded-xl p-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
+                                    class="w-full rounded-xl p-3 text-gray-900 dark:text-white bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
                                 <option value="">All Dates</option>
                             </select>
                         </div>
@@ -410,7 +310,7 @@
                 <!-- Questions List - Compact Single Column -->
                 <div class="questions-container">
                     @foreach($questions as $question)
-                        <div class="question-card border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200" data-question-id="{{ $question->id }}">
+<div class="question-card border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200 transition-transform hover:-translate-y-0.5" data-question-id="{{ $question->id }}">
                             <div class="px-4 py-3">
                                 <!-- Mobile-First Question Layout -->
                                 <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-2">
@@ -420,9 +320,21 @@
                                             <div class="w-6 h-6 rounded-md flex items-center justify-center
                                                 {{ $question->question_type === 'mcq' ? 'bg-blue-100 dark:bg-blue-900/30' : ($question->question_type === 'true_false' ? 'bg-orange-100 dark:bg-orange-900/30' : 'bg-green-100 dark:bg-green-900/30') }}">
                                                 @if($question->question_type === 'mcq')
-                                                    <img src="{{ asset('images/mcq.png') }}" alt="MCQ" class="w-4 h-4">
+<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                                    <circle cx="5" cy="7" r="1.5" stroke-width="2"></circle>
+                                                    <line x1="9" y1="7" x2="19" y2="7" stroke-width="2" stroke-linecap="round"></line>
+                                                    <circle cx="5" cy="12" r="1.5" stroke-width="2"></circle>
+                                                    <line x1="9" y1="12" x2="19" y2="12" stroke-width="2" stroke-linecap="round"></line>
+                                                    <circle cx="5" cy="17" r="1.5" stroke-width="2"></circle>
+                                                    <line x1="9" y1="17" x2="19" y2="17" stroke-width="2" stroke-linecap="round"></line>
+                                                </svg>
                                                 @elseif($question->question_type === 'descriptive')
-                                                    <img src="{{ asset('images/cq.png') }}" alt="CQ" class="w-4 h-4">
+<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                                    <rect x="6" y="4" width="12" height="16" rx="2" ry="2" stroke-width="2"></rect>
+                                                    <line x1="9" y1="9" x2="15" y2="9" stroke-width="2" stroke-linecap="round"></line>
+                                                    <line x1="9" y1="13" x2="17" y2="13" stroke-width="2" stroke-linecap="round"></line>
+                                                    <line x1="9" y1="17" x2="14" y2="17" stroke-width="2" stroke-linecap="round"></line>
+                                                </svg>
                                                 @else
                                                     <svg class="w-4 h-4 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -718,12 +630,24 @@
                             @endif
                         </p>
                         <div class="flex flex-wrap gap-3 justify-center">
-                            <a href="{{ route('partner.questions.mcq.create') }}" class="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 flex items-center gap-2 font-medium">
-                                <img src="{{ asset('images/mcq.png') }}" alt="MCQ" class="w-4 h-4">
+<a href="{{ route('partner.questions.mcq.create') }}" class="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 flex items-center gap-2 font-medium">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                <circle cx="5" cy="7" r="1.5" stroke-width="2"></circle>
+                                <line x1="9" y1="7" x2="19" y2="7" stroke-width="2" stroke-linecap="round"></line>
+                                <circle cx="5" cy="12" r="1.5" stroke-width="2"></circle>
+                                <line x1="9" y1="12" x2="19" y2="12" stroke-width="2" stroke-linecap="round"></line>
+                                <circle cx="5" cy="17" r="1.5" stroke-width="2"></circle>
+                                <line x1="9" y1="17" x2="19" y2="17" stroke-width="2" stroke-linecap="round"></line>
+                            </svg>
                                 Create MCQ
                             </a>
-                            <a href="{{ route('partner.questions.descriptive.create') }}" class="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-all duration-200 flex items-center gap-2 font-medium">
-                                <img src="{{ asset('images/cq.png') }}" alt="CQ" class="w-4 h-4">
+<a href="{{ route('partner.questions.descriptive.create') }}" class="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-all duration-200 flex items-center gap-2 font-medium">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                <rect x="6" y="4" width="12" height="16" rx="2" ry="2" stroke-width="2"></rect>
+                                <line x1="9" y1="9" x2="15" y2="9" stroke-width="2" stroke-linecap="round"></line>
+                                <line x1="9" y1="13" x2="17" y2="13" stroke-width="2" stroke-linecap="round"></line>
+                                <line x1="9" y1="17" x2="14" y2="17" stroke-width="2" stroke-linecap="round"></line>
+                            </svg>
                                 Create Descriptive
                             </a>
                             <a href="{{ route('partner.questions.tf.create') }}" class="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-all duration-200 flex items-center gap-2 font-medium">
@@ -744,153 +668,6 @@
 .questions-container.updating {
     opacity: 0.6;
     pointer-events: none;
-}
-
-.filter-group select:disabled {
-    background-color: #f9fafb;
-    color: #6b7280;
-    cursor: not-allowed;
-}
-
-.line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-/* Mobile optimizations */
-@media (max-width: 640px) {
-    .questions-container .question-card {
-        padding: 0.5rem;
-    }
-    
-    .questions-container .question-card .px-4 {
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
-    }
-    
-    .questions-container .question-card .py-3 {
-        padding-top: 0.5rem;
-        padding-bottom: 0.5rem;
-    }
-    
-    /* Ensure proper spacing on mobile */
-    .questions-container .question-card .gap-3 {
-        gap: 0.75rem;
-    }
-    
-    /* Make answer options more compact on mobile */
-    .questions-container .question-card .flex.flex-wrap.gap-2 {
-        gap: 0.5rem;
-    }
-    
-    .questions-container .question-card .flex.flex-wrap.gap-3 {
-        gap: 0.75rem;
-    }
-    
-    /* Smaller circles for mobile */
-    .questions-container .question-card .w-4.h-4 {
-        width: 0.875rem;
-        height: 0.875rem;
-    }
-    
-    /* Better text sizing for mobile */
-    .questions-container .question-card .text-xs {
-        font-size: 0.6875rem;
-    }
-    
-    /* Ensure question text is readable on mobile */
-    .questions-container .question-card .text-sm {
-        font-size: 0.8125rem;
-        line-height: 1.4;
-    }
-    
-    /* Better spacing for metadata */
-    .questions-container .question-card .gap-4 {
-        gap: 0.75rem;
-    }
-}
-
-/* Hover effects for better UX */
-.question-card:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-.question-card {
-    transition: all 0.2s ease-in-out;
-}
-
-/* Answer options styling */
-.question-card .text-gray-600 {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.question-card .line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    white-space: normal;
-}
-
-/* Ensure answer options don't break the layout */
-.question-card .flex-1 {
-    min-width: 0;
-    overflow: hidden;
-}
-
-/* Removed checkmark styling - no longer needed */
-
-/* Circular answer option styling */
-.question-card .inline-flex {
-    flex-shrink: 0;
-    min-width: 1.25rem;
-    min-height: 1.25rem;
-}
-
-/* Ensure proper spacing between circular options */
-.question-card .mx-1 {
-    margin-left: 0.25rem;
-    margin-right: 0.25rem;
-}
-
-/* Animation for question cards */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.question-card {
-    animation: fadeInUp 0.3s ease-out;
-}
-
-/* Loading state for cards */
-.question-card.loading {
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
-}
-
-.dark .question-card.loading {
-    background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
-    background-size: 200% 100%;
 }
 </style>
 

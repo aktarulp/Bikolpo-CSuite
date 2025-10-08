@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('title', 'Cookies Policy - Bikolpo LQ')
+@section('title', 'Cookies Policy - Bikolpo Live')
 
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">

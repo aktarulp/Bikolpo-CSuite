@@ -142,7 +142,7 @@ class QuestionController extends Controller
             'sql' => $query->toSql(),
             'bindings' => $query->getBindings(),
             'limit' => $limit,
-            'user_id' => $user->id,
+            'created_by' => $user->id,
             'user_role' => $user->role
         ]);
         

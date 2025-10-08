@@ -1,4 +1,4 @@
-@extends('layouts.student-layout')
+@extends('layouts.partner-layout')
 
 @section('content')
 <div class="space-y-6">

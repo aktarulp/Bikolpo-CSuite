@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Bikolpo-LQ - Online Test Platform</title>
+    <title>Bikolpo Live - Online Test Platform</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
@@ -67,8 +67,7 @@
                 
                 <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-gray-900 dark:text-white mb-4 leading-tight">
                     <div class="brand-visible font-brand tracking-wide flex flex-col items-center">
-                        <img src="{{ asset('images/Bikolpo_LQ_Transparent.png') }}" alt="Bikolpo LQ" class="h-48 md:h-32 lg:h-40 mb-1">
-                        <span class="text-4xl md:text-5xl lg:text-6xl font-black font-brand tracking-wider bg-gradient-to-r from-primaryGreen via-primaryBlue to-primaryPurple bg-clip-text text-transparent drop-shadow-lg">Bikolpo LQ</span>
+                        <img src="{{ asset('images/bikolpoLive_TR.png') }}" alt="Bikolpo Live" class="h-48 md:h-32 lg:h-40 mb-1">
                         <span class="text-4xl md:text-5xl lg:text-6xl text-gray-700 dark:text-gray-300 font-light font-modern mt-2">
                             Your Smart Exam Partner
                         </span>
@@ -283,7 +282,7 @@
                     Trusted by Thousands
                 </h2>
                 <p class="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
-                    Join the growing community of learners and educators who trust Bikolpo LQ for their educational success
+                    Join the growing community of learners and educators who trust Bikolpo Live for their educational success
                 </p>
             </div>
             
@@ -418,7 +417,7 @@
     </section>
 
 
-    <!-- Why Choose Bikolpo LQ? -->
+    <!-- Why Choose Bikolpo Live? -->
     <section id="about" class="py-16 bg-gradient-to-br from-white via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 relative overflow-hidden">
         <!-- Background Elements -->
         <div class="absolute inset-0">
@@ -435,7 +434,7 @@
                     <span class="text-sm font-medium text-primaryGreen">Why Choose Us</span>
                 </div>
                 <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-primaryGreen to-primaryBlue dark:from-white dark:via-primaryGreen dark:to-primaryBlue bg-clip-text text-transparent">
-                    Why Choose Bikolpo LQ?
+                    Why Choose Bikolpo Live?
                 </h2>
                 <p class="text-xl text-gray-600 dark:text-gray-400 max-w-4xl mx-auto leading-relaxed">
                     Experience the future of online education with our cutting-edge platform designed to transform how you learn, test, and succeed.
@@ -522,7 +521,7 @@
                     <span class="bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">Learning Journey?</span>
             </h2>
                 <p class="text-xl md:text-2xl text-blue-100 mb-10 leading-relaxed max-w-4xl mx-auto">
-                    Join over 2,500 students and 75+ institutions who trust Bikolpo LQ for their educational success. 
+                    Join over 2,500 students and 75+ institutions who trust Bikolpo Live for their educational success. 
                     <span class="text-yellow-300 font-semibold">Start your transformation today!</span>
                 </p>
             </div>
@@ -604,7 +603,7 @@
                         <i class="fas fa-star"></i>
                     </div>
                     <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
-                        "Bikolpo LQ has completely transformed my exam preparation. The instant feedback and detailed analytics help me identify my weak areas and improve systematically."
+                        "Bikolpo Live has completely transformed my exam preparation. The instant feedback and detailed analytics help me identify my weak areas and improve systematically."
                     </p>
                 </div>
 
@@ -673,7 +672,7 @@
                         <i class="fas fa-star"></i>
                     </div>
                     <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
-                        "Our school has been using Bikolpo LQ for over a year. The results speak for themselves - our students' performance has improved significantly."
+                        "Our school has been using Bikolpo Live for over a year. The results speak for themselves - our students' performance has improved significantly."
                     </p>
                 </div>
 

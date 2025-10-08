@@ -7,9 +7,11 @@ use App\Models\QuestionStat;
 use App\Models\Exam;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Traits\HasPartnerContext;
 
 class QuestionAnalyticsController extends Controller
 {
+    use HasPartnerContext;
     /**
      * Display question analytics dashboard
      *

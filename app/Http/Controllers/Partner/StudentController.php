@@ -14,10 +14,7 @@ class StudentController extends Controller
      */
     public function index()
     {
-        // Check menu permission
-        if (!auth()->user()->can('menu-students')) {
-            abort(403, 'Access denied. You do not have permission to view students.');
-        }
+        // Permission checking disabled
 
         $students = Student::with(['user', 'courses', 'batches'])
             ->where('partner_id', $this->getPartnerId())
@@ -31,14 +28,7 @@ class StudentController extends Controller
      */
     public function create()
     {
-        // Check both menu and button permissions
-        if (!auth()->user()->can('menu-students')) {
-            abort(403, 'Access denied. You do not have permission to access students.');
-        }
-
-        if (!auth()->user()->can('students-add')) {
-            abort(403, 'Access denied. You do not have permission to add students.');
-        }
+        // Permission checking disabled
 
         return view('partner.students.create');
     }
@@ -48,10 +38,7 @@ class StudentController extends Controller
      */
     public function store(Request $request)
     {
-        // Check permissions before processing
-        if (!auth()->user()->can('students-add')) {
-            abort(403, 'Access denied. You do not have permission to add students.');
-        }
+        // Permission checking disabled
 
         $validated = $request->validate([
             'full_name' => 'required|string|max:255',
@@ -98,10 +85,7 @@ class StudentController extends Controller
      */
     public function show(Student $student)
     {
-        // Check permissions
-        if (!auth()->user()->can('students-view')) {
-            abort(403, 'Access denied. You do not have permission to view student details.');
-        }
+        // Permission checking disabled
 
         // Ensure student belongs to current partner
         if ($student->partner_id !== $this->getPartnerId()) {
@@ -136,10 +120,7 @@ class StudentController extends Controller
      */
     public function update(Request $request, Student $student)
     {
-        // Check permissions
-        if (!auth()->user()->can('students-edit')) {
-            abort(403, 'Access denied. You do not have permission to edit students.');
-        }
+        // Permission checking disabled
 
         // Ensure student belongs to current partner
         if ($student->partner_id !== $this->getPartnerId()) {
@@ -186,10 +167,7 @@ class StudentController extends Controller
      */
     public function destroy(Student $student)
     {
-        // Check permissions
-        if (!auth()->user()->can('students-delete')) {
-            abort(403, 'Access denied. You do not have permission to delete students.');
-        }
+        // Permission checking disabled
 
         // Ensure student belongs to current partner
         if ($student->partner_id !== $this->getPartnerId()) {
@@ -217,10 +195,7 @@ class StudentController extends Controller
      */
     public function export(Request $request)
     {
-        // Check permissions
-        if (!auth()->user()->can('students-export')) {
-            abort(403, 'Access denied. You do not have permission to export students.');
-        }
+        // Permission checking disabled
 
         $students = Student::with(['user', 'courses'])
             ->where('partner_id', $this->getPartnerId())
@@ -241,10 +216,7 @@ class StudentController extends Controller
      */
     public function import(Request $request)
     {
-        // Check permissions
-        if (!auth()->user()->can('students-import')) {
-            abort(403, 'Access denied. You do not have permission to import students.');
-        }
+        // Permission checking disabled
 
         $request->validate([
             'file' => 'required|file|mimes:csv,xlsx,xls'
@@ -272,10 +244,7 @@ class StudentController extends Controller
      */
     public function assignCourse(Request $request, Student $student)
     {
-        // Check permissions
-        if (!auth()->user()->can('students-assign-course')) {
-            abort(403, 'Access denied. You do not have permission to assign courses to students.');
-        }
+        // Permission checking disabled
 
         // Ensure student belongs to current partner
         if ($student->partner_id !== $this->getPartnerId()) {
@@ -310,10 +279,7 @@ class StudentController extends Controller
      */
     public function manageGrades(Student $student)
     {
-        // Check permissions
-        if (!auth()->user()->can('students-manage-grades')) {
-            abort(403, 'Access denied. You do not have permission to manage student grades.');
-        }
+        // Permission checking disabled
 
         // Ensure student belongs to current partner
         if ($student->partner_id !== $this->getPartnerId()) {

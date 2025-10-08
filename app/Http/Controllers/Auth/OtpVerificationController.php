@@ -19,7 +19,7 @@ class OtpVerificationController extends Controller
      */
     public function show(Request $request)
     {
-        $email = $request->session()->get('registration_email');
+        $email = $request->session()->get('email'); // Retrieve from flash data
         
         if (!$email) {
             return redirect()->route('register');
@@ -82,31 +82,7 @@ class OtpVerificationController extends Controller
                 'flag' => 'active',
             ]);
 
-            // Find the partner role
-            $partnerRole = \App\Models\EnhancedRole::where('name', 'partner')->first();
-            
-            // If partner role not found, try to find any role
-            if (!$partnerRole) {
-                $partnerRole = \App\Models\EnhancedRole::first();
-            }
-            
-            // If still no role found, create a default partner role with only the fields that exist in the database
-            if (!$partnerRole) {
-                try {
-                    $partnerRole = \App\Models\EnhancedRole::create([
-                        'name' => 'partner',
-                        'display_name' => 'Partner',
-                        'description' => 'Partner role with basic permissions',
-                        'level' => 2, // Partner level
-                        'status' => 'active',
-                        'created_by' => 1, // System user (will be updated after user creation)
-                        'updated_by' => 1,
-                    ]);
-                } catch (\Exception $e) {
-                    \Log::error('Failed to create partner role: ' . $e->getMessage());
-                    throw new \RuntimeException('Failed to create partner role. Please contact support.');
-                }
-            }
+            // Role assignment disabled - skip role creation/assignment
 
             // Create user with only the fields that exist in the database
             $userData = [
@@ -114,7 +90,6 @@ class OtpVerificationController extends Controller
                 'email' => $email,
                 'password' => Hash::make($registrationData['password']),
                 'email_verified_at' => now(),
-                'role' => $partnerRole->name,
             ];
             
             // Add optional fields if they exist in the database
@@ -124,9 +99,10 @@ class OtpVerificationController extends Controller
             if (Schema::hasColumn('ac_users', 'partner_id')) {
                 $userData['partner_id'] = $partner->id;
             }
-            if (Schema::hasColumn('ac_users', 'role_id')) {
-                $userData['role_id'] = $partnerRole->id;
-            }
+            // Role assignment disabled - skip role_id
+            // if (Schema::hasColumn('ac_users', 'role_id')) {
+            //     $userData['role_id'] = $partnerRole->id;
+            // }
             
             // Create the user first
             $user = \App\Models\EnhancedUser::create($userData);
@@ -140,20 +116,8 @@ class OtpVerificationController extends Controller
             }
             $user->save();
             
-            // Create role assignment in pivot table
-            if ($partnerRole && Schema::hasTable('ac_user_roles')) {
-                DB::table('ac_user_roles')->insert([
-                    'user_id' => $user->id,
-                    'role_id' => $partnerRole->id,
-                    'assigned_by' => $user->id,
-                    'assigned_at' => now(),
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-            }
 
-                // Update partner with user_id
-            $partner->update(['user_id' => $user->id]);
+
 
             // Mark OTP as used
             $verificationCode->markAsUsed();

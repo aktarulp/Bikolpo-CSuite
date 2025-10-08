@@ -16,6 +16,7 @@ class Course extends Model
         'start_date',
         'end_date',
         'status',
+        'flag',
         'partner_id',
         'created_by',
     ];
@@ -24,6 +25,7 @@ class Course extends Model
         'start_date' => 'date',
         'end_date' => 'date',
         'status' => 'string',
+        'flag' => 'string',
     ];
 
     // Relationships

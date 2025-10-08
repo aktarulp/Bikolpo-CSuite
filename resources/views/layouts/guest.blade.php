@@ -8,8 +8,11 @@
         <title>{{ config('app.name', 'Laravel') }}</title>
 
         <!-- Favicon -->
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
-        <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+        <link rel="icon" href="{{ asset('images/BikolpoLive.svg') }}" type="image/svg+xml">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/favicon-32x32.png') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon-16x16.png') }}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/apple-touch-icon-180x180.png') }}">
+        <link rel="mask-icon" href="{{ asset('images/BikolpoLive.svg') }}" color="#10b981">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -58,7 +61,7 @@
                 <!-- Footer -->
                 <div class="mt-8 text-center animate-fade-in">
                     <p class="text-sm text-gray-500 dark:text-gray-400">
-                        © 2025 Bikolpo LQ. All rights reserved.
+                        © 2025 Bikolpo Live. All rights reserved.
                     </p>
                 </div>
             </div>

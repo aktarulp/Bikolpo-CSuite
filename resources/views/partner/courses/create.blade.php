@@ -3,50 +3,46 @@
 @section('title', 'Add Course')
 
 @section('content')
-<!-- Professional Mobile-First Design -->
-<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-slate-900 dark:to-gray-900 py-4 sm:py-6 lg:py-8">
-    <div class="max-w-3xl mx-auto space-y-6">
+@can('courses-add')
+<!-- Slim, professional layout -->
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900 py-4">
+    <div class="max-w-3xl mx-auto space-y-4">
         
-        <!-- Header Card with Glassmorphism -->
-        <div class="relative overflow-hidden bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 sm:p-8">
-            <!-- Animated Background -->
-            <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
-            <div class="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-indigo-500/10 to-pink-500/10 rounded-full blur-3xl -ml-24 -mb-24"></div>
-            
-            <div class="relative z-10 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-                <!-- Title Section -->
-                <div class="flex items-center space-x-4">
-                    <div class="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl transform rotate-3 hover:rotate-6 transition-transform duration-300">
-                        <svg class="w-7 h-7 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+        <!-- Slim Header with action button -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700 p-4">
+            <div class="flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-indigo-600 text-white flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253"></path>
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-black bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                            Add Course
-                        </h1>
-                        <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 font-medium mt-1">Create a new academic course</p>
+                        <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Add Course</h1>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Create a new academic course</p>
                     </div>
                 </div>
-
-                <!-- Back Button -->
-                <a href="{{ route('partner.courses.index') }}" 
-                   class="group relative inline-flex items-center justify-center gap-2 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white px-5 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                    <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                    </svg>
-                    <span class="hidden sm:inline">Back</span>
-                </a>
+                <div class="flex items-center gap-2">
+                    <a href="{{ route('partner.courses.index') }}" class="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        <span>Back</span>
+                    </a>
+                    <button type="submit" form="courseCreateForm" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        <span>Create</span>
+                    </button>
+                </div>
             </div>
         </div>
 
         <!-- Form Card -->
-        <div class="relative overflow-hidden bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50">
-            <!-- Decorative Elements -->
-            <div class="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-full blur-2xl"></div>
-            
-            <div class="relative z-10 p-6 sm:p-8 lg:p-10">
-                <form action="{{ route('partner.courses.store') }}" method="POST" class="space-y-6">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200 dark:border-gray-700">
+            <div class="p-4 sm:p-6">
+                <form id="courseCreateForm" action="{{ route('partner.courses.store') }}" method="POST" class="space-y-5">
                     @csrf
 
                     <!-- Course Name & Code -->
@@ -146,32 +142,21 @@
                         @enderror
                     </div>
 
-                    <!-- Action Buttons -->
-                    <div class="flex flex-col sm:flex-row gap-3 pt-6 border-t-2 border-gray-100 dark:border-gray-700">
-                        <a href="{{ route('partner.courses.index') }}" 
-                           class="group relative inline-flex items-center justify-center gap-2 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 border-2 border-gray-300 dark:border-gray-600 px-6 py-3.5 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                            <svg class="w-5 h-5 group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <!-- Footer (only cancel) -->
+                    <div class="flex justify-end pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <a href="{{ route('partner.courses.index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
                             <span>Cancel</span>
                         </a>
-                        
-                        <button type="submit" 
-                                class="group relative flex-1 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-purple-600 hover:via-indigo-600 hover:to-blue-600 text-white px-6 py-3.5 rounded-xl font-bold shadow-2xl hover:shadow-blue-500/50 transition-all duration-500 transform hover:scale-105 overflow-hidden">
-                            <span class="absolute inset-0 w-full h-full bg-gradient-to-r from-white/0 via-white/30 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></span>
-                            <svg class="w-5 h-5 relative z-10 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                            </svg>
-                            <span class="relative z-10">Add Course</span>
-                            <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500"></div>
-                        </button>
                     </div>
                 </form>
             </div>
         </div>
 
         <!-- Help Card -->
-        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 backdrop-blur-xl rounded-2xl border border-blue-200/50 dark:border-blue-700/50 p-6">
+        <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800 p-4">
             <div class="flex items-start space-x-4">
                 <div class="flex-shrink-0 w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -180,7 +165,7 @@
                 </div>
                 <div>
                     <h3 class="text-sm font-bold text-blue-900 dark:text-blue-100 mb-1">Quick Tips</h3>
-                    <ul class="text-sm text-blue-700 dark:text-blue-300 space-y-1">
+                    <ul class="text-xs text-blue-700 dark:text-blue-300 space-y-1">
                         <li class="flex items-start space-x-2">
                             <span class="text-blue-600 dark:text-blue-400 mt-0.5">•</span>
                             <span>Use a clear, descriptive name for your course</span>
@@ -199,4 +184,5 @@
         </div>
     </div>
 </div>
+@endcan
 @endsection 

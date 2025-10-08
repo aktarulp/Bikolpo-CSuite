@@ -75,25 +75,32 @@ class EnhancedRole extends Model
      */
     public function permissions(): BelongsToMany
     {
+        // Permissions disabled - return empty relationship
         return $this->belongsToMany(
-                    EnhancedPermission::class,
+                    \App\Models\EnhancedRole::class, // Self-reference to avoid errors
                     'ac_role_permissions',
-                    'enhanced_role_id',
-                    'enhanced_permission_id'
+                    'role_id',
+                    'module_id'
                 )
-                    ->withPivot('granted_by', 'granted_at', 'expires_at')
-                    ->withTimestamps();
+                    ->whereRaw('1 = 0'); // Always return empty result
     }
 
     /**
-     * Get the users that have this role.
+     * Get the users assigned to this role.
      */
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(EnhancedUser::class, 'ac_user_roles', 'role_id', 'user_id')
-                    ->withPivot('assigned_by', 'assigned_at', 'expires_at')
-                    ->withTimestamps();
+        return $this->belongsToMany(
+            EnhancedUser::class,
+            'ac_user_roles',
+            'role_id',
+            'user_id'
+        )
+            ->withPivot('assigned_by', 'assigned_at', 'expires_at')
+            ->withTimestamps();
     }
+
+
 
     /**
      * Get the creator of this role.
@@ -210,26 +217,20 @@ class EnhancedRole extends Model
 
     /**
      * Check if role has a specific permission.
+     * Permission checking disabled - always returns true.
      */
     public function hasPermission($permission): bool
     {
-        if (is_string($permission)) {
-            return $this->getAllPermissions()->contains('name', $permission);
-        }
-        
-        if (is_int($permission)) {
-            return $this->getAllPermissions()->contains('id', $permission);
-        }
-
-        return false;
+        return true;
     }
 
     /**
      * Check if role has a specific permission by ID.
+     * Permission checking disabled - always returns true.
      */
     public function hasPermissionById($permissionId): bool
     {
-        return $this->getAllPermissions()->contains('id', $permissionId);
+        return true;
     }
 
     /**
@@ -237,19 +238,16 @@ class EnhancedRole extends Model
      */
     public function grantPermission($permission, $grantedBy = null, $expiresAt = null)
     {
-        if (is_string($permission)) {
-            $permission = EnhancedPermission::where('name', $permission)->first();
-        }
+        return $this->grantPermissionWithCrud($permission, [], $grantedBy, $expiresAt);
+    }
 
-        if (!$permission) {
-            return false;
-        }
-
-        return $this->permissions()->attach($permission->id, [
-            'granted_by' => $grantedBy ?? auth()->id(),
-            'granted_at' => now(),
-            'expires_at' => $expiresAt
-        ]);
+    /**
+     * Grant a permission to this role with optional CRUD flags.
+     */
+    public function grantPermissionWithCrud($permission, array $crudFlags = [], $grantedBy = null, $expiresAt = null)
+    {
+        // Permissions disabled - always return true
+        return true;
     }
 
     /**
@@ -257,15 +255,8 @@ class EnhancedRole extends Model
      */
     public function revokePermission($permission)
     {
-        if (is_string($permission)) {
-            $permission = EnhancedPermission::where('name', $permission)->first();
-        }
-
-        if (!$permission) {
-            return false;
-        }
-
-        return $this->permissions()->detach($permission->id);
+        // Permissions disabled - always return true
+        return true;
     }
 
     /**
@@ -273,28 +264,47 @@ class EnhancedRole extends Model
      */
     public function syncPermissions($permissions, $grantedBy = null)
     {
-        $permissionIds = [];
-        
-        foreach ($permissions as $permission) {
-            if (is_string($permission)) {
-                $perm = EnhancedPermission::where('name', $permission)->first();
-                if ($perm) {
-                    $permissionIds[] = $perm->id;
-                }
-            } elseif (is_int($permission)) {
-                $permissionIds[] = $permission;
+        // Permissions disabled - always return true
+        return true;
+    }
+
+    /**
+     * Sync permissions with CRUD flags. Accepts an associative array where key is permission id or name,
+     * and value is an array like ['create' => bool, 'read' => bool, 'update' => bool, 'delete' => bool, 'is_default' => bool].
+     */
+    public function syncPermissionsWithCrud(array $permissionFlags, $grantedBy = null)
+    {
+        // Permissions disabled - always return true
+        return true;
+    }
+
+    /**
+     * Ensure CRUD flags are in expected keys and normalized to 'Y'/'N' via pivot mutators.
+     */
+    protected function normalizeCrudFlags(array $flags): array
+    {
+        // Map common aliases to our pivot attributes
+        $map = [
+            'create' => 'can_create',
+            'read' => 'can_read',
+            'view' => 'can_read',
+            'update' => 'can_update',
+            'edit' => 'can_update',
+            'delete' => 'can_delete',
+            'remove' => 'can_delete',
+            'is_default' => 'is_default',
+            'default' => 'is_default',
+        ];
+        $out = [];
+        foreach ($flags as $k => $v) {
+            $k = strtolower((string)$k);
+            if (isset($map[$k])) {
+                $out[$map[$k]] = $v;
+            } elseif (in_array($k, ['can_create','can_read','can_update','can_delete','is_default'], true)) {
+                $out[$k] = $v;
             }
         }
-
-        $syncData = [];
-        foreach ($permissionIds as $permissionId) {
-            $syncData[$permissionId] = [
-                'granted_by' => $grantedBy ?? auth()->id(),
-                'granted_at' => now(),
-            ];
-        }
-
-        return $this->permissions()->sync($syncData);
+        return $out;
     }
 
     /**

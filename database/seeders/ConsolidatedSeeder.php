@@ -130,7 +130,7 @@ class ConsolidatedSeeder extends Seeder
             'target_group' => 'HSC, SSC Students',
             'subjects_offered' => 'Mathematics, Physics, Chemistry, Biology, English',
             'class_range' => 'Class 6-12',
-            'total_teachers' => 15,
+
             'total_students' => 200,
             'batch_system' => true,
             'subscription_plan' => 'Premium',

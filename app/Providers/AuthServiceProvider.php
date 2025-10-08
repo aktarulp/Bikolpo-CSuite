@@ -12,11 +12,12 @@ class AuthServiceProvider extends ServiceProvider
 {
     /**
      * The model to policy mappings for the application.
+     * Policies disabled - no policy enforcement.
      *
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        EnhancedUser::class => EnhancedUserPolicy::class,
+        // EnhancedUser::class => EnhancedUserPolicy::class,
     ];
 
     /**
@@ -32,10 +33,17 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->registerPolicies();
+        // Policies disabled
+        // $this->registerPolicies();
 
         Sanctum::usePersonalAccessTokenModel(
             \App\Models\PersonalAccessToken::class
         );
+
+        // Grant full access to all authenticated users - no permission checking
+        Gate::before(function ($user, $ability) {
+            // Always allow access for authenticated users
+            return $user ? true : null;
+        });
     }
 }

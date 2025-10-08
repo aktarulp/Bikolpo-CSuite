@@ -4,17 +4,20 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use App\Models\User;
+use App\Models\EnhancedUser;
 use App\Models\Partner;
 use App\Models\Course;
 use App\Models\Subject;
 use App\Models\Topic;
 use App\Models\QuestionType;
 use App\Models\Question;
+use App\Models\EnhancedUser as AcUser;
 // use App\Models\QuestionSet;
 use App\Models\Exam;
+use App\Models\Role;
 use App\Models\Student;
 use Carbon\Carbon;
+use App\Models\User; // Added
 
 class BasicDemoSeeder extends Seeder
 {
@@ -23,15 +26,34 @@ class BasicDemoSeeder extends Seeder
      */
     public function run(): void
     {
+        // (new \Database\Seeders\RoleSeeder())->run();
+
         $this->command->info('Seeding basic demo data...');
 
         // Get or create a partner user
+        $partnerRole = Role::where('name', 'partner_admin')->first();
+        if (!$partnerRole) {
+            throw new \Exception('Partner admin role not found in the database.');
+        }
+
         $partnerUser = User::firstOrCreate(
             ['email' => 'partner@demo.com'],
             [
                 'name' => 'Demo Partner',
                 'password' => bcrypt('password'),
-                'role' => 'partner',
+                'role' => 'partner_admin',
+                'role_id' => $partnerRole->id,
+            ]
+        );
+
+        $acUser = AcUser::create(
+            [
+                'email' => $partnerUser->email,
+                'name' => $partnerUser->name,
+                'password' => $partnerUser->password,
+
+                'status' => 'active',
+                'flag' => 'active',
             ]
         );
 
@@ -41,7 +63,6 @@ class BasicDemoSeeder extends Seeder
             [
                 'name' => 'Demo Coaching Center',
                 'phone' => '+880 1234567890',
-                'user_id' => $partnerUser->id,
                 'status' => 'active',
             ]
         );

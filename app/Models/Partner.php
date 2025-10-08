@@ -13,42 +13,25 @@ class Partner extends Model
         'name',
         'email',
         'phone',
-        'address',
-        'city',
+        'slug', 
         'logo',
-        'description',
         'status',
-        'user_id',
-        'partner_category',
-        'slug',
-        'cover_photo',
+        'flag',
+        'city',
         'map_location',
-        'owner_name',
         'mobile',
         'alternate_mobile',
         'website',
         'facebook_page',
         'division',
         'district',
-        'upazila',
         'established_year',
-        'eiin_no',
-        'trade_license_no',
-        'tin_no',
-        'category',
-        'target_group',
-        'subjects_offered',
-        'class_range',
-        'total_teachers',
-        'total_students',
-        'batch_system',
         'subscription_plan',
         'subscription_start_date',
         'subscription_end_date',
         'payment_status',
         'created_by',
         'institute_name',
-        'owner_director_name',
         'primary_contact_person',
         'primary_contact_no',
         'alternate_contact_person',
@@ -64,7 +47,7 @@ class Partner extends Model
         'year_of_establishment',
         'short_address',
         'course_offers',
-        'custom_courses',
+        'custom_courses'
     ];
 
     protected $casts = [
@@ -74,7 +57,9 @@ class Partner extends Model
     // Relationships
     public function user()
     {
-        return $this->belongsTo(EnhancedUser::class);
+        // Partner doesn't belong to a single user, but has many users
+        // This method should return the primary user if needed, or null
+        return $this->users()->first();
     }
 
     public function questions()

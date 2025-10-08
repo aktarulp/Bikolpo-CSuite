@@ -1,6 +1,6 @@
 <header class="bg-white/90 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50 transition-all duration-300">
     <!-- Font Imports -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet" />
@@ -19,12 +19,7 @@
         <div class="flex justify-between items-center py-4">
             <!-- Logo -->
             <div class="flex items-center space-x-3">
-                <x-brand-logo 
-                    size="lg" 
-                    variant="default" 
-                    :href="route('landing')" 
-                    :show-tagline="true" 
-                />
+                <x-branding size="lg" :href="route('landing')" bg="bg-white/90 dark:bg-gray-900/70" />
             </div>
 
             <!-- Desktop Navigation -->

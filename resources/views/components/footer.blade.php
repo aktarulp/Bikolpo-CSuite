@@ -14,7 +14,7 @@
                 <div class="flex items-center space-x-2 mb-3">
                     <x-brand-logo 
                         size="md" 
-                        variant="footer" 
+                        variant="minimal" 
                         :href="route('landing')" 
                         :show-tagline="false" 
                     />
@@ -107,7 +107,7 @@
         <div class="border-t border-white/10 pt-4">
             <div class="flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
                 <div class="text-white-400 text-s">
-                    © 2025 <span class="text-primaryGreen font-semibold">Bikolpo LQ</span>. All rights reserved.
+                    © 2025 <span class="text-primaryGreen font-semibold">Bikolpo Live</span>. All rights reserved.
                 </div>
                 <div class="flex flex-wrap justify-center sm:justify-end space-x-4 text-xs">
                     <a href="{{ route('privacy') }}" class="text-gray-400 hover:text-white transition-colors duration-300">Privacy</a>

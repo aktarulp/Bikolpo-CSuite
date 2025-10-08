@@ -73,11 +73,6 @@ class TopicController extends Controller
             ->with('success', 'Topic created successfully.');
     }
 
-    public function show(Topic $topic)
-    {
-        $topic->load(['subject.course', 'questions']);
-        return view('partner.topics.show', compact('topic'));
-    }
 
     public function edit(Topic $topic)
     {

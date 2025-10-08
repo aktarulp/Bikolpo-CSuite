@@ -1295,10 +1295,36 @@
         }
         
         function selectAllQuestions() {
+            const totalCount = parseInt(document.getElementById('total-count')?.textContent) || 0;
+            const currentSelected = document.querySelectorAll('.question-checkbox:checked').length;
+            const limitWarning = document.getElementById('limit-warning');
+            
+            // Hide limit warning initially
+            if (limitWarning) {
+                limitWarning.classList.add('hidden');
+            }
+            
+            let selectedCount = 0;
+            
             document.querySelectorAll('.question-checkbox').forEach(checkbox => {
-                checkbox.checked = true;
-                assignQuestionNumber(checkbox);
+                // Only select if we haven't reached the limit
+                if (selectedCount < totalCount && !checkbox.checked) {
+                    checkbox.checked = true;
+                    assignQuestionNumber(checkbox);
+                    selectedCount++;
+                } else if (checkbox.checked) {
+                    // Already selected, count it
+                    selectedCount++;
+                }
             });
+            
+            // Show warning if we've reached the limit
+            if (selectedCount >= totalCount && totalCount > 0) {
+                if (limitWarning) {
+                    limitWarning.classList.remove('hidden');
+                }
+            }
+            
             updateSelectedCount();
         }
 

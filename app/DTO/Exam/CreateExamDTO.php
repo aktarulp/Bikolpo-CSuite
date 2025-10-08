@@ -58,7 +58,6 @@ class CreateExamDTO extends FormRequest
 
     public function authorize(): bool
     {
-        // Only authenticated partners can create exams
-        return auth()->check() && auth()->user()->role === 'partner';
+        return true;
     }
 }

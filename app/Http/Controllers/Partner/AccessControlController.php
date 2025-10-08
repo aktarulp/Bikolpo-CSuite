@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Partner;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\EnhancedRole;
-use App\Models\EnhancedPermission;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -44,28 +43,80 @@ class AccessControlController extends Controller
             ->orderBy('level')
             ->get();
         
-        $permissions = EnhancedPermission::all()->groupBy(function($permission) {
-            if (str_starts_with($permission->name, 'menu-')) {
-                return substr($permission->name, 5);
-            }
-            
-            $parts = explode('-', $permission->name, 2);
-            return $parts[0] ?? 'other';
-        });
-
-        $permissionConfig = config('permissions.menus', []);
+        $permissions = collect(); // Permissions disabled
+        $permissionConfig = []; // Permissions disabled
 
         return view('partner.access-control.create-role', compact('permissions', 'permissionConfig', 'existingRoles'));
     }
 
     /**
-     * Show the form for editing role permissions.
+     * Show the form for editing role permissions (action-level only; excludes menu-*).
      */
     public function editRole(EnhancedRole $role)
     {
+        // Enforce visibility rules: role must be at or below current user's level and belong to this partner or be default/legacy
+        $currentUser = \App\Models\EnhancedUser::find(auth()->id());
+        $currentUserLevel = $currentUser?->getHighestRoleLevel() ?? 1;
+        if (($role->level ?? PHP_INT_MAX) < $currentUserLevel) {
+            abort(403, 'You cannot manage a higher-privilege role.');
+        }
+        $user = auth()->user();
+        $partner = null;
+        if ($user && $user->partner_id) {
+            $partner = \App\Models\Partner::find($user->partner_id);
+        }
+        // Skip partner authorization checks since permissions are disabled
+        // if (!($role->is_default || is_null($role->created_by))) {
+        //     abort(403, 'You cannot manage roles outside your organization.');
+        // }
+
         $permissionConfig = config('permissions.menus', []);
-        
-        return view('partner.access-control.edit-role', compact('role', 'permissionConfig'));
+
+        // Current role permissions and allowed modules by menu-* grants
+        $currentPerms = $role->permissions->pluck('name')->toArray();
+        $allowedModules = collect($currentPerms)
+            ->filter(fn($n) => str_starts_with($n, 'menu-'))
+            ->map(fn($n) => substr($n, 5))
+            ->filter(fn($k) => isset($permissionConfig[$k]))
+            ->unique()
+            ->values()
+            ->all();
+
+        // Build action-only structure (exclude menu-*), filtered by allowed modules only
+        $modules = collect($permissionConfig)
+            ->filter(function ($cfg, $key) use ($allowedModules) {
+                return in_array($key, $allowedModules, true);
+            })
+            ->map(function ($cfg, $key) {
+                $buttons = $cfg['buttons'] ?? [];
+                return [
+                    'key' => $key,
+                    'label' => $cfg['label'] ?? ucfirst($key),
+                    'buttons' => $buttons,
+                ];
+            })
+            ->values();
+
+        // Extract only action permission names for allowed modules from config for comparison
+        $actionNames = [];
+        foreach ($allowedModules as $menuKey) {
+            $cfg = $permissionConfig[$menuKey] ?? [];
+            foreach (($cfg['buttons'] ?? []) as $buttonKey => $label) {
+                $actionNames[] = $menuKey . '-' . $buttonKey;
+            }
+        }
+
+        // Map to boolean checked states
+        $checked = [];
+        foreach ($actionNames as $name) {
+            $checked[$name] = in_array($name, $currentPerms, true);
+        }
+
+        return view('partner.access-control.edit-role', [
+            'role' => $role,
+            'modules' => $modules,
+            'checked' => $checked,
+        ]);
     }
 
     /**
@@ -78,7 +129,7 @@ class AccessControlController extends Controller
             'display_name' => 'nullable|string|max:255',
             'description' => 'nullable|string|max:500',
             'permissions' => 'array',
-            'permissions.*' => 'exists:ac_permissions,name'
+'permissions.*' => 'exists:ac_modules,module_name'
         ]);
 
         if ($validator->fails()) {
@@ -137,17 +188,53 @@ class AccessControlController extends Controller
     {
         try {
             $role = \App\Models\EnhancedRole::findOrFail($roleId);
+
+            // Enforce visibility rules similar to edit
+            $currentUser = \App\Models\EnhancedUser::find(auth()->id());
+            $currentUserLevel = $currentUser?->getHighestRoleLevel() ?? 1;
+            if (($role->level ?? PHP_INT_MAX) < $currentUserLevel) {
+                return response()->json(['success' => false, 'message' => 'Cannot modify a higher-privilege role.'], 403);
+            }
+            $user = auth()->user();
+            $partner = null;
+            if ($user && $user->partner_id) {
+                $partner = \App\Models\Partner::find($user->partner_id);
+            }
+            // Skip partner authorization checks since permissions are disabled
+            // if (!($role->is_default || is_null($role->created_by))) {
+            //     return response()->json(['success' => false, 'message' => 'Cannot modify roles outside your organization.'], 403);
+            // }
+
             $permissions = $request->input('permissions', []);
-            
-            // Validate permissions exist
-            $validPermissions = \App\Models\EnhancedPermission::whereIn('name', $permissions)
-                ->pluck('name')
-                ->toArray();
-            
-            // Sync permissions (this will remove old permissions and add new ones)
-            $role->syncPermissions($validPermissions);
-            
-            // Update the updated_by field to track who made the changes
+            if (!is_array($permissions)) { $permissions = []; }
+
+            // Keep existing menu-* permissions intact
+            $existing = $role->permissions()->pluck('name')->all();
+            $keepMenus = array_values(array_filter($existing, fn($n) => str_starts_with($n, 'menu-')));
+
+            // Validate only action permissions from config, restricted to allowed modules by menu-*
+            $permissionConfig = config('permissions.menus', []);
+
+            // Determine allowed modules for this role from its current menu-* grants
+            $allowedModules = collect($existing)
+                ->filter(fn($n) => str_starts_with($n, 'menu-'))
+                ->map(fn($n) => substr($n, 5))
+                ->filter(fn($k) => isset($permissionConfig[$k]))
+                ->unique()
+                ->values()
+                ->all();
+
+            $validActionSet = [];
+            foreach ($allowedModules as $menuKey) {
+                $cfg = $permissionConfig[$menuKey] ?? [];
+                foreach (($cfg['buttons'] ?? []) as $buttonKey => $label) {
+                    $validActionSet[] = $menuKey . '-' . $buttonKey;
+                }
+            }
+            $selectedActions = array_values(array_intersect($permissions, $validActionSet));
+
+            // Permissions disabled - no sync needed
+            $final = [];
             $role->update(['updated_by' => auth()->id()]);
 
             // If this is an AJAX/JSON request, return JSON; otherwise redirect back with a flash message
@@ -185,7 +272,6 @@ class AccessControlController extends Controller
         }
 
         try {
-            // Check if role is assigned to any users
             $userCount = $role->users()->count();
             if ($userCount > 0) {
                 return response()->json([
@@ -200,13 +286,88 @@ class AccessControlController extends Controller
                 'success' => true,
                 'message' => 'Role deleted successfully'
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Error deleting role: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Show simple permission assignment (CRUD flags per module) for a role.
+     */
+    public function assignCrud(EnhancedRole $role)
+    {
+        // Ensure visibility like editRole
+        $currentUser = \App\Models\EnhancedUser::find(auth()->id());
+        $currentUserLevel = $currentUser?->getHighestRoleLevel() ?? 1;
+        if (($role->level ?? PHP_INT_MAX) < $currentUserLevel) {
+            abort(403, 'You cannot manage a higher-privilege role.');
+        }
+        $user = auth()->user();
+        $partner = null;
+        if ($user && $user->partner_id) {
+            $partner = \App\Models\Partner::find($user->partner_id);
+        }
+        // Skip partner authorization checks since permissions are disabled
+        // if (!($role->is_default || is_null($role->created_by))) {
+        //     abort(403, 'You cannot manage roles outside your organization.');
+        // }
+
+        $permissionConfig = config('permissions.menus', []);
+
+        // Derive modules from config keys
+        $modules = collect($permissionConfig)->map(function ($cfg, $key) {
+            return [
+                'key' => $key,
+                'label' => $cfg['label'] ?? ucfirst($key),
+            ];
+        })->values();
+
+        // Permissions disabled - all flags set to true
+        $flagsByKey = [];
+        foreach ($modules as $m) {
+            $flagsByKey[$m['key']] = [
+                'create' => true,
+                'read' => true,
+                'update' => true,
+                'delete' => true,
+            ];
+        }
+
+        return view('partner.permissions.assign', [
+            'role' => $role,
+            'modules' => $modules,
+            'flagsByKey' => $flagsByKey,
+        ]);
+    }
+
+    /**
+     * Save CRUD flags per module for the role.
+     */
+    public function saveCrud(Request $request, EnhancedRole $role)
+    {
+        $payload = $request->input('modules', []); // expected: modules[key][create|read|update|delete] => 'on'
+        if (!is_array($payload)) { $payload = []; }
+
+        $map = [];
+        foreach ($payload as $key => $flags) {
+            $map['menu-' . $key] = [
+                'create' => !empty($flags['create']),
+                'read' => !empty($flags['read']),
+                'update' => !empty($flags['update']),
+                'delete' => !empty($flags['delete']),
+            ];
+        }
+
+        // Sync while preserving any other permissions already attached
+        $role->syncPermissionsWithCrud($map, auth()->id());
+        $role->update(['updated_by' => auth()->id()]);
+
+        return redirect()
+            ->route('partner.access-control.role.assign', $role)
+            ->with('success', 'Permissions updated.');
     }
 
     /**

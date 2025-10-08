@@ -76,11 +76,6 @@ class SubjectController extends Controller
             ->with('success', 'Subject created successfully.');
     }
 
-    public function show(Subject $subject)
-    {
-        $subject->load(['course', 'topics']);
-        return view('partner.subjects.show', compact('subject'));
-    }
 
     public function edit(Subject $subject)
     {

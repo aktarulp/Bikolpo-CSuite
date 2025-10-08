@@ -73,6 +73,12 @@ class DemoStudentsSeeder extends Seeder
         );
 
         // Get or create a demo user for the partner
+        $partnerRole = \App\Models\Role::where('name', 'partner_admin')->first();
+
+        if (!$partnerRole) {
+            throw new \Exception('Partner role not found. Please ensure RoleSeeder runs first or define the partner role.');
+        }
+
         $user = User::firstOrCreate(
             ['email' => 'demo.bangladesh@example.com'],
             [
@@ -81,15 +87,13 @@ class DemoStudentsSeeder extends Seeder
                 'password' => bcrypt('password'),
                 'email_verified_at' => now(),
                 'role' => 'partner',
+                'role_id' => $partnerRole->id,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]
         );
 
         // Associate user with partner if not already associated
-        if (!$partner->user_id) {
-            $partner->update(['user_id' => $user->id]);
-        }
 
         $this->command->info("Creating demo students for partner: {$partner->name}");
 

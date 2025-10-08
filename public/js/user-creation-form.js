@@ -6,7 +6,6 @@
 class UserCreationForm {
     constructor() {
         this.currentUserType = 'operator';
-        this.teacherForm = null;
         this.studentForm = null;
         this.init();
     }
@@ -18,7 +17,6 @@ class UserCreationForm {
     }
 
     setupFormElements() {
-        this.teacherForm = document.getElementById('teacher-form-section');
         this.studentForm = document.getElementById('student-form-section');
         this.userTypeInputs = document.querySelectorAll('input[name="user_type"]');
         this.nameInput = document.getElementById('name');
@@ -36,16 +34,14 @@ class UserCreationForm {
 
         // Auto-populate name from teacher/student forms
         document.addEventListener('input', (e) => {
-            if (e.target.id === 'teacher_full_name_en') {
-                this.syncNameField(e.target.value);
-            } else if (e.target.id === 'student_full_name') {
+            if (e.target.id === 'student_full_name') {
                 this.syncNameField(e.target.value);
             }
         });
 
         // Auto-populate phone from teacher mobile
         document.addEventListener('input', (e) => {
-            if (e.target.id === 'teacher_mobile') {
+            if (e.target.id === 'student_mobile') {
                 this.syncPhoneField(e.target.value);
             }
         });
@@ -72,9 +68,6 @@ class UserCreationForm {
         
         // Show relevant form based on user type
         switch (userType) {
-            case 'teacher':
-                this.showTeacherForm();
-                break;
             case 'student':
                 this.showStudentForm();
                 break;
@@ -92,23 +85,8 @@ class UserCreationForm {
     }
 
     hideAllSpecificForms() {
-        if (this.teacherForm) {
-            this.teacherForm.classList.add('hidden');
-        }
         if (this.studentForm) {
             this.studentForm.classList.add('hidden');
-        }
-    }
-
-    showTeacherForm() {
-        if (this.teacherForm) {
-            this.teacherForm.classList.remove('hidden');
-            // Add smooth animation
-            this.teacherForm.style.opacity = '0';
-            setTimeout(() => {
-                this.teacherForm.style.transition = 'opacity 0.3s ease-in-out';
-                this.teacherForm.style.opacity = '1';
-            }, 10);
         }
     }
 
@@ -142,30 +120,9 @@ class UserCreationForm {
         // Remove existing validation classes
         this.clearValidationStates();
 
-        if (userType === 'teacher') {
-            this.setTeacherValidation();
-        } else if (userType === 'student') {
+        if (userType === 'student') {
             this.setStudentValidation();
         }
-    }
-
-    setTeacherValidation() {
-        const requiredFields = [
-            'teacher_full_name_en',
-            'teacher_gender',
-            'teacher_dob',
-            'teacher_mobile',
-            'teacher_designation',
-            'teacher_joining_date'
-        ];
-
-        requiredFields.forEach(fieldId => {
-            const field = document.getElementById(fieldId);
-            if (field) {
-                field.setAttribute('required', 'required');
-                field.classList.add('required-field');
-            }
-        });
     }
 
     setStudentValidation() {
@@ -186,7 +143,7 @@ class UserCreationForm {
 
     clearValidationStates() {
         // Remove required attributes from all teacher/student fields
-        const allFields = document.querySelectorAll('[id^="teacher_"], [id^="student_"]');
+        const allFields = document.querySelectorAll('[id^="student_"]');
         allFields.forEach(field => {
             field.removeAttribute('required');
             field.classList.remove('required-field');
@@ -194,9 +151,6 @@ class UserCreationForm {
     }
 
     clearHiddenFormData(activeUserType) {
-        if (activeUserType !== 'teacher') {
-            this.clearFormSection('teacher');
-        }
         if (activeUserType !== 'student') {
             this.clearFormSection('student');
         }
@@ -272,33 +226,9 @@ class UserCreationForm {
         }
 
         // Validate specific form sections
-        if (this.currentUserType === 'teacher') {
-            isValid = this.validateTeacherForm() && isValid;
-        } else if (this.currentUserType === 'student') {
+        if (this.currentUserType === 'student') {
             isValid = this.validateStudentForm() && isValid;
         }
-
-        return isValid;
-    }
-
-    validateTeacherForm() {
-        let isValid = true;
-        const requiredFields = [
-            { id: 'teacher_full_name_en', name: 'Teacher full name (English)' },
-            { id: 'teacher_gender', name: 'Gender' },
-            { id: 'teacher_dob', name: 'Date of birth' },
-            { id: 'teacher_mobile', name: 'Mobile number' },
-            { id: 'teacher_designation', name: 'Designation' },
-            { id: 'teacher_joining_date', name: 'Joining date' }
-        ];
-
-        requiredFields.forEach(field => {
-            const element = document.getElementById(field.id);
-            if (element && !element.value.trim()) {
-                this.showFieldError(element, `${field.name} is required`);
-                isValid = false;
-            }
-        });
 
         return isValid;
     }
