@@ -25,6 +25,18 @@ Route::get('/test-log', function () {
     return 'Log entry attempted.';
 });
 
+// Test email route
+Route::get('/test-email', function () {
+    try {
+        $user = new \App\Models\EnhancedUser(['email' => 'test@example.com', 'name' => 'Test User']);
+        $user->notify(new \App\Notifications\OtpVerificationNotification('123456'));
+        return 'Email sent successfully!';
+    } catch (\Exception $e) {
+        \Log::error('Email test failed: ' . $e->getMessage());
+        return 'Email test failed: ' . $e->getMessage();
+    }
+});
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes

@@ -37,15 +37,15 @@ class OtpVerificationNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Verify Your Email - Bikolpo Pathshala')
+            ->subject('Verify Your Email - BikolpoLive')
             ->greeting('Hello!')
-            ->line('Thank you for registering with Bikolpo Pathshala!')
+            ->line('Thank you for registering with BikolpoLive!')
             ->line('To complete your registration, please use the following verification code:')
             ->line('**' . $this->otp . '**')
             ->line('This code is valid for 10 minutes.')
             ->line('If you did not request this verification code, please ignore this email.')
             ->line('Best regards,')
-            ->salutation('The Bikolpo Pathshala Team');
+            ->salutation('The BikolpoLive Team');
     }
 
     /**

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\VerificationCode;
 use App\Models\EnhancedUser;
 use App\Models\Partner;
+use App\Models\EnhancedRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -19,7 +20,8 @@ class OtpVerificationController extends Controller
      */
     public function show(Request $request)
     {
-        $email = $request->session()->get('email'); // Retrieve from flash data
+        // Retrieve email from flash data or session
+        $email = $request->session()->get('email') ?: $request->session()->get('registration_data.email');
         
         if (!$email) {
             return redirect()->route('register');
@@ -64,7 +66,7 @@ class OtpVerificationController extends Controller
             $verificationCode->markAsUsed();
             
             // Clear session data
-            $request->session()->forget(['registration_email', 'registration_data']);
+            $request->session()->forget(['registration_email', 'registration_data', 'email']);
             
             return redirect()->route('register')->withErrors([
                 'email' => 'This email address is already registered. Please use a different email address or try logging in.'
@@ -82,8 +84,9 @@ class OtpVerificationController extends Controller
                 'flag' => 'active',
             ]);
 
-            // Role assignment disabled - skip role creation/assignment
-
+            // Get the partner_admin role
+            $partnerRole = EnhancedRole::where('name', 'partner_admin')->first();
+            
             // Create user with only the fields that exist in the database
             $userData = [
                 'name' => $registrationData['name'],
@@ -99,10 +102,10 @@ class OtpVerificationController extends Controller
             if (Schema::hasColumn('ac_users', 'partner_id')) {
                 $userData['partner_id'] = $partner->id;
             }
-            // Role assignment disabled - skip role_id
-            // if (Schema::hasColumn('ac_users', 'role_id')) {
-            //     $userData['role_id'] = $partnerRole->id;
-            // }
+            // Add role_id if partner role exists
+            if ($partnerRole && Schema::hasColumn('ac_users', 'role_id')) {
+                $userData['role_id'] = $partnerRole->id;
+            }
             
             // Create the user first
             $user = \App\Models\EnhancedUser::create($userData);
@@ -115,15 +118,12 @@ class OtpVerificationController extends Controller
                 $user->updated_by = $user->id;
             }
             $user->save();
-            
-
-
 
             // Mark OTP as used
             $verificationCode->markAsUsed();
 
             // Clear session data
-            $request->session()->forget(['registration_email', 'registration_data']);
+            $request->session()->forget(['registration_email', 'registration_data', 'email']);
 
             DB::commit();
 
@@ -147,7 +147,7 @@ class OtpVerificationController extends Controller
             \Log::error('Partner registration failed', $errorDetails);
             
             // Clear session data
-            $request->session()->forget(['registration_email', 'registration_data']);
+            $request->session()->forget(['registration_email', 'registration_data', 'email']);
             
             // Check specific error types
             if (str_contains($errorMessage, 'Duplicate entry') && str_contains($errorMessage, 'email')) {

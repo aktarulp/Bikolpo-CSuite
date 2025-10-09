@@ -7,6 +7,7 @@ use App\Models\EnhancedRole;
 use App\Models\EnhancedUser;
 use App\Models\Partner;
 use App\Models\VerificationCode;
+use App\Notifications\OtpVerificationNotification;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -14,7 +15,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
@@ -66,36 +66,38 @@ class RegisteredUserController extends Controller
 
         $request->validate($rules, $messages);
 
-        $roleName = $isPartnerRegistration ? 'partner_admin' : 'student';
-        $role = EnhancedRole::where('name', $roleName)->first();
+        try {
+            // Generate and store verification code
+            $verificationCode = VerificationCode::generateCode($request->email, 'registration');
 
-        $user = \App\Models\EnhancedUser::create([
-            'name' => $request->organization_name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role_id' => $role->id,
-            'status' => 'active',
-        ]);
-
-        if ($isPartnerRegistration) {
-            $partner = Partner::create([
+            // Send OTP email immediately
+            $user = new EnhancedUser(['email' => $request->email, 'name' => $request->organization_name]);
+            $user->notify(new OtpVerificationNotification($verificationCode->code));
+            
+            // Store registration data in session for later use
+            $request->session()->put('registration_data', [
                 'name' => $request->organization_name,
                 'email' => $request->email,
-                'status' => 'active',
+                'password' => $request->password,
             ]);
-            $user->partner_id = $partner->id;
-            $user->save();
+            
+            // Also store email in session for OTP verification
+            $request->session()->put('email', $request->email);
+
+            // Redirect to OTP verification page
+            return redirect()->route('otp.verify');
+
+        } catch (\Exception $e) {
+            // Log the error for debugging
+            \Log::error('Failed to send OTP during registration: ' . $e->getMessage(), [
+                'email' => $request->email,
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            // Redirect back with error message
+            return back()->withErrors([
+                'email' => 'Failed to send verification code. Please try again.'
+            ]);
         }
-
-        event(new Registered($user));
-
-        // Generate and store verification code
-        VerificationCode::generateCode($user->email, 'email_verification');
-
-        // Auth::login($user); // Do not log in automatically, email verification is required
-
-        return redirect()->route('otp.verify')->with('email', $user->email);
     }
-
-
 }

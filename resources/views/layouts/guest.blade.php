@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>@yield('title', config('app.name', 'Laravel'))</title>
 
         <!-- Favicon -->
         <link rel="icon" href="{{ asset('images/BikolpoLive.svg') }}" type="image/svg+xml">
@@ -53,7 +53,7 @@
                 <div class="w-full sm:max-w-md animate-slide-up">
                     <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-2xl rounded-3xl border border-white/20 dark:border-gray-700/20 overflow-hidden">
                         <div class="p-8">
-                            {{ $slot }}
+                            @yield('content')
                         </div>
                     </div>
                 </div>
