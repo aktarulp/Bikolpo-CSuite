@@ -1,2 +1,30 @@
 User-agent: *
-Disallow:
+Disallow: /vendor/
+Disallow: /storage/
+Disallow: /database/
+Disallow: /tests/
+Disallow: /config/
+Disallow: /resources/
+Disallow: /routes/
+Disallow: /app/
+Disallow: /bootstrap/
+
+# Allow access to assets
+Allow: /css/
+Allow: /js/
+Allow: /images/
+Allow: /fonts/
+
+# Authenticated pages
+Disallow: /dashboard
+Disallow: /partner/
+Disallow: /student/
+Disallow: /admin/
+
+# Specific disallows
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /verify-otp
+Disallow: /resend-otp
+
+Sitemap: https://bikolpolive.com/sitemap.xml

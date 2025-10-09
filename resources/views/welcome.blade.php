@@ -3,7 +3,24 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Bikolpo Live - Online Test Platform</title>
+    <title>Bikolpo Live - Online Test Platform for Students & Educational Partners</title>
+    <meta name="description" content="Bikolpo Live is a smart online exam platform for students and educational partners. Practice MCQs, take tests, and track your progress with real-time analytics.">
+    <meta name="keywords" content="online exam, MCQ test, educational platform, student testing, exam preparation, learning platform, Bangladesh education">
+    <meta name="author" content="Bikolpo Live">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://bikolpolive.com/">
+    <meta property="og:title" content="Bikolpo Live - Smart Online Exam Platform">
+    <meta property="og:description" content="Revolutionize your learning journey with our AI-powered online testing platform. Practice smarter, perform better, achieve more.">
+    <meta property="og:image" content="https://bikolpolive.com/images/bikolpoLive_TR.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://bikolpolive.com/">
+    <meta property="twitter:title" content="Bikolpo Live - Smart Online Exam Platform">
+    <meta property="twitter:description" content="Revolutionize your learning journey with our AI-powered online testing platform. Practice smarter, perform better, achieve more.">
+    <meta property="twitter:image" content="https://bikolpolive.com/images/bikolpoLive_TR.png">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
@@ -67,7 +84,7 @@
                 
                 <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-gray-900 dark:text-white mb-4 leading-tight">
                     <div class="brand-visible font-brand tracking-wide flex flex-col items-center">
-                        <img src="{{ asset('images/bikolpoLive_TR.png') }}" alt="Bikolpo Live" class="h-48 md:h-32 lg:h-40 mb-1">
+                        <img src="{{ asset('images/bikolpoLive_TR.png') }}" alt="Bikolpo Live - Smart Online Exam Platform" class="h-48 md:h-32 lg:h-40 mb-1">
                         <span class="text-4xl md:text-5xl lg:text-6xl text-gray-700 dark:text-gray-300 font-light font-modern mt-2">
                             Your Smart Exam Partner
                         </span>
@@ -149,7 +166,7 @@
                     <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primaryGreen/10 to-transparent rounded-full -translate-y-16 translate-x-16"></div>
                     <div class="relative">
                         <div class="w-20 h-20 bg-gradient-to-br from-primaryGreen to-green-600 rounded-3xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                            <img src="{{ asset('images/mcq.png') }}" alt="MCQ" class="w-10 h-10 filter brightness-0 invert">
+                            <img src="{{ asset('images/mcq.png') }}" alt="MCQ Testing" class="w-10 h-10 filter brightness-0 invert">
                         </div>
                         <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Smart MCQ Testing</h3>
                         <p class="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">

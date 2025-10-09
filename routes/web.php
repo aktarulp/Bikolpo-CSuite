@@ -15,9 +15,13 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\SmsRecordController;
 use App\Http\Controllers\Partner\AccessControlController;
 use App\Http\Controllers\PartnerController; // Add this missing import
+use App\Http\Controllers\SitemapController; // Add sitemap controller
 
 // Include Auth Routes
 require __DIR__.'/auth.php';
+
+// Sitemap route
+Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 
 // Test logging route
 Route::get('/test-log', function () {
