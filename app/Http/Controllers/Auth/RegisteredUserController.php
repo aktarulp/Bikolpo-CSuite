@@ -8,11 +8,8 @@ use App\Models\EnhancedUser;
 use App\Models\Partner;
 use App\Models\VerificationCode;
 use App\Notifications\OtpVerificationNotification;
-use App\Providers\RouteServiceProvider;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rules;
@@ -51,18 +48,6 @@ class RegisteredUserController extends Controller
             'password.required' => 'Password is required.',
             'password.confirmed' => 'Password confirmation does not match.',
         ];
-
-        if ($isPartnerRegistration) {
-            // These fields are now directly in the form, so no need for conditional rules here
-            // $rules['phone'] = ['required', 'string', 'max:20'];
-            // $rules['address'] = ['required', 'string', 'max:255'];
-            // $rules['trade_license'] = ['nullable', 'string', 'max:255'];
-            // $rules['tin_number'] = ['nullable', 'string', 'max:255'];
-            // $rules['bin_number'] = ['nullable', 'string', 'max:255'];
-
-            // $messages['phone.required'] = 'Phone number is required.';
-            // $messages['address.required'] = 'Address is required.';
-        }
 
         $request->validate($rules, $messages);
 

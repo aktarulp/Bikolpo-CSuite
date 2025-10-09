@@ -25,6 +25,10 @@ Route::middleware('guest')->group(function () {
     Route::post('resend-otp', [OtpVerificationController::class, 'resend'])
         ->name('otp.resend');
 
+    // Registration Success Route
+    Route::get('registration-success', [OtpVerificationController::class, 'showSuccess'])
+        ->name('registration.success');
+
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
 

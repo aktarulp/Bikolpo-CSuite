@@ -127,9 +127,8 @@ class OtpVerificationController extends Controller
 
             DB::commit();
 
-            // Show success message and redirect to login
-            return redirect()->route('login')
-                ->with('success', 'Registration successful! Your account has been created. Please sign in with your credentials.');
+            // Store success message in session and redirect to success page
+            return redirect()->route('registration.success');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -194,5 +193,13 @@ class OtpVerificationController extends Controller
         } catch (\Exception $e) {
             return back()->withErrors(['email' => 'Failed to send verification code. Please try again.']);
         }
+    }
+
+    /**
+     * Show registration success page
+     */
+    public function showSuccess()
+    {
+        return view('auth.registration-success');
     }
 }
