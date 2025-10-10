@@ -18,10 +18,8 @@ class StudentDashboardController extends Controller
     {
         $user = Auth::user();
 
-        // Resolve the Student record for this user
-        $student = Student::with(['course', 'batch'])
-            ->where('id', $user->student_id)
-            ->first();
+        // Resolve the Student record for this user using the relationship
+        $student = $user->student ? $user->student->load(['course', 'batch']) : null;
 
         // Defensive fallback if no Student record yet
         if (!$student) {
