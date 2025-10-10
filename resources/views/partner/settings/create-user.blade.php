@@ -1,6 +1,6 @@
 @extends('layouts.partner-layout')
 
-@section('title', 'Create New User')
+@section('title', 'Create New Student User')
 
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-8">
@@ -10,17 +10,17 @@
         <div class="mb-8">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-4">
-                    <a href="/partner/settings" 
+                    <a href="{{ route('partner.settings.users.index') }}" 
                        class="group inline-flex items-center px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 bg-white hover:bg-gray-50 border border-gray-300 hover:border-gray-400 rounded-lg shadow-sm transition-all duration-200">
                         <svg class="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                         </svg>
-                        Back to Settings
+                        Back to Users
                     </a>
                 </div>
                 <div class="text-right">
-                    <h1 class="text-2xl font-bold text-gray-900">Create New User</h1>
-                    <p class="text-sm text-gray-600 mt-1">Add a new user to your organization</p>
+                    <h1 class="text-2xl font-bold text-gray-900">Create New Student User</h1>
+                    <p class="text-sm text-gray-600 mt-1">Add a new student user to your organization</p>
                 </div>
             </div>
         </div>
@@ -47,7 +47,11 @@
             <form id="createUserForm" action="{{ route('partner.settings.users.store') }}" method="POST" class="divide-y divide-gray-200">
                 @csrf
                 
-                <!-- Step 1: Role Selection -->
+                <!-- Hidden field for role ID (student role hardcoded) -->
+                <input type="hidden" name="role_id" value="3">
+                <input type="hidden" name="user_type" value="student">
+                
+                <!-- Step 1: Select Student -->
                 <div class="p-6 sm:p-8">
                     <div class="flex items-center mb-6">
                         <div class="flex-shrink-0">
@@ -56,44 +60,27 @@
                             </div>
                         </div>
                         <div class="ml-4">
-                            <h2 class="text-lg font-semibold text-gray-900">Select User Role</h2>
-                            <p class="text-sm text-gray-600">Choose the role and permissions for this user</p>
+                            <h2 class="text-lg font-semibold text-gray-900">Select Student</h2>
+                            <p class="text-sm text-gray-600">Choose the student to create an account for</p>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <!-- Role Selection -->
+                    <div class="grid grid-cols-1 gap-6">
+                        <!-- Student Selection -->
                         <div>
-                            <label for="role_id" class="block text-sm font-medium text-gray-700 mb-2">
-                                User Role <span class="text-red-500">*</span>
+                            <label for="student_id" class="block text-sm font-medium text-gray-700 mb-2">
+                                Select Student <span class="text-red-500">*</span>
                             </label>
                             <div class="relative">
-                                <select name="role_id" id="role_id" required
+                                <select name="student_id" id="student_id" required
                                         class="block w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200 bg-white">
-                                    <option value="">Select a role</option>
-                                    @foreach($roles as $role)
-                                        @php
-                                            $roleName = strtolower($role->name);
-                                            
-                                            $isStudent = str_contains($roleName, 'student');
-                                            
-                                            if ($isStudent) {
-                                                $userType = 'student';
-                                                $icon = '🎓';
-                                            } else {
-
-                                                $userType = 'other';
-                                                $icon = '👤';
-                                            }
-                                            
-                                            $displayName = $role->display_name ?? ucfirst(str_replace('_', ' ', $role->name));
-                                        @endphp
-                                        
-                                        <option value="{{ $role->id }}" 
-                                                data-name="{{ $role->name }}" 
-                                                data-user-type="{{ $userType }}"
-                                                data-icon="{{ $icon }}">
-                                            {{ $displayName }}
+                                    <option value="">Select a student</option>
+                                    @foreach($students as $student)
+                                        <option value="{{ $student->id }}" 
+                                                data-name="{{ $student->full_name }}"
+                                                data-email="{{ $student->email ?? 'N/A' }}"
+                                                data-phone="{{ $student->phone ?? 'N/A' }}">
+                                            {{ $student->full_name }} ({{ $student->student_id ?? 'No ID' }})
                                         </option>
                                     @endforeach
                                 </select>
@@ -104,66 +91,10 @@
                                 </div>
                             </div>
                         </div>
-
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Quick Select Existing Record
-                            </label>
-                            
-
-
-                            <!-- Student Quick Select -->
-                            <div class="flex items-center space-x-4">
-                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Quick Student Selection</h3>
-                            </div>
-                            <div id="studentQuickSelect" class="hidden">
-                                <select id="quick_student_select" class="block w-full px-3 py-3 text-sm border border-blue-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
-                                    <option value="">-- Select existing student --</option>
-                                    @forelse($students as $student)
-                                        <option value="{{ $student->id }}"
-                                                data-name="{{ $student->full_name_en ?? $student->full_name_bn }}"
-                                                data-email="{{ $student->email }}"
-                                                data-phone="{{ $student->mobile }}"
-                                                data-student-data="{{ json_encode($student->toArray()) }}">
-                                            {{ $student->full_name_en ?? $student->full_name_bn }}
-                                            @if($student->student_id) ({{ $student->student_id }}) @endif
-                                            @if($student->user_id) - ⚠️ Has account @endif
-                                        </option>
-                                    @empty
-                                        <option value="" disabled>No students found</option>
-                                    @endforelse
-                                </select>
-                                <button type="button" id="quick_populate_student_btn" class="px-4 py-3 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                                    Populate Student Data
-                                </button>
-                            </div>
-
-
-                        </div>
-                    </div>
-                    
-                    <!-- Role Type Indicator -->
-                    <div id="roleTypeIndicator" class="mt-6 hidden">
-                        <div class="flex items-center space-x-2 p-3 rounded-lg border">
-                            <div id="roleIcon" class="text-2xl"></div>
-                            <div>
-                                <div id="roleTypeName" class="text-sm font-medium text-gray-900"></div>
-                                <div id="roleTypeDescription" class="text-xs text-gray-500"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Hidden field to store user type -->
-                    <input type="hidden" name="user_type" id="user_type" value="">
-                    
-                    <!-- Debug: Show current user type (remove in production) -->
-                    <div id="debugUserType" class="mt-2 text-xs text-gray-500">
-                        <strong>Debug - Current user type:</strong> <span id="debugUserTypeValue" class="font-mono bg-yellow-100 px-2 py-1 rounded font-bold">[Not set yet]</span>
                     </div>
                 </div>
 
-                <!-- Step 2: Basic Information -->
+                <!-- Step 2: Account Information -->
                 <div class="p-6 sm:p-8">
                     <div class="flex items-center mb-6">
                         <div class="flex-shrink-0">
@@ -172,84 +103,45 @@
                             </div>
                         </div>
                         <div class="ml-4">
-                            <h2 class="text-lg font-semibold text-gray-900">Basic Information</h2>
-                            <p class="text-sm text-gray-600">Enter the user's basic details</p>
+                            <h2 class="text-lg font-semibold text-gray-900">Account Information</h2>
+                            <p class="text-sm text-gray-600">Set up login credentials for the student</p>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Full Name -->
-                        <div class="relative">
-                            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
-                                Full Name <span class="text-red-500">*</span>
-                                <span id="name_lock_indicator" class="hidden ml-2 text-xs text-green-600 font-medium">
-                                    <svg class="w-3 h-3 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
-                                    </svg>
-                                    Auto-populated
-                                </span>
+                        <!-- Display Name -->
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Student Name
                             </label>
-                            <div class="relative">
-                                <input type="text" name="name" id="name" required
-                                       class="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
-                                       placeholder="Enter full name">
-                                <button type="button" id="name_unlock_btn" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600" title="Unlock field for editing">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path>
-                                    </svg>
-                                </button>
+                            <div id="display_name" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg shadow-sm text-gray-700">
+                                Select a student above
                             </div>
                         </div>
 
                         <!-- Email -->
-                        <div class="relative">
-                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                                Email Address <span class="text-red-500">*</span>
-                                <span id="email_lock_indicator" class="hidden ml-2 text-xs text-green-600 font-medium">
-                                    <svg class="w-3 h-3 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
-                                    </svg>
-                                    Auto-populated
-                                </span>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Email Address
                             </label>
-                            <div class="relative">
-                                <input type="email" name="email" id="email" required
-                                       class="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
-                                       placeholder="Enter email address">
-                                <button type="button" id="email_unlock_btn" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600" title="Unlock field for editing">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path>
-                                    </svg>
-                                </button>
+                            <div id="display_email" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg shadow-sm text-gray-700">
+                                Select a student above
                             </div>
                         </div>
 
-                        <!-- Phone, Password, Confirm Password - 3 Column Grid -->
+                        <!-- Phone -->
                         <div class="md:col-span-2">
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <!-- Phone Number -->
-                                <div class="relative">
-                                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
-                                        Phone Number <span class="text-red-500">*</span>
-                                        <span id="phone_lock_indicator" class="hidden ml-2 text-xs text-green-600 font-medium">
-                                            <svg class="w-3 h-3 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"></path>
-                                            </svg>
-                                            Auto-populated
-                                        </span>
-                                    </label>
-                                    <div class="relative">
-                                        <input type="tel" name="phone" id="phone" required
-                                               class="block w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
-                                               placeholder="Enter phone number">
-                                        <button type="button" id="phone_unlock_btn" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600" title="Unlock field for editing">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
-                                
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Phone Number
+                            </label>
+                            <div id="display_phone" class="block w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg shadow-sm text-gray-700">
+                                Select a student above
+                            </div>
+                        </div>
+
+                        <!-- Password, Confirm Password - 2 Column Grid -->
+                        <div class="md:col-span-2">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <!-- Password -->
                                 <div>
                                     <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
@@ -271,24 +163,6 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <!-- Auto-populated Data Controls -->
-                    <div id="autoPopulatedControls" class="hidden mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-2">
-                                <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                                </svg>
-                                <span class="text-sm font-medium text-green-800">Data auto-populated from existing record</span>
-                            </div>
-                            <button type="button" id="clearAutoPopulatedBtn" class="px-3 py-1 text-xs font-medium text-red-600 bg-white border border-red-300 rounded hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200">
-                                Clear & Edit Manually
-                            </button>
-                        </div>
-                        <p class="mt-2 text-xs text-green-700">
-                            Fields are locked to prevent accidental changes. Click the unlock button next to each field or use "Clear & Edit Manually" to modify the data.
-                        </p>
                     </div>
                 </div>
 
@@ -332,199 +206,74 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Script loaded and DOM ready!');
     
     const form = document.getElementById('createUserForm');
-    const userTypeInputs = document.querySelectorAll('input[name="user_type"]');
+    const studentSelect = document.getElementById('student_id');
     const submitBtn = document.getElementById('submitBtn');
     const submitText = document.getElementById('submitText');
     const submitIcon = document.getElementById('submitIcon');
     const loadingOverlay = document.getElementById('loadingOverlay');
     const resetBtn = document.getElementById('resetBtn');
+    
+    // Display elements
+    const displayName = document.getElementById('display_name');
+    const displayEmail = document.getElementById('display_email');
+    const displayPhone = document.getElementById('display_phone');
 
-    // Handle role selection changes
-    const roleSelect = document.getElementById('role_id');
-    const userTypeField = document.getElementById('user_type');
-    const roleTypeIndicator = document.getElementById('roleTypeIndicator');
-    
-    console.log('Elements found:', {
-        roleSelect: roleSelect ? 'YES' : 'NO',
-        userTypeField: userTypeField ? 'YES' : 'NO',
-        form: form ? 'YES' : 'NO'
-    });
-    const roleIcon = document.getElementById('roleIcon');
-    const roleTypeName = document.getElementById('roleTypeName');
-    const roleTypeDescription = document.getElementById('roleTypeDescription');
-    const debugUserType = document.getElementById('debugUserType');
-    const debugUserTypeValue = document.getElementById('debugUserTypeValue');
-    
-    function handleRoleChange() {
-        console.log('=== handleRoleChange called ===');
-        const selectedOption = roleSelect.options[roleSelect.selectedIndex];
+    // Handle student selection changes
+    function handleStudentChange() {
+        console.log('=== handleStudentChange called ===');
+        const selectedOption = studentSelect.options[studentSelect.selectedIndex];
         console.log('Selected option:', selectedOption);
         console.log('Selected value:', selectedOption.value);
         
         if (selectedOption.value && selectedOption.value !== '') {
-            const userType = selectedOption.getAttribute('data-user-type');
-            const icon = selectedOption.getAttribute('data-icon');
-            const roleName = selectedOption.getAttribute('data-name');
+            const name = selectedOption.getAttribute('data-name');
+            const email = selectedOption.getAttribute('data-email');
+            const phone = selectedOption.getAttribute('data-phone');
             
-            console.log('Data attributes:', {
-                userType: userType,
-                icon: icon,
-                roleName: roleName
-            });
+            console.log('Student data:', { name, email, phone });
             
-            // CRITICAL: Set user type immediately
-            let finalUserType = userType;
-            
-            if (!finalUserType) {
-                // Fallback: determine user type from role name
-                const nameToCheck = (roleName || selectedOption.textContent).toLowerCase();
-                console.log('Checking role name:', nameToCheck);
-                
-                if (nameToCheck.includes('student')) {
-                    finalUserType = 'student';
-                } else {
-
-                    finalUserType = 'other';
-                }
-                console.log('Fallback user type detected:', finalUserType);
-            }
-            
-            // SET THE USER TYPE FIELD (hidden)
-            userTypeField.value = finalUserType;
-
-
-            const debugVisibleText = (selectedOption.textContent || '').toLowerCase();
-            const debugIsStudent = debugVisibleText.includes('student');
-            const debugType = debugIsStudent ? 'student' : 'other';
-            debugUserType.classList.remove('hidden');
-            debugUserTypeValue.textContent = debugType;
-            
-            console.log('✓✓✓ User type field NOW set to:', userTypeField.value);
-            console.log('✓✓✓ Debug display NOW shows:', debugUserTypeValue.textContent);
-            
-            // Show role type indicator
-            roleTypeIndicator.classList.remove('hidden');
-            roleIcon.textContent = icon || '👤';
-            roleTypeName.textContent = roleName || selectedOption.textContent.trim();
-            
-            // Set description based on user type
-            let description = '';
-            
-            if (finalUserType === 'student') {
-                description = 'Can access learning materials, take exams, and view results';
-                roleTypeIndicator.querySelector('.border').className = 'flex items-center space-x-2 p-3 rounded-lg border border-purple-200 bg-purple-50';
-            } else {
-                description = 'Standard system user with basic permissions';
-                roleTypeIndicator.querySelector('.border').className = 'flex items-center space-x-2 p-3 rounded-lg border border-blue-200 bg-blue-50';
-            }
-            roleTypeDescription.textContent = description;
-            
-
-            // Show relevant section based on detected user type
-            console.log('Final user type:', finalUserType);
-            
-            // Handle quick selection visibility
-            const studentQuickSelect = document.getElementById('studentQuickSelect');
-            const noQuickSelect = document.getElementById('noQuickSelect');
-            
-            // Hide all quick selects first
-            studentQuickSelect.classList.add('hidden');
-            noQuickSelect.classList.add('hidden');
-            
-            const visibleText = (selectedOption.textContent || '').toLowerCase();
-            const isStudentRole = visibleText.includes('student');
-
-            if (isStudentRole) {
-                console.log('Student role selected - showing quick select only');
-                studentQuickSelect.classList.remove('hidden');
-            } else {
-                console.log('Other role selected - clearing any auto-populated data and showing info message');
-                noQuickSelect.classList.remove('hidden');
-    
-                if (typeof clearAllAutoPopulatedData === 'function') {
-                    clearAllAutoPopulatedData();
-                }
-            }
+            // Populate display fields
+            displayName.textContent = name || 'N/A';
+            displayEmail.textContent = email || 'N/A';
+            displayPhone.textContent = phone || 'N/A';
         } else {
-            // Hide indicator and sections if no role selected
-            roleTypeIndicator.classList.add('hidden');
-            debugUserType.classList.add('hidden');
-            userTypeField.value = '';
-            console.log('No role selected, user type cleared');
+            // Clear fields if no student selected
+            displayName.textContent = 'Select a student above';
+            displayEmail.textContent = 'Select a student above';
+            displayPhone.textContent = 'Select a student above';
+            console.log('No student selected, fields cleared');
         }
     }
     
-    roleSelect.addEventListener('change', function() {
-        console.log('Role changed to:', roleSelect.value);
-        handleRoleChange();
+    studentSelect.addEventListener('change', function() {
+        console.log('Student changed to:', studentSelect.value);
+        handleStudentChange();
     });
     
     // Initialize on page load if there's a selected value
-    if (roleSelect.value) {
-        console.log('Initial role value:', roleSelect.value);
-        handleRoleChange();
+    if (studentSelect.value) {
+        console.log('Initial student value:', studentSelect.value);
+        handleStudentChange();
     }
     
-    // Also trigger on any interaction
-    roleSelect.addEventListener('click', function() {
-        console.log('Role select clicked');
-    });
-
     // Form submission
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         
         console.log('Form submit triggered');
         
-        // Ensure a role is selected
-        if (!roleSelect.value) {
-            alert('Please select a user role');
-            roleSelect.focus();
+        // Ensure a student is selected
+        if (!studentSelect.value) {
+            alert('Please select a student');
+            studentSelect.focus();
             return false;
         }
-        
-        // CRITICAL: Ensure user_type is ALWAYS set before submission
-        if (roleSelect.value) {
-            const selectedOption = roleSelect.options[roleSelect.selectedIndex];
-            const userType = selectedOption.getAttribute('data-user-type');
-            
-            if (userType) {
-                userTypeField.value = userType;
-                console.log('✓ User type set to:', userType);
-            } else {
-                // Fallback: detect from role name
-                const roleName = (selectedOption.getAttribute('data-name') || selectedOption.textContent).toLowerCase();
-                let detectedType = '';
-                
-                if (roleName.includes('student')) {
-                    detectedType = 'student';
-                } else {
-
-                    detectedType = 'other';
-                }
-                
-                userTypeField.value = detectedType;
-                console.log('✓ User type detected and set to:', detectedType);
-            }
-        }
-        
         
         // Debug: Log form data before submission
         const formData = new FormData(form);
         console.log('Form data being submitted:');
         for (let [key, value] of formData.entries()) {
             console.log(key + ': ' + value);
-        }
-        
-        // Validate required fields
-        if (!roleSelect.value) {
-            showNotification('Please select a user role', 'error');
-            return;
-        }
-        
-        if (!userTypeField.value) {
-            showNotification('User type could not be determined. Please try selecting the role again.', 'error');
-            return;
         }
         
         // Show loading state
@@ -540,23 +289,45 @@ document.addEventListener('DOMContentLoaded', function() {
             body: formData,
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
-                'Accept': 'application/json'
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            // If response is not JSON, handle as error
+            if (!response.headers.get('content-type') || !response.headers.get('content-type').includes('application/json')) {
+                throw new Error('Server returned an invalid response');
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
                 showNotification('User created successfully!', 'success');
                 setTimeout(() => {
-                    window.location.href = '{{ route("partner.settings.index") }}';
+                    window.location.href = data.redirect || '{{ route("partner.settings.index") }}';
                 }, 1500);
             } else {
-                throw new Error(data.message || 'Failed to create user');
+                // Handle validation errors
+                if (data.errors) {
+                    let errorMessages = [];
+                    for (let field in data.errors) {
+                        errorMessages = errorMessages.concat(data.errors[field]);
+                    }
+                    showNotification(errorMessages.join('\n'), 'error');
+                } else {
+                    showNotification(data.message || 'Failed to create user', 'error');
+                }
+                
+                // Reset button state
+                submitBtn.disabled = false;
+                submitText.textContent = 'Create User';
+                submitIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>';
+                loadingOverlay.classList.add('hidden');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            showNotification(error.message || 'An error occurred while creating the user', 'error');
+            showNotification('An unexpected error occurred while creating the user. Please try again.', 'error');
             
             // Reset button state
             submitBtn.disabled = false;
@@ -570,145 +341,7 @@ document.addEventListener('DOMContentLoaded', function() {
     resetBtn.addEventListener('click', function() {
         if (confirm('Are you sure you want to reset the form? All entered data will be lost.')) {
             form.reset();
-            // Reset to operator as default
-            document.querySelector('input[name="user_type"][value="operator"]').checked = true;
-        }
-    });
-
-    }
-
-    
-    // Handle quick student selection (top section)
-    const quickStudentSelect = document.getElementById('quick_student_select');
-    const quickPopulateStudentBtn = document.getElementById('quick_populate_student_btn');
-    
-    if (quickStudentSelect && quickPopulateStudentBtn) {
-        quickStudentSelect.addEventListener('change', function() {
-            quickPopulateStudentBtn.disabled = !this.value;
-        });
-        
-        quickPopulateStudentBtn.addEventListener('click', function() {
-            const selectedOption = quickStudentSelect.options[quickStudentSelect.selectedIndex];
-            if (selectedOption.value) {
-                populateStudentData(selectedOption);
-            }
-        });
-    }
-
-    // Field locking functionality
-    function lockField(fieldId) {
-        const field = document.getElementById(fieldId);
-        const lockIndicator = document.getElementById(fieldId + '_lock_indicator');
-        const unlockBtn = document.getElementById(fieldId + '_unlock_btn');
-        
-        if (field && lockIndicator && unlockBtn) {
-            field.readOnly = true;
-            field.classList.add('bg-gray-50', 'text-gray-600', 'cursor-not-allowed');
-            field.classList.remove('focus:ring-2', 'focus:ring-blue-500', 'focus:border-blue-500');
-            lockIndicator.classList.remove('hidden');
-            unlockBtn.classList.remove('hidden');
-        }
-    }
-    
-    function unlockField(fieldId) {
-        const field = document.getElementById(fieldId);
-        const lockIndicator = document.getElementById(fieldId + '_lock_indicator');
-        const unlockBtn = document.getElementById(fieldId + '_unlock_btn');
-        
-        if (field && lockIndicator && unlockBtn) {
-            field.readOnly = false;
-            field.classList.remove('bg-gray-50', 'text-gray-600', 'cursor-not-allowed');
-            field.classList.add('focus:ring-2', 'focus:ring-blue-500', 'focus:border-blue-500');
-            lockIndicator.classList.add('hidden');
-            unlockBtn.classList.add('hidden');
-        }
-    }
-    
-    function showAutoPopulatedControls() {
-        document.getElementById('autoPopulatedControls').classList.remove('hidden');
-    }
-    
-    function hideAutoPopulatedControls() {
-        document.getElementById('autoPopulatedControls').classList.add('hidden');
-    }
-    
-    function clearAllAutoPopulatedData() {
-        // Unlock and clear all fields
-        ['name', 'email', 'phone'].forEach(fieldId => {
-            unlockField(fieldId);
-            document.getElementById(fieldId).value = '';
-        });
-        
-
-        document.querySelectorAll('input[name="student_id"]').forEach(field => field.remove());
-        
-        // Hide controls
-        hideAutoPopulatedControls();
-        
-        // Reset quick selects
-        const quickStudentSelect = document.getElementById('quick_student_select');
-        if (quickStudentSelect) quickStudentSelect.value = '';
-        
-        showNotification('Auto-populated data cleared. You can now edit fields manually.', 'info');
-    }
-
-
-    // Reusable function to populate student data
-    function populateStudentData(selectedOption) {
-        try {
-            const studentData = JSON.parse(selectedOption.getAttribute('data-student-data'));
-            const studentId = selectedOption.value;
-            
-            // Populate main form fields
-            document.getElementById('name').value = studentData.full_name || '';
-            document.getElementById('email').value = studentData.email || '';
-            document.getElementById('phone').value = studentData.phone || '';
-            
-            // Lock the populated fields
-            lockField('name');
-            lockField('email');
-            lockField('phone');
-            
-            // Show auto-populated controls
-            showAutoPopulatedControls();
-            
-            // Remove existing student hidden fields
-            document.querySelectorAll('input[name^="student"]').forEach(field => field.remove());
-            
-            // Create hidden field with existing student ID (for linking, not creating new record)
-            const studentIdField = document.createElement('input');
-            studentIdField.type = 'hidden';
-            studentIdField.name = 'student_id';
-            studentIdField.value = studentId;
-            form.appendChild(studentIdField);
-            
-            showNotification('Student data populated successfully! Fields are locked to prevent accidental changes.', 'success');
-        } catch (error) {
-            console.error('Error parsing student data:', error);
-            showNotification('Error populating student data', 'error');
-        }
-    }
-    
-    // Event listeners for unlock buttons
-    document.getElementById('name_unlock_btn').addEventListener('click', function() {
-        unlockField('name');
-        showNotification('Name field unlocked for editing', 'info');
-    });
-    
-    document.getElementById('email_unlock_btn').addEventListener('click', function() {
-        unlockField('email');
-        showNotification('Email field unlocked for editing', 'info');
-    });
-    
-    document.getElementById('phone_unlock_btn').addEventListener('click', function() {
-        unlockField('phone');
-        showNotification('Phone field unlocked for editing', 'info');
-    });
-    
-    // Event listener for clear auto-populated data button
-    document.getElementById('clearAutoPopulatedBtn').addEventListener('click', function() {
-        if (confirm('Are you sure you want to clear all auto-populated data? This will unlock all fields for manual editing.')) {
-            clearAllAutoPopulatedData();
+            handleStudentChange(); // Reset the display fields
         }
     });
 

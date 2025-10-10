@@ -86,38 +86,20 @@ class UserManagementController extends Controller
         $partner = $this->getPartner();
         $partnerId = $this->getPartnerId();
 
-        // Filter roles: only default roles and roles created by this partner (or legacy without creator),
-        // and only roles at or below current user's privilege level
-        $roles = EnhancedRole::active()
-            ->where('level', '>=', $currentUserLevel)
-            ->where(function ($query) use ($partner) {
-                $query->where('is_default', 1)
-                      ->orWhere('created_by', $partner->id)
-                      ->orWhereNull('created_by');
-            })
-            ->orderBy('level')
-            ->get();
-
-
-        // Get students from current partner
+        // Get students from current partner who don't have user accounts yet
         $students = \App\Models\Student::where('partner_id', $partnerId)
+            ->whereNull('user_id') // Only students without user accounts
             ->orderBy('full_name')
-            ->get()
-            ->sortBy(function($student) {
-                return $student->id ? 1 : 0; // NULL user_id comes first
-            });
+            ->get();
 
         // Debug: Log the counts
         \Log::info('UserManagementController create method', [
             'partner_id' => $partnerId,
             'students_count' => $students->count(),
-            'students_without_users' => $students->whereNull('id')->count()
+            'students_without_users' => $students->whereNull('user_id')->count()
         ]);
 
-        // Get the default role (first role in the filtered list)
-        $defaultRole = $roles->first();
-
-        return view('partner.settings.create-user', compact('roles', 'students', 'defaultRole'));
+        return view('partner.settings.create-user', compact('students'));
     }
 
     /**
@@ -125,217 +107,142 @@ class UserManagementController extends Controller
      */
     public function store(Request $request)
     {
-        // Base validation rules
-        $rules = [
-            'name' => 'required|string|max:255',
-'email' => 'required|string|email|max:255|unique:ac_users,email',
-            'phone' => 'required|string|max:20|unique:ac_users,phone',
-            'password' => 'required|string|min:8|confirmed',
-            'role_id' => 'required|exists:ac_roles,id',
-'user_type' => 'required|in:student,other',
-        ];
-        
-        // Ensure role_id is properly cast to integer
-        if ($request->has('role_id')) {
-            $request->merge(['role_id' => (int)$request->role_id]);
-        }
-
-
-        // Add student-specific validation rules
-        if ($request->user_type === 'student') {
-            if ($request->has('student_id')) {
-                // Linking to existing student - only validate student_id
-                $rules['student_id'] = 'required|exists:students,id';
-            } else {
-                // Creating new student - validate all student fields
-                $rules = array_merge($rules, [
-                    'student.full_name' => 'required|string|max:255',
-                    'student.date_of_birth' => 'required|date',
-                    'student.gender' => 'required|in:male,female,other',
-                    'student.address' => 'nullable|string|max:500',
-                    'student.city' => 'nullable|string|max:100',
-                    'student.school_college' => 'nullable|string|max:255',
-                    'student.class_grade' => 'nullable|string|max:50',
-                    'student.father_name' => 'nullable|string|max:255',
-                    'student.mother_name' => 'nullable|string|max:255',
-                    'student.blood_group' => 'nullable|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
-                    'student.religion' => 'nullable|in:Islam,Hinduism,Christianity,Buddhism',
-'student.default_role' => 'nullable|exists:ac_roles,name',
-                ]);
-            }
-        }
-
-        // Ensure role_id is properly cast to integer
-        $request->merge(['role_id' => (int)$request->role_id]);
-        
-        $validated = $request->validate($rules);
-        
-        // Log the validated data for debugging
-        \Log::info('Creating user with validated data:', [
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'role_id' => $validated['role_id'],
-            'role_id_type' => gettype($validated['role_id']),
-            'user_type' => $validated['user_type']
-        ]);
-
-        DB::beginTransaction();
-
         try {
-            // Log the incoming request data for debugging
-            \Log::info('User creation request data:', [
-                'validated' => $validated,
-                'request_all' => $request->all()
+            // Validate the request
+            $validated = $request->validate([
+                'student_id' => 'required|exists:students,id',
+                'password' => 'required|string|min:8|confirmed',
+                'role_id' => 'required|exists:ac_roles,id',
+                'user_type' => 'required|in:student,other',
+            ], [
+                'student_id.required' => 'Please select a student.',
+                'student_id.exists' => 'The selected student is invalid.',
+                'password.required' => 'Password is required.',
+                'password.min' => 'Password must be at least 8 characters.',
+                'password.confirmed' => 'Password confirmation does not match.',
+                'role_id.required' => 'Role is required.',
+                'role_id.exists' => 'The selected role is invalid.',
+                'user_type.required' => 'User type is required.',
+                'user_type.in' => 'Invalid user type selected.',
             ]);
             
-            // Get the role with error handling
-            $roleId = (int)$validated['role_id'];
-            
-            // Log the role ID and its type
-            \Log::info('Role ID and type:', [
-                'role_id' => $roleId,
-                'role_id_type' => gettype($roleId),
-                'role_id_value' => $roleId
+            // Log the validated data for debugging
+            \Log::info('Creating user with validated data:', [
+                'student_id' => $validated['student_id'],
+                'role_id' => $validated['role_id'],
+                'user_type' => $validated['user_type']
             ]);
-            
-            $selectedRole = EnhancedRole::find($roleId);
-            
-            if (!$selectedRole) {
-                throw new \Exception("Role with ID {$roleId} not found");
-            }
-            
-            // Log role information with detailed type information
-            \Log::info('Using role:', [
-                'id' => $selectedRole->id,
-                'id_type' => gettype($selectedRole->id),
-                'name' => $selectedRole->name,
-                'name_type' => gettype($selectedRole->name),
-                'role_object' => $selectedRole->toArray()
-            ]);
-            
-            // Create the user
-            $user = new EnhancedUser();
-            $user->name = $validated['name'];
-            $user->email = $validated['email'];
-            $user->phone = $validated['phone'];
-            $user->password = Hash::make($validated['password']);
-            $user->role_id = $roleId;
-            // Safely get role name with type checking
-            $roleName = $selectedRole->name;
-            if (!is_string($roleName)) {
-                if (is_object($roleName) && method_exists($roleName, '__toString')) {
-                    $roleName = (string)$roleName;
-                } else {
-                    $roleName = 'user';
-                    \Log::warning('Invalid role name type, defaulting to "user"', [
-                        'role_name' => $roleName,
-                        'role_name_type' => gettype($roleName)
-                    ]);
+
+            DB::beginTransaction();
+
+            try {
+                // Get the student
+                $student = \App\Models\Student::findOrFail($validated['student_id']);
+                
+                // Check if student already has a user account
+                if ($student->user_id) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'This student already has a user account.'
+                    ], 422);
                 }
-            }
-            $user->role = strtolower($roleName);
-            $user->partner_id = $this->getPartnerId();
-            $user->status = 'active';
-            $user->email_verified_at = now();
-            $user->created_by = auth()->id();
-            $user->updated_by = auth()->id();
-            
-            // Save the user with error handling
-            if (!$user->save()) {
-                throw new \Exception('Failed to save user');
-            }
-
-        // Role assignment disabled - skip pivot assignment
-        // try {
-        //     $user->assignRoleWithMetadata($selectedRole, auth()->id());
-        // } catch (\Throwable $e) {
-        //     \Log::error('Failed to assign role to user pivot', [
-        //         'user_id' => $user->id,
-        //         'role_id' => $roleId,
-        //         'error' => $e->getMessage()
-        //     ]);
-        // }
-            
-            // Ensure the user is properly loaded with the role
-            $user->load('roles');
-            
-            \Log::info('User created successfully');
-            
-
-            // Create student record if user_type is student
-            if ($validated['user_type'] === 'student' && isset($validated['student'])) {
-                $studentData = $validated['student'];
-                $studentData['partner_id'] = $this->getPartnerId();
-                $studentData['created_by'] = auth()->id();
-                $studentData['status'] = 'active';
-                $studentData['enable_login'] = 'y';
-                $studentData['enroll_date'] = now();
                 
-                // Generate student ID
-                $lastStudent = \App\Models\Student::where('partner_id', $this->getPartnerId())
-                    ->whereNotNull('student_id')
-                    ->orderBy('id', 'desc')
-                    ->first();
-                
-                $nextNumber = $lastStudent ? (int)substr($lastStudent->student_id, -3) + 1 : 1;
-                $studentData['student_id'] = 'STU-' . date('Y') . '-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
-
-                \App\Models\Student::create($studentData);
-            }
-
-            // Link to existing student if specified
-            if ($validated['user_type'] === 'student' && $request->has('student_id') && !isset($validated['student'])) {
-                $student = \App\Models\Student::where('id', $request->student_id)
-                    ->where('partner_id', $this->getPartnerId())
-                    ->first();
-
-                if ($student) {
-                    $student->save();
+                // Check if email already exists
+                if ($student->email && EnhancedUser::where('email', $student->email)->exists()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'A user with this email address already exists.'
+                    ], 422);
                 }
-            }
-
-
-            // Create student record if user_type is student
-            if ($validated['user_type'] === 'student' && isset($validated['student'])) {
-                $studentData = $validated['student'];
-    
-                $studentData['partner_id'] = $this->getPartnerId();
-                $studentData['created_by'] = auth()->id();
-                $studentData['status'] = 'active';
-                $studentData['enable_login'] = 'y';
-                $studentData['enroll_date'] = now();
                 
-                // Generate student ID
-                $lastStudent = \App\Models\Student::where('partner_id', $this->getPartnerId())
-                    ->whereNotNull('student_id')
-                    ->orderBy('id', 'desc')
-                    ->first();
+                // Get the role (hardcoded to student role)
+                $roleId = 3; // Student role ID
+                $selectedRole = EnhancedRole::find($roleId);
                 
-                $nextNumber = $lastStudent ? (int)substr($lastStudent->student_id, -3) + 1 : 1;
-                $studentData['student_id'] = 'STU-' . date('Y') . '-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+                if (!$selectedRole) {
+                    throw new \Exception("Role with ID {$roleId} not found");
+                }
+                
+                // Create the user
+                $user = new EnhancedUser();
+                $user->name = $student->full_name;
+                $user->email = $student->email ?? strtolower(str_replace(' ', '.', $student->full_name)) . '@example.com';
+                $user->phone = $student->phone ?? '';
+                $user->password = Hash::make($validated['password']);
+                $user->role_id = $roleId;
+                $user->role = 'student';
+                $user->partner_id = $this->getPartnerId();
+                $user->status = 'active';
+                $user->email_verified_at = now();
+                $user->created_by = auth()->id();
+                $user->updated_by = auth()->id();
+                
+                // Save the user with error handling
+                if (!$user->save()) {
+                    throw new \Exception('Failed to save user');
+                }
+                
+                // Update the student record to link to the user
+                $student->user_id = $user->id;
+                $student->save();
 
-                \App\Models\Student::create($studentData);
+                DB::commit();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'User created successfully',
+                    'redirect' => route('partner.settings.index')
+                ]);
+
+            } catch (\Exception $e) {
+                DB::rollBack();
+                
+                // Handle specific database errors
+                if (strpos($e->getMessage(), 'Duplicate entry') !== false) {
+                    if (strpos($e->getMessage(), 'users_email_unique') !== false) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'A user with this email address already exists.'
+                        ], 422);
+                    }
+                    if (strpos($e->getMessage(), 'users_phone_unique') !== false) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'A user with this phone number already exists.'
+                        ], 422);
+                    }
+                }
+                
+                \Log::error('Error creating user: ' . $e->getMessage(), [
+                    'exception' => $e,
+                    'trace' => $e->getTraceAsString()
+                ]);
+                
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error creating user: ' . $e->getMessage()
+                ], 500);
             }
-
-            DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'User created successfully',
-                'redirect' => route('partner.settings.users.index')
-            ]);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            \Log::error('Error creating user: ' . $e->getMessage(), [
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Validation error creating user: ' . json_encode($e->errors()), [
                 'exception' => $e,
                 'trace' => $e->getTraceAsString()
             ]);
             
             return response()->json([
                 'success' => false,
-                'message' => 'Error creating user: ' . $e->getMessage(),
-                'user_data' => isset($user) ? $user->toArray() : null
+                'message' => 'Please check the form for errors.',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            \Log::error('Unexpected error creating user: ' . $e->getMessage(), [
+                'exception' => $e,
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'An unexpected error occurred while creating the user. Please try again.'
             ], 500);
         }
     }
