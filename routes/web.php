@@ -433,7 +433,7 @@ Route::middleware('auth')->group(function () {
 Route::prefix('partner')->name('partner.')->middleware(['auth'])->group(function () {
 // Permission management removed
         Route::get('/', [PartnerDashboardController::class, 'index'])->name('dashboard');
-        Route::get('/dashboard', [PartnerDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard', [PartnerDashboardController::class, 'index'])->name('dashboard.main');
         
         // Partner Management
         
@@ -611,10 +611,10 @@ Route::prefix('partner')->name('partner.')->middleware(['auth'])->group(function
         Route::put('profile/user', [\App\Http\Controllers\ProfileController::class, 'updateUser'])->name('profile.update-user');
         
         // Additional profile routes for better naming consistency
-        Route::put('profile/update', [\App\Http\Controllers\ProfileController::class, 'updatePartner'])->name('profile.update');
+        Route::put('profile/update', [\App\Http\Controllers\ProfileController::class, 'updatePartner'])->name('profile.update.main');
         
         // Partner profile update route (alias for consistency)
-        Route::put('profile/update-partner', [\App\Http\Controllers\ProfileController::class, 'updatePartner'])->name('profile.updatePartner');
+        Route::put('profile/update-partner', [\App\Http\Controllers\ProfileController::class, 'updatePartner'])->name('profile.updatePartner.main');
         
         // Partner Settings
         Route::get('settings', function () {
@@ -795,7 +795,7 @@ Route::prefix('partner')->name('partner.')->middleware(['auth'])->group(function
     // Student Routes
 Route::prefix('student')->name('student.')->middleware(['auth'])->group(function () {
         Route::get('/', [StudentDashboardController::class, 'index'])->name('dashboard');
-        Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard.main');
         
         // Student Profile
         Route::resource('profile', StudentController::class)->only(['show', 'edit', 'update']);
