@@ -10,7 +10,7 @@ class CheckRole
 {
     /**
      * Handle an incoming request.
-     * Permission checking disabled - allows all authenticated users.
+     * Check if the authenticated user has one of the required roles.
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
@@ -20,7 +20,24 @@ class CheckRole
             return redirect()->route('login');
         }
 
-        // Permission checking disabled - allow all authenticated users
-        return $next($request);
+        $user = auth()->user();
+        
+        // If no specific roles are required, allow access
+        if (empty($roles)) {
+            return $next($request);
+        }
+        
+        // Check if user has any of the required roles
+        if (in_array($user->role, $roles)) {
+            return $next($request);
+        }
+        
+        // Redirect based on user role
+        if ($user->role === 'student') {
+            return redirect()->route('student.dashboard')->with('error', 'Access denied. Insufficient permissions.');
+        }
+        
+        // Default redirect for other roles
+        return redirect()->route('partner.dashboard')->with('error', 'Access denied. Insufficient permissions.');
     }
 }

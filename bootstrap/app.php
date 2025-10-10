@@ -23,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
         
         $middleware->alias([
             'role' => \App\Http\Middleware\CheckRole::class,
+            'partner' => \App\Http\Middleware\CheckPartnerRole::class,
             // Permission middleware removed
             // Keep explicit alias if you still want to call Spatie's role for any legacy route
             'spatie_role' => \Spatie\Permission\Middleware\RoleMiddleware::class,

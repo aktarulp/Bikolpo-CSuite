@@ -54,6 +54,14 @@ Route::get('/test-email', function () {
 
 // Landing page route - show the welcome page first
 Route::get('/', function () {
+    if (auth()->check()) {
+        $user = auth()->user();
+        if ($user->role === 'student') {
+            return redirect()->route('student.dashboard');
+        } else {
+            return redirect()->route('partner.dashboard');
+        }
+    }
     return view('welcome');
 })->name('landing');
 
@@ -385,7 +393,7 @@ Route::middleware('auth')->group(function () {
     // Partner Area Access Route
     Route::get('/partner-area', function () {
         return redirect()->route('partner.dashboard');
-    })->name('partner.area');
+    })->name('partner.area')->middleware(['auth', 'partner']);
     
     // Test analytics route outside partner middleware
     Route::get('/test-analytics-simple', function() {
@@ -404,6 +412,17 @@ Route::middleware('auth')->group(function () {
             return 'Error: ' . $e->getMessage();
         }
     })->name('test.analytics.simple');
+    
+    // Test route to check middleware
+    Route::get('/test-middleware', function() {
+        $user = auth()->user();
+        return response()->json([
+            'user_id' => $user->id,
+            'user_role' => $user->role,
+            'user_role_id' => $user->role_id,
+            'middleware_working' => true
+        ]);
+    })->name('test.middleware')->middleware(['auth', 'partner']);
     
     // Analytics routes outside partner middleware for testing
     Route::prefix('analytics')->name('analytics.')->group(function () {
@@ -424,13 +443,8 @@ Route::middleware('auth')->group(function () {
         return redirect()->route('student.dashboard');
     })->name('student.area');
 
-    // Redirect root URL to the partner dashboard
-    // Route::get('/', function () {
-    //     return redirect()->route('partner.dashboard');
-    // });
-
 // Partner Routes (Coaching Center)
-Route::prefix('partner')->name('partner.')->middleware(['auth'])->group(function () {
+Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->group(function () {
 // Permission management removed
         Route::get('/', [PartnerDashboardController::class, 'index'])->name('dashboard');
         Route::get('/dashboard', [PartnerDashboardController::class, 'index'])->name('dashboard.main');
