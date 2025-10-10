@@ -96,7 +96,7 @@
                         <div class="relative">
                             <input id="csv_file" name="csv_file" type="file" 
                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 file:cursor-pointer cursor-pointer border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200" 
-                                   accept=".csv,.txt" required>
+                                   accept=".csv,.txt,text/csv,text/plain" required>
                         </div>
                         <p class="mt-2 text-xs text-gray-500">CSV or TXT files up to 2MB</p>
                         @error('csv_file')

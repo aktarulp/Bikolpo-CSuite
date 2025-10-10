@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Models\Subject;
 use App\Models\Topic;
 use App\Models\QuestionType;
+use App\Rules\CsvFile;
 use App\Traits\HasPartnerContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -1428,18 +1429,42 @@ class QuestionController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
+    /**
+     * Handle bulk upload of questions from CSV file.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function bulkUpload(Request $request)
     {
         $request->validate([
-            'csv_file' => 'required|file|mimes:csv,txt|max:2048',
+            'csv_file' => ['required', 'file', new \App\Rules\CsvFile()],
         ]);
 
         try {
             $file = $request->file('csv_file');
             $partnerId = $this->getPartnerId();
             
+            \Log::info('Starting bulk upload', [
+                'file_name' => $file->getClientOriginalName(),
+                'file_size' => $file->getSize(),
+                'partner_id' => $partnerId
+            ]);
+            
             $handle = fopen($file->getPathname(), 'r');
             $headers = fgetcsv($handle);
+            
+            // Handle BOM (Byte Order Mark) in CSV files
+            if (!empty($headers)) {
+                // Remove BOM from first header if present
+                $bom = "\xEF\xBB\xBF";
+                $headers[0] = str_replace($bom, '', $headers[0]);
+                
+                // Also trim whitespace from all headers
+                $headers = array_map('trim', $headers);
+            }
+            
+            \Log::info('CSV headers', ['headers' => $headers]);
             
             // Simplified required headers - only essential question data
             $requiredHeaders = ['question_text', 'option_a', 'option_b', 'option_c', 'option_d', 'correct_answer'];
@@ -1447,6 +1472,7 @@ class QuestionController extends Controller
             
             if (!empty($missingHeaders)) {
                 fclose($handle);
+                \Log::error('Missing required headers', ['missing' => $missingHeaders]);
                 return redirect()->back()->withErrors(['csv_file' => 'Missing required headers: ' . implode(', ', $missingHeaders)]);
             }
 
@@ -1462,6 +1488,8 @@ class QuestionController extends Controller
                     // Map CSV data to array
                     $rowData = array_combine($headers, $data);
                     
+                    \Log::info("Processing row {$rowNumber}", ['row_data' => $rowData]);
+                    
                     // Get MCQ question type
                     $mcqType = QuestionType::where('q_type_code', 'MCQ')->first();
                     if (!$mcqType) {
@@ -1470,12 +1498,33 @@ class QuestionController extends Controller
                         continue;
                     }
 
-                    // Validate correct answer format
+                    // Handle correct answer - it can be either:
+                    // 1. The letter 'a', 'b', 'c', or 'd' (indicating which option is correct)
+                    // 2. The actual answer text (we need to find which option matches)
                     $correctAnswer = strtolower(trim($rowData['correct_answer']));
-                    if (!in_array($correctAnswer, ['a', 'b', 'c', 'd'])) {
-                        $errors[] = "Row {$rowNumber}: Correct answer must be 'a', 'b', 'c', or 'd'";
-                        $errorCount++;
-                        continue;
+                    $validOptions = ['a', 'b', 'c', 'd'];
+                    
+                    // If correct_answer is not one of the valid options, try to match it with the options
+                    if (!in_array($correctAnswer, $validOptions)) {
+                        $optionA = trim($rowData['option_a'] ?? '');
+                        $optionB = trim($rowData['option_b'] ?? '');
+                        $optionC = trim($rowData['option_c'] ?? '');
+                        $optionD = trim($rowData['option_d'] ?? '');
+                        
+                        // Try to match the correct answer with one of the options
+                        if (strcasecmp($correctAnswer, $optionA) === 0) {
+                            $correctAnswer = 'a';
+                        } elseif (strcasecmp($correctAnswer, $optionB) === 0) {
+                            $correctAnswer = 'b';
+                        } elseif (strcasecmp($correctAnswer, $optionC) === 0) {
+                            $correctAnswer = 'c';
+                        } elseif (strcasecmp($correctAnswer, $optionD) === 0) {
+                            $correctAnswer = 'd';
+                        } else {
+                            $errors[] = "Row {$rowNumber}: Correct answer '{$rowData['correct_answer']}' does not match any of the options";
+                            $errorCount++;
+                            continue;
+                        }
                     }
 
                     // Create question as draft (no course/subject/topic assigned yet)
@@ -1502,12 +1551,22 @@ class QuestionController extends Controller
 
                     $successCount++;
                 } catch (\Exception $e) {
+                    \Log::error("Error processing row {$rowNumber}", [
+                        'error' => $e->getMessage(),
+                        'trace' => $e->getTraceAsString()
+                    ]);
                     $errors[] = "Row {$rowNumber}: " . $e->getMessage();
                     $errorCount++;
                 }
             }
 
             fclose($handle);
+
+            \Log::info('Bulk upload completed', [
+                'success_count' => $successCount,
+                'error_count' => $errorCount,
+                'errors' => $errors
+            ]);
 
             $message = "Successfully imported {$successCount} questions as drafts.";
             if ($errorCount > 0) {
@@ -1522,6 +1581,10 @@ class QuestionController extends Controller
             return redirect()->route('partner.questions.drafts')->with('success', $message);
 
         } catch (\Exception $e) {
+            \Log::error('Error processing bulk upload file', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
             return redirect()->back()->withErrors(['csv_file' => 'Error processing file: ' . $e->getMessage()]);
         }
     }
