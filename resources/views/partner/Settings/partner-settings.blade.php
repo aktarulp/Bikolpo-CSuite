@@ -120,21 +120,8 @@
                         
                         // Initialize the role group if it doesn't exist
                         if (!isset($usersByRoleArray[$roleDisplayName])) {
-                            // Try to get the role level if available
-                            $roleLevel = 999; // Default level
-                            if ($user->role) {
-                                $roleLevel = $user->role->level ?? 999;
-                            } else if ($user->role_id) {
-                                // Try to get role level directly
-                                $role = \App\Models\EnhancedRole::find($user->role_id);
-                                if ($role) {
-                                    $roleLevel = $role->level ?? 999;
-                                }
-                            }
-                            
                             $usersByRoleArray[$roleDisplayName] = [
                                 'users' => collect(),
-                                'level' => $roleLevel,
                                 'name' => $roleDisplayName
                             ];
                         }
@@ -143,8 +130,8 @@
                         $usersByRoleArray[$roleDisplayName]['users']->push($user);
                     }
                     
-                    // Convert to collection and sort by level
-                    $sortedRoles = collect($usersByRoleArray)->sortBy('level');
+                    // Convert to collection
+                    $sortedRoles = collect($usersByRoleArray);
                 @endphp
                 
                 <!-- Desktop Table -->
@@ -169,9 +156,6 @@
                                             <h4 class="text-sm font-semibold text-gray-700">{{ $roleData['name'] }}</h4>
                                             <span class="ml-2 px-2 py-0.5 text-xs font-medium rounded-full bg-gray-200 text-gray-700">
                                                 {{ $roleData['users']->count() }} users
-                                            </span>
-                                            <span class="ml-2 px-2 py-0.5 text-xs font-medium rounded-full {{ $roleData['level'] <= 2 ? 'bg-purple-100 text-purple-800' : ($roleData['level'] <= 4 ? 'bg-indigo-100 text-indigo-800' : 'bg-gray-100 text-gray-800') }}">
-                                                Level {{ $roleData['level'] }}
                                             </span>
                                         </div>
                                     </td>
@@ -233,9 +217,6 @@
                                 <div class="flex space-x-1">
                                     <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-gray-200 text-gray-700">
                                         {{ $roleData['users']->count() }} users
-                                    </span>
-                                    <span class="px-2 py-0.5 text-xs font-medium rounded-full {{ $roleData['level'] <= 2 ? 'bg-purple-100 text-purple-800' : ($roleData['level'] <= 4 ? 'bg-indigo-100 text-indigo-800' : 'bg-gray-100 text-gray-800') }}">
-                                        L{{ $roleData['level'] }}
                                     </span>
                                 </div>
                             </div>
