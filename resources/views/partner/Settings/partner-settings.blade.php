@@ -5,20 +5,20 @@
 @section('content')
 <div class="min-h-screen bg-gray-50/50 p-4 sm:p-6">
     <!-- Page Header -->
-    <div class="mb-6">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 sm:p-6">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div class="mb-4">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-3 sm:p-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-800 mb-1">
+                    <h1 class="text-xl font-bold text-gray-800 mb-1">
                         Partner Settings
                     </h1>
-                    <p class="text-gray-500 text-sm">
+                    <p class="text-gray-500 text-xs">
                         Manage your organization settings, users, and permissions
                     </p>
                 </div>
-                <div class="flex flex-wrap gap-2">
-                    <a href="{{ route('partner.settings.backup-restore') }}" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm font-medium rounded-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-green-500/20 focus:ring-offset-1 transition-all active:scale-[0.98]">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex flex-wrap gap-1">
+                    <a href="{{ route('partner.settings.backup-restore') }}" class="inline-flex items-center px-3 py-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xs font-medium rounded-md hover:opacity-90 focus:outline-none focus:ring-1 focus:ring-green-500/20 focus:ring-offset-1 transition-all active:scale-[0.98]">
+                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12"></path>
                         </svg>
                         Backup/Restore
@@ -29,76 +29,76 @@
     </div>
 
     <!-- Stats Section -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-3">
             <div class="flex items-center">
-                <div class="p-3 rounded-lg bg-blue-50 text-blue-600">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="p-2 rounded-lg bg-blue-50 text-blue-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                     </svg>
                 </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-500">Total Users</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $stats['total_users'] ?? 0 }}</p>
+                <div class="ml-3">
+                    <p class="text-xs font-medium text-gray-500">Total Users</p>
+                    <p class="text-lg font-semibold text-gray-900">{{ $stats['total_users'] ?? 0 }}</p>
                 </div>
             </div>
         </div>
         
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-3">
             <div class="flex items-center">
-                <div class="p-3 rounded-lg bg-green-50 text-green-600">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="p-2 rounded-lg bg-green-50 text-green-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                 </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-500">Active Users</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $stats['active_users'] ?? 0 }}</p>
+                <div class="ml-3">
+                    <p class="text-xs font-medium text-gray-500">Active Users</p>
+                    <p class="text-lg font-semibold text-gray-900">{{ $stats['active_users'] ?? 0 }}</p>
                 </div>
             </div>
         </div>
         
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-3">
             <div class="flex items-center">
-                <div class="p-3 rounded-lg bg-yellow-50 text-yellow-600">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="p-2 rounded-lg bg-yellow-50 text-yellow-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                 </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-500">Pending Users</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $stats['pending_users'] ?? 0 }}</p>
+                <div class="ml-3">
+                    <p class="text-xs font-medium text-gray-500">Pending Users</p>
+                    <p class="text-lg font-semibold text-gray-900">{{ $stats['pending_users'] ?? 0 }}</p>
                 </div>
             </div>
         </div>
         
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-3">
             <div class="flex items-center">
-                <div class="p-3 rounded-lg bg-red-50 text-red-600">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="p-2 rounded-lg bg-red-50 text-red-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
                     </svg>
                 </div>
-                <div class="ml-4">
-                    <p class="text-sm font-medium text-gray-500">Suspended Users</p>
-                    <p class="text-2xl font-semibold text-gray-900">{{ $stats['suspended_users'] ?? 0 }}</p>
+                <div class="ml-3">
+                    <p class="text-xs font-medium text-gray-500">Suspended Users</p>
+                    <p class="text-lg font-semibold text-gray-900">{{ $stats['suspended_users'] ?? 0 }}</p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- User Management Section -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6 overflow-hidden">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-100 mb-4 overflow-hidden">
         <!-- Header -->
-        <div class="px-5 py-4 border-b border-gray-100 bg-gray-50/50">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div class="px-3 py-2 border-b border-gray-100 bg-gray-50/50">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-800">User Management</h3>
-                    <p class="text-sm text-gray-500 mt-0.5">Manage all user accounts and their access</p>
+                    <h3 class="text-base font-semibold text-gray-800">User Management</h3>
+                    <p class="text-xs text-gray-500 mt-0.5">Manage all user accounts and their access</p>
                 </div>
                 <a href="{{ route('partner.settings.users.create') }}" 
-                   class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-medium rounded-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-1 transition-all active:scale-[0.98]">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   class="inline-flex items-center px-3 py-1.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-medium rounded-md hover:opacity-90 focus:outline-none focus:ring-1 focus:ring-blue-500/20 focus:ring-offset-1 transition-all active:scale-[0.98]">
+                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                     </svg>
                     Create User
