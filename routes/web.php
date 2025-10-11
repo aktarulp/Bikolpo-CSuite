@@ -1174,6 +1174,56 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
                     return response()->json(['error' => $e->getMessage()]);
                 }
             })->name('test.available.students');
+            
+            // Test route to check students with user accounts
+            Route::get('test-student-users', function () {
+                try {
+                    // Get authenticated user
+                    $user = auth()->user();
+                    if (!$user) {
+                        return response()->json(['error' => 'Not authenticated']);
+                    }
+                    
+                    // Get partner
+                    $partner = $user->partner;
+                    if (!$partner) {
+                        return response()->json(['error' => 'No partner associated with user']);
+                    }
+                    
+                    // Get students from current partner who don't have user accounts yet
+                    $students = \App\Models\Student::where('partner_id', $partner->id)
+                        ->whereDoesntHave('user')
+                        ->with('user')
+                        ->orderBy('full_name')
+                        ->get();
+                    
+                    $debugInfo = [
+                        'partner_id' => $partner->id,
+                        'partner_name' => $partner->name,
+                        'students_count' => $students->count(),
+                        'students' => []
+                    ];
+                    
+                    foreach ($students as $student) {
+                        $debugInfo['students'][] = [
+                            'id' => $student->id,
+                            'full_name' => $student->full_name,
+                            'user_id' => $student->user_id,
+                            'user_exists' => $student->user ? true : false,
+                            'user_data' => $student->user ? [
+                                'id' => $student->user->id,
+                                'name' => $student->user->name,
+                                'email' => $student->user->email,
+                                'flag' => $student->user->flag
+                            ] : null
+                        ];
+                    }
+                    
+                    return response()->json($debugInfo);
+                } catch (\Exception $e) {
+                    return response()->json(['error' => $e->getMessage()]);
+                }
+            })->name('test.student.users');
         });
 
         // Access Control Routes - Disabled

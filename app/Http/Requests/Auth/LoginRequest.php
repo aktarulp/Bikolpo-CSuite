@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use App\Models\EnhancedUser;
 
 class LoginRequest extends FormRequest
 {
@@ -46,6 +47,7 @@ class LoginRequest extends FormRequest
         $authenticated = false;
         $fieldName = 'email';
         $lastError = null;
+        $user = null;
 
         // Try authentication with multiple methods
         $password = $this->password;
@@ -74,6 +76,7 @@ class LoginRequest extends FormRequest
             
             if (Auth::attempt($credentials, $remember)) {
                 $authenticated = true;
+                $user = Auth::user();
                 if ($this->email === 'opt@gg.com') {
                     \Log::info('LoginRequest: Email authentication SUCCESS for opt@gg.com');
                 }
@@ -90,6 +93,7 @@ class LoginRequest extends FormRequest
             $fieldName = 'phone';
             if (Auth::attempt($credentials, $remember)) {
                 $authenticated = true;
+                $user = Auth::user();
             }
         }
 
@@ -100,6 +104,7 @@ class LoginRequest extends FormRequest
             $fieldName = 'email';
             if (Auth::attempt($credentials, $remember)) {
                 $authenticated = true;
+                $user = Auth::user();
             }
             
             // Then try as phone if email failed
@@ -108,6 +113,7 @@ class LoginRequest extends FormRequest
                 $fieldName = 'phone';
                 if (Auth::attempt($credentials, $remember)) {
                     $authenticated = true;
+                    $user = Auth::user();
                 }
             }
         }
@@ -118,6 +124,20 @@ class LoginRequest extends FormRequest
             throw ValidationException::withMessages([
                 $fieldName => trans('auth.failed'),
             ]);
+        }
+
+        // Check if user is a student and if their account is active
+        if ($user && $user->role_id == 3) { // Student role ID is 3, not 6
+            // Check only the user's flag column in ac_users table
+            if ($user->flag !== EnhancedUser::FLAG_ACTIVE) {
+                // Log out the user
+                Auth::logout();
+                
+                // Throw validation exception with custom message
+                throw ValidationException::withMessages([
+                    'login_credential' => 'Your student account is currently inactive. Please contact your teacher or administrator for assistance.',
+                ]);
+            }
         }
 
         // Debug: Log successful authentication

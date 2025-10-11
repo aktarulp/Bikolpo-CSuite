@@ -108,16 +108,43 @@ class UserManagementController extends Controller
         $partnerId = $this->getPartnerId();
 
         // Get students from current partner who don't have user accounts yet
+        // (students not present in ac_users table)
         $students = \App\Models\Student::where('partner_id', $partnerId)
-            ->whereNull('user_id') // Only students without user accounts
+            ->where(function($query) {
+                // Students where user_id is null or points to non-existent user
+                $query->whereNull('user_id')
+                      ->orWhere(function($subquery) {
+                          $subquery->whereNotNull('user_id')
+                                   ->whereNotExists(function($existsQuery) {
+                                       $existsQuery->select(DB::raw(1))
+                                                   ->from('ac_users')
+                                                   ->whereColumn('ac_users.id', 'students.user_id');
+                                   });
+                      })
+                      // Also check that no user has this student_id
+                      ->whereNotExists(function($subquery) {
+                          $subquery->select(DB::raw(1))
+                                   ->from('ac_users')
+                                   ->whereColumn('ac_users.student_id', 'students.id');
+                      });
+            })
             ->orderBy('full_name')
             ->get();
 
-        // Debug: Log the counts
-        \Log::info('UserManagementController create method', [
+        // Debug: Log detailed information
+        \Log::info('UserManagementController create method - Student query details', [
             'partner_id' => $partnerId,
-            'students_count' => $students->count(),
-            'students_without_users' => $students->whereNull('user_id')->count()
+            'total_students_in_partner' => \App\Models\Student::where('partner_id', $partnerId)->count(),
+            'students_without_users_count' => $students->count(),
+            'students_without_users_ids' => $students->pluck('id')->toArray(),
+            'students_without_users_details' => $students->map(function($student) {
+                return [
+                    'id' => $student->id,
+                    'full_name' => $student->full_name,
+                    'user_id' => $student->user_id,
+                    'user_exists' => $student->user_id ? EnhancedUser::find($student->user_id) ? true : false : null
+                ];
+            })->toArray()
         ]);
 
         return view('partner.settings.create-user', compact('students'));
@@ -160,14 +187,45 @@ class UserManagementController extends Controller
                 // Get the student
                 $student = \App\Models\Student::findOrFail($validated['student_id']);
                 
+                // Debug: Log student information
+                \Log::info('Student information in store method', [
+                    'student_id' => $student->id,
+                    'full_name' => $student->full_name,
+                    'user_id' => $student->user_id,
+                    'user_exists' => $student->user ? true : false,
+                    'user_data' => $student->user ? [
+                        'id' => $student->user->id,
+                        'name' => $student->user->name,
+                        'email' => $student->user->email
+                    ] : null
+                ]);
+                
                 // Check if student already has a user account
-                if ($student->user_id) {
+                // First check if student has user_id set AND that user actually exists
+                if ($student->user_id && EnhancedUser::find($student->user_id)) {
+                    \Log::info('Student already has user account (user_id set and user exists)', [
+                        'student_id' => $student->id,
+                        'user_id' => $student->user_id
+                    ]);
                     return response()->json([
                         'success' => false,
                         'message' => 'This student already has a user account.'
                     ], 422);
                 }
                 
+                // Also check if there's a user with this student_id
+                $existingUser = EnhancedUser::where('student_id', $student->id)->first();
+                if ($existingUser) {
+                    \Log::info('Student already has user account (student_id set on user)', [
+                        'student_id' => $student->id,
+                        'user_id' => $existingUser->id
+                    ]);
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'This student already has a user account.'
+                    ], 422);
+                }
+
                 // Check if email already exists
                 if ($student->email && EnhancedUser::where('email', $student->email)->exists()) {
                     return response()->json([
@@ -197,6 +255,7 @@ class UserManagementController extends Controller
                 $user->email_verified_at = now();
                 $user->created_by = auth()->id();
                 $user->updated_by = auth()->id();
+                $user->student_id = $student->id; // Set the student_id on the user
                 
                 // Save the user with error handling
                 if (!$user->save()) {

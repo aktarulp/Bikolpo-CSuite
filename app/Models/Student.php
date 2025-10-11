@@ -91,7 +91,7 @@ class Student extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(EnhancedUser::class, 'user_id', 'id');
     }
 
     /**
@@ -174,7 +174,12 @@ class Student extends Model
 
         $now = now();
         $startDate = $this->course->start_date ?? $this->enroll_date;
-        $endDate = $this->course->end_date;
+        $endDate = $this->course->end_date ?? now()->addYear(); // Default to one year from now if no end date
+
+        // Ensure both dates are valid before calling between()
+        if (!$startDate || !$endDate) {
+            return false;
+        }
 
         return $now->between($startDate, $endDate);
     }
