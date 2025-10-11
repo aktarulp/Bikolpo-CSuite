@@ -139,22 +139,22 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
-                                <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                                <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-100">
                             @foreach($sortedRoles as $roleData)
                                 <!-- Role Header -->
                                 <tr class="bg-gray-50">
-                                    <td colspan="6" class="px-5 py-2">
+                                    <td colspan="6" class="px-3 py-1">
                                         <div class="flex items-center">
-                                            <h4 class="text-sm font-semibold text-gray-700">{{ $roleData['name'] }}</h4>
-                                            <span class="ml-2 px-2 py-0.5 text-xs font-medium rounded-full bg-gray-200 text-gray-700">
+                                            <h4 class="text-xs font-semibold text-gray-700">{{ $roleData['name'] }}</h4>
+                                            <span class="ml-2 px-1.5 py-0.5 text-xs font-medium rounded-full bg-gray-200 text-gray-700">
                                                 {{ $roleData['users']->count() }} users
                                             </span>
                                         </div>
@@ -164,37 +164,37 @@
                                 <!-- Users in this role -->
                                 @foreach($roleData['users'] as $user)
                                     <tr class="hover:bg-gray-50/50 transition-colors">
-                                        <td class="px-5 py-4 whitespace-nowrap">
+                                        <td class="px-3 py-2 whitespace-nowrap">
                                             <div class="flex items-center">
-                                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 font-medium">
+                                                <div class="flex-shrink-0 h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 font-medium text-xs">
                                                     {{ substr($user->name, 0, 1) }}
                                                 </div>
-                                                <div class="ml-4">
-                                                    <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
+                                                <div class="ml-2">
+                                                    <div class="text-xs font-medium text-gray-900 truncate max-w-[120px]">{{ $user->name }}</div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="px-5 py-4 whitespace-nowrap">
-                                            <div class="text-sm text-gray-600">{{ $user->phone ?? 'N/A' }}</div>
+                                        <td class="px-3 py-2 whitespace-nowrap">
+                                            <div class="text-xs text-gray-600 truncate max-w-[100px]">{{ $user->phone ?? 'N/A' }}</div>
                                         </td>
-                                        <td class="px-5 py-4 whitespace-nowrap">
-                                            <div class="text-sm text-gray-600">{{ $user->email }}</div>
+                                        <td class="px-3 py-2 whitespace-nowrap">
+                                            <div class="text-xs text-gray-600 truncate max-w-[150px]">{{ $user->email }}</div>
                                         </td>
-                                        <td class="px-5 py-4 whitespace-nowrap">
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $user->status == 'active' ? 'bg-green-100 text-green-800' : ($user->status == 'inactive' ? 'bg-gray-100 text-gray-800' : 'bg-red-100 text-red-800') }}">
-                                                <span class="w-1.5 h-1.5 rounded-full {{ $user->status == 'active' ? 'bg-green-500' : ($user->status == 'inactive' ? 'bg-gray-500' : 'bg-red-500') }} mr-1.5"></span>
+                                        <td class="px-3 py-2 whitespace-nowrap">
+                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium {{ $user->status == 'active' ? 'bg-green-100 text-green-800' : ($user->status == 'inactive' ? 'bg-gray-100 text-gray-800' : 'bg-red-100 text-red-800') }}">
+                                                <span class="w-1 h-1 rounded-full {{ $user->status == 'active' ? 'bg-green-500' : ($user->status == 'inactive' ? 'bg-gray-500' : 'bg-red-500') }} mr-1"></span>
                                                 {{ ucfirst($user->status) }}
                                             </span>
                                         </td>
-                                        <td class="px-5 py-4 whitespace-nowrap">
-                                            <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-50 text-blue-700">
+                                        <td class="px-3 py-2 whitespace-nowrap">
+                                            <span class="px-1.5 py-0.5 text-xs font-medium rounded-full bg-blue-50 text-blue-700 truncate max-w-[100px]">
                                                 {{ $user->getRoleDisplayName() }}
                                             </span>
                                         </td>
-                                        <td class="px-5 py-4 whitespace-nowrap text-sm font-medium">
+                                        <td class="px-3 py-2 whitespace-nowrap text-xs font-medium">
                                             <a href="{{ route('partner.settings.users.show', $user) }}" 
-                                               class="text-blue-600 hover:text-blue-900 p-1 rounded hover:bg-blue-50">
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                               class="text-blue-600 hover:text-blue-900 p-0.5 rounded hover:bg-blue-50">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                                 </svg>
@@ -208,14 +208,14 @@
                 </div>
                 
                 <!-- Mobile Cards -->
-                <div class="sm:hidden space-y-3 p-3">
+                <div class="sm:hidden space-y-2 p-2">
                     @foreach($sortedRoles as $roleData)
                         <!-- Role Header -->
-                        <div class="bg-gray-50 rounded-lg p-3">
+                        <div class="bg-gray-50 rounded-md p-2">
                             <div class="flex items-center justify-between">
-                                <h4 class="text-sm font-semibold text-gray-700">{{ $roleData['name'] }}</h4>
+                                <h4 class="text-xs font-semibold text-gray-700">{{ $roleData['name'] }}</h4>
                                 <div class="flex space-x-1">
-                                    <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-gray-200 text-gray-700">
+                                    <span class="px-1.5 py-0.5 text-xs font-medium rounded-full bg-gray-200 text-gray-700">
                                         {{ $roleData['users']->count() }} users
                                     </span>
                                 </div>
@@ -224,37 +224,37 @@
                         
                         <!-- Users in this role -->
                         @foreach($roleData['users'] as $user)
-                            <div class="bg-white rounded-xl border border-gray-100 p-4 shadow-xs hover:shadow-sm transition-shadow">
+                            <div class="bg-white rounded-lg border border-gray-100 p-3 shadow-xs hover:shadow-sm transition-shadow">
                                 <div class="flex items-start justify-between">
-                                    <div class="flex items-center space-x-3">
-                                        <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-medium text-sm">
+                                    <div class="flex items-center space-x-2">
+                                        <div class="flex-shrink-0 h-8 w-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-medium text-xs">
                                             {{ substr($user->name, 0, 1) }}
                                         </div>
                                         <div>
-                                            <h4 class="text-sm font-medium text-gray-900">{{ $user->name }}</h4>
-                                            <p class="text-xs text-gray-500 mt-0.5">{{ $user->email }}</p>
+                                            <h4 class="text-xs font-medium text-gray-900 truncate max-w-[120px]">{{ $user->name }}</h4>
+                                            <p class="text-xs text-gray-500 truncate max-w-[120px]">{{ $user->email }}</p>
                                         </div>
                                     </div>
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium {{ $user->status == 'active' ? 'bg-green-100 text-green-800' : ($user->status == 'inactive' ? 'bg-gray-100 text-gray-800' : 'bg-red-100 text-red-800') }}">
+                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium {{ $user->status == 'active' ? 'bg-green-100 text-green-800' : ($user->status == 'inactive' ? 'bg-gray-100 text-gray-800' : 'bg-red-100 text-red-800') }}">
                                         {{ ucfirst($user->status) }}
                                     </span>
                                 </div>
-                                <div class="mt-3 grid grid-cols-2 gap-2 text-xs">
+                                <div class="mt-2 grid grid-cols-2 gap-1 text-xs">
                                     <div>
-                                        <p class="text-gray-500">Phone</p>
-                                        <p class="text-gray-900">{{ $user->phone ?? 'N/A' }}</p>
+                                        <p class="text-gray-500 text-xs">Phone</p>
+                                        <p class="text-gray-900 text-xs">{{ $user->phone ?? 'N/A' }}</p>
                                     </div>
                                     <div>
-                                        <p class="text-gray-500">Role</p>
-                                        <p class="text-gray-900">
+                                        <p class="text-gray-500 text-xs">Role</p>
+                                        <p class="text-gray-900 text-xs truncate max-w-[80px]">
                                             {{ $user->getRoleDisplayName() }}
                                         </p>
                                     </div>
                                 </div>
-                                <div class="mt-3 flex items-center justify-between">
+                                <div class="mt-2 flex items-center justify-between">
                                     <a href="{{ route('partner.settings.users.show', $user) }}" 
-                                       class="text-blue-600 hover:text-blue-900 p-1 rounded hover:bg-blue-50">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                       class="text-blue-600 hover:text-blue-900 p-0.5 rounded hover:bg-blue-50">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                         </svg>
