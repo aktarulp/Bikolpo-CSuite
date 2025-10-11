@@ -75,8 +75,57 @@ class EnhancedUser extends Authenticatable
         return $this->belongsTo(Partner::class);
     }
 
+    /**
+     * Get the role assigned to this user.
+     */
+    public function role()
+    {
+        return $this->belongsTo(EnhancedRole::class, 'role_id', 'id');
+    }
 
+    /**
+     * Get the roles assigned to this user (as a collection for compatibility).
+     */
+    public function roles()
+    {
+        // Return a collection containing the single role for compatibility with existing code
+        $role = $this->role;
+        return $role ? collect([$role]) : collect();
+    }
 
+    /**
+     * Get the role name safely.
+     */
+    public function getRoleName()
+    {
+        if ($this->role && is_object($this->role)) {
+            return $this->role->name;
+        }
+        
+        if ($this->role_id) {
+            $role = EnhancedRole::find($this->role_id);
+            return $role ? $role->name : 'Unknown Role';
+        }
+        
+        return 'No Role';
+    }
+
+    /**
+     * Get the role display name safely.
+     */
+    public function getRoleDisplayName()
+    {
+        if ($this->role && is_object($this->role)) {
+            return $this->role->display_name ?? $this->role->name;
+        }
+        
+        if ($this->role_id) {
+            $role = EnhancedRole::find($this->role_id);
+            return $role ? ($role->display_name ?? $role->name) : 'Unknown Role';
+        }
+        
+        return 'No Role';
+    }
 
     // Direct user permissions removed - using role-based permissions only
     // Permissions are now accessed through: user → roles → role_permissions → permissions

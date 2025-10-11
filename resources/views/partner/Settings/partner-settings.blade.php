@@ -28,8 +28,64 @@
         </div>
     </div>
 
-   
-
+    <!-- Stats Section -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+            <div class="flex items-center">
+                <div class="p-3 rounded-lg bg-blue-50 text-blue-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-500">Total Users</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ $stats['total_users'] ?? 0 }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+            <div class="flex items-center">
+                <div class="p-3 rounded-lg bg-green-50 text-green-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-500">Active Users</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ $stats['active_users'] ?? 0 }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+            <div class="flex items-center">
+                <div class="p-3 rounded-lg bg-yellow-50 text-yellow-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-500">Pending Users</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ $stats['pending_users'] ?? 0 }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+            <div class="flex items-center">
+                <div class="p-3 rounded-lg bg-red-50 text-red-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
+                    </svg>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-500">Suspended Users</p>
+                    <p class="text-2xl font-semibold text-gray-900">{{ $stats['suspended_users'] ?? 0 }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- User Management Section -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6 overflow-hidden">
@@ -52,56 +108,116 @@
         
         <!-- Users Content -->
         <div class="p-1">
-            @if($stats['users'] && $stats['users']->isNotEmpty())
+            @if(isset($stats['users']) && $stats['users']->isNotEmpty())
+                <!-- Group users by role hierarchy -->
+                @php
+                    // Group users by role name and sort by role level
+                    // Create a proper array structure instead of trying to modify Collection elements directly
+                    $usersByRoleArray = [];
+                    
+                    foreach ($stats['users'] as $user) {
+                        $roleDisplayName = $user->getRoleDisplayName();
+                        
+                        // Initialize the role group if it doesn't exist
+                        if (!isset($usersByRoleArray[$roleDisplayName])) {
+                            // Try to get the role level if available
+                            $roleLevel = 999; // Default level
+                            if ($user->role) {
+                                $roleLevel = $user->role->level ?? 999;
+                            } else if ($user->role_id) {
+                                // Try to get role level directly
+                                $role = \App\Models\EnhancedRole::find($user->role_id);
+                                if ($role) {
+                                    $roleLevel = $role->level ?? 999;
+                                }
+                            }
+                            
+                            $usersByRoleArray[$roleDisplayName] = [
+                                'users' => collect(),
+                                'level' => $roleLevel,
+                                'name' => $roleDisplayName
+                            ];
+                        }
+                        
+                        // Add user to the role group
+                        $usersByRoleArray[$roleDisplayName]['users']->push($user);
+                    }
+                    
+                    // Convert to collection and sort by level
+                    $sortedRoles = collect($usersByRoleArray)->sortBy('level');
+                @endphp
+                
                 <!-- Desktop Table -->
                 <div class="hidden sm:block overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
                                 <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                                 <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                 <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                                <th class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-100">
-@foreach($stats['users'] as $user)
-                                <tr class="hover:bg-gray-50/50 transition-colors">
-                                    <td class="px-5 py-4 whitespace-nowrap">
+                            @foreach($sortedRoles as $roleData)
+                                <!-- Role Header -->
+                                <tr class="bg-gray-50">
+                                    <td colspan="6" class="px-5 py-2">
                                         <div class="flex items-center">
-                                            <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 font-medium">
-                                                {{ substr($user->name, 0, 1) }}
-                                            </div>
-                                            <div class="ml-4">
-                                                <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
-                                            </div>
+                                            <h4 class="text-sm font-semibold text-gray-700">{{ $roleData['name'] }}</h4>
+                                            <span class="ml-2 px-2 py-0.5 text-xs font-medium rounded-full bg-gray-200 text-gray-700">
+                                                {{ $roleData['users']->count() }} users
+                                            </span>
+                                            <span class="ml-2 px-2 py-0.5 text-xs font-medium rounded-full {{ $roleData['level'] <= 2 ? 'bg-purple-100 text-purple-800' : ($roleData['level'] <= 4 ? 'bg-indigo-100 text-indigo-800' : 'bg-gray-100 text-gray-800') }}">
+                                                Level {{ $roleData['level'] }}
+                                            </span>
                                         </div>
                                     </td>
-                                    <td class="px-5 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-600">{{ $user->email }}</div>
-                                    </td>
-                                    <td class="px-5 py-4 whitespace-nowrap">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $user->status == 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                            <span class="w-1.5 h-1.5 rounded-full {{ $user->status == 'active' ? 'bg-green-500' : 'bg-red-500' }} mr-1.5"></span>
-                                            {{ ucfirst($user->status) }}
-                                        </span>
-                                    </td>
-                                    <td class="px-5 py-4 whitespace-nowrap">
-                                        @if(isset($user->roles) && $user->roles && $user->roles->isNotEmpty())
-                                            <div class="flex flex-wrap gap-1">
-                                                @foreach($user->roles as $role)
-                                                    <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-50 text-blue-700">
-                                                        {{ $role->display_name ?? ucwords(str_replace('_', ' ', $role->name ?? '')) }}
-                                                    </span>
-                                                @endforeach
-                                            </div>
-                                        @else
-                                            <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-600">
-                                                No Role
-                                            </span>
-                                        @endif
-                                    </td>
                                 </tr>
+                                
+                                <!-- Users in this role -->
+                                @foreach($roleData['users'] as $user)
+                                    <tr class="hover:bg-gray-50/50 transition-colors">
+                                        <td class="px-5 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 font-medium">
+                                                    {{ substr($user->name, 0, 1) }}
+                                                </div>
+                                                <div class="ml-4">
+                                                    <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-5 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-600">{{ $user->phone ?? 'N/A' }}</div>
+                                        </td>
+                                        <td class="px-5 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-600">{{ $user->email }}</div>
+                                        </td>
+                                        <td class="px-5 py-4 whitespace-nowrap">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $user->status == 'active' ? 'bg-green-100 text-green-800' : ($user->status == 'inactive' ? 'bg-gray-100 text-gray-800' : 'bg-red-100 text-red-800') }}">
+                                                <span class="w-1.5 h-1.5 rounded-full {{ $user->status == 'active' ? 'bg-green-500' : ($user->status == 'inactive' ? 'bg-gray-500' : 'bg-red-500') }} mr-1.5"></span>
+                                                {{ ucfirst($user->status) }}
+                                            </span>
+                                        </td>
+                                        <td class="px-5 py-4 whitespace-nowrap">
+                                            <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-50 text-blue-700">
+                                                {{ $user->getRoleDisplayName() }}
+                                            </span>
+                                        </td>
+                                        <td class="px-5 py-4 whitespace-nowrap text-sm font-medium">
+                                            <a href="{{ route('partner.settings.users.show', $user) }}" 
+                                               class="text-blue-600 hover:text-blue-900 p-1 rounded hover:bg-blue-50">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                </svg>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
                             @endforeach
                         </tbody>
                     </table>
@@ -109,39 +225,62 @@
                 
                 <!-- Mobile Cards -->
                 <div class="sm:hidden space-y-3 p-3">
-@foreach($stats['users'] as $user)
-                        <div class="bg-white rounded-xl border border-gray-100 p-4 shadow-xs hover:shadow-sm transition-shadow">
-                            <div class="flex items-start justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-medium text-sm">
-                                        {{ substr($user->name, 0, 1) }}
-                                    </div>
-                                    <div>
-                                        <h4 class="text-sm font-medium text-gray-900">{{ $user->name }}</h4>
-                                        <p class="text-xs text-gray-500 mt-0.5">{{ $user->email }}</p>
-                                    </div>
+                    @foreach($sortedRoles as $roleData)
+                        <!-- Role Header -->
+                        <div class="bg-gray-50 rounded-lg p-3">
+                            <div class="flex items-center justify-between">
+                                <h4 class="text-sm font-semibold text-gray-700">{{ $roleData['name'] }}</h4>
+                                <div class="flex space-x-1">
+                                    <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-gray-200 text-gray-700">
+                                        {{ $roleData['users']->count() }} users
+                                    </span>
+                                    <span class="px-2 py-0.5 text-xs font-medium rounded-full {{ $roleData['level'] <= 2 ? 'bg-purple-100 text-purple-800' : ($roleData['level'] <= 4 ? 'bg-indigo-100 text-indigo-800' : 'bg-gray-100 text-gray-800') }}">
+                                        L{{ $roleData['level'] }}
+                                    </span>
                                 </div>
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium {{ $user->status == 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                    {{ ucfirst($user->status) }}
-                                </span>
-                            </div>
-                            <div class="mt-3 flex items-center justify-between">
-                                <div class="flex flex-wrap gap-1">
-                                    @if(isset($user->roles) && $user->roles && $user->roles->isNotEmpty())
-                                        @foreach($user->roles as $role)
-                                            <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-50 text-blue-700">
-                                                {{ $role->display_name ?? ucwords(str_replace('_', ' ', $role->name ?? '')) }}
-                                            </span>
-                                        @endforeach
-                                    @else
-                                        <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-600">
-                                            No Role
-                                        </span>
-                                    @endif
-                                </div>
-                                <a href="#" class="text-xs font-medium text-blue-600 hover:text-blue-800">View</a>
                             </div>
                         </div>
+                        
+                        <!-- Users in this role -->
+                        @foreach($roleData['users'] as $user)
+                            <div class="bg-white rounded-xl border border-gray-100 p-4 shadow-xs hover:shadow-sm transition-shadow">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-medium text-sm">
+                                            {{ substr($user->name, 0, 1) }}
+                                        </div>
+                                        <div>
+                                            <h4 class="text-sm font-medium text-gray-900">{{ $user->name }}</h4>
+                                            <p class="text-xs text-gray-500 mt-0.5">{{ $user->email }}</p>
+                                        </div>
+                                    </div>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium {{ $user->status == 'active' ? 'bg-green-100 text-green-800' : ($user->status == 'inactive' ? 'bg-gray-100 text-gray-800' : 'bg-red-100 text-red-800') }}">
+                                        {{ ucfirst($user->status) }}
+                                    </span>
+                                </div>
+                                <div class="mt-3 grid grid-cols-2 gap-2 text-xs">
+                                    <div>
+                                        <p class="text-gray-500">Phone</p>
+                                        <p class="text-gray-900">{{ $user->phone ?? 'N/A' }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-500">Role</p>
+                                        <p class="text-gray-900">
+                                            {{ $user->getRoleDisplayName() }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="mt-3 flex items-center justify-between">
+                                    <a href="{{ route('partner.settings.users.show', $user) }}" 
+                                       class="text-blue-600 hover:text-blue-900 p-1 rounded hover:bg-blue-50">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        @endforeach
                     @endforeach
                 </div>
             @else
@@ -154,205 +293,17 @@
                     </div>
                     <h3 class="text-lg font-medium text-gray-900 mb-2">No users found</h3>
                     <p class="text-gray-600 mb-4">Users you create will be displayed here.</p>
+                    <a href="{{ route('partner.settings.users.create') }}" 
+                       class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-medium rounded-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-1 transition-all">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        Create User
+                    </a>
                 </div>
             @endif
         </div>
     </div>
 
 </div>
-@endsection
-
-@section('scripts')
-<script>
-// Load total permissions count
-function loadPermissionsCount() {
-    fetch('/api/permissions')
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                document.getElementById('totalPermissionsCount').textContent = data.permissions.length;
-            }
-        })
-        .catch(error => {
-            console.error('Error loading permissions count:', error);
-            if (document.getElementById('totalPermissionsCount')) {
-                document.getElementById('totalPermissionsCount').textContent = 'N/A';
-            }
-        });
-}
-
-                        <td class="py-4 px-6 hidden sm:table-cell">
-                            <p class="text-sm text-gray-900 max-w-xs truncate">${activity.description || ''}</p>
-                        </td>
-                        <td class="py-4 px-6 hidden sm:table-cell">
-                            <code class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-md">${activity.ip_address || 'N/A'}</code>
-                        </td>
-                        <td class="py-4 px-6 whitespace-nowrap">
-                            <p class="text-sm text-gray-900">${formatTimestamp(activity.created_at)}</p>
-                        </td>
-                    </tr>
-                `).join('');
-
-                // Render mobile cards
-                cards.innerHTML = data.activities.slice(0, 10).map(activity => `
-                    <div class="activity-card bg-gray-50 border border-gray-200 rounded-lg p-4">
-                        <div class="flex items-center mb-2">
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gray-400 to-gray-500 flex items-center justify-center mr-3 flex-shrink-0 shadow-sm">
-                                <i class="fas fa-user text-white text-sm"></i>
-                            </div>
-                            <div class="min-w-0">
-                                <p class="text-sm font-medium text-gray-900 truncate">${activity.user_name || 'Unknown User'}</p>
-                                <p class="text-xs text-gray-500 truncate">${activity.user_email || ''}</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between text-xs text-gray-500 mt-2">
-                            <span class="badge ${getActionBadgeColor(activity.action)}">${formatAction(activity.action || '')}</span>
-                            <span class="">${formatTimestamp(activity.created_at)}</span>
-                        </div>
-                        ${activity.description ? `<p class="text-sm text-gray-700 mt-2">${activity.description}</p>` : ''}
-                        ${activity.ip_address ? `<code class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-md inline-block mt-2">${activity.ip_address}</code>` : ''}
-                    </div>
-                `).join('');
-            } else {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="text-center py-12 text-gray-500">
-                            <div class="flex flex-col items-center">
-                                <i class="fas fa-inbox text-3xl text-gray-300 mb-3"></i>
-                                <p class="text-base font-medium text-gray-900">No activity found</p>
-                                <p class="text-sm text-gray-500">There are no recent system activities to display</p>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-                cards.innerHTML = `
-                    <div class="activity-card bg-gray-50 border border-gray-200 rounded-lg p-4">
-                        <div class="flex items-center mb-2">
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gray-400 to-gray-500 flex items-center justify-center mr-3 flex-shrink-0 shadow-sm">
-                                <i class="fas fa-inbox text-white text-sm"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-900">No activity found</p>
-                                <p class="text-xs text-gray-500">There are no recent system activities to display</p>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-        })
-        .catch(error => {
-            console.error('Error loading recent activity:', error);
-            const tbody = document.getElementById('recentActivityTable');
-            const cards = document.getElementById('recentActivityCards');
-            
-            if (tbody) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="text-center py-12 text-gray-500">
-                            <div class="flex flex-col items-center">
-                                <i class="fas fa-exclamation-triangle text-3xl text-gray-300 mb-3"></i>
-                                <p class="text-base font-medium text-gray-900">Unable to load activity</p>
-                                <p class="text-sm text-gray-500">Please check your connection and try again</p>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }
-            
-            if (cards) {
-                cards.innerHTML = `
-                    <div class="activity-card bg-gray-50 border border-gray-200 rounded-lg p-4">
-                        <div class="flex items-center mb-2">
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-400 to-red-500 flex items-center justify-center mr-3 flex-shrink-0 shadow-sm">
-                                <i class="fas fa-exclamation-triangle text-white text-sm"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-900">Unable to load activity</p>
-                                <p class="text-xs text-gray-500">Please check your connection and try again</p>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-        });
-}
-
-// Helper functions
-function getActionBadgeColor(action) {
-    const colors = {
-        'login': 'bg-green-100 text-green-800',
-        'logout': 'bg-gray-100 text-gray-800',
-        'create': 'bg-blue-100 text-blue-800',
-        'update': 'bg-yellow-100 text-yellow-800',
-        'delete': 'bg-red-100 text-red-800',
-        'view': 'bg-purple-100 text-purple-800',
-        'export': 'bg-indigo-100 text-indigo-800',
-        'import': 'bg-pink-100 text-pink-800'
-    };
-    return colors[action?.toLowerCase()] || 'bg-gray-100 text-gray-800';
-}
-
-function formatAction(action) {
-    if (!action) return 'Unknown';
-    return action.charAt(0).toUpperCase() + action.slice(1).replace(/_/g, ' ');
-}
-
-function formatTimestamp(timestamp) {
-    if (!timestamp) return 'N/A';
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diff = now - date;
-    
-    if (diff < 60000) return 'Just now';
-    if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
-    if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
-    if (diff < 604800000) return `${Math.floor(diff / 86400000)}d ago`;
-    
-    return date.toLocaleDateString();
-}
-
-// Refresh all data
-function refreshData() {
-    loadPermissionsCount();
-    loadRecentActivity();
-    
-    // Show toast notification
-    const toast = document.createElement('div');
-    toast.className = 'fixed top-6 right-6 bg-white border border-gray-100 rounded-xl shadow-xl z-50 flex items-center p-4 min-w-[320px] backdrop-blur-sm';
-    toast.style.background = 'linear-gradient(135deg, #ffffff 0%, #fafbfc 100%)';
-    toast.setAttribute('role', 'alert');
-    toast.innerHTML = `
-        <div class="flex items-center">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center mr-3 shadow-sm">
-                <i class="fas fa-check text-white"></i>
-            </div>
-            <div>
-                <p class="text-sm font-medium text-gray-900">Data refreshed</p>
-                <p class="text-xs text-gray-500">Statistics updated successfully</p>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateX(100%)';
-        toast.style.transition = 'all 0.3s ease';
-        setTimeout(() => {
-            toast.remove();
-        }, 300);
-    }, 3000);
-}
-
-// Initialize page
-document.addEventListener('DOMContentLoaded', function() {
-    loadPermissionsCount();
-    loadRecentActivity();
-    
-    // Auto-refresh every 5 minutes
-    setInterval(() => {
-        loadRecentActivity();
-    }, 300000);
-});
-</script>
 @endsection

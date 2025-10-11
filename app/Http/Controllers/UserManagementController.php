@@ -25,7 +25,11 @@ class UserManagementController extends Controller
     {
         // Permission checking disabled
 
-        $users = EnhancedUser::with(['partner', 'roles', 'creator'])
+        // Get current partner ID
+        $partnerId = $this->getPartnerId();
+        
+        $users = EnhancedUser::with(['partner', 'role', 'creator'])
+            ->where('partner_id', $partnerId) // Only show users from current partner
             ->when(request('search'), function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
@@ -37,26 +41,43 @@ class UserManagementController extends Controller
                 $query->where('status', $status);
             })
             ->when(request('role'), function ($query, $role) {
-                $query->whereHas('roles', function ($q) use ($role) {
+                $query->whereHas('role', function ($q) use ($role) {
                     $q->where('name', $role);
                 });
             })
-            ->when(request('partner'), function ($query, $partner) {
-                $query->where('partner_id', $partner);
-            })
             ->orderBy(request('sort_by', 'created_at'), request('sort_order', 'desc'))
-            ->paginate(request('per_page', 10));
+            ->paginate(request('per_page', 15));
+
+        // Ensure roles are properly loaded for all users
+        $users->each(function ($user) {
+            if ($user->role_id && (!$user->role || !is_object($user->role))) {
+                // Try to manually load the role if it's not loaded properly
+                $user->setRelation('role', \App\Models\EnhancedRole::find($user->role_id));
+            }
+        });
+
+        // Debug: Check if users have roles loaded
+        foreach ($users as $user) {
+            \Log::info("User {$user->id} - Name: {$user->name}, Role: " . $user->getRoleName() . ", Role Display: " . $user->getRoleDisplayName());
+        }
+        
+        // Additional debugging
+        \Log::info('Total users loaded: ' . $users->count());
+        foreach ($users as $user) {
+            \Log::info("User {$user->id} - Name: {$user->name}, Role ID: " . ($user->role_id ?? 'null') . ", Role loaded: " . ($user->relationLoaded('role') ? 'yes' : 'no') . ", Role Name: " . $user->getRoleName());
+        }
 
         $roles = EnhancedRole::active()->orderBy('level')->get();
-        $partners = \App\Models\Partner::all();
+        $partners = \App\Models\Partner::where('id', $partnerId)->get(); // Only show current partner
 
         $stats = [
-            'total_users' => EnhancedUser::count(),
-            'active_users' => EnhancedUser::where('status', EnhancedUser::STATUS_ACTIVE)->count(),
-            'inactive_users' => EnhancedUser::where('status', EnhancedUser::STATUS_INACTIVE)->count(),
-            'suspended_users' => EnhancedUser::where('status', EnhancedUser::STATUS_SUSPENDED)->count(),
-            'pending_users' => EnhancedUser::where('status', EnhancedUser::STATUS_PENDING)->count(),
+            'total_users' => EnhancedUser::where('partner_id', $partnerId)->count(), // Only count users from current partner
+            'active_users' => EnhancedUser::where('status', EnhancedUser::STATUS_ACTIVE)->where('partner_id', $partnerId)->count(),
+            'inactive_users' => EnhancedUser::where('status', EnhancedUser::STATUS_INACTIVE)->where('partner_id', $partnerId)->count(),
+            'suspended_users' => EnhancedUser::where('status', EnhancedUser::STATUS_SUSPENDED)->where('partner_id', $partnerId)->count(),
+            'pending_users' => EnhancedUser::where('status', EnhancedUser::STATUS_PENDING)->where('partner_id', $partnerId)->count(),
             'users_by_role' => EnhancedUser::join('ac_roles', 'ac_users.role_id', '=', 'ac_roles.id')
+                ->where('ac_users.partner_id', $partnerId) // Only count users from current partner
                 ->groupBy('ac_roles.name')
                 ->selectRaw('ac_roles.name as role_name, count(*) as count')
                 ->pluck('count', 'role_name')
@@ -253,14 +274,27 @@ class UserManagementController extends Controller
     public function show(EnhancedUser $user)
     {
         // Permission checking disabled
+        
+        // Ensure user belongs to current partner
+        $partnerId = $this->getPartnerId();
+        if ($user->partner_id != $partnerId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found.'
+            ], 404);
+        }
 
-        $user->load(['partner', 'roles', 'permissions', 'creator', 'activities' => function ($query) {
+        $user->load(['partner', 'role', 'permissions', 'creator', 'activities' => function ($query) {
             $query->latest()->take(10);
         }]);
 
+        // Format the user data to match the expected API response
+        $userData = $user->toArray();
+        $userData['roles'] = $user->role ? [$user->role] : [];
+
         return response()->json([
             'success' => true,
-            'user' => $user
+            'user' => $userData
         ]);
     }
 
@@ -270,18 +304,26 @@ class UserManagementController extends Controller
     public function update(Request $request, EnhancedUser $user)
     {
         // Permission checking disabled
+        
+        // Ensure user belongs to current partner
+        $partnerId = $this->getPartnerId();
+        if ($user->partner_id != $partnerId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found.'
+            ], 404);
+        }
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
- 'email' => ['required', 'string', 'email', 'max:255', Rule::unique('ac_users', 'email')->ignore($user->id, 'id')],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('ac_users', 'email')->ignore($user->id, 'id')],
             'phone' => 'nullable|string|max:20',
             'password' => 'nullable|string|min:8|confirmed',
-            'role_ids' => 'required|array|min:1',
-'role_ids.*' => 'exists:ac_roles,id',
+            'role_id' => 'required|exists:ac_roles,id',
             'partner_id' => 'nullable|exists:partners,id',
             'status' => ['required', Rule::in(EnhancedUser::getStatuses())],
             'permissions' => 'nullable|array',
-'permissions.*' => 'exists:ac_modules,id',
+            'permissions.*' => 'exists:ac_modules,id',
         ]);
 
         if ($validator->fails()) {
@@ -300,6 +342,7 @@ class UserManagementController extends Controller
                 'phone' => $request->phone,
                 'partner_id' => $request->partner_id,
                 'status' => $request->status,
+                'role_id' => $request->role_id,
                 'updated_by' => auth()->id(),
             ];
 
@@ -308,12 +351,6 @@ class UserManagementController extends Controller
             }
 
             $user->update($updateData);
-
-            // Role syncing disabled - skip roles sync
-            // $user->roles()->sync($request->role_ids, [
-            //     'assigned_by' => auth()->id(),
-            //     'assigned_at' => now(),
-            // ]);
 
             // Permission syncing disabled - skip permissions sync
             // $user->permissions()->sync($request->permissions ?? [], [
@@ -327,7 +364,7 @@ class UserManagementController extends Controller
                 'description' => 'User account updated',
                 'metadata' => [
                     'updated_by' => auth()->id(),
-                    'roles' => $request->role_ids,
+                    'role_id' => $request->role_id,
                     'permissions' => $request->permissions ?? [],
                     'changed_fields' => array_keys($request->except(['password', 'password_confirmation'])),
                 ],
@@ -337,10 +374,17 @@ class UserManagementController extends Controller
 
             DB::commit();
             
+            // Load the updated user with role
+            $user->load(['role']);
+            
+            // Format the user data to match the expected API response
+            $userData = $user->toArray();
+            $userData['roles'] = $user->role ? [$user->role] : [];
+            
             return response()->json([
                 'success' => true,
                 'message' => 'User updated successfully',
-                'user' => $user->load(['roles', 'permissions'])
+                'user' => $userData
             ]);
             
         } catch (\Exception $e) {
@@ -360,6 +404,15 @@ class UserManagementController extends Controller
     public function destroy(EnhancedUser $user)
     {
         // Permission checking disabled
+        
+        // Ensure user belongs to current partner
+        $partnerId = $this->getPartnerId();
+        if ($user->partner_id != $partnerId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found.'
+            ], 404);
+        }
 
         try {
             DB::beginTransaction();
@@ -373,7 +426,7 @@ class UserManagementController extends Controller
                     'user_data' => [
                         'name' => $user->name,
                         'email' => $user->email,
-                        'roles' => $user->roles->pluck('id')->toArray(),
+                        'roles' => $user->role ? [$user->role->id] : [],
                         'permissions' => $user->permissions->pluck('id')->toArray(),
                     ],
                 ],
@@ -415,10 +468,10 @@ class UserManagementController extends Controller
 
         $validator = Validator::make($request->all(), [
             'user_ids' => 'required|array|min:1',
-'user_ids.*' => 'exists:ac_users,id',
+            'user_ids.*' => 'exists:ac_users,id',
             'action' => 'required|string|in:activate,deactivate,suspend,assign_role,remove_role,assign_permission,remove_permission',
-'role_id' => 'required_if:action,assign_role,remove_role|exists:ac_roles,id',
-'permission_id' => 'required_if:action,assign_permission,remove_permission|exists:ac_modules,id',
+            'role_id' => 'required_if:action,assign_role,remove_role|exists:ac_roles,id',
+            'permission_id' => 'required_if:action,assign_permission,remove_permission|exists:ac_modules,id',
         ]);
 
         if ($validator->fails()) {
@@ -534,8 +587,8 @@ class UserManagementController extends Controller
         $directPermissions = $user->permissions;
         $rolePermissions = collect();
 
-        foreach ($user->roles as $role) {
-            $rolePermissions = $rolePermissions->merge($role->getAllPermissions());
+        if ($user->role) {
+            $rolePermissions = $rolePermissions->merge($user->role->getAllPermissions());
         }
 
         $allPermissions = $directPermissions->merge($rolePermissions)->unique('id');
@@ -557,7 +610,7 @@ class UserManagementController extends Controller
     {
         // Permission checking disabled
 
-        $users = EnhancedUser::with(['partner', 'roles', 'permissions'])
+        $users = EnhancedUser::with(['partner', 'role', 'permissions'])
             ->when($request->search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
@@ -569,7 +622,7 @@ class UserManagementController extends Controller
                 $query->where('status', $status);
             })
             ->when($request->role, function ($query, $role) {
-                $query->whereHas('roles', function ($q) use ($role) {
+                $query->whereHas('role', function ($q) use ($role) {
                     $q->where('name', $role);
                 });
             })
@@ -584,7 +637,7 @@ class UserManagementController extends Controller
                 'Phone' => $user->phone,
                 'Status' => $user->status,
                 'Partner' => $user->partner?->name,
-                'Roles' => $user->roles->pluck('name')->join(', '),
+                'Roles' => $user->role ? $user->role->name : '',
                 'Permissions' => $user->permissions->pluck('name')->join(', '),
                 'Created At' => $user->created_at->format('Y-m-d H:i:s'),
                 'Updated At' => $user->updated_at->format('Y-m-d H:i:s'),
@@ -620,7 +673,7 @@ class UserManagementController extends Controller
                 ->selectRaw('partners.name as partner_name, count(*) as count')
                 ->pluck('count', 'partner_name')
                 ->toArray(),
-            'recent_users' => EnhancedUser::with(['roles'])
+            'recent_users' => EnhancedUser::with(['role'])
                 ->orderBy('created_at', 'desc')
                 ->take(5)
                 ->get(),
