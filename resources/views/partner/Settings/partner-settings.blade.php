@@ -3,7 +3,7 @@
 @section('title', 'BikolpoLive|Partner Settings')
 
 @section('content')
-<div class="min-h-screen bg-gray-50/50 p-4 sm:p-6">
+<div class="min-h-screen bg-gray-50/50 p-3 sm:p-4">
     <!-- Page Header -->
     <div class="mb-4">
         <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-3 sm:p-4">
@@ -181,9 +181,9 @@
                                             <div class="text-xs text-gray-600 truncate max-w-[150px]">{{ $user->email }}</div>
                                         </td>
                                         <td class="px-3 py-2 whitespace-nowrap">
-                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium {{ $user->status == 'active' ? 'bg-green-100 text-green-800' : ($user->status == 'inactive' ? 'bg-gray-100 text-gray-800' : 'bg-red-100 text-red-800') }}">
-                                                <span class="w-1 h-1 rounded-full {{ $user->status == 'active' ? 'bg-green-500' : ($user->status == 'inactive' ? 'bg-gray-500' : 'bg-red-500') }} mr-1"></span>
-                                                {{ ucfirst($user->status) }}
+                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium {{ $user->flag == 'active' ? 'bg-green-100 text-green-800' : ($user->flag == 'inactive' ? 'bg-gray-100 text-gray-800' : 'bg-red-100 text-red-800') }}">
+                                                <span class="w-1 h-1 rounded-full {{ $user->flag == 'active' ? 'bg-green-500' : ($user->flag == 'inactive' ? 'bg-gray-500' : 'bg-red-500') }} mr-1"></span>
+                                                {{ ucfirst($user->flag) }}
                                             </span>
                                         </td>
                                         <td class="px-3 py-2 whitespace-nowrap">
@@ -192,13 +192,40 @@
                                             </span>
                                         </td>
                                         <td class="px-3 py-2 whitespace-nowrap text-xs font-medium">
-                                            <a href="{{ route('partner.settings.users.show', $user) }}" 
-                                               class="text-blue-600 hover:text-blue-900 p-0.5 rounded hover:bg-blue-50">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                </svg>
-                                            </a>
+                                            <div class="relative inline-block text-left">
+                                                <button type="button" 
+                                                        class="text-blue-600 hover:text-blue-900 p-0.5 rounded hover:bg-blue-50 action-dropdown-btn"
+                                                        data-user-id="{{ $user->id }}">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c-.94 1.543.826 3.31 2.37 2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                    </svg>
+                                                </button>
+                                                
+                                                <!-- Dropdown menu -->
+                                                <div class="hidden origin-top-right absolute right-0 mt-1 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none action-dropdown-menu z-10" 
+                                                     data-user-id="{{ $user->id }}">
+                                                    <div class="py-1">
+                                                        <a href="#" 
+                                                           class="user-status-toggle block px-4 py-2 text-xs text-gray-700 hover:bg-gray-100 hover:text-gray-900" 
+                                                           data-user-id="{{ $user->id }}" 
+                                                           data-current-status="{{ $user->flag }}">
+                                                            {{ $user->flag == 'active' ? 'Mark Inactive' : 'Mark Active' }}
+                                                        </a>
+                                                        <a href="#" 
+                                                           class="user-password-reset block px-4 py-2 text-xs text-gray-700 hover:bg-gray-100 hover:text-gray-900" 
+                                                           data-user-id="{{ $user->id }}">
+                                                            Reset Password
+                                                        </a>
+                                                        <a href="#" 
+                                                           class="user-delete block px-4 py-2 text-xs text-red-600 hover:bg-red-50" 
+                                                           data-user-id="{{ $user->id }}"
+                                                           data-user-name="{{ $user->name }}">
+                                                            Delete User
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -235,8 +262,8 @@
                                             <p class="text-xs text-gray-500 truncate max-w-[120px]">{{ $user->email }}</p>
                                         </div>
                                     </div>
-                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium {{ $user->status == 'active' ? 'bg-green-100 text-green-800' : ($user->status == 'inactive' ? 'bg-gray-100 text-gray-800' : 'bg-red-100 text-red-800') }}">
-                                        {{ ucfirst($user->status) }}
+                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium {{ $user->flag == 'active' ? 'bg-green-100 text-green-800' : ($user->flag == 'inactive' ? 'bg-gray-100 text-gray-800' : 'bg-red-100 text-red-800') }}">
+                                        {{ ucfirst($user->flag) }}
                                     </span>
                                 </div>
                                 <div class="mt-2 grid grid-cols-2 gap-1 text-xs">
@@ -252,13 +279,40 @@
                                     </div>
                                 </div>
                                 <div class="mt-2 flex items-center justify-between">
-                                    <a href="{{ route('partner.settings.users.show', $user) }}" 
-                                       class="text-blue-600 hover:text-blue-900 p-0.5 rounded hover:bg-blue-50">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                        </svg>
-                                    </a>
+                                    <div class="relative inline-block text-left">
+                                        <button type="button" 
+                                                class="text-blue-600 hover:text-blue-900 p-0.5 rounded hover:bg-blue-50 action-dropdown-btn"
+                                                data-user-id="{{ $user->id }}">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            </svg>
+                                        </button>
+                                        
+                                        <!-- Dropdown menu -->
+                                        <div class="hidden origin-top-right absolute right-0 mt-1 w-40 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none action-dropdown-menu z-10" 
+                                             data-user-id="{{ $user->id }}">
+                                            <div class="py-1">
+                                                <a href="#" 
+                                                   class="user-status-toggle block px-4 py-2 text-xs text-gray-700 hover:bg-gray-100 hover:text-gray-900" 
+                                                   data-user-id="{{ $user->id }}" 
+                                                   data-current-status="{{ $user->flag }}">
+                                                    {{ $user->flag == 'active' ? 'Mark Inactive' : 'Mark Active' }}
+                                                </a>
+                                                <a href="#" 
+                                                   class="user-password-reset block px-4 py-2 text-xs text-gray-700 hover:bg-gray-100 hover:text-gray-900" 
+                                                   data-user-id="{{ $user->id }}">
+                                                    Reset Password
+                                                </a>
+                                                <a href="#" 
+                                                   class="user-delete block px-4 py-2 text-xs text-red-600 hover:bg-red-50" 
+                                                   data-user-id="{{ $user->id }}"
+                                                   data-user-name="{{ $user->name }}">
+                                                    Delete User
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         @endforeach
@@ -266,17 +320,17 @@
                 </div>
             @else
                 <!-- Empty State -->
-                <div class="text-center py-12">
-                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="text-center py-8">
+                    <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
                         </svg>
                     </div>
-                    <h3 class="text-lg font-medium text-gray-900 mb-2">No users found</h3>
-                    <p class="text-gray-600 mb-4">Users you create will be displayed here.</p>
+                    <h3 class="text-base font-medium text-gray-900 mb-1">No users found</h3>
+                    <p class="text-gray-600 text-sm mb-3">Users you create will be displayed here.</p>
                     <a href="{{ route('partner.settings.users.create') }}" 
-                       class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-medium rounded-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:ring-offset-1 transition-all">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       class="inline-flex items-center px-3 py-1.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-medium rounded-md hover:opacity-90 focus:outline-none focus:ring-1 focus:ring-blue-500/20 focus:ring-offset-1 transition-all">
+                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                         </svg>
                         Create User
@@ -287,4 +341,288 @@
     </div>
 
 </div>
+
+<!-- Password Reset Modal -->
+<div id="passwordResetModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+        <!-- Background overlay -->
+        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+            <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+        </div>
+
+        <!-- Modal container -->
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="passwordResetModalLabel">
+                            Reset User Password
+                        </h3>
+                        <div class="mt-2">
+                            <form id="passwordResetForm">
+                                <input type="hidden" id="resetUserId" name="user_id">
+                                <div class="mb-4">
+                                    <label for="password" class="block text-sm font-medium text-gray-700">New Password</label>
+                                    <div class="mt-1 relative rounded-md shadow-sm">
+                                        <input type="password" name="password" id="password" class="focus:ring-blue-500 focus:border-blue-500 block w-full pr-10 sm:text-sm border-gray-300 rounded-md" required>
+                                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                            <button type="button" class="text-gray-400 hover:text-gray-500 toggle-password-visibility" data-target="password">
+                                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path class="eye-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path class="eye-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                    <path class="eye-closed hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                                    <div class="mt-1 relative rounded-md shadow-sm">
+                                        <input type="password" name="password_confirmation" id="password_confirmation" class="focus:ring-blue-500 focus:border-blue-500 block w-full pr-10 sm:text-sm border-gray-300 rounded-md" required>
+                                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                            <button type="button" class="text-gray-400 hover:text-gray-500 toggle-password-visibility" data-target="password_confirmation">
+                                                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path class="eye-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path class="eye-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                    <path class="eye-closed hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="passwordResetErrors" class="hidden mb-4">
+                                    <div class="text-red-600 text-sm"></div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button type="button" id="confirmPasswordReset" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+                    Reset Password
+                </button>
+                <button type="button" id="cancelPasswordReset" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for dropdown functionality -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle dropdown toggle
+    document.querySelectorAll('.action-dropdown-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            
+            const userId = this.getAttribute('data-user-id');
+            const dropdown = document.querySelector(`.action-dropdown-menu[data-user-id="${userId}"]`);
+            
+            // Hide all other dropdowns
+            document.querySelectorAll('.action-dropdown-menu').forEach(menu => {
+                if (menu !== dropdown) {
+                    menu.classList.add('hidden');
+                }
+            });
+            
+            // Toggle current dropdown
+            if (dropdown) {
+                dropdown.classList.toggle('hidden');
+            }
+        });
+    });
+    
+    // Hide dropdown when clicking elsewhere
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.action-dropdown-btn') && !e.target.closest('.action-dropdown-menu')) {
+            document.querySelectorAll('.action-dropdown-menu').forEach(menu => {
+                menu.classList.add('hidden');
+            });
+        }
+    });
+    
+    // Handle status toggle
+    document.querySelectorAll('.user-status-toggle').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const userId = this.getAttribute('data-user-id');
+            const currentStatus = this.getAttribute('data-current-status');
+            const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+            const actionText = newStatus === 'active' ? 'activate' : 'deactivate';
+            
+            if (confirm(`Are you sure you want to ${actionText} this user?`)) {
+                // Make AJAX call to update user status
+                fetch(`/partner/settings/users/${userId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        status: newStatus
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Show success message
+                        alert(`User successfully ${actionText}d.`);
+                        // Reload the page to reflect changes
+                        location.reload();
+                    } else {
+                        alert('Failed to update user status: ' + (data.message || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while updating user status');
+                });
+            }
+            
+            // Hide dropdown
+            this.closest('.action-dropdown-menu').classList.add('hidden');
+        });
+    });
+    
+    // Handle password reset modal
+    const passwordResetModal = document.getElementById('passwordResetModal');
+    const confirmPasswordReset = document.getElementById('confirmPasswordReset');
+    const cancelPasswordReset = document.getElementById('cancelPasswordReset');
+    const passwordResetForm = document.getElementById('passwordResetForm');
+    const passwordResetErrors = document.getElementById('passwordResetErrors');
+    
+    // Toggle password visibility
+    document.querySelectorAll('.toggle-password-visibility').forEach(button => {
+        button.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-target');
+            const targetInput = document.getElementById(targetId);
+            const eyeOpen = this.querySelector('.eye-open');
+            const eyeClosed = this.querySelector('.eye-closed');
+            
+            if (targetInput.type === 'password') {
+                targetInput.type = 'text';
+                eyeOpen.classList.add('hidden');
+                eyeClosed.classList.remove('hidden');
+            } else {
+                targetInput.type = 'password';
+                eyeOpen.classList.remove('hidden');
+                eyeClosed.classList.add('hidden');
+            }
+        });
+    });
+    
+    // Open password reset modal
+    document.querySelectorAll('.user-password-reset').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const userId = this.getAttribute('data-user-id');
+            document.getElementById('resetUserId').value = userId;
+            passwordResetForm.reset();
+            passwordResetErrors.classList.add('hidden');
+            passwordResetModal.classList.remove('hidden');
+            
+            // Hide dropdown
+            this.closest('.action-dropdown-menu').classList.add('hidden');
+        });
+    });
+    
+    // Cancel password reset
+    cancelPasswordReset.addEventListener('click', function() {
+        passwordResetModal.classList.add('hidden');
+    });
+    
+    // Confirm password reset
+    confirmPasswordReset.addEventListener('click', function() {
+        const userId = document.getElementById('resetUserId').value;
+        const formData = new FormData(passwordResetForm);
+        
+        // Make AJAX call to reset password
+        fetch(`/partner/settings/users/${userId}/reset-password`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({
+                password: formData.get('password'),
+                password_confirmation: formData.get('password_confirmation')
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                passwordResetModal.classList.add('hidden');
+                alert('Password reset successfully.');
+            } else if (data.errors) {
+                // Display validation errors
+                let errorMessages = '';
+                for (const field in data.errors) {
+                    errorMessages += data.errors[field].join(', ') + '\n';
+                }
+                passwordResetErrors.querySelector('div').textContent = errorMessages;
+                passwordResetErrors.classList.remove('hidden');
+            } else {
+                passwordResetErrors.querySelector('div').textContent = data.message || 'Failed to reset password';
+                passwordResetErrors.classList.remove('hidden');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            passwordResetErrors.querySelector('div').textContent = 'An error occurred while resetting password';
+            passwordResetErrors.classList.remove('hidden');
+        });
+    });
+    
+    // Handle user delete
+    document.querySelectorAll('.user-delete').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const userId = this.getAttribute('data-user-id');
+            const userName = this.getAttribute('data-user-name');
+            
+            if (confirm(`Are you sure you want to delete user ${userName}? This action cannot be undone.`)) {
+                // Make AJAX call to delete user
+                fetch(`/partner/settings/users/${userId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        _method: 'DELETE'
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Remove the user row from the DOM
+                        alert('User deleted successfully.');
+                        location.reload();
+                    } else {
+                        alert('Failed to delete user: ' + (data.message || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while deleting user');
+                });
+            }
+            
+            // Hide dropdown
+            this.closest('.action-dropdown-menu').classList.add('hidden');
+        });
+    });
+});
+</script>
 @endsection

@@ -131,14 +131,6 @@ class EnhancedUser extends Authenticatable
     // Permissions are now accessed through: user → roles → role_permissions → permissions
 
     /**
-     * Get the user activities.
-     */
-    public function activities(): HasMany
-    {
-        return $this->hasMany(UserActivity::class);
-    }
-
-    /**
      * Get users created by this user.
      */
     public function createdUsers(): HasMany
@@ -253,13 +245,8 @@ class EnhancedUser extends Authenticatable
      */
     public function logActivity($action, $description = null, $metadata = [])
     {
-        return $this->activities()->create([
-            'action' => $action,
-            'description' => $description,
-            'metadata' => $metadata,
-            'ip_address' => request()->ip(),
-            'user_agent' => request()->userAgent(),
-        ]);
+        // Activity logging disabled
+        return null;
     }
 
     /**
@@ -325,66 +312,6 @@ class EnhancedUser extends Authenticatable
             self::STATUS_SUSPENDED,
             self::STATUS_PENDING,
         ];
-    }
-
-    /**
-     * Get all available user flags.
-     */
-    public static function getFlags(): array
-    {
-        return [
-            self::FLAG_ACTIVE,
-            self::FLAG_INACTIVE,
-            self::FLAG_DELETED,
-        ];
-    }
-
-    /**
-     * Check if user flag is active.
-     */
-    public function isFlagActive(): bool
-    {
-        return $this->flag === self::FLAG_ACTIVE;
-    }
-
-    /**
-     * Check if user flag is inactive.
-     */
-    public function isFlagInactive(): bool
-    {
-        return $this->flag === self::FLAG_INACTIVE;
-    }
-
-    /**
-     * Check if user flag is deleted.
-     */
-    public function isFlagDeleted(): bool
-    {
-        return $this->flag === self::FLAG_DELETED;
-    }
-
-    /**
-     * Scope a query to only include users with active flag.
-     */
-    public function scopeFlagActive($query)
-    {
-        return $query->where('flag', self::FLAG_ACTIVE);
-    }
-
-    /**
-     * Scope a query to only include users with inactive flag.
-     */
-    public function scopeFlagInactive($query)
-    {
-        return $query->where('flag', self::FLAG_INACTIVE);
-    }
-
-    /**
-     * Scope a query to exclude deleted users.
-     */
-    public function scopeNotDeleted($query)
-    {
-        return $query->where('flag', '!=', self::FLAG_DELETED);
     }
 
     /**

@@ -1061,21 +1061,33 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
             Route::post('users', [\App\Http\Controllers\UserManagementController::class, 'store'])->name('users.store');
             Route::get('users/{user}', [\App\Http\Controllers\UserManagementController::class, 'show'])->name('users.show');
             Route::put('users/{user}', [\App\Http\Controllers\UserManagementController::class, 'update'])->name('users.update');
+            Route::put('users/{user}/status', [\App\Http\Controllers\UserManagementController::class, 'updateStatus'])->name('users.update-status');
+            Route::post('users/{user}/reset-password', [\App\Http\Controllers\UserManagementController::class, 'resetPassword'])->name('users.reset-password');
             Route::delete('users/{user}', [\App\Http\Controllers\UserManagementController::class, 'destroy'])->name('users.destroy');
-            Route::post('users/bulk-update', [\App\Http\Controllers\UserManagementController::class, 'bulkUpdate'])->name('users.bulk-update');
-            Route::get('users/{user}/activities', [\App\Http\Controllers\UserManagementController::class, 'getActivities'])->name('users.activities');
-            // Permission route removed
-            Route::get('users/export', [\App\Http\Controllers\UserManagementController::class, 'export'])->name('users.export');
-            Route::get('users/statistics', [\App\Http\Controllers\UserManagementController::class, 'getStatistics'])->name('users.statistics');
-            // Permission route removed
-            Route::get('users/get-students', [\App\Http\Controllers\UserManagementController::class, 'getStudents'])->name('users.get-students');
             
-            
-            // Test route
-            Route::get('test-route', function() {
-                return response()->json(['message' => 'Test route working']);
-            })->name('test.route');
+            // Test route for debugging user status update
+            Route::get('test-user-status/{user}', function(\App\Models\EnhancedUser $user) {
+                try {
+                    $controller = new \App\Http\Controllers\UserManagementController();
+                    $partnerId = $controller->getPartnerId();
                     
+                    return response()->json([
+                        'success' => true,
+                        'user_id' => $user->id,
+                        'user_partner_id' => $user->partner_id,
+                        'current_partner_id' => $partnerId,
+                        'user_belongs_to_partner' => $user->partner_id == $partnerId,
+                        'user_status' => $user->status,
+                        'valid_statuses' => \App\Models\EnhancedUser::getStatuses()
+                    ]);
+                } catch (\Exception $e) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => $e->getMessage()
+                    ], 500);
+                }
+            })->name('test.user-status');
+
             // Test user management route
             Route::get('test-user-management', function() {
                 try {
@@ -1283,7 +1295,7 @@ Route::middleware(['auth'])->group(function () {
         // User Management API routes
         Route::get('/users', [\App\Http\Controllers\UserManagementController::class, 'getUsers'])->name('api.users.index');
         Route::get('/users/{id}', [\App\Http\Controllers\UserManagementController::class, 'getUser'])->name('api.users.show');
-        Route::get('/users/{id}/activities', [\App\Http\Controllers\UserManagementController::class, 'getActivities'])->name('api.users.activities');
+        // Route removed: Route::get('/users/{id}/activities', [\App\Http\Controllers\UserManagementController::class, 'getActivities'])->name('api.users.activities');
         // Permission route removed
         Route::get('/users/export', [\App\Http\Controllers\UserManagementController::class, 'export'])->name('api.users.export');
         Route::get('/users/statistics', [\App\Http\Controllers\UserManagementController::class, 'getStatistics'])->name('api.users.statistics');

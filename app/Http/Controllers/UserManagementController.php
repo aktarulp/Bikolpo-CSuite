@@ -6,11 +6,11 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 use App\Models\EnhancedUser;
 use App\Models\EnhancedRole;
-use App\Models\UserActivity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use App\Traits\HasPartnerContext;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -284,9 +284,7 @@ class UserManagementController extends Controller
             ], 404);
         }
 
-        $user->load(['partner', 'role', 'permissions', 'creator', 'activities' => function ($query) {
-            $query->latest()->take(10);
-        }]);
+        $user->load(['partner', 'role', 'permissions', 'creator']);
 
         // Format the user data to match the expected API response
         $userData = $user->toArray();
@@ -314,6 +312,14 @@ class UserManagementController extends Controller
             ], 404);
         }
 
+        // Map status values to flag values
+        $statusToFlagMap = [
+            'active' => EnhancedUser::FLAG_ACTIVE,
+            'inactive' => EnhancedUser::FLAG_INACTIVE,
+            'suspended' => EnhancedUser::FLAG_INACTIVE,
+            'pending' => EnhancedUser::FLAG_INACTIVE,
+        ];
+
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('ac_users', 'email')->ignore($user->id, 'id')],
@@ -336,12 +342,15 @@ class UserManagementController extends Controller
         try {
             DB::beginTransaction();
 
+            // Map the status to flag value
+            $flagValue = $statusToFlagMap[$request->status] ?? EnhancedUser::FLAG_ACTIVE;
+
             $updateData = [
                 'name' => $request->name,
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'partner_id' => $request->partner_id,
-                'status' => $request->status,
+                'flag' => $flagValue,
                 'role_id' => $request->role_id,
                 'updated_by' => auth()->id(),
             ];
@@ -358,19 +367,19 @@ class UserManagementController extends Controller
             //     'granted_at' => now(),
             // ]);
 
-            // Log activity
-            $user->activities()->create([
-                'action' => 'user_updated',
-                'description' => 'User account updated',
-                'metadata' => [
-                    'updated_by' => auth()->id(),
-                    'role_id' => $request->role_id,
-                    'permissions' => $request->permissions ?? [],
-                    'changed_fields' => array_keys($request->except(['password', 'password_confirmation'])),
-                ],
-                'ip_address' => $request->ip(),
-                'user_agent' => $request->userAgent(),
-            ]);
+            // Log activity (disabled)
+            // $user->activities()->create([
+            //     'action' => 'user_updated',
+            //     'description' => 'User account updated',
+            //     'metadata' => [
+            //         'updated_by' => auth()->id(),
+            //         'role_id' => $request->role_id,
+            //         'permissions' => $request->permissions ?? [],
+            //         'changed_fields' => array_keys($request->except(['password', 'password_confirmation'])),
+            //     ],
+            //     'ip_address' => $request->ip(),
+            //     'user_agent' => $request->userAgent(),
+            // ]);
 
             DB::commit();
             
@@ -399,6 +408,86 @@ class UserManagementController extends Controller
     }
 
     /**
+     * Get recent user activity.
+     */
+    public function getRecentActivity()
+    {
+        // Permission checking disabled
+        // Activity logging disabled
+
+        return response()->json([
+            'success' => true,
+            'activities' => []
+        ]);
+    }
+
+    /**
+     * Update the specified user's status.
+     */
+    public function updateStatus(Request $request, EnhancedUser $user)
+    {
+        // Permission checking disabled
+        
+        // Ensure user belongs to current partner
+        $partnerId = $this->getPartnerId();
+        if ($user->partner_id != $partnerId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found.'
+            ], 404);
+        }
+
+        // Map status values to flag values
+        $statusToFlagMap = [
+            'active' => EnhancedUser::FLAG_ACTIVE,
+            'inactive' => EnhancedUser::FLAG_INACTIVE,
+            'suspended' => EnhancedUser::FLAG_INACTIVE,
+            'pending' => EnhancedUser::FLAG_INACTIVE,
+        ];
+
+        // Validate only the status field
+        $validator = Validator::make($request->all(), [
+            'status' => ['required', Rule::in(EnhancedUser::getStatuses())],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // Map the status to flag value
+            $flagValue = $statusToFlagMap[$request->status] ?? EnhancedUser::FLAG_ACTIVE;
+
+            // Update only the flag column
+            $user->update([
+                'flag' => $flagValue,
+                'updated_by' => auth()->id(),
+            ]);
+
+            DB::commit();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'User status updated successfully'
+            ]);
+            
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('User status update failed: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update user status: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Remove the specified user.
      */
     public function destroy(EnhancedUser $user)
@@ -417,22 +506,22 @@ class UserManagementController extends Controller
         try {
             DB::beginTransaction();
 
-            // Log activity before deletion
-            $user->activities()->create([
-                'action' => 'user_deleted',
-                'description' => 'User account deleted',
-                'metadata' => [
-                    'deleted_by' => auth()->id(),
-                    'user_data' => [
-                        'name' => $user->name,
-                        'email' => $user->email,
-                        'roles' => $user->role ? [$user->role->id] : [],
-                        'permissions' => $user->permissions->pluck('id')->toArray(),
-                    ],
-                ],
-                'ip_address' => request()->ip(),
-                'user_agent' => request()->userAgent(),
-            ]);
+            // Log activity before deletion (disabled)
+            // $user->activities()->create([
+            //     'action' => 'user_deleted',
+            //     'description' => 'User account deleted',
+            //     'metadata' => [
+            //         'deleted_by' => auth()->id(),
+            //         'user_data' => [
+            //             'name' => $user->name,
+            //             'email' => $user->email,
+            //             'roles' => $user->role ? [$user->role->id] : [],
+            //             'permissions' => $user->permissions->pluck('id')->toArray(),
+            //         ],
+            //     ],
+            //     'ip_address' => request()->ip(),
+            //     'user_agent' => request()->userAgent(),
+            // ]);
 
             // Relationship detaching disabled - skip detaching
             // $user->roles()->detach();
@@ -490,17 +579,17 @@ class UserManagementController extends Controller
             foreach ($users as $user) {
                 switch ($request->action) {
                     case 'activate':
-                        $user->update(['status' => EnhancedUser::STATUS_ACTIVE]);
+                        $user->update(['flag' => EnhancedUser::FLAG_ACTIVE]);
                         $updatedCount++;
                         break;
                     
                     case 'deactivate':
-                        $user->update(['status' => EnhancedUser::STATUS_INACTIVE]);
+                        $user->update(['flag' => EnhancedUser::FLAG_INACTIVE]);
                         $updatedCount++;
                         break;
                     
                     case 'suspend':
-                        $user->update(['status' => EnhancedUser::STATUS_SUSPENDED]);
+                        $user->update(['flag' => EnhancedUser::FLAG_INACTIVE]);
                         $updatedCount++;
                         break;
                     
@@ -525,19 +614,19 @@ class UserManagementController extends Controller
                         break;
                 }
 
-                // Log activity for each user
-                $user->activities()->create([
-                    'action' => 'user_bulk_updated',
-                    'description' => "User bulk action: {$request->action}",
-                    'metadata' => [
-                        'action' => $request->action,
-                        'role_id' => $request->role_id ?? null,
-                        'permission_id' => $request->permission_id ?? null,
-                        'performed_by' => auth()->id(),
-                    ],
-                    'ip_address' => $request->ip(),
-                    'user_agent' => $request->userAgent(),
-                ]);
+                // Log activity for each user (disabled)
+                // $user->activities()->create([
+                //     'action' => 'user_bulk_updated',
+                //     'description' => "User bulk action: {$request->action}",
+                //     'metadata' => [
+                //         'action' => $request->action,
+                //         'role_id' => $request->role_id ?? null,
+                //         'permission_id' => $request->permission_id ?? null,
+                //         'performed_by' => auth()->id(),
+                //     ],
+                //     'ip_address' => $request->ip(),
+                //     'user_agent' => $request->userAgent(),
+                // ]);
             }
 
             DB::commit();
@@ -565,15 +654,11 @@ class UserManagementController extends Controller
     public function getActivities(EnhancedUser $user)
     {
         // Permission checking disabled
-
-        $activities = $user->activities()
-            ->with('user')
-            ->latest()
-            ->paginate(request('per_page', 20));
+        // Activity logging disabled
 
         return response()->json([
             'success' => true,
-            'activities' => $activities
+            'activities' => []
         ]);
     }
 
@@ -677,10 +762,7 @@ class UserManagementController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->take(5)
                 ->get(),
-            'recent_activities' => UserActivity::with(['user'])
-                ->orderBy('created_at', 'desc')
-                ->take(10)
-                ->get(),
+            'recent_activities' => [],
         ];
 
         return response()->json([
@@ -720,32 +802,63 @@ class UserManagementController extends Controller
     }
 
     /**
-     * Get recent user activity.
+     * Reset user password.
      */
-    public function getRecentActivity()
+    public function resetPassword(Request $request, EnhancedUser $user)
     {
         // Permission checking disabled
+        
+        // Ensure user belongs to current partner
+        $partnerId = $this->getPartnerId();
+        if ($user->partner_id != $partnerId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found.'
+            ], 404);
+        }
 
-        $activities = UserActivity::with(['user'])
-            ->orderBy('created_at', 'desc')
-            ->limit(50)
-            ->get()
-            ->map(function ($activity) {
-                return [
-                    'id' => $activity->id,
-                    'user_name' => $activity->user ? $activity->user->name : 'Unknown',
-                    'user_email' => $activity->user ? $activity->user->email : '',
-                    'action' => $activity->action,
-                    'description' => $activity->description,
-                    'ip_address' => $activity->ip_address,
-                    'created_at' => $activity->created_at->toISOString(),
-                ];
-            });
-
-        return response()->json([
-            'success' => true,
-            'activities' => $activities
+        // Validate the request
+        $validator = Validator::make($request->all(), [
+            'password' => 'required|string|min:8|confirmed',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            // Update user password
+            $user->update([
+                'password' => Hash::make($request->password)
+            ]);
+
+            // Log activity (disabled)
+            // $user->activities()->create([
+            //     'action' => 'password_reset',
+            //     'description' => 'User password reset by administrator',
+            //     'metadata' => [
+            //         'reset_by' => auth()->id(),
+            //     ],
+            //     'ip_address' => $request->ip(),
+            //     'user_agent' => $request->userAgent(),
+            // ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Password reset successfully.'
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Password reset failed: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to reset password: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -803,5 +916,4 @@ class UserManagementController extends Controller
             ], 500);
         }
     }
-
 }
