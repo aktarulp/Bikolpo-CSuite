@@ -847,11 +847,6 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
             }
         })->name('test-settings.index');
         
-        // Equation Tutorial Route
-        Route::get('settings/equation-tutorial', function () {
-            return view('partner.settings.equation-tutorial');
-        })->name('settings.equation-tutorial');
-        
         // Test route to verify user filtering
         Route::get('test-user-filter', function () {
             try {
