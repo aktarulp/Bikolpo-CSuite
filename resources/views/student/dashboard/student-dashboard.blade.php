@@ -105,7 +105,7 @@
                 </div>
             </div>
 
-            <!-- Account Status -->
+            <!-- Learning Strike -->
             <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm">
                 <div class="flex items-center">
                     <div class="p-2 rounded-lg bg-amber-100 dark:bg-amber-900/50">
@@ -114,17 +114,17 @@
                         </svg>
                     </div>
                     <div class="ml-3">
-                        <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Account</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Learning Strike</p>
                         <p class="text-sm font-semibold text-gray-900 dark:text-white mt-1">
-                            @if(isset($student) && $student->isLoginEnabled())
+                            @if(isset($student) && $student->enroll_date)
                                 <span class="inline-flex items-center text-green-600 dark:text-green-400">
                                     <span class="h-2 w-2 rounded-full bg-green-600 dark:bg-green-400 mr-1"></span>
-                                    Enabled
+                                    {{ abs($student->enroll_date->startOfDay()->diffInDays(now()->startOfDay())) }} days
                                 </span>
                             @else
-                                <span class="inline-flex items-center text-red-600 dark:text-red-400">
-                                    <span class="h-2 w-2 rounded-full bg-red-600 dark:bg-red-400 mr-1"></span>
-                                    Disabled
+                                <span class="inline-flex items-center text-gray-500 dark:text-gray-400">
+                                    <span class="h-2 w-2 rounded-full bg-gray-500 dark:bg-gray-400 mr-1"></span>
+                                    Not available
                                 </span>
                             @endif
                         </p>
