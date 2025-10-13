@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne; // Add this import
 
 class Student extends Model
 {
@@ -91,7 +92,7 @@ class Student extends Model
      */
     public function user()
     {
-        return $this->belongsTo(EnhancedUser::class, 'user_id', 'id');
+        return $this->hasOne(EnhancedUser::class, 'student_id', 'id');
     }
 
     /**

@@ -31,6 +31,7 @@ class EnhancedUser extends Authenticatable
         'partner_id',
         'role',
         'role_id',
+        'student_id',
         'created_by',
         'updated_by',
         'preferences',

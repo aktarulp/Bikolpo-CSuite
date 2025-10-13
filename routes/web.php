@@ -1246,8 +1246,18 @@ Route::prefix('student')->name('student.')->middleware(['auth'])->group(function
         Route::get('/', [StudentDashboardController::class, 'index'])->name('dashboard');
         Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard.main');
         
-        // Student Profile
-        Route::resource('profile', StudentController::class)->only(['show', 'edit', 'update']);
+        // Student Profile - Custom routes for own profile
+        Route::get('/profile', [StudentController::class, 'showProfile'])->name('profile.show');
+        Route::get('/profile/edit', [StudentController::class, 'editProfile'])->name('profile.edit');
+        Route::put('/profile', [StudentController::class, 'updateProfile'])->name('profile.update');
+        
+        // My Syllabus
+        Route::get('/syllabus', [StudentDashboardController::class, 'syllabus'])->name('syllabus');
+        Route::post('/syllabus/topic-progress', [StudentDashboardController::class, 'updateTopicProgress'])->name('syllabus.update-topic-progress');
+        Route::post('/syllabus/multiple-topic-progress', [StudentDashboardController::class, 'updateMultipleTopicProgress'])->name('syllabus.update-multiple-topic-progress');
+        
+        // My Analytics
+        Route::get('/analytics', [StudentDashboardController::class, 'analytics'])->name('analytics');
         
         // Available Exams (show Expired message)
         Route::get('exams', function() {
