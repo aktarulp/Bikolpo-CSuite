@@ -1249,9 +1249,14 @@ Route::prefix('student')->name('student.')->middleware(['auth'])->group(function
         // Student Profile
         Route::resource('profile', StudentController::class)->only(['show', 'edit', 'update']);
         
-        // Available Exams
-        Route::get('exams', [StudentExamController::class, 'availableExams'])->name('exams.available');
+        // Available Exams (show Expired message)
+        Route::get('exams', function() {
+            return 'Expired';
+        })->name('exams.available');
         Route::get('exams/{exam}', [StudentExamController::class, 'showExam'])->name('exams.show');
+        
+        // My Exams
+        Route::get('my-exams', [StudentExamController::class, 'myExams'])->name('exams.my-exams');
         
         // Take Exam
         Route::get('exams/{exam}/start', [StudentExamController::class, 'startExam'])->name('exams.start');

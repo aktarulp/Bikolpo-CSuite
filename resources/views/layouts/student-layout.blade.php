@@ -172,7 +172,7 @@
                             </div>
                             <div class="flex flex-col min-w-0 flex-1">
                                 <h2 class="text-lg font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-primaryGreen to-emerald-600 dark:from-white dark:via-emerald-400 dark:to-primaryGreen tracking-tight leading-tight">
-                                    Bikolpo<br/>Live Question
+                                    Bikolpo Live
                                 </h2>
                             </div>
                         </a>
@@ -195,7 +195,18 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                                 </svg>
                             </div>
-                            <span class="ml-2 flex-1">Dashboard</span>
+                            <span class="ml-2 flex-1">My Dashboard</span>
+                        </a>
+                        
+                        <!-- My Exams Menu Item -->
+                        <a href="{{ route('student.exams.my-exams') }}"
+                           class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('student.exams.my-exams') ? 'bg-gradient-to-r from-primaryGreen/10 to-emerald-50 text-primaryGreen border border-primaryGreen/20 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
+                            <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('student.exams.my-exams') ? 'bg-primaryGreen/10' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-primaryGreen/10' }} flex items-center justify-center transition-all duration-200">
+                                <svg class="h-4 w-4 {{ request()->routeIs('student.exams.my-exams') ? 'text-primaryGreen' : 'text-gray-500 group-hover:text-primaryGreen' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                                </svg>
+                            </div>
+                            <span class="ml-2 flex-1">My Exams</span>
                         </a>
                     @endif
                 </nav>

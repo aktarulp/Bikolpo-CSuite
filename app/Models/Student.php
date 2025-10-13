@@ -361,4 +361,57 @@ class Student extends Model
             ->limit($limit)
             ->get();
     }
+
+    /**
+     * Get the progress records for this student.
+     */
+    public function topicProgress()
+    {
+        return $this->hasMany(ProgressPivot::class);
+    }
+
+    /**
+     * Update progress for a specific topic
+     *
+     * @param int $topicId
+     * @param array $progressData
+     * @return ProgressPivot
+     */
+    public function updateTopicProgress($topicId, array $progressData)
+    {
+        return ProgressPivot::updateOrCreate(
+            [
+                'student_id' => $this->id,
+                'topic_id' => $topicId,
+            ],
+            array_merge($progressData, [
+                'last_activity_at' => now(),
+            ])
+        );
+    }
+
+    /**
+     * Get progress percentage for a specific topic
+     *
+     * @param int $topicId
+     * @return float
+     */
+    public function getTopicProgressPercentage($topicId)
+    {
+        $progress = ProgressPivot::where('student_id', $this->id)
+            ->where('topic_id', $topicId)
+            ->first();
+            
+        return $progress ? $progress->completion_percentage : 0;
+    }
+
+    /**
+     * Get all topic progress data for this student
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getAllTopicProgress()
+    {
+        return $this->topicProgress()->with('topic')->get();
+    }
 }

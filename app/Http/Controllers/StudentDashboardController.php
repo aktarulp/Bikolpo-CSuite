@@ -72,16 +72,37 @@ class StudentDashboardController extends Controller
 
         $upcomingExams = $upcomingAccessCodes->pluck('exam')->take(5);
 
-        // Basic stats
-        $totalExamsTaken = ExamResult::where('student_id', $studentId)->where('status', 'completed')->count();
-        $averageScore = round((float) (ExamResult::where('student_id', $studentId)->whereNotNull('percentage')->avg('percentage') ?? 0), 1);
-        $passedExams = ExamResult::where('student_id', $studentId)->where('status', 'completed')->where('percentage', '>=', 50)->count();
+        // Enhanced stats calculation for the four requested metrics
+        // 1. Exams Taken - Count of completed exams
+        $totalExamsTaken = ExamResult::where('student_id', $studentId)
+            ->where('status', 'completed')
+            ->count();
+
+        // 2. Passed Exams - Count of exams with passing score (>= 50%)
+        $passedExams = ExamResult::where('student_id', $studentId)
+            ->where('status', 'completed')
+            ->where('percentage', '>=', 50)
+            ->count();
+
+        // 3. Average Score - Average of all completed exam percentages
+        $averageScore = 0;
+        if ($totalExamsTaken > 0) {
+            $averageScore = round((float) (ExamResult::where('student_id', $studentId)
+                ->where('status', 'completed')
+                ->whereNotNull('percentage')
+                ->avg('percentage') ?? 0), 1);
+        }
+
+        // 4. Upcoming Exams - Count of future exams assigned to student
+        $upcomingExamsCount = $upcomingExams->count();
 
         // Batchmate totals (how many exams faced collectively)
         $batchmateExamFaced = 0;
         if ($batchId) {
             $batchStudentIds = Student::where('batch_id', $batchId)->pluck('id');
-            $batchmateExamFaced = ExamResult::whereIn('student_id', $batchStudentIds)->where('status', 'completed')->count();
+            $batchmateExamFaced = ExamResult::whereIn('student_id', $batchStudentIds)
+                ->where('status', 'completed')
+                ->count();
         }
 
         // Ranking calculations (course and batch) based on average percentage over completed exams
@@ -107,7 +128,7 @@ class StudentDashboardController extends Controller
             'completed_exams' => $totalExamsTaken,
             'average_score' => $averageScore,
             'passed_exams' => $passedExams,
-            'upcoming_exams' => $upcomingExams->count(),
+            'upcoming_exams' => $upcomingExamsCount,
             'batchmate_exam_faced' => $batchmateExamFaced,
             'course_rank' => $courseRank ? ($courseRank . ' / ' . $coursePopulation) : null,
             'batch_rank' => $batchRank ? ($batchRank . ' / ' . $batchPopulation) : null,

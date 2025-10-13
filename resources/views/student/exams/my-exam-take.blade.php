@@ -1,4 +1,4 @@
-@extends('layouts.partner-layout')
+@extends('layouts.student-layout')
 
 @section('title', 'Taking Exam - ' . $exam->title)
 

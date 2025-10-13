@@ -33,7 +33,7 @@
                 <a href="{{ route('typing.test') }}" 
                    class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors duration-200 flex items-center">
                     <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 001 1v3a1 1 0 011 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V4z"></path>
                     </svg>
                     Typing Test
                 </a>
@@ -249,7 +249,7 @@
                 <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                         <div>
-                            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">My Course</h2>
+                            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">My Progress</h2>
                             <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
                                 {{ $my_course->name ?? 'Not assigned' }} 
                                 @if(isset($my_course) && $my_course->code)
@@ -267,7 +267,7 @@
                     <!-- Syllabus Progress -->
                     <div class="mb-6">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Syllabus Completion</span>
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Overall Progress</span>
                             <span class="text-sm font-medium text-gray-900 dark:text-white">{{ $stats['syllabus_completion'] ?? 0 }}%</span>
                         </div>
                         <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
@@ -280,7 +280,7 @@
                     <div>
                         <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Subject Progress</h3>
                         <div class="space-y-4">
-                            @forelse(($subjectProgress ?? collect())->take(5) as $sp)
+                            @forelse($subjectProgress ?? collect() as $sp)
                                 <div>
                                     <div class="flex items-center justify-between text-sm mb-1">
                                         <span class="font-medium text-gray-900 dark:text-white">{{ $sp['subject']->name }}</span>
@@ -298,52 +298,7 @@
                 </div>
 
                 <!-- Upcoming Exams -->
-                <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
-                    <div class="p-5 border-b border-gray-200 dark:border-gray-700">
-                        <div class="flex items-center justify-between">
-                            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Upcoming Exams</h2>
-                            <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 dark:bg-gray-700 text-xs font-medium text-gray-600 dark:text-gray-300">
-                                {{ ($upcoming_exams ?? collect())->count() }}
-                            </span>
-                        </div>
-                    </div>
-                    <div class="p-5">
-                        @if(($upcoming_exams ?? collect())->count() > 0)
-                            <div class="space-y-4">
-                                @foreach(($upcoming_exams ?? collect())->take(3) as $exam)
-                                    <div class="flex items-center justify-between p-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150">
-                                        <div class="flex-1 min-w-0">
-                                            <h3 class="text-sm font-semibold text-gray-900 dark:text-white truncate">{{ $exam->title }}</h3>
-                                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                                Starts: {{ optional($exam->start_time)->format('M d, Y H:i') ?? 'TBA' }}
-                                            </p>
-                                        </div>
-                                        <a href="{{ route('student.exams.start', $exam) }}" 
-                                           class="ml-4 px-3 py-1.5 rounded-md text-xs font-medium bg-emerald-600 hover:bg-emerald-700 text-white transition-colors duration-200">
-                                            Start
-                                        </a>
-                                    </div>
-                                @endforeach
-                            </div>
-                            @if(($upcoming_exams ?? collect())->count() > 3)
-                                <div class="mt-4 text-center">
-                                    <a href="{{ route('student.exams.available') }}" 
-                                       class="text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
-                                        View all upcoming exams
-                                    </a>
-                                </div>
-                            @endif
-                        @else
-                            <div class="text-center py-8">
-                                <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                </svg>
-                                <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">No upcoming exams</h3>
-                                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">You don't have any exams scheduled at the moment.</p>
-                            </div>
-                        @endif
-                    </div>
-                </div>
+                {{-- Removed as per user request --}}
             </div>
 
             <!-- Right Column: Rankings & Recent Results -->
