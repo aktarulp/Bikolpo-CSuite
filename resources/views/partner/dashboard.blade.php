@@ -140,7 +140,7 @@
                         Questions without valid course links won't appear in the questions list or be available for exams.
                     </p>
                     <div class="flex gap-2 mt-3">
-                        <a href="{{ route('partner.questions.index') }}" class="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors shadow-md">
+                        <a href="{{ route('partner.questions.drafts') }}" class="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors shadow-md">
                             <x-icon name="eye" class="w-4 h-4" />
                             View Questions
                         </a>

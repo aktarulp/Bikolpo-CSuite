@@ -230,7 +230,7 @@
                             </div>
                             <div class="flex flex-col min-w-0 flex-1">
                                 <h2 class="text-lg font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-primaryGreen to-emerald-600 dark:from-white dark:via-emerald-400 dark:to-primaryGreen tracking-tight leading-tight">
-                                    Bikolpo<br/>Live Question
+                                    Bikolpo Live
                                 </h2>
                             </div>
                         </a>
