@@ -22,7 +22,7 @@
                         <p class="text-sm text-gray-600 mt-1">
                             Manage your organization, users, and system configuration
                     </p>
-                    </div>
+                </div>
                 </div>
                 <div class="flex flex-wrap gap-2">
                     <a href="{{ route('partner.settings.backup-restore') }}" class="group inline-flex items-center px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-green-600 text-white text-sm font-semibold rounded-xl hover:from-emerald-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 shadow-lg hover:shadow-xl transition-all duration-200 active:scale-[0.98]">
@@ -42,80 +42,80 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
             <!-- Total Users Card -->
             <div class="group relative bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:-translate-y-1">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/10 via-blue-400/5 to-transparent rounded-bl-full"></div>
-                <div class="relative p-5 sm:p-6">
-                    <div class="flex items-start justify-between mb-4">
-                        <div class="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
-                            <svg class="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-500/10 via-blue-400/5 to-transparent rounded-bl-full"></div>
+                <div class="relative p-3 sm:p-4">
+                    <div class="flex items-start justify-between mb-2">
+                        <div class="flex-shrink-0 w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                     </svg>
                 </div>
-                        <span class="px-2.5 py-1 text-xs font-semibold text-blue-700 bg-blue-50 rounded-lg">Total</span>
+                        <span class="px-2 py-0.5 text-xs font-semibold text-blue-700 bg-blue-50 rounded-lg">Total</span>
                     </div>
                     <div>
-                        <p class="text-sm font-medium text-gray-500 mb-1">Total Users</p>
-                        <p class="text-3xl sm:text-4xl font-bold text-gray-900">{{ $stats['total_users'] ?? 0 }}</p>
-                    </div>
+                        <p class="text-xs font-medium text-gray-500 mb-1">Total Users</p>
+                        <p class="text-2xl sm:text-3xl font-bold text-gray-900">{{ $stats['total_users'] ?? 0 }}</p>
+                </div>
             </div>
         </div>
         
             <!-- Active Users Card -->
             <div class="group relative bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:-translate-y-1">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-500/10 via-emerald-400/5 to-transparent rounded-bl-full"></div>
-                <div class="relative p-5 sm:p-6">
-                    <div class="flex items-start justify-between mb-4">
-                        <div class="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition-transform duration-300">
-                            <svg class="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-emerald-500/10 via-emerald-400/5 to-transparent rounded-bl-full"></div>
+                <div class="relative p-3 sm:p-4">
+                    <div class="flex items-start justify-between mb-2">
+                        <div class="flex-shrink-0 w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-500/30 group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                 </div>
-                        <span class="px-2.5 py-1 text-xs font-semibold text-emerald-700 bg-emerald-50 rounded-lg">Active</span>
+                        <span class="px-2 py-0.5 text-xs font-semibold text-emerald-700 bg-emerald-50 rounded-lg">Active</span>
                     </div>
                     <div>
-                        <p class="text-sm font-medium text-gray-500 mb-1">Active Users</p>
-                        <p class="text-3xl sm:text-4xl font-bold text-gray-900">{{ $stats['active_users'] ?? 0 }}</p>
-                    </div>
+                        <p class="text-xs font-medium text-gray-500 mb-1">Active Users</p>
+                        <p class="text-2xl sm:text-3xl font-bold text-gray-900">{{ $stats['active_users'] ?? 0 }}</p>
+                </div>
             </div>
         </div>
         
             <!-- Pending Users Card -->
             <div class="group relative bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:-translate-y-1">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-amber-500/10 via-amber-400/5 to-transparent rounded-bl-full"></div>
-                <div class="relative p-5 sm:p-6">
-                    <div class="flex items-start justify-between mb-4">
-                        <div class="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30 group-hover:scale-110 transition-transform duration-300">
-                            <svg class="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-amber-500/10 via-amber-400/5 to-transparent rounded-bl-full"></div>
+                <div class="relative p-3 sm:p-4">
+                    <div class="flex items-start justify-between mb-2">
+                        <div class="flex-shrink-0 w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shadow-amber-500/30 group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                 </div>
-                        <span class="px-2.5 py-1 text-xs font-semibold text-amber-700 bg-amber-50 rounded-lg">Pending</span>
+                        <span class="px-2 py-0.5 text-xs font-semibold text-amber-700 bg-amber-50 rounded-lg">Pending</span>
                     </div>
                     <div>
-                        <p class="text-sm font-medium text-gray-500 mb-1">Pending Users</p>
-                        <p class="text-3xl sm:text-4xl font-bold text-gray-900">{{ $stats['pending_users'] ?? 0 }}</p>
-                    </div>
+                        <p class="text-xs font-medium text-gray-500 mb-1">Pending Users</p>
+                        <p class="text-2xl sm:text-3xl font-bold text-gray-900">{{ $stats['pending_users'] ?? 0 }}</p>
+                </div>
             </div>
         </div>
         
             <!-- Suspended Users Card -->
             <div class="group relative bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:-translate-y-1">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-red-500/10 via-red-400/5 to-transparent rounded-bl-full"></div>
-                <div class="relative p-5 sm:p-6">
-                    <div class="flex items-start justify-between mb-4">
-                        <div class="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center shadow-lg shadow-red-500/30 group-hover:scale-110 transition-transform duration-300">
-                            <svg class="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
+                <div class="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-red-500/10 via-red-400/5 to-transparent rounded-bl-full"></div>
+                <div class="relative p-3 sm:p-4">
+                    <div class="flex items-start justify-between mb-2">
+                        <div class="flex-shrink-0 w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center shadow-lg shadow-red-500/30 group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 15.636 5.636m12.728 12.728L5.636 5.636"></path>
                     </svg>
                 </div>
-                        <span class="px-2.5 py-1 text-xs font-semibold text-red-700 bg-red-50 rounded-lg">Blocked</span>
+                        <span class="px-2 py-0.5 text-xs font-semibold text-red-700 bg-red-50 rounded-lg">Blocked</span>
                     </div>
                     <div>
-                        <p class="text-sm font-medium text-gray-500 mb-1">Suspended</p>
-                        <p class="text-3xl sm:text-4xl font-bold text-gray-900">{{ $stats['suspended_users'] ?? 0 }}</p>
-                    </div>
+                        <p class="text-xs font-medium text-gray-500 mb-1">Suspended</p>
+                        <p class="text-2xl sm:text-3xl font-bold text-gray-900">{{ $stats['suspended_users'] ?? 0 }}</p>
                 </div>
             </div>
         </div>
+    </div>
 
         <!-- Modern User Management Section -->
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -219,15 +219,15 @@
                                             <span class="text-xs font-bold text-gray-700 uppercase tracking-wider">Actions</span>
                                         </div>
                                     </th>
-                                </tr>
-                            </thead>
+                            </tr>
+                        </thead>
                             <tbody class="divide-y divide-gray-100">
                             @foreach($sortedRoles as $roleData)
                                 <!-- Modern Role Section Header -->
                                 <tr class="bg-gradient-to-r from-gray-50 via-blue-50/20 to-white border-l-4 border-l-blue-500">
                                     <td colspan="5" class="px-5 py-3">
                                         <div class="flex items-center space-x-3">
-                                            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-sm">
+                                            <div class="min-w-[2.5rem] h-10 px-3 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg">
                                                 <span class="text-sm font-bold text-white">{{ $roleData['users']->count() }}</span>
                                             </div>
                                             <div class="flex items-center space-x-2 flex-1">
@@ -309,7 +309,7 @@
                                                 </button>
                                             @else
                                                 <!-- Other Users - Modern Full Action Menu -->
-                                                <div class="relative inline-block text-left">
+                                            <div class="relative inline-block text-left">
                                                 <button type="button" 
                                                         class="group inline-flex items-center justify-center w-9 h-9 text-gray-600 hover:text-blue-600 bg-gray-100 hover:bg-blue-50 rounded-xl border border-gray-200 hover:border-blue-300 shadow-sm hover:shadow transition-all duration-200 active:scale-95 action-dropdown-btn"
                                                         data-user-id="{{ $user->id }}">
@@ -375,7 +375,7 @@
                             <div class="absolute bottom-0 left-0 w-16 h-16 bg-white/10 rounded-full -ml-8 -mb-8"></div>
                             <div class="relative flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
-                                    <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg">
+                                    <div class="min-w-[2.75rem] h-11 px-3 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg">
                                         <span class="text-base font-bold text-white">{{ $roleData['users']->count() }}</span>
                                     </div>
                                     <div>
@@ -405,8 +405,8 @@
                                                         You
                                                     </span>
                                                 @endif
-                                            </div>
                                         </div>
+                                    </div>
                                     </div>
                                     <span class="inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-lg shadow-sm ml-2 {{ $user->flag == 'active' ? 'bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-700 border border-emerald-200/50' : ($user->flag == 'inactive' ? 'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 border border-gray-300/50' : 'bg-gradient-to-r from-red-100 to-rose-100 text-red-700 border border-red-200/50') }}">
                                         <span class="w-1.5 h-1.5 rounded-full mr-1.5 {{ $user->flag == 'active' ? 'bg-emerald-500 animate-pulse' : ($user->flag == 'inactive' ? 'bg-gray-500' : 'bg-red-500') }}"></span>
@@ -422,7 +422,7 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
                                             </svg>
                                             <p class="text-xs font-semibold text-gray-500">Login ID</p>
-                                        </div>
+                                    </div>
                                         @php
                                             $roleName = $user->role->name ?? 'user';
                                             // Roles that use email for login (check if role contains 'partner', 'admin', or 'developer')
@@ -469,20 +469,20 @@
                                                     class="w-full group inline-flex items-center justify-center px-4 py-2.5 text-sm font-semibold text-gray-700 bg-white border-2 border-gray-200 hover:border-blue-400 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 active:scale-95 action-dropdown-btn"
                                                     data-user-id="{{ $user->id }}">
                                                 <svg class="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                </svg>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            </svg>
                                                 Actions
-                                            </button>
-                                            
+                                        </button>
+                                        
                                             <!-- Modern Dropdown menu -->
                                             <div class="hidden origin-top-right absolute right-0 mt-2 w-full min-w-[200px] rounded-2xl shadow-2xl bg-white border border-gray-200/50 focus:outline-none action-dropdown-menu z-20 animate-fadeIn" 
-                                                 data-user-id="{{ $user->id }}">
+                                             data-user-id="{{ $user->id }}">
                                                 <div class="py-2">
-                                                    <a href="#" 
+                                                <a href="#" 
                                                        class="user-status-toggle group flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-all duration-150" 
-                                                       data-user-id="{{ $user->id }}" 
-                                                       data-current-status="{{ $user->flag }}">
+                                                   data-user-id="{{ $user->id }}" 
+                                                   data-current-status="{{ $user->flag }}">
                                                         <svg class="w-5 h-5 mr-3 text-gray-400 group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             @if($user->flag == 'active')
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
@@ -490,29 +490,29 @@
                                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                                             @endif
                                                         </svg>
-                                                        {{ $user->flag == 'active' ? 'Mark Inactive' : 'Mark Active' }}
-                                                    </a>
-                                                    <a href="#" 
+                                                    {{ $user->flag == 'active' ? 'Mark Inactive' : 'Mark Active' }}
+                                                </a>
+                                                <a href="#" 
                                                        class="user-password-reset group flex items-center px-4 py-3 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-all duration-150" 
-                                                       data-user-id="{{ $user->id }}">
+                                                   data-user-id="{{ $user->id }}">
                                                         <svg class="w-5 h-5 mr-3 text-gray-400 group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
                                                         </svg>
-                                                        Reset Password
-                                                    </a>
+                                                    Reset Password
+                                                </a>
                                                     <div class="border-t border-gray-100 my-1"></div>
-                                                    <a href="#" 
+                                                <a href="#" 
                                                        class="user-delete group flex items-center px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 transition-all duration-150" 
-                                                       data-user-id="{{ $user->id }}"
-                                                       data-user-name="{{ $user->name }}">
+                                                   data-user-id="{{ $user->id }}"
+                                                   data-user-name="{{ $user->name }}">
                                                         <svg class="w-5 h-5 mr-3 text-red-400 group-hover:text-red-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                                         </svg>
-                                                        Delete User
-                                                    </a>
-                                                </div>
+                                                    Delete User
+                                                </a>
                                             </div>
                                         </div>
+                                    </div>
                                     @endif
                                 </div>
                             </div>
@@ -567,7 +567,7 @@
                             <div>
                                 <h3 class="text-lg sm:text-xl font-bold text-white" id="passwordResetModalLabel">
                                     Reset Password
-                                </h3>
+                        </h3>
                                 <p class="text-xs sm:text-sm text-blue-100 mt-0.5">Secure your account</p>
                             </div>
                         </div>
@@ -606,19 +606,19 @@
                                 >
                                 <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center toggle-password-visibility" data-target="current_password">
                                     <svg class="h-5 w-5 text-gray-400 hover:text-gray-600 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path class="eye-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        <path class="eye-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                        <path class="eye-closed hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
-                                    </svg>
-                                </button>
-                            </div>
+                                                    <path class="eye-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    <path class="eye-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                    <path class="eye-closed hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+                                                </svg>
+                                            </button>
+                                        </div>
                             <p class="mt-1.5 text-xs text-gray-500 flex items-start">
                                 <svg class="w-4 h-4 mr-1 mt-0.5 flex-shrink-0 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
                                 </svg>
                                 <span>For security, verify your identity with your current password</span>
                             </p>
-                        </div>
+                                    </div>
                         
                         <!-- New Password Field -->
                         <div>
@@ -655,10 +655,10 @@
                                     <div id="strength-bar-2" class="h-1 flex-1 bg-gray-200 rounded-full transition-all duration-300"></div>
                                     <div id="strength-bar-3" class="h-1 flex-1 bg-gray-200 rounded-full transition-all duration-300"></div>
                                     <div id="strength-bar-4" class="h-1 flex-1 bg-gray-200 rounded-full transition-all duration-300"></div>
-                                </div>
-                                <p id="strength-text" class="text-xs text-gray-500"></p>
-                                        </div>
                                     </div>
+                                <p id="strength-text" class="text-xs text-gray-500"></p>
+                                </div>
+                                </div>
                         
                         <!-- Confirm Password Field -->
                         <div>
@@ -671,7 +671,7 @@
                                     <svg class="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
-                                </div>
+                        </div>
                                 <input 
                                     type="password" 
                                     name="password_confirmation" 
@@ -687,8 +687,8 @@
                                                     <path class="eye-closed hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
                                                 </svg>
                                             </button>
-                                        </div>
-                        </div>
+                    </div>
+                </div>
                         
                         <!-- Error Display -->
                         <div id="passwordResetErrors" class="hidden">
@@ -700,7 +700,7 @@
                                     <div class="flex-1">
                                         <p class="text-sm font-medium text-red-800">Error</p>
                                         <p class="text-sm text-red-700 mt-1"></p>
-                                    </div>
+            </div>
                                 </div>
                                 </div>
                         </div>
@@ -738,7 +738,7 @@
                         id="cancelPasswordReset" 
                         class="w-full sm:w-auto px-5 py-3 sm:py-2.5 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-all duration-200 active:scale-[0.98]"
                     >
-                        Cancel
+                    Cancel
                     </button>
                     <button 
                         type="button" 
