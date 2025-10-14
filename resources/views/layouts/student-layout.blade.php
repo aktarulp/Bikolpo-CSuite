@@ -23,60 +23,6 @@
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <!-- Font Loading Debug & Fix -->
-    <script>
-        // Enhanced font loading detection and debugging
-        document.addEventListener('DOMContentLoaded', function() {
-            // Test content for font verification
-            const testText = 'Test আমি বাংলায় গান গাই English 123';
-            console.log('🎨 Font Debug: Testing text = ', testText);
-            
-            // Check if browser supports font loading API
-            if (document.fonts) {
-                document.fonts.ready.then(function() {
-                    console.log('✅ Font API: All fonts loaded successfully');
-                    
-                    // Additional verification
-                    const testDiv = document.createElement('div');
-                    testDiv.style.fontFamily = "Inter, 'Hind Siliguri', system-ui, sans-serif";
-                    testDiv.textContent = testText;
-                    testDiv.style.position = 'absolute';
-                    testDiv.style.visibility = 'hidden';
-                    document.body.appendChild(testDiv);
-                    
-                    const computedStyle = window.getComputedStyle(testDiv);
-                    console.log('🎭 Computed font-family:', computedStyle.fontFamily);
-                    
-                    document.body.removeChild(testDiv);
-                }).catch(function(error) {
-                    console.error('❌ Font loading error:', error);
-                    document.body.classList.add('font-fallback');
-                });
-            } else {
-                console.warn('⚠️ Font Loading API not supported, using fallback detection');
-                
-                // Fallback detection for older browsers
-                setTimeout(function() {
-                    console.log('🔄 Applying safety fallback fonts');
-                    document.body.classList.add('font-fallback');
-                }, 3000);
-            }
-            
-            // Debug SVG icons
-            const svgElements = document.querySelectorAll('svg use');
-            console.log(`🎯 Found ${svgElements.length} SVG icons`);
-            
-            // Report any text nodes that might be showing symbols
-            setTimeout(function() {
-                const allText = document.body.innerText;
-                const hasWeirdSymbols = /[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/u.test(allText);
-                if (hasWeirdSymbols) {
-                    console.warn('⚠️ Potential symbol/emoji detected in text - check for font loading issues');
-                }
-            }, 1000);
-        });
-    </script>
-    
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
@@ -201,11 +147,7 @@
     @php
         $user = Auth::user();
         $role = strtolower($user->role ?? '');
-        $homeRouteName = 'partner.dashboard';
-        if ($role === 'student') {
-            $homeRouteName = 'student.dashboard';
-
-        }
+        $homeRouteName = 'student.dashboard';
     @endphp
     <!-- SVG Sprites -->
     @include('partials.svg-sprites')
@@ -221,7 +163,7 @@
                 <!-- Sidebar Header -->
                 <div class="relative px-3 py-3 lg:py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-br from-primaryGreen/5 to-emerald-50 dark:from-primaryGreen/10 dark:to-gray-900">
                     <div class="flex items-center justify-between">
-<a href="{{ route($homeRouteName) }}" class="flex items-center space-x-2 group flex-1 min-w-0">
+                        <a href="{{ route($homeRouteName) }}" class="flex items-center space-x-2 group flex-1 min-w-0">
                             <div class="relative flex-shrink-0">
                                 <div class="w-14 h-14 bg-white dark:bg-gray-800 rounded-xl flex items-center justify-center shadow-lg ring-2 ring-primaryGreen/20 group-hover:ring-primaryGreen/40 transition-all duration-300 group-hover:scale-105 overflow-hidden">
                                     <img src="{{ asset('images/BikolpoLive.svg') }}" alt="Bikolpo Live" class="w-full h-full object-contain p-1">
@@ -230,7 +172,7 @@
                             </div>
                             <div class="flex flex-col min-w-0 flex-1">
                                 <h2 class="text-lg font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-primaryGreen to-emerald-600 dark:from-white dark:via-emerald-400 dark:to-primaryGreen tracking-tight leading-tight">
-                                    Bikolpo<br/>Live Question
+                                    Bikolpo Live
                                 </h2>
                             </div>
                         </a>
@@ -243,150 +185,57 @@
                     </div>
                 </div>
 
-                <!-- Navigation -->
+                <!-- Navigation - Only Dashboard for students -->
                 <nav class="flex-1 px-2 py-3 lg:px-3 space-y-1">
                     @if(auth()->check())
-<a href="{{ route($homeRouteName) }}"
-                       class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs($homeRouteName) ? 'bg-gradient-to-r from-primaryGreen/10 to-emerald-50 text-primaryGreen border border-primaryGreen/20 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
-<div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs($homeRouteName) ? 'bg-primaryGreen/10' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-primaryGreen/10' }} flex items-center justify-center transition-all duration-200">
-<svg class="h-4 w-4 {{ request()->routeIs($homeRouteName) ? 'text-primaryGreen' : 'text-gray-500 group-hover:text-primaryGreen' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                            </svg>
-                        </div>
-                        <span class="ml-2 flex-1">Dashboard</span>
-                    </a>
-                    @endif
-
-                    @if(auth()->check())
-                    {{-- Permission checking disabled --}}
-                    <a href="{{ route('partner.courses.index') }}"
-                       class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.courses.*') ? 'bg-gradient-to-r from-orange-50 to-orange-100 text-orange-700 border border-orange-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-orange-50/50 hover:to-orange-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-orange-700 dark:hover:text-white' }}">
-                        <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.courses.*') ? 'bg-orange-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-orange-50' }} flex items-center justify-center transition-all duration-200">
-                            <svg class="h-4 w-4 {{ request()->routeIs('partner.courses.*') ? 'text-orange-600' : 'text-gray-500 group-hover:text-orange-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                            </svg>
-                        </div>
-                        <span class="ml-2 flex-1">Courses</span>
-                        <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300 border border-orange-300 dark:border-orange-700">{{ $stats['total_courses'] ?? 0 }}</span>
-                    </a>
-                    @endif
-                    
-
-                    @if(auth()->check())
-                    {{-- Permission checking disabled --}}
-                    <a href="{{ route('partner.subjects.index') }}"
-                       class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.subjects.*') ? 'bg-gradient-to-r from-purple-50 to-purple-100 text-purple-700 border border-purple-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-purple-50/50 hover:to-purple-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-purple-700 dark:hover:text-white' }}">
-                        <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.subjects.*') ? 'bg-purple-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-purple-50' }} flex items-center justify-center transition-all duration-200">
-                            <svg class="h-4 w-4 {{ request()->routeIs('partner.subjects.*') ? 'text-purple-600' : 'text-gray-500 group-hover:text-purple-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                        </div>
-                        <span class="ml-2 flex-1">Subjects</span>
-                        <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300 border border-purple-300 dark:border-purple-700">{{ $stats['total_subjects'] ?? 0 }}</span>
-                    </a>
-                    @endif
-
-                    @if(auth()->check())
-                    {{-- Permission checking disabled --}}
-                    <a href="{{ route('partner.topics.index') }}"
-                       class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.topics.*') ? 'bg-gradient-to-r from-pink-50 to-pink-100 text-pink-700 border border-pink-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-pink-50/50 hover:to-pink-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-pink-700 dark:hover:text-white' }}">
-                        <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.topics.*') ? 'bg-pink-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-pink-50' }} flex items-center justify-center transition-all duration-200">
-                            <svg class="h-4 w-4 {{ request()->routeIs('partner.topics.*') ? 'text-pink-600' : 'text-gray-500 group-hover:text-pink-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                            </svg>
-                        </div>
-                        <span class="ml-2 flex-1">Topics</span>
-                        <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-pink-100 text-pink-700 dark:bg-pink-900/50 dark:text-pink-300 border border-pink-300 dark:border-pink-700">{{ $stats['total_topics'] ?? 0 }}</span>
-                    </a>
-                    @endif
-                    @if(auth()->check())
-                    {{-- Permission checking disabled --}}
-                    <a href="{{ route('partner.batches.index') }}"
-                       class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.batches.*') ? 'bg-gradient-to-r from-indigo-50 to-indigo-100 text-indigo-700 border border-indigo-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-indigo-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-indigo-700 dark:hover:text-white' }}">
-                        <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.batches.*') ? 'bg-indigo-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-indigo-50' }} flex items-center justify-center transition-all duration-200">
-                            <svg class="h-4 w-4 {{ request()->routeIs('partner.batches.*') ? 'text-indigo-600' : 'text-gray-500 group-hover:text-indigo-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                            </svg>
-                        </div>
-                        <span class="ml-2 flex-1">Batches</span>
-                        <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-700">{{ $stats['total_batches'] ?? 0 }}</span>
-                    </a>
-                    @endif
-                    @if(auth()->check())
-                    {{-- Permission checking disabled --}}
-                    <a href="{{ route('partner.students.index') }}"
-                       class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.students.*') ? 'bg-gradient-to-r from-emerald-50 to-emerald-100 text-emerald-700 border border-emerald-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-emerald-50/50 hover:to-emerald-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-emerald-700 dark:hover:text-white' }}">
-                        <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.students.*') ? 'bg-emerald-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-emerald-50' }} flex items-center justify-center transition-all duration-200">
-                            <svg class="h-4 w-4 {{ request()->routeIs('partner.students.*') ? 'text-emerald-600' : 'text-gray-500 group-hover:text-emerald-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                            </svg>
-                        </div>
-                        <span class="ml-2 flex-1">Students</span>
-                        <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700">{{ $stats['total_students'] ?? 0 }}</span>
-                    </a>
-                    @endif
-                    
-                    @if(auth()->check())
-                    {{-- Permission checking disabled --}}
-                    <a href="{{ route('partner.questions.all') }}"
-                       class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.questions.*') ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 border border-blue-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-blue-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-blue-700 dark:hover:text-white' }}">
-                        <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.questions.*') ? 'bg-blue-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-blue-50' }} flex items-center justify-center transition-all duration-200">
-                            <svg class="h-4 w-4 {{ request()->routeIs('partner.questions.*') ? 'text-blue-600' : 'text-gray-500 group-hover:text-blue-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <span class="ml-2 flex-1">Questions</span>
-                        <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 border border-blue-300 dark:border-blue-700">{{ $stats['total_questions'] ?? 0 }}</span>
-                    </a>
-                    @endif
-
-
-                    @if(auth()->check())
-                    {{-- Permission checking disabled --}}
-                    <a href="{{ route('partner.exams.index') }}"
-                       class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.exams.*') ? 'bg-gradient-to-r from-cyan-50 to-cyan-100 text-cyan-700 border border-cyan-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-cyan-50/50 hover:to-cyan-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-cyan-700 dark:hover:text-white' }}">
-                        <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.exams.*') ? 'bg-cyan-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-cyan-50' }} flex items-center justify-center transition-all duration-200">
-                            <svg class="h-4 w-4 {{ request()->routeIs('partner.exams.*') ? 'text-cyan-600' : 'text-gray-500 group-hover:text-cyan-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                        </div>
-                        <span class="ml-2 flex-1">Exams</span>
-                        <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-cyan-100 text-cyan-700 dark:bg-cyan-900/50 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-700">{{ $stats['total_exams'] ?? 0 }}</span>
-                    </a>
-                    @endif
-
-                    @if(auth()->check())
-                    {{-- Permission checking disabled --}}
-                    <a href="{{ route('analytics.questions.index') }}"
-                       class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('analytics.questions.*') ? 'bg-gradient-to-r from-violet-50 to-violet-100 text-violet-700 border border-violet-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-violet-50/50 hover:to-violet-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-violet-700 dark:hover:text-white' }}">
-                        <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('analytics.questions.*') ? 'bg-violet-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-violet-50' }} flex items-center justify-center transition-all duration-200">
-                            <svg class="h-4 w-4 {{ request()->routeIs('analytics.questions.*') ? 'text-violet-600' : 'text-gray-500 group-hover:text-violet-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                            </svg>
-                        </div>
-                        <span class="ml-2 flex-1">Analytics</span>
-                        <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-violet-100 text-violet-700 dark:bg-violet-900/50 dark:text-violet-300 border border-violet-300 dark:border-violet-700">{{ $stats['total_question_attempts'] ?? 0 }}</span>
-                    </a>
-                    @endif
-
-                    @if(auth()->check())
-                    {{-- Permission checking disabled --}}
-                    <a href="{{ route('partner.sms.index') }}"
-                       class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.sms.*') ? 'bg-gradient-to-r from-teal-50 to-teal-100 text-teal-700 border border-teal-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-teal-50/50 hover:to-teal-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-teal-700 dark:hover:text-white' }}">
-                        <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.sms.*') ? 'bg-teal-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-teal-50' }} flex items-center justify-center transition-all duration-200">
-                            <svg class="h-4 w-4 {{ request()->routeIs('partner.sms.*') ? 'text-teal-600' : 'text-gray-500 group-hover:text-teal-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
-                            </svg>
-                        </div>
-                        <span class="ml-2 flex-1">SMS</span>
-                        <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-teal-100 text-teal-700 dark:bg-teal-900/50 dark:text-teal-300 border border-teal-300 dark:border-teal-700">{{ $stats['total_sms'] ?? 0 }}</span>
-                    </a>
+                        <a href="{{ route($homeRouteName) }}"
+                           class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs($homeRouteName) ? 'bg-gradient-to-r from-primaryGreen/10 to-emerald-50 text-primaryGreen border border-primaryGreen/20 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
+                            <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs($homeRouteName) ? 'bg-primaryGreen/10' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-primaryGreen/10' }} flex items-center justify-center transition-all duration-200">
+                                <svg class="h-4 w-4 {{ request()->routeIs($homeRouteName) ? 'text-primaryGreen' : 'text-gray-500 group-hover:text-primaryGreen' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                                </svg>
+                            </div>
+                            <span class="ml-2 flex-1">My Dashboard</span>
+                        </a>
+                        
+                        <!-- My Exams Menu Item -->
+                        <a href="{{ route('student.exams.my-exams') }}"
+                           class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('student.exams.my-exams') ? 'bg-gradient-to-r from-primaryGreen/10 to-emerald-50 text-primaryGreen border border-primaryGreen/20 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
+                            <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('student.exams.my-exams') ? 'bg-primaryGreen/10' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-primaryGreen/10' }} flex items-center justify-center transition-all duration-200">
+                                <svg class="h-4 w-4 {{ request()->routeIs('student.exams.my-exams') ? 'text-primaryGreen' : 'text-gray-500 group-hover:text-primaryGreen' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                                </svg>
+                            </div>
+                            <span class="ml-2 flex-1">My Exams</span>
+                        </a>
+                        
+                        <!-- My Syllabus Menu Item -->
+                        <a href="{{ route('student.syllabus') }}"
+                           class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('student.syllabus') ? 'bg-gradient-to-r from-primaryGreen/10 to-emerald-50 text-primaryGreen border border-primaryGreen/20 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
+                            <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('student.syllabus') ? 'bg-primaryGreen/10' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-primaryGreen/10' }} flex items-center justify-center transition-all duration-200">
+                                <svg class="h-4 w-4 {{ request()->routeIs('student.syllabus') ? 'text-primaryGreen' : 'text-gray-500 group-hover:text-primaryGreen' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                </svg>
+                            </div>
+                            <span class="ml-2 flex-1">My Syllabus</span>
+                        </a>
+                        
+                        <!-- My Analytics Menu Item -->
+                        <a href="{{ route('student.analytics') }}"
+                           class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('student.analytics') ? 'bg-gradient-to-r from-primaryGreen/10 to-emerald-50 text-primaryGreen border border-primaryGreen/20 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-gray-900 dark:hover:text-white' }}">
+                            <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('student.analytics') ? 'bg-primaryGreen/10' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-primaryGreen/10' }} flex items-center justify-center transition-all duration-200">
+                                <svg class="h-4 w-4 {{ request()->routeIs('student.analytics') ? 'text-primaryGreen' : 'text-gray-500 group-hover:text-primaryGreen' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                                </svg>
+                            </div>
+                            <span class="ml-2 flex-1">My Analytics</span>
+                        </a>
                     @endif
                 </nav>
 
                 <!-- ======================
                      SIDEBAR USER MENU 
-                     (Visible on all screen sizes)
+                     (Minimal for students)
                      ====================== -->
                 <div class="flex-shrink-0 p-2 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
                     <div class="relative" x-data="{ open: false }" @click.away="open = false">
@@ -399,26 +248,14 @@
                                         $roleName = strtolower($authUser->role ?? $role ?? '');
                                         $studentPhoto = null;
                                         
-                                        $partnerLogoSidebar = null;
-
                                         // Resolve student photo
                                         if ($roleName === 'student') {
                                             $studentPhoto = optional($authUser->student)->photo;
                                         }
 
-                                        
-
-                                        // Resolve partner logo for partner or other non-default roles
-                                        if (in_array($roleName, ['partner','partner_admin','admin','operator',''])) {
-                                            $partnerLogoSidebar = $partner?->logo ?? null;
-                                        }
-
                                         $displayImage = null;
                                         if (!empty($studentPhoto)) {
                                             $displayImage = asset('storage/' . $studentPhoto);
-
-                                        } elseif (!empty($partnerLogoSidebar)) {
-                                            $displayImage = asset('storage/' . $partnerLogoSidebar);
                                         }
 
                                         // Compute initials as fallback
@@ -440,8 +277,8 @@
                                 </div>
                             </div>
                             <div class="flex-1 min-w-0 text-left">
-                                <p class="text-sm font-bold text-gray-900 dark:text-white truncate">{{ Auth::user()->name ?? 'Partner' }}</p>
-                                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 truncate">{{ Auth::user()->email ?? 'partner@example.com' }}</p>
+                                <p class="text-sm font-bold text-gray-900 dark:text-white truncate">{{ Auth::user()->name ?? 'Student' }}</p>
+                                <p class="text-xs font-medium text-gray-500 dark:text-gray-400 truncate">{{ Auth::user()->email ?? 'student@example.com' }}</p>
                             </div>
                             <svg class="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-all duration-300 transform group-hover:rotate-180" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -460,65 +297,20 @@
                             
                             <!-- Menu Body -->
                             <div class="p-0.5">
-                                <!-- Institution Section -->
-                                <div class="mb-1">
-                                    <p class="px-3 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Institution</p>
-                                    <div class="space-y-1">
-                                        <a href="{{ route('partner.profile.show-partnar') }}" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-primaryGreen/10 dark:hover:bg-primaryGreen/20 hover:text-primaryGreen dark:hover:text-emerald-400 rounded-lg transition-colors duration-150">
-                                            <div class="w-7 h-7 bg-primaryGreen/10 dark:bg-primaryGreen/20 rounded-md flex items-center justify-center mr-2 group-hover:scale-110 transition-transform duration-200">
-                                                <svg class="w-3.5 h-3.5 text-primaryGreen dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                                </svg>
-                                            </div>
-                                            <div class="flex-1">
-                                                <p class="font-medium">Institution Profile</p>
-                                            </div>
-                                            <svg class="w-4 h-4 text-gray-400 group-hover:text-primaryGreen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                            </svg>
-            
-                                        
-                                    </div>
-                                </div>
-                                
                                 <!-- User Section -->
                                 <div class="mb-1">
                                     <p class="px-3 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Personal</p>
                                     <div class="space-y-1">
-                                        <a href="{{ route('partner.profile.show-user-profile') }}" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 hover:text-blue-700 dark:hover:text-blue-400 rounded-lg transition-colors duration-150">
+                                        <a href="{{ route('student.profile.show') }}" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 hover:text-blue-700 dark:hover:text-blue-400 rounded-lg transition-colors duration-150">
                                             <div class="w-7 h-7 bg-blue-100 dark:bg-blue-900/50 rounded-md flex items-center justify-center mr-2 group-hover:scale-110 transition-transform duration-200">
                                                 <svg class="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                                 </svg>
                                             </div>
                                             <div class="flex-1">
-                                                <p class="font-medium">User Profile</p>
+                                                <p class="font-medium">Profile</p>
                                             </div>
                                             <svg class="w-4 h-4 text-gray-400 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                            </svg>
-                                        </a>
-                                        
-                                        
-                                    </div>
-                                </div>
-                                
-                                <!-- System Section -->
-                                <div class="mb-1">
-                                    <p class="px-3 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">System</p>
-                                    <div class="space-y-1">
-                                        {{-- Permission checking disabled --}}
-                                        <a href="{{ route('partner.settings.index') }}" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white rounded-lg transition-colors duration-150">
-                                            <div class="w-7 h-7 bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center mr-2 group-hover:scale-110 transition-transform duration-200">
-                                                <svg class="w-3.5 h-3.5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                </svg>
-                                            </div>
-                                            <div class="flex-1">
-                                                <p class="font-medium">Settings</p>
-                                            </div>
-                                            <svg class="w-4 h-4 text-gray-400 group-hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                                             </svg>
                                         </a>
@@ -562,7 +354,7 @@
                         </svg>
                     </button>
                     <h1 class="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-primaryGreen to-emerald-600 dark:from-white dark:via-emerald-400 dark:to-primaryGreen">
-                        {{ $partner?->name ?? 'Partner Portal' }}
+                        Student Dashboard
                     </h1>
                     <div class="w-10"></div> <!-- Spacer for centering -->
                 </div>
@@ -574,230 +366,112 @@
                     <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                         <div class="flex items-center space-x-4">
                             <div class="w-12 h-12 flex items-center justify-center bg-gradient-to-br from-primaryGreen/10 to-emerald-100 dark:from-primaryGreen/20 dark:to-emerald-900/30 rounded-xl ring-2 ring-primaryGreen/20 shadow-lg">
-                                @if(!empty($partner?->logo))
-                                    <img src="{{ asset('storage/' . $partner->logo) }}" alt="Partner Logo" class="w-10 h-10 object-cover rounded-lg">
-                                @else
-                                    <svg class="w-6 h-6 text-primaryGreen dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                    </svg>
-                                @endif
+                                <svg class="w-6 h-6 text-primaryGreen dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
                             </div>
                             <div>
                                 <h2 class="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white">
-                                    Welcome back, <span class="text-transparent bg-clip-text bg-gradient-to-r from-primaryGreen to-emerald-600 dark:from-emerald-400 dark:to-primaryGreen">{{ in_array($role, ['student']) ? (Auth::user()->name ?? 'User') : ($partner?->name ?? Auth::user()->name ?? 'Partner') }}</span>
+                                    Welcome back, <span class="text-transparent bg-clip-text bg-gradient-to-r from-primaryGreen to-emerald-600 dark:from-emerald-400 dark:to-primaryGreen">{{ Auth::user()->name ?? 'Student' }}</span>
                                 </h2>
                                 <p class="text-gray-600 dark:text-gray-400 text-sm flex items-center mt-1">
                                     <svg class="w-4 h-4 mr-1.5 text-primaryGreen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
-                                    @if($role === 'student')
-                                        Enhance Your Learning Experience
-                                    @else
-                                        Manage your exam system efficiently
-                                    @endif
+                                    Enhance Your Learning Experience
                                 </p>
                             </div>
                         </div>
 
-                        <!-- Stats Container - Mobile First -->
-                        <div class="stats-container flex flex-wrap gap-3 lg:gap-4">
-                            <!-- Courses Card -->
-                            <div class="group flex items-center gap-2 px-3 py-2 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-900/30 rounded-xl border border-orange-200 dark:border-orange-800/50 hover:shadow-lg hover:scale-105 transition-all duration-200">
-                                <div class="w-10 h-10 bg-white dark:bg-orange-900/50 rounded-lg flex items-center justify-center shadow-sm group-hover:rotate-12 transition-transform duration-200">
-                                    <svg class="w-5 h-5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                                    </svg>
+                        <!-- Top Bar User Menu -->
+                        <div class="relative" x-data="{ open: false }" @click.away="open = false">
+                            <!-- User Menu Button -->
+                            <button @click="open = !open" class="p-1.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg border-0 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primaryGreen/20 shadow-sm hover:shadow-md">
+                                <div class="w-10 h-10 bg-gradient-to-br from-primaryGreen to-emerald-600 flex items-center justify-center rounded-md overflow-hidden border-0 border-white dark:border-gray-700 shadow-sm">
+                                    @php
+                                        $authUser = Auth::user();
+                                        $roleName = strtolower($authUser->role ?? $role ?? '');
+                                        $studentPhoto = null;
+
+                                        // Attempt to resolve student photo if role is student
+                                        if ($roleName === 'student') {
+                                            $studentPhoto = optional($authUser->student)->photo;
+                                        }
+
+                                        $displayImage = null;
+                                        if (!empty($studentPhoto)) {
+                                            $displayImage = asset('storage/' . $studentPhoto);
+                                        }
+
+                                        // Compute initials as fallback
+                                        $name = $authUser->name ?? 'User';
+                                        $initials = '';
+                                        $nameParts = array_filter(explode(' ', $name));
+                                        if (count($nameParts) >= 2) {
+                                            $initials = strtoupper(substr($nameParts[0], 0, 1) . substr(end($nameParts), 0, 1));
+                                        } else {
+                                            $initials = strtoupper(substr($name, 0, 2));
+                                        }
+                                    @endphp
+
+                                    @if($displayImage)
+                                        <img src="{{ $displayImage }}" alt="Profile" class="w-full h-full object-cover">
+                                    @else
+                                        <span class="text-sm font-bold text-white">{{ $initials }}</span>
+                                    @endif
                                 </div>
-                                <div>
-                                    <p class="text-xl font-bold text-orange-600 dark:text-orange-400 leading-none">{{ $stats['total_courses'] ?? 0 }}</p>
-                                    <p class="text-xs font-medium text-orange-700 dark:text-orange-300 mt-0.5">Courses</p>
-                                </div>
-                            </div>
+                            </button>
 
-                            <!-- Questions Card -->
-                            <div class="group flex items-center gap-2 px-3 py-2 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-900/30 rounded-xl border border-blue-200 dark:border-blue-800/50 hover:shadow-lg hover:scale-105 transition-all duration-200">
-                                <div class="w-10 h-10 bg-white dark:bg-blue-900/50 rounded-lg flex items-center justify-center shadow-sm group-hover:rotate-12 transition-transform duration-200">
-                                    <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p class="text-xl font-bold text-blue-600 dark:text-blue-400 leading-none">{{ $stats['total_questions'] ?? 0 }}</p>
-                                    <p class="text-xs font-medium text-blue-700 dark:text-blue-300 mt-0.5">Questions</p>
-                                </div>
-                            </div>
-
-                            <!-- Exams Card -->
-                            <div class="group flex items-center gap-2 px-3 py-2 bg-gradient-to-br from-cyan-50 to-cyan-100 dark:from-cyan-900/20 dark:to-cyan-900/30 rounded-xl border border-cyan-200 dark:border-cyan-800/50 hover:shadow-lg hover:scale-105 transition-all duration-200">
-                                <div class="w-10 h-10 bg-white dark:bg-cyan-900/50 rounded-lg flex items-center justify-center shadow-sm group-hover:rotate-12 transition-transform duration-200">
-                                    <svg class="w-5 h-5 text-cyan-600 dark:text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p class="text-xl font-bold text-cyan-600 dark:text-cyan-400 leading-none">{{ $stats['total_exams'] ?? 0 }}</p>
-                                    <p class="text-xs font-medium text-cyan-700 dark:text-cyan-300 mt-0.5">Exams</p>
-                                </div>
-                            </div>
-
-                            <!-- ======================
-                                 TOP BAR USER MENU 
-                                 (Visible on large screens only - lg breakpoint and up)
-                                 ====================== -->
-                            <div class="relative" x-data="{ open: false }" @click.away="open = false">
-                                <!-- User Menu Button - Square Profile Image Only -->
-                                <button @click="open = !open" class="p-1.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg border-0 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primaryGreen/20 shadow-sm hover:shadow-md">
-                                    
-                                    <div class="w-10 h-10 bg-gradient-to-br from-primaryGreen to-emerald-600 flex items-center justify-center rounded-md overflow-hidden border-0 border-white dark:border-gray-700 shadow-sm">
-                                        @php
-                                            $authUser = Auth::user();
-                                            $roleName = strtolower($authUser->role ?? $role ?? '');
-                                            $studentPhoto = null;
-                                            $teacherPhoto = null;
-                                            $partnerLogoTop = null;
-
-                                            // Attempt to resolve student photo if role is student
-                                            if ($roleName === 'student') {
-                                                $studentPhoto = optional($authUser->student)->photo;
-                                            }
-
-
-
-                                            // Resolve partner logo for partner or non-default partner roles
-                                            if (in_array($roleName, ['partner','partner_admin','admin','operator',''])) {
-                                                $partnerLogoTop = $partner->logo ?? null;
-                                            }
-
-                                            $displayImage = null;
-                                            if (!empty($studentPhoto)) {
-                                                $displayImage = asset('storage/' . $studentPhoto);
-
-                                            } elseif (!empty($partnerLogoTop)) {
-                                                $displayImage = asset('storage/' . $partnerLogoTop);
-                                            }
-
-                                            // Compute initials as fallback
-                                            $name = $authUser->name ?? 'User';
-                                            $initials = '';
-                                            $nameParts = array_filter(explode(' ', $name));
-                                            if (count($nameParts) >= 2) {
-                                                $initials = strtoupper(substr($nameParts[0], 0, 1) . substr(end($nameParts), 0, 1));
-                                            } else {
-                                                $initials = strtoupper(substr($name, 0, 2));
-                                            }
-                                        @endphp
-
-                                        @if($displayImage)
-                                            <img src="{{ $displayImage }}" alt="Profile" class="w-full h-full object-cover">
-                                        @else
-                                            <span class="text-sm font-bold text-white">{{ $initials }}</span>
-                                        @endif
+                            <!-- Dropdown Menu -->
+                            <div x-show="open" 
+                                 x-transition:enter="transition ease-out duration-300"
+                                 x-transition:enter-start="opacity-0 transform scale-95 -translate-y-2"
+                                 x-transition:enter-end="opacity-100 transform scale-100 translate-y-0"
+                                 x-transition:leave="transition ease-in duration-200"
+                                 x-transition:leave-start="opacity-100 transform scale-100 translate-y-0"
+                                 x-transition:leave-end="opacity-0 transform scale-95 -translate-y-2"
+                                 class="absolute right-0 mt-2 w-64 sm:w-72 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 overflow-hidden">
+                                
+                                <!-- Menu Body -->
+                                <div class="p-0.5">
+                                    <!-- User Section -->
+                                    <div class="mb-1">
+                                        <p class="px-3 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Personal</p>
+                                        <div class="space-y-1">
+                                            <a href="{{ route('student.profile.show') }}" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 hover:text-blue-700 dark:hover:text-blue-400 rounded-lg transition-colors duration-150">
+                                                <div class="w-7 h-7 bg-blue-100 dark:bg-blue-900/50 rounded-md flex items-center justify-center mr-2 group-hover:scale-110 transition-transform duration-200">
+                                                    <svg class="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                                    </svg>
+                                                </div>
+                                                <div class="flex-1">
+                                                    <p class="font-medium">Profile</p>
+                                                </div>
+                                                <svg class="w-4 h-4 text-gray-400 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                                </svg>
+                                            </a>
+                                        </div>
                                     </div>
-                                </button>
-
-                                <!-- Enhanced Dropdown Menu -->
-                                <div x-show="open" 
-                                     x-transition:enter="transition ease-out duration-300"
-                                     x-transition:enter-start="opacity-0 transform scale-95 -translate-y-2"
-                                     x-transition:enter-end="opacity-100 transform scale-100 translate-y-0"
-                                     x-transition:leave="transition ease-in duration-200"
-                                     x-transition:leave-start="opacity-100 transform scale-100 translate-y-0"
-                                     x-transition:leave-end="opacity-0 transform scale-95 -translate-y-2"
-                                     class="absolute right-0 mt-2 w-64 sm:w-72 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 overflow-hidden">
                                     
-                                  
-                                    <!-- Menu Body -->
-                                    <div class="p-0.5">
-                                        <!-- Institution Section -->
-                                        <div class="mb-1">
-                                            <p class="px-3 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Institution</p>
-                                            <div class="space-y-1">
-                                                @php
-                                                    $profileRoute = in_array($role ?? strtolower(Auth::user()->role ?? ''), ['student'])
-                                                        ? route('partner.profile.show-user-profile')
-                                                        : route('partner.profile.show-partnar');
-                                                @endphp
-                                                <a href="{{ $profileRoute }}" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-primaryGreen/10 dark:hover:bg-primaryGreen/20 hover:text-primaryGreen dark:hover:text-emerald-400 rounded-lg transition-colors duration-150">
-                                                    <div class="w-7 h-7 bg-primaryGreen/10 dark:bg-primaryGreen/20 rounded-md flex items-center justify-center mr-2 group-hover:scale-110 transition-transform duration-200">
-                                                        <svg class="w-3.5 h-3.5 text-primaryGreen dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                                        </svg>
-                                                    </div>
-                                                    <div class="flex-1">
-                                                        <p class="font-medium">Profile</p>
-                                                    </div>
-                                                    <svg class="w-4 h-4 text-gray-400 group-hover:text-primaryGreen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    <!-- Logout Section -->
+                                    <div class="border-t border-gray-200 dark:border-gray-700 pt-2 mt-2">
+                                        <form method="POST" action="{{ route('logout') }}" class="block">
+                                            @csrf
+                                            <button type="submit" class="group w-full flex items-center px-3 py-2 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-700 dark:hover:text-red-300 rounded-lg transition-colors duration-150">
+                                                <div class="w-7 h-7 bg-red-100 dark:bg-red-900/50 rounded-md flex items-center justify-center mr-2 group-hover:scale-110 transition-transform duration-200">
+                                                    <svg class="w-3.5 h-3.5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                                                     </svg>
-                                                </a>
-                                                
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- User Section -->
-                                        <div class="mb-1">
-                                            <p class="px-3 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Personal</p>
-                                            <div class="space-y-1">
-                                                <a href="{{ route('partner.profile.show-user-profile') }}" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 hover:text-blue-700 dark:hover:text-blue-400 rounded-lg transition-colors duration-150">
-                                                    <div class="w-7 h-7 bg-blue-100 dark:bg-blue-900/50 rounded-md flex items-center justify-center mr-2 group-hover:scale-110 transition-transform duration-200">
-                                                        <svg class="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                                        </svg>
-                                                    </div>
-                                                    <div class="flex-1">
-                                                        <p class="font-medium">User Profile</p>
-                                                    </div>
-                                                    <svg class="w-4 h-4 text-gray-400 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                                    </svg>
-                                                </a>
-                                                
-                                                
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- System Section -->
-                                        <div class="mb-1">
-                                            <p class="px-3 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">System</p>
-                                            <div class="space-y-1">
-                                                @if(auth()->check())
-                                                <a href="{{ route('partner.settings.index') }}" class="group flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white rounded-lg transition-colors duration-150">
-                                                    <div class="w-7 h-7 bg-gray-100 dark:bg-gray-700 rounded-md flex items-center justify-center mr-2 group-hover:scale-110 transition-transform duration-200">
-                                                        <svg class="w-3.5 h-3.5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                        </svg>
-                                                    </div>
-                                                    <div class="flex-1">
-                                                        <p class="font-medium">Settings</p>
-                                                    </div>
-                                                    <svg class="w-4 h-4 text-gray-400 group-hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                                    </svg>
-                                                </a>
-                                                @endif
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Logout Section -->
-                                        <div class="border-t border-gray-200 dark:border-gray-700 pt-2 mt-2">
-                                            <form method="POST" action="{{ route('logout') }}" class="block">
-                                                @csrf
-                                                <button type="submit" class="group w-full flex items-center px-3 py-2 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 hover:text-red-700 dark:hover:text-red-300 rounded-lg transition-colors duration-150">
-                                                    <div class="w-7 h-7 bg-red-100 dark:bg-red-900/50 rounded-md flex items-center justify-center mr-2 group-hover:scale-110 transition-transform duration-200">
-                                                        <svg class="w-3.5 h-3.5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                                                        </svg>
-                                                    </div>
-                                                    <div class="flex-1 text-left">
-                                                        <p class="font-medium">Logout</p>
-                                                    </div>
-                                                    <svg class="w-4 h-4 text-red-400 group-hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                                    </svg>
-                                                </button>
-                                            </form>
-                                        </div>
+                                                </div>
+                                                <div class="flex-1 text-left">
+                                                    <p class="font-medium">Logout</p>
+                                                </div>
+                                                <svg class="w-4 h-4 text-red-400 group-hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                                </svg>
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>

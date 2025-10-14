@@ -69,14 +69,6 @@ class EnhancedUserPolicy
     }
 
     /**
-     * Determine whether the user can view user activities.
-     */
-    public function viewActivities(User $user, EnhancedUser $model)
-    {
-        return $user->isSystemAdministrator() || $user->isPartnerAdmin();
-    }
-
-    /**
      * Determine whether the user can view user permissions.
      */
     public function viewPermissions(User $user, EnhancedUser $model)

@@ -11,9 +11,18 @@ use Illuminate\Support\Facades\Auth;
 
 class StudentExamController extends Controller
 {
+    private function getStudentId()
+    {
+        // Get the authenticated user
+        $user = Auth::user();
+        
+        // Return the student ID associated with this user
+        return $user->student->id ?? 1; // Fallback to 1 if no student record
+    }
+
     public function availableExams()
     {
-        $studentId = 1; // Default student ID
+        $studentId = $this->getStudentId();
         
         $availableExams = Exam::where('status', 'published')
             ->where('start_time', '<=', now())
@@ -24,9 +33,28 @@ class StudentExamController extends Controller
         return view('student.exams.available', compact('availableExams'));
     }
 
+    public function myExams()
+    {
+        $studentId = $this->getStudentId();
+        
+        // Get all exams assigned to this student through access codes
+        // Also load the results for this student to show in the table
+        $assignedExams = Exam::whereHas('accessCodes', function ($query) use ($studentId) {
+            $query->where('student_id', $studentId);
+        })
+        ->with(['accessCodes' => function ($query) use ($studentId) {
+            $query->where('student_id', $studentId);
+        }, 'studentResults' => function ($query) use ($studentId) {
+            $query->where('student_id', $studentId);
+        }])
+        ->get();
+
+        return view('student.exams.my-exams', compact('assignedExams'));
+    }
+
     public function showExam(Exam $exam)
     {
-        $studentId = 1; // Default student ID
+        $studentId = $this->getStudentId();
         
         // Check if student has already taken this exam
         $existingResult = ExamResult::where('student_id', $studentId)
@@ -43,7 +71,7 @@ class StudentExamController extends Controller
 
     public function startExam(Exam $exam)
     {
-        $studentId = 1; // Default student ID
+        $studentId = $this->getStudentId();
         
         // Check if exam is available
         if ($exam->status !== 'published' || now() < $exam->start_time || now() > $exam->end_time) {
@@ -75,12 +103,12 @@ class StudentExamController extends Controller
         // $questions = $exam->questionSet->questions()->orderBy('pivot_order')->get();
         $questions = collect(); // Empty collection for now
 
-        return view('student.exams.start', compact('exam', 'questions', 'result'));
+        return view('student.exams.start-my-exam', compact('exam', 'questions', 'result'));
     }
 
     public function takeExam(Exam $exam)
     {
-        $studentId = 1; // Default student ID
+        $studentId = $this->getStudentId();
         
         // Check if exam is available
         if (!$exam->isActive) {
@@ -102,12 +130,12 @@ class StudentExamController extends Controller
         // $questions = $exam->questionSet->questions()->orderBy('pivot_order')->get();
         $questions = collect(); // Empty collection for now
 
-        return view('student.exams.take', compact('exam', 'questions', 'result'));
+        return view('student.exams.my-exam-take', compact('exam', 'questions', 'result'));
     }
 
     public function submitExam(Request $request, Exam $exam)
     {
-        $studentId = 1; // Default student ID
+        $studentId = $this->getStudentId();
         
         $result = ExamResult::where('student_id', $studentId)
             ->where('exam_id', $exam->id)
@@ -254,21 +282,42 @@ class StudentExamController extends Controller
                 ->with('info', 'Results are not available immediately. Please contact your instructor.');
         }
 
-        $studentId = 1; // Default student ID
+        $studentId = $this->getStudentId();
         
         $result = ExamResult::where('student_id', $studentId)
             ->where('exam_id', $exam->id)
             ->with(['student.partner', 'exam'])
             ->firstOrFail();
 
+        // Ensure all required values are set to prevent division by zero
+        if ($result->correct_answers === null) {
+            $result->correct_answers = 0;
+        }
+        
+        if ($result->wrong_answers === null) {
+            $result->wrong_answers = 0;
+        }
+        
+        if ($result->unanswered === null) {
+            $result->unanswered = 0;
+        }
+        
+        if ($result->score === null) {
+            $result->score = 0;
+        }
+        
+        if ($result->percentage === null) {
+            $result->percentage = 0;
+        }
+
         $questions = $exam->questions()->orderBy('pivot_order')->get();
 
-        return view('student.exams.result', compact('exam', 'result', 'questions'));
+        return view('student.exams.my-result', compact('exam', 'result', 'questions'));
     }
 
     public function history()
     {
-        $studentId = 1; // Default student ID
+        $studentId = $this->getStudentId();
         
         $results = ExamResult::where('student_id', $studentId)
             ->with(['exam'])

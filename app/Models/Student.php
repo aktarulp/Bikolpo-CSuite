@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne; // Add this import
 
 class Student extends Model
 {
@@ -91,7 +92,7 @@ class Student extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->hasOne(EnhancedUser::class, 'student_id', 'id');
     }
 
     /**
@@ -174,7 +175,12 @@ class Student extends Model
 
         $now = now();
         $startDate = $this->course->start_date ?? $this->enroll_date;
-        $endDate = $this->course->end_date;
+        $endDate = $this->course->end_date ?? now()->addYear(); // Default to one year from now if no end date
+
+        // Ensure both dates are valid before calling between()
+        if (!$startDate || !$endDate) {
+            return false;
+        }
 
         return $now->between($startDate, $endDate);
     }
@@ -355,5 +361,58 @@ class Student extends Model
             ->orderBy('created_at', 'desc')
             ->limit($limit)
             ->get();
+    }
+
+    /**
+     * Get the progress records for this student.
+     */
+    public function topicProgress()
+    {
+        return $this->hasMany(ProgressPivot::class);
+    }
+
+    /**
+     * Update progress for a specific topic
+     *
+     * @param int $topicId
+     * @param array $progressData
+     * @return ProgressPivot
+     */
+    public function updateTopicProgress($topicId, array $progressData)
+    {
+        return ProgressPivot::updateOrCreate(
+            [
+                'student_id' => $this->id,
+                'topic_id' => $topicId,
+            ],
+            array_merge($progressData, [
+                'last_activity_at' => now(),
+            ])
+        );
+    }
+
+    /**
+     * Get progress percentage for a specific topic
+     *
+     * @param int $topicId
+     * @return float
+     */
+    public function getTopicProgressPercentage($topicId)
+    {
+        $progress = ProgressPivot::where('student_id', $this->id)
+            ->where('topic_id', $topicId)
+            ->first();
+            
+        return $progress ? $progress->completion_percentage : 0;
+    }
+
+    /**
+     * Get all topic progress data for this student
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getAllTopicProgress()
+    {
+        return $this->topicProgress()->with('topic')->get();
     }
 }

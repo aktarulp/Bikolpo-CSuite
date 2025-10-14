@@ -31,6 +31,7 @@ class EnhancedUser extends Authenticatable
         'partner_id',
         'role',
         'role_id',
+        'student_id',
         'created_by',
         'updated_by',
         'preferences',
@@ -75,19 +76,60 @@ class EnhancedUser extends Authenticatable
         return $this->belongsTo(Partner::class);
     }
 
+    /**
+     * Get the role assigned to this user.
+     */
+    public function role()
+    {
+        return $this->belongsTo(EnhancedRole::class, 'role_id', 'id');
+    }
 
+    /**
+     * Get the roles assigned to this user (as a collection for compatibility).
+     */
+    public function roles()
+    {
+        // Return a collection containing the single role for compatibility with existing code
+        $role = $this->role;
+        return $role ? collect([$role]) : collect();
+    }
 
+    /**
+     * Get the role name safely.
+     */
+    public function getRoleName()
+    {
+        if ($this->role && is_object($this->role)) {
+            return $this->role->name;
+        }
+        
+        if ($this->role_id) {
+            $role = EnhancedRole::find($this->role_id);
+            return $role ? $role->name : 'Unknown Role';
+        }
+        
+        return 'No Role';
+    }
+
+    /**
+     * Get the role display name safely.
+     */
+    public function getRoleDisplayName()
+    {
+        if ($this->role && is_object($this->role)) {
+            return $this->role->display_name ?? $this->role->name;
+        }
+        
+        if ($this->role_id) {
+            $role = EnhancedRole::find($this->role_id);
+            return $role ? ($role->display_name ?? $role->name) : 'Unknown Role';
+        }
+        
+        return 'No Role';
+    }
 
     // Direct user permissions removed - using role-based permissions only
     // Permissions are now accessed through: user → roles → role_permissions → permissions
-
-    /**
-     * Get the user activities.
-     */
-    public function activities(): HasMany
-    {
-        return $this->hasMany(UserActivity::class);
-    }
 
     /**
      * Get users created by this user.
@@ -103,6 +145,14 @@ class EnhancedUser extends Authenticatable
     public function creator(): BelongsTo
     {
         return $this->belongsTo(EnhancedUser::class, 'created_by');
+    }
+
+    /**
+     * Get the student associated with this user.
+     */
+    public function student()
+    {
+        return $this->belongsTo(Student::class, 'student_id', 'id');
     }
 
     /**
@@ -204,13 +254,8 @@ class EnhancedUser extends Authenticatable
      */
     public function logActivity($action, $description = null, $metadata = [])
     {
-        return $this->activities()->create([
-            'action' => $action,
-            'description' => $description,
-            'metadata' => $metadata,
-            'ip_address' => request()->ip(),
-            'user_agent' => request()->userAgent(),
-        ]);
+        // Activity logging disabled
+        return null;
     }
 
     /**
@@ -276,66 +321,6 @@ class EnhancedUser extends Authenticatable
             self::STATUS_SUSPENDED,
             self::STATUS_PENDING,
         ];
-    }
-
-    /**
-     * Get all available user flags.
-     */
-    public static function getFlags(): array
-    {
-        return [
-            self::FLAG_ACTIVE,
-            self::FLAG_INACTIVE,
-            self::FLAG_DELETED,
-        ];
-    }
-
-    /**
-     * Check if user flag is active.
-     */
-    public function isFlagActive(): bool
-    {
-        return $this->flag === self::FLAG_ACTIVE;
-    }
-
-    /**
-     * Check if user flag is inactive.
-     */
-    public function isFlagInactive(): bool
-    {
-        return $this->flag === self::FLAG_INACTIVE;
-    }
-
-    /**
-     * Check if user flag is deleted.
-     */
-    public function isFlagDeleted(): bool
-    {
-        return $this->flag === self::FLAG_DELETED;
-    }
-
-    /**
-     * Scope a query to only include users with active flag.
-     */
-    public function scopeFlagActive($query)
-    {
-        return $query->where('flag', self::FLAG_ACTIVE);
-    }
-
-    /**
-     * Scope a query to only include users with inactive flag.
-     */
-    public function scopeFlagInactive($query)
-    {
-        return $query->where('flag', self::FLAG_INACTIVE);
-    }
-
-    /**
-     * Scope a query to exclude deleted users.
-     */
-    public function scopeNotDeleted($query)
-    {
-        return $query->where('flag', '!=', self::FLAG_DELETED);
     }
 
     /**

@@ -29,6 +29,106 @@ Route::get('/test-log', function () {
     return 'Log entry attempted.';
 });
 
+// Debug route to check user-role relationship
+Route::get('/debug-user-role', function () {
+    $users = \App\Models\EnhancedUser::with('role')->take(5)->get();
+    $result = [];
+    
+    foreach ($users as $user) {
+        $result[] = [
+            'user_id' => $user->id,
+            'user_name' => $user->name,
+            'role_id' => $user->role_id,
+            'role_loaded' => $user->relationLoaded('role'),
+            'role_exists' => $user->role ? true : false,
+            'role_name' => $user->role ? $user->role->name : null,
+            'role_display_name' => $user->role ? $user->role->display_name : null
+        ];
+    }
+    
+    return response()->json($result);
+});
+
+// Debug route to check raw database values
+Route::get('/debug-db-role', function () {
+    $users = DB::table('ac_users')->whereNotNull('role_id')->take(5)->get(['id', 'name', 'role_id']);
+    $result = [];
+    
+    foreach ($users as $user) {
+        $role = DB::table('ac_roles')->where('id', $user->role_id)->first();
+        $result[] = [
+            'user_id' => $user->id,
+            'user_name' => $user->name,
+            'role_id' => $user->role_id,
+            'role_exists' => $role ? true : false,
+            'role_name' => $role ? $role->name : null,
+            'role_display_name' => $role ? $role->display_name : null
+        ];
+    }
+    
+    return response()->json($result);
+});
+
+// Comprehensive debug route
+Route::get('/debug-comprehensive', function () {
+    // Check if roles exist
+    $roles = \App\Models\EnhancedRole::all();
+    $roleIds = $roles->pluck('id')->toArray();
+    
+    // Get users with role_id
+    $users = \App\Models\EnhancedUser::whereNotNull('role_id')->with('role')->take(5)->get();
+    
+    $result = [
+        'total_roles' => count($roleIds),
+        'role_ids' => $roleIds,
+        'users' => []
+    ];
+    
+    foreach ($users as $user) {
+        $result['users'][] = [
+            'user_id' => $user->id,
+            'user_name' => $user->name,
+            'role_id' => $user->role_id,
+            'role_relation_loaded' => $user->relationLoaded('role'),
+            'role_object_exists' => $user->role ? true : false,
+            'role_name' => $user->role ? $user->role->name : null,
+            'role_display_name' => $user->role ? $user->role->display_name : null,
+            'role_id_valid' => in_array($user->role_id, $roleIds)
+        ];
+    }
+    
+    return response()->json($result);
+});
+
+// Debug route to test relationship directly
+Route::get('/debug-relation', function () {
+    $user = \App\Models\EnhancedUser::whereNotNull('role_id')->first();
+    
+    if (!$user) {
+        return response()->json(['error' => 'No user with role_id found']);
+    }
+    
+    // Test the relationship
+    $role = $user->role;
+    
+    return response()->json([
+        'user_id' => $user->id,
+        'user_name' => $user->name,
+        'role_id' => $user->role_id,
+        'role_object' => $role ? [
+            'id' => $role->id,
+            'name' => $role->name,
+            'display_name' => $role->display_name
+        ] : null,
+        'relation_loaded' => $user->relationLoaded('role'),
+        'manual_lookup' => \App\Models\EnhancedRole::find($user->role_id) ? [
+            'id' => \App\Models\EnhancedRole::find($user->role_id)->id,
+            'name' => \App\Models\EnhancedRole::find($user->role_id)->name,
+            'display_name' => \App\Models\EnhancedRole::find($user->role_id)->display_name
+        ] : null
+    ]);
+});
+
 // Test email route
 Route::get('/test-email', function () {
     try {
@@ -661,15 +761,11 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
                 
                 try {
                     // Get user counts with error handling using EnhancedUser model
-                    $stats['total_users'] = \App\Models\EnhancedUser::where('partner_id', $partner->id)
-                        ->orWhere('id', $partner->user_id)
-                        ->count();
+                    // Only show users from the current partner
+                    $stats['total_users'] = \App\Models\EnhancedUser::where('partner_id', $partner->id)->count();
                     
                     $stats['active_users'] = \App\Models\EnhancedUser::where('status', 'active')
-                        ->where(function($query) use ($partner) {
-                            $query->where('partner_id', $partner->id)
-                                  ->orWhere('id', $partner->user_id);
-                        })
+                        ->where('partner_id', $partner->id)
                         ->count();
                     
                     $stats['pending_users'] = \App\Models\EnhancedUser::where('status', 'pending')
@@ -681,13 +777,21 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
                         ->count();
                     
                     // Get recent users with error handling using EnhancedUser model
-                    $users = \App\Models\EnhancedUser::where(function ($q) use ($partner) {
-                            $q->where('partner_id', $partner->id)
-                              ->orWhere('id', $partner->user_id);
-                        })
-                        ->orderByDesc('created_at')
-                        ->limit(10)
+                    // Only show users from the current partner
+                    $users = \App\Models\EnhancedUser::where('partner_id', $partner->id)
+                        ->orderBy('created_at', 'desc') // Order by creation date
                         ->get();
+                    
+                    // Ensure roles are properly loaded for all users
+                    $users->each(function ($user) {
+                        // Load role relationship manually to ensure it's properly loaded
+                        if ($user->role_id) {
+                            $role = \App\Models\EnhancedRole::find($user->role_id);
+                            if ($role) {
+                                $user->setRelation('role', $role);
+                            }
+                        }
+                    });
                     
                     // Ensure users is always a collection
                     $stats['users'] = $users ?: collect();
@@ -743,6 +847,189 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
             }
         })->name('test-settings.index');
         
+        // Equation Tutorial Route
+        Route::get('settings/equation-tutorial', function () {
+            return view('partner.settings.equation-tutorial');
+        })->name('settings.equation-tutorial');
+        
+        // Test route to verify user filtering
+        Route::get('test-user-filter', function () {
+            try {
+                // Get the authenticated user with partner relationship
+                $user = auth()->user();
+                if (!$user) {
+                    return response()->json(['error' => 'User not authenticated']);
+                }
+                
+                // Check if user has a partner relationship
+                if (!$user->partner) {
+                    return response()->json(['error' => 'Please complete your partner profile first.']);
+                }
+                
+                // Get the partner record
+                $partner = $user->partner;
+                
+                // Get users from current partner only
+                $partnerUsers = \App\Models\EnhancedUser::where('partner_id', $partner->id)
+                    ->with(['role'])
+                    ->orderByDesc('created_at')
+                    ->limit(10)
+                    ->get();
+                
+                // Get the partner owner user
+                $partnerOwner = \App\Models\EnhancedUser::where('id', $partner->user_id)->first();
+                
+                // Combine results
+                $users = collect();
+                if ($partnerOwner) {
+                    $users->push($partnerOwner);
+                }
+                $users = $users->merge($partnerUsers);
+                
+                return response()->json([
+                    'success' => true,
+                    'partner_id' => $partner->id,
+                    'partner_name' => $partner->name,
+                    'total_users' => $users->count(),
+                    'users' => $users->map(function ($u) {
+                        return [
+                            'id' => $u->id,
+                            'name' => $u->name,
+                            'email' => $u->email,
+                            'partner_id' => $u->partner_id,
+                            'role' => $u->getRoleDisplayName(),
+                            'is_partner_owner' => $u->id == $u->partner->user_id
+                        ];
+                    })
+                ]);
+            } catch (\Exception $e) {
+                \Log::error('Error in test user filter route: ' . $e->getMessage());
+                return response()->json(['error' => 'An error occurred: ' . $e->getMessage()]);
+            }
+        })->name('test-user-filter');
+        
+        // Test route to verify partner-specific user filtering
+        Route::get('test-partner-users', function () {
+            try {
+                // Get authenticated user
+                $user = auth()->user();
+                if (!$user) {
+                    return response()->json(['error' => 'Not authenticated']);
+                }
+                
+                // Get partner
+                $partner = $user->partner;
+                if (!$partner) {
+                    return response()->json(['error' => 'No partner associated with user']);
+                }
+                
+                // Get users that belong to this partner only
+                $partnerUsers = \App\Models\EnhancedUser::where('partner_id', $partner->id)
+                    ->with(['role'])
+                    ->get();
+                
+                // Get the partner owner user
+                $partnerOwner = \App\Models\EnhancedUser::where('id', $partner->user_id)->first();
+                
+                return response()->json([
+                    'current_user_id' => $user->id,
+                    'partner_id' => $partner->id,
+                    'partner_name' => $partner->name,
+                    'partner_owner' => $partnerOwner ? [
+                        'id' => $partnerOwner->id,
+                        'name' => $partnerOwner->name,
+                        'email' => $partnerOwner->email
+                    ] : null,
+                    'partner_users_count' => $partnerUsers->count(),
+                    'partner_users' => $partnerUsers->map(function ($u) {
+                        return [
+                            'id' => $u->id,
+                            'name' => $u->name,
+                            'email' => $u->email,
+                            'partner_id' => $u->partner_id,
+                            'role_id' => $u->role_id,
+                            'role' => $u->role ? [
+                                'id' => $u->role->id,
+                                'name' => $u->role->name,
+                                'display_name' => $u->role->display_name,
+                                'level' => $u->role->level
+                            ] : null,
+                            'role_name_via_method' => $u->getRoleName(),
+                            'role_display_name_via_method' => $u->getRoleDisplayName()
+                        ];
+                    })
+                ]);
+            } catch (\Exception $e) {
+                return response()->json(['error' => $e->getMessage()]);
+            }
+        })->name('test.partner.users');
+        
+        // Debug route to check users for partner settings
+        Route::get('debug-partner-settings', function () {
+            try {
+                // Get the authenticated user with partner relationship
+                $user = auth()->user();
+                if (!$user) {
+                    return response()->json(['error' => 'User not authenticated']);
+                }
+                
+                // Check if user has a partner relationship
+                if (!$user->partner) {
+                    return response()->json(['error' => 'Please complete your partner profile first.']);
+                }
+                
+                // Get the partner record with relationships
+                $partner = $user->partner;
+                
+                // Get recent users
+                $users = \App\Models\EnhancedUser::where('partner_id', $partner->id)
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+                
+                // Debug information for each user
+                $debugUsers = [];
+                foreach ($users as $u) {
+                    // Try different ways to load the role
+                    $roleViaRelationship = $u->role;
+                    $roleViaMethod = null;
+                    $roleViaDirectQuery = null;
+                    
+                    if ($u->role_id) {
+                        $roleViaMethod = $u->getRoleDisplayName();
+                        $roleViaDirectQuery = \App\Models\EnhancedRole::find($u->role_id);
+                    }
+                    
+                    $debugUsers[] = [
+                        'id' => $u->id,
+                        'name' => $u->name,
+                        'email' => $u->email,
+                        'role_id' => $u->role_id,
+                        'role_via_relationship' => $roleViaRelationship ? [
+                            'id' => $roleViaRelationship->id,
+                            'name' => $roleViaRelationship->name,
+                            'display_name' => $roleViaRelationship->display_name
+                        ] : null,
+                        'role_via_method' => $roleViaMethod,
+                        'role_via_direct_query' => $roleViaDirectQuery ? [
+                            'id' => $roleViaDirectQuery->id,
+                            'name' => $roleViaDirectQuery->name,
+                            'display_name' => $roleViaDirectQuery->display_name
+                        ] : null,
+                        'is_role_object' => $u->role && is_object($u->role),
+                    ];
+                }
+                
+                return response()->json([
+                    'partner_id' => $partner->id,
+                    'partner_name' => $partner->name,
+                    'users_count' => $users->count(),
+                    'users' => $debugUsers
+                ]);
+            } catch (\Exception $e) {
+                return response()->json(['error' => $e->getMessage()]);
+            }
+        })->name('debug.partner.settings');
+        
         // Backup & Restore Routes
         Route::get('backup-restore', [App\Http\Controllers\Partner\BackupRestoreController::class, 'index'])->name('settings.backup-restore');
         Route::post('backup/database', [App\Http\Controllers\Partner\BackupRestoreController::class, 'createDatabaseBackup'])->name('settings.backup.database');
@@ -779,21 +1066,169 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
             Route::post('users', [\App\Http\Controllers\UserManagementController::class, 'store'])->name('users.store');
             Route::get('users/{user}', [\App\Http\Controllers\UserManagementController::class, 'show'])->name('users.show');
             Route::put('users/{user}', [\App\Http\Controllers\UserManagementController::class, 'update'])->name('users.update');
+            Route::put('users/{user}/status', [\App\Http\Controllers\UserManagementController::class, 'updateStatus'])->name('users.update-status');
+            Route::post('users/{user}/reset-password', [\App\Http\Controllers\UserManagementController::class, 'resetPassword'])->name('users.reset-password');
             Route::delete('users/{user}', [\App\Http\Controllers\UserManagementController::class, 'destroy'])->name('users.destroy');
-            Route::post('users/bulk-update', [\App\Http\Controllers\UserManagementController::class, 'bulkUpdate'])->name('users.bulk-update');
-            Route::get('users/{user}/activities', [\App\Http\Controllers\UserManagementController::class, 'getActivities'])->name('users.activities');
-            // Permission route removed
-            Route::get('users/export', [\App\Http\Controllers\UserManagementController::class, 'export'])->name('users.export');
-            Route::get('users/statistics', [\App\Http\Controllers\UserManagementController::class, 'getStatistics'])->name('users.statistics');
-            // Permission route removed
-            Route::get('users/get-students', [\App\Http\Controllers\UserManagementController::class, 'getStudents'])->name('users.get-students');
             
+            // Test route for debugging user status update
+            Route::get('test-user-status/{user}', function(\App\Models\EnhancedUser $user) {
+                try {
+                    $controller = new \App\Http\Controllers\UserManagementController();
+                    $partnerId = $controller->getPartnerId();
+                    
+                    return response()->json([
+                        'success' => true,
+                        'user_id' => $user->id,
+                        'user_partner_id' => $user->partner_id,
+                        'current_partner_id' => $partnerId,
+                        'user_belongs_to_partner' => $user->partner_id == $partnerId,
+                        'user_status' => $user->status,
+                        'valid_statuses' => \App\Models\EnhancedUser::getStatuses()
+                    ]);
+                } catch (\Exception $e) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => $e->getMessage()
+                    ], 500);
+                }
+            })->name('test.user-status');
+
+            // Test user management route
+            Route::get('test-user-management', function() {
+                try {
+                    $users = \App\Models\EnhancedUser::with(['role'])->take(5)->get();
+                    $result = [];
+                            
+                    foreach ($users as $user) {
+                        $result[] = [
+                            'user_id' => $user->id,
+                            'user_name' => $user->name,
+                            'role_id' => $user->role_id,
+                            'role_loaded' => $user->relationLoaded('role'),
+                            'role_is_object' => is_object($user->role),
+                            'role_name' => $user->role && is_object($user->role) ? $user->role->name : null,
+                            'role_display_name' => $user->role && is_object($user->role) ? $user->role->display_name : null
+                        ];
+                    }
+                            
+                    return response()->json([
+                        'success' => true,
+                        'users' => $result
+                    ]);
+                } catch (\Exception $e) {
+                    return response()->json([
+                        'success' => false,
+                        'error' => $e->getMessage()
+                    ], 500);
+                }
+            })->name('test.user-management');
             
-            // Test route
-            Route::get('test-route', function() {
-                return response()->json(['message' => 'Test route working']);
-            })->name('test.route');
+            // Test route to check available students for user creation
+            Route::get('test-available-students', function () {
+                try {
+                    // Get authenticated user
+                    $user = auth()->user();
+                    if (!$user) {
+                        return response()->json(['error' => 'Not authenticated']);
+                    }
+                    
+                    // Get partner
+                    $partner = $user->partner;
+                    if (!$partner) {
+                        return response()->json(['error' => 'No partner associated with user']);
+                    }
+                    
+                    // Get students from current partner who don't have user accounts yet
+                    $students = \App\Models\Student::where('partner_id', $partner->id)
+                        ->whereNull('user_id') // Only students without user accounts
+                        ->orderBy('full_name')
+                        ->get();
+                    
+                    // Get students who already have user accounts
+                    $studentsWithAccounts = \App\Models\Student::where('partner_id', $partner->id)
+                        ->whereNotNull('user_id') // Students with user accounts
+                        ->with('user')
+                        ->orderBy('full_name')
+                        ->get();
+                    
+                    return response()->json([
+                        'partner_id' => $partner->id,
+                        'partner_name' => $partner->name,
+                        'students_without_accounts_count' => $students->count(),
+                        'students_with_accounts_count' => $studentsWithAccounts->count(),
+                        'students_without_accounts' => $students->map(function ($student) {
+                            return [
+                                'id' => $student->id,
+                                'full_name' => $student->full_name,
+                                'email' => $student->email,
+                                'phone' => $student->phone
+                            ];
+                        }),
+                        'students_with_accounts' => $studentsWithAccounts->map(function ($student) {
+                            return [
+                                'id' => $student->id,
+                                'full_name' => $student->full_name,
+                                'email' => $student->email,
+                                'phone' => $student->phone,
+                                'user_id' => $student->user_id,
+                                'user_email' => $student->user ? $student->user->email : 'N/A'
+                            ];
+                        })
+                    ]);
+                } catch (\Exception $e) {
+                    return response()->json(['error' => $e->getMessage()]);
+                }
+            })->name('test.available.students');
             
+            // Test route to check students with user accounts
+            Route::get('test-student-users', function () {
+                try {
+                    // Get authenticated user
+                    $user = auth()->user();
+                    if (!$user) {
+                        return response()->json(['error' => 'Not authenticated']);
+                    }
+                    
+                    // Get partner
+                    $partner = $user->partner;
+                    if (!$partner) {
+                        return response()->json(['error' => 'No partner associated with user']);
+                    }
+                    
+                    // Get students from current partner who don't have user accounts yet
+                    $students = \App\Models\Student::where('partner_id', $partner->id)
+                        ->whereDoesntHave('user')
+                        ->with('user')
+                        ->orderBy('full_name')
+                        ->get();
+                    
+                    $debugInfo = [
+                        'partner_id' => $partner->id,
+                        'partner_name' => $partner->name,
+                        'students_count' => $students->count(),
+                        'students' => []
+                    ];
+                    
+                    foreach ($students as $student) {
+                        $debugInfo['students'][] = [
+                            'id' => $student->id,
+                            'full_name' => $student->full_name,
+                            'user_id' => $student->user_id,
+                            'user_exists' => $student->user ? true : false,
+                            'user_data' => $student->user ? [
+                                'id' => $student->user->id,
+                                'name' => $student->user->name,
+                                'email' => $student->user->email,
+                                'flag' => $student->user->flag
+                            ] : null
+                        ];
+                    }
+                    
+                    return response()->json($debugInfo);
+                } catch (\Exception $e) {
+                    return response()->json(['error' => $e->getMessage()]);
+                }
+            })->name('test.student.users');
         });
 
         // Access Control Routes - Disabled
@@ -811,12 +1246,27 @@ Route::prefix('student')->name('student.')->middleware(['auth'])->group(function
         Route::get('/', [StudentDashboardController::class, 'index'])->name('dashboard');
         Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard.main');
         
-        // Student Profile
-        Route::resource('profile', StudentController::class)->only(['show', 'edit', 'update']);
+        // Student Profile - Custom routes for own profile
+        Route::get('/profile', [StudentController::class, 'showProfile'])->name('profile.show');
+        Route::get('/profile/edit', [StudentController::class, 'editProfile'])->name('profile.edit');
+        Route::put('/profile', [StudentController::class, 'updateProfile'])->name('profile.update');
         
-        // Available Exams
-        Route::get('exams', [StudentExamController::class, 'availableExams'])->name('exams.available');
+        // My Syllabus
+        Route::get('/syllabus', [StudentDashboardController::class, 'syllabus'])->name('syllabus');
+        Route::post('/syllabus/topic-progress', [StudentDashboardController::class, 'updateTopicProgress'])->name('syllabus.update-topic-progress');
+        Route::post('/syllabus/multiple-topic-progress', [StudentDashboardController::class, 'updateMultipleTopicProgress'])->name('syllabus.update-multiple-topic-progress');
+        
+        // My Analytics
+        Route::get('/analytics', [StudentDashboardController::class, 'analytics'])->name('analytics');
+        
+        // Available Exams (show Expired message)
+        Route::get('exams', function() {
+            return 'Expired';
+        })->name('exams.available');
         Route::get('exams/{exam}', [StudentExamController::class, 'showExam'])->name('exams.show');
+        
+        // My Exams
+        Route::get('my-exams', [StudentExamController::class, 'myExams'])->name('exams.my-exams');
         
         // Take Exam
         Route::get('exams/{exam}/start', [StudentExamController::class, 'startExam'])->name('exams.start');
@@ -915,7 +1365,7 @@ Route::middleware(['auth'])->group(function () {
         // User Management API routes
         Route::get('/users', [\App\Http\Controllers\UserManagementController::class, 'getUsers'])->name('api.users.index');
         Route::get('/users/{id}', [\App\Http\Controllers\UserManagementController::class, 'getUser'])->name('api.users.show');
-        Route::get('/users/{id}/activities', [\App\Http\Controllers\UserManagementController::class, 'getActivities'])->name('api.users.activities');
+        // Route removed: Route::get('/users/{id}/activities', [\App\Http\Controllers\UserManagementController::class, 'getActivities'])->name('api.users.activities');
         // Permission route removed
         Route::get('/users/export', [\App\Http\Controllers\UserManagementController::class, 'export'])->name('api.users.export');
         Route::get('/users/statistics', [\App\Http\Controllers\UserManagementController::class, 'getStatistics'])->name('api.users.statistics');

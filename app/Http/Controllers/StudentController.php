@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Student;
 use App\Models\Course;
 use App\Models\Batch;
+use App\Models\ExamResult;
 use App\Traits\HasPartnerContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class StudentController extends Controller
 {
@@ -126,6 +128,7 @@ class StudentController extends Controller
 
     public function show(Student $student)
     {
+        // For partner view
         $student->load(['examResults.exam']);
         return view('partner.students.show', compact('student'));
     }
@@ -298,5 +301,136 @@ class StudentController extends Controller
 
         return redirect()->route('partner.students.assignment')
             ->with('success', 'Bulk assignment completed successfully.');
+    }
+
+    /**
+     * Get student record for the authenticated user using multiple approaches
+     */
+    private function getStudentForUser($user)
+    {
+        // Try to get student record through relationship first
+        $student = $user->student;
+        
+        // If relationship doesn't work, try to find student by student_id
+        if (!$student && $user->student_id) {
+            $student = Student::find($user->student_id);
+        }
+        
+        // If still no student, try to find by user_id
+        if (!$student) {
+            $student = Student::where('user_id', $user->id)->first();
+        }
+        
+        return $student;
+    }
+
+    /**
+     * Display the student's own profile
+     */
+    public function showProfile()
+    {
+        $user = Auth::user();
+        
+        // Try to get student record using multiple approaches
+        $student = $this->getStudentForUser($user);
+        
+        if (!$student) {
+            return redirect()->route('student.dashboard')
+                ->with('error', 'Student profile not found.');
+        }
+        
+        // Load relationships
+        $student->load(['course', 'batch']);
+        
+        // Calculate exam statistics
+        $examStats = [
+            'total' => ExamResult::where('student_id', $student->id)->count(),
+            'passed' => ExamResult::where('student_id', $student->id)
+                ->where('percentage', '>=', 50)
+                ->count(),
+            'average' => round((float) (ExamResult::where('student_id', $student->id)
+                ->whereNotNull('percentage')
+                ->avg('percentage') ?? 0), 1),
+        ];
+        
+        return view('student.profile.show', compact('student', 'examStats'));
+    }
+
+    /**
+     * Show the form for editing the student's own profile
+     */
+    public function editProfile()
+    {
+        $user = Auth::user();
+        
+        // Try to get student record using multiple approaches
+        $student = $this->getStudentForUser($user);
+        
+        if (!$student) {
+            return redirect()->route('student.dashboard')
+                ->with('error', 'Student profile not found.');
+        }
+        
+        return view('student.profile.edit', compact('student'));
+    }
+
+    /**
+     * Update the student's own profile
+     */
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+        
+        // Try to get student record using multiple approaches
+        $student = $this->getStudentForUser($user);
+        
+        if (!$student) {
+            return redirect()->route('student.dashboard')
+                ->with('error', 'Student profile not found.');
+        }
+        
+        $request->validate([
+            'full_name' => 'required|string|max:255',
+            'date_of_birth' => 'required|date',
+            'gender' => 'required|in:male,female,other',
+            'email' => 'required|email|unique:students,email,'.$student->id,
+            'phone' => 'required|string|regex:/^01[3-9][0-9]{8}$/|max:20|unique:students,phone,'.$student->id,
+            'address' => 'nullable|string|max:500',
+            'city' => 'nullable|string|max:100',
+            'school_college' => 'nullable|string|max:255',
+            'class_grade' => 'nullable|string|max:50',
+            'father_name' => 'nullable|string|max:255',
+            'father_phone' => 'nullable|string|regex:/^01[3-9][0-9]{8}$/|max:20',
+            'mother_name' => 'nullable|string|max:255',
+            'mother_phone' => 'nullable|string|regex:/^01[3-9][0-9]{8}$/|max:20',
+            'blood_group' => 'required|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
+            'religion' => 'required|in:Islam,Hinduism,Christianity,Buddhism',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ], [
+            'email.unique' => 'This email address is already registered.',
+            'phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
+            'phone.unique' => 'This phone number is already registered.',
+            'father_phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
+            'mother_phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
+        ]);
+
+        $data = $request->except(['photo']);
+        
+        // Handle photo upload
+        if ($request->hasFile('photo')) {
+            // Delete old photo if exists
+            if ($student->photo) {
+                Storage::disk('public')->delete($student->photo);
+            }
+            
+            // Store new photo
+            $data['photo'] = $request->file('photo')->store('student-photos', 'public');
+        }
+
+        // Update student
+        $student->update($data);
+
+        return redirect()->route('student.profile.show')
+            ->with('success', 'Profile updated successfully.');
     }
 }
