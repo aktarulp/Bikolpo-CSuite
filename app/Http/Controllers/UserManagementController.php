@@ -876,10 +876,21 @@ class UserManagementController extends Controller
             ], 404);
         }
 
-        // Validate the request
-        $validator = Validator::make($request->all(), [
+        // Check if user is resetting their own password
+        $isCurrentUser = ($user->id == auth()->id());
+        
+        // Build validation rules
+        $rules = [
             'password' => 'required|string|min:8|confirmed',
-        ]);
+        ];
+        
+        // If resetting own password, require current password
+        if ($isCurrentUser) {
+            $rules['current_password'] = 'required|string';
+        }
+
+        // Validate the request
+        $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return response()->json([
@@ -889,6 +900,19 @@ class UserManagementController extends Controller
         }
 
         try {
+            // If resetting own password, verify current password first
+            if ($isCurrentUser) {
+                if (!Hash::check($request->current_password, $user->password)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Current password is incorrect.',
+                        'errors' => [
+                            'current_password' => ['The current password is incorrect.']
+                        ]
+                    ], 422);
+                }
+            }
+            
             // Update user password
             $user->update([
                 'password' => Hash::make($request->password)
@@ -897,9 +921,10 @@ class UserManagementController extends Controller
             // Log activity (disabled)
             // $user->activities()->create([
             //     'action' => 'password_reset',
-            //     'description' => 'User password reset by administrator',
+            //     'description' => $isCurrentUser ? 'User changed own password' : 'User password reset by administrator',
             //     'metadata' => [
             //         'reset_by' => auth()->id(),
+            //         'self_reset' => $isCurrentUser,
             //     ],
             //     'ip_address' => $request->ip(),
             //     'user_agent' => $request->userAgent(),
