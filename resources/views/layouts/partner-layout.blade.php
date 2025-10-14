@@ -979,6 +979,68 @@
         });
     </script>
 
+    <!-- MathJax for Global LaTeX Rendering -->
+    <script>
+    window.MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
+            packages: {'[+]': ['mhchem']} // Chemistry support
+        },
+        startup: {
+            ready: () => {
+                console.log('MathJax loaded globally');
+                MathJax.startup.defaultReady();
+                // Auto-render equations on page load
+                MathJax.startup.promise.then(() => {
+                    MathJax.typesetPromise();
+                });
+            }
+        }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/input/tex/extensions/mhchem.js"></script>
+    
+    <!-- Global Equation Rendering Helper -->
+    <script>
+    // Function to render LaTeX equations in any element
+    window.renderMathInElement = function(element) {
+        if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+            return MathJax.typesetPromise([element]).then(() => {
+                console.log('✓ Equations rendered');
+            }).catch((err) => console.log('MathJax error:', err));
+        }
+    };
+    
+    // Global function to render entire page
+    window.renderAllMath = function() {
+        if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+            return MathJax.typesetPromise().then(() => {
+                console.log('✓ All equations rendered');
+            }).catch((err) => console.log('MathJax error:', err));
+        }
+    };
+    </script>
+    
+    <style>
+    /* Global styling for rendered equations */
+    .MathJax {
+        font-size: 1.1em !important;
+    }
+    
+    mjx-container {
+        margin: 0.5em 0;
+        display: inline-block;
+    }
+    
+    mjx-container[display="true"] {
+        display: block;
+        text-align: center;
+        margin: 1em 0;
+    }
+    </style>
+
     @stack('scripts')
 </body>
 </html>

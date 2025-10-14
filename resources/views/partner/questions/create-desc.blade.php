@@ -115,79 +115,19 @@
 
                      <div class="space-y-2">
                          <div class="w-full">
-                             <!-- Rich Text Editor -->
-                                 <!-- Rich Text Editor Toolbar -->
-                                 <div class="border border-gray-300 rounded-t-lg bg-gray-50 p-2 flex flex-wrap items-center gap-2">
-                                     <!-- Text Formatting -->
-                                     <button type="button" id="boldBtn" class="p-2 hover:bg-gray-200 rounded" title="Bold">
-                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 12h8a4 4 0 100-8H6v8zm0 0h8a4 4 0 110 8H6v-8z"></path>
-                                         </svg>
-                                     </button>
-                                     <button type="button" id="italicBtn" class="p-2 hover:bg-gray-200 rounded" title="Italic">
-                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
-                                         </svg>
-                                     </button>
-                                     <button type="button" id="underlineBtn" class="p-2 hover:bg-gray-200 rounded" title="Underline">
-                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
-                                         </svg>
-                                     </button>
-                                     
-                                     <div class="w-px h-6 bg-gray-300"></div>
-                                     
-                                     <!-- Equation -->
-                                     <button type="button" id="equationBtn" class="p-2 hover:bg-gray-200 rounded text-sm font-medium" title="Insert Equation">
-                                         ∑
-                                     </button>
-                                     
-                                     <!-- Local Image Upload -->
-                                     <button type="button" id="uploadImageBtn" class="p-2 hover:bg-gray-200 rounded" title="Upload Image with Caption">
-                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                                         </svg>
-                                     </button>
-                                     
-                                     <!-- Hidden file input for image upload -->
-                                     <input type="file" id="imageFileInput" accept="image/*" class="hidden">
-                                     
-                                     <!-- Image Resize -->
-                                     <button type="button" id="resizeBtn" class="p-2 hover:bg-gray-200 rounded bg-blue-50 border border-blue-200" title="Resize Selected Image" style="display: inline-flex !important; visibility: visible !important;">
-                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
-                                         </svg>
-                                         <span class="ml-1 text-xs text-blue-600 font-medium">Resize</span>
-                                     </button>
-                                    
-                                     <div class="w-px h-6 bg-gray-300"></div>
-                                     
-                                     <!-- Hyperlink -->
-                                     <button type="button" id="linkBtn" class="p-2 hover:bg-gray-200 rounded" title="Insert Hyperlink">
-                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
-                                         </svg>
-                                     </button>
-                                    
-                                     <div class="w-px h-6 bg-gray-300"></div>
-                                     
-                                     <!-- Clear Formatting -->
-                                     <button type="button" id="clearFormatBtn" class="p-2 hover:bg-gray-200 rounded text-sm font-medium" title="Clear Formatting">
-                                         Clear
-                                     </button>
-                                 </div>
-                                 
-                                 <!-- Rich Text Editor Content -->
-                                 <div id="richTextEditor" class="border border-t-0 border-gray-300 rounded-b-lg min-h-[150px] p-4 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all duration-200" contenteditable="true" data-placeholder="Enter your question here... You can use formatting, images, and equations."></div>
-                                 
-                                 <!-- Hidden textarea for form submission -->
-                                 <textarea name="question_text" id="question_text" class="hidden" required></textarea>
-                                 <input type="hidden" name="q_type_id" value="1">
-                                 
-                                 <div class="flex justify-between items-center text-sm text-gray-500 mt-2">
-                                     <span>Use the toolbar above for formatting, equations, and images.</span>
-                                     <span id="charCount">0 characters</span>
-                                 </div>
+                             <label for="question_text" class="block text-sm font-medium text-gray-700 mb-2">
+                                 Question Text<span class="text-red-500">*</span>
+                             </label>
+                             
+                             <!-- CKEditor Textarea -->
+                             <textarea name="question_text" id="question_text" rows="10" required
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                       placeholder="Enter your descriptive question here..."></textarea>
+                             <input type="hidden" name="q_type_id" value="1">
+                             
+                             <div class="text-sm text-gray-500 mt-2">
+                                 <span>💡 Use the ∑ (equation) button in the toolbar to add math or chemistry equations.</span>
+                             </div>
                          </div>
                      </div>
                      
@@ -959,7 +899,7 @@ courseSelect.addEventListener('change', function() {
     // Form validation function
     function validateForm() {
         const requiredFields = [
-            'course_id', 'subject_id', 'question_text'
+            'course_id', 'subject_id'
         ];
         
         for (const fieldName of requiredFields) {
@@ -971,14 +911,23 @@ courseSelect.addEventListener('change', function() {
             }
         }
 
-        // Special validation for rich text editor
-        const editor = document.getElementById('richTextEditor');
-        const editorText = editor ? (editor.innerText || editor.textContent || '') : '';
-        
-        if (editorText.trim() === '' || editorText.includes('Enter your question here')) {
-            showNotification('Please enter a question text.', 'error');
-            editor?.focus();
-            return false;
+        // Validate CKEditor content
+        if (window.questionEditor) {
+            window.questionEditor.updateElement(); // Sync CKEditor to textarea
+            const editorData = window.questionEditor.getData();
+            
+            if (!editorData || editorData.trim() === '') {
+                showNotification('Please enter a question text.', 'error');
+                window.questionEditor.focus();
+                return false;
+            }
+        } else {
+            // Fallback if CKEditor not ready
+            const questionText = document.getElementById('question_text').value;
+            if (!questionText || questionText.trim() === '') {
+                showNotification('Please enter a question text.', 'error');
+                return false;
+            }
         }
         
         return true;
@@ -988,11 +937,12 @@ courseSelect.addEventListener('change', function() {
     function resetForm() {
         form.reset();
         
-        // Reset rich text editor
-        const editor = document.getElementById('richTextEditor');
-        editor.innerHTML = '';
-        document.getElementById('question_text').value = '';
-        updateCharCount();
+        // Reset CKEditor
+        if (window.questionEditor) {
+            window.questionEditor.setData('');
+        } else {
+            document.getElementById('question_text').value = '';
+        }
         
         // Reset dropdowns to initial state
         subjectSelect.innerHTML = '<option value="">Please select a course first</option>';
@@ -1025,4 +975,350 @@ courseSelect.addEventListener('change', function() {
     }
 });
 </script>
+
+<!-- Ensure Math Button is Visible -->
+<style>
+    /* Make sure the Math Equation button is visible */
+    .cke_button__mathequation {
+        display: inline-block !important;
+        visibility: visible !important;
+    }
+    
+    .cke_button__mathequation_label {
+        display: inline !important;
+        padding: 0 4px !important;
+    }
+    
+    /* Note: Equation styling is global in partner-layout.blade.php */
+</style>
+
+<!-- Suppress CKEditor License Warning -->
+<script>
+(function() {
+    const originalError = console.error;
+    const originalWarn = console.warn;
+    
+    console.error = function() {
+        const message = Array.from(arguments).join(' ');
+        if (message.includes('CKEDITOR') && message.includes('license')) {
+            return; // Suppress license warnings
+        }
+        originalError.apply(console, arguments);
+    };
+    
+    console.warn = function() {
+        const message = Array.from(arguments).join(' ');
+        if (message.includes('CKEDITOR') && message.includes('license')) {
+            return; // Suppress license warnings
+        }
+        originalWarn.apply(console, arguments);
+    };
+})();
+</script>
+
+<!-- Load CKEditor 4 -->
+<script src="{{ asset('ckeditor/ckeditor.js') }}"></script>
+
+<!-- Load MathLive from CDN (for visual equation editor) -->
+<link rel="stylesheet" href="https://unpkg.com/mathlive/dist/mathlive-static.css">
+<script src="https://unpkg.com/mathlive"></script>
+
+<!-- Note: MathJax is loaded globally in partner-layout.blade.php -->
+
+<!-- Define CKEditor Math Equation Plugin -->
+<script>
+(function() {
+    if (typeof CKEDITOR !== 'undefined') {
+        console.log('Registering mathequation plugin...');
+        
+        CKEDITOR.plugins.add('mathequation', {
+            init: function(editor) {
+                console.log('mathequation plugin init() called for:', editor.name);
+                
+                editor.addCommand('insertMathEquation', {
+                    exec: function(editor) {
+                        console.log('Math equation button clicked!');
+                        if (typeof window.openMathEditor === 'function') {
+                            window.openMathEditor();
+                        } else {
+                            alert('Math editor is loading. Please wait a moment and try again.');
+                        }
+                    }
+                });
+                
+                editor.ui.addButton('MathEquation', {
+                    label: 'Math/Chemistry Equation (∑)',
+                    command: 'insertMathEquation',
+                    toolbar: 'insert',
+                    icon: false // Use text instead of icon
+                });
+                
+                console.log('✓ MathEquation button registered');
+            }
+        });
+        
+        console.log('✓ mathequation plugin added to CKEDITOR.plugins');
+    } else {
+        console.error('CKEDITOR not available when trying to register mathequation plugin!');
+    }
+})();
+</script>
+
+<!-- Initialize CKEditor -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Initializing CKEditor...');
+    
+    // Destroy existing instance if any
+    if (CKEDITOR.instances['question_text']) {
+        CKEDITOR.instances['question_text'].destroy(true);
+    }
+    
+    // Initialize CKEditor
+    const questionEditor = CKEDITOR.replace('question_text', {
+        height: 200,
+        versionCheck: false, // Suppress license warnings
+        extraPlugins: 'mathequation',
+        removePlugins: 'elementspath',
+        allowedContent: true,
+        toolbarCanCollapse: false,
+        // Explicit toolbar with Math button
+        toolbar: [
+            { name: 'document', items: [ 'Source', '-', 'Save', 'NewPage', 'Preview', 'Print', '-', 'Templates' ] },
+            { name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
+            { name: 'editing', items: [ 'Find', 'Replace', '-', 'SelectAll', '-', 'Scayt' ] },
+            '/',
+            { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript', '-', 'CopyFormatting', 'RemoveFormat' ] },
+            { name: 'paragraph', items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl' ] },
+            { name: 'links', items: [ 'Link', 'Unlink', 'Anchor' ] },
+            { name: 'insert', items: [ 'Image', 'Table', 'HorizontalRule', 'SpecialChar', 'MathEquation' ] }, // Math button here!
+            '/',
+            { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
+            { name: 'colors', items: [ 'TextColor', 'BGColor' ] },
+            { name: 'tools', items: [ 'Maximize', 'ShowBlocks' ] }
+        ]
+    });
+    
+    questionEditor.on('instanceReady', function() {
+        console.log('✓ CKEditor ready!');
+        console.log('✓ Loaded plugins:', Object.keys(questionEditor.plugins));
+        console.log('✓ Has mathequation plugin?', questionEditor.plugins.mathequation !== undefined);
+        console.log('✓ Toolbar items:', questionEditor.ui.items);
+        console.log('✓ Has MathEquation button?', questionEditor.ui.items.MathEquation !== undefined);
+        
+        // Render any existing LaTeX equations
+        if (typeof MathJax !== 'undefined') {
+            MathJax.typesetPromise([questionEditor.container.$]).catch((err) => console.log('MathJax error:', err));
+        }
+    });
+    
+    // Re-render equations when content changes
+    questionEditor.on('change', function() {
+        if (typeof MathJax !== 'undefined') {
+            setTimeout(() => {
+                MathJax.typesetPromise([questionEditor.container.$]).catch((err) => console.log('MathJax error:', err));
+            }, 100);
+        }
+    });
+    
+    // Update form validation
+    const form = document.getElementById('descriptive-question-form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            questionEditor.updateElement();
+        });
+    }
+    
+    // Store globally for access
+    window.questionEditor = questionEditor;
+});
+</script>
+
+<!-- Initialize MathLive -->
+<script>
+window.addEventListener('load', function() {
+    const mathFieldElement = document.getElementById('mathfield');
+    const mathPreview = document.getElementById('mathPreview');
+    const latexCodeField = document.getElementById('latexCode');
+    const modal = document.getElementById('mathEditorModal');
+    
+    // Tab switching
+    document.getElementById('mathTab').addEventListener('click', function() {
+        document.getElementById('mathButtons').classList.remove('hidden');
+        document.getElementById('chemButtons').classList.add('hidden');
+        this.classList.add('border-b-2', 'border-blue-500', 'text-blue-600');
+        this.classList.remove('text-gray-600');
+        document.getElementById('chemTab').classList.remove('border-b-2', 'border-blue-500', 'text-blue-600');
+        document.getElementById('chemTab').classList.add('text-gray-600');
+    });
+    
+    document.getElementById('chemTab').addEventListener('click', function() {
+        document.getElementById('mathButtons').classList.add('hidden');
+        document.getElementById('chemButtons').classList.remove('hidden');
+        this.classList.add('border-b-2', 'border-blue-500', 'text-blue-600');
+        this.classList.remove('text-gray-600');
+        document.getElementById('mathTab').classList.remove('border-b-2', 'border-blue-500', 'text-blue-600');
+        document.getElementById('mathTab').classList.add('text-gray-600');
+    });
+    
+    // Quick insert buttons
+    document.querySelectorAll('.math-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const latex = this.getAttribute('data-latex');
+            mathFieldElement.executeCommand(['insert', latex]);
+            mathFieldElement.focus();
+        });
+    });
+    
+    // Sync MathField with LaTeX code
+    mathFieldElement.addEventListener('input', function() {
+        const latex = this.value;
+        latexCodeField.value = latex;
+        // Render with MathJax
+        mathPreview.innerHTML = `$$${latex}$$`;
+        if (typeof MathJax !== 'undefined') {
+            MathJax.typesetPromise([mathPreview]).catch((err) => console.log('MathJax preview error:', err));
+        }
+    });
+    
+    // Sync LaTeX code with MathField
+    latexCodeField.addEventListener('input', function() {
+        mathFieldElement.value = this.value;
+        // Render with MathJax
+        mathPreview.innerHTML = `$$${this.value}$$`;
+        if (typeof MathJax !== 'undefined') {
+            MathJax.typesetPromise([mathPreview]).catch((err) => console.log('MathJax preview error:', err));
+        }
+    });
+    
+    // Initial preview render
+    setTimeout(() => {
+        const initialLatex = mathFieldElement.value;
+        mathPreview.innerHTML = `$$${initialLatex}$$`;
+        if (typeof MathJax !== 'undefined') {
+            MathJax.typesetPromise([mathPreview]).catch((err) => console.log('MathJax preview error:', err));
+        }
+    }, 500);
+    
+    // Open modal function
+    window.openMathEditor = function() {
+        modal.classList.remove('hidden');
+        mathFieldElement.focus();
+    };
+    
+    // Close modal
+    document.getElementById('closeMathModal').addEventListener('click', function() {
+        modal.classList.add('hidden');
+    });
+    
+    document.getElementById('cancelMathModal').addEventListener('click', function() {
+        modal.classList.add('hidden');
+    });
+    
+    // Insert equation
+    document.getElementById('insertEquation').addEventListener('click', function() {
+        const latex = mathFieldElement.value;
+        if (window.questionEditor && latex) {
+            // Insert LaTeX wrapped in $$ for display or $ for inline
+            window.questionEditor.insertHtml('$$ ' + latex + ' $$');
+            modal.classList.add('hidden');
+            mathFieldElement.value = 'x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}';
+        }
+    });
+    
+    console.log('✓ MathLive initialized');
+});
+</script>
+
+<!-- Note: Global MathJax rendering helpers are in partner-layout.blade.php -->
+
+<!-- MathLive Equation Editor Modal -->
+<div id="mathEditorModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+    <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full m-4 max-h-[90vh] overflow-y-auto">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-900">Math & Chemistry Equation Editor</h3>
+                <button type="button" id="closeMathModal" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex border-b mb-4">
+                <button type="button" id="mathTab" class="px-4 py-2 font-medium border-b-2 border-blue-500 text-blue-600">
+                    Mathematics
+                </button>
+                <button type="button" id="chemTab" class="px-4 py-2 font-medium text-gray-600 hover:text-gray-900">
+                    Chemistry
+                </button>
+            </div>
+
+            <!-- Math Field (Visual Editor) -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Enter Equation:</label>
+                <math-field id="mathfield" class="w-full p-4 border border-gray-300 rounded-lg text-2xl" style="font-size: 24px;">
+                    x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}
+                </math-field>
+            </div>
+
+            <!-- Quick Insert Buttons -->
+            <div id="mathButtons" class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Quick Insert:</label>
+                <div class="grid grid-cols-4 gap-2">
+                    <button type="button" class="math-btn p-2 border rounded hover:bg-gray-100" data-latex="\frac{}{}">Fraction</button>
+                    <button type="button" class="math-btn p-2 border rounded hover:bg-gray-100" data-latex="\sqrt{}">Square Root</button>
+                    <button type="button" class="math-btn p-2 border rounded hover:bg-gray-100" data-latex="^{}">Superscript</button>
+                    <button type="button" class="math-btn p-2 border rounded hover:bg-gray-100" data-latex="_{}">Subscript</button>
+                    <button type="button" class="math-btn p-2 border rounded hover:bg-gray-100" data-latex="\sum">Summation (∑)</button>
+                    <button type="button" class="math-btn p-2 border rounded hover:bg-gray-100" data-latex="\int">Integral (∫)</button>
+                    <button type="button" class="math-btn p-2 border rounded hover:bg-gray-100" data-latex="\pi">Pi (π)</button>
+                    <button type="button" class="math-btn p-2 border rounded hover:bg-gray-100" data-latex="\theta">Theta (θ)</button>
+                    <button type="button" class="math-btn p-2 border rounded hover:bg-gray-100" data-latex="\alpha">Alpha (α)</button>
+                    <button type="button" class="math-btn p-2 border rounded hover:bg-gray-100" data-latex="\beta">Beta (β)</button>
+                    <button type="button" class="math-btn p-2 border rounded hover:bg-gray-100" data-latex="\lim">Limit</button>
+                    <button type="button" class="math-btn p-2 border rounded hover:bg-gray-100" data-latex="\infty">Infinity (∞)</button>
+                </div>
+            </div>
+
+            <div id="chemButtons" class="mb-4 hidden">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Quick Insert (Chemistry):</label>
+                <div class="grid grid-cols-4 gap-2">
+                    <button type="button" class="math-btn p-2 border rounded hover:bg-gray-100" data-latex="\ce{H2O}">H₂O</button>
+                    <button type="button" class="math-btn p-2 border rounded hover:bg-gray-100" data-latex="\ce{CO2}">CO₂</button>
+                    <button type="button" class="math-btn p-2 border rounded hover:bg-gray-100" data-latex="\ce{H2SO4}">H₂SO₄</button>
+                    <button type="button" class="math-btn p-2 border rounded hover:bg-gray-100" data-latex="\ce{->}">Arrow (→)</button>
+                    <button type="button" class="math-btn p-2 border rounded hover:bg-gray-100" data-latex="\ce{<->}">Equilibrium (⇌)</button>
+                    <button type="button" class="math-btn p-2 border rounded hover:bg-gray-100" data-latex="^{}">Superscript</button>
+                    <button type="button" class="math-btn p-2 border rounded hover:bg-gray-100" data-latex="_{}">Subscript</button>
+                    <button type="button" class="math-btn p-2 border rounded hover:bg-gray-100" data-latex="+">Plus (+)</button>
+                </div>
+            </div>
+
+            <!-- LaTeX Code -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">LaTeX Code:</label>
+                <textarea id="latexCode" class="w-full p-3 border border-gray-300 rounded-lg font-mono text-sm" rows="3"></textarea>
+            </div>
+
+            <!-- Preview -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Preview:</label>
+                <div id="mathPreview" class="w-full p-4 border border-gray-300 rounded-lg bg-gray-50 min-h-[60px] text-center text-2xl"></div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex justify-end gap-2">
+                <button type="button" id="cancelMathModal" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                    Cancel
+                </button>
+                <button type="button" id="insertEquation" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    Insert Equation
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
