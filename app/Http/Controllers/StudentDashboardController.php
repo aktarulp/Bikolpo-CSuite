@@ -244,20 +244,50 @@ class StudentDashboardController extends Controller
         $highestScore = $totalExams > 0 ? $examResults->max('percentage') : 0;
         $lowestScore = $totalExams > 0 ? $examResults->min('percentage') : 0;
 
-        // Subject-wise performance
-        $subjectPerformance = $examResults
-            ->groupBy('exam.subject_id')
-            ->map(function ($results, $subjectId) {
-                $subject = Subject::find($subjectId);
-                return [
-                    'subject' => $subject ? $subject->name : 'Unknown Subject',
-                    'exams' => $results->count(),
-                    'average' => round($results->avg('percentage'), 1),
-                    'highest' => $results->max('percentage'),
-                    'lowest' => $results->min('percentage'),
-                ];
-            })
-            ->sortByDesc('average');
+        // Subject-wise performance (based on exam questions' subjects)
+        $subjectData = [];
+        
+        foreach ($examResults as $result) {
+            $exam = $result->exam;
+            if ($exam) {
+                // Get all questions for this exam
+                $examQuestions = $exam->questions()->with('subject')->get();
+                
+                // Group by subject
+                $questionsBySubject = $examQuestions->groupBy('subject_id');
+                
+                foreach ($questionsBySubject as $subjectId => $questions) {
+                    $subject = $questions->first()->subject;
+                    if ($subject) {
+                        $subjectName = $subject->name;
+                        
+                        // Initialize subject array if not exists
+                        if (!isset($subjectData[$subjectName])) {
+                            $subjectData[$subjectName] = [
+                                'subject_id' => $subjectId,
+                                'subject' => $subjectName,
+                                'results' => [],
+                            ];
+                        }
+                        
+                        // Add result percentage
+                        $subjectData[$subjectName]['results'][] = $result->percentage;
+                    }
+                }
+            }
+        }
+        
+        // Calculate statistics for each subject
+        $subjectPerformance = collect($subjectData)->map(function ($data) {
+            $results = collect($data['results']);
+            return [
+                'subject' => $data['subject'],
+                'exams' => $results->count(),
+                'average' => $results->count() > 0 ? round($results->avg(), 1) : 0,
+                'highest' => $results->count() > 0 ? round($results->max(), 1) : 0,
+                'lowest' => $results->count() > 0 ? round($results->min(), 1) : 0,
+            ];
+        })->sortByDesc('average')->values();
 
         // Performance trend (last 5 exams)
         $performanceTrend = $examResults
