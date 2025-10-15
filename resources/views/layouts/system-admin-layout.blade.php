@@ -216,27 +216,27 @@
     <!-- Layout Container -->
     <div class="flex h-full">
         <!-- Left Sidebar Navigation (Collapsible) -->
-        <aside id="sidebar" class="mobile-sidebar w-64 lg:w-72 border-r border-slate-700 flex flex-col" style="background-color: #0F172A;">
+        <aside id="sidebar" class="mobile-sidebar w-64 lg:w-72 border-r flex flex-col" style="background-color: #0F172A; border-color: #15803D;">
             <div class="flex flex-col h-full overflow-y-auto custom-scrollbar">
-                <!-- Sidebar Header -->
-                <div class="relative px-4 py-4 border-b" style="border-color: #1E293B;">
+                <!-- Sidebar Header - Sticky with Top Bar -->
+                <div class="sticky top-0 z-40 px-4 py-4 border-b" style="background-color: #16A34A; border-color: #15803D;">
                     <div class="flex items-center justify-between">
                         <a href="{{ route('system-admin.system-admin-dashboard') }}" class="flex items-center space-x-3 group flex-1 min-w-0">
                             <div class="relative flex-shrink-0">
-                                <div class="w-12 h-12 bg-white dark:bg-gray-800 rounded-xl flex items-center justify-center shadow-lg ring-2 ring-primaryGreen/20 group-hover:ring-primaryGreen/40 transition-all duration-300 group-hover:scale-105 overflow-hidden">
+                                <div class="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg ring-2 ring-white/20 group-hover:ring-white/40 transition-all duration-300 group-hover:scale-105 overflow-hidden" style="background-color: rgba(255, 255, 255, 0.2);">
                                     <img src="{{ asset('images/BikolpoLive.svg') }}" alt="Bikolpo Live" class="w-full h-full object-contain p-1">
                                 </div>
                                 <div class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full animate-pulse"></div>
                             </div>
                             <div class="flex flex-col min-w-0 flex-1">
-                                <h2 class="text-lg font-extrabold tracking-tight leading-tight" style="color: #F1F5F9;">
+                                <h2 class="text-lg font-extrabold tracking-tight leading-tight" style="color: #FFFFFF;">
                                     Bikolpo Live
                                 </h2>
-                                <p class="text-xs font-medium" style="color: #F1F5F9;">Super User Dashboard</p>
+                                <p class="text-xs font-medium" style="color: #FFFFFF;">Super User Dashboard</p>
                             </div>
                         </a>
                         <!-- Close button for mobile -->
-                        <button id="sidebar-close" class="lg:hidden p-1.5 rounded-lg transition-all duration-200 flex-shrink-0" style="color: #F1F5F9;" onmouseover="this.style.backgroundColor='#15803D'" onmouseout="this.style.backgroundColor='transparent'">
+                        <button id="sidebar-close" class="lg:hidden p-1.5 rounded-lg transition-all duration-200 flex-shrink-0" style="color: #FFFFFF;" onmouseover="this.style.backgroundColor='#15803D'" onmouseout="this.style.backgroundColor='transparent'">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                             </svg>
