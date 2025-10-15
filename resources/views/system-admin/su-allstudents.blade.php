@@ -42,24 +42,24 @@
                     </div>
                 </div>
 
-                <!-- Suspended Students -->
-                <div class="bg-red-50 dark:bg-red-900/20 rounded-lg p-3 border border-red-200 dark:border-red-800">
+                <!-- Inactive Students -->
+                <div class="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-3 border border-yellow-200 dark:border-yellow-800">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
-                            <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
+                            <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
                                 <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
                                 </svg>
                             </div>
                         </div>
                         <div class="ml-3">
-                            <p class="text-sm font-medium text-red-600 dark:text-red-400">Suspended</p>
-                            <p class="text-lg font-bold text-red-900 dark:text-red-100">{{ $suspendedStudents }}</p>
+                            <p class="text-sm font-medium text-yellow-600 dark:text-yellow-400">Inactive</p>
+                            <p class="text-lg font-bold text-yellow-900 dark:text-yellow-100">{{ $inactiveStudents ?? 0 }}</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Soft Deleted -->
+                <!-- Deleted -->
                 <div class="bg-gray-50 dark:bg-gray-900/20 rounded-lg p-3 border border-gray-200 dark:border-gray-700">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
@@ -70,7 +70,7 @@
                             </div>
                         </div>
                         <div class="ml-3">
-                            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Soft Deleted</p>
+                            <p class="text-sm font-medium text-gray-600 dark:text-gray-400">Deleted</p>
                             <p class="text-lg font-bold text-gray-900 dark:text-gray-100">{{ $softDeletedStudents }}</p>
                         </div>
                     </div>
@@ -89,6 +89,40 @@
                         <div class="ml-3">
                             <p class="text-sm font-medium text-purple-600 dark:text-purple-400">Total Partners</p>
                             <p class="text-lg font-bold text-purple-900 dark:text-purple-100">{{ $totalPartners }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Login Access Card -->
+                <div class="bg-indigo-50 dark:bg-indigo-900/20 rounded-lg p-3 border border-indigo-200 dark:border-indigo-800">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-indigo-600 dark:text-indigo-400">Login Access</p>
+                            <p class="text-lg font-bold text-indigo-900 dark:text-indigo-100">{{ $activeStudents }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- New Registrations Card -->
+                <div class="bg-teal-50 dark:bg-teal-900/20 rounded-lg p-3 border border-teal-200 dark:border-teal-800">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-teal-600 dark:text-teal-400">New This Month</p>
+                            <p class="text-lg font-bold text-teal-900 dark:text-teal-100">{{ $newStudentsThisMonth ?? 0 }}</p>
                         </div>
                     </div>
                 </div>
@@ -137,6 +171,15 @@
                         </select>
                     </div>
 
+                    <!-- Login Enabled Filter -->
+                    <div class="sm:w-36">
+                        <select id="loginEnabledFilter" class="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm">
+                            <option value="">All Login</option>
+                            <option value="yes">Login Enabled</option>
+                            <option value="no">Login Disabled</option>
+                        </select>
+                    </div>
+
                     <!-- Date Range Filter -->
                     <div class="sm:w-40">
                         <input type="date" 
@@ -164,8 +207,8 @@
                 <!-- Soft Delete Toggle -->
                 <div class="flex items-center space-x-4">
                     <label class="inline-flex items-center">
-                        <input type="checkbox" id="showSoftDeleted" class="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out">
-                        <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Show Soft Deleted Only</span>
+                        <input type="checkbox" id="showDeleted" class="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out">
+                        <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Show Deleted Only</span>
                     </label>
                     <label class="inline-flex items-center">
                         <input type="checkbox" id="showAllStudents" checked class="form-checkbox h-4 w-4 text-blue-600 transition duration-150 ease-in-out">
@@ -245,34 +288,31 @@
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead class="bg-gray-50 dark:bg-gray-700">
                     <tr>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                            <input type="checkbox" id="selectAll" class="form-checkbox h-4 w-4 text-blue-600">
+                        <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-8">
+                            <input type="checkbox" id="selectAll" class="form-checkbox h-3 w-3 text-blue-600">
                         </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                            Name / Mobile
+                        <th scope="col" class="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-48">
+                            Student
                         </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-24">
                             Partner
                         </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                            Join Date
+                        <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-20">
+                            Joined
                         </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                            Last Login
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-16">
                             Tests
                         </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                            Avg. Score
+                        <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-16">
+                            Score
                         </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-20">
                             Status
                         </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                            Deleted At
+                        <th scope="col" class="px-2 py-2 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-20">
+                            Login Enabled
                         </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-24">
                             Actions
                         </th>
                     </tr>
@@ -280,71 +320,138 @@
                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700" id="studentsTableBody">
                     @forelse($students as $student)
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-700" data-student-id="{{ $student->id }}">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <input type="checkbox" class="student-checkbox form-checkbox h-4 w-4 text-blue-600" value="{{ $student->id }}">
+                        <td class="px-2 py-2 whitespace-nowrap">
+                            <input type="checkbox" class="student-checkbox form-checkbox h-3 w-3 text-blue-600" value="{{ $student->id }}">
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="px-3 py-2 whitespace-nowrap">
                             <div class="flex items-center">
-                                <div class="flex-shrink-0 h-10 w-10">
-                                    <div class="h-10 w-10 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center">
-                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                            {{ substr($student->full_name, 0, 2) }}
+                                <div class="flex-shrink-0 h-6 w-6">
+                                    <div class="h-6 w-6 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center">
+                                        <span class="text-xs font-medium text-gray-700 dark:text-gray-300">
+                                            {{ substr($student->full_name, 0, 1) }}
                                         </span>
                                     </div>
                                 </div>
-                                <div class="ml-4">
-                                    <div class="text-sm font-medium text-gray-900 dark:text-gray-100">
+                                <div class="ml-2 min-w-0 flex-1">
+                                    <div class="text-xs font-medium text-gray-900 dark:text-gray-100 truncate">
                                         {{ $student->full_name }}
                                     </div>
-                                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                                    <div class="text-xs text-gray-500 dark:text-gray-400 truncate">
                                         {{ $student->phone }}
                                     </div>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                        <td class="px-2 py-2 whitespace-nowrap text-xs text-gray-900 dark:text-gray-100 truncate">
                             {{ $student->partner->name ?? 'N/A' }}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                            {{ $student->created_at->format('Y-m-d') }}
+                        <td class="px-2 py-2 whitespace-nowrap text-xs text-gray-900 dark:text-gray-100">
+                            {{ $student->created_at->format('M d, Y') }}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                            Never
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                        <td class="px-2 py-2 whitespace-nowrap text-xs text-gray-900 dark:text-gray-100 text-center">
                             {{ $student->exam_results_count ?? 0 }}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                        <td class="px-2 py-2 whitespace-nowrap text-xs text-gray-900 dark:text-gray-100 text-center">
                             {{ $student->average_score ?? 0 }}%
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="px-2 py-2 whitespace-nowrap">
                             @if($student->status === 'suspended')
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
-                                    🔴 Suspended
+                                <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                                    🔴
                                 </span>
                             @else
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                                    🟢 Active
+                                <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                    🟢
                                 </span>
                             @endif
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
-                            —
+                        <td class="px-2 py-2 whitespace-nowrap text-center">
+                            @if($student->has_login_access)
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                    ✅ Yes
+                                </span>
+                            @else
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
+                                    ❌ No
+                                </span>
+                            @endif
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <div class="flex space-x-2">
-                                <button onclick="viewStudent({{ $student->id }})" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-200">
-                                    View
+                        <td class="px-2 py-2 whitespace-nowrap text-xs font-medium">
+                            <div class="relative" x-data="{ open: false }">
+                                <!-- Action Menu Button -->
+                                <button @click="open = !open" 
+                                        class="inline-flex items-center px-2 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                    ⋯
                                 </button>
-                                @if($student->status === 'suspended')
-                                    <button onclick="activateStudent({{ $student->id }})" class="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-200">
-                                        Activate
-                                    </button>
-                                @else
-                                    <button onclick="suspendStudent({{ $student->id }})" class="text-yellow-600 hover:text-yellow-900 dark:text-yellow-400 dark:hover:text-yellow-200">
-                                        Suspend
-                                    </button>
-                                @endif
+
+                                <!-- Dropdown Menu -->
+                                <div x-show="open" 
+                                     @click.away="open = false"
+                                     x-transition:enter="transition ease-out duration-100"
+                                     x-transition:enter-start="transform opacity-0 scale-95"
+                                     x-transition:enter-end="transform opacity-100 scale-100"
+                                     x-transition:leave="transition ease-in duration-75"
+                                     x-transition:leave-start="transform opacity-100 scale-100"
+                                     x-transition:leave-end="transform opacity-0 scale-95"
+                                     class="absolute right-0 z-10 mt-1 w-48 origin-top-right bg-white dark:bg-gray-800 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                    <div class="py-1">
+                                        <!-- View Profile -->
+                                        <button onclick="viewStudent({{ $student->id }})" 
+                                                class="flex items-center w-full px-3 py-1.5 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                            <span class="mr-2">🔍</span>
+                                            View Profile
+                                        </button>
+                                        
+                                        <!-- Edit Info -->
+                                        <button onclick="editStudent({{ $student->id }})" 
+                                                class="flex items-center w-full px-3 py-1.5 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                            <span class="mr-2">✏️</span>
+                                            Edit Info
+                                        </button>
+                                        
+                                        <!-- Suspend/Reactivate -->
+                                        @if($student->status === 'suspended')
+                                            <button onclick="reactivateStudent({{ $student->id }})" 
+                                                    class="flex items-center w-full px-3 py-1.5 text-xs text-green-700 dark:text-green-300 hover:bg-green-50 dark:hover:bg-green-900/20">
+                                                <span class="mr-2">✅</span>
+                                                Reactivate
+                                            </button>
+                                        @else
+                                            <button onclick="suspendStudent({{ $student->id }})" 
+                                                    class="flex items-center w-full px-3 py-1.5 text-xs text-yellow-700 dark:text-yellow-300 hover:bg-yellow-50 dark:hover:bg-yellow-900/20">
+                                                <span class="mr-2">🚫</span>
+                                                Suspend
+                                            </button>
+                                        @endif
+                                        
+                                        <!-- Divider -->
+                                        <div class="border-t border-gray-200 dark:border-gray-600 my-1"></div>
+                                        
+                                        <!-- Export Data -->
+                                        <button onclick="exportStudentData({{ $student->id }})" 
+                                                class="flex items-center w-full px-3 py-1.5 text-xs text-purple-700 dark:text-purple-300 hover:bg-purple-50 dark:hover:bg-purple-900/20">
+                                            <span class="mr-2">📤</span>
+                                            Export Data
+                                        </button>
+                                        
+                                        <!-- Send Message -->
+                                        <button onclick="sendMessage({{ $student->id }})" 
+                                                class="flex items-center w-full px-3 py-1.5 text-xs text-indigo-700 dark:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20">
+                                            <span class="mr-2">💬</span>
+                                            Send Message
+                                        </button>
+                                        
+                                        <!-- Divider -->
+                                        <div class="border-t border-gray-200 dark:border-gray-600 my-1"></div>
+                                        
+                                        <!-- Delete Student -->
+                                        <button onclick="deleteStudent({{ $student->id }})" 
+                                                class="flex items-center w-full px-3 py-1.5 text-xs text-red-700 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20">
+                                            <span class="mr-2">🗑️</span>
+                                            Delete Student
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </td>
                     </tr>
@@ -490,14 +597,28 @@ function initializeCheckboxes() {
 }
 
 function initializeFilters() {
+    console.log('initializeFilters called');
+    
     // Filter functionality
     const filterBtn = document.getElementById('filterBtn');
     const searchInput = document.getElementById('searchInput');
     const partnerFilter = document.getElementById('partnerFilter');
     const statusFilter = document.getElementById('statusFilter');
+    const loginEnabledFilter = document.getElementById('loginEnabledFilter');
     const dateFrom = document.getElementById('dateFrom');
-    const showSoftDeleted = document.getElementById('showSoftDeleted');
+    const showDeleted = document.getElementById('showDeleted');
     const showAllStudents = document.getElementById('showAllStudents');
+
+    console.log('Filter elements found:', {
+        filterBtn: !!filterBtn,
+        searchInput: !!searchInput,
+        partnerFilter: !!partnerFilter,
+        statusFilter: !!statusFilter,
+        loginEnabledFilter: !!loginEnabledFilter,
+        dateFrom: !!dateFrom,
+        showDeleted: !!showDeleted,
+        showAllStudents: !!showAllStudents
+    });
 
 
     // Real-time search with debouncing
@@ -512,9 +633,22 @@ function initializeFilters() {
     }
 
     // Filter on change
-    if (partnerFilter) partnerFilter.addEventListener('change', applyFilters);
-    if (statusFilter) statusFilter.addEventListener('change', applyFilters);
-    if (dateFrom) dateFrom.addEventListener('change', applyFilters);
+    if (partnerFilter) {
+        console.log('Adding change listener to partnerFilter');
+        partnerFilter.addEventListener('change', applyFilters);
+    }
+    if (statusFilter) {
+        console.log('Adding change listener to statusFilter');
+        statusFilter.addEventListener('change', applyFilters);
+    }
+    if (loginEnabledFilter) {
+        console.log('Adding change listener to loginEnabledFilter');
+        loginEnabledFilter.addEventListener('change', applyFilters);
+    }
+    if (dateFrom) {
+        console.log('Adding change listener to dateFrom');
+        dateFrom.addEventListener('change', applyFilters);
+    }
 
     if (filterBtn) {
         filterBtn.addEventListener('click', function() {
@@ -530,8 +664,9 @@ function initializeFilters() {
             if (searchInput) searchInput.value = '';
             if (partnerFilter) partnerFilter.value = '';
             if (statusFilter) statusFilter.value = '';
+            if (loginEnabledFilter) loginEnabledFilter.value = '';
             if (dateFrom) dateFrom.value = '';
-            if (showSoftDeleted) showSoftDeleted.checked = false;
+            if (showDeleted) showDeleted.checked = false;
             if (showAllStudents) showAllStudents.checked = false;
             
             // Apply filters (which will now be empty)
@@ -553,7 +688,7 @@ function initializeFilters() {
     if (showAllStudents) {
         showAllStudents.addEventListener('change', function() {
             if (this.checked) {
-                if (showSoftDeleted) showSoftDeleted.checked = false;
+                if (showDeleted) showDeleted.checked = false;
             }
             applyFilters();
         });
@@ -561,27 +696,47 @@ function initializeFilters() {
 }
 
 function applyFilters() {
-    const searchTerm = document.getElementById('searchInput').value;
-    const partnerFilter = document.getElementById('partnerFilter').value;
-    const statusFilter = document.getElementById('statusFilter').value;
-    const dateFrom = document.getElementById('dateFrom').value;
-    const showSoftDeleted = document.getElementById('showSoftDeleted').checked;
-    const showAllStudents = document.getElementById('showAllStudents').checked;
+    console.log('applyFilters called');
+    
+    const searchTerm = document.getElementById('searchInput')?.value || '';
+    const partnerFilter = document.getElementById('partnerFilter')?.value || '';
+    const statusFilter = document.getElementById('statusFilter')?.value || '';
+    const loginEnabledFilter = document.getElementById('loginEnabledFilter')?.value || '';
+    const dateFrom = document.getElementById('dateFrom')?.value || '';
+    const showDeleted = document.getElementById('showDeleted')?.checked || false;
+    const showAllStudents = document.getElementById('showAllStudents')?.checked || false;
+
+    console.log('Filter values:', {
+        searchTerm,
+        partnerFilter,
+        statusFilter,
+        loginEnabledFilter,
+        dateFrom,
+        showDeleted,
+        showAllStudents
+    });
 
     // Build query parameters
     const params = new URLSearchParams();
     if (searchTerm) params.append('search', searchTerm);
     if (partnerFilter) params.append('partner', partnerFilter);
     if (statusFilter) params.append('status', statusFilter);
+    if (loginEnabledFilter) params.append('login_enabled', loginEnabledFilter);
     if (dateFrom) params.append('date_from', dateFrom);
-    if (showSoftDeleted) params.append('soft_deleted', '1');
+    if (showDeleted) params.append('soft_deleted', '1');
     if (showAllStudents) params.append('all_students', '1');
 
     // Show loading state
     const tableBody = document.getElementById('studentsTableBody');
+    if (!tableBody) {
+        console.error('studentsTableBody not found');
+        return;
+    }
+    
     tableBody.innerHTML = '<tr><td colspan="9" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">Loading...</td></tr>';
 
     const url = `/system-admin/students?${params.toString()}`;
+    console.log('Making request to:', url);
 
     // Make AJAX request
     fetch(url, {
@@ -593,25 +748,37 @@ function applyFilters() {
         }
     })
     .then(response => {
+        console.log('Response status:', response.status);
+        console.log('Response headers:', response.headers);
+        
         if (response.status === 302) {
+            console.log('302 redirect detected');
             tableBody.innerHTML = '<tr><td colspan="9" class="px-6 py-4 text-center text-sm text-red-500">Authentication required. Please refresh the page and try again.</td></tr>';
             return;
         }
         if (!response.ok) {
+            console.error('Response not ok:', response.status, response.statusText);
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         return response.text();
     })
     .then(html => {
+        console.log('Response HTML length:', html.length);
+        console.log('Response HTML preview:', html.substring(0, 200));
+        
         // Extract table body from response
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         const newTableBody = doc.getElementById('studentsTableBody');
+
+        console.log('New table body found:', !!newTableBody);
         if (newTableBody) {
+            console.log('New table body HTML:', newTableBody.innerHTML.substring(0, 200));
             tableBody.innerHTML = newTableBody.innerHTML;
             // Re-initialize event listeners for new checkboxes
             initializeCheckboxes();
         } else {
+            console.log('No table body found in response');
             tableBody.innerHTML = '<tr><td colspan="9" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">No students found</td></tr>';
         }
     })
@@ -687,6 +854,153 @@ function hardDeleteStudent(studentId) {
         // Implement hard delete functionality
         console.log('Hard deleting student:', studentId);
     }
+}
+
+// New action button functions
+function editStudent(studentId) {
+    // Open edit modal or redirect to edit page
+    const editUrl = `/system-admin/students/${studentId}/edit`;
+    window.open(editUrl, '_blank');
+}
+
+function reactivateStudent(studentId) {
+    if (confirm('Are you sure you want to reactivate this student?')) {
+        // Implement reactivate functionality
+        fetch(`/system-admin/students/${studentId}/reactivate`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error reactivating student: ' + (data.message || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error reactivating student');
+        });
+    }
+}
+
+function deleteStudent(studentId) {
+    if (confirm('Are you sure you want to delete this student? This action can be undone.')) {
+        // Implement soft delete functionality
+        fetch(`/system-admin/students/${studentId}/delete`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error deleting student: ' + (data.message || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error deleting student');
+        });
+    }
+}
+
+function exportStudentData(studentId) {
+    // Show export options modal
+    const exportModal = document.createElement('div');
+    exportModal.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50';
+    exportModal.innerHTML = `
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-gray-800">
+            <div class="mt-3">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Export Student Data</h3>
+                <div class="space-y-3">
+                    <button onclick="exportStudentPDF(${studentId})" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                        📄 Export as PDF
+                    </button>
+                    <button onclick="exportStudentCSV(${studentId})" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                        📊 Export as CSV
+                    </button>
+                    <button onclick="exportStudentExcel(${studentId})" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        📈 Export as Excel
+                    </button>
+                </div>
+                <div class="mt-4">
+                    <button onclick="this.closest('.fixed').remove()" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(exportModal);
+}
+
+function exportStudentPDF(studentId) {
+    window.open(`/system-admin/students/${studentId}/export/pdf`, '_blank');
+    document.querySelector('.fixed').remove();
+}
+
+function exportStudentCSV(studentId) {
+    window.open(`/system-admin/students/${studentId}/export/csv`, '_blank');
+    document.querySelector('.fixed').remove();
+}
+
+function exportStudentExcel(studentId) {
+    window.open(`/system-admin/students/${studentId}/export/excel`, '_blank');
+    document.querySelector('.fixed').remove();
+}
+
+function sendMessage(studentId) {
+    // Show message modal
+    const messageModal = document.createElement('div');
+    messageModal.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50';
+    messageModal.innerHTML = `
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-gray-800">
+            <div class="mt-3">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Send Message</h3>
+                <div class="space-y-3">
+                    <button onclick="sendEmail(${studentId})" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        📧 Send Email
+                    </button>
+                    <button onclick="sendSMS(${studentId})" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                        📱 Send SMS
+                    </button>
+                    <button onclick="sendNotification(${studentId})" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
+                        🔔 Send Notification
+                    </button>
+                </div>
+                <div class="mt-4">
+                    <button onclick="this.closest('.fixed').remove()" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(messageModal);
+}
+
+function sendEmail(studentId) {
+    window.open(`/system-admin/students/${studentId}/send-email`, '_blank');
+    document.querySelector('.fixed').remove();
+}
+
+function sendSMS(studentId) {
+    window.open(`/system-admin/students/${studentId}/send-sms`, '_blank');
+    document.querySelector('.fixed').remove();
+}
+
+function sendNotification(studentId) {
+    window.open(`/system-admin/students/${studentId}/send-notification`, '_blank');
+    document.querySelector('.fixed').remove();
 }
 </script>
 @endpush

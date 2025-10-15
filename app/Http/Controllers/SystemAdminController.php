@@ -130,12 +130,14 @@ class SystemAdminController extends Controller
                 'active_users_today' => EnhancedUser::whereDate('updated_at', $today)->count(),
                 'active_users_this_month' => EnhancedUser::where('updated_at', '>=', $thisMonth)->count(),
                 'new_users_today' => EnhancedUser::whereDate('created_at', $today)->count(),
+                'new_users_this_week' => EnhancedUser::where('created_at', '>=', Carbon::now()->startOfWeek())->count(),
                 'new_users_this_month' => EnhancedUser::where('created_at', '>=', $thisMonth)->count(),
                 
                 // Student Statistics
                 'total_students' => Student::count(),
                 'active_students_today' => Student::whereDate('updated_at', $today)->count(),
                 'active_students_this_month' => Student::where('updated_at', '>=', $thisMonth)->count(),
+                'students_with_login_access' => Student::where('status', 'active')->count(),
                 
                 // Partner Statistics
                 'total_partners' => Partner::count(),
@@ -536,10 +538,12 @@ class SystemAdminController extends Controller
             'active_users_today' => 0,
             'active_users_this_month' => 0,
             'new_users_today' => 0,
+            'new_users_this_week' => 0,
             'new_users_this_month' => 0,
             'total_students' => 0,
             'active_students_today' => 0,
             'active_students_this_month' => 0,
+            'students_with_login_access' => 0,
             'total_partners' => 0,
             'active_partners' => 0,
             'active_partners_today' => 0,
@@ -678,6 +682,8 @@ class SystemAdminController extends Controller
     public function allStudents(Request $request)
     {
         try {
+            \Log::info('SystemAdminController: allStudents called with params:', $request->all());
+            
             // Start with base query
             $query = Student::with(['partner', 'examResults'])
                 ->withCount('examResults');
@@ -685,6 +691,7 @@ class SystemAdminController extends Controller
             // Apply filters
             if ($request->filled('search')) {
                 $searchTerm = $request->get('search');
+                \Log::info('SystemAdminController: Applying search filter:', ['search' => $searchTerm]);
                 $query->where(function($q) use ($searchTerm) {
                     $q->where('full_name', 'like', "%{$searchTerm}%")
                       ->orWhere('phone', 'like', "%{$searchTerm}%")
@@ -700,6 +707,26 @@ class SystemAdminController extends Controller
                 $query->where('status', $request->get('status'));
             }
 
+            if ($request->filled('login_enabled')) {
+                $loginEnabled = $request->get('login_enabled');
+                \Log::info('SystemAdminController: Applying login_enabled filter:', ['login_enabled' => $loginEnabled]);
+                if ($loginEnabled === 'yes') {
+                    // Students with login access (exist in ac_users table)
+                    $query->whereExists(function($q) {
+                        $q->select(\DB::raw(1))
+                          ->from('ac_users')
+                          ->whereRaw('ac_users.id = students.id');
+                    });
+                } elseif ($loginEnabled === 'no') {
+                    // Students without login access (don't exist in ac_users table)
+                    $query->whereNotExists(function($q) {
+                        $q->select(\DB::raw(1))
+                          ->from('ac_users')
+                          ->whereRaw('ac_users.id = students.id');
+                    });
+                }
+            }
+
             if ($request->filled('date_from')) {
                 $query->whereDate('created_at', '>=', $request->get('date_from'));
             }
@@ -710,20 +737,24 @@ class SystemAdminController extends Controller
             // Get summary statistics (unfiltered)
             $totalStudents = Student::count();
             $activeStudents = Student::where('status', 'active')->count();
-            $suspendedStudents = Student::where('status', 'suspended')->count();
+            $inactiveStudents = Student::where('status', '!=', 'active')->count(); // All non-active students
             $softDeletedStudents = 0; // No soft delete in this model
             $totalPartners = Partner::count();
+            $newStudentsThisMonth = Student::where('created_at', '>=', Carbon::now()->startOfMonth())->count();
 
             // Get all partners for filter dropdown
             $partners = Partner::select('id', 'name')->get();
 
-            // Calculate average scores for students
+            // Calculate average scores for students and check login access
             foreach ($students as $student) {
                 if ($student->examResults->count() > 0) {
                     $student->average_score = round($student->examResults->avg('percentage'), 1);
                 } else {
                     $student->average_score = 0;
                 }
+                
+                // Check if student has login access (exists in ac_users table)
+                $student->has_login_access = EnhancedUser::where('id', $student->id)->exists();
             }
 
             // If AJAX request, return only the table body
@@ -732,10 +763,11 @@ class SystemAdminController extends Controller
                     'students',
                     'totalStudents',
                     'activeStudents', 
-                    'suspendedStudents',
+                    'inactiveStudents',
                     'softDeletedStudents',
                     'totalPartners',
-                    'partners'
+                    'partners',
+                    'newStudentsThisMonth'
                 ));
             }
 
@@ -743,10 +775,11 @@ class SystemAdminController extends Controller
                 'students',
                 'totalStudents',
                 'activeStudents', 
-                'suspendedStudents',
+                'inactiveStudents',
                 'softDeletedStudents',
                 'totalPartners',
-                'partners'
+                'partners',
+                'newStudentsThisMonth'
             ));
 
         } catch (\Exception $e) {
@@ -756,16 +789,17 @@ class SystemAdminController extends Controller
                 return response()->json(['error' => 'Unable to load students data: ' . $e->getMessage()], 500);
             }
             
-            return view('system-admin.su-allstudents', [
-                'students' => collect(),
-                'totalStudents' => 0,
-                'activeStudents' => 0,
-                'suspendedStudents' => 0, 
-                'softDeletedStudents' => 0,
-                'totalPartners' => 0,
-                'partners' => collect(),
-                'error' => 'Unable to load students data: ' . $e->getMessage()
-            ]);
+                return view('system-admin.su-allstudents', [
+                    'students' => collect(),
+                    'totalStudents' => 0,
+                    'activeStudents' => 0,
+                    'inactiveStudents' => 0, 
+                    'softDeletedStudents' => 0,
+                    'totalPartners' => 0,
+                    'partners' => collect(),
+                    'newStudentsThisMonth' => 0,
+                    'error' => 'Unable to load students data: ' . $e->getMessage()
+                ]);
         }
     }
 
