@@ -105,7 +105,7 @@
                         </div>
                         <div class="ml-3">
                             <p class="text-sm font-medium text-indigo-600 dark:text-indigo-400">Login Access</p>
-                            <p class="text-lg font-bold text-indigo-900 dark:text-indigo-100">{{ $activeStudents }}</p>
+                            <p class="text-lg font-bold text-indigo-900 dark:text-indigo-100">{{ $studentsWithLoginAccess ?? 0 }}</p>
                         </div>
                     </div>
                 </div>
@@ -367,9 +367,44 @@
                         </td>
                         <td class="px-2 py-2 whitespace-nowrap text-center">
                             @if($student->has_login_access)
-                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                                    ✅ Yes
-                                </span>
+                                <div class="relative inline-block" x-data="{ open: false }">
+                                    <button @click="open = !open" 
+                                            class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 hover:bg-green-200 dark:hover:bg-green-800 transition-colors cursor-pointer">
+                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0l1.403 5.591c.194.776.74 1.396 1.47 1.624l5.591 1.403c1.756.426 1.756 2.924 0 3.35l-5.591 1.403c-.73.228-1.276.848-1.47 1.624l-1.403 5.591c-.426 1.756-2.924 1.756-3.35 0l-1.403-5.591c-.194-.776-.74-1.396-1.47-1.624l-5.591-1.403c-1.756-.426-1.756-2.924 0-3.35l5.591-1.403c.73-.228 1.276-.848 1.47-1.624l1.403-5.591z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        </svg>
+                                        Yes
+                                    </button>
+                                    
+                                    <!-- Popup Menu -->
+                                    <div x-show="open" 
+                                         @click.away="open = false"
+                                         x-transition:enter="transition ease-out duration-100"
+                                         x-transition:enter-start="transform opacity-0 scale-95"
+                                         x-transition:enter-end="transform opacity-100 scale-100"
+                                         x-transition:leave="transition ease-in duration-75"
+                                         x-transition:leave-start="transform opacity-100 scale-100"
+                                         x-transition:leave-end="transform opacity-0 scale-95"
+                                         class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg z-50 border border-gray-200 dark:border-gray-700">
+                                        <div class="py-1">
+                                            <button onclick="disableLogin({{ $student->id }})" 
+                                                    class="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                                <svg class="w-4 h-4 mr-3 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M12 2.25a9.75 9.75 0 100 19.5 9.75 9.75 0 000-19.5z"></path>
+                                                </svg>
+                                                Disable Login
+                                            </button>
+                                            <button onclick="resetPassword({{ $student->id }})" 
+                                                    class="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                                <svg class="w-4 h-4 mr-3 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+                                                </svg>
+                                                Reset Password
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             @else
                                 <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
                                     ❌ No
@@ -1001,6 +1036,61 @@ function sendSMS(studentId) {
 function sendNotification(studentId) {
     window.open(`/system-admin/students/${studentId}/send-notification`, '_blank');
     document.querySelector('.fixed').remove();
+}
+
+// Login management functions
+function disableLogin(studentId) {
+    if (confirm('Are you sure you want to disable login access for this student?')) {
+        fetch(`/system-admin/students/${studentId}/disable-login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Login access disabled successfully');
+                // Refresh the page to update the UI
+                location.reload();
+            } else {
+                alert('Error disabling login access: ' + (data.message || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error disabling login access');
+        });
+    }
+}
+
+function resetPassword(studentId) {
+    if (confirm('Are you sure you want to reset the password for this student? A new temporary password will be generated.')) {
+        fetch(`/system-admin/students/${studentId}/reset-password`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Password reset successfully. New temporary password: ' + data.temporary_password);
+                // Optionally copy to clipboard
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(data.temporary_password);
+                }
+            } else {
+                alert('Error resetting password: ' + (data.message || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error resetting password');
+        });
+    }
 }
 </script>
 @endpush

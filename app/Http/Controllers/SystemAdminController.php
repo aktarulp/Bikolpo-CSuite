@@ -137,7 +137,7 @@ class SystemAdminController extends Controller
                 'total_students' => Student::count(),
                 'active_students_today' => Student::whereDate('updated_at', $today)->count(),
                 'active_students_this_month' => Student::where('updated_at', '>=', $thisMonth)->count(),
-                'students_with_login_access' => Student::where('status', 'active')->count(),
+                'students_with_login_access' => EnhancedUser::where('role', 'student')->count(),
                 
                 // Partner Statistics
                 'total_partners' => Partner::count(),
@@ -711,18 +711,20 @@ class SystemAdminController extends Controller
                 $loginEnabled = $request->get('login_enabled');
                 \Log::info('SystemAdminController: Applying login_enabled filter:', ['login_enabled' => $loginEnabled]);
                 if ($loginEnabled === 'yes') {
-                    // Students with login access (exist in ac_users table)
+                    // Students with login access (exist in ac_users table with role 'student')
                     $query->whereExists(function($q) {
                         $q->select(\DB::raw(1))
                           ->from('ac_users')
-                          ->whereRaw('ac_users.id = students.id');
+                          ->whereRaw('ac_users.id = students.id')
+                          ->where('ac_users.role', 'student');
                     });
                 } elseif ($loginEnabled === 'no') {
-                    // Students without login access (don't exist in ac_users table)
+                    // Students without login access (don't exist in ac_users table with role 'student')
                     $query->whereNotExists(function($q) {
                         $q->select(\DB::raw(1))
                           ->from('ac_users')
-                          ->whereRaw('ac_users.id = students.id');
+                          ->whereRaw('ac_users.id = students.id')
+                          ->where('ac_users.role', 'student');
                     });
                 }
             }
@@ -741,6 +743,7 @@ class SystemAdminController extends Controller
             $softDeletedStudents = 0; // No soft delete in this model
             $totalPartners = Partner::count();
             $newStudentsThisMonth = Student::where('created_at', '>=', Carbon::now()->startOfMonth())->count();
+            $studentsWithLoginAccess = EnhancedUser::where('role', 'student')->count();
 
             // Get all partners for filter dropdown
             $partners = Partner::select('id', 'name')->get();
@@ -753,8 +756,8 @@ class SystemAdminController extends Controller
                     $student->average_score = 0;
                 }
                 
-                // Check if student has login access (exists in ac_users table)
-                $student->has_login_access = EnhancedUser::where('id', $student->id)->exists();
+                // Check if student has login access (exists in ac_users table with role 'student')
+                $student->has_login_access = EnhancedUser::where('id', $student->id)->where('role', 'student')->exists();
             }
 
             // If AJAX request, return only the table body
@@ -767,7 +770,8 @@ class SystemAdminController extends Controller
                     'softDeletedStudents',
                     'totalPartners',
                     'partners',
-                    'newStudentsThisMonth'
+                    'newStudentsThisMonth',
+                    'studentsWithLoginAccess'
                 ));
             }
 
@@ -779,7 +783,8 @@ class SystemAdminController extends Controller
                 'softDeletedStudents',
                 'totalPartners',
                 'partners',
-                'newStudentsThisMonth'
+                'newStudentsThisMonth',
+                'studentsWithLoginAccess'
             ));
 
         } catch (\Exception $e) {
@@ -798,6 +803,7 @@ class SystemAdminController extends Controller
                     'totalPartners' => 0,
                     'partners' => collect(),
                     'newStudentsThisMonth' => 0,
+                    'studentsWithLoginAccess' => 0,
                     'error' => 'Unable to load students data: ' . $e->getMessage()
                 ]);
         }
@@ -830,6 +836,82 @@ class SystemAdminController extends Controller
         } catch (\Exception $e) {
             \Log::error('SystemAdminController: Error getting student details: ' . $e->getMessage());
             return response()->json(['error' => 'Student not found'], 404);
+        }
+    }
+
+    public function disableStudentLogin($id)
+    {
+        try {
+            // Check if student exists
+            $student = Student::findOrFail($id);
+            
+            // Check if student has login access (exists in ac_users table)
+            $user = EnhancedUser::find($id);
+            
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Student does not have login access'
+                ], 400);
+            }
+            
+            // Delete the user from ac_users table to disable login
+            $user->delete();
+            
+            \Log::info("SystemAdminController: Disabled login access for student ID: {$id}");
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Login access disabled successfully'
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error disabling student login: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error disabling login access: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function resetStudentPassword($id)
+    {
+        try {
+            // Check if student exists
+            $student = Student::findOrFail($id);
+            
+            // Check if student has login access (exists in ac_users table)
+            $user = EnhancedUser::find($id);
+            
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Student does not have login access'
+                ], 400);
+            }
+            
+            // Generate a temporary password
+            $temporaryPassword = \Str::random(12);
+            
+            // Update the user's password
+            $user->update([
+                'password' => \Hash::make($temporaryPassword)
+            ]);
+            
+            \Log::info("SystemAdminController: Reset password for student ID: {$id}");
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Password reset successfully',
+                'temporary_password' => $temporaryPassword
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error resetting student password: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error resetting password: ' . $e->getMessage()
+            ], 500);
         }
     }
 }

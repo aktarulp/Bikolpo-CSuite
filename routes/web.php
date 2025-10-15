@@ -97,6 +97,8 @@ Route::middleware('auth')->group(function () {
         // Student Management Routes
         Route::get('/system-admin/students', [SystemAdminController::class, 'allStudents'])->name('system-admin.all-students');
         Route::get('/system-admin/students/{id}', [SystemAdminController::class, 'getStudent'])->name('system-admin.get-student');
+        Route::post('/system-admin/students/{id}/disable-login', [SystemAdminController::class, 'disableStudentLogin'])->name('system-admin.disable-student-login');
+        Route::post('/system-admin/students/{id}/reset-password', [SystemAdminController::class, 'resetStudentPassword'])->name('system-admin.reset-student-password');
     });
     
     // Debug route for system admin authentication
