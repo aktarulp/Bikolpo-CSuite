@@ -1032,4 +1032,316 @@ class SystemAdminController extends Controller
             return response()->json(['error' => 'Partner not found'], 404);
         }
     }
+
+    // Subscription Management Methods
+    public function subscriptionPlans()
+    {
+        try {
+            // Mock data for subscription plans
+            $plans = [
+                [
+                    'id' => 1,
+                    'name' => 'Free',
+                    'slug' => 'free',
+                    'price' => 0,
+                    'currency' => 'BDT',
+                    'billing_cycle' => 'monthly',
+                    'is_popular' => false,
+                    'features' => [
+                        'max_students' => 50,
+                        'max_tests' => 10,
+                        'max_questions' => 100,
+                        'storage_gb' => 1,
+                        'support' => 'email',
+                        'analytics' => 'basic',
+                        'custom_branding' => false,
+                        'api_access' => false
+                    ]
+                ],
+                [
+                    'id' => 2,
+                    'name' => 'Basic',
+                    'slug' => 'basic',
+                    'price' => 2500,
+                    'currency' => 'BDT',
+                    'billing_cycle' => 'monthly',
+                    'is_popular' => true,
+                    'features' => [
+                        'max_students' => 200,
+                        'max_tests' => 50,
+                        'max_questions' => 500,
+                        'storage_gb' => 5,
+                        'support' => 'email_phone',
+                        'analytics' => 'standard',
+                        'custom_branding' => true,
+                        'api_access' => false
+                    ]
+                ],
+                [
+                    'id' => 3,
+                    'name' => 'Premium',
+                    'slug' => 'premium',
+                    'price' => 5000,
+                    'currency' => 'BDT',
+                    'billing_cycle' => 'monthly',
+                    'is_popular' => false,
+                    'features' => [
+                        'max_students' => 500,
+                        'max_tests' => 200,
+                        'max_questions' => 2000,
+                        'storage_gb' => 20,
+                        'support' => 'priority',
+                        'analytics' => 'advanced',
+                        'custom_branding' => true,
+                        'api_access' => true
+                    ]
+                ],
+                [
+                    'id' => 4,
+                    'name' => 'Enterprise',
+                    'slug' => 'enterprise',
+                    'price' => 10000,
+                    'currency' => 'BDT',
+                    'billing_cycle' => 'monthly',
+                    'is_popular' => false,
+                    'features' => [
+                        'max_students' => -1, // unlimited
+                        'max_tests' => -1, // unlimited
+                        'max_questions' => -1, // unlimited
+                        'storage_gb' => 100,
+                        'support' => 'dedicated',
+                        'analytics' => 'enterprise',
+                        'custom_branding' => true,
+                        'api_access' => true,
+                        'white_label' => true
+                    ]
+                ]
+            ];
+
+            return view('system-admin.sa-subscription-plans', compact('plans'));
+
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error loading subscription plans: ' . $e->getMessage());
+            return view('system-admin.sa-subscription-plans', [
+                'plans' => [],
+                'error' => 'Unable to load subscription plans: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    public function subscriptionOverview()
+    {
+        try {
+            // Mock data for subscription overview
+            $overview = [
+                'total_revenue' => 45000,
+                'active_subscriptions' => 27,
+                'monthly_recurring_revenue' => 15000,
+                'churn_rate' => 3.2,
+                'revenue_growth' => 12.5,
+                'mrr_growth' => 8.2,
+                'churn_improvement' => -0.5
+            ];
+
+            $recentSubscriptions = [
+                [
+                    'partner' => 'Smart Learn Coaching',
+                    'plan' => 'Premium',
+                    'amount' => 5000,
+                    'date' => '2024-01-15'
+                ],
+                [
+                    'partner' => 'EduTech Center',
+                    'plan' => 'Basic',
+                    'amount' => 2500,
+                    'date' => '2024-01-14'
+                ],
+                [
+                    'partner' => 'Future Academy',
+                    'plan' => 'Enterprise',
+                    'amount' => 10000,
+                    'date' => '2024-01-13'
+                ]
+            ];
+
+            $planStats = [
+                'free' => 12,
+                'basic' => 8,
+                'premium' => 5,
+                'enterprise' => 2
+            ];
+
+            return view('system-admin.sa-subscription-overview', compact('overview', 'recentSubscriptions', 'planStats'));
+
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error loading subscription overview: ' . $e->getMessage());
+            return view('system-admin.sa-subscription-overview', [
+                'overview' => [],
+                'recentSubscriptions' => [],
+                'planStats' => [],
+                'error' => 'Unable to load subscription overview: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    public function subscriptionUsage()
+    {
+        try {
+            // Mock data for usage tracking
+            $usageStats = [
+                'students' => [
+                    'current' => 1247,
+                    'limit' => 2500,
+                    'percentage' => 49.9
+                ],
+                'tests' => [
+                    'current' => 89,
+                    'limit' => 200,
+                    'percentage' => 44.5
+                ],
+                'questions' => [
+                    'current' => 1156,
+                    'limit' => 2500,
+                    'percentage' => 46.2
+                ],
+                'storage' => [
+                    'current' => 45.2,
+                    'limit' => 100,
+                    'percentage' => 45.2
+                ]
+            ];
+
+            $partnerUsage = [
+                [
+                    'partner' => 'Smart Learn Coaching',
+                    'plan' => 'Premium',
+                    'students' => ['current' => 150, 'limit' => 200, 'percentage' => 75],
+                    'tests' => ['current' => 45, 'limit' => 100, 'percentage' => 45],
+                    'questions' => ['current' => 600, 'limit' => 1000, 'percentage' => 60],
+                    'storage' => ['current' => 6, 'limit' => 20, 'percentage' => 30],
+                    'status' => 'healthy'
+                ],
+                [
+                    'partner' => 'EduTech Center',
+                    'plan' => 'Basic',
+                    'students' => ['current' => 190, 'limit' => 200, 'percentage' => 95],
+                    'tests' => ['current' => 45, 'limit' => 50, 'percentage' => 90],
+                    'questions' => ['current' => 400, 'limit' => 500, 'percentage' => 80],
+                    'storage' => ['current' => 2, 'limit' => 5, 'percentage' => 40],
+                    'status' => 'critical'
+                ]
+            ];
+
+            $alerts = [
+                [
+                    'type' => 'critical',
+                    'partner' => 'EduTech Center',
+                    'message' => 'is approaching student limit (95% used)',
+                    'suggestion' => 'Consider upgrading to Premium plan'
+                ],
+                [
+                    'type' => 'warning',
+                    'partner' => 'Future Academy',
+                    'message' => 'is approaching test limit (85% used)',
+                    'suggestion' => 'Monitor usage closely'
+                ]
+            ];
+
+            return view('system-admin.sa-subscription-usage', compact('usageStats', 'partnerUsage', 'alerts'));
+
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error loading subscription usage: ' . $e->getMessage());
+            return view('system-admin.sa-subscription-usage', [
+                'usageStats' => [],
+                'partnerUsage' => [],
+                'alerts' => [],
+                'error' => 'Unable to load subscription usage: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    public function subscriptionBilling()
+    {
+        try {
+            // Mock data for billing and payments
+            $billingStats = [
+                'total_revenue' => 45000,
+                'pending_payments' => 7500,
+                'monthly_recurring_revenue' => 15000,
+                'failed_payments' => 2500,
+                'revenue_growth' => 12.5,
+                'mrr_growth' => 8.2,
+                'pending_count' => 3,
+                'failed_count' => 2
+            ];
+
+            $transactions = [
+                [
+                    'id' => 'TXN-2024-001',
+                    'partner' => 'Smart Learn Coaching',
+                    'plan' => 'Premium',
+                    'amount' => 5000,
+                    'payment_method' => 'bKash',
+                    'status' => 'completed',
+                    'date' => '2024-01-15'
+                ],
+                [
+                    'id' => 'TXN-2024-002',
+                    'partner' => 'EduTech Center',
+                    'plan' => 'Basic',
+                    'amount' => 2500,
+                    'payment_method' => 'Bank Transfer',
+                    'status' => 'pending',
+                    'date' => '2024-01-14'
+                ],
+                [
+                    'id' => 'TXN-2024-003',
+                    'partner' => 'Future Academy',
+                    'plan' => 'Enterprise',
+                    'amount' => 10000,
+                    'payment_method' => 'Credit Card',
+                    'status' => 'failed',
+                    'date' => '2024-01-13'
+                ]
+            ];
+
+            $paymentMethods = [
+                [
+                    'name' => 'bKash',
+                    'type' => 'Mobile Financial Service',
+                    'status' => 'active',
+                    'usage_percentage' => 45
+                ],
+                [
+                    'name' => 'Nagad',
+                    'type' => 'Mobile Financial Service',
+                    'status' => 'active',
+                    'usage_percentage' => 25
+                ],
+                [
+                    'name' => 'Rocket',
+                    'type' => 'Mobile Financial Service',
+                    'status' => 'active',
+                    'usage_percentage' => 20
+                ],
+                [
+                    'name' => 'Bank Transfer',
+                    'type' => 'Traditional Banking',
+                    'status' => 'active',
+                    'usage_percentage' => 10
+                ]
+            ];
+
+            return view('system-admin.sa-subscription-billing', compact('billingStats', 'transactions', 'paymentMethods'));
+
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error loading subscription billing: ' . $e->getMessage());
+            return view('system-admin.sa-subscription-billing', [
+                'billingStats' => [],
+                'transactions' => [],
+                'paymentMethods' => [],
+                'error' => 'Unable to load subscription billing: ' . $e->getMessage()
+            ]);
+        }
+    }
 }

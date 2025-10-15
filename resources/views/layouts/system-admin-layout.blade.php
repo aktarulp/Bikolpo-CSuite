@@ -300,9 +300,24 @@
                                      style="{{ request()->routeIs('system-admin.all-partners') ? 'background-color: rgba(241, 245, 249, 0.2);' : 'background-color: rgba(241, 245, 249, 0.1);' }}">
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #F1F5F9;">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                            </svg>
-                        </div>
+                                    </svg>
+                                </div>
                                 <span class="ml-3 flex-1">Partner Management</span>
+                            </a>
+                            
+                            <!-- Subscription -->
+                            <a href="{{ route('system-admin.subscription-plans') }}" 
+                               class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('system-admin.subscription*') ? 'active' : '' }}"
+                               style="{{ request()->routeIs('system-admin.subscription*') ? 'background-color: #16A34A; color: #F1F5F9;' : 'color: #F1F5F9;' }}"
+                               onmouseover="if (!this.classList.contains('active')) { this.style.backgroundColor = '#15803D'; }"
+                               onmouseout="if (!this.classList.contains('active')) { this.style.backgroundColor = 'transparent'; }">
+                                <div class="w-8 h-8 flex-shrink-0 rounded-lg flex items-center justify-center transition-all duration-200" 
+                                     style="{{ request()->routeIs('system-admin.subscription*') ? 'background-color: rgba(241, 245, 249, 0.2);' : 'background-color: rgba(241, 245, 249, 0.1);' }}">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #F1F5F9;">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                                    </svg>
+                                </div>
+                                <span class="ml-3 flex-1">Subscription</span>
                             </a>
                             
                             <a href="#" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200" style="color: #F1F5F9;" onmouseover="this.style.backgroundColor='#15803D'" onmouseout="this.style.backgroundColor='transparent'">

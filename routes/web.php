@@ -103,6 +103,12 @@ Route::middleware('auth')->group(function () {
         // Partner Management Routes
         Route::get('/system-admin/partners', [SystemAdminController::class, 'allPartners'])->name('system-admin.all-partners');
         Route::get('/system-admin/partners/{id}', [SystemAdminController::class, 'getPartner'])->name('system-admin.get-partner');
+        
+        // Subscription Management Routes
+        Route::get('/system-admin/subscription/plans', [SystemAdminController::class, 'subscriptionPlans'])->name('system-admin.subscription-plans');
+        Route::get('/system-admin/subscription/overview', [SystemAdminController::class, 'subscriptionOverview'])->name('system-admin.subscription-overview');
+        Route::get('/system-admin/subscription/usage', [SystemAdminController::class, 'subscriptionUsage'])->name('system-admin.subscription-usage');
+        Route::get('/system-admin/subscription/billing', [SystemAdminController::class, 'subscriptionBilling'])->name('system-admin.subscription-billing');
     });
     
     // Debug route for system admin authentication
