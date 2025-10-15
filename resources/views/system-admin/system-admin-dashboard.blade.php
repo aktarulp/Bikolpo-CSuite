@@ -53,153 +53,169 @@
         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
             <!-- Total Users Card -->
             <div class="group relative overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 rounded-lg p-3 shadow-sm hover:shadow-md transition-all duration-200">
-                <div class="relative z-10">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-6 h-6 bg-white/20 backdrop-blur-sm rounded-md flex items-center justify-center shadow">
-                            <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                            </svg>
-                        </div>
-                        <div class="text-right">
+                <div class="relative z-10 flex items-center">
+                    <!-- Side Icon -->
+                    <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center shadow-lg mr-3 flex-shrink-0">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                        </svg>
+                    </div>
+                    <!-- Content -->
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between mb-1">
+                            <h3 class="text-white/90 text-xs font-semibold">📊 Users</h3>
                             <p class="text-white/80 text-xs">+12.5%</p>
                         </div>
+                        <p class="text-xl font-black text-white mb-1">{{ $stats['total_students'] + $stats['total_partners'] + 1 }}</p>
+                        <p class="text-white/70 text-xs">Total</p>
                     </div>
-                    <h3 class="text-white/90 text-xs font-semibold mb-1">📊 Users</h3>
-                    <p class="text-xl font-black text-white mb-1">{{ $stats['total_students'] + $stats['total_partners'] + 1 }}</p>
-                    <p class="text-white/70 text-xs">Total</p>
                 </div>
             </div>
 
             <!-- Active Students Card -->
             <div class="group relative overflow-hidden bg-gradient-to-br from-emerald-500 to-emerald-600 dark:from-emerald-600 dark:to-emerald-700 rounded-lg p-3 shadow-sm hover:shadow-md transition-all duration-200">
-                <div class="relative z-10">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-6 h-6 bg-white/20 backdrop-blur-sm rounded-md flex items-center justify-center shadow">
-                            <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                            </svg>
-                        </div>
-                        <div class="text-right">
+                <div class="relative z-10 flex items-center">
+                    <!-- Side Icon -->
+                    <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center shadow-lg mr-3 flex-shrink-0">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                    </div>
+                    <!-- Content -->
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between mb-1">
+                            <h3 class="text-white/90 text-xs font-semibold">🧑‍🎓 Students</h3>
                             <p class="text-white/80 text-xs">{{ $stats['active_students_today'] ?? 0 }}</p>
                         </div>
+                        <p class="text-xl font-black text-white mb-1">{{ $stats['total_students'] }}</p>
+                        <p class="text-white/70 text-xs">Active</p>
                     </div>
-                    <h3 class="text-white/90 text-xs font-semibold mb-1">🧑‍🎓 Students</h3>
-                    <p class="text-xl font-black text-white mb-1">{{ $stats['total_students'] }}</p>
-                    <p class="text-white/70 text-xs">Active</p>
                 </div>
             </div>
 
             <!-- Active Partners Card -->
             <div class="group relative overflow-hidden bg-gradient-to-br from-purple-500 to-purple-600 dark:from-purple-600 dark:to-purple-700 rounded-lg p-3 shadow-sm hover:shadow-md transition-all duration-200">
-                <div class="relative z-10">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-6 h-6 bg-white/20 backdrop-blur-sm rounded-md flex items-center justify-center shadow">
-                            <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                            </svg>
-                        </div>
-                        <div class="text-right">
+                <div class="relative z-10 flex items-center">
+                    <!-- Side Icon -->
+                    <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center shadow-lg mr-3 flex-shrink-0">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                    </div>
+                    <!-- Content -->
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between mb-1">
+                            <h3 class="text-white/90 text-xs font-semibold">🏫 Partners</h3>
                             <p class="text-white/80 text-xs">{{ $stats['active_partners_today'] ?? 0 }}</p>
                         </div>
+                        <p class="text-xl font-black text-white mb-1">{{ $stats['total_partners'] }}</p>
+                        <p class="text-white/70 text-xs">Centers</p>
                     </div>
-                    <h3 class="text-white/90 text-xs font-semibold mb-1">🏫 Partners</h3>
-                    <p class="text-xl font-black text-white mb-1">{{ $stats['total_partners'] }}</p>
-                    <p class="text-white/70 text-xs">Centers</p>
                 </div>
             </div>
 
             <!-- MCQ Sets Card -->
             <div class="group relative overflow-hidden bg-gradient-to-br from-orange-500 to-orange-600 dark:from-orange-600 dark:to-orange-700 rounded-lg p-3 shadow-sm hover:shadow-md transition-all duration-200">
-                <div class="relative z-10">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-6 h-6 bg-white/20 backdrop-blur-sm rounded-md flex items-center justify-center shadow">
-                            <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                        </div>
-                        <div class="text-right">
+                <div class="relative z-10 flex items-center">
+                    <!-- Side Icon -->
+                    <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center shadow-lg mr-3 flex-shrink-0">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <!-- Content -->
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between mb-1">
+                            <h3 class="text-white/90 text-xs font-semibold">🧠 MCQ</h3>
                             <p class="text-white/80 text-xs">{{ $stats['total_exams'] }}</p>
                         </div>
+                        <p class="text-xl font-black text-white mb-1">{{ $stats['total_questions'] }}</p>
+                        <p class="text-white/70 text-xs">Questions</p>
                     </div>
-                    <h3 class="text-white/90 text-xs font-semibold mb-1">🧠 MCQ</h3>
-                    <p class="text-xl font-black text-white mb-1">{{ $stats['total_questions'] }}</p>
-                    <p class="text-white/70 text-xs">Questions</p>
                 </div>
             </div>
 
             <!-- Ongoing Tests Card -->
             <div class="group relative overflow-hidden bg-gradient-to-br from-cyan-500 to-cyan-600 dark:from-cyan-600 dark:to-cyan-700 rounded-lg p-3 shadow-sm hover:shadow-md transition-all duration-200">
-                <div class="relative z-10">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-6 h-6 bg-white/20 backdrop-blur-sm rounded-md flex items-center justify-center shadow">
-                            <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <div class="text-right">
+                <div class="relative z-10 flex items-center">
+                    <!-- Side Icon -->
+                    <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center shadow-lg mr-3 flex-shrink-0">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <!-- Content -->
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between mb-1">
+                            <h3 class="text-white/90 text-xs font-semibold">🕒 Tests</h3>
                             <p class="text-white/80 text-xs">{{ $stats['ongoing_tests'] ?? 0 }}</p>
                         </div>
+                        <p class="text-xl font-black text-white mb-1">{{ $stats['total_ongoing_tests'] ?? 0 }}</p>
+                        <p class="text-white/70 text-xs">Live</p>
                     </div>
-                    <h3 class="text-white/90 text-xs font-semibold mb-1">🕒 Tests</h3>
-                    <p class="text-xl font-black text-white mb-1">{{ $stats['total_ongoing_tests'] ?? 0 }}</p>
-                    <p class="text-white/70 text-xs">Live</p>
                 </div>
             </div>
 
             <!-- Total Earnings Card -->
             <div class="group relative overflow-hidden bg-gradient-to-br from-green-500 to-green-600 dark:from-green-600 dark:to-green-700 rounded-lg p-3 shadow-sm hover:shadow-md transition-all duration-200">
-                <div class="relative z-10">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-6 h-6 bg-white/20 backdrop-blur-sm rounded-md flex items-center justify-center shadow">
-                            <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                            </svg>
-                        </div>
-                        <div class="text-right">
+                <div class="relative z-10 flex items-center">
+                    <!-- Side Icon -->
+                    <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center shadow-lg mr-3 flex-shrink-0">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                        </svg>
+                    </div>
+                    <!-- Content -->
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between mb-1">
+                            <h3 class="text-white/90 text-xs font-semibold">💰 Earnings</h3>
                             <p class="text-white/80 text-xs">${{ number_format($stats['earnings_today'] ?? 0) }}</p>
                         </div>
+                        <p class="text-xl font-black text-white mb-1">${{ number_format($stats['total_earnings'] ?? 0) }}</p>
+                        <p class="text-white/70 text-xs">Total</p>
                     </div>
-                    <h3 class="text-white/90 text-xs font-semibold mb-1">💰 Earnings</h3>
-                    <p class="text-xl font-black text-white mb-1">${{ number_format($stats['total_earnings'] ?? 0) }}</p>
-                    <p class="text-white/70 text-xs">Total</p>
                 </div>
             </div>
 
             <!-- Pending Payments Card -->
             <div class="group relative overflow-hidden bg-gradient-to-br from-red-500 to-red-600 dark:from-red-600 dark:to-red-700 rounded-lg p-3 shadow-sm hover:shadow-md transition-all duration-200">
-                <div class="relative z-10">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-6 h-6 bg-white/20 backdrop-blur-sm rounded-md flex items-center justify-center shadow">
-                            <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <div class="text-right">
+                <div class="relative z-10 flex items-center">
+                    <!-- Side Icon -->
+                    <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center shadow-lg mr-3 flex-shrink-0">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <!-- Content -->
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between mb-1">
+                            <h3 class="text-white/90 text-xs font-semibold">🧾 Pending</h3>
                             <p class="text-white/80 text-xs">{{ $stats['pending_payments_count'] ?? 0 }}</p>
                         </div>
+                        <p class="text-xl font-black text-white mb-1">${{ number_format($stats['pending_payments_amount'] ?? 0) }}</p>
+                        <p class="text-white/70 text-xs">Payments</p>
                     </div>
-                    <h3 class="text-white/90 text-xs font-semibold mb-1">🧾 Pending</h3>
-                    <p class="text-xl font-black text-white mb-1">${{ number_format($stats['pending_payments_amount'] ?? 0) }}</p>
-                    <p class="text-white/70 text-xs">Payments</p>
                 </div>
             </div>
 
             <!-- System Status Card -->
             <div class="group relative overflow-hidden bg-gradient-to-br from-indigo-500 to-indigo-600 dark:from-indigo-600 dark:to-indigo-700 rounded-lg p-3 shadow-sm hover:shadow-md transition-all duration-200">
-                <div class="relative z-10">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="w-6 h-6 bg-white/20 backdrop-blur-sm rounded-md flex items-center justify-center shadow">
-                            <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                            </svg>
-                        </div>
-                        <div class="text-right">
+                <div class="relative z-10 flex items-center">
+                    <!-- Side Icon -->
+                    <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center shadow-lg mr-3 flex-shrink-0">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <!-- Content -->
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between mb-1">
+                            <h3 class="text-white/90 text-xs font-semibold">⚡ System</h3>
                             <p class="text-green-300 text-xs font-bold">✓ All Good</p>
                         </div>
+                        <p class="text-xl font-black text-white mb-1">Online</p>
+                        <p class="text-white/70 text-xs">Status</p>
                     </div>
-                    <h3 class="text-white/90 text-xs font-semibold mb-1">⚡ System</h3>
-                    <p class="text-xl font-black text-white mb-1">Online</p>
-                    <p class="text-white/70 text-xs">Status</p>
                 </div>
             </div>
         </div>
