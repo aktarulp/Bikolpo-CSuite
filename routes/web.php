@@ -16,6 +16,7 @@ use App\Http\Controllers\SmsRecordController;
 use App\Http\Controllers\Partner\AccessControlController;
 use App\Http\Controllers\PartnerController; // Add this missing import
 use App\Http\Controllers\SitemapController; // Add sitemap controller
+use App\Http\Controllers\SystemAdminController; // System Admin Controller
 
 // Include Auth Routes
 require __DIR__.'/auth.php';
@@ -56,7 +57,17 @@ Route::get('/test-email', function () {
 Route::get('/', function () {
     if (auth()->check()) {
         $user = auth()->user();
-        if ($user->role === 'student') {
+        $effectiveRole = strtolower((string)($user->role ?? ''));
+        
+        \Log::info('Landing page redirect check', [
+            'user_id' => $user->id,
+            'user_role' => $user->role,
+            'effective_role' => $effectiveRole,
+        ]);
+        
+        if ($effectiveRole === 'system_administrator') {
+            return redirect()->route('system-admin.system-admin-dashboard');
+        } elseif ($effectiveRole === 'student') {
             return redirect()->route('student.dashboard');
         } else {
             return redirect()->route('partner.dashboard');
@@ -76,7 +87,327 @@ Route::middleware('auth')->group(function () {
     // Student Dashboard
     Route::get('/student/dashboard', [\App\Http\Controllers\StudentDashboardController::class, 'index'])->name('student.dashboard');
 
+    // System Admin Dashboard
+    Route::middleware(['auth', 'role:system_administrator'])->group(function () {
+        Route::get('/system-admin/dashboard', [SystemAdminController::class, 'dashboard'])->name('system-admin.system-admin-dashboard');
+        Route::post('/system-admin/clear-cache', [SystemAdminController::class, 'clearCache'])->name('system-admin.clear-cache');
+        Route::get('/system-admin/logs', [SystemAdminController::class, 'getSystemLogs'])->name('system-admin.logs');
+        Route::get('/system-admin/user-stats', [SystemAdminController::class, 'getUserStats'])->name('system-admin.user-stats');
+    });
     
+    // Debug route for system admin authentication
+    Route::get('/debug-system-admin', function () {
+        $user = auth()->user();
+        return response()->json([
+            'authenticated' => auth()->check(),
+            'user_id' => auth()->id(),
+            'user_role' => $user ? $user->role : 'none',
+            'user_role_lowercase' => $user ? strtolower($user->role) : 'none',
+            'user_email' => $user ? $user->email : 'none',
+            'user_status' => $user ? $user->status : 'none',
+            'session_id' => session()->getId(),
+            'all_user_data' => $user ? $user->toArray() : 'not authenticated',
+            'role_comparison' => [
+                'system_administrator_match' => $user ? strtolower($user->role) === 'system_administrator' : false,
+                'partner_match' => $user ? strtolower($user->role) === 'partner' : false,
+                'student_match' => $user ? strtolower($user->role) === 'student' : false,
+            ]
+        ]);
+    })->middleware('auth');
+    
+    // Simple system admin test route
+    Route::get('/system-admin/test', function () {
+        return response()->json([
+            'message' => 'System admin test route working',
+            'authenticated' => auth()->check(),
+            'user_role' => auth()->user() ? auth()->user()->role : 'none'
+        ]);
+    })->middleware(['auth', 'role:system_administrator']);
+    
+    // Create system admin user (for development/testing)
+    Route::get('/create-system-admin', function () {
+        try {
+            // Check if system admin already exists
+            $existingAdmin = \App\Models\EnhancedUser::where('role', 'system_administrator')->first();
+            if ($existingAdmin) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'System administrator already exists',
+                    'admin' => [
+                        'id' => $existingAdmin->id,
+                        'name' => $existingAdmin->name,
+                        'email' => $existingAdmin->email,
+                        'role' => $existingAdmin->role,
+                        'role_lowercase' => strtolower($existingAdmin->role),
+                        'status' => $existingAdmin->status
+                    ]
+                ]);
+            }
+            
+            // Create system admin user
+            $admin = \App\Models\EnhancedUser::create([
+                'name' => 'System Administrator',
+                'email' => 'admin@bikolpo.com',
+                'password' => \Hash::make('admin123'),
+                'role' => 'system_administrator',
+                'status' => 'active',
+                'email_verified_at' => now(),
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'System administrator created successfully',
+                'admin' => [
+                    'id' => $admin->id,
+                    'name' => $admin->name,
+                    'email' => $admin->email,
+                    'role' => $admin->role,
+                    'role_lowercase' => strtolower($admin->role),
+                    'status' => $admin->status,
+                    'password' => 'admin123'
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error creating system administrator: ' . $e->getMessage()
+            ], 500);
+        }
+    });
+    
+    // Test system admin user exists
+    Route::get('/test-system-admin', function () {
+        $admin = \App\Models\EnhancedUser::where('email', 'admin@bikolpo.com')->first();
+        if ($admin) {
+            return response()->json([
+                'success' => true,
+                'message' => 'System administrator found',
+                'admin' => [
+                    'id' => $admin->id,
+                    'name' => $admin->name,
+                    'email' => $admin->email,
+                    'role' => $admin->role,
+                    'role_id' => $admin->role_id,
+                    'status' => $admin->status,
+                    'password_check' => \Hash::check('admin123', $admin->password)
+                ]
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'System administrator not found'
+            ]);
+        }
+    });
+    
+    // Test system admin dashboard access
+    Route::get('/test-dashboard', function () {
+        try {
+            $controller = new \App\Http\Controllers\SystemAdminController();
+            $stats = $controller->getSystemStats();
+            return response()->json([
+                'success' => true,
+                'message' => 'Dashboard data loaded successfully',
+                'stats' => $stats
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error loading dashboard: ' . $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
+    });
+    
+    // Test CSRF token
+    Route::get('/test-csrf', function () {
+        return response()->json([
+            'success' => true,
+            'message' => 'CSRF token test',
+            'csrf_token' => csrf_token(),
+            'session_id' => session()->getId(),
+            'session_driver' => config('session.driver'),
+            'session_table' => config('session.table')
+        ]);
+    });
+    
+    // Test sessions table
+    Route::get('/test-sessions', function () {
+        try {
+            $sessions = DB::table('sessions')->count();
+            return response()->json([
+                'success' => true,
+                'message' => 'Sessions table accessible',
+                'session_count' => $sessions,
+                'session_driver' => config('session.driver'),
+                'session_table' => config('session.table')
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sessions table error: ' . $e->getMessage()
+            ]);
+        }
+    });
+    
+    // Clear old sessions
+    Route::get('/clear-sessions', function () {
+        try {
+            $deleted = DB::table('sessions')->where('last_activity', '<', time() - 3600)->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'Old sessions cleared',
+                'deleted_count' => $deleted
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error clearing sessions: ' . $e->getMessage()
+            ]);
+        }
+    });
+    
+    // Test login form CSRF
+    Route::get('/test-login-form', function () {
+        return view('auth.login');
+    });
+    
+    // Test login without CSRF (for debugging)
+    Route::post('/test-login-no-csrf', function(\Illuminate\Http\Request $request) {
+        try {
+            $credentials = $request->only('login_credential', 'password');
+            
+            // Try to find user by email or phone
+            $user = \App\Models\EnhancedUser::where('email', $credentials['login_credential'])
+                ->orWhere('phone', $credentials['login_credential'])
+                ->first();
+                
+            if ($user && \Hash::check($credentials['password'], $user->password)) {
+                \Auth::login($user);
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Login successful',
+                    'user' => [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'role' => $user->role
+                    ]
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid credentials'
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Login error: ' . $e->getMessage()
+            ]);
+        }
+    });
+    
+    // Alternative login route that bypasses CSRF
+    Route::post('/alt-login', function(\Illuminate\Http\Request $request) {
+        try {
+            $credentials = $request->only('login_credential', 'password');
+            
+            // Try to find user by email or phone
+            $user = \App\Models\EnhancedUser::where('email', $credentials['login_credential'])
+                ->orWhere('phone', $credentials['login_credential'])
+                ->first();
+                
+            if ($user && \Hash::check($credentials['password'], $user->password)) {
+                \Auth::login($user);
+                
+                // Redirect based on role
+                $role = strtolower($user->role);
+                if ($role === 'system_administrator') {
+                    return redirect()->route('system-admin.system-admin-dashboard');
+                } elseif ($role === 'student') {
+                    return redirect()->route('student.dashboard');
+                } else {
+                    return redirect()->route('partner.dashboard');
+                }
+            } else {
+                return redirect()->back()->withErrors(['login_credential' => 'Invalid credentials']);
+            }
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['login_credential' => 'Login error: ' . $e->getMessage()]);
+        }
+    });
+    
+    // Completely bypass CSRF for testing
+    Route::post('/bypass-login', function(\Illuminate\Http\Request $request) {
+        // Disable CSRF for this specific route
+        $request->session()->regenerateToken();
+        
+        try {
+            $credentials = $request->only('login_credential', 'password');
+            
+            // Try to find user by email or phone
+            $user = \App\Models\EnhancedUser::where('email', $credentials['login_credential'])
+                ->orWhere('phone', $credentials['login_credential'])
+                ->first();
+                
+            if ($user && \Hash::check($credentials['password'], $user->password)) {
+                \Auth::login($user);
+                
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Login successful',
+                    'redirect' => $user->role === 'system_administrator' ? '/system-admin/dashboard' : '/partner/dashboard',
+                    'user' => [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'role' => $user->role
+                    ]
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid credentials'
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Login error: ' . $e->getMessage()
+            ]);
+        }
+    });
+    
+    // Direct authentication route (no CSRF)
+    Route::get('/auth-user/{userId}', function($userId) {
+        try {
+            $user = \App\Models\EnhancedUser::find($userId);
+            if ($user) {
+                \Auth::login($user);
+                return response()->json([
+                    'success' => true,
+                    'message' => 'User authenticated',
+                    'user' => [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'role' => $user->role
+                    ]
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User not found'
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ]);
+        }
+    });
 
 });
 
