@@ -291,8 +291,13 @@
                                 <span class="ml-3 flex-1">Students Management</span>
                             </a>
                             
-                            <a href="#" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200" style="color: #F1F5F9;" onmouseover="this.style.backgroundColor='#15803D'" onmouseout="this.style.backgroundColor='transparent'">
-                                <div class="w-8 h-8 flex-shrink-0 rounded-lg flex items-center justify-center transition-all duration-200" style="background-color: rgba(241, 245, 249, 0.1);">
+                            <a href="{{ route('system-admin.all-partners') }}" 
+                               class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('system-admin.all-partners') ? 'active' : '' }}"
+                               style="{{ request()->routeIs('system-admin.all-partners') ? 'background-color: #16A34A; color: #F1F5F9;' : 'color: #F1F5F9;' }}"
+                               onmouseover="if (!this.classList.contains('active')) { this.style.backgroundColor = '#15803D'; }"
+                               onmouseout="if (!this.classList.contains('active')) { this.style.backgroundColor = 'transparent'; }">
+                                <div class="w-8 h-8 flex-shrink-0 rounded-lg flex items-center justify-center transition-all duration-200" 
+                                     style="{{ request()->routeIs('system-admin.all-partners') ? 'background-color: rgba(241, 245, 249, 0.2);' : 'background-color: rgba(241, 245, 249, 0.1);' }}">
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #F1F5F9;">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
                             </svg>
@@ -386,10 +391,10 @@
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #F1F5F9;">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    </svg>
-                                </div>
+                            </svg>
+                        </div>
                                 <span class="ml-3 flex-1">System Settings</span>
-                            </a>
+                    </a>
                         </div>
                     </div>
                 </nav>

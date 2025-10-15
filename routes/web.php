@@ -99,6 +99,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/system-admin/students/{id}', [SystemAdminController::class, 'getStudent'])->name('system-admin.get-student');
         Route::post('/system-admin/students/{id}/disable-login', [SystemAdminController::class, 'disableStudentLogin'])->name('system-admin.disable-student-login');
         Route::post('/system-admin/students/{id}/reset-password', [SystemAdminController::class, 'resetStudentPassword'])->name('system-admin.reset-student-password');
+        
+        // Partner Management Routes
+        Route::get('/system-admin/partners', [SystemAdminController::class, 'allPartners'])->name('system-admin.all-partners');
+        Route::get('/system-admin/partners/{id}', [SystemAdminController::class, 'getPartner'])->name('system-admin.get-partner');
     });
     
     // Debug route for system admin authentication

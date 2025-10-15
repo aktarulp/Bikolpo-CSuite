@@ -914,4 +914,122 @@ class SystemAdminController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Show all partners list
+     */
+    public function allPartners(Request $request)
+    {
+        try {
+            // Start with base query
+            $query = Partner::with(['students', 'exams'])
+                ->withCount(['students', 'exams']);
+
+            // Apply filters
+            if ($request->filled('search')) {
+                $searchTerm = $request->get('search');
+                $query->where(function($q) use ($searchTerm) {
+                    $q->where('name', 'like', "%{$searchTerm}%")
+                      ->orWhere('owner_name', 'like', "%{$searchTerm}%")
+                      ->orWhere('phone', 'like', "%{$searchTerm}%")
+                      ->orWhere('email', 'like', "%{$searchTerm}%");
+                });
+            }
+
+            if ($request->filled('status')) {
+                $query->where('status', $request->get('status'));
+            }
+
+            if ($request->filled('plan')) {
+                $query->where('subscription_plan', $request->get('plan'));
+            }
+
+            if ($request->filled('date_from')) {
+                $query->whereDate('created_at', '>=', $request->get('date_from'));
+            }
+
+            // Get paginated results
+            $partners = $query->latest()->paginate(20);
+
+            // Calculate summary statistics
+            $totalStudentsViaPartners = Student::count();
+            $totalTestsConducted = Exam::count();
+            $avgTestsPerPartner = Partner::count() > 0 ? round($totalTestsConducted / Partner::count(), 1) : 0;
+            
+            // Get top performing partner
+            $topPartner = Partner::withCount('students')
+                ->orderBy('students_count', 'desc')
+                ->first();
+            $topPerformingPartner = $topPartner ? $topPartner->name : 'N/A';
+            
+            $totalRevenue = 0; // Placeholder for revenue calculation
+
+            // If AJAX request, return only the table body
+            if ($request->ajax()) {
+                return view('system-admin.sa-partner-management', compact(
+                    'partners',
+                    'totalStudentsViaPartners',
+                    'totalTestsConducted',
+                    'avgTestsPerPartner',
+                    'topPerformingPartner',
+                    'totalRevenue'
+                ));
+            }
+
+            return view('system-admin.sa-partner-management', compact(
+                'partners',
+                'totalStudentsViaPartners',
+                'totalTestsConducted',
+                'avgTestsPerPartner',
+                'topPerformingPartner',
+                'totalRevenue'
+            ));
+
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error loading all partners: ' . $e->getMessage());
+            
+            if ($request->ajax()) {
+                return response()->json(['error' => 'Unable to load partners data: ' . $e->getMessage()], 500);
+            }
+            
+            return view('system-admin.sa-partner-management', [
+                'partners' => collect(),
+                'totalStudentsViaPartners' => 0,
+                'totalTestsConducted' => 0,
+                'avgTestsPerPartner' => 0,
+                'topPerformingPartner' => 'N/A',
+                'totalRevenue' => 0,
+                'error' => 'Unable to load partners data: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Get partner details for modal
+     */
+    public function getPartner($id)
+    {
+        try {
+            $partner = Partner::with(['students', 'exams'])
+                ->findOrFail($id);
+
+            return response()->json([
+                'id' => $partner->id,
+                'name' => $partner->name,
+                'owner_name' => $partner->owner_name,
+                'phone' => $partner->phone,
+                'email' => $partner->email,
+                'address' => $partner->address,
+                'subscription_plan' => $partner->subscription_plan ?? 'free',
+                'status' => $partner->status ?? 'active',
+                'created_at' => $partner->created_at->format('Y-m-d'),
+                'students_count' => $partner->students->count(),
+                'exams_count' => $partner->exams->count(),
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error getting partner details: ' . $e->getMessage());
+            return response()->json(['error' => 'Partner not found'], 404);
+        }
+    }
 }
