@@ -124,25 +124,24 @@ class SystemAdminController extends Controller
             $today = Carbon::today();
             $thisMonth = Carbon::now()->startOfMonth();
             
-            \Log::info('SystemAdminController: Getting system stats');
-            
             return [
                 // User Statistics
                 'total_users' => EnhancedUser::count(),
-                'active_users_today' => EnhancedUser::whereDate('last_login_at', $today)->count(),
-                'active_users_this_month' => EnhancedUser::where('last_login_at', '>=', $thisMonth)->count(),
+                'active_users_today' => EnhancedUser::whereDate('updated_at', $today)->count(),
+                'active_users_this_month' => EnhancedUser::where('updated_at', '>=', $thisMonth)->count(),
                 'new_users_today' => EnhancedUser::whereDate('created_at', $today)->count(),
                 'new_users_this_month' => EnhancedUser::where('created_at', '>=', $thisMonth)->count(),
                 
                 // Student Statistics
                 'total_students' => Student::count(),
-                'active_students_today' => 0, // Simplified for now
-                'active_students_this_month' => 0, // Simplified for now
+                'active_students_today' => Student::whereDate('updated_at', $today)->count(),
+                'active_students_this_month' => Student::where('updated_at', '>=', $thisMonth)->count(),
                 
                 // Partner Statistics
                 'total_partners' => Partner::count(),
-                'active_partners' => Partner::where('status', 'active')->count(),
-                'pending_partners' => Partner::where('status', 'pending')->count(),
+                'active_partners' => Partner::count(), // All partners for super admin
+                'active_partners_today' => Partner::whereDate('updated_at', $today)->count(),
+                'pending_partners' => Partner::count(), // All partners for super admin
                 
                 // Content Statistics
                 'total_questions' => Question::count(),
@@ -167,15 +166,21 @@ class SystemAdminController extends Controller
                 'total_exam_attempts' => ExamResult::count(),
                 'completed_exams' => ExamResult::where('status', 'completed')->count(),
                 'ongoing_exams' => ExamResult::where('status', 'in_progress')->count(),
+                'ongoing_tests' => ExamResult::where('status', 'in_progress')->count(),
+                'total_ongoing_tests' => ExamResult::where('status', 'in_progress')->count(),
                 'average_exam_score' => ExamResult::where('status', 'completed')
                     ->whereNotNull('percentage')
                     ->avg('percentage') ?? 0,
                 
                 // Revenue Statistics (placeholder - implement based on your payment system)
                 'total_revenue' => 0, // Implement based on your payment system
+                'total_earnings' => 0, // Alias for total_revenue
                 'revenue_today' => 0,
+                'earnings_today' => 0, // Alias for revenue_today
                 'revenue_this_month' => 0,
                 'pending_payments' => 0,
+                'pending_payments_count' => 0,
+                'pending_payments_amount' => 0,
                 
                 // System Statistics
                 'total_sms_sent' => 0, // Implement based on your SMS system
@@ -194,8 +199,9 @@ class SystemAdminController extends Controller
     private function getRecentExams()
     {
         try {
-            return Exam::latest()
-                ->take(5)
+            return Exam::with('partner')
+                ->latest()
+                ->take(10) // More exams for super admin
                 ->get();
         } catch (\Exception $e) {
             \Log::error('SystemAdminController: Error getting recent exams: ' . $e->getMessage());
@@ -210,9 +216,8 @@ class SystemAdminController extends Controller
     {
         try {
             return ExamResult::with(['student', 'exam'])
-                ->where('status', 'completed')
                 ->latest('completed_at')
-                ->take(5)
+                ->take(10) // More results for super admin
                 ->get();
         } catch (\Exception $e) {
             \Log::error('SystemAdminController: Error getting recent results: ' . $e->getMessage());
@@ -228,14 +233,14 @@ class SystemAdminController extends Controller
         try {
             $activities = collect();
             
-            // Recent user registrations
+            // Recent user registrations (all users for super admin)
             $recentUsers = EnhancedUser::latest()
-                ->take(5)
+                ->take(10)
                 ->get()
                 ->map(function($user) {
                     return [
                         'type' => 'user_registration',
-                        'title' => 'New User Registration',
+                        'title' => 'User Registration',
                         'description' => $user->name . ' registered as ' . ($user->role ?? 'user'),
                         'time' => $user->created_at,
                         'icon' => 'user',
@@ -243,31 +248,30 @@ class SystemAdminController extends Controller
                     ];
                 });
             
-            // Recent exam completions
-            $recentExams = ExamResult::where('status', 'completed')
-                ->latest('completed_at')
-                ->take(5)
+            // Recent exam completions (all exam results for super admin)
+            $recentExams = ExamResult::latest('completed_at')
+                ->take(10)
                 ->get()
                 ->map(function($result) {
                     return [
                         'type' => 'exam_completion',
-                        'title' => 'Exam Completed',
-                        'description' => 'Exam completed with ' . ($result->percentage ?? 0) . '% score',
-                        'time' => $result->completed_at,
+                        'title' => 'Exam Activity',
+                        'description' => 'Exam ' . ($result->status ?? 'unknown') . ' with ' . ($result->percentage ?? 0) . '% score',
+                        'time' => $result->completed_at ?? $result->created_at,
                         'icon' => 'exam',
                         'color' => 'green'
                     ];
                 });
             
-            // Recent partner activities
+            // Recent partner activities (all partners for super admin)
             $recentPartners = Partner::latest()
-                ->take(3)
+                ->take(10)
                 ->get()
                 ->map(function($partner) {
                     return [
                         'type' => 'partner_activity',
                         'title' => 'Partner Activity',
-                        'description' => $partner->name . ' updated their profile',
+                        'description' => $partner->name . ' (Status: ' . ($partner->status ?? 'unknown') . ')',
                         'time' => $partner->updated_at,
                         'icon' => 'building',
                         'color' => 'purple'
@@ -280,12 +284,12 @@ class SystemAdminController extends Controller
                 ->merge($recentExams)
                 ->merge($recentPartners);
             
-            // Sort by time and take the most recent 10
+            // Sort by time and take the most recent 20 (more data for super admin)
             return $allActivities
                 ->sortByDesc(function($activity) {
                     return $activity['time'] ?? now();
                 })
-                ->take(10);
+                ->take(20);
         } catch (\Exception $e) {
             \Log::error('SystemAdminController: Error getting recent activity: ' . $e->getMessage());
             return collect();
@@ -342,15 +346,15 @@ class SystemAdminController extends Controller
     {
         try {
             return Partner::latest()
-                ->take(10)
+                ->take(20) // More partners for super admin
                 ->get()
                 ->map(function($partner) {
                     return [
                         'id' => $partner->id,
                         'name' => $partner->name,
-                        'students_count' => 0, // Simplified for now
-                        'exams_count' => 0, // Simplified for now
-                        'total_exam_attempts' => 0, // Simplified for now
+                        'students_count' => $partner->students()->count(), // Real student count
+                        'exams_count' => $partner->exams()->count(), // Real exam count
+                        'total_exam_attempts' => $partner->examResults()->count(), // Real exam attempts
                         'status' => $partner->status,
                         'created_at' => $partner->created_at,
                     ];
@@ -384,33 +388,31 @@ class SystemAdminController extends Controller
         try {
             $events = collect();
             
-            // Upcoming exams
-            $upcomingExams = Exam::where('start_time', '>', now())
-                ->where('start_time', '<=', now()->addDays(7))
-                ->with('partner')
-                ->take(5)
+            // All exams (no filtering for super admin)
+            $upcomingExams = Exam::with('partner')
+                ->take(10)
                 ->get()
                 ->map(function($exam) {
                     return [
                         'type' => 'exam',
-                        'title' => 'Upcoming Exam: ' . $exam->title,
-                        'description' => 'Scheduled for ' . $exam->start_time->format('M d, Y H:i'),
-                        'time' => $exam->start_time,
+                        'title' => 'Exam: ' . $exam->title,
+                        'description' => 'Status: ' . ($exam->status ?? 'unknown') . ' - Partner: ' . ($exam->partner->name ?? 'Unknown'),
+                        'time' => $exam->start_time ?? $exam->created_at,
                         'priority' => 'medium',
                     ];
                 });
             
-            // Pending partner approvals
-            $pendingPartners = Partner::where('status', 'pending')
-                ->take(3)
+            // All partners (no filtering for super admin)
+            $pendingPartners = Partner::latest()
+                ->take(10)
                 ->get()
                 ->map(function($partner) {
                     return [
-                        'type' => 'approval',
-                        'title' => 'Partner Approval Pending',
-                        'description' => $partner->name . ' is waiting for approval',
+                        'type' => 'partner',
+                        'title' => 'Partner: ' . $partner->name,
+                        'description' => 'Status: ' . ($partner->status ?? 'unknown') . ' - Created: ' . $partner->created_at->format('M d, Y'),
                         'time' => $partner->created_at,
-                        'priority' => 'high',
+                        'priority' => 'medium',
                     ];
                 });
             
@@ -540,6 +542,7 @@ class SystemAdminController extends Controller
             'active_students_this_month' => 0,
             'total_partners' => 0,
             'active_partners' => 0,
+            'active_partners_today' => 0,
             'pending_partners' => 0,
             'total_questions' => 0,
             'total_exams' => 0,
@@ -560,11 +563,17 @@ class SystemAdminController extends Controller
             'total_exam_attempts' => 0,
             'completed_exams' => 0,
             'ongoing_exams' => 0,
+            'ongoing_tests' => 0,
+            'total_ongoing_tests' => 0,
             'average_exam_score' => 0,
             'total_revenue' => 0,
+            'total_earnings' => 0,
             'revenue_today' => 0,
+            'earnings_today' => 0,
             'revenue_this_month' => 0,
             'pending_payments' => 0,
+            'pending_payments_count' => 0,
+            'pending_payments_amount' => 0,
             'total_sms_sent' => 0,
             'cache_hit_rate' => '0%',
             'database_size' => '0 MB',

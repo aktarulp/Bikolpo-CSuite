@@ -80,7 +80,7 @@
                             </svg>
                         </div>
                         <div class="text-right">
-                            <p class="text-white/80 text-xs">{{ rand(15, 45) }}</p>
+                            <p class="text-white/80 text-xs">{{ $stats['active_students_today'] ?? 0 }}</p>
                         </div>
                     </div>
                     <h3 class="text-white/90 text-xs font-semibold mb-1">🧑‍🎓 Students</h3>
@@ -99,11 +99,11 @@
                             </svg>
                         </div>
                         <div class="text-right">
-                            <p class="text-white/80 text-xs">{{ rand(8, 15) }}</p>
+                            <p class="text-white/80 text-xs">{{ $stats['active_partners_today'] ?? 0 }}</p>
                         </div>
                     </div>
                     <h3 class="text-white/90 text-xs font-semibold mb-1">🏫 Partners</h3>
-                    <p class="text-xl font-black text-white mb-1">{{ $stats['total_partners'] ?? rand(20, 50) }}</p>
+                    <p class="text-xl font-black text-white mb-1">{{ $stats['total_partners'] }}</p>
                     <p class="text-white/70 text-xs">Centers</p>
                 </div>
             </div>
@@ -137,11 +137,11 @@
                             </svg>
                         </div>
                         <div class="text-right">
-                            <p class="text-white/80 text-xs">{{ rand(3, 8) }}</p>
+                            <p class="text-white/80 text-xs">{{ $stats['ongoing_tests'] ?? 0 }}</p>
                         </div>
                     </div>
                     <h3 class="text-white/90 text-xs font-semibold mb-1">🕒 Tests</h3>
-                    <p class="text-xl font-black text-white mb-1">{{ rand(5, 15) }}</p>
+                    <p class="text-xl font-black text-white mb-1">{{ $stats['total_ongoing_tests'] ?? 0 }}</p>
                     <p class="text-white/70 text-xs">Live</p>
                 </div>
             </div>
@@ -156,11 +156,11 @@
                             </svg>
                         </div>
                         <div class="text-right">
-                            <p class="text-white/80 text-xs">${{ rand(150, 450) }}</p>
+                            <p class="text-white/80 text-xs">${{ number_format($stats['earnings_today'] ?? 0) }}</p>
                         </div>
                     </div>
                     <h3 class="text-white/90 text-xs font-semibold mb-1">💰 Earnings</h3>
-                    <p class="text-xl font-black text-white mb-1">${{ rand(5000, 15000) }}</p>
+                    <p class="text-xl font-black text-white mb-1">${{ number_format($stats['total_earnings'] ?? 0) }}</p>
                     <p class="text-white/70 text-xs">Total</p>
                 </div>
             </div>
@@ -175,11 +175,11 @@
                             </svg>
                         </div>
                         <div class="text-right">
-                            <p class="text-white/80 text-xs">{{ rand(3, 8) }}</p>
+                            <p class="text-white/80 text-xs">{{ $stats['pending_payments_count'] ?? 0 }}</p>
                         </div>
                     </div>
                     <h3 class="text-white/90 text-xs font-semibold mb-1">🧾 Pending</h3>
-                    <p class="text-xl font-black text-white mb-1">${{ rand(500, 2000) }}</p>
+                    <p class="text-xl font-black text-white mb-1">${{ number_format($stats['pending_payments_amount'] ?? 0) }}</p>
                     <p class="text-white/70 text-xs">Payments</p>
                 </div>
             </div>
