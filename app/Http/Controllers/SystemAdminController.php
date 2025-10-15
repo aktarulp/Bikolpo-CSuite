@@ -671,4 +671,131 @@ class SystemAdminController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Show all students list
+     */
+    public function allStudents(Request $request)
+    {
+        try {
+            // Start with base query
+            $query = Student::with(['partner', 'examResults'])
+                ->withCount('examResults');
+
+            // Apply filters
+            if ($request->filled('search')) {
+                $searchTerm = $request->get('search');
+                $query->where(function($q) use ($searchTerm) {
+                    $q->where('full_name', 'like', "%{$searchTerm}%")
+                      ->orWhere('phone', 'like', "%{$searchTerm}%")
+                      ->orWhere('email', 'like', "%{$searchTerm}%");
+                });
+            }
+
+            if ($request->filled('partner')) {
+                $query->where('partner_id', $request->get('partner'));
+            }
+
+            if ($request->filled('status')) {
+                $query->where('status', $request->get('status'));
+            }
+
+            if ($request->filled('date_from')) {
+                $query->whereDate('created_at', '>=', $request->get('date_from'));
+            }
+
+            // Get paginated results
+            $students = $query->latest()->paginate(20);
+
+            // Get summary statistics (unfiltered)
+            $totalStudents = Student::count();
+            $activeStudents = Student::where('status', 'active')->count();
+            $suspendedStudents = Student::where('status', 'suspended')->count();
+            $softDeletedStudents = 0; // No soft delete in this model
+            $totalPartners = Partner::count();
+
+            // Get all partners for filter dropdown
+            $partners = Partner::select('id', 'name')->get();
+
+            // Calculate average scores for students
+            foreach ($students as $student) {
+                if ($student->examResults->count() > 0) {
+                    $student->average_score = round($student->examResults->avg('percentage'), 1);
+                } else {
+                    $student->average_score = 0;
+                }
+            }
+
+            // If AJAX request, return only the table body
+            if ($request->ajax()) {
+                return view('system-admin.su-allstudents', compact(
+                    'students',
+                    'totalStudents',
+                    'activeStudents', 
+                    'suspendedStudents',
+                    'softDeletedStudents',
+                    'totalPartners',
+                    'partners'
+                ));
+            }
+
+            return view('system-admin.su-allstudents', compact(
+                'students',
+                'totalStudents',
+                'activeStudents', 
+                'suspendedStudents',
+                'softDeletedStudents',
+                'totalPartners',
+                'partners'
+            ));
+
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error loading all students: ' . $e->getMessage());
+            
+            if ($request->ajax()) {
+                return response()->json(['error' => 'Unable to load students data: ' . $e->getMessage()], 500);
+            }
+            
+            return view('system-admin.su-allstudents', [
+                'students' => collect(),
+                'totalStudents' => 0,
+                'activeStudents' => 0,
+                'suspendedStudents' => 0, 
+                'softDeletedStudents' => 0,
+                'totalPartners' => 0,
+                'partners' => collect(),
+                'error' => 'Unable to load students data: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Get student details for modal
+     */
+    public function getStudent($id)
+    {
+        try {
+            $student = Student::with(['partner', 'examResults'])
+                ->findOrFail($id);
+
+            return response()->json([
+                'id' => $student->id,
+                'name' => $student->full_name,
+                'mobile' => $student->phone,
+                'email' => $student->email,
+                'partner' => $student->partner,
+                'created_at' => $student->created_at->format('Y-m-d'),
+                'exam_results_count' => $student->examResults->count(),
+                'average_score' => $student->examResults->count() > 0 ? 
+                    round($student->examResults->avg('percentage'), 1) : 0,
+                'last_login_at' => null, // No last_login_at field in this model
+                'status' => $student->status,
+                'deleted_at' => null // No soft delete in this model
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error getting student details: ' . $e->getMessage());
+            return response()->json(['error' => 'Student not found'], 404);
+        }
+    }
 }

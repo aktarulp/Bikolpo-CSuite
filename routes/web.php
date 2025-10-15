@@ -93,6 +93,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/system-admin/clear-cache', [SystemAdminController::class, 'clearCache'])->name('system-admin.clear-cache');
         Route::get('/system-admin/logs', [SystemAdminController::class, 'getSystemLogs'])->name('system-admin.logs');
         Route::get('/system-admin/user-stats', [SystemAdminController::class, 'getUserStats'])->name('system-admin.user-stats');
+        
+        // Student Management Routes
+        Route::get('/system-admin/students', [SystemAdminController::class, 'allStudents'])->name('system-admin.all-students');
+        Route::get('/system-admin/students/{id}', [SystemAdminController::class, 'getStudent'])->name('system-admin.get-student');
     });
     
     // Debug route for system admin authentication
