@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Partner extends Model
 {
@@ -47,7 +49,11 @@ class Partner extends Model
         'year_of_establishment',
         'short_address',
         'course_offers',
-        'custom_courses'
+        'custom_courses',
+        'referral_code',
+        'total_referrals',
+        'successful_referrals',
+        'referral_earnings'
     ];
 
     protected $casts = [
@@ -152,5 +158,62 @@ class Partner extends Model
     public function scopeByDistrict($query, $district)
     {
         return $query->where('district', $district);
+    }
+
+    // Referral relationships
+    public function referralCodes(): HasMany
+    {
+        return $this->hasMany(ReferralCode::class, 'referrer_id');
+    }
+
+    public function referrals(): HasMany
+    {
+        return $this->hasMany(Referral::class, 'referrer_id');
+    }
+
+    public function referredBy(): HasMany
+    {
+        return $this->hasMany(Referral::class, 'referred_id');
+    }
+
+    public function referralRewards(): HasMany
+    {
+        return $this->hasMany(ReferralReward::class, 'referrer_id');
+    }
+
+    public function getActiveReferralCode(): ?ReferralCode
+    {
+        return $this->referralCodes()
+            ->where('is_active', true)
+            ->where(function($query) {
+                $query->whereNull('expires_at')
+                      ->orWhere('expires_at', '>', now());
+            })
+            ->first();
+    }
+
+    public function generateReferralCode(): ReferralCode
+    {
+        $code = ReferralCode::createForPartner($this, [
+            'name' => $this->name . ' Referral Code',
+            'description' => 'Invite & Earn referral code for ' . $this->name
+        ]);
+
+        // Update partner's referral code
+        $this->update(['referral_code' => $code->code]);
+
+        return $code;
+    }
+
+    public function getReferralStats(): array
+    {
+        return [
+            'total_referrals' => $this->total_referrals,
+            'successful_referrals' => $this->successful_referrals,
+            'referral_earnings' => $this->referral_earnings,
+            'success_rate' => $this->total_referrals > 0 
+                ? round(($this->successful_referrals / $this->total_referrals) * 100, 1) 
+                : 0
+        ];
     }
 }

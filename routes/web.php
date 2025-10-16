@@ -106,9 +106,33 @@ Route::middleware('auth')->group(function () {
         
         // Subscription Management Routes
         Route::get('/system-admin/subscription/plans', [SystemAdminController::class, 'subscriptionPlans'])->name('system-admin.subscription-plans');
+        Route::get('/system-admin/subscription/plans/create', [SystemAdminController::class, 'createSubscription'])->name('system-admin.subscription-plans.create');
+        Route::post('/system-admin/subscription/plans', [SystemAdminController::class, 'storeSubscription'])->name('system-admin.subscription-plans.store');
+        Route::get('/system-admin/subscription/plans/{id}/edit', [SystemAdminController::class, 'editSubscription'])->name('system-admin.subscription-plans.edit');
+        Route::put('/system-admin/subscription/plans/{id}', [SystemAdminController::class, 'updateSubscription'])->name('system-admin.subscription-plans.update');
+        Route::delete('/system-admin/subscription/plans/{id}', [SystemAdminController::class, 'deleteSubscription'])->name('system-admin.subscription-plans.delete');
+        Route::post('/system-admin/subscription/plans/custom-request', [SystemAdminController::class, 'customPlanRequest'])->name('system-admin.subscription-plans.custom-request');
         Route::get('/system-admin/subscription/overview', [SystemAdminController::class, 'subscriptionOverview'])->name('system-admin.subscription-overview');
         Route::get('/system-admin/subscription/usage', [SystemAdminController::class, 'subscriptionUsage'])->name('system-admin.subscription-usage');
         Route::get('/system-admin/subscription/billing', [SystemAdminController::class, 'subscriptionBilling'])->name('system-admin.subscription-billing');
+        Route::get('/system-admin/referrals', [SystemAdminController::class, 'referralManagement'])->name('system-admin.referral-management');
+
+// Plan Features Management
+Route::get('/system-admin/plan-features', [SystemAdminController::class, 'planFeatures'])->name('system-admin.plan-features');
+Route::get('/system-admin/plan-features/create', [SystemAdminController::class, 'createPlanFeature'])->name('system-admin.plan-features.create');
+Route::post('/system-admin/plan-features', [SystemAdminController::class, 'storePlanFeature'])->name('system-admin.plan-features.store');
+Route::get('/system-admin/plan-features/{id}/edit', [SystemAdminController::class, 'editPlanFeature'])->name('system-admin.plan-features.edit');
+Route::put('/system-admin/plan-features/{id}', [SystemAdminController::class, 'updatePlanFeature'])->name('system-admin.plan-features.update');
+Route::delete('/system-admin/plan-features/{id}', [SystemAdminController::class, 'deletePlanFeature'])->name('system-admin.plan-features.delete');
+
+// Payment Methods Management
+Route::get('/system-admin/payment-methods', [SystemAdminController::class, 'paymentMethods'])->name('system-admin.payment-methods');
+Route::get('/system-admin/payment-methods/create', [SystemAdminController::class, 'createPaymentMethod'])->name('system-admin.payment-methods.create');
+Route::post('/system-admin/payment-methods', [SystemAdminController::class, 'storePaymentMethod'])->name('system-admin.payment-methods.store');
+Route::get('/system-admin/payment-methods/{id}/edit', [SystemAdminController::class, 'editPaymentMethod'])->name('system-admin.payment-methods.edit');
+Route::put('/system-admin/payment-methods/{id}', [SystemAdminController::class, 'updatePaymentMethod'])->name('system-admin.payment-methods.update');
+Route::delete('/system-admin/payment-methods/{id}', [SystemAdminController::class, 'deletePaymentMethod'])->name('system-admin.payment-methods.delete');
+Route::patch('/system-admin/payment-methods/{id}/toggle-status', [SystemAdminController::class, 'togglePaymentMethodStatus'])->name('system-admin.payment-methods.toggle-status');
     });
     
     // Debug route for system admin authentication

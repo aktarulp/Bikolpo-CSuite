@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\SubscriptionPlan;
+use App\Models\PlanFeature;
 
 class SubscriptionPlanSeeder extends Seeder
 {
@@ -26,21 +27,15 @@ class SubscriptionPlanSeeder extends Seeder
                 'is_active' => true,
                 'is_popular' => false,
                 'sort_order' => 1,
-                'features' => [
-                    'max_students' => 50,
-                    'max_tests' => 10,
-                    'max_questions' => 100,
-                    'storage_gb' => 1,
-                    'support' => 'email',
-                    'analytics' => 'basic',
-                    'custom_branding' => false,
-                    'api_access' => false
-                ],
-                'limits' => [
-                    'students' => 50,
-                    'tests' => 10,
-                    'questions' => 100,
-                    'storage' => 1
+                'features_data' => [
+                    'user_limit' => ['enabled' => true, 'value' => '50', 'limit_value' => 50],
+                    'max_tests' => ['enabled' => true, 'value' => '10', 'limit_value' => 10],
+                    'max_questions' => ['enabled' => true, 'value' => '100', 'limit_value' => 100],
+                    'storage_gb' => ['enabled' => true, 'value' => '1', 'limit_value' => 1],
+                    'email_support' => ['enabled' => true],
+                    'student_dashboard' => ['enabled' => true],
+                    'teacher_dashboard' => ['enabled' => true],
+                    'basic_analytics' => ['enabled' => true],
                 ]
             ],
             [
@@ -54,21 +49,17 @@ class SubscriptionPlanSeeder extends Seeder
                 'is_active' => true,
                 'is_popular' => true,
                 'sort_order' => 2,
-                'features' => [
-                    'max_students' => 200,
-                    'max_tests' => 50,
-                    'max_questions' => 500,
-                    'storage_gb' => 5,
-                    'support' => 'email_phone',
-                    'analytics' => 'standard',
-                    'custom_branding' => true,
-                    'api_access' => false
-                ],
-                'limits' => [
-                    'students' => 200,
-                    'tests' => 50,
-                    'questions' => 500,
-                    'storage' => 5
+                'features_data' => [
+                    'user_limit' => ['enabled' => true, 'value' => '200', 'limit_value' => 200],
+                    'max_tests' => ['enabled' => true, 'value' => '50', 'limit_value' => 50],
+                    'max_questions' => ['enabled' => true, 'value' => '500', 'limit_value' => 500],
+                    'storage_gb' => ['enabled' => true, 'value' => '5', 'limit_value' => 5],
+                    'email_support' => ['enabled' => true],
+                    'phone_support' => ['enabled' => true],
+                    'student_dashboard' => ['enabled' => true],
+                    'teacher_dashboard' => ['enabled' => true],
+                    'standard_analytics' => ['enabled' => true],
+                    'custom_branding' => ['enabled' => true],
                 ]
             ],
             [
@@ -82,21 +73,17 @@ class SubscriptionPlanSeeder extends Seeder
                 'is_active' => true,
                 'is_popular' => false,
                 'sort_order' => 3,
-                'features' => [
-                    'max_students' => 500,
-                    'max_tests' => 200,
-                    'max_questions' => 2000,
-                    'storage_gb' => 20,
-                    'support' => 'priority',
-                    'analytics' => 'advanced',
-                    'custom_branding' => true,
-                    'api_access' => true
-                ],
-                'limits' => [
-                    'students' => 500,
-                    'tests' => 200,
-                    'questions' => 2000,
-                    'storage' => 20
+                'features_data' => [
+                    'user_limit' => ['enabled' => true, 'value' => '500', 'limit_value' => 500],
+                    'max_tests' => ['enabled' => true, 'value' => '200', 'limit_value' => 200],
+                    'max_questions' => ['enabled' => true, 'value' => '2000', 'limit_value' => 2000],
+                    'storage_gb' => ['enabled' => true, 'value' => '20', 'limit_value' => 20],
+                    'priority_support' => ['enabled' => true],
+                    'student_dashboard' => ['enabled' => true],
+                    'teacher_dashboard' => ['enabled' => true],
+                    'advanced_analytics' => ['enabled' => true],
+                    'custom_branding' => ['enabled' => true],
+                    'api_access' => ['enabled' => true],
                 ]
             ],
             [
@@ -110,22 +97,18 @@ class SubscriptionPlanSeeder extends Seeder
                 'is_active' => true,
                 'is_popular' => false,
                 'sort_order' => 4,
-                'features' => [
-                    'max_students' => -1, // unlimited
-                    'max_tests' => -1, // unlimited
-                    'max_questions' => -1, // unlimited
-                    'storage_gb' => 100,
-                    'support' => 'dedicated',
-                    'analytics' => 'enterprise',
-                    'custom_branding' => true,
-                    'api_access' => true,
-                    'white_label' => true
-                ],
-                'limits' => [
-                    'students' => -1, // unlimited
-                    'tests' => -1, // unlimited
-                    'questions' => -1, // unlimited
-                    'storage' => 100
+                'features_data' => [
+                    'user_limit' => ['enabled' => true, 'value' => 'unlimited', 'limit_value' => -1],
+                    'max_tests' => ['enabled' => true, 'value' => 'unlimited', 'limit_value' => -1],
+                    'max_questions' => ['enabled' => true, 'value' => 'unlimited', 'limit_value' => -1],
+                    'storage_gb' => ['enabled' => true, 'value' => '100', 'limit_value' => 100],
+                    'dedicated_support' => ['enabled' => true],
+                    'student_dashboard' => ['enabled' => true],
+                    'teacher_dashboard' => ['enabled' => true],
+                    'enterprise_analytics' => ['enabled' => true],
+                    'custom_branding' => ['enabled' => true],
+                    'api_access' => ['enabled' => true],
+                    'white_label' => ['enabled' => true],
                 ]
             ]
         ];
@@ -143,15 +126,11 @@ class SubscriptionPlanSeeder extends Seeder
                 'is_active' => true,
                 'is_popular' => false,
                 'sort_order' => 1,
-                'features' => [
-                    'max_exams' => 5,
-                    'max_attempts' => 3,
-                    'support' => 'email',
-                    'analytics' => 'basic'
-                ],
-                'limits' => [
-                    'exams' => 5,
-                    'attempts' => 3
+                'features_data' => [
+                    'max_exams' => ['enabled' => true, 'value' => '5', 'limit_value' => 5],
+                    'max_attempts' => ['enabled' => true, 'value' => '3', 'limit_value' => 3],
+                    'email_support' => ['enabled' => true],
+                    'basic_analytics' => ['enabled' => true],
                 ]
             ],
             [
@@ -165,28 +144,50 @@ class SubscriptionPlanSeeder extends Seeder
                 'is_active' => true,
                 'is_popular' => true,
                 'sort_order' => 2,
-                'features' => [
-                    'max_exams' => -1, // unlimited
-                    'max_attempts' => -1, // unlimited
-                    'support' => 'priority',
-                    'analytics' => 'advanced',
-                    'certificates' => true
-                ],
-                'limits' => [
-                    'exams' => -1, // unlimited
-                    'attempts' => -1 // unlimited
+                'features_data' => [
+                    'max_exams' => ['enabled' => true, 'value' => 'unlimited', 'limit_value' => -1],
+                    'max_attempts' => ['enabled' => true, 'value' => 'unlimited', 'limit_value' => -1],
+                    'priority_support' => ['enabled' => true],
+                    'advanced_analytics' => ['enabled' => true],
+                    'certificates' => ['enabled' => true],
                 ]
             ]
         ];
 
         // Create partner plans
-        foreach ($partnerPlans as $plan) {
-            SubscriptionPlan::create($plan);
+        foreach ($partnerPlans as $planData) {
+            $featuresData = $planData['features_data'];
+            unset($planData['features_data']);
+            
+            $plan = SubscriptionPlan::create($planData);
+            
+            // Attach features
+            $pivotData = [];
+            foreach ($featuresData as $slug => $data) {
+                $feature = PlanFeature::where('slug', $slug)->first();
+                if ($feature) {
+                    $pivotData[$feature->id] = $data;
+                }
+            }
+            $plan->features()->sync($pivotData);
         }
 
         // Create student plans
-        foreach ($studentPlans as $plan) {
-            SubscriptionPlan::create($plan);
+        foreach ($studentPlans as $planData) {
+            $featuresData = $planData['features_data'];
+            unset($planData['features_data']);
+            
+            $plan = SubscriptionPlan::create($planData);
+            
+            // Attach features
+            $pivotData = [];
+            foreach ($featuresData as $slug => $data) {
+                $feature = PlanFeature::where('slug', $slug)->first();
+                if ($feature) {
+                    $pivotData[$feature->id] = $data;
+                }
+            }
+            $plan->features()->sync($pivotData);
         }
     }
 }

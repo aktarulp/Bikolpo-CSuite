@@ -1037,93 +1037,18 @@ class SystemAdminController extends Controller
     public function subscriptionPlans()
     {
         try {
-            // Mock data for subscription plans
-            $plans = [
-                [
-                    'id' => 1,
-                    'name' => 'Free',
-                    'slug' => 'free',
-                    'price' => 0,
-                    'currency' => 'BDT',
-                    'billing_cycle' => 'monthly',
-                    'is_popular' => false,
-                    'features' => [
-                        'max_students' => 50,
-                        'max_tests' => 10,
-                        'max_questions' => 100,
-                        'storage_gb' => 1,
-                        'support' => 'email',
-                        'analytics' => 'basic',
-                        'custom_branding' => false,
-                        'api_access' => false
-                    ]
-                ],
-                [
-                    'id' => 2,
-                    'name' => 'Basic',
-                    'slug' => 'basic',
-                    'price' => 2500,
-                    'currency' => 'BDT',
-                    'billing_cycle' => 'monthly',
-                    'is_popular' => true,
-                    'features' => [
-                        'max_students' => 200,
-                        'max_tests' => 50,
-                        'max_questions' => 500,
-                        'storage_gb' => 5,
-                        'support' => 'email_phone',
-                        'analytics' => 'standard',
-                        'custom_branding' => true,
-                        'api_access' => false
-                    ]
-                ],
-                [
-                    'id' => 3,
-                    'name' => 'Premium',
-                    'slug' => 'premium',
-                    'price' => 5000,
-                    'currency' => 'BDT',
-                    'billing_cycle' => 'monthly',
-                    'is_popular' => false,
-                    'features' => [
-                        'max_students' => 500,
-                        'max_tests' => 200,
-                        'max_questions' => 2000,
-                        'storage_gb' => 20,
-                        'support' => 'priority',
-                        'analytics' => 'advanced',
-                        'custom_branding' => true,
-                        'api_access' => true
-                    ]
-                ],
-                [
-                    'id' => 4,
-                    'name' => 'Enterprise',
-                    'slug' => 'enterprise',
-                    'price' => 10000,
-                    'currency' => 'BDT',
-                    'billing_cycle' => 'monthly',
-                    'is_popular' => false,
-                    'features' => [
-                        'max_students' => -1, // unlimited
-                        'max_tests' => -1, // unlimited
-                        'max_questions' => -1, // unlimited
-                        'storage_gb' => 100,
-                        'support' => 'dedicated',
-                        'analytics' => 'enterprise',
-                        'custom_branding' => true,
-                        'api_access' => true,
-                        'white_label' => true
-                    ]
-                ]
-            ];
+            // Get plans from database
+            $plans = \App\Models\SubscriptionPlan::where('is_active', true)
+                ->orderBy('sort_order')
+                ->orderBy('price')
+                ->get();
 
             return view('system-admin.sa-subscription-plans', compact('plans'));
 
         } catch (\Exception $e) {
             \Log::error('SystemAdminController: Error loading subscription plans: ' . $e->getMessage());
             return view('system-admin.sa-subscription-plans', [
-                'plans' => [],
+                'plans' => collect(),
                 'error' => 'Unable to load subscription plans: ' . $e->getMessage()
             ]);
         }
@@ -1342,6 +1267,805 @@ class SystemAdminController extends Controller
                 'paymentMethods' => [],
                 'error' => 'Unable to load subscription billing: ' . $e->getMessage()
             ]);
+        }
+    }
+
+    /**
+     * Show create subscription form
+     */
+    public function createSubscription()
+    {
+        try {
+            return view('system-admin.sa-create-subscription');
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error loading create subscription form: ' . $e->getMessage());
+            return redirect()->route('system-admin.subscription-plans')
+                ->with('error', 'Unable to load create subscription form: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Store new subscription plan
+     */
+    public function storeSubscription(Request $request)
+    {
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'slug' => 'required|string|max:255|unique:subscription_plans,slug',
+                'description' => 'nullable|string',
+                'price' => 'nullable|numeric|min:0',
+                'is_custom_pricing' => 'boolean',
+                'currency' => 'required|string|in:BDT,USD,EUR',
+                'billing_cycle' => 'required|string|in:monthly,yearly,lifetime',
+                'partner_type' => 'required|string|in:partner,student',
+                'sort_order' => 'nullable|integer|min:0',
+                'is_active' => 'boolean',
+                'is_popular' => 'boolean',
+                'enable_offer' => 'boolean',
+                'offer_price' => 'nullable|numeric|min:0',
+                'offer_name' => 'nullable|string|max:255',
+                'offer_description' => 'nullable|string|max:500',
+                'offer_start_date' => 'nullable|date',
+                'offer_end_date' => 'nullable|date|after:offer_start_date',
+                'offer_max_users' => 'nullable|integer|min:0',
+                'enable_annual_offer' => 'boolean',
+                'annual_offer_price' => 'nullable|numeric|min:0',
+                'annual_offer_name' => 'nullable|string|max:255',
+                'annual_offer_description' => 'nullable|string|max:500',
+                'annual_offer_start_date' => 'nullable|date',
+                'annual_offer_end_date' => 'nullable|date|after:annual_offer_start_date',
+                'annual_offer_max_users' => 'nullable|integer|min:0',
+                'referral_eligible' => 'boolean',
+                'referral_reward_months' => 'nullable|integer|min:1|max:12',
+                'referral_minimum_amount' => 'nullable|numeric|min:0',
+                'referral_conditions' => 'nullable|json',
+                'features' => 'nullable|array',
+                'features.*.enabled' => 'boolean',
+                'features.*.value' => 'nullable|string',
+                'features.*.limit_value' => 'nullable|integer|min:0',
+            ]);
+
+            // Handle table-driven features
+            $featuresData = [];
+            if ($request->has('features')) {
+                foreach ($request->features as $featureId => $featureData) {
+                    if (isset($featureData['enabled']) && $featureData['enabled']) {
+                        $featuresData[$featureId] = [
+                            'is_enabled' => true,
+                            'value' => $featureData['value'] ?? null,
+                            'limit_value' => $featureData['limit_value'] ?? null,
+                        ];
+                    }
+                }
+            }
+
+            // Handle offer pricing
+            $offerData = [];
+            if ($request->has('enable_offer')) {
+                $offerData = [
+                    'offer_price' => $request->offer_price,
+                    'offer_name' => $request->offer_name,
+                    'offer_description' => $request->offer_description,
+                    'offer_start_date' => $request->offer_start_date,
+                    'offer_end_date' => $request->offer_end_date,
+                    'offer_max_users' => $request->offer_max_users,
+                    'offer_code' => $request->offer_code,
+                    'offer_badge_text' => $request->offer_badge_text,
+                    'offer_badge_color' => $request->offer_badge_color ?: 'red',
+                    'offer_is_active' => true,
+                    'offer_auto_apply' => $request->has('offer_auto_apply'),
+                    'offer_show_original_price' => $request->has('offer_show_original_price'),
+                ];
+            }
+
+            // Handle annual offer pricing
+            $annualOfferData = [];
+            if ($request->has('enable_annual_offer')) {
+                $monthlyPrice = $request->price ?: 0;
+                $annualPrice = $request->annual_price ?: 0;
+                $monthlyTotal = $monthlyPrice * 12;
+                $savingsAmount = $monthlyTotal - $annualPrice;
+                $savingsPercentage = $monthlyTotal > 0 ? round(($savingsAmount / $monthlyTotal) * 100, 1) : 0;
+
+                $annualOfferData = [
+                    'annual_price' => $request->annual_price,
+                    'annual_offer_name' => $request->annual_offer_name,
+                    'annual_offer_description' => $request->annual_offer_description,
+                    'annual_discount_percentage' => $savingsPercentage,
+                    'annual_savings_amount' => $savingsAmount,
+                    'annual_offer_active' => true,
+                    'annual_badge_text' => $request->annual_badge_text ?: 'SAVE 2 MONTHS',
+                    'annual_badge_color' => $request->annual_badge_color ?: 'green',
+                    'annual_show_monthly_equivalent' => $request->has('annual_show_monthly_equivalent'),
+                    'annual_highlight_savings' => $request->has('annual_highlight_savings'),
+                ];
+            }
+
+            // Handle referral system
+            $referralData = [];
+            if ($request->has('referral_eligible')) {
+                $referralData = [
+                    'referral_eligible' => true,
+                    'referral_reward_months' => $request->referral_reward_months ?: 1,
+                    'referral_minimum_amount' => $request->referral_minimum_amount,
+                    'referral_conditions' => $request->referral_conditions ? json_decode($request->referral_conditions, true) : null,
+                ];
+            }
+
+            $plan = \App\Models\SubscriptionPlan::create(array_merge([
+                'name' => $request->name,
+                'slug' => $request->slug,
+                'description' => $request->description,
+                'price' => $request->has('is_custom_pricing') || empty($request->price) ? null : $request->price,
+                'currency' => $request->currency,
+                'billing_cycle' => $request->billing_cycle,
+                'partner_type' => $request->partner_type,
+                'sort_order' => $request->sort_order ?? 0,
+                'is_active' => $request->has('is_active'),
+                'is_popular' => $request->has('is_popular'),
+            ], $offerData, $annualOfferData, $referralData));
+
+            // Attach features to the plan
+            if (!empty($featuresData)) {
+                $plan->features()->sync($featuresData);
+            }
+
+            \Log::info("SystemAdminController: Created subscription plan: {$plan->name}");
+
+            return redirect()->route('system-admin.subscription-plans')
+                ->with('success', 'Subscription plan created successfully');
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()
+                ->withErrors($e->validator)
+                ->withInput();
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error creating subscription plan: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Unable to create subscription plan: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
+
+    /**
+     * Show edit subscription form
+     */
+    public function editSubscription($id)
+    {
+        try {
+            $plan = \App\Models\SubscriptionPlan::findOrFail($id);
+            return view('system-admin.sa-edit-subscription', compact('plan'));
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error loading edit subscription form: ' . $e->getMessage());
+            return redirect()->route('system-admin.subscription-plans')
+                ->with('error', 'Unable to load edit subscription form: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Update subscription plan
+     */
+    public function updateSubscription(Request $request, $id)
+    {
+        try {
+            $plan = \App\Models\SubscriptionPlan::findOrFail($id);
+
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'slug' => 'required|string|max:255|unique:subscription_plans,slug,' . $id,
+                'description' => 'nullable|string',
+                'price' => 'nullable|numeric|min:0',
+                'is_custom_pricing' => 'boolean',
+                'currency' => 'required|string|in:BDT,USD,EUR',
+                'billing_cycle' => 'required|string|in:monthly,yearly,lifetime',
+                'partner_type' => 'required|string|in:partner,student',
+                'sort_order' => 'nullable|integer|min:0',
+                'is_active' => 'boolean',
+                'is_popular' => 'boolean',
+                'features' => 'nullable|array',
+                'features.*.enabled' => 'boolean',
+                'features.*.value' => 'nullable|string',
+                'features.*.limit_value' => 'nullable|integer|min:0',
+            ]);
+
+            // Handle table-driven features
+            $featuresData = [];
+            if ($request->has('features')) {
+                foreach ($request->features as $featureId => $featureData) {
+                    if (isset($featureData['enabled']) && $featureData['enabled']) {
+                        $featuresData[$featureId] = [
+                            'is_enabled' => true,
+                            'value' => $featureData['value'] ?? null,
+                            'limit_value' => $featureData['limit_value'] ?? null,
+                        ];
+                    }
+                }
+            }
+
+            $plan->update([
+                'name' => $request->name,
+                'slug' => $request->slug,
+                'description' => $request->description,
+                'price' => $request->has('is_custom_pricing') || empty($request->price) ? null : $request->price,
+                'currency' => $request->currency,
+                'billing_cycle' => $request->billing_cycle,
+                'partner_type' => $request->partner_type,
+                'sort_order' => $request->sort_order ?? 0,
+                'is_active' => $request->has('is_active'),
+                'is_popular' => $request->has('is_popular'),
+            ]);
+
+            // Update features
+            $plan->features()->sync($featuresData);
+
+            \Log::info("SystemAdminController: Updated subscription plan: {$plan->name}");
+
+            return redirect()->route('system-admin.subscription-plans')
+                ->with('success', 'Subscription plan updated successfully');
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()
+                ->withErrors($e->validator)
+                ->withInput();
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error updating subscription plan: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Unable to update subscription plan: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
+
+    /**
+     * Delete subscription plan
+     */
+    public function deleteSubscription($id)
+    {
+        try {
+            $plan = \App\Models\SubscriptionPlan::findOrFail($id);
+            $planName = $plan->name;
+            $plan->delete();
+
+            \Log::info("SystemAdminController: Deleted subscription plan: {$planName}");
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Subscription plan deleted successfully'
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error deleting subscription plan: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Unable to delete subscription plan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Handle custom plan request
+     */
+    public function customPlanRequest(Request $request)
+    {
+        try {
+            $request->validate([
+                'organization_name' => 'required|string|max:255',
+                'contact_person' => 'required|string|max:255',
+                'email' => 'required|email|max:255',
+                'phone' => 'nullable|string|max:20',
+                'requirements' => 'required|string|min:10',
+                'budget_range' => 'nullable|string',
+                'timeline' => 'nullable|string',
+                'additional_notes' => 'nullable|string',
+            ]);
+
+            // Store the custom plan request
+            $customRequest = [
+                'organization_name' => $request->organization_name,
+                'contact_person' => $request->contact_person,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'requirements' => $request->requirements,
+                'budget_range' => $request->budget_range,
+                'timeline' => $request->timeline,
+                'additional_notes' => $request->additional_notes,
+                'submitted_at' => now(),
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ];
+
+            // Log the request (you can also store in database or send email)
+            \Log::info('Custom Plan Request Received:', $customRequest);
+
+            // Here you can:
+            // 1. Store in database
+            // 2. Send email notification to admin
+            // 3. Send confirmation email to requester
+            // 4. Create a ticket in your support system
+
+            // For now, we'll just log it and return success
+            \Log::info("Custom plan request from: {$request->organization_name} ({$request->email})");
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Custom plan request submitted successfully! We will contact you within 24 hours.'
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->validator->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error processing custom plan request: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Unable to process custom plan request: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function referralManagement()
+    {
+        try {
+            // Get referral statistics
+            $totalReferrals = \App\Models\Referral::count();
+            $successfulReferrals = \App\Models\Referral::where('status', 'completed')->count();
+            $pendingReferrals = \App\Models\Referral::where('status', 'pending')->count();
+            $totalRewards = \App\Models\ReferralReward::sum('reward_value');
+            $appliedRewards = \App\Models\ReferralReward::where('status', 'applied')->sum('reward_value');
+            $pendingRewards = \App\Models\ReferralReward::where('status', 'pending')->sum('reward_value');
+
+            // Get top referrers
+            $topReferrers = \App\Models\Partner::withCount(['referrals', 'successfulReferrals'])
+                ->orderBy('successful_referrals_count', 'desc')
+                ->take(10)
+                ->get();
+
+            // Get recent referrals
+            $recentReferrals = \App\Models\Referral::with(['referrer', 'referred', 'referralCode'])
+                ->latest()
+                ->take(20)
+                ->get();
+
+            // Get referral codes
+            $referralCodes = \App\Models\ReferralCode::with(['referrer', 'referrals'])
+                ->latest()
+                ->take(20)
+                ->get();
+
+            // Get rewards
+            $rewards = \App\Models\ReferralReward::with(['referrer', 'referral'])
+                ->latest()
+                ->take(20)
+                ->get();
+
+            $stats = [
+                'total_referrals' => $totalReferrals,
+                'successful_referrals' => $successfulReferrals,
+                'pending_referrals' => $pendingReferrals,
+                'success_rate' => $totalReferrals > 0 ? round(($successfulReferrals / $totalReferrals) * 100, 1) : 0,
+                'total_rewards' => $totalRewards,
+                'applied_rewards' => $appliedRewards,
+                'pending_rewards' => $pendingRewards,
+            ];
+
+            return view('system-admin.sa-referral-management', compact(
+                'stats',
+                'topReferrers',
+                'recentReferrals',
+                'referralCodes',
+                'rewards'
+            ));
+
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error loading referral management: ' . $e->getMessage());
+            return view('system-admin.sa-referral-management', [
+                'stats' => [],
+                'topReferrers' => collect(),
+                'recentReferrals' => collect(),
+                'referralCodes' => collect(),
+                'rewards' => collect(),
+                'error' => 'Unable to load referral data: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Show plan features management page
+     */
+    public function planFeatures()
+    {
+        try {
+            $features = \App\Models\PlanFeature::withCount('subscriptionPlans')
+                ->orderBy('category')
+                ->orderBy('sort_order')
+                ->get()
+                ->groupBy('category');
+
+            $categories = \App\Models\PlanFeature::getCategories();
+
+            return view('system-admin.sa-plan-features', compact('features', 'categories'));
+
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error loading plan features: ' . $e->getMessage());
+            return redirect()->route('system-admin.system-admin-dashboard')
+                ->with('error', 'Unable to load plan features: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Show create plan feature form
+     */
+    public function createPlanFeature()
+    {
+        try {
+            $categories = \App\Models\PlanFeature::getCategories();
+            $featureTypes = \App\Models\PlanFeature::getTypes();
+
+            return view('system-admin.sa-create-plan-feature', compact('categories', 'featureTypes'));
+
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error loading create plan feature form: ' . $e->getMessage());
+            return redirect()->route('system-admin.plan-features')
+                ->with('error', 'Unable to load create form: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Store new plan feature
+     */
+    public function storePlanFeature(Request $request)
+    {
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'slug' => 'required|string|max:255|unique:plan_features,slug',
+                'description' => 'nullable|string',
+                'type' => 'required|in:boolean,numeric,text,select',
+                'category' => 'required|string|max:100',
+                'default_value' => 'nullable|string',
+                'options' => 'nullable|array',
+                'is_active' => 'boolean',
+                'sort_order' => 'nullable|integer|min:0',
+            ]);
+
+            $feature = \App\Models\PlanFeature::create([
+                'name' => $request->name,
+                'slug' => $request->slug,
+                'description' => $request->description,
+                'type' => $request->type,
+                'category' => $request->category,
+                'default_value' => $request->default_value,
+                'options' => $request->options,
+                'is_active' => $request->has('is_active'),
+                'sort_order' => $request->sort_order ?? 0,
+            ]);
+
+            \Log::info("SystemAdminController: Created plan feature: {$feature->name}");
+
+            return redirect()->route('system-admin.plan-features')
+                ->with('success', 'Plan feature created successfully');
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()
+                ->withErrors($e->validator)
+                ->withInput();
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error creating plan feature: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Unable to create plan feature: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
+
+    /**
+     * Show edit plan feature form
+     */
+    public function editPlanFeature($id)
+    {
+        try {
+            $feature = \App\Models\PlanFeature::findOrFail($id);
+            $categories = \App\Models\PlanFeature::getCategories();
+            $featureTypes = \App\Models\PlanFeature::getTypes();
+
+            return view('system-admin.sa-edit-plan-feature', compact('feature', 'categories', 'featureTypes'));
+
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error loading edit plan feature form: ' . $e->getMessage());
+            return redirect()->route('system-admin.plan-features')
+                ->with('error', 'Unable to load edit form: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Update plan feature
+     */
+    public function updatePlanFeature(Request $request, $id)
+    {
+        try {
+            $feature = \App\Models\PlanFeature::findOrFail($id);
+
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'slug' => 'required|string|max:255|unique:plan_features,slug,' . $id,
+                'description' => 'nullable|string',
+                'type' => 'required|in:boolean,numeric,text,select',
+                'category' => 'required|string|max:100',
+                'default_value' => 'nullable|string',
+                'options' => 'nullable|array',
+                'is_active' => 'boolean',
+                'sort_order' => 'nullable|integer|min:0',
+            ]);
+
+            $feature->update([
+                'name' => $request->name,
+                'slug' => $request->slug,
+                'description' => $request->description,
+                'type' => $request->type,
+                'category' => $request->category,
+                'default_value' => $request->default_value,
+                'options' => $request->options,
+                'is_active' => $request->has('is_active'),
+                'sort_order' => $request->sort_order ?? 0,
+            ]);
+
+            \Log::info("SystemAdminController: Updated plan feature: {$feature->name}");
+
+            return redirect()->route('system-admin.plan-features')
+                ->with('success', 'Plan feature updated successfully');
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()
+                ->withErrors($e->validator)
+                ->withInput();
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error updating plan feature: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Unable to update plan feature: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
+
+    /**
+     * Delete plan feature
+     */
+    public function deletePlanFeature($id)
+    {
+        try {
+            $feature = \App\Models\PlanFeature::findOrFail($id);
+
+            // Check if feature is being used by any plans
+            if ($feature->subscriptionPlans()->count() > 0) {
+                return redirect()->route('system-admin.plan-features')
+                    ->with('error', 'Cannot delete feature that is being used by subscription plans');
+            }
+
+            $featureName = $feature->name;
+            $feature->delete();
+
+            \Log::info("SystemAdminController: Deleted plan feature: {$featureName}");
+
+            return redirect()->route('system-admin.plan-features')
+                ->with('success', 'Plan feature deleted successfully');
+
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error deleting plan feature: ' . $e->getMessage());
+            return redirect()->route('system-admin.plan-features')
+                ->with('error', 'Unable to delete plan feature: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Show payment methods management page
+     */
+    public function paymentMethods()
+    {
+        try {
+            $paymentMethods = \App\Models\PaymentMethod::ordered()->get();
+            $types = \App\Models\PaymentMethod::getTypes();
+            $currencies = \App\Models\PaymentMethod::getSupportedCurrencies();
+
+            return view('system-admin.sa-payment-methods', compact('paymentMethods', 'types', 'currencies'));
+
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error loading payment methods: ' . $e->getMessage());
+            return redirect()->route('system-admin.system-admin-dashboard')
+                ->with('error', 'Unable to load payment methods: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Show create payment method form
+     */
+    public function createPaymentMethod()
+    {
+        try {
+            $types = \App\Models\PaymentMethod::getTypes();
+            $currencies = \App\Models\PaymentMethod::getSupportedCurrencies();
+
+            return view('system-admin.sa-create-payment-method', compact('types', 'currencies'));
+
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error loading create payment method form: ' . $e->getMessage());
+            return redirect()->route('system-admin.payment-methods')
+                ->with('error', 'Unable to load create form: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Store new payment method
+     */
+    public function storePaymentMethod(Request $request)
+    {
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'slug' => 'required|string|max:255|unique:payment_methods,slug',
+                'type' => 'required|string|in:mobile,bank,cash,check',
+                'provider' => 'nullable|string|max:255',
+                'account_number' => 'required|string|max:255',
+                'account_title' => 'required|string|max:255',
+                'branch_name' => 'required|string|max:255',
+                'routing_number' => 'nullable|string|max:255',
+                'configuration' => 'nullable|array',
+                'is_active' => 'boolean',
+                'is_popular' => 'boolean',
+                'requires_verification' => 'boolean',
+                'sort_order' => 'nullable|integer|min:0',
+            ]);
+
+            $paymentMethod = \App\Models\PaymentMethod::create([
+                'name' => $request->name,
+                'slug' => $request->slug,
+                'type' => $request->type,
+                'provider' => $request->provider,
+                'account_number' => $request->account_number,
+                'account_title' => $request->account_title,
+                'branch_name' => $request->branch_name,
+                'routing_number' => $request->routing_number,
+                'configuration' => $request->configuration,
+                'is_active' => $request->has('is_active'),
+                'is_popular' => $request->has('is_popular'),
+                'requires_verification' => $request->has('requires_verification'),
+                'sort_order' => $request->sort_order ?: 0,
+            ]);
+
+            \Log::info("SystemAdminController: Created payment method: {$paymentMethod->name}");
+
+            return redirect()->route('system-admin.payment-methods')
+                ->with('success', 'Payment method created successfully');
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()
+                ->withErrors($e->validator)
+                ->withInput();
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error creating payment method: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Unable to create payment method: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
+
+    /**
+     * Show edit payment method form
+     */
+    public function editPaymentMethod($id)
+    {
+        try {
+            $paymentMethod = \App\Models\PaymentMethod::findOrFail($id);
+            $types = \App\Models\PaymentMethod::getTypes();
+            $currencies = \App\Models\PaymentMethod::getSupportedCurrencies();
+
+            return view('system-admin.sa-edit-payment-method', compact('paymentMethod', 'types', 'currencies'));
+
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error loading edit payment method form: ' . $e->getMessage());
+            return redirect()->route('system-admin.payment-methods')
+                ->with('error', 'Unable to load edit form: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Update payment method
+     */
+    public function updatePaymentMethod(Request $request, $id)
+    {
+        try {
+            $paymentMethod = \App\Models\PaymentMethod::findOrFail($id);
+
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'slug' => 'required|string|max:255|unique:payment_methods,slug,' . $id,
+                'type' => 'required|string|in:mobile,bank,cash,check',
+                'provider' => 'nullable|string|max:255',
+                'account_number' => 'required|string|max:255',
+                'account_title' => 'required|string|max:255',
+                'branch_name' => 'required|string|max:255',
+                'routing_number' => 'nullable|string|max:255',
+                'configuration' => 'nullable|array',
+                'is_active' => 'boolean',
+                'is_popular' => 'boolean',
+                'requires_verification' => 'boolean',
+                'sort_order' => 'nullable|integer|min:0',
+            ]);
+
+            $paymentMethod->update([
+                'name' => $request->name,
+                'slug' => $request->slug,
+                'type' => $request->type,
+                'provider' => $request->provider,
+                'account_number' => $request->account_number,
+                'account_title' => $request->account_title,
+                'branch_name' => $request->branch_name,
+                'routing_number' => $request->routing_number,
+                'configuration' => $request->configuration,
+                'is_active' => $request->has('is_active'),
+                'is_popular' => $request->has('is_popular'),
+                'requires_verification' => $request->has('requires_verification'),
+                'sort_order' => $request->sort_order ?: 0,
+            ]);
+
+            \Log::info("SystemAdminController: Updated payment method: {$paymentMethod->name}");
+
+            return redirect()->route('system-admin.payment-methods')
+                ->with('success', 'Payment method updated successfully');
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()
+                ->withErrors($e->validator)
+                ->withInput();
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error updating payment method: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Unable to update payment method: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
+
+    /**
+     * Delete payment method
+     */
+    public function deletePaymentMethod($id)
+    {
+        try {
+            $paymentMethod = \App\Models\PaymentMethod::findOrFail($id);
+            $paymentMethodName = $paymentMethod->name;
+            $paymentMethod->delete();
+
+            \Log::info("SystemAdminController: Deleted payment method: {$paymentMethodName}");
+
+            return redirect()->route('system-admin.payment-methods')
+                ->with('success', 'Payment method deleted successfully');
+
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error deleting payment method: ' . $e->getMessage());
+            return redirect()->route('system-admin.payment-methods')
+                ->with('error', 'Unable to delete payment method: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Toggle payment method status
+     */
+    public function togglePaymentMethodStatus($id)
+    {
+        try {
+            $paymentMethod = \App\Models\PaymentMethod::findOrFail($id);
+            $paymentMethod->update(['is_active' => !$paymentMethod->is_active]);
+
+            $status = $paymentMethod->is_active ? 'activated' : 'deactivated';
+            \Log::info("SystemAdminController: Payment method {$status}: {$paymentMethod->name}");
+
+            return redirect()->route('system-admin.payment-methods')
+                ->with('success', "Payment method {$status} successfully");
+
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error toggling payment method status: ' . $e->getMessage());
+            return redirect()->route('system-admin.payment-methods')
+                ->with('error', 'Unable to update payment method status: ' . $e->getMessage());
         }
     }
 }
