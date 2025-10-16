@@ -169,7 +169,7 @@ class SubscriptionPlanSeeder extends Seeder
                     $pivotData[$feature->id] = $data;
                 }
             }
-            $plan->features()->sync($pivotData);
+            $plan->planFeatures()->sync($pivotData);
         }
 
         // Create student plans
@@ -187,7 +187,7 @@ class SubscriptionPlanSeeder extends Seeder
                     $pivotData[$feature->id] = $data;
                 }
             }
-            $plan->features()->sync($pivotData);
+            $plan->planFeatures()->sync($pivotData);
         }
     }
 }

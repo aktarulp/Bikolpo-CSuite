@@ -110,6 +110,7 @@
                             @enderror
                         </div>
 
+                        <!-- Category -->
                         <div>
                             <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Category <span class="text-red-500">*</span>
@@ -162,7 +163,7 @@
                                     <span class="text-gray-500 dark:text-gray-400">:</span>
                                     <input type="text" 
                                            name="options[{{ $index }}][value]" 
-                                           value="{{ $option }}"
+                                           value="{{ is_string($option) ? $option : (is_array($option) ? json_encode($option) : (string)$option) }}"
                                            placeholder="Option label" 
                                            class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
                                     <button type="button" 

@@ -720,95 +720,178 @@
                     <div class="space-y-6">
                         @php
                             $features = \App\Models\PlanFeature::active()->ordered()->get()->groupBy('category');
+                            $categories = \App\Models\PlanFeature::getCategories();
                         @endphp
                         
                         @foreach($features as $category => $categoryFeatures)
-                        <div>
-                            <h4 class="text-md font-medium text-gray-800 dark:text-gray-200 mb-4">
-                                {{ \App\Models\PlanFeature::getCategories()[$category] ?? ucfirst($category) }}
-                            </h4>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                @foreach($categoryFeatures as $feature)
-                                <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                                    <div class="flex items-start justify-between">
-                                        <div class="flex-1">
-                                            <div class="flex items-center">
+                        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                            <!-- Category Header -->
+                            <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 border-b border-gray-200 dark:border-gray-600">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="text-sm font-semibold text-gray-900 dark:text-white">
+                                        {{ $categories[$category] ?? ucfirst($category) }}
+                                    </h4>
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                                        {{ $categoryFeatures->count() }} features
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <!-- Features Table -->
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                    <thead class="bg-gray-50 dark:bg-gray-700">
+                                        <tr>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                Enable
+                                            </th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                Name
+                                            </th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                Description
+                                            </th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                Type
+                                            </th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                Actions
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                        @foreach($categoryFeatures as $feature)
+                                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                            <!-- Enable Checkbox -->
+                                            <td class="px-6 py-4 whitespace-nowrap">
                                                 <input type="checkbox" 
                                                        id="feature_{{ $feature->id }}" 
                                                        name="features[{{ $feature->id }}][enabled]" 
                                                        value="1"
-                                                       {{ old("features.{$feature->id}.enabled") ? 'checked' : '' }}
+                                                       {{ old("features.{$feature->id}.enabled", true) ? 'checked' : '' }}
                                                        onchange="toggleFeatureInput({{ $feature->id }}, '{{ $feature->type }}')"
                                                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                                                <label for="feature_{{ $feature->id }}" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                                                    {{ $feature->name }}
-                                                </label>
-                                            </div>
-                                            @if($feature->description)
-                                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ $feature->description }}</p>
-                                            @endif
-                                        </div>
-                                    </div>
-                                    
-                                    @if($feature->type === 'numeric')
-                                    <div id="feature_input_{{ $feature->id }}" class="mt-3 hidden">
-                                        <label for="feature_value_{{ $feature->id }}" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                                            Value @if($feature->unit)({{ $feature->unit }})@endif
-                                        </label>
-                                        <input type="number" 
-                                               id="feature_value_{{ $feature->id }}" 
-                                               name="features[{{ $feature->id }}][value]" 
-                                               value="{{ old("features.{$feature->id}.value") }}"
-                                               min="0"
-                                               class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                                               placeholder="Enter value">
-                                    </div>
-                                    @elseif($feature->type === 'text')
-                                    <div id="feature_input_{{ $feature->id }}" class="mt-3 hidden">
-                                        <label for="feature_value_{{ $feature->id }}" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                                            Value
-                                        </label>
-                                        <input type="text" 
-                                               id="feature_value_{{ $feature->id }}" 
-                                               name="features[{{ $feature->id }}][value]" 
-                                               value="{{ old("features.{$feature->id}.value") }}"
-                                               class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                                               placeholder="Enter value">
-                                    </div>
-                                    @elseif($feature->type === 'select' && $feature->options)
-                                    <div id="feature_input_{{ $feature->id }}" class="mt-3 hidden">
-                                        <label for="feature_value_{{ $feature->id }}" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                                            Select Option
-                                        </label>
-                                        <select id="feature_value_{{ $feature->id }}" 
-                                                name="features[{{ $feature->id }}][value]"
-                                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
-                                            <option value="">Select an option</option>
-                                            @foreach($feature->options as $key => $option)
-                                            <option value="{{ $key }}" {{ old("features.{$feature->id}.value") == $key ? 'selected' : '' }}>
-                                                {{ $option }}
-                                            </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    @endif
-                                    
-                                    @if($feature->type === 'numeric')
-                                    <div id="feature_limit_{{ $feature->id }}" class="mt-3 hidden">
-                                        <label for="feature_limit_value_{{ $feature->id }}" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                                            Limit @if($feature->unit)({{ $feature->unit }})@endif
-                                        </label>
-                                        <input type="number" 
-                                               id="feature_limit_value_{{ $feature->id }}" 
-                                               name="features[{{ $feature->id }}][limit_value]" 
-                                               value="{{ old("features.{$feature->id}.limit_value") }}"
-                                               min="0"
-                                               class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                                               placeholder="Enter limit">
-                                    </div>
-                                    @endif
-                                </div>
-                                @endforeach
+                                            </td>
+                                            
+                                            <!-- Feature Name -->
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center">
+                                                    <label for="feature_{{ $feature->id }}" class="text-sm font-medium text-gray-900 dark:text-white cursor-pointer">
+                                                        {{ $feature->name }}
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            
+                                            <!-- Description -->
+                                            <td class="px-6 py-4">
+                                                <div class="text-sm text-gray-500 dark:text-gray-400">
+                                                    {{ $feature->description ?: 'No description' }}
+                                                </div>
+                                            </td>
+                                            
+                                            <!-- Type -->
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                                    @if($feature->type === 'boolean') bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
+                                                    @elseif($feature->type === 'numeric') bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200
+                                                    @elseif($feature->type === 'text') bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200
+                                                    @else bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200
+                                                    @endif">
+                                                    {{ ucfirst($feature->type) }}
+                                                </span>
+                                            </td>
+                                            
+                                            <!-- Actions -->
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                <div id="feature_input_{{ $feature->id }}" class="">
+                                                    @if($feature->type === 'numeric')
+                                                    <div class="space-y-2">
+                                                        <div>
+                                                            <label for="feature_value_{{ $feature->id }}" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                                                                Value @if($feature->unit)({{ $feature->unit }})@endif
+                                                            </label>
+                                                            <div class="flex space-x-2">
+                                                                <input type="number" 
+                                                                       id="feature_value_{{ $feature->id }}" 
+                                                                       name="features[{{ $feature->id }}][value]" 
+                                                                       value="{{ old("features.{$feature->id}.value", '0') }}"
+                                                                       min="0"
+                                                                       class="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                                                       placeholder="Enter value">
+                                                                <button type="button" 
+                                                                        onclick="setUnlimited('feature_value_{{ $feature->id }}')"
+                                                                        class="px-3 py-2 text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 border border-blue-300 dark:border-blue-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
+                                                                    Unlimited
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <label for="feature_limit_value_{{ $feature->id }}" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                                                                Limit @if($feature->unit)({{ $feature->unit }})@endif
+                                                            </label>
+                                                            <div class="flex space-x-2">
+                                                                <input type="number" 
+                                                                       id="feature_limit_value_{{ $feature->id }}" 
+                                                                       name="features[{{ $feature->id }}][limit_value]" 
+                                                                       value="{{ old("features.{$feature->id}.limit_value", '0') }}"
+                                                                       min="0"
+                                                                       class="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                                                       placeholder="Enter limit">
+                                                                <button type="button" 
+                                                                        onclick="setUnlimited('feature_limit_value_{{ $feature->id }}')"
+                                                                        class="px-3 py-2 text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 border border-blue-300 dark:border-blue-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
+                                                                    Unlimited
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @elseif($feature->type === 'boolean')
+                                                    <div>
+                                                        <label for="feature_value_{{ $feature->id }}" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                                                            Enable Feature
+                                                        </label>
+                                                        <select id="feature_value_{{ $feature->id }}"
+                                                                name="features[{{ $feature->id }}][value]"
+                                                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                                                            <option value="1" {{ old("features.{$feature->id}.value", '1') === '1' ? 'selected' : '' }}>Yes</option>
+                                                            <option value="0" {{ old("features.{$feature->id}.value", '1') === '0' ? 'selected' : '' }}>No</option>
+                                                        </select>
+                                                    </div>
+                                                    @elseif($feature->type === 'text')
+                                                    <div>
+                                                        <label for="feature_value_{{ $feature->id }}" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                                                            Value
+                                                        </label>
+                                                        <input type="text" 
+                                                               id="feature_value_{{ $feature->id }}" 
+                                                               name="features[{{ $feature->id }}][value]" 
+                                                               value="{{ old("features.{$feature->id}.value") }}"
+                                                               class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                                               placeholder="Enter value">
+                                                    </div>
+                                                    @elseif($feature->type === 'select' && $feature->options)
+                                                    <div>
+                                                        <label for="feature_value_{{ $feature->id }}" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                                                            Select Option
+                                                        </label>
+                                                        <select id="feature_value_{{ $feature->id }}" 
+                                                                name="features[{{ $feature->id }}][value]"
+                                                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                                                            <option value="">Select an option</option>
+                                                            @foreach($feature->options as $key => $option)
+                                                            <option value="{{ $key }}" {{ old("features.{$feature->id}.value") == $key ? 'selected' : '' }}>
+                                                                {{ $option }}
+                                                            </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    @endif
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                         @endforeach
@@ -981,22 +1064,25 @@ function toggleReferralFields() {
 function toggleFeatureInput(featureId, featureType) {
     const checkbox = document.getElementById('feature_' + featureId);
     const inputDiv = document.getElementById('feature_input_' + featureId);
-    const limitDiv = document.getElementById('feature_limit_' + featureId);
     
     if (checkbox.checked) {
         if (inputDiv) {
             inputDiv.classList.remove('hidden');
         }
-        if (limitDiv && featureType === 'numeric') {
-            limitDiv.classList.remove('hidden');
-        }
     } else {
         if (inputDiv) {
             inputDiv.classList.add('hidden');
         }
-        if (limitDiv) {
-            limitDiv.classList.add('hidden');
-        }
+    }
+}
+
+// Set unlimited value for numeric features
+function setUnlimited(inputId) {
+    const input = document.getElementById(inputId);
+    if (input) {
+        input.value = '0';
+        input.style.backgroundColor = '#f0f9ff';
+        input.style.borderColor = '#3b82f6';
     }
 }
 

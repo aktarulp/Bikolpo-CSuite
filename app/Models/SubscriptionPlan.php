@@ -50,21 +50,21 @@ class SubscriptionPlan extends Model
         return $this->hasMany(PartnerSubscription::class, 'plan_id');
     }
 
-    public function features(): BelongsToMany
+    public function planFeatures(): BelongsToMany
     {
         return $this->belongsToMany(PlanFeature::class, 'subscription_plan_features')
-            ->withPivot(['is_enabled', 'value', 'limit_value', 'notes'])
+            ->withPivot(['enabled', 'value', 'limit_value', 'notes'])
             ->withTimestamps();
     }
 
     public function enabledFeatures(): BelongsToMany
     {
-        return $this->features()->wherePivot('is_enabled', true);
+        return $this->planFeatures()->wherePivot('enabled', true);
     }
 
     public function getFeatureValue(string $featureSlug): mixed
     {
-        $feature = $this->features()->where('slug', $featureSlug)->first();
+        $feature = $this->planFeatures()->where('slug', $featureSlug)->first();
         
         if (!$feature) {
             return null;

@@ -125,6 +125,17 @@ Route::get('/system-admin/plan-features/{id}/edit', [SystemAdminController::clas
 Route::put('/system-admin/plan-features/{id}', [SystemAdminController::class, 'updatePlanFeature'])->name('system-admin.plan-features.update');
 Route::delete('/system-admin/plan-features/{id}', [SystemAdminController::class, 'deletePlanFeature'])->name('system-admin.plan-features.delete');
 
+// Debug route for subscription plans
+Route::get('/debug/subscription-plans', function() {
+    $plans = \App\Models\SubscriptionPlan::all(['id', 'name', 'slug', 'is_active']);
+    echo "<h2>Available Subscription Plans:</h2>";
+    foreach($plans as $plan) {
+        echo "ID: {$plan->id} - Name: {$plan->name} - Slug: {$plan->slug} - Active: " . ($plan->is_active ? 'Yes' : 'No') . "<br>";
+    }
+    echo "<br><a href='/system-admin/subscription/plans'>Back to Subscription Plans</a>";
+});
+
+
 // Payment Methods Management
 Route::get('/system-admin/payment-methods', [SystemAdminController::class, 'paymentMethods'])->name('system-admin.payment-methods');
 Route::get('/system-admin/payment-methods/create', [SystemAdminController::class, 'createPaymentMethod'])->name('system-admin.payment-methods.create');

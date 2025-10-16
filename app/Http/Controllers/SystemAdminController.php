@@ -1037,11 +1037,15 @@ class SystemAdminController extends Controller
     public function subscriptionPlans()
     {
         try {
-            // Get plans from database
-            $plans = \App\Models\SubscriptionPlan::where('is_active', true)
+            // Get all plans from database (including inactive ones for admin view)
+            $plans = \App\Models\SubscriptionPlan::with(['planFeatures', 'enabledFeatures'])
                 ->orderBy('sort_order')
                 ->orderBy('price')
                 ->get();
+
+            // Debug: Log the plans count and type
+            \Log::info('SubscriptionPlans: Found ' . $plans->count() . ' plans');
+            \Log::info('SubscriptionPlans: Plans type: ' . gettype($plans));
 
             return view('system-admin.sa-subscription-plans', compact('plans'));
 
@@ -1323,7 +1327,7 @@ class SystemAdminController extends Controller
                 'features' => 'nullable|array',
                 'features.*.enabled' => 'boolean',
                 'features.*.value' => 'nullable|string',
-                'features.*.limit_value' => 'nullable|integer|min:0',
+                'features.*.limit_value' => 'nullable|string',
             ]);
 
             // Handle table-driven features
@@ -1331,10 +1335,14 @@ class SystemAdminController extends Controller
             if ($request->has('features')) {
                 foreach ($request->features as $featureId => $featureData) {
                     if (isset($featureData['enabled']) && $featureData['enabled']) {
+                        // Get the feature to determine its type
+                        $feature = \App\Models\PlanFeature::find($featureId);
+                        $defaultValue = ($feature && $feature->type === 'boolean') ? '1' : '0';
+                        
                         $featuresData[$featureId] = [
-                            'is_enabled' => true,
-                            'value' => $featureData['value'] ?? null,
-                            'limit_value' => $featureData['limit_value'] ?? null,
+                            'enabled' => true,
+                            'value' => $featureData['value'] ?? $defaultValue,
+                            'limit_value' => $featureData['limit_value'] ?? $defaultValue,
                         ];
                     }
                 }
@@ -1408,7 +1416,7 @@ class SystemAdminController extends Controller
 
             // Attach features to the plan
             if (!empty($featuresData)) {
-                $plan->features()->sync($featuresData);
+                $plan->planFeatures()->sync($featuresData);
             }
 
             \Log::info("SystemAdminController: Created subscription plan: {$plan->name}");
@@ -1434,7 +1442,13 @@ class SystemAdminController extends Controller
     public function editSubscription($id)
     {
         try {
-            $plan = \App\Models\SubscriptionPlan::findOrFail($id);
+            $plan = \App\Models\SubscriptionPlan::find($id);
+            
+            if (!$plan) {
+                return redirect()->route('system-admin.subscription-plans')
+                    ->with('error', 'Subscription plan not found. It may have been deleted.');
+            }
+            
             return view('system-admin.sa-edit-subscription', compact('plan'));
         } catch (\Exception $e) {
             \Log::error('SystemAdminController: Error loading edit subscription form: ' . $e->getMessage());
@@ -1466,7 +1480,7 @@ class SystemAdminController extends Controller
                 'features' => 'nullable|array',
                 'features.*.enabled' => 'boolean',
                 'features.*.value' => 'nullable|string',
-                'features.*.limit_value' => 'nullable|integer|min:0',
+                'features.*.limit_value' => 'nullable|string',
             ]);
 
             // Handle table-driven features
@@ -1474,10 +1488,14 @@ class SystemAdminController extends Controller
             if ($request->has('features')) {
                 foreach ($request->features as $featureId => $featureData) {
                     if (isset($featureData['enabled']) && $featureData['enabled']) {
+                        // Get the feature to determine its type
+                        $feature = \App\Models\PlanFeature::find($featureId);
+                        $defaultValue = ($feature && $feature->type === 'boolean') ? '1' : '0';
+                        
                         $featuresData[$featureId] = [
-                            'is_enabled' => true,
-                            'value' => $featureData['value'] ?? null,
-                            'limit_value' => $featureData['limit_value'] ?? null,
+                            'enabled' => true,
+                            'value' => $featureData['value'] ?? $defaultValue,
+                            'limit_value' => $featureData['limit_value'] ?? $defaultValue,
                         ];
                     }
                 }
@@ -1497,7 +1515,7 @@ class SystemAdminController extends Controller
             ]);
 
             // Update features
-            $plan->features()->sync($featuresData);
+            $plan->planFeatures()->sync($featuresData);
 
             \Log::info("SystemAdminController: Updated subscription plan: {$plan->name}");
 

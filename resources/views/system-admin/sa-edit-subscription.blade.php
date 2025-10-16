@@ -340,99 +340,350 @@
                     </div>
                 </div>
 
+                <!-- Annual Offer -->
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Annual Offer</h3>
+                    
+                    <div class="space-y-6">
+                        <!-- Annual Offer Toggle -->
+                        <div class="flex items-center">
+                            <input type="checkbox" 
+                                   id="enable_annual_offer" 
+                                   name="enable_annual_offer" 
+                                   value="1"
+                                   {{ old('enable_annual_offer', $plan->annual_offer_active) ? 'checked' : '' }}
+                                   onchange="toggleAnnualOfferFields()"
+                                   class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                            <label for="enable_annual_offer" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Enable annual subscription discount
+                            </label>
+                        </div>
+
+                        <!-- Annual Offer Fields -->
+                        <div id="annualOfferFields" class="space-y-6 {{ old('enable_annual_offer', $plan->annual_offer_active) ? '' : 'hidden' }}">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Annual Price -->
+                                <div>
+                                    <label for="annual_price" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Annual Price (৳)
+                                    </label>
+                                    <input type="number" 
+                                           id="annual_price" 
+                                           name="annual_price" 
+                                           value="{{ old('annual_price', $plan->annual_price) }}"
+                                           step="0.01"
+                                           min="0"
+                                           onchange="calculateAnnualSavings()"
+                                           class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                           placeholder="Enter annual price">
+                                    @error('annual_price')
+                                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <!-- Annual Offer Name -->
+                                <div>
+                                    <label for="annual_offer_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Offer Name
+                                    </label>
+                                    <input type="text" 
+                                           id="annual_offer_name" 
+                                           name="annual_offer_name" 
+                                           value="{{ old('annual_offer_name', $plan->annual_offer_name) }}"
+                                           class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                           placeholder="e.g., Annual Subscription">
+                                    @error('annual_offer_name')
+                                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <!-- Annual Offer Description -->
+                            <div>
+                                <label for="annual_offer_description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Offer Description
+                                </label>
+                                <textarea id="annual_offer_description" 
+                                          name="annual_offer_description" 
+                                          rows="3"
+                                          class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                          placeholder="Describe the annual offer benefits...">{{ old('annual_offer_description', $plan->annual_offer_description) }}</textarea>
+                                @error('annual_offer_description')
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Savings Display -->
+                            <div id="annualSavingsDisplay" class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 hidden">
+                                <h4 class="text-sm font-medium text-green-800 dark:text-green-200 mb-2">Annual Savings Preview</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                                    <div>
+                                        <span class="text-green-600 dark:text-green-400">Monthly Total:</span>
+                                        <span id="monthlyTotal" class="font-medium text-green-800 dark:text-green-200">৳0</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-green-600 dark:text-green-400">Annual Price:</span>
+                                        <span id="annualPriceDisplay" class="font-medium text-green-800 dark:text-green-200">৳0</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-green-600 dark:text-green-400">You Save:</span>
+                                        <span id="savingsAmount" class="font-medium text-green-800 dark:text-green-200">৳0</span>
+                                        <span id="savingsPercentage" class="text-green-600 dark:text-green-400">(0%)</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Badge Text -->
+                                <div>
+                                    <label for="annual_badge_text" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Badge Text
+                                    </label>
+                                    <input type="text" 
+                                           id="annual_badge_text" 
+                                           name="annual_badge_text" 
+                                           value="{{ old('annual_badge_text', $plan->annual_badge_text ?: 'SAVE 2 MONTHS') }}"
+                                           class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                           placeholder="e.g., SAVE 2 MONTHS">
+                                    @error('annual_badge_text')
+                                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <!-- Badge Color -->
+                                <div>
+                                    <label for="annual_badge_color" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        Badge Color
+                                    </label>
+                                    <select id="annual_badge_color" 
+                                            name="annual_badge_color"
+                                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                                        <option value="green" {{ old('annual_badge_color', $plan->annual_badge_color ?: 'green') == 'green' ? 'selected' : '' }}>Green</option>
+                                        <option value="blue" {{ old('annual_badge_color', $plan->annual_badge_color) == 'blue' ? 'selected' : '' }}>Blue</option>
+                                        <option value="purple" {{ old('annual_badge_color', $plan->annual_badge_color) == 'purple' ? 'selected' : '' }}>Purple</option>
+                                        <option value="orange" {{ old('annual_badge_color', $plan->annual_badge_color) == 'orange' ? 'selected' : '' }}>Orange</option>
+                                        <option value="red" {{ old('annual_badge_color', $plan->annual_badge_color) == 'red' ? 'selected' : '' }}>Red</option>
+                                        <option value="yellow" {{ old('annual_badge_color', $plan->annual_badge_color) == 'yellow' ? 'selected' : '' }}>Yellow</option>
+                                    </select>
+                                    @error('annual_badge_color')
+                                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <!-- Annual Offer Settings -->
+                            <div class="flex items-center space-x-6">
+                                <div class="flex items-center">
+                                    <input type="checkbox" 
+                                           id="annual_show_monthly_equivalent" 
+                                           name="annual_show_monthly_equivalent" 
+                                           value="1"
+                                           {{ old('annual_show_monthly_equivalent', $plan->annual_show_monthly_equivalent) ? 'checked' : '' }}
+                                           class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                    <label for="annual_show_monthly_equivalent" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        Show monthly equivalent price
+                                    </label>
+                                </div>
+                                <div class="flex items-center">
+                                    <input type="checkbox" 
+                                           id="annual_highlight_savings" 
+                                           name="annual_highlight_savings" 
+                                           value="1"
+                                           {{ old('annual_highlight_savings', $plan->annual_highlight_savings) ? 'checked' : '' }}
+                                           class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                    <label for="annual_highlight_savings" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        Highlight savings amount
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Plan Features -->
                 <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Plan Features</h3>
+                    
                     <div class="space-y-6">
                         @php
                             $features = \App\Models\PlanFeature::active()->ordered()->get()->groupBy('category');
                             $categories = \App\Models\PlanFeature::getCategories();
                         @endphp
+                        
                         @foreach($features as $category => $categoryFeatures)
-                        <div>
-                            <h4 class="text-md font-medium text-gray-800 dark:text-gray-200 mb-4">
-                                {{ $categories[$category] ?? ucfirst($category) }}
-                            </h4>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                @foreach($categoryFeatures as $feature)
-                                <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                                    <div class="flex items-start justify-between">
-                                        <div class="flex-1">
-                                            <div class="flex items-center">
+                        <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                            <!-- Category Header -->
+                            <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 border-b border-gray-200 dark:border-gray-600">
+                                <div class="flex items-center justify-between">
+                                    <h4 class="text-sm font-semibold text-gray-900 dark:text-white">
+                                        {{ $categories[$category] ?? ucfirst($category) }}
+                                    </h4>
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                                        {{ $categoryFeatures->count() }} features
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <!-- Features Table -->
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                    <thead class="bg-gray-50 dark:bg-gray-700">
+                                        <tr>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                Enable
+                                            </th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                Name
+                                            </th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                Description
+                                            </th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                Type
+                                            </th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                                Actions
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                        @foreach($categoryFeatures as $feature)
+                                        @php
+                                            $featurePivot = $plan->planFeatures()->where('plan_feature_id', $feature->id)->first();
+                                        @endphp
+                                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                            <!-- Enable Checkbox -->
+                                            <td class="px-6 py-4 whitespace-nowrap">
                                                 <input type="checkbox"
                                                        id="feature_{{ $feature->id }}"
                                                        name="features[{{ $feature->id }}][enabled]"
                                                        value="1"
-                                                       {{ $plan->features()->where('plan_feature_id', $feature->id)->where('is_enabled', true)->exists() ? 'checked' : '' }}
+                                                       {{ !$featurePivot || ($featurePivot && $featurePivot->pivot->enabled) ? 'checked' : '' }}
                                                        onchange="toggleFeatureInput({{ $feature->id }}, '{{ $feature->type }}')"
                                                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                                                <label for="feature_{{ $feature->id }}" class="ml-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                                                    {{ $feature->name }}
-                                                </label>
-                                            </div>
-                                            @if($feature->description)
-                                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ $feature->description }}</p>
-                                            @endif
-                                        </div>
-                                    </div>
-                                    @if($feature->type === 'numeric')
-                                    <div id="feature_input_{{ $feature->id }}" class="mt-3 {{ $plan->features()->where('plan_feature_id', $feature->id)->where('is_enabled', true)->exists() ? '' : 'hidden' }}">
-                                        <label for="feature_value_{{ $feature->id }}" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                                            Value @if($feature->unit)({{ $feature->unit }})@endif
-                                        </label>
-                                        <input type="number"
-                                               id="feature_value_{{ $feature->id }}"
-                                               name="features[{{ $feature->id }}][value]"
-                                               value="{{ $plan->features()->where('plan_feature_id', $feature->id)->first()->pivot->value ?? $feature->default_value }}"
-                                               min="0"
-                                               class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                                               placeholder="Enter value">
-                                    </div>
-                                    @elseif($feature->type === 'text')
-                                    <div id="feature_input_{{ $feature->id }}" class="mt-3 {{ $plan->features()->where('plan_feature_id', $feature->id)->where('is_enabled', true)->exists() ? '' : 'hidden' }}">
-                                        <label for="feature_value_{{ $feature->id }}" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                                            Value
-                                        </label>
-                                        <input type="text"
-                                               id="feature_value_{{ $feature->id }}"
-                                               name="features[{{ $feature->id }}][value]"
-                                               value="{{ $plan->features()->where('plan_feature_id', $feature->id)->first()->pivot->value ?? $feature->default_value }}"
-                                               class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                                               placeholder="Enter value">
-                                    </div>
-                                    @elseif($feature->type === 'select' && $feature->options)
-                                    <div id="feature_input_{{ $feature->id }}" class="mt-3 {{ $plan->features()->where('plan_feature_id', $feature->id)->where('is_enabled', true)->exists() ? '' : 'hidden' }}">
-                                        <label for="feature_value_{{ $feature->id }}" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                                            Select Option
-                                        </label>
-                                        <select id="feature_value_{{ $feature->id }}"
-                                                name="features[{{ $feature->id }}][value]"
-                                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
-                                            <option value="">Select an option</option>
-                                            @foreach($feature->options as $key => $option)
-                                            <option value="{{ $key }}" {{ ($plan->features()->where('plan_feature_id', $feature->id)->first()->pivot->value ?? $feature->default_value) == $key ? 'selected' : '' }}>
-                                                {{ $option }}
-                                            </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    @endif
-                                    @if($feature->type === 'numeric')
-                                    <div id="feature_limit_{{ $feature->id }}" class="mt-3 {{ $plan->features()->where('plan_feature_id', $feature->id)->where('is_enabled', true)->exists() ? '' : 'hidden' }}">
-                                        <label for="feature_limit_value_{{ $feature->id }}" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                                            Limit @if($feature->unit)({{ $feature->unit }})@endif
-                                        </label>
-                                        <input type="number"
-                                               id="feature_limit_value_{{ $feature->id }}"
-                                               name="features[{{ $feature->id }}][limit_value]"
-                                               value="{{ $plan->features()->where('plan_feature_id', $feature->id)->first()->pivot->limit_value ?? '' }}"
-                                               min="0"
-                                               class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                                               placeholder="Enter limit">
-                                    </div>
-                                    @endif
-                                </div>
-                                @endforeach
+                                            </td>
+                                            
+                                            <!-- Feature Name -->
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center">
+                                                    <label for="feature_{{ $feature->id }}" class="text-sm font-medium text-gray-900 dark:text-white cursor-pointer">
+                                                        {{ is_string($feature->name) ? $feature->name : (string)$feature->name }}
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            
+                                            <!-- Description -->
+                                            <td class="px-6 py-4">
+                                                <div class="text-sm text-gray-500 dark:text-gray-400">
+                                                    {{ is_string($feature->description) ? $feature->description : 'No description' }}
+                                                </div>
+                                            </td>
+                                            
+                                            <!-- Type -->
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                                    @if($feature->type === 'boolean') bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
+                                                    @elseif($feature->type === 'numeric') bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200
+                                                    @elseif($feature->type === 'text') bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200
+                                                    @else bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200
+                                                    @endif">
+                                                    {{ ucfirst($feature->type) }}
+                                                </span>
+                                            </td>
+                                            
+                                            <!-- Actions -->
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                <div id="feature_input_{{ $feature->id }}" class="{{ !$featurePivot || ($featurePivot && $featurePivot->pivot->enabled) ? '' : 'hidden' }}">
+                                                @if($feature->type === 'numeric')
+                                                <div class="space-y-2">
+                                                    <div>
+                                                        <label for="feature_value_{{ $feature->id }}" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                                                            Value @if($feature->unit)({{ $feature->unit }})@endif
+                                                        </label>
+                                                        <div class="flex space-x-2">
+                                                            <input type="number" 
+                                                                   id="feature_value_{{ $feature->id }}" 
+                                                                   name="features[{{ $feature->id }}][value]" 
+                                                                   value="{{ is_string($featurePivot?->pivot?->value) ? ($featurePivot->pivot->value === '0' ? '0' : $featurePivot->pivot->value) : '0' }}"
+                                                                   min="0"
+                                                                   class="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                                                   placeholder="Enter value">
+                                                            <button type="button" 
+                                                                    onclick="setUnlimited('feature_value_{{ $feature->id }}')"
+                                                                    class="px-3 py-2 text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 border border-blue-300 dark:border-blue-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
+                                                                Unlimited
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <label for="feature_limit_value_{{ $feature->id }}" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                                                            Limit @if($feature->unit)({{ $feature->unit }})@endif
+                                                        </label>
+                                                        <div class="flex space-x-2">
+                                                            <input type="number" 
+                                                                   id="feature_limit_value_{{ $feature->id }}" 
+                                                                   name="features[{{ $feature->id }}][limit_value]" 
+                                                                   value="{{ is_string($featurePivot?->pivot?->limit_value) ? $featurePivot->pivot->limit_value : '' }}"
+                                                                   min="0"
+                                                                   class="flex-1 px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                                                   placeholder="Enter limit">
+                                                            <button type="button" 
+                                                                    onclick="setUnlimited('feature_limit_value_{{ $feature->id }}')"
+                                                                    class="px-3 py-2 text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 border border-blue-300 dark:border-blue-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
+                                                                Unlimited
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                    @elseif($feature->type === 'boolean')
+                                                    <div>
+                                                        <label for="feature_value_{{ $feature->id }}" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                                                            Enable Feature
+                                                        </label>
+                                                        <select id="feature_value_{{ $feature->id }}"
+                                                                name="features[{{ $feature->id }}][value]"
+                                                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                                                            <option value="1" {{ is_string($featurePivot?->pivot?->value) && ($featurePivot->pivot->value === '1' || $featurePivot->pivot->value === 'true') ? 'selected' : '' }}>Yes</option>
+                                                            <option value="0" {{ is_string($featurePivot?->pivot?->value) && ($featurePivot->pivot->value === '0' || $featurePivot->pivot->value === 'false') ? 'selected' : '' }}>No</option>
+                                                        </select>
+                                                    </div>
+                                                    @elseif($feature->type === 'text')
+                                                    <div>
+                                                        <label for="feature_value_{{ $feature->id }}" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                                                            Value
+                                                        </label>
+                                                        <input type="text"
+                                                               id="feature_value_{{ $feature->id }}"
+                                                               name="features[{{ $feature->id }}][value]"
+                                                               value="{{ is_string($featurePivot?->pivot?->value) ? $featurePivot->pivot->value : '' }}"
+                                                               class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                                               placeholder="Enter value">
+                                                    </div>
+                                                    @elseif($feature->type === 'select' && is_array($feature->options) && !empty($feature->options))
+                                                    <div>
+                                                        <label for="feature_value_{{ $feature->id }}" class="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                                                            Select Option
+                                                        </label>
+                                                        <select id="feature_value_{{ $feature->id }}"
+                                                                name="features[{{ $feature->id }}][value]"
+                                                                class="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+                                                            <option value="">Select an option</option>
+                                                            @if(is_array($feature->options))
+                                                                @foreach($feature->options as $key => $option)
+                                                                <option value="{{ $key }}" {{ (is_string($featurePivot?->pivot?->value) ? $featurePivot->pivot->value : '') == $key ? 'selected' : '' }}>
+                                                                    {{ is_string($option) ? $option : (string)$option }}
+                                                                </option>
+                                                                @endforeach
+                                                            @endif
+                                                        </select>
+                                                    </div>
+                                                    @endif
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                         @endforeach
@@ -503,22 +754,59 @@ document.addEventListener('DOMContentLoaded', function() {
 function toggleFeatureInput(featureId, featureType) {
     const checkbox = document.getElementById('feature_' + featureId);
     const inputDiv = document.getElementById('feature_input_' + featureId);
-    const limitDiv = document.getElementById('feature_limit_' + featureId);
-
+    
     if (checkbox.checked) {
         if (inputDiv) {
             inputDiv.classList.remove('hidden');
-        }
-        if (limitDiv && featureType === 'numeric') {
-            limitDiv.classList.remove('hidden');
         }
     } else {
         if (inputDiv) {
             inputDiv.classList.add('hidden');
         }
-        if (limitDiv) {
-            limitDiv.classList.add('hidden');
-        }
+    }
+}
+
+// Set unlimited value for numeric features
+function setUnlimited(inputId) {
+    const input = document.getElementById(inputId);
+    if (input) {
+        input.value = '0';
+        input.style.backgroundColor = '#f0f9ff';
+        input.style.borderColor = '#3b82f6';
+    }
+}
+
+
+// Annual offer toggle
+function toggleAnnualOfferFields() {
+    const checkbox = document.getElementById('enable_annual_offer');
+    const fieldsDiv = document.getElementById('annualOfferFields');
+    
+    if (checkbox.checked) {
+        fieldsDiv.classList.remove('hidden');
+    } else {
+        fieldsDiv.classList.add('hidden');
+    }
+}
+
+// Calculate annual savings
+function calculateAnnualSavings() {
+    const monthlyPrice = parseFloat(document.getElementById('price').value) || 0;
+    const annualPrice = parseFloat(document.getElementById('annual_price').value) || 0;
+    
+    if (monthlyPrice > 0 && annualPrice > 0) {
+        const monthlyTotal = monthlyPrice * 12;
+        const savingsAmount = monthlyTotal - annualPrice;
+        const savingsPercentage = monthlyTotal > 0 ? Math.round((savingsAmount / monthlyTotal) * 100) : 0;
+        
+        document.getElementById('monthlyTotal').textContent = '৳' + monthlyTotal.toFixed(0);
+        document.getElementById('annualPriceDisplay').textContent = '৳' + annualPrice.toFixed(0);
+        document.getElementById('savingsAmount').textContent = '৳' + savingsAmount.toFixed(0);
+        document.getElementById('savingsPercentage').textContent = '(' + savingsPercentage + '%)';
+        
+        document.getElementById('annualSavingsDisplay').classList.remove('hidden');
+    } else {
+        document.getElementById('annualSavingsDisplay').classList.add('hidden');
     }
 }
 

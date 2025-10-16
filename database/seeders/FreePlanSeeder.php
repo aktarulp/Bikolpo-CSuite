@@ -55,7 +55,7 @@ class FreePlanSeeder extends Seeder
             }
         }
 
-        $freePlan->features()->sync($featureData);
+        $freePlan->planFeatures()->sync($featureData);
 
         $this->command->info('Free Plan created/updated with table-driven features!');
     }

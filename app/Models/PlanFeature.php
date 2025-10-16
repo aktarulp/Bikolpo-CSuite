@@ -53,6 +53,9 @@ class PlanFeature extends Model
         }
 
         if ($this->type === 'numeric' && $pivotValue) {
+            if ($pivotValue === 'unlimited' || $pivotValue === null) {
+                return 'Unlimited';
+            }
             $unit = $this->unit ? " {$this->unit}" : '';
             return $pivotValue . $unit;
         }
@@ -73,11 +76,11 @@ class PlanFeature extends Model
     public function getCategoryDisplayName(): string
     {
         return match($this->category) {
+            'users' => 'Usages Limits',
             'dashboard' => 'Dashboard Features',
             'analytics' => 'Analytics & Reporting',
             'communication' => 'Communication',
             'storage' => 'Storage & Files',
-            'users' => 'User Management',
             'api' => 'API & Integration',
             'support' => 'Support',
             'security' => 'Security',
@@ -100,11 +103,11 @@ class PlanFeature extends Model
     public static function getCategories(): array
     {
         return [
+            'users' => 'Usages Limits',
             'dashboard' => 'Dashboard Features',
             'analytics' => 'Analytics & Reporting',
             'communication' => 'Communication',
             'storage' => 'Storage & Files',
-            'users' => 'User Management',
             'api' => 'API & Integration',
             'support' => 'Support',
             'security' => 'Security',
@@ -119,7 +122,15 @@ class PlanFeature extends Model
             'boolean' => 'Yes/No Feature',
             'numeric' => 'Numeric Value',
             'text' => 'Text Value',
-            'select' => 'Selection from Options'
+            'select' => 'Select Existing Feature'
         ];
+    }
+
+    /**
+     * Check if value is unlimited
+     */
+    public function isUnlimited($value): bool
+    {
+        return $value === 'unlimited' || $value === null;
     }
 }

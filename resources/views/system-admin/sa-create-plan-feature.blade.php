@@ -90,6 +90,7 @@
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Feature Configuration</h3>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Feature Type -->
                         <div>
                             <label for="type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Feature Type <span class="text-red-500">*</span>
@@ -109,6 +110,7 @@
                             @enderror
                         </div>
 
+                        <!-- Category -->
                         <div>
                             <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Category <span class="text-red-500">*</span>

@@ -135,86 +135,127 @@
                     </div>
                 </div>
                 
-                <div class="divide-y divide-gray-200 dark:divide-gray-700">
-                    @foreach($categoryFeatures as $feature)
-                    <div class="px-4 sm:px-6 py-4">
-                        <div class="flex items-center justify-between">
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center space-x-3">
-                                    <div class="flex-shrink-0">
-                                        @if($feature->is_active)
-                                            <div class="w-2 h-2 bg-green-400 rounded-full"></div>
-                                        @else
-                                            <div class="w-2 h-2 bg-gray-400 rounded-full"></div>
-                                        @endif
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <div class="flex items-center space-x-2">
-                                            <h4 class="text-sm font-medium text-gray-900 dark:text-white truncate">
-                                                {{ $feature->name }}
-                                            </h4>
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
-                                                @if($feature->type === 'boolean') bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
-                                                @elseif($feature->type === 'numeric') bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200
-                                                @elseif($feature->type === 'text') bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200
-                                                @else bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200
-                                                @endif">
-                                                {{ ucfirst($feature->type) }}
-                                            </span>
+                <!-- Features Table -->
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    Status
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    Name
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    Description
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    Type
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    Usage
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                            @foreach($categoryFeatures as $feature)
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                <!-- Status -->
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @if($feature->is_active)
+                                        <div class="flex items-center">
+                                            <div class="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                                            <span class="text-xs text-green-600 dark:text-green-400">Active</span>
                                         </div>
-                                        @if($feature->description)
-                                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">{{ $feature->description }}</p>
-                                        @endif
-                                        <div class="flex items-center space-x-4 mt-2">
-                                            <span class="text-xs text-gray-500 dark:text-gray-400">
-                                                Used in {{ $feature->subscription_plans_count }} plans
-                                            </span>
-                                            @if($feature->default_value)
-                                            <span class="text-xs text-gray-500 dark:text-gray-400">
-                                                Default: {{ $feature->default_value }}
-                                            </span>
-                                            @endif
+                                    @else
+                                        <div class="flex items-center">
+                                            <div class="w-2 h-2 bg-gray-400 rounded-full mr-2"></div>
+                                            <span class="text-xs text-gray-500 dark:text-gray-400">Inactive</span>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-center space-x-2">
-                                <a href="{{ route('system-admin.plan-features.edit', $feature->id) }}" 
-                                   class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-xs font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors duration-200">
-                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                    </svg>
-                                    Edit
-                                </a>
+                                    @endif
+                                </td>
                                 
-                                @if($feature->subscription_plans_count == 0)
-                                <form action="{{ route('system-admin.plan-features.delete', $feature->id) }}" 
-                                      method="POST" 
-                                      class="inline"
-                                      onsubmit="return confirm('Are you sure you want to delete this feature? This action cannot be undone.')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" 
-                                            class="inline-flex items-center px-3 py-1.5 border border-red-300 dark:border-red-600 rounded-md text-xs font-medium text-red-700 dark:text-red-400 bg-white dark:bg-gray-700 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200">
-                                        <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                        </svg>
-                                        Delete
-                                    </button>
-                                </form>
-                                @else
-                                <span class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-xs font-medium text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-700 cursor-not-allowed">
-                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                                    </svg>
-                                    In Use
-                                </span>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                    @endforeach
+                                <!-- Feature Name -->
+                                <td class="px-6 py-4">
+                                    <div class="text-sm font-medium text-gray-900 dark:text-white">
+                                        {{ $feature->name }}
+                                    </div>
+                                </td>
+                                
+                                <!-- Description -->
+                                <td class="px-6 py-4">
+                                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                                        {{ $feature->description ?: 'No description' }}
+                                    </div>
+                                </td>
+                                
+                                <!-- Type -->
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                        @if($feature->type === 'boolean') bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200
+                                        @elseif($feature->type === 'numeric') bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200
+                                        @elseif($feature->type === 'text') bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200
+                                        @else bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200
+                                        @endif">
+                                        {{ ucfirst($feature->type) }}
+                                    </span>
+                                </td>
+                                
+                                <!-- Usage -->
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                                        Used in {{ $feature->subscription_plans_count }} plans
+                                    </div>
+                                    @if($feature->default_value)
+                                    <div class="text-xs text-gray-400 dark:text-gray-500">
+                                        Default: {{ $feature->default_value }}
+                                    </div>
+                                    @endif
+                                </td>
+                                
+                                <!-- Actions -->
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <div class="flex items-center space-x-2">
+                                        <a href="{{ route('system-admin.plan-features.edit', $feature->id) }}" 
+                                           class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-xs font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors duration-200">
+                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                            </svg>
+                                            Edit
+                                        </a>
+                                        
+                                        @if($feature->subscription_plans_count == 0)
+                                        <form action="{{ route('system-admin.plan-features.delete', $feature->id) }}" 
+                                              method="POST" 
+                                              class="inline"
+                                              onsubmit="return confirm('Are you sure you want to delete this feature? This action cannot be undone.')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" 
+                                                    class="inline-flex items-center px-3 py-1.5 border border-red-300 dark:border-red-600 rounded-md text-xs font-medium text-red-700 dark:text-red-400 bg-white dark:bg-gray-700 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200">
+                                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                </svg>
+                                                Delete
+                                            </button>
+                                        </form>
+                                        @else
+                                        <span class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-xs font-medium text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-700 cursor-not-allowed">
+                                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                            </svg>
+                                            In Use
+                                        </span>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
             @endforeach
