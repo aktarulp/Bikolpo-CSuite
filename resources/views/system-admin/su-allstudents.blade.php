@@ -130,6 +130,27 @@
         </div>
     </div>
 
+    <!-- Header Actions -->
+    <div class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+        <div class="px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Student Management</h1>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Manage and view all student information</p>
+                </div>
+                <div class="mt-4 sm:mt-0">
+                    <button onclick="exportStudents()" 
+                            class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors duration-200">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Export Data
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Filters & Search Section -->
     <div class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
         <div class="px-4 sm:px-6 lg:px-8 py-4">
@@ -315,6 +336,9 @@
                         <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-24">
                             Actions
                         </th>
+                        <th scope="col" class="px-2 py-2 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-16">
+                            Delete
+                        </th>
                     </tr>
                 </thead>
                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700" id="studentsTableBody">
@@ -416,7 +440,10 @@
                                 <!-- Action Menu Button -->
                                 <button @click="open = !open" 
                                         class="inline-flex items-center px-2 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-1 focus:ring-blue-500">
-                                    ⋯
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0l1.403 5.591c.194.776.74 1.396 1.47 1.624l5.591 1.403c1.756.426 1.756 2.924 0 3.35l-5.591 1.403c-.73.228-1.276.848-1.47 1.624l-1.403 5.591c-.426 1.756-2.924 1.756-3.35 0l-1.403-5.591c-.194-.776-.74-1.396-1.47-1.624l-5.591-1.403c-1.756-.426-1.756-2.924 0-3.35l5.591-1.403c.73-.228 1.276-.848 1.47-1.624l1.403-5.591z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
                                 </button>
 
                                 <!-- Dropdown Menu -->
@@ -437,27 +464,12 @@
                                             View Profile
                                         </button>
                                         
-                                        <!-- Edit Info -->
-                                        <button onclick="editStudent({{ $student->id }})" 
-                                                class="flex items-center w-full px-3 py-1.5 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                                            <span class="mr-2">✏️</span>
-                                            Edit Info
-                                        </button>
-                                        
-                                        <!-- Suspend/Reactivate -->
-                                        @if($student->status === 'suspended')
-                                            <button onclick="reactivateStudent({{ $student->id }})" 
-                                                    class="flex items-center w-full px-3 py-1.5 text-xs text-green-700 dark:text-green-300 hover:bg-green-50 dark:hover:bg-green-900/20">
-                                                <span class="mr-2">✅</span>
-                                                Reactivate
-                                            </button>
-                                        @else
-                                            <button onclick="suspendStudent({{ $student->id }})" 
-                                                    class="flex items-center w-full px-3 py-1.5 text-xs text-yellow-700 dark:text-yellow-300 hover:bg-yellow-50 dark:hover:bg-yellow-900/20">
-                                                <span class="mr-2">🚫</span>
-                                                Suspend
-                                            </button>
-                                        @endif
+                                        <!-- Interactive Grid -->
+                                        <a href="{{ route('system-admin.single-student-ig', $student->id) }}" 
+                                           class="flex items-center w-full px-3 py-1.5 text-xs text-green-700 dark:text-green-300 hover:bg-green-50 dark:hover:bg-green-900/20">
+                                            <span class="mr-2">📊</span>
+                                            Interactive Grid
+                                        </a>
                                         
                                         <!-- Divider -->
                                         <div class="border-t border-gray-200 dark:border-gray-600 my-1"></div>
@@ -489,10 +501,28 @@
                                 </div>
                             </div>
                         </td>
+                        <td class="px-2 py-2 whitespace-nowrap text-center">
+                            @if(($student->exam_results_count ?? 0) > 0 || $student->has_login_access || $student->partner_id)
+                            <span class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-xs font-medium text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-700 cursor-not-allowed">
+                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                </svg>
+                                In Use
+                            </span>
+                            @else
+                            <button onclick="deleteStudent({{ $student->id }})" 
+                                    class="inline-flex items-center px-3 py-1.5 border border-red-300 dark:border-red-600 rounded-md text-xs font-medium text-red-700 dark:text-red-400 bg-white dark:bg-gray-700 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200">
+                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                                Delete
+                            </button>
+                            @endif
+                        </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="9" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                        <td colspan="10" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
                             No students found.
                         </td>
                     </tr>
@@ -768,7 +798,7 @@ function applyFilters() {
         return;
     }
     
-    tableBody.innerHTML = '<tr><td colspan="9" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">Loading...</td></tr>';
+    tableBody.innerHTML = '<tr><td colspan="10" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">Loading...</td></tr>';
 
     const url = `/system-admin/students?${params.toString()}`;
     console.log('Making request to:', url);
@@ -788,7 +818,7 @@ function applyFilters() {
         
         if (response.status === 302) {
             console.log('302 redirect detected');
-            tableBody.innerHTML = '<tr><td colspan="9" class="px-6 py-4 text-center text-sm text-red-500">Authentication required. Please refresh the page and try again.</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="10" class="px-6 py-4 text-center text-sm text-red-500">Authentication required. Please refresh the page and try again.</td></tr>';
             return;
         }
         if (!response.ok) {
@@ -814,12 +844,12 @@ function applyFilters() {
             initializeCheckboxes();
         } else {
             console.log('No table body found in response');
-            tableBody.innerHTML = '<tr><td colspan="9" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">No students found</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="10" class="px-6 py-4 text-center text-sm text-gray-500 dark:text-gray-400">No students found</td></tr>';
         }
     })
     .catch(error => {
         console.error('Error filtering students:', error);
-        tableBody.innerHTML = '<tr><td colspan="9" class="px-6 py-4 text-center text-sm text-red-500">Error loading data</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="10" class="px-6 py-4 text-center text-sm text-red-500">Error loading data</td></tr>';
     });
 }
 
@@ -1091,6 +1121,51 @@ function resetPassword(studentId) {
             alert('Error resetting password');
         });
     }
+}
+
+function exportStudents() {
+    // Show export options modal
+    const exportModal = document.createElement('div');
+    exportModal.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50';
+    exportModal.innerHTML = `
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-gray-800">
+            <div class="mt-3">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Export Student Data</h3>
+                <div class="space-y-3">
+                    <button onclick="exportStudentsPDF()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                        📄 Export as PDF
+                    </button>
+                    <button onclick="exportStudentsCSV()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                        📊 Export as CSV
+                    </button>
+                    <button onclick="exportStudentsExcel()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        📈 Export as Excel
+                    </button>
+                </div>
+                <div class="mt-4">
+                    <button onclick="this.closest('.fixed').remove()" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(exportModal);
+}
+
+function exportStudentsPDF() {
+    window.open('/system-admin/students/export/pdf', '_blank');
+    document.querySelector('.fixed').remove();
+}
+
+function exportStudentsCSV() {
+    window.open('/system-admin/students/export/csv', '_blank');
+    document.querySelector('.fixed').remove();
+}
+
+function exportStudentsExcel() {
+    window.open('/system-admin/students/export/excel', '_blank');
+    document.querySelector('.fixed').remove();
 }
 </script>
 @endpush

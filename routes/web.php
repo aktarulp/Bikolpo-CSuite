@@ -96,7 +96,11 @@ Route::middleware('auth')->group(function () {
         
         // Student Management Routes
         Route::get('/system-admin/students', [SystemAdminController::class, 'allStudents'])->name('system-admin.all-students');
+        Route::get('/system-admin/student-ig', [SystemAdminController::class, 'studentInteractiveGrid'])->name('system-admin.student-ig');
+        Route::get('/system-admin/student-ig/{id}', [SystemAdminController::class, 'singleStudentInteractiveGrid'])->name('system-admin.single-student-ig');
         Route::get('/system-admin/students/{id}', [SystemAdminController::class, 'getStudent'])->name('system-admin.get-student');
+        Route::get('/system-admin/students/{id}/details', [SystemAdminController::class, 'getStudentDetails'])->name('system-admin.get-student-details');
+        Route::post('/system-admin/students/{id}/update-field', [SystemAdminController::class, 'updateStudentField'])->name('system-admin.update-student-field');
         Route::post('/system-admin/students/{id}/disable-login', [SystemAdminController::class, 'disableStudentLogin'])->name('system-admin.disable-student-login');
         Route::post('/system-admin/students/{id}/reset-password', [SystemAdminController::class, 'resetStudentPassword'])->name('system-admin.reset-student-password');
         

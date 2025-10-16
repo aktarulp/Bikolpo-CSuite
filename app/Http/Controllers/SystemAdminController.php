@@ -810,6 +810,165 @@ class SystemAdminController extends Controller
     }
 
     /**
+     * Student Interactive Grid View
+     */
+    public function studentInteractiveGrid(Request $request)
+    {
+        try {
+            $query = Student::with(['partner', 'examResults'])
+                ->withCount('examResults');
+
+            // Apply filters
+            if ($request->has('search') && $request->search) {
+                $searchTerm = $request->search;
+                $query->where(function($q) use ($searchTerm) {
+                    $q->where('full_name', 'like', "%{$searchTerm}%")
+                      ->orWhere('phone', 'like', "%{$searchTerm}%")
+                      ->orWhere('email', 'like', "%{$searchTerm}%");
+                });
+            }
+
+            if ($request->has('partner') && $request->partner) {
+                $query->where('partner_id', $request->partner);
+            }
+
+            if ($request->has('status') && $request->status) {
+                $query->where('status', $request->status);
+            }
+
+            $students = $query->latest()->paginate(50);
+
+            // Calculate average scores and check login access
+            foreach ($students as $student) {
+                if ($student->exam_results_count > 0) {
+                    $student->average_score = round($student->examResults->avg('percentage'), 1);
+                } else {
+                    $student->average_score = 0;
+                }
+                
+                // Check if student has login access
+                $student->has_login_access = EnhancedUser::where('id', $student->id)->where('role', 'student')->exists();
+            }
+
+            // Get all partners for filters
+            $partners = Partner::select('id', 'name')->get();
+
+            return view('system-admin.sa-student-ig', compact('students', 'partners'));
+
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error loading student interactive grid: ' . $e->getMessage());
+            
+            return view('system-admin.sa-student-ig', [
+                'students' => collect(),
+                'partners' => collect(),
+                'error' => 'Unable to load student data: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    public function singleStudentInteractiveGrid($id)
+    {
+        try {
+            $student = Student::with(['partner', 'examResults'])
+                ->withCount('examResults')
+                ->findOrFail($id);
+
+            // Calculate average score
+            if ($student->exam_results_count > 0) {
+                $student->average_score = round($student->examResults->avg('percentage'), 1);
+            } else {
+                $student->average_score = 0;
+            }
+
+            // Check login access
+            $student->has_login_access = EnhancedUser::where('id', $student->id)->where('role', 'student')->exists();
+
+            // Get all partners for dropdown
+            $partners = Partner::select('id', 'name')->get();
+
+            return view('system-admin.sa-single-student-ig', compact('student', 'partners'));
+
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error loading single student interactive grid: ' . $e->getMessage());
+            
+            return redirect()->route('system-admin.all-students')
+                ->with('error', 'Student not found: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Get detailed student information for modal
+     */
+    public function getStudentDetails($id)
+    {
+        try {
+            $student = Student::with(['partner', 'examResults'])
+                ->withCount('examResults')
+                ->findOrFail($id);
+
+            // Calculate average score
+            if ($student->exam_results_count > 0) {
+                $student->average_score = round($student->examResults->avg('percentage'), 1);
+            } else {
+                $student->average_score = 0;
+            }
+
+            // Check login access
+            $student->has_login_access = EnhancedUser::where('id', $student->id)->where('role', 'student')->exists();
+
+            return response()->json($student);
+
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error loading student details: ' . $e->getMessage());
+            return response()->json(['error' => 'Student not found'], 404);
+        }
+    }
+
+    /**
+     * Update a specific student field
+     */
+    public function updateStudentField(Request $request, $id)
+    {
+        try {
+            $student = Student::findOrFail($id);
+            
+            $field = $request->input('field');
+            $value = $request->input('value');
+
+            // Validate allowed fields
+            $allowedFields = ['full_name', 'phone', 'email', 'partner_id', 'status'];
+            if (!in_array($field, $allowedFields)) {
+                return response()->json(['success' => false, 'message' => 'Field not allowed'], 400);
+            }
+
+            // Validate partner_id if provided
+            if ($field === 'partner_id' && $value) {
+                $partner = Partner::find($value);
+                if (!$partner) {
+                    return response()->json(['success' => false, 'message' => 'Invalid partner'], 400);
+                }
+            }
+
+            // Validate status if provided
+            if ($field === 'status') {
+                $allowedStatuses = ['active', 'suspended', 'inactive'];
+                if (!in_array($value, $allowedStatuses)) {
+                    return response()->json(['success' => false, 'message' => 'Invalid status'], 400);
+                }
+            }
+
+            // Update the field
+            $student->update([$field => $value]);
+
+            return response()->json(['success' => true, 'message' => 'Field updated successfully']);
+
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error updating student field: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Error updating field: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
      * Get student details for modal
      */
     public function getStudent($id)
