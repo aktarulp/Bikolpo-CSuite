@@ -1306,6 +1306,8 @@ class SystemAdminController extends Controller
                 'sort_order' => 'nullable|integer|min:0',
                 'is_active' => 'boolean',
                 'is_popular' => 'boolean',
+                'implementation_cost' => 'nullable|numeric|min:0',
+                'implementation_cost_label' => 'nullable|string|max:100',
                 'enable_offer' => 'boolean',
                 'offer_price' => 'nullable|numeric|min:0',
                 'offer_name' => 'nullable|string|max:255',
@@ -1412,6 +1414,8 @@ class SystemAdminController extends Controller
                 'sort_order' => $request->sort_order ?? 0,
                 'is_active' => $request->has('is_active'),
                 'is_popular' => $request->has('is_popular'),
+                'implementation_cost' => $request->implementation_cost,
+                'implementation_cost_label' => $request->implementation_cost_label,
             ], $offerData, $annualOfferData, $referralData));
 
             // Attach features to the plan
@@ -1477,6 +1481,8 @@ class SystemAdminController extends Controller
                 'sort_order' => 'nullable|integer|min:0',
                 'is_active' => 'boolean',
                 'is_popular' => 'boolean',
+                'implementation_cost' => 'nullable|numeric|min:0',
+                'implementation_cost_label' => 'nullable|string|max:100',
                 'features' => 'nullable|array',
                 'features.*.enabled' => 'boolean',
                 'features.*.value' => 'nullable|string',
@@ -1512,6 +1518,8 @@ class SystemAdminController extends Controller
                 'sort_order' => $request->sort_order ?? 0,
                 'is_active' => $request->has('is_active'),
                 'is_popular' => $request->has('is_popular'),
+                'implementation_cost' => $request->implementation_cost,
+                'implementation_cost_label' => $request->implementation_cost_label,
             ]);
 
             // Update features

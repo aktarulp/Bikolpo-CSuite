@@ -82,6 +82,17 @@
                         @php
                             $allFeatures = \App\Models\PlanFeature::orderBy('category')->orderBy('sort_order')->get();
             @endphp
+            
+                            <!-- Implementation Cost Row -->
+                            <div class="px-6 py-2 h-10 bg-orange-50 dark:bg-orange-900/20 border-b border-orange-200 dark:border-orange-800 flex items-center">
+                                <div class="w-4 h-4 mr-3 flex-shrink-0 flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                        </svg>
+                    </div>
+                                <span class="text-sm font-medium text-orange-700 dark:text-orange-300">Implementation Cost</span>
+                </div>
+                
                             @foreach($allFeatures as $feature)
                                 <div class="px-6 py-2 h-10 {{ $loop->even ? 'bg-gray-50 dark:bg-gray-700/50' : 'bg-white dark:bg-gray-800' }} border-b border-gray-100 dark:border-gray-700 last:border-b-0 flex items-center">
                                     <div class="w-4 h-4 mr-3 flex-shrink-0 flex items-center justify-center">
@@ -113,12 +124,12 @@
                                             <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
-                                        @endif
+                            @endif
                                     </div>
                                     <span class="text-sm font-medium text-gray-900 dark:text-white">{{ $feature->name }}</span>
-                                </div>
-                            @endforeach
-                        </div>
+                    </div>
+                    @endforeach
+                </div>
                     </div>
                     
                     <!-- Plans Comparison -->
@@ -136,8 +147,8 @@
                             <svg class="w-3 h-3 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
                         </svg>
-                            POPULAR
-                        </span>
+                                POPULAR
+                            </span>
             @endif
 
                         <!-- Plan Header -->
@@ -150,6 +161,21 @@
                             <p class="text-xs text-gray-500 dark:text-gray-400">{{ $plan->description }}</p>
                         </div>
                         
+                        <!-- Implementation Cost Row -->
+                        <div class="px-6 py-2 h-10 bg-orange-50 dark:bg-orange-900/20 border-b border-orange-200 dark:border-orange-800 flex items-center justify-center">
+                            @if($plan->implementation_cost)
+                    <div class="flex items-center">
+                                    <svg class="w-4 h-4 text-orange-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                        </svg>
+                                    <span class="text-sm font-medium text-orange-700 dark:text-orange-300">
+                                        ৳{{ number_format($plan->implementation_cost, 0) }}
+                                    </span>
+                    </div>
+                            @else
+                                <span class="text-sm text-gray-500 dark:text-gray-400">No setup cost</span>
+                            @endif
+                        </div>
                         
                         @foreach($allFeatures as $feature)
                             @php
@@ -214,20 +240,16 @@
                         @endif
 
                         <!-- Action Button -->
-                        <div class="border-t border-gray-200 dark:border-gray-700 p-6 text-center bg-gray-50 dark:bg-gray-800 rounded-b-lg">
-                            <a href="{{ route('system-admin.subscription-plans.edit', $plan->id) }}" 
-                               class="inline-flex items-center text-white bg-blue-600 hover:bg-blue-700 py-2 px-4 rounded-lg text-sm font-medium transition-colors">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                        </svg>
-                        Edit Plan
-                    </a>
+                        <div class="border-t border-gray-200 dark:border-gray-700 p-4 text-center bg-gray-50 dark:bg-gray-800 rounded-b-lg">
+                            <a href="{{ route('system-admin.subscription-plans.edit', $plan->id) }}" class="inline-flex items-center text-white bg-blue-600 hover:bg-blue-700 py-2 px-4 rounded text-sm font-medium transition-colors">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>Edit
+                            </a>
                         </div>
-                        </div>
+            </div>
                         @endforeach
                     </div>
                 </div>
-            </div>
+                    </div>
         </section>
         @else
         <!-- No Plans Message -->

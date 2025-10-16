@@ -121,11 +121,11 @@
                 <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Pricing & Billing</h3>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Price -->
                         <div>
                             <label for="price" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Price (৳) <span class="text-red-500">*</span>
+                                Monthly Price (৳) <span class="text-red-500">*</span>
                             </label>
                             <div class="relative">
                                 <input type="number" 
@@ -168,6 +168,55 @@
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
+                    </div>
+
+                    <!-- Implementation Cost Section -->
+                    <div class="mt-8 p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
+                        <div class="flex items-center mb-4">
+                            <svg class="w-5 h-5 text-orange-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                            </svg>
+                            <h4 class="text-lg font-semibold text-orange-800 dark:text-orange-200">One-Time Implementation Cost</h4>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Implementation Cost -->
+                            <div>
+                                <label for="implementation_cost" class="block text-sm font-medium text-orange-700 dark:text-orange-300 mb-2">
+                                    Implementation Cost (৳)
+                                </label>
+                                <input type="number" 
+                                       id="implementation_cost" 
+                                       name="implementation_cost" 
+                                       value="{{ old('implementation_cost', $plan->implementation_cost) }}"
+                                       step="0.01"
+                                       min="0"
+                                       class="w-full px-4 py-3 border border-orange-300 dark:border-orange-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 dark:bg-orange-900/20 dark:text-white"
+                                       placeholder="0.00">
+                                <p class="mt-1 text-xs text-orange-600 dark:text-orange-400">One-time setup cost charged upfront</p>
+                                @error('implementation_cost')
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Implementation Cost Label -->
+                            <div>
+                                <label for="implementation_cost_label" class="block text-sm font-medium text-orange-700 dark:text-orange-300 mb-2">
+                                    Cost Label
+                                </label>
+                                <input type="text" 
+                                       id="implementation_cost_label" 
+                                       name="implementation_cost_label" 
+                                       value="{{ old('implementation_cost_label', $plan->implementation_cost_label) }}"
+                                       class="w-full px-4 py-3 border border-orange-300 dark:border-orange-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 dark:bg-orange-900/20 dark:text-white"
+                                       placeholder="e.g., Setup Cost, One-time Fee">
+                                <p class="mt-1 text-xs text-orange-600 dark:text-orange-400">Custom label for the implementation cost</p>
+                                @error('implementation_cost_label')
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
 
                         <!-- Billing Cycle -->
                         <div>
