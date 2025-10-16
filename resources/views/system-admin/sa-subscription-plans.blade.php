@@ -66,204 +66,141 @@
         @endif
         
         @if(isset($plans) && is_object($plans) && method_exists($plans, 'count') && $plans->count() > 0)
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            @foreach($plans as $plan)
-            <!-- Plan Card -->
-            <div class="bg-gradient-to-br from-white via-gray-50 to-white dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 rounded-2xl shadow-lg border-2 {{ $plan->is_popular ? 'border-blue-200 dark:border-blue-700 shadow-blue-200 dark:shadow-blue-900/20' : 'border-gray-200 dark:border-gray-700 hover:shadow-xl' }} p-6 relative transition-all duration-300 hover:scale-105">
-                @if($plan->is_popular)
-                <div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <span class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-1 rounded-full text-sm font-medium shadow-lg">
-                        <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                        </svg>
-                        Popular
-                    </span>
-                </div>
-                @endif
-                
-                <div class="text-center">
-                    <div class="w-16 h-16 {{ $plan->is_popular ? 'bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900 dark:to-blue-800' : 'bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600' }} rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                        <svg class="w-8 h-8 {{ $plan->is_popular ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                        </svg>
+        <!-- Comparison Table Layout -->
+        <section class="text-gray-700 body-font overflow-hidden border-t border-gray-200 dark:border-gray-700">
+            <div class="container px-5 py-24 mx-auto flex">
+                <!-- Features Column -->
+                <div class="lg:w-1/4 hidden lg:block">
+                    <div class="border-t border-gray-300 dark:border-gray-600 border-b border-l rounded-tl-lg rounded-bl-lg overflow-hidden">
+                        <!-- Header row to match plan headers -->
+                        <div class="px-3 py-4 text-center bg-gray-50 dark:bg-gray-800">
+                            <h3 class="tracking-widest text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">FEATURES</h3>
+                            <h2 class="text-3xl text-gray-900 dark:text-white font-bold leading-none mb-1">Compare</h2>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">All features</span>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ $plan->name }}</h3>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm mt-1">{{ $plan->description }}</p>
-                    
-                    <div class="mt-4">
-                        <span class="text-4xl font-bold {{ $plan->is_popular ? 'text-blue-600 dark:text-blue-400' : 'text-gray-900 dark:text-white' }}">৳{{ number_format($plan->price, 0) }}</span>
-                        <span class="text-gray-600 dark:text-gray-400 text-lg">/{{ $plan->billing_cycle }}</span>
-                        </div>
-                
+                        
+                        @php
+                            $allFeatures = \App\Models\PlanFeature::orderBy('category')->orderBy('sort_order')->get();
+                        @endphp
+                        @foreach($allFeatures as $feature)
+                            <p class="{{ $loop->even ? 'bg-gray-100 dark:bg-gray-800' : '' }} text-gray-900 dark:text-white h-12 text-center px-4 flex items-center justify-start">
+                                {{ $feature->name }}
+                            </p>
+                        @endforeach
+                    </div>
                 </div>
                 
-                <div class="mt-6 space-y-3">
+                <!-- Plans Comparison -->
+                <div class="flex flex-col lg:flex-row lg:w-3/4 w-full lg:border border-gray-300 dark:border-gray-600 rounded-lg">
+                    @foreach($plans as $plan)
                     @php
-                        // Get all features for this plan
                         $planFeatures = $plan->planFeatures ?? collect();
-                        $allFeatures = \App\Models\PlanFeature::orderBy('category')->orderBy('sort_order')->get();
-                        
-                        // Ensure we have collections, not strings
                         if (is_string($planFeatures)) {
                             $planFeatures = collect();
                         }
                     @endphp
-                    
-                    @if($allFeatures && $allFeatures->count() > 0)
+                    <div class="flex-1 w-full mb-10 lg:mb-0 border-2 {{ $plan->is_popular ? 'border-blue-500' : 'border-gray-300 dark:border-gray-600' }} rounded-lg lg:rounded-none relative">
+                        @if($plan->is_popular)
+                        <span class="bg-blue-500 text-white px-3 py-1 tracking-widest text-xs absolute right-0 top-0 rounded-bl">POPULAR</span>
+                        @endif
+                        
+                        <!-- Plan Header -->
+                        <div class="px-3 py-4 text-center bg-gray-50 dark:bg-gray-800">
+                            <h3 class="tracking-widest text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">{{ strtoupper($plan->name) }}</h3>
+                            <h2 class="text-3xl text-gray-900 dark:text-white font-bold flex items-center justify-center leading-none mb-1">
+                                ৳{{ number_format($plan->price, 0) }}
+                                <span class="text-gray-600 dark:text-gray-400 text-sm ml-1">/{{ $plan->billing_cycle }}</span>
+                            </h2>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">{{ $plan->description }}</span>
+                        </div>
+                        
+                        
                         @foreach($allFeatures as $feature)
                             @php
-                                // Find the feature in this plan's features
                                 $featurePivot = $planFeatures->where('id', $feature->id)->first();
                                 $isEnabled = $featurePivot && $featurePivot->pivot->enabled;
                                 $featureValue = $featurePivot ? $featurePivot->pivot->value : null;
                             @endphp
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center">
-                                    <span class="text-sm text-gray-700 dark:text-gray-300">
-                                        {{ $feature->name }}
-                            </span>
-                        </div>
-                                <div class="text-sm">
-                                    @if($isEnabled && $featureValue !== null && $featureValue !== '')
-                                        @if($feature->type === 'boolean')
-                                            @if($featureValue === '1' || $featureValue === 'true')
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
-                                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                        </svg>
-                                                    Yes
-                                                </span>
-                                            @else
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
-                                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                        </svg>
-                                                    No
-                                                </span>
-                                            @endif
-                                        @elseif($feature->type === 'numeric')
-                                            @if($featureValue === '0' || $featureValue === 'unlimited')
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
-                                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
-                        </svg>
-                                                    Unlimited
-                                                </span>
-                                            @else
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400">
-                                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                        </svg>
-                                                    {{ $featureValue }}{{ $feature->unit ? ' ' . $feature->unit : '' }}
-                                                </span>
-                                            @endif
-                                        @else
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400">
-                                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
-                        </svg>
-                                                {{ $featureValue }}
-                                            </span>
-                                        @endif
-                                    @else
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-700 dark:bg-red-900/20 dark:text-red-400 border border-red-200 dark:border-red-800">
-                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                        </svg>
-                                            No
-                                        </span>
-                                    @endif
-                    </div>
-                </div>
-                        @endforeach
-                    @else
-                        <div class="text-sm text-gray-500 dark:text-gray-400 italic">
-                            No features available
-                        </div>
-                    @endif
-                </div>
-                
-                <!-- Annual Offer Card -->
-                @if($plan->annual_offer_active && $plan->annual_price)
-                <div class="mt-6 mb-4">
-                    <div class="relative overflow-hidden bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl shadow-lg border border-green-400">
-                        <!-- Decorative elements -->
-                        <div class="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-10 translate-x-10"></div>
-                        <div class="absolute bottom-0 left-0 w-16 h-16 bg-white/5 rounded-full translate-y-8 -translate-x-8"></div>
-                        
-                        <!-- Content -->
-                        <div class="relative p-6 text-white">
-                            <!-- Header with badge -->
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="flex items-center space-x-2">
-                                    <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 01-2 0v-1H3a1 1 0 110-2h1V3a1 1 0 011-1z" clip-rule="evenodd"></path>
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <div class="text-sm font-medium opacity-90">{{ $plan->annual_badge_text ?: 'SAVE 2 MONTHS' }}</div>
-                                        @if($plan->annual_offer_name)
-                                            <div class="text-xs opacity-75">{{ $plan->annual_offer_name }}</div>
-                                        @endif
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    @php
-                                        $monthlyTotal = $plan->price * 12;
-                                        $savingsAmount = $monthlyTotal - $plan->annual_price;
-                                        $savingsPercentage = $monthlyTotal > 0 ? round(($savingsAmount / $monthlyTotal) * 100) : 0;
-                                    @endphp
-                                    <div class="text-2xl font-bold">৳{{ number_format($plan->annual_price, 0) }}</div>
-                                    <div class="text-xs opacity-75">/year</div>
-                                </div>
-                            </div>
                             
-                            <!-- Pricing details -->
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    @if($plan->annual_show_monthly_equivalent)
-                                        <div class="text-sm opacity-90">
-                                            ৳{{ number_format($plan->annual_price / 12, 0) }}/month
-                                        </div>
-                                    @endif
-                                    @if($plan->annual_offer_description)
-                                        <div class="text-xs opacity-75 mt-1">
-                                            {{ $plan->annual_offer_description }}
-                                        </div>
-                                    @endif
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-lg font-bold">Save ৳{{ number_format($savingsAmount, 0) }}</div>
-                                    <div class="text-xs opacity-75">{{ $savingsPercentage }}% off</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @endif
-                
-                <div class="mt-6">
-                    <a href="{{ route('system-admin.subscription-plans.edit', $plan->id) }}" 
-                       class="block w-full {{ $plan->is_popular ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-blue-200 dark:shadow-blue-900/20' : 'bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800' }} text-white font-medium py-3 px-4 rounded-lg transition-all duration-300 text-center shadow-lg hover:shadow-xl transform hover:scale-105">
-                        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                            @if($isEnabled && $featureValue !== null && $featureValue !== '')
+                                @if($feature->type === 'boolean')
+                                    @if($featureValue === '1' || $featureValue === 'true')
+                                        <p class="{{ $loop->even ? 'bg-gray-100 dark:bg-gray-800' : '' }} text-gray-600 dark:text-gray-400 text-center h-12 flex items-center justify-center">
+                                            <span class="w-5 h-5 inline-flex items-center justify-center bg-green-500 text-white rounded-full flex-shrink-0">
+                                                <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" class="w-3 h-3" viewBox="0 0 24 24">
+                                                    <path d="M20 6L9 17l-5-5"></path>
+                                                </svg>
+                                            </span>
+                                        </p>
+                                    @else
+                                        <p class="{{ $loop->even ? 'bg-gray-100 dark:bg-gray-800' : '' }} text-gray-600 dark:text-gray-400 text-center h-12 flex items-center justify-center">
+                                            <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" class="w-5 h-5 text-gray-500" viewBox="0 0 24 24">
+                                                <path d="M18 6L6 18M6 6l12 12"></path>
                         </svg>
-                        Edit Plan
-                    </a>
+                                        </p>
+                                    @endif
+                                @elseif($feature->type === 'numeric')
+                                    @if($featureValue === '0' || $featureValue === 'unlimited')
+                                        <p class="{{ $loop->even ? 'bg-gray-100 dark:bg-gray-800' : '' }} text-gray-600 dark:text-gray-400 text-center h-12 flex items-center justify-center">
+                                            <span class="text-sm font-medium text-blue-600 dark:text-blue-400">Unlimited</span>
+                                        </p>
+                                    @else
+                                        <p class="{{ $loop->even ? 'bg-gray-100 dark:bg-gray-800' : '' }} text-gray-600 dark:text-gray-400 text-center h-12 flex items-center justify-center">
+                                            <span class="text-sm font-medium">{{ $featureValue }}{{ $feature->unit ? ' ' . $feature->unit : '' }}</span>
+                                        </p>
+                                    @endif
+                                @else
+                                    <p class="{{ $loop->even ? 'bg-gray-100 dark:bg-gray-800' : '' }} text-gray-600 dark:text-gray-400 text-center h-12 flex items-center justify-center">
+                                        <span class="text-sm font-medium">{{ $featureValue }}</span>
+                                    </p>
+                                @endif
+                            @else
+                                <p class="{{ $loop->even ? 'bg-gray-100 dark:bg-gray-800' : '' }} text-gray-600 dark:text-gray-400 text-center h-12 flex items-center justify-center">
+                                    <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" class="w-5 h-5 text-gray-500" viewBox="0 0 24 24">
+                                        <path d="M18 6L6 18M6 6l12 12"></path>
+                                    </svg>
+                                </p>
+                            @endif
+                    @endforeach
+                        
+                        <!-- Annual Offer -->
+                        @if($plan->annual_offer_active && $plan->annual_price)
+                        <div class="bg-green-50 dark:bg-green-900/20 border-t border-gray-300 dark:border-gray-600 p-4">
+                            <div class="text-center">
+                                <div class="text-sm font-semibold text-green-800 dark:text-green-300 mb-1">{{ $plan->annual_badge_text ?: 'SAVE 2 MONTHS' }}</div>
+                                <div class="text-lg font-bold text-green-700 dark:text-green-400">৳{{ number_format($plan->annual_price, 0) }}/year</div>
+                                @if($plan->annual_show_monthly_equivalent)
+                                    <div class="text-xs text-green-600 dark:text-green-400">৳{{ number_format($plan->annual_price / 12, 0) }}/month</div>
+                                @endif
                 </div>
             </div>
-            @endforeach
-        </div>
+            @endif
+
+                        <!-- Action Button -->
+                        <div class="border-t border-gray-300 dark:border-gray-600 p-6 text-center">
+                            <a href="{{ route('system-admin.subscription-plans.edit', $plan->id) }}" 
+                               class="flex items-center mt-auto text-white bg-blue-500 border-0 py-2 px-4 w-full focus:outline-none hover:bg-blue-600 rounded">
+                        Edit Plan
+                                <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-4 h-4 ml-auto" viewBox="0 0 24 24">
+                                    <path d="M5 12h14M12 5l7 7-7 7"></path>
+                        </svg>
+                            </a>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-3">{{ $plan->description }}</p>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+        </section>
         @else
         <!-- No Plans Message -->
         <div class="text-center py-12">
             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-            </svg>
+                        </svg>
             <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">No subscription plans</h3>
             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Get started by creating a new subscription plan.</p>
-            <div class="mt-6">
+                <div class="mt-6">
                 <a href="{{ route('system-admin.subscription-plans.create') }}" 
                    class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
                     <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
