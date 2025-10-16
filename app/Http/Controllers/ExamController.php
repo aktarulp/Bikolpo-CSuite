@@ -854,6 +854,8 @@ class ExamController extends Controller
     
     public function paperParameters(Exam $exam)
     {
+        $partnerId = $this->getPartnerId();
+        
         // Get exam questions for display purposes
         $questions = $exam->questions()
             ->where('partner_id', $partnerId)

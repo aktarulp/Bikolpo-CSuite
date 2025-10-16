@@ -25,8 +25,8 @@ class Partner extends Model
         'alternate_mobile',
         'website',
         'facebook_page',
-        'division',
-        'district',
+        'division_id',
+        'district_id',
         'established_year',
         'subscription_plan',
         'subscription_start_date',
@@ -38,7 +38,7 @@ class Partner extends Model
         'primary_contact_no',
         'alternate_contact_person',
         'alternate_contact_no',
-        'upazila_p_s',
+        'upazila_id',
         'post_office',
         'post_code',
         'village_road_no',
@@ -66,6 +66,21 @@ class Partner extends Model
         // Partner doesn't belong to a single user, but has many users
         // This method should return the primary user if needed, or null
         return $this->users()->first();
+    }
+
+    public function division()
+    {
+        return $this->belongsTo(\App\Models\Division::class);
+    }
+
+    public function district()
+    {
+        return $this->belongsTo(\App\Models\District::class);
+    }
+
+    public function upazila()
+    {
+        return $this->belongsTo(\App\Models\Upazila::class);
     }
 
     public function questions()

@@ -809,62 +809,6 @@ class SystemAdminController extends Controller
         }
     }
 
-    /**
-     * Student Interactive Grid View
-     */
-    public function studentInteractiveGrid(Request $request)
-    {
-        try {
-            $query = Student::with(['partner', 'examResults'])
-                ->withCount('examResults');
-
-            // Apply filters
-            if ($request->has('search') && $request->search) {
-                $searchTerm = $request->search;
-                $query->where(function($q) use ($searchTerm) {
-                    $q->where('full_name', 'like', "%{$searchTerm}%")
-                      ->orWhere('phone', 'like', "%{$searchTerm}%")
-                      ->orWhere('email', 'like', "%{$searchTerm}%");
-                });
-            }
-
-            if ($request->has('partner') && $request->partner) {
-                $query->where('partner_id', $request->partner);
-            }
-
-            if ($request->has('status') && $request->status) {
-                $query->where('status', $request->status);
-            }
-
-            $students = $query->latest()->paginate(50);
-
-            // Calculate average scores and check login access
-            foreach ($students as $student) {
-                if ($student->exam_results_count > 0) {
-                    $student->average_score = round($student->examResults->avg('percentage'), 1);
-                } else {
-                    $student->average_score = 0;
-                }
-                
-                // Check if student has login access
-                $student->has_login_access = EnhancedUser::where('id', $student->id)->where('role', 'student')->exists();
-            }
-
-            // Get all partners for filters
-            $partners = Partner::select('id', 'name')->get();
-
-            return view('system-admin.sa-student-ig', compact('students', 'partners'));
-
-        } catch (\Exception $e) {
-            \Log::error('SystemAdminController: Error loading student interactive grid: ' . $e->getMessage());
-            
-            return view('system-admin.sa-student-ig', [
-                'students' => collect(),
-                'partners' => collect(),
-                'error' => 'Unable to load student data: ' . $e->getMessage()
-            ]);
-        }
-    }
 
     public function singleStudentInteractiveGrid($id)
     {
@@ -893,6 +837,134 @@ class SystemAdminController extends Controller
             
             return redirect()->route('system-admin.all-students')
                 ->with('error', 'Student not found: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Show the form for creating a new partner
+     */
+    public function createPartner()
+    {
+        return view('system-admin.sa-add-partner');
+    }
+
+    /**
+     * Store a newly created partner
+     */
+    public function storePartner(Request $request)
+    {
+        try {
+            // Validate the request
+            $validated = $request->validate([
+                'institute_name' => 'required|string|max:255',
+                'institute_name_bangla' => 'nullable|string|max:255',
+                'primary_contact_person' => 'required|string|max:255',
+                'primary_contact_no' => 'required|string|max:20',
+                'email' => 'required|email|unique:partners,email',
+                'year_of_establishment' => 'nullable|integer|min:1900|max:' . date('Y'),
+                'mobile' => 'nullable|string|max:20',
+                'alternate_mobile' => 'nullable|string|max:20',
+                'website' => 'nullable|url|max:255',
+                'facebook_page' => 'nullable|url|max:255',
+                'division_id' => 'nullable|exists:divisions,id',
+                'district_id' => 'nullable|exists:districts,id',
+                'upazila_id' => 'nullable|exists:upazilas,id',
+                'post_office' => 'nullable|string|max:100',
+                'post_code' => 'nullable|string|max:20',
+                'village_road_no' => 'nullable|string|max:255',
+                'flat_house_no' => 'nullable|string|max:255',
+                'subscription_plan' => 'required|in:free,basic,premium,enterprise',
+                'status' => 'required|in:active,inactive,pending',
+            ]);
+
+            // Generate slug from institute name
+            $slug = \Str::slug($validated['institute_name']);
+            
+            // Ensure slug is unique
+            $originalSlug = $slug;
+            $counter = 1;
+            while (Partner::where('slug', $slug)->exists()) {
+                $slug = $originalSlug . '-' . $counter;
+                $counter++;
+            }
+
+            // Create the partner
+            $partner = Partner::create([
+                'name' => $validated['institute_name'],
+                'slug' => $slug,
+                'email' => $validated['email'],
+                'phone' => $validated['primary_contact_no'],
+                'mobile' => $validated['mobile'],
+                'alternate_mobile' => $validated['alternate_mobile'],
+                'website' => $validated['website'],
+                'facebook_page' => $validated['facebook_page'],
+                'division_id' => $validated['division_id'],
+                'district_id' => $validated['district_id'],
+                'upazila_id' => $validated['upazila_id'],
+                'post_office' => $validated['post_office'],
+                'post_code' => $validated['post_code'],
+                'village_road_no' => $validated['village_road_no'],
+                'flat_house_no' => $validated['flat_house_no'],
+                'subscription_plan' => $validated['subscription_plan'],
+                'status' => $validated['status'],
+                'institute_name' => $validated['institute_name'],
+                'institute_name_bangla' => $validated['institute_name_bangla'],
+                'primary_contact_person' => $validated['primary_contact_person'],
+                'primary_contact_no' => $validated['primary_contact_no'],
+                'year_of_establishment' => $validated['year_of_establishment'],
+                'created_by' => auth()->id(),
+            ]);
+
+            // Generate referral code for the partner
+            $partner->generateReferralCode();
+
+            return redirect()->route('system-admin.all-partners')
+                ->with('success', 'Partner created successfully!');
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()
+                ->withErrors($e->validator)
+                ->withInput();
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error creating partner: ' . $e->getMessage());
+            
+            return redirect()->back()
+                ->with('error', 'Failed to create partner: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
+
+    /**
+     * Get districts by division ID
+     */
+    public function getDistricts($divisionId)
+    {
+        try {
+            $districts = \App\Models\District::where('division_id', $divisionId)
+                ->orderBy('name')
+                ->get(['id', 'name', 'name_bangla']);
+
+            return response()->json($districts);
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error fetching districts: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to fetch districts'], 500);
+        }
+    }
+
+    /**
+     * Get upazilas by district ID
+     */
+    public function getUpazilas($districtId)
+    {
+        try {
+            $upazilas = \App\Models\Upazila::where('district_id', $districtId)
+                ->orderBy('name')
+                ->get(['id', 'name', 'name_bangla']);
+
+            return response()->json($upazilas);
+        } catch (\Exception $e) {
+            \Log::error('SystemAdminController: Error fetching upazilas: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to fetch upazilas'], 500);
         }
     }
 

@@ -96,7 +96,6 @@ Route::middleware('auth')->group(function () {
         
         // Student Management Routes
         Route::get('/system-admin/students', [SystemAdminController::class, 'allStudents'])->name('system-admin.all-students');
-        Route::get('/system-admin/student-ig', [SystemAdminController::class, 'studentInteractiveGrid'])->name('system-admin.student-ig');
         Route::get('/system-admin/student-ig/{id}', [SystemAdminController::class, 'singleStudentInteractiveGrid'])->name('system-admin.single-student-ig');
         Route::get('/system-admin/students/{id}', [SystemAdminController::class, 'getStudent'])->name('system-admin.get-student');
         Route::get('/system-admin/students/{id}/details', [SystemAdminController::class, 'getStudentDetails'])->name('system-admin.get-student-details');
@@ -106,7 +105,13 @@ Route::middleware('auth')->group(function () {
         
         // Partner Management Routes
         Route::get('/system-admin/partners', [SystemAdminController::class, 'allPartners'])->name('system-admin.all-partners');
+        Route::get('/system-admin/partners/create', [SystemAdminController::class, 'createPartner'])->name('system-admin.create-partner');
+        Route::post('/system-admin/partners', [SystemAdminController::class, 'storePartner'])->name('system-admin.store-partner');
         Route::get('/system-admin/partners/{id}', [SystemAdminController::class, 'getPartner'])->name('system-admin.get-partner');
+        
+        // Administrative divisions API routes
+        Route::get('/system-admin/api/districts/{divisionId}', [SystemAdminController::class, 'getDistricts'])->name('system-admin.api.districts');
+        Route::get('/system-admin/api/upazilas/{districtId}', [SystemAdminController::class, 'getUpazilas'])->name('system-admin.api.upazilas');
         
         // Subscription Management Routes
         Route::get('/system-admin/subscription/plans', [SystemAdminController::class, 'subscriptionPlans'])->name('system-admin.subscription-plans');
@@ -873,6 +878,12 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
         Route::get('questions/drafts', [QuestionController::class, 'showDrafts'])->name('questions.drafts');
         Route::post('questions/drafts/update', [QuestionController::class, 'updateDrafts'])->name('questions.drafts.update');
         Route::post('questions/drafts/delete', [QuestionController::class, 'deleteDrafts'])->name('questions.drafts.delete');
+        
+        // Question Download Routes
+        Route::get('questions/download', [QuestionController::class, 'downloadForm'])->name('questions.download');
+        Route::post('questions/download', [QuestionController::class, 'downloadQuestions'])->name('questions.download.process');
+        Route::get('questions/download/exam/{id}', [QuestionController::class, 'getExamDetails'])->name('questions.download.exam');
+        
         
         // Questions API for step 2
         Route::get('questions/api', [QuestionController::class, 'apiIndex'])->name('questions.api');

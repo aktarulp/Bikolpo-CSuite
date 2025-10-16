@@ -4,6 +4,18 @@
 
 @section('content')
 <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <!-- Success/Error Messages -->
+    @if(session('success'))
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <span class="block sm:inline">{{ session('success') }}</span>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <span class="block sm:inline">{{ session('error') }}</span>
+        </div>
+    @endif
     <!-- Top Summary Section -->
     <div class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
         <div class="px-4 sm:px-6 lg:px-8 py-4">
@@ -21,13 +33,13 @@
                         </svg>
                         Export Data
                     </button>
-                    <button onclick="alert('Add new partner functionality will be implemented')" 
-                            class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
+                    <a href="{{ route('system-admin.create-partner') }}" 
+                       class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                         </svg>
                         Add Partner
-                    </button>
+                    </a>
                 </div>
             </div>
 
