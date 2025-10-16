@@ -53,17 +53,29 @@
 
     <!-- Plans Grid -->
     <div class="px-4 sm:px-6 lg:px-8 py-6">
-        <!-- Debug Information -->
-        @if(config('app.debug'))
-        <div class="mb-4 p-4 bg-yellow-100 dark:bg-yellow-900 rounded-lg">
-            <h4 class="font-bold text-yellow-800 dark:text-yellow-200">Debug Information:</h4>
-            <p><strong>Plans type:</strong> {{ gettype($plans ?? 'not set') }}</p>
-            <p><strong>Plans count:</strong> {{ isset($plans) && is_object($plans) && method_exists($plans, 'count') ? $plans->count() : 'N/A' }}</p>
-            @if(isset($error))
-            <p><strong>Error:</strong> {{ $error }}</p>
-            @endif
+        <!-- Plan Type Toggle -->
+        <div class="mb-6 flex justify-center">
+            <div class="bg-gray-100 dark:bg-gray-700 rounded-lg p-1 flex">
+                <a href="{{ route('system-admin.subscription-plans', ['type' => 'partner']) }}" 
+                   class="px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 {{ ($partnerType ?? 'partner') === 'partner' ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300' }}">
+                    <div class="flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                        Partner Plans
+                    </div>
+                </a>
+                <a href="{{ route('system-admin.subscription-plans', ['type' => 'student']) }}" 
+                   class="px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 {{ ($partnerType ?? 'partner') === 'student' ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300' }}">
+                    <div class="flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                        </svg>
+                        Student Plans
+                    </div>
+                </a>
+            </div>
         </div>
-        @endif
         
         @if(isset($plans) && is_object($plans) && method_exists($plans, 'count') && $plans->count() > 0)
         <!-- Comparison Table Layout -->
@@ -80,8 +92,25 @@
                         </div>
                         
                         @php
-                            $allFeatures = \App\Models\PlanFeature::orderBy('category')->orderBy('sort_order')->get();
-            @endphp
+                            // Filter features based on plan type
+                            if (($partnerType ?? 'partner') === 'student') {
+                                // For student plans, show student-specific features
+                                $allFeatures = \App\Models\PlanFeature::where(function($query) {
+                                    $query->where('feature_for', 'student')
+                                          ->orWhere('feature_for', 'both');
+                                })->orderBy('category')
+                                  ->orderBy('sort_order')
+                                  ->get();
+                            } else {
+                                // For partner plans, show partner-specific features
+                                $allFeatures = \App\Models\PlanFeature::where(function($query) {
+                                    $query->where('feature_for', 'partner')
+                                          ->orWhere('feature_for', 'both');
+                                })->orderBy('category')
+                                  ->orderBy('sort_order')
+                                  ->get();
+                            }
+                        @endphp
             
                             <!-- Implementation Cost Row -->
                             <div class="px-6 py-2 h-10 bg-orange-50 dark:bg-orange-900/20 border-b border-orange-200 dark:border-orange-800 flex items-center">

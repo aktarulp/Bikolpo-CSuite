@@ -12,6 +12,7 @@ class PlanFeature extends Model
         'slug',
         'description',
         'category',
+        'feature_for',
         'type',
         'options',
         'unit',

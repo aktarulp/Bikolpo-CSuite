@@ -1034,25 +1034,26 @@ class SystemAdminController extends Controller
     }
 
     // Subscription Management Methods
-    public function subscriptionPlans()
+    public function subscriptionPlans(Request $request)
     {
         try {
-            // Get all plans from database (including inactive ones for admin view)
+            // Get partner type filter (default to 'partner')
+            $partnerType = $request->get('type', 'partner');
+            
+            // Get all plans from database filtered by partner type
             $plans = \App\Models\SubscriptionPlan::with(['planFeatures', 'enabledFeatures'])
+                ->where('partner_type', $partnerType)
                 ->orderBy('sort_order')
                 ->orderBy('price')
                 ->get();
 
-            // Debug: Log the plans count and type
-            \Log::info('SubscriptionPlans: Found ' . $plans->count() . ' plans');
-            \Log::info('SubscriptionPlans: Plans type: ' . gettype($plans));
-
-            return view('system-admin.sa-subscription-plans', compact('plans'));
+            return view('system-admin.sa-subscription-plans', compact('plans', 'partnerType'));
 
         } catch (\Exception $e) {
             \Log::error('SystemAdminController: Error loading subscription plans: ' . $e->getMessage());
             return view('system-admin.sa-subscription-plans', [
                 'plans' => collect(),
+                'partnerType' => 'partner',
                 'error' => 'Unable to load subscription plans: ' . $e->getMessage()
             ]);
         }
@@ -1751,6 +1752,8 @@ class SystemAdminController extends Controller
                 'description' => 'nullable|string',
                 'type' => 'required|in:boolean,numeric,text,select',
                 'category' => 'required|string|max:100',
+                'feature_for' => 'required|in:partner,student,both',
+                'unit' => 'nullable|string|max:50',
                 'default_value' => 'nullable|string',
                 'options' => 'nullable|array',
                 'is_active' => 'boolean',
@@ -1763,6 +1766,8 @@ class SystemAdminController extends Controller
                 'description' => $request->description,
                 'type' => $request->type,
                 'category' => $request->category,
+                'feature_for' => $request->feature_for,
+                'unit' => $request->unit,
                 'default_value' => $request->default_value,
                 'options' => $request->options,
                 'is_active' => $request->has('is_active'),
@@ -1819,6 +1824,8 @@ class SystemAdminController extends Controller
                 'description' => 'nullable|string',
                 'type' => 'required|in:boolean,numeric,text,select',
                 'category' => 'required|string|max:100',
+                'feature_for' => 'required|in:partner,student,both',
+                'unit' => 'nullable|string|max:50',
                 'default_value' => 'nullable|string',
                 'options' => 'nullable|array',
                 'is_active' => 'boolean',
@@ -1831,6 +1838,8 @@ class SystemAdminController extends Controller
                 'description' => $request->description,
                 'type' => $request->type,
                 'category' => $request->category,
+                'feature_for' => $request->feature_for,
+                'unit' => $request->unit,
                 'default_value' => $request->default_value,
                 'options' => $request->options,
                 'is_active' => $request->has('is_active'),

@@ -3,22 +3,45 @@
 @section('title', 'Edit Plan Feature - System Admin')
 
 @section('content')
-<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
     <!-- Header -->
-    <div class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
-        <div class="px-4 sm:px-6 lg:px-8 py-4">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Edit Plan Feature</h1>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Update feature: {{ $feature->name }}</p>
+    <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-b border-slate-200/50 dark:border-slate-700/50">
+        <div class="px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div class="flex items-center space-x-3">
+                    <div class="p-2 bg-gradient-to-r from-amber-500 to-orange-600 rounded-lg">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-200 bg-clip-text text-transparent">Edit Feature</h1>
+                        <div class="flex items-center space-x-2 mt-1">
+                            <span class="text-sm text-slate-600 dark:text-slate-400">Editing:</span>
+                            <span class="inline-flex items-center px-3 py-1 bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30 text-blue-800 dark:text-blue-200 text-sm font-semibold rounded-full border border-blue-200 dark:border-blue-700">
+                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                                </svg>
+                                {{ $feature->name }}
+                            </span>
+                        </div>
+                    </div>
                 </div>
-                <div class="mt-4 sm:mt-0">
+                <div class="flex items-center space-x-3">
+                    <button type="submit" 
+                            form="feature-form"
+                            class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm font-semibold rounded-lg transition-all duration-200 hover:shadow-lg transform hover:-translate-y-0.5">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Update Feature
+                    </button>
                     <a href="{{ route('system-admin.plan-features') }}" 
-                       class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                       class="inline-flex items-center px-4 py-2 bg-white/80 dark:bg-slate-700/80 hover:bg-white dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm font-semibold text-slate-700 dark:text-slate-300 transition-all duration-200 hover:shadow-md">
                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                         </svg>
-                        Back to Features
+                        Cancel & Back
                     </a>
                 </div>
             </div>
@@ -27,78 +50,93 @@
 
     <!-- Form -->
     <div class="px-4 sm:px-6 lg:px-8 py-6">
-        <form action="{{ route('system-admin.plan-features.update', $feature->id) }}" method="POST" class="max-w-4xl mx-auto">
+        <form id="feature-form" action="{{ route('system-admin.plan-features.update', $feature->id) }}" method="POST" class="max-w-3xl mx-auto">
             @csrf
             @method('PUT')
             
             <div class="space-y-6">
                 <!-- Basic Information -->
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Basic Information</h3>
+                <div class="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 dark:border-slate-700/50 p-6">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="p-2 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Basic Information</h3>
+                    </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label for="name" class="block text-sm font-semibold text-slate-700 dark:text-slate-300">
                                 Feature Name <span class="text-red-500">*</span>
                             </label>
                             <input type="text" 
                                    id="name" 
                                    name="name" 
                                    value="{{ old('name', $feature->name) }}"
-                                   class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                   class="w-full px-4 py-3 bg-white/80 dark:bg-slate-700/80 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white transition-all duration-200 hover:shadow-sm"
                                    placeholder="e.g., Student Dashboard"
                                    required>
                             @error('name')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                <p class="text-sm text-red-500 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <div>
-                            <label for="slug" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <div class="space-y-2">
+                            <label for="slug" class="block text-sm font-semibold text-slate-700 dark:text-slate-300">
                                 Slug <span class="text-red-500">*</span>
                             </label>
                             <input type="text" 
                                    id="slug" 
                                    name="slug" 
                                    value="{{ old('slug', $feature->slug) }}"
-                                   class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                   class="w-full px-4 py-3 bg-white/80 dark:bg-slate-700/80 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white transition-all duration-200 hover:shadow-sm"
                                    placeholder="e.g., student_dashboard"
                                    required>
-                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">URL-friendly identifier (auto-generated from name)</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Auto-generated from name</p>
                             @error('slug')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                <p class="text-sm text-red-500 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
 
-                    <div class="mt-6">
-                        <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <div class="mt-4">
+                        <label for="description" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
                             Description
                         </label>
                         <textarea id="description" 
                                   name="description" 
                                   rows="3"
-                                  class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                  class="w-full px-4 py-3 bg-white/80 dark:bg-slate-700/80 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white transition-all duration-200 hover:shadow-sm resize-none"
                                   placeholder="Describe what this feature does...">{{ old('description', $feature->description) }}</textarea>
                         @error('description')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            <p class="text-sm text-red-500 dark:text-red-400">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
 
                 <!-- Feature Configuration -->
-                <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-6">Feature Configuration</h3>
+                <div class="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 dark:border-slate-700/50 p-6">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="p-2 bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Configuration</h3>
+                    </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label for="type" class="block text-sm font-semibold text-slate-700 dark:text-slate-300">
                                 Feature Type <span class="text-red-500">*</span>
                             </label>
                             <select id="type" 
                                     name="type"
                                     onchange="toggleTypeFields()"
-                                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                    class="w-full px-4 py-3 bg-white/80 dark:bg-slate-700/80 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white transition-all duration-200 hover:shadow-sm"
                                     required>
                                 <option value="">Select a type</option>
                                 @foreach($featureTypes as $key => $label)
@@ -106,18 +144,18 @@
                                 @endforeach
                             </select>
                             @error('type')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                <p class="text-sm text-red-500 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <!-- Category -->
-                        <div>
-                            <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <div class="space-y-2">
+                            <label for="category" class="block text-sm font-semibold text-slate-700 dark:text-slate-300">
                                 Category <span class="text-red-500">*</span>
                             </label>
                             <select id="category" 
                                     name="category"
-                                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                    class="w-full px-4 py-3 bg-white/80 dark:bg-slate-700/80 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:text-white transition-all duration-200 hover:shadow-sm"
                                     required>
                                 <option value="">Select a category</option>
                                 @foreach($categories as $key => $label)
@@ -125,6 +163,45 @@
                                 @endforeach
                             </select>
                             @error('category')
+                                <p class="text-sm text-red-500 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                        <!-- Feature For -->
+                        <div>
+                            <label for="feature_for" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Feature For <span class="text-red-500">*</span>
+                            </label>
+                            <select id="feature_for" 
+                                    name="feature_for"
+                                    class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                    required>
+                                <option value="">Select target audience</option>
+                                <option value="partner" {{ old('feature_for', $feature->feature_for) == 'partner' ? 'selected' : '' }}>Partner Plans</option>
+                                <option value="student" {{ old('feature_for', $feature->feature_for) == 'student' ? 'selected' : '' }}>Student Plans</option>
+                                <option value="both" {{ old('feature_for', $feature->feature_for) == 'both' ? 'selected' : '' }}>Both Partner & Student</option>
+                            </select>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Choose which plan types this feature applies to</p>
+                            @error('feature_for')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Unit -->
+                        <div>
+                            <label for="unit" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Unit
+                            </label>
+                            <input type="text" 
+                                   id="unit" 
+                                   name="unit" 
+                                   value="{{ old('unit', $feature->unit) }}"
+                                   class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                                   placeholder="e.g., users, GB, months">
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Unit of measurement (optional)</p>
+                            @error('unit')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
@@ -262,20 +339,6 @@
                 </div>
                 @endif
 
-                <!-- Form Actions -->
-                <div class="flex flex-col sm:flex-row sm:justify-end space-y-3 sm:space-y-0 sm:space-x-3">
-                    <a href="{{ route('system-admin.plan-features') }}" 
-                       class="inline-flex items-center justify-center px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                        Cancel
-                    </a>
-                    <button type="submit" 
-                            class="inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors duration-200">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                        Update Feature
-                    </button>
-                </div>
             </div>
         </form>
     </div>
