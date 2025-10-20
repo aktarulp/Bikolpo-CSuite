@@ -185,7 +185,6 @@ class SystemAdminController extends Controller
                 'pending_payments_amount' => 0,
                 
                 // System Statistics
-                'total_sms_sent' => 0, // Implement based on your SMS system
                 'cache_hit_rate' => $this->getCacheHitRate(),
                 'database_size' => $this->getDatabaseSize(),
             ];
@@ -578,7 +577,6 @@ class SystemAdminController extends Controller
             'pending_payments' => 0,
             'pending_payments_count' => 0,
             'pending_payments_amount' => 0,
-            'total_sms_sent' => 0,
             'cache_hit_rate' => '0%',
             'database_size' => '0 MB',
         ];
