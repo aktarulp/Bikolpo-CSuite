@@ -878,10 +878,6 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
         Route::post('questions/drafts/update', [QuestionController::class, 'updateDrafts'])->name('questions.drafts.update');
         Route::post('questions/drafts/delete', [QuestionController::class, 'deleteDrafts'])->name('questions.drafts.delete');
         
-        // Question Download Routes
-        Route::get('questions/download', [QuestionController::class, 'downloadForm'])->name('questions.download');
-        Route::post('questions/download', [QuestionController::class, 'downloadQuestions'])->name('questions.download.process');
-        Route::get('questions/download/exam/{id}', [QuestionController::class, 'getExamDetails'])->name('questions.download.exam');
         
         
         // Questions API for step 2
