@@ -6,11 +6,11 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 use App\Models\EnhancedUser;
 use App\Models\EnhancedRole;
-use App\Models\UserActivity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use App\Traits\HasPartnerContext;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -25,7 +25,11 @@ class UserManagementController extends Controller
     {
         // Permission checking disabled
 
-        $users = EnhancedUser::with(['partner', 'roles', 'creator'])
+        // Get current partner ID
+        $partnerId = $this->getPartnerId();
+        
+        $users = EnhancedUser::with(['partner', 'role', 'creator'])
+            ->where('partner_id', $partnerId) // Only show users from current partner
             ->when(request('search'), function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
@@ -37,26 +41,43 @@ class UserManagementController extends Controller
                 $query->where('status', $status);
             })
             ->when(request('role'), function ($query, $role) {
-                $query->whereHas('roles', function ($q) use ($role) {
+                $query->whereHas('role', function ($q) use ($role) {
                     $q->where('name', $role);
                 });
             })
-            ->when(request('partner'), function ($query, $partner) {
-                $query->where('partner_id', $partner);
-            })
             ->orderBy(request('sort_by', 'created_at'), request('sort_order', 'desc'))
-            ->paginate(request('per_page', 10));
+            ->paginate(request('per_page', 15));
+
+        // Ensure roles are properly loaded for all users
+        $users->each(function ($user) {
+            if ($user->role_id && (!$user->role || !is_object($user->role))) {
+                // Try to manually load the role if it's not loaded properly
+                $user->setRelation('role', \App\Models\EnhancedRole::find($user->role_id));
+            }
+        });
+
+        // Debug: Check if users have roles loaded
+        foreach ($users as $user) {
+            \Log::info("User {$user->id} - Name: {$user->name}, Role: " . $user->getRoleName() . ", Role Display: " . $user->getRoleDisplayName());
+        }
+        
+        // Additional debugging
+        \Log::info('Total users loaded: ' . $users->count());
+        foreach ($users as $user) {
+            \Log::info("User {$user->id} - Name: {$user->name}, Role ID: " . ($user->role_id ?? 'null') . ", Role loaded: " . ($user->relationLoaded('role') ? 'yes' : 'no') . ", Role Name: " . $user->getRoleName());
+        }
 
         $roles = EnhancedRole::active()->orderBy('level')->get();
-        $partners = \App\Models\Partner::all();
+        $partners = \App\Models\Partner::where('id', $partnerId)->get(); // Only show current partner
 
         $stats = [
-            'total_users' => EnhancedUser::count(),
-            'active_users' => EnhancedUser::where('status', EnhancedUser::STATUS_ACTIVE)->count(),
-            'inactive_users' => EnhancedUser::where('status', EnhancedUser::STATUS_INACTIVE)->count(),
-            'suspended_users' => EnhancedUser::where('status', EnhancedUser::STATUS_SUSPENDED)->count(),
-            'pending_users' => EnhancedUser::where('status', EnhancedUser::STATUS_PENDING)->count(),
+            'total_users' => EnhancedUser::where('partner_id', $partnerId)->count(), // Only count users from current partner
+            'active_users' => EnhancedUser::where('status', EnhancedUser::STATUS_ACTIVE)->where('partner_id', $partnerId)->count(),
+            'inactive_users' => EnhancedUser::where('status', EnhancedUser::STATUS_INACTIVE)->where('partner_id', $partnerId)->count(),
+            'suspended_users' => EnhancedUser::where('status', EnhancedUser::STATUS_SUSPENDED)->where('partner_id', $partnerId)->count(),
+            'pending_users' => EnhancedUser::where('status', EnhancedUser::STATUS_PENDING)->where('partner_id', $partnerId)->count(),
             'users_by_role' => EnhancedUser::join('ac_roles', 'ac_users.role_id', '=', 'ac_roles.id')
+                ->where('ac_users.partner_id', $partnerId) // Only count users from current partner
                 ->groupBy('ac_roles.name')
                 ->selectRaw('ac_roles.name as role_name, count(*) as count')
                 ->pluck('count', 'role_name')
@@ -87,16 +108,43 @@ class UserManagementController extends Controller
         $partnerId = $this->getPartnerId();
 
         // Get students from current partner who don't have user accounts yet
+        // (students not present in ac_users table)
         $students = \App\Models\Student::where('partner_id', $partnerId)
-            ->whereNull('user_id') // Only students without user accounts
+            ->where(function($query) {
+                // Students where user_id is null or points to non-existent user
+                $query->whereNull('user_id')
+                      ->orWhere(function($subquery) {
+                          $subquery->whereNotNull('user_id')
+                                   ->whereNotExists(function($existsQuery) {
+                                       $existsQuery->select(DB::raw(1))
+                                                   ->from('ac_users')
+                                                   ->whereColumn('ac_users.id', 'students.user_id');
+                                   });
+                      })
+                      // Also check that no user has this student_id
+                      ->whereNotExists(function($subquery) {
+                          $subquery->select(DB::raw(1))
+                                   ->from('ac_users')
+                                   ->whereColumn('ac_users.student_id', 'students.id');
+                      });
+            })
             ->orderBy('full_name')
             ->get();
 
-        // Debug: Log the counts
-        \Log::info('UserManagementController create method', [
+        // Debug: Log detailed information
+        \Log::info('UserManagementController create method - Student query details', [
             'partner_id' => $partnerId,
-            'students_count' => $students->count(),
-            'students_without_users' => $students->whereNull('user_id')->count()
+            'total_students_in_partner' => \App\Models\Student::where('partner_id', $partnerId)->count(),
+            'students_without_users_count' => $students->count(),
+            'students_without_users_ids' => $students->pluck('id')->toArray(),
+            'students_without_users_details' => $students->map(function($student) {
+                return [
+                    'id' => $student->id,
+                    'full_name' => $student->full_name,
+                    'user_id' => $student->user_id,
+                    'user_exists' => $student->user_id ? EnhancedUser::find($student->user_id) ? true : false : null
+                ];
+            })->toArray()
         ]);
 
         return view('partner.settings.create-user', compact('students'));
@@ -139,14 +187,45 @@ class UserManagementController extends Controller
                 // Get the student
                 $student = \App\Models\Student::findOrFail($validated['student_id']);
                 
+                // Debug: Log student information
+                \Log::info('Student information in store method', [
+                    'student_id' => $student->id,
+                    'full_name' => $student->full_name,
+                    'user_id' => $student->user_id,
+                    'user_exists' => $student->user ? true : false,
+                    'user_data' => $student->user ? [
+                        'id' => $student->user->id,
+                        'name' => $student->user->name,
+                        'email' => $student->user->email
+                    ] : null
+                ]);
+                
                 // Check if student already has a user account
-                if ($student->user_id) {
+                // First check if student has user_id set AND that user actually exists
+                if ($student->user_id && EnhancedUser::find($student->user_id)) {
+                    \Log::info('Student already has user account (user_id set and user exists)', [
+                        'student_id' => $student->id,
+                        'user_id' => $student->user_id
+                    ]);
                     return response()->json([
                         'success' => false,
                         'message' => 'This student already has a user account.'
                     ], 422);
                 }
                 
+                // Also check if there's a user with this student_id
+                $existingUser = EnhancedUser::where('student_id', $student->id)->first();
+                if ($existingUser) {
+                    \Log::info('Student already has user account (student_id set on user)', [
+                        'student_id' => $student->id,
+                        'user_id' => $existingUser->id
+                    ]);
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'This student already has a user account.'
+                    ], 422);
+                }
+
                 // Check if email already exists
                 if ($student->email && EnhancedUser::where('email', $student->email)->exists()) {
                     return response()->json([
@@ -176,6 +255,7 @@ class UserManagementController extends Controller
                 $user->email_verified_at = now();
                 $user->created_by = auth()->id();
                 $user->updated_by = auth()->id();
+                $user->student_id = $student->id; // Set the student_id on the user
                 
                 // Save the user with error handling
                 if (!$user->save()) {
@@ -253,14 +333,25 @@ class UserManagementController extends Controller
     public function show(EnhancedUser $user)
     {
         // Permission checking disabled
+        
+        // Ensure user belongs to current partner
+        $partnerId = $this->getPartnerId();
+        if ($user->partner_id != $partnerId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found.'
+            ], 404);
+        }
 
-        $user->load(['partner', 'roles', 'permissions', 'creator', 'activities' => function ($query) {
-            $query->latest()->take(10);
-        }]);
+        $user->load(['partner', 'role', 'permissions', 'creator']);
+
+        // Format the user data to match the expected API response
+        $userData = $user->toArray();
+        $userData['roles'] = $user->role ? [$user->role] : [];
 
         return response()->json([
             'success' => true,
-            'user' => $user
+            'user' => $userData
         ]);
     }
 
@@ -270,18 +361,34 @@ class UserManagementController extends Controller
     public function update(Request $request, EnhancedUser $user)
     {
         // Permission checking disabled
+        
+        // Ensure user belongs to current partner
+        $partnerId = $this->getPartnerId();
+        if ($user->partner_id != $partnerId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found.'
+            ], 404);
+        }
+
+        // Map status values to flag values
+        $statusToFlagMap = [
+            'active' => EnhancedUser::FLAG_ACTIVE,
+            'inactive' => EnhancedUser::FLAG_INACTIVE,
+            'suspended' => EnhancedUser::FLAG_INACTIVE,
+            'pending' => EnhancedUser::FLAG_INACTIVE,
+        ];
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
- 'email' => ['required', 'string', 'email', 'max:255', Rule::unique('ac_users', 'email')->ignore($user->id, 'id')],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('ac_users', 'email')->ignore($user->id, 'id')],
             'phone' => 'nullable|string|max:20',
             'password' => 'nullable|string|min:8|confirmed',
-            'role_ids' => 'required|array|min:1',
-'role_ids.*' => 'exists:ac_roles,id',
+            'role_id' => 'required|exists:ac_roles,id',
             'partner_id' => 'nullable|exists:partners,id',
             'status' => ['required', Rule::in(EnhancedUser::getStatuses())],
             'permissions' => 'nullable|array',
-'permissions.*' => 'exists:ac_modules,id',
+            'permissions.*' => 'exists:ac_modules,id',
         ]);
 
         if ($validator->fails()) {
@@ -294,12 +401,16 @@ class UserManagementController extends Controller
         try {
             DB::beginTransaction();
 
+            // Map the status to flag value
+            $flagValue = $statusToFlagMap[$request->status] ?? EnhancedUser::FLAG_ACTIVE;
+
             $updateData = [
                 'name' => $request->name,
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'partner_id' => $request->partner_id,
-                'status' => $request->status,
+                'flag' => $flagValue,
+                'role_id' => $request->role_id,
                 'updated_by' => auth()->id(),
             ];
 
@@ -309,38 +420,39 @@ class UserManagementController extends Controller
 
             $user->update($updateData);
 
-            // Role syncing disabled - skip roles sync
-            // $user->roles()->sync($request->role_ids, [
-            //     'assigned_by' => auth()->id(),
-            //     'assigned_at' => now(),
-            // ]);
-
             // Permission syncing disabled - skip permissions sync
             // $user->permissions()->sync($request->permissions ?? [], [
             //     'granted_by' => auth()->id(),
             //     'granted_at' => now(),
             // ]);
 
-            // Log activity
-            $user->activities()->create([
-                'action' => 'user_updated',
-                'description' => 'User account updated',
-                'metadata' => [
-                    'updated_by' => auth()->id(),
-                    'roles' => $request->role_ids,
-                    'permissions' => $request->permissions ?? [],
-                    'changed_fields' => array_keys($request->except(['password', 'password_confirmation'])),
-                ],
-                'ip_address' => $request->ip(),
-                'user_agent' => $request->userAgent(),
-            ]);
+            // Log activity (disabled)
+            // $user->activities()->create([
+            //     'action' => 'user_updated',
+            //     'description' => 'User account updated',
+            //     'metadata' => [
+            //         'updated_by' => auth()->id(),
+            //         'role_id' => $request->role_id,
+            //         'permissions' => $request->permissions ?? [],
+            //         'changed_fields' => array_keys($request->except(['password', 'password_confirmation'])),
+            //     ],
+            //     'ip_address' => $request->ip(),
+            //     'user_agent' => $request->userAgent(),
+            // ]);
 
             DB::commit();
+            
+            // Load the updated user with role
+            $user->load(['role']);
+            
+            // Format the user data to match the expected API response
+            $userData = $user->toArray();
+            $userData['roles'] = $user->role ? [$user->role] : [];
             
             return response()->json([
                 'success' => true,
                 'message' => 'User updated successfully',
-                'user' => $user->load(['roles', 'permissions'])
+                'user' => $userData
             ]);
             
         } catch (\Exception $e) {
@@ -355,31 +467,120 @@ class UserManagementController extends Controller
     }
 
     /**
+     * Get recent user activity.
+     */
+    public function getRecentActivity()
+    {
+        // Permission checking disabled
+        // Activity logging disabled
+
+        return response()->json([
+            'success' => true,
+            'activities' => []
+        ]);
+    }
+
+    /**
+     * Update the specified user's status.
+     */
+    public function updateStatus(Request $request, EnhancedUser $user)
+    {
+        // Permission checking disabled
+        
+        // Ensure user belongs to current partner
+        $partnerId = $this->getPartnerId();
+        if ($user->partner_id != $partnerId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found.'
+            ], 404);
+        }
+
+        // Map status values to flag values
+        $statusToFlagMap = [
+            'active' => EnhancedUser::FLAG_ACTIVE,
+            'inactive' => EnhancedUser::FLAG_INACTIVE,
+            'suspended' => EnhancedUser::FLAG_INACTIVE,
+            'pending' => EnhancedUser::FLAG_INACTIVE,
+        ];
+
+        // Validate only the status field
+        $validator = Validator::make($request->all(), [
+            'status' => ['required', Rule::in(EnhancedUser::getStatuses())],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // Map the status to flag value
+            $flagValue = $statusToFlagMap[$request->status] ?? EnhancedUser::FLAG_ACTIVE;
+
+            // Update only the flag column
+            $user->update([
+                'flag' => $flagValue,
+                'updated_by' => auth()->id(),
+            ]);
+
+            DB::commit();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'User status updated successfully'
+            ]);
+            
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('User status update failed: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update user status: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Remove the specified user.
      */
     public function destroy(EnhancedUser $user)
     {
         // Permission checking disabled
+        
+        // Ensure user belongs to current partner
+        $partnerId = $this->getPartnerId();
+        if ($user->partner_id != $partnerId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found.'
+            ], 404);
+        }
 
         try {
             DB::beginTransaction();
 
-            // Log activity before deletion
-            $user->activities()->create([
-                'action' => 'user_deleted',
-                'description' => 'User account deleted',
-                'metadata' => [
-                    'deleted_by' => auth()->id(),
-                    'user_data' => [
-                        'name' => $user->name,
-                        'email' => $user->email,
-                        'roles' => $user->roles->pluck('id')->toArray(),
-                        'permissions' => $user->permissions->pluck('id')->toArray(),
-                    ],
-                ],
-                'ip_address' => request()->ip(),
-                'user_agent' => request()->userAgent(),
-            ]);
+            // Log activity before deletion (disabled)
+            // $user->activities()->create([
+            //     'action' => 'user_deleted',
+            //     'description' => 'User account deleted',
+            //     'metadata' => [
+            //         'deleted_by' => auth()->id(),
+            //         'user_data' => [
+            //             'name' => $user->name,
+            //             'email' => $user->email,
+            //             'roles' => $user->role ? [$user->role->id] : [],
+            //             'permissions' => $user->permissions->pluck('id')->toArray(),
+            //         ],
+            //     ],
+            //     'ip_address' => request()->ip(),
+            //     'user_agent' => request()->userAgent(),
+            // ]);
 
             // Relationship detaching disabled - skip detaching
             // $user->roles()->detach();
@@ -415,10 +616,10 @@ class UserManagementController extends Controller
 
         $validator = Validator::make($request->all(), [
             'user_ids' => 'required|array|min:1',
-'user_ids.*' => 'exists:ac_users,id',
+            'user_ids.*' => 'exists:ac_users,id',
             'action' => 'required|string|in:activate,deactivate,suspend,assign_role,remove_role,assign_permission,remove_permission',
-'role_id' => 'required_if:action,assign_role,remove_role|exists:ac_roles,id',
-'permission_id' => 'required_if:action,assign_permission,remove_permission|exists:ac_modules,id',
+            'role_id' => 'required_if:action,assign_role,remove_role|exists:ac_roles,id',
+            'permission_id' => 'required_if:action,assign_permission,remove_permission|exists:ac_modules,id',
         ]);
 
         if ($validator->fails()) {
@@ -437,17 +638,17 @@ class UserManagementController extends Controller
             foreach ($users as $user) {
                 switch ($request->action) {
                     case 'activate':
-                        $user->update(['status' => EnhancedUser::STATUS_ACTIVE]);
+                        $user->update(['flag' => EnhancedUser::FLAG_ACTIVE]);
                         $updatedCount++;
                         break;
                     
                     case 'deactivate':
-                        $user->update(['status' => EnhancedUser::STATUS_INACTIVE]);
+                        $user->update(['flag' => EnhancedUser::FLAG_INACTIVE]);
                         $updatedCount++;
                         break;
                     
                     case 'suspend':
-                        $user->update(['status' => EnhancedUser::STATUS_SUSPENDED]);
+                        $user->update(['flag' => EnhancedUser::FLAG_INACTIVE]);
                         $updatedCount++;
                         break;
                     
@@ -472,19 +673,19 @@ class UserManagementController extends Controller
                         break;
                 }
 
-                // Log activity for each user
-                $user->activities()->create([
-                    'action' => 'user_bulk_updated',
-                    'description' => "User bulk action: {$request->action}",
-                    'metadata' => [
-                        'action' => $request->action,
-                        'role_id' => $request->role_id ?? null,
-                        'permission_id' => $request->permission_id ?? null,
-                        'performed_by' => auth()->id(),
-                    ],
-                    'ip_address' => $request->ip(),
-                    'user_agent' => $request->userAgent(),
-                ]);
+                // Log activity for each user (disabled)
+                // $user->activities()->create([
+                //     'action' => 'user_bulk_updated',
+                //     'description' => "User bulk action: {$request->action}",
+                //     'metadata' => [
+                //         'action' => $request->action,
+                //         'role_id' => $request->role_id ?? null,
+                //         'permission_id' => $request->permission_id ?? null,
+                //         'performed_by' => auth()->id(),
+                //     ],
+                //     'ip_address' => $request->ip(),
+                //     'user_agent' => $request->userAgent(),
+                // ]);
             }
 
             DB::commit();
@@ -512,15 +713,11 @@ class UserManagementController extends Controller
     public function getActivities(EnhancedUser $user)
     {
         // Permission checking disabled
-
-        $activities = $user->activities()
-            ->with('user')
-            ->latest()
-            ->paginate(request('per_page', 20));
+        // Activity logging disabled
 
         return response()->json([
             'success' => true,
-            'activities' => $activities
+            'activities' => []
         ]);
     }
 
@@ -534,8 +731,8 @@ class UserManagementController extends Controller
         $directPermissions = $user->permissions;
         $rolePermissions = collect();
 
-        foreach ($user->roles as $role) {
-            $rolePermissions = $rolePermissions->merge($role->getAllPermissions());
+        if ($user->role) {
+            $rolePermissions = $rolePermissions->merge($user->role->getAllPermissions());
         }
 
         $allPermissions = $directPermissions->merge($rolePermissions)->unique('id');
@@ -557,7 +754,7 @@ class UserManagementController extends Controller
     {
         // Permission checking disabled
 
-        $users = EnhancedUser::with(['partner', 'roles', 'permissions'])
+        $users = EnhancedUser::with(['partner', 'role', 'permissions'])
             ->when($request->search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
@@ -569,7 +766,7 @@ class UserManagementController extends Controller
                 $query->where('status', $status);
             })
             ->when($request->role, function ($query, $role) {
-                $query->whereHas('roles', function ($q) use ($role) {
+                $query->whereHas('role', function ($q) use ($role) {
                     $q->where('name', $role);
                 });
             })
@@ -584,7 +781,7 @@ class UserManagementController extends Controller
                 'Phone' => $user->phone,
                 'Status' => $user->status,
                 'Partner' => $user->partner?->name,
-                'Roles' => $user->roles->pluck('name')->join(', '),
+                'Roles' => $user->role ? $user->role->name : '',
                 'Permissions' => $user->permissions->pluck('name')->join(', '),
                 'Created At' => $user->created_at->format('Y-m-d H:i:s'),
                 'Updated At' => $user->updated_at->format('Y-m-d H:i:s'),
@@ -620,14 +817,11 @@ class UserManagementController extends Controller
                 ->selectRaw('partners.name as partner_name, count(*) as count')
                 ->pluck('count', 'partner_name')
                 ->toArray(),
-            'recent_users' => EnhancedUser::with(['roles'])
+            'recent_users' => EnhancedUser::with(['role'])
                 ->orderBy('created_at', 'desc')
                 ->take(5)
                 ->get(),
-            'recent_activities' => UserActivity::with(['user'])
-                ->orderBy('created_at', 'desc')
-                ->take(10)
-                ->get(),
+            'recent_activities' => [],
         ];
 
         return response()->json([
@@ -667,32 +861,88 @@ class UserManagementController extends Controller
     }
 
     /**
-     * Get recent user activity.
+     * Reset user password.
      */
-    public function getRecentActivity()
+    public function resetPassword(Request $request, EnhancedUser $user)
     {
         // Permission checking disabled
+        
+        // Ensure user belongs to current partner
+        $partnerId = $this->getPartnerId();
+        if ($user->partner_id != $partnerId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found.'
+            ], 404);
+        }
 
-        $activities = UserActivity::with(['user'])
-            ->orderBy('created_at', 'desc')
-            ->limit(50)
-            ->get()
-            ->map(function ($activity) {
-                return [
-                    'id' => $activity->id,
-                    'user_name' => $activity->user ? $activity->user->name : 'Unknown',
-                    'user_email' => $activity->user ? $activity->user->email : '',
-                    'action' => $activity->action,
-                    'description' => $activity->description,
-                    'ip_address' => $activity->ip_address,
-                    'created_at' => $activity->created_at->toISOString(),
-                ];
-            });
+        // Check if user is resetting their own password
+        $isCurrentUser = ($user->id == auth()->id());
+        
+        // Build validation rules
+        $rules = [
+            'password' => 'required|string|min:8|confirmed',
+        ];
+        
+        // If resetting own password, require current password
+        if ($isCurrentUser) {
+            $rules['current_password'] = 'required|string';
+        }
 
-        return response()->json([
-            'success' => true,
-            'activities' => $activities
-        ]);
+        // Validate the request
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            // If resetting own password, verify current password first
+            if ($isCurrentUser) {
+                if (!Hash::check($request->current_password, $user->password)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Current password is incorrect.',
+                        'errors' => [
+                            'current_password' => ['The current password is incorrect.']
+                        ]
+                    ], 422);
+                }
+            }
+            
+            // Update user password
+            $user->update([
+                'password' => Hash::make($request->password)
+            ]);
+
+            // Log activity (disabled)
+            // $user->activities()->create([
+            //     'action' => 'password_reset',
+            //     'description' => $isCurrentUser ? 'User changed own password' : 'User password reset by administrator',
+            //     'metadata' => [
+            //         'reset_by' => auth()->id(),
+            //         'self_reset' => $isCurrentUser,
+            //     ],
+            //     'ip_address' => $request->ip(),
+            //     'user_agent' => $request->userAgent(),
+            // ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Password reset successfully.'
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Password reset failed: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to reset password: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -750,5 +1000,4 @@ class UserManagementController extends Controller
             ], 500);
         }
     }
-
 }

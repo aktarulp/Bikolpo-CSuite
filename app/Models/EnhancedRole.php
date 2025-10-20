@@ -88,16 +88,9 @@ class EnhancedRole extends Model
     /**
      * Get the users assigned to this role.
      */
-    public function users(): BelongsToMany
+    public function users(): HasMany
     {
-        return $this->belongsToMany(
-            EnhancedUser::class,
-            'ac_user_roles',
-            'role_id',
-            'user_id'
-        )
-            ->withPivot('assigned_by', 'assigned_at', 'expires_at')
-            ->withTimestamps();
+        return $this->hasMany(EnhancedUser::class, 'role_id');
     }
 
 

@@ -21,6 +21,8 @@
         "vite": "^7.1.2"
     },
     "dependencies": {
-        "@wiris/mathtype-ckeditor4": "^8.13.4"
+        "@ckeditor/ckeditor5-build-classic": "^39.0.2",
+        "@wiris/mathtype-ckeditor5": "^8.13.4",
+        "mathjax": "^4.0.0"
     }
 }

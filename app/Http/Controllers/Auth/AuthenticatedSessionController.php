@@ -48,13 +48,10 @@ class AuthenticatedSessionController extends Controller
         // Determine login type for fallback logic
         $loginType = $request->input('login_type', 'auto');
         
-        // Determine effective role (prefer string role, fallback to first assigned role)
+        // Determine effective role (prefer string role, fallback to role relationship)
         $effectiveRole = strtolower((string)($user->role ?? ''));
-        if ($effectiveRole === '' && method_exists($user, 'roles')) {
-            $firstRole = $user->roles()->orderBy('level')->first();
-            if ($firstRole) {
-                $effectiveRole = strtolower($firstRole->name ?? '');
-            }
+        if ($effectiveRole === '' && $user->role) {
+            $effectiveRole = strtolower($user->role->name ?? '');
         }
         
         // Debug: Log the authenticated user
