@@ -60,13 +60,6 @@
           <p class="text-gray-600 dark:text-gray-400 text-sm">
             Enter your credentials to access your dashboard
           </p>
-          @if(config('app.debug'))
-            <div class="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-              <p class="text-xs text-blue-700 dark:text-blue-300">
-                <strong>System Admin:</strong> admin@bikolpo.com / admin123
-              </p>
-            </div>
-          @endif
         </div>
 
         <!-- Login Form -->
@@ -168,20 +161,6 @@
           </div>
         </form>
 
-        <!-- Debug Information (only in debug mode) -->
-        @if(config('app.debug'))
-          <div class="mt-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-            <p class="text-xs text-gray-600 dark:text-gray-400 mb-2">
-              <strong>Debug Info:</strong>
-            </p>
-            <div class="text-xs text-gray-500 dark:text-gray-400 space-y-1">
-              <p>Session ID: {{ session()->getId() }}</p>
-              <p>Auth Guard: {{ config('auth.defaults.guard') }}</p>
-              <p>Auth Model: {{ config('auth.providers.users.model') }}</p>
-              <p>Current User: {{ auth()->check() ? auth()->user()->email : 'Not authenticated' }}</p>
-            </div>
-          </div>
-        @endif
 
         <!-- Registration Link -->
         <div class="text-center mt-5 pt-3 border-t border-gray-200/50 dark:border-gray-700/50">
