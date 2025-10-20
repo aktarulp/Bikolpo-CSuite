@@ -199,16 +199,25 @@
                             <div class="flex-shrink-0">
                                 @if($student->photo)
                                     @php
-                                        $raw = $student->photo;
-                                        if (preg_match('/^https?:\/\//i', $raw)) {
-                                            $photoUrl = $raw;
-                                        } elseif (str_starts_with($raw, '/storage/') || str_starts_with($raw, 'storage/')) {
-                                            $photoUrl = asset(ltrim($raw, '/'));
-                                        } elseif (str_starts_with($raw, 'public/')) {
-                                            $photoUrl = Storage::disk('public')->url(substr($raw, 7));
+                                        // Handle different photo path formats
+                                        $photoPath = $student->photo;
+                                        
+                                        if (str_starts_with($photoPath, 'students/') || str_starts_with($photoPath, 'student-photos/')) {
+                                            $photoUrl = asset('storage/' . $photoPath);
                                         } else {
-                                            $photoUrl = Storage::disk('public')->url($raw);
+                                            // Try both possible directories
+                                            $studentsPath = 'students/' . $photoPath;
+                                            $studentPhotosPath = 'student-photos/' . $photoPath;
+                                            
+                                            if (Storage::disk('public')->exists($studentsPath)) {
+                                                $photoUrl = asset('storage/' . $studentsPath);
+                                            } elseif (Storage::disk('public')->exists($studentPhotosPath)) {
+                                                $photoUrl = asset('storage/' . $studentPhotosPath);
+                                            } else {
+                                                $photoUrl = asset('storage/' . $photoPath);
+                                            }
                                         }
+                                        
                                     @endphp
                                     <img class="h-14 w-14 rounded-xl object-cover shadow-lg ring-2 ring-purple-500" 
                                          src="{{ $photoUrl }}" 
@@ -351,16 +360,25 @@
                                     <div class="flex-shrink-0 h-10 w-10">
                                         @if($student->photo)
                                             @php
-                                                $raw = $student->photo;
-                                                if (preg_match('/^https?:\/\//i', $raw)) {
-                                                    $photoUrl = $raw;
-                                                } elseif (str_starts_with($raw, '/storage/') || str_starts_with($raw, 'storage/')) {
-                                                    $photoUrl = asset(ltrim($raw, '/'));
-                                                } elseif (str_starts_with($raw, 'public/')) {
-                                                    $photoUrl = Storage::disk('public')->url(substr($raw, 7));
+                                                // Handle different photo path formats
+                                                $photoPath = $student->photo;
+                                                
+                                                if (str_starts_with($photoPath, 'students/') || str_starts_with($photoPath, 'student-photos/')) {
+                                                    $photoUrl = asset('storage/' . $photoPath);
                                                 } else {
-                                                    $photoUrl = Storage::disk('public')->url($raw);
+                                                    // Try both possible directories
+                                                    $studentsPath = 'students/' . $photoPath;
+                                                    $studentPhotosPath = 'student-photos/' . $photoPath;
+                                                    
+                                                    if (Storage::disk('public')->exists($studentsPath)) {
+                                                        $photoUrl = asset('storage/' . $studentsPath);
+                                                    } elseif (Storage::disk('public')->exists($studentPhotosPath)) {
+                                                        $photoUrl = asset('storage/' . $studentPhotosPath);
+                                                    } else {
+                                                        $photoUrl = asset('storage/' . $photoPath);
+                                                    }
                                                 }
+                                                
                                             @endphp
                                             <img class="h-10 w-10 rounded-full object-cover shadow-lg group-hover:scale-110 transition-transform duration-200" 
                                                  src="{{ $photoUrl }}" 

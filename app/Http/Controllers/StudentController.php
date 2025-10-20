@@ -139,7 +139,7 @@ class StudentController extends Controller
         $data['created_by'] = auth()->id();
 
         if ($request->hasFile('photo')) {
-            $data['photo'] = $request->file('photo')->store('students', 'public');
+            $data['photo'] = $request->file('photo')->store('student-photos', 'public');
         }
 
         try {
