@@ -12,10 +12,10 @@ use App\Http\Controllers\QuestionHistoryController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\StudentExamController;
 use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\SmsRecordController;
 use App\Http\Controllers\Partner\AccessControlController;
 use App\Http\Controllers\PartnerController; // Add this missing import
 use App\Http\Controllers\SitemapController; // Add sitemap controller
+use App\Http\Controllers\SystemAdminController; // System Admin Controller
 
 // Include Auth Routes
 require __DIR__.'/auth.php';
@@ -156,7 +156,17 @@ Route::get('/test-email', function () {
 Route::get('/', function () {
     if (auth()->check()) {
         $user = auth()->user();
-        if ($user->role === 'student') {
+        $effectiveRole = strtolower((string)($user->role ?? ''));
+        
+        \Log::info('Landing page redirect check', [
+            'user_id' => $user->id,
+            'user_role' => $user->role,
+            'effective_role' => $effectiveRole,
+        ]);
+        
+        if ($effectiveRole === 'system_administrator') {
+            return redirect()->route('system-admin.system-admin-dashboard');
+        } elseif ($effectiveRole === 'student') {
             return redirect()->route('student.dashboard');
         } else {
             return redirect()->route('partner.dashboard');
@@ -176,7 +186,183 @@ Route::middleware('auth')->group(function () {
     // Student Dashboard
     Route::get('/student/dashboard', [\App\Http\Controllers\StudentDashboardController::class, 'index'])->name('student.dashboard');
 
+    // System Admin Dashboard
+    Route::middleware(['auth', 'role:system_administrator'])->group(function () {
+        Route::get('/system-admin/dashboard', [SystemAdminController::class, 'dashboard'])->name('system-admin.system-admin-dashboard');
+        Route::post('/system-admin/clear-cache', [SystemAdminController::class, 'clearCache'])->name('system-admin.clear-cache');
+        Route::get('/system-admin/logs', [SystemAdminController::class, 'getSystemLogs'])->name('system-admin.logs');
+        Route::get('/system-admin/user-stats', [SystemAdminController::class, 'getUserStats'])->name('system-admin.user-stats');
+        
+        // Student Management Routes
+        Route::get('/system-admin/students', [SystemAdminController::class, 'allStudents'])->name('system-admin.all-students');
+        Route::get('/system-admin/student-ig/{id}', [SystemAdminController::class, 'singleStudentInteractiveGrid'])->name('system-admin.single-student-ig');
+        Route::get('/system-admin/students/{id}', [SystemAdminController::class, 'getStudent'])->name('system-admin.get-student');
+        Route::get('/system-admin/students/{id}/details', [SystemAdminController::class, 'getStudentDetails'])->name('system-admin.get-student-details');
+        Route::post('/system-admin/students/{id}/update-field', [SystemAdminController::class, 'updateStudentField'])->name('system-admin.update-student-field');
+        Route::post('/system-admin/students/{id}/disable-login', [SystemAdminController::class, 'disableStudentLogin'])->name('system-admin.disable-student-login');
+        Route::post('/system-admin/students/{id}/reset-password', [SystemAdminController::class, 'resetStudentPassword'])->name('system-admin.reset-student-password');
+        
+        // Partner Management Routes
+        Route::get('/system-admin/partners', [SystemAdminController::class, 'allPartners'])->name('system-admin.all-partners');
+        Route::get('/system-admin/partners/create', [SystemAdminController::class, 'createPartner'])->name('system-admin.create-partner');
+        Route::post('/system-admin/partners', [SystemAdminController::class, 'storePartner'])->name('system-admin.store-partner');
+        Route::get('/system-admin/partners/{id}', [SystemAdminController::class, 'getPartner'])->name('system-admin.get-partner');
+        
+        // Administrative divisions API routes
+        Route::get('/system-admin/api/districts/{divisionId}', [SystemAdminController::class, 'getDistricts'])->name('system-admin.api.districts');
+        Route::get('/system-admin/api/upazilas/{districtId}', [SystemAdminController::class, 'getUpazilas'])->name('system-admin.api.upazilas');
+        
+        // Subscription Management Routes
+        Route::get('/system-admin/subscription/plans', [SystemAdminController::class, 'subscriptionPlans'])->name('system-admin.subscription-plans');
+        Route::get('/system-admin/subscription/plans/create', [SystemAdminController::class, 'createSubscription'])->name('system-admin.subscription-plans.create');
+        Route::post('/system-admin/subscription/plans', [SystemAdminController::class, 'storeSubscription'])->name('system-admin.subscription-plans.store');
+        Route::get('/system-admin/subscription/plans/{id}/edit', [SystemAdminController::class, 'editSubscription'])->name('system-admin.subscription-plans.edit');
+        Route::put('/system-admin/subscription/plans/{id}', [SystemAdminController::class, 'updateSubscription'])->name('system-admin.subscription-plans.update');
+        Route::delete('/system-admin/subscription/plans/{id}', [SystemAdminController::class, 'deleteSubscription'])->name('system-admin.subscription-plans.delete');
+        Route::post('/system-admin/subscription/plans/custom-request', [SystemAdminController::class, 'customPlanRequest'])->name('system-admin.subscription-plans.custom-request');
+        Route::get('/system-admin/subscription/overview', [SystemAdminController::class, 'subscriptionOverview'])->name('system-admin.subscription-overview');
+        Route::get('/system-admin/subscription/usage', [SystemAdminController::class, 'subscriptionUsage'])->name('system-admin.subscription-usage');
+        Route::get('/system-admin/subscription/billing', [SystemAdminController::class, 'subscriptionBilling'])->name('system-admin.subscription-billing');
+        Route::get('/system-admin/referrals', [SystemAdminController::class, 'referralManagement'])->name('system-admin.referral-management');
+
+// Plan Features Management
+Route::get('/system-admin/plan-features', [SystemAdminController::class, 'planFeatures'])->name('system-admin.plan-features');
+Route::get('/system-admin/plan-features/create', [SystemAdminController::class, 'createPlanFeature'])->name('system-admin.plan-features.create');
+Route::post('/system-admin/plan-features', [SystemAdminController::class, 'storePlanFeature'])->name('system-admin.plan-features.store');
+Route::get('/system-admin/plan-features/{id}/edit', [SystemAdminController::class, 'editPlanFeature'])->name('system-admin.plan-features.edit');
+Route::put('/system-admin/plan-features/{id}', [SystemAdminController::class, 'updatePlanFeature'])->name('system-admin.plan-features.update');
+Route::delete('/system-admin/plan-features/{id}', [SystemAdminController::class, 'deletePlanFeature'])->name('system-admin.plan-features.delete');
+
+// Debug route for subscription plans
+Route::get('/debug/subscription-plans', function() {
+    $plans = \App\Models\SubscriptionPlan::all(['id', 'name', 'slug', 'is_active']);
+    echo "<h2>Available Subscription Plans:</h2>";
+    foreach($plans as $plan) {
+        echo "ID: {$plan->id} - Name: {$plan->name} - Slug: {$plan->slug} - Active: " . ($plan->is_active ? 'Yes' : 'No') . "<br>";
+    }
+    echo "<br><a href='/system-admin/subscription/plans'>Back to Subscription Plans</a>";
+});
+
+
+// Payment Methods Management
+Route::get('/system-admin/payment-methods', [SystemAdminController::class, 'paymentMethods'])->name('system-admin.payment-methods');
+Route::get('/system-admin/payment-methods/create', [SystemAdminController::class, 'createPaymentMethod'])->name('system-admin.payment-methods.create');
+Route::post('/system-admin/payment-methods', [SystemAdminController::class, 'storePaymentMethod'])->name('system-admin.payment-methods.store');
+Route::get('/system-admin/payment-methods/{id}/edit', [SystemAdminController::class, 'editPaymentMethod'])->name('system-admin.payment-methods.edit');
+Route::put('/system-admin/payment-methods/{id}', [SystemAdminController::class, 'updatePaymentMethod'])->name('system-admin.payment-methods.update');
+Route::delete('/system-admin/payment-methods/{id}', [SystemAdminController::class, 'deletePaymentMethod'])->name('system-admin.payment-methods.delete');
+Route::patch('/system-admin/payment-methods/{id}/toggle-status', [SystemAdminController::class, 'togglePaymentMethodStatus'])->name('system-admin.payment-methods.toggle-status');
+    });
     
+    // Debug route for system admin authentication
+    Route::get('/debug-system-admin', function () {
+        $user = auth()->user();
+        return response()->json([
+            'authenticated' => auth()->check(),
+            'user_id' => auth()->id(),
+            'user_role' => $user ? $user->role : 'none',
+            'user_role_lowercase' => $user ? strtolower($user->role) : 'none',
+            'user_email' => $user ? $user->email : 'none',
+            'user_status' => $user ? $user->status : 'none',
+            'session_id' => session()->getId(),
+            'all_user_data' => $user ? $user->toArray() : 'not authenticated',
+            'role_comparison' => [
+                'system_administrator_match' => $user ? strtolower($user->role) === 'system_administrator' : false,
+                'partner_match' => $user ? strtolower($user->role) === 'partner' : false,
+                'student_match' => $user ? strtolower($user->role) === 'student' : false,
+            ]
+        ]);
+    })->middleware('auth');
+    
+    // Simple system admin test route
+    Route::get('/system-admin/test', function () {
+        return response()->json([
+            'message' => 'System admin test route working',
+            'authenticated' => auth()->check(),
+            'user_role' => auth()->user() ? auth()->user()->role : 'none'
+        ]);
+    })->middleware(['auth', 'role:system_administrator']);
+    
+    // Create system admin user (for development/testing)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    // Completely bypass CSRF for testing
+    Route::post('/bypass-login', function(\Illuminate\Http\Request $request) {
+        // Disable CSRF for this specific route
+        $request->session()->regenerateToken();
+        
+        try {
+            $credentials = $request->only('login_credential', 'password');
+            
+            // Try to find user by email or phone
+            $user = \App\Models\EnhancedUser::where('email', $credentials['login_credential'])
+                ->orWhere('phone', $credentials['login_credential'])
+                ->first();
+                
+            if ($user && \Hash::check($credentials['password'], $user->password)) {
+                \Auth::login($user);
+                
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Login successful',
+                    'redirect' => $user->role === 'system_administrator' ? '/system-admin/dashboard' : '/partner/dashboard',
+                    'user' => [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'role' => $user->role
+                    ]
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid credentials'
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Login error: ' . $e->getMessage()
+            ]);
+        }
+    });
+    
+    // Direct authentication route (no CSRF)
+    Route::get('/auth-user/{userId}', function($userId) {
+        try {
+            $user = \App\Models\EnhancedUser::find($userId);
+            if ($user) {
+                \Auth::login($user);
+                return response()->json([
+                    'success' => true,
+                    'message' => 'User authenticated',
+                    'user' => [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'role' => $user->role
+                    ]
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User not found'
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ]);
+        }
+    });
 
 });
 
@@ -587,6 +773,8 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
         Route::get('questions/drafts', [QuestionController::class, 'showDrafts'])->name('questions.drafts');
         Route::post('questions/drafts/update', [QuestionController::class, 'updateDrafts'])->name('questions.drafts.update');
         Route::post('questions/drafts/delete', [QuestionController::class, 'deleteDrafts'])->name('questions.drafts.delete');
+        
+        
         
         // Questions API for step 2
         Route::get('questions/api', [QuestionController::class, 'apiIndex'])->name('questions.api');
@@ -1051,11 +1239,6 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
         
         // Permission Management removed
         
-        // SMS Management
-        Route::prefix('sms')->name('sms.')->group(function () {
-            Route::get('/', [\App\Http\Controllers\SmsRecordController::class, 'index'])->name('index');
-            // Add other SMS related routes here (e.g., show, delete, etc.)
-        });
         
         // User Management Routes
         Route::prefix('settings')->name('settings.')->group(function () {

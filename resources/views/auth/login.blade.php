@@ -161,6 +161,7 @@
           </div>
         </form>
 
+
         <!-- Registration Link -->
         <div class="text-center mt-5 pt-3 border-t border-gray-200/50 dark:border-gray-700/50">
           <p class="text-gray-600 dark:text-gray-300 text-xs mb-2">

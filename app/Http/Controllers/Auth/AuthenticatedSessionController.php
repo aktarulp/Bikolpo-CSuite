@@ -61,23 +61,29 @@ class AuthenticatedSessionController extends Controller
             'role' => $user->role,
             'role_id' => $user->role_id,
             'status' => $user->status,
+            'effective_role' => $effectiveRole,
         ]);
 
         // Redirect based on role
         switch ($effectiveRole) {
+            case 'system_administrator':
+                \Log::info('Redirecting system administrator to system admin dashboard');
+                return redirect()->route('system-admin.system-admin-dashboard');
+                
             case 'partner':
             case 'partner_admin':
+                \Log::info('Redirecting partner to partner dashboard');
                 return redirect()->route('partner.dashboard');
                 
             // Operator role removed - redirect to partner dashboard as fallback
             case 'operator':
                 // Operator role omitted; fall back to partner dashboard
+                \Log::info('Redirecting operator to partner dashboard');
                 return redirect()->route('partner.dashboard');
                 
             case 'student':
+                \Log::info('Redirecting student to student dashboard');
                 return redirect()->route('student.dashboard');
-                
-                
                 
             default:
                 \Log::warning('Unknown role detected, attempting intelligent redirect', [

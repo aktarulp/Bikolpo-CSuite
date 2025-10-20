@@ -52,7 +52,6 @@ class AppServiceProvider extends ServiceProvider
                     'total_questions' => 0,
                     'total_exams' => 0,
                     'total_question_attempts' => 0,
-                    'total_sms' => 0,
                 ]);
                 $view->with('partner', $view->getData()['partner'] ?? null);
                 return;
@@ -75,7 +74,6 @@ class AppServiceProvider extends ServiceProvider
                 'total_questions' => $existingStats['total_questions'] ?? ($partnerId ? Question::where('partner_id', $partnerId)->where('status', 'active')->count() : 0),
                 'total_exams' => $existingStats['total_exams'] ?? ($partnerId ? Exam::where('partner_id', $partnerId)->count() : 0),
                 'total_question_attempts' => $existingStats['total_question_attempts'] ?? 0,
-                'total_sms' => $existingStats['total_sms'] ?? 0,
             ];
             
             

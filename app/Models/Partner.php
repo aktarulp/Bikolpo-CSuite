@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Partner extends Model
 {
@@ -23,8 +25,8 @@ class Partner extends Model
         'alternate_mobile',
         'website',
         'facebook_page',
-        'division',
-        'district',
+        'division_id',
+        'district_id',
         'established_year',
         'subscription_plan',
         'subscription_start_date',
@@ -36,7 +38,7 @@ class Partner extends Model
         'primary_contact_no',
         'alternate_contact_person',
         'alternate_contact_no',
-        'upazila_p_s',
+        'upazila_id',
         'post_office',
         'post_code',
         'village_road_no',
@@ -47,7 +49,11 @@ class Partner extends Model
         'year_of_establishment',
         'short_address',
         'course_offers',
-        'custom_courses'
+        'custom_courses',
+        'referral_code',
+        'total_referrals',
+        'successful_referrals',
+        'referral_earnings'
     ];
 
     protected $casts = [
@@ -60,6 +66,21 @@ class Partner extends Model
         // Partner doesn't belong to a single user, but has many users
         // This method should return the primary user if needed, or null
         return $this->users()->first();
+    }
+
+    public function division()
+    {
+        return $this->belongsTo(\App\Models\Division::class);
+    }
+
+    public function district()
+    {
+        return $this->belongsTo(\App\Models\District::class);
+    }
+
+    public function upazila()
+    {
+        return $this->belongsTo(\App\Models\Upazila::class);
     }
 
     public function questions()
@@ -152,5 +173,62 @@ class Partner extends Model
     public function scopeByDistrict($query, $district)
     {
         return $query->where('district', $district);
+    }
+
+    // Referral relationships
+    public function referralCodes(): HasMany
+    {
+        return $this->hasMany(ReferralCode::class, 'referrer_id');
+    }
+
+    public function referrals(): HasMany
+    {
+        return $this->hasMany(Referral::class, 'referrer_id');
+    }
+
+    public function referredBy(): HasMany
+    {
+        return $this->hasMany(Referral::class, 'referred_id');
+    }
+
+    public function referralRewards(): HasMany
+    {
+        return $this->hasMany(ReferralReward::class, 'referrer_id');
+    }
+
+    public function getActiveReferralCode(): ?ReferralCode
+    {
+        return $this->referralCodes()
+            ->where('is_active', true)
+            ->where(function($query) {
+                $query->whereNull('expires_at')
+                      ->orWhere('expires_at', '>', now());
+            })
+            ->first();
+    }
+
+    public function generateReferralCode(): ReferralCode
+    {
+        $code = ReferralCode::createForPartner($this, [
+            'name' => $this->name . ' Referral Code',
+            'description' => 'Invite & Earn referral code for ' . $this->name
+        ]);
+
+        // Update partner's referral code
+        $this->update(['referral_code' => $code->code]);
+
+        return $code;
+    }
+
+    public function getReferralStats(): array
+    {
+        return [
+            'total_referrals' => $this->total_referrals,
+            'successful_referrals' => $this->successful_referrals,
+            'referral_earnings' => $this->referral_earnings,
+            'success_rate' => $this->total_referrals > 0 
+                ? round(($this->successful_referrals / $this->total_referrals) * 100, 1) 
+                : 0
+        ];
     }
 }

@@ -8,7 +8,6 @@ use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Services\BulkSmsBdService;
-use App\Models\SmsRecord;
 use App\Traits\HasPartnerContext;
 
 class ExamAssignmentController extends Controller
