@@ -50,6 +50,46 @@ class Student extends Model
     ];
 
     /**
+     * Validation rules for student creation/update
+     */
+    public static function getValidationRules($studentId = null)
+    {
+        $partnerId = request('partner_id');
+        
+        $rules = [
+            'full_name' => 'required|string|max:255',
+            'student_id' => 'required|string|max:50',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:20',
+            'father_phone' => 'nullable|string|max:20',
+            'mother_phone' => 'nullable|string|max:20',
+            'guardian_phone' => 'nullable|string|max:20',
+            'partner_id' => 'required|exists:partners,id',
+        ];
+
+        // Add unique constraints that are scoped to partner_id
+        if ($studentId) {
+            // For updates, exclude current student from uniqueness check
+            $rules['student_id'] .= '|unique:students,student_id,' . $studentId . ',id,partner_id,' . $partnerId;
+            $rules['email'] .= '|unique:students,email,' . $studentId . ',id,partner_id,' . $partnerId;
+            $rules['phone'] .= '|unique:students,phone,' . $studentId . ',id,partner_id,' . $partnerId;
+            $rules['father_phone'] .= '|unique:students,father_phone,' . $studentId . ',id,partner_id,' . $partnerId;
+            $rules['mother_phone'] .= '|unique:students,mother_phone,' . $studentId . ',id,partner_id,' . $partnerId;
+            $rules['guardian_phone'] .= '|unique:students,guardian_phone,' . $studentId . ',id,partner_id,' . $partnerId;
+        } else {
+            // For creation, check uniqueness within partner
+            $rules['student_id'] .= '|unique:students,student_id,NULL,id,partner_id,' . $partnerId;
+            $rules['email'] .= '|unique:students,email,NULL,id,partner_id,' . $partnerId;
+            $rules['phone'] .= '|unique:students,phone,NULL,id,partner_id,' . $partnerId;
+            $rules['father_phone'] .= '|unique:students,father_phone,NULL,id,partner_id,' . $partnerId;
+            $rules['mother_phone'] .= '|unique:students,mother_phone,NULL,id,partner_id,' . $partnerId;
+            $rules['guardian_phone'] .= '|unique:students,guardian_phone,NULL,id,partner_id,' . $partnerId;
+        }
+
+        return $rules;
+    }
+
+    /**
      * Check if login is enabled for this student
      */
     public function isLoginEnabled()

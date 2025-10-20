@@ -19,7 +19,6 @@ class CreateExamAccessCodesTable extends Migration
             $table->unsignedBigInteger('student_id')->index('exam_access_codes_student_id_foreign');
             $table->string('access_code', 6)->unique('exam_access_codes_access_code_unique');
             $table->enum('status', ['active', 'used', 'expired'])->default('active');
-            $table->string('sms_status')->default('pending');
             $table->timestamp('used_at')->nullable();
             $table->timestamp('expires_at')->nullable();
             $table->timestamps();

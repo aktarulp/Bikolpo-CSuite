@@ -72,34 +72,56 @@ class StudentController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $partnerId = $this->getPartnerId();
+        
+        // Set partner_id in request for validation rules
+        $request->merge(['partner_id' => $partnerId]);
+        
+        // Basic validation rules first
+        $rules = [
             'full_name' => 'required|string|max:255',
-            'student_id' => 'required|string|max:50|unique:students,student_id',
+            'student_id' => 'required|string|max:50',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:20',
+            'father_phone' => 'nullable|string|max:20',
+            'mother_phone' => 'nullable|string|max:20',
+            'guardian_phone' => 'nullable|string|max:20',
             'date_of_birth' => 'required|date',
             'enroll_date' => 'required|date',
             'gender' => 'required|in:male,female,other',
-            'email' => 'required|email|unique:students,email',
-            'phone' => 'required|string|regex:/^01[3-9][0-9]{8}$/|max:20|unique:students,phone',
             'address' => 'nullable|string|max:500',
             'city' => 'nullable|string|max:100',
             'school_college' => 'nullable|string|max:255',
             'class_grade' => 'nullable|string|max:50',
             'father_name' => 'nullable|string|max:255',
-            'father_phone' => 'nullable|string|regex:/^01[3-9][0-9]{8}$/|max:20',
             'mother_name' => 'nullable|string|max:255',
-            'mother_phone' => 'nullable|string|regex:/^01[3-9][0-9]{8}$/|max:20',
             'guardian' => 'nullable|in:Father,Mother,Other',
             'guardian_name' => 'nullable|string|max:255',
-            'guardian_phone' => 'nullable|string|regex:/^01[3-9][0-9]{8}$/|max:20|unique:students,guardian_phone',
             'blood_group' => 'required|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
             'religion' => 'required|in:Islam,Hinduism,Christianity,Buddhism',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'course_id' => 'required|exists:courses,id',
             'batch_id' => 'required|exists:batches,id',
-        ], [
-            'email.unique' => 'This email address is already registered.',
+        ];
+        
+        // Add phone number regex validation
+        $rules['phone'] .= '|regex:/^01[3-9][0-9]{8}$/';
+        $rules['father_phone'] .= '|regex:/^01[3-9][0-9]{8}$/';
+        $rules['mother_phone'] .= '|regex:/^01[3-9][0-9]{8}$/';
+        $rules['guardian_phone'] .= '|regex:/^01[3-9][0-9]{8}$/';
+        
+        // Add partner-scoped unique constraints
+        $rules['student_id'] .= '|unique:students,student_id,NULL,id,partner_id,' . $partnerId;
+        $rules['email'] .= '|unique:students,email,NULL,id,partner_id,' . $partnerId;
+        $rules['phone'] .= '|unique:students,phone,NULL,id,partner_id,' . $partnerId;
+        $rules['father_phone'] .= '|unique:students,father_phone,NULL,id,partner_id,' . $partnerId;
+        $rules['mother_phone'] .= '|unique:students,mother_phone,NULL,id,partner_id,' . $partnerId;
+        $rules['guardian_phone'] .= '|unique:students,guardian_phone,NULL,id,partner_id,' . $partnerId;
+        
+        $request->validate($rules, [
+            'email.unique' => 'This email address is already registered in your organization.',
             'phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
-            'phone.unique' => 'This phone number is already registered.',
+            'phone.unique' => 'This phone number is already registered in your organization.',
             'father_phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
             'mother_phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
             'guardian_phone.regex' => 'Please enter a valid Bangladeshi phone number (e.g., 01XXXXXXXXX)',
@@ -120,10 +142,22 @@ class StudentController extends Controller
             $data['photo'] = $request->file('photo')->store('students', 'public');
         }
 
-        Student::create($data);
-
-        return redirect()->route('partner.students.index')
-            ->with('success', 'Student created successfully.');
+        try {
+            $student = Student::create($data);
+            
+            return redirect()->route('partner.students.index')
+                ->with('success', 'Student created successfully.');
+        } catch (\Exception $e) {
+            \Log::error('Student creation failed', [
+                'error' => $e->getMessage(),
+                'data' => $data,
+                'partner_id' => $partnerId
+            ]);
+            
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['error' => 'Failed to create student: ' . $e->getMessage()]);
+        }
     }
 
     public function show(Student $student)
@@ -144,31 +178,51 @@ class StudentController extends Controller
 
     public function update(Request $request, Student $student)
     {
-        $request->validate([
+        $partnerId = $this->getPartnerId();
+        
+        // Set partner_id in request for validation rules
+        $request->merge(['partner_id' => $partnerId]);
+        
+        // Basic validation rules for update
+        $rules = [
             'full_name' => 'required|string|max:255',
-            'student_id' => 'required|string|max:50|unique:students,student_id,'.$student->id,
+            'student_id' => 'required|string|max:50',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:20',
+            'father_phone' => 'nullable|string|max:20',
+            'mother_phone' => 'nullable|string|max:20',
+            'guardian_phone' => 'nullable|string|max:20',
             'date_of_birth' => 'required|date',
             'enroll_date' => 'required|date',
             'gender' => 'required|in:male,female,other',
-            'email' => 'required|email|unique:students,email,'.$student->id,
-            'phone' => 'required|string|regex:/^01[3-9][0-9]{8}$/|max:20|unique:students,phone,'.$student->id,
             'address' => 'nullable|string|max:500',
             'city' => 'nullable|string|max:100',
             'school_college' => 'nullable|string|max:255',
             'class_grade' => 'nullable|string|max:50',
             'father_name' => 'nullable|string|max:255',
-            'father_phone' => 'nullable|string|regex:/^01[3-9][0-9]{8}$/|max:20',
             'mother_name' => 'nullable|string|max:255',
-            'mother_phone' => 'nullable|string|regex:/^01[3-9][0-9]{8}$/|max:20',
             'guardian' => 'nullable|in:Father,Mother,Other',
             'guardian_name' => 'nullable|string|max:255',
-            'guardian_phone' => 'nullable|string|regex:/^01[3-9][0-9]{8}$/|max:20',
             'blood_group' => 'required|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
             'religion' => 'required|in:Islam,Hinduism,Christianity,Buddhism',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'course_id' => 'required|exists:courses,id',
             'batch_id' => 'required|exists:batches,id',
-        ]);
+        ];
+        
+        // Add phone number regex validation
+        $rules['phone'] .= '|regex:/^01[3-9][0-9]{8}$/';
+        $rules['father_phone'] .= '|regex:/^01[3-9][0-9]{8}$/';
+        $rules['mother_phone'] .= '|regex:/^01[3-9][0-9]{8}$/';
+        $rules['guardian_phone'] .= '|regex:/^01[3-9][0-9]{8}$/';
+        
+        // Add partner-scoped unique constraints for update
+        $rules['student_id'] .= '|unique:students,student_id,' . $student->id . ',id,partner_id,' . $partnerId;
+        $rules['email'] .= '|unique:students,email,' . $student->id . ',id,partner_id,' . $partnerId;
+        $rules['phone'] .= '|unique:students,phone,' . $student->id . ',id,partner_id,' . $partnerId;
+        $rules['father_phone'] .= '|unique:students,father_phone,' . $student->id . ',id,partner_id,' . $partnerId;
+        $rules['mother_phone'] .= '|unique:students,mother_phone,' . $student->id . ',id,partner_id,' . $partnerId;
+        $rules['guardian_phone'] .= '|unique:students,guardian_phone,' . $student->id . ',id,partner_id,' . $partnerId;
 
         $data = $request->all();
 

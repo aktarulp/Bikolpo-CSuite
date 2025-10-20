@@ -7,27 +7,27 @@ use App\Models\ExamAccessCode;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Services\BulkSmsBdService;
-use App\Models\SmsRecord;
 use App\Traits\HasPartnerContext;
 
 class ExamAssignmentController extends Controller
 {
     use HasPartnerContext;
 
-    protected $bulkSmsBdService;
 
-    public function __construct(BulkSmsBdService $bulkSmsBdService)
-    {
-        $this->bulkSmsBdService = $bulkSmsBdService;
-    }
 
     /**
      * Show the exam assignment page
      */
     public function index(Request $request, Exam $exam)
     {
-        $exam->load(['assignedStudents', 'accessCodes.student']);
+        $exam->load(['assignedStudents', 'accessCodes' => function($query) {
+            $query->with('student')->whereNotNull('student_id');
+        }]);
+
+        // Clean up any orphaned access codes (access codes with null student_id)
+        ExamAccessCode::where('exam_id', $exam->id)
+            ->whereNull('student_id')
+            ->delete();
         
         // Get the authenticated user's partner ID
         $user = auth()->user();
@@ -78,15 +78,6 @@ class ExamAssignmentController extends Controller
         $courses = \App\Models\Course::where('partner_id', $partnerId)->get();
         $batches = \App\Models\Batch::where('partner_id', $partnerId)->get();
 
-        // Debug information
-        \Log::info('Exam Assignment Debug', [
-            'partner_id' => $partnerId,
-            'exam_partner_id' => $exam->partner_id,
-            'total_students' => Student::where('partner_id', $partnerId)->count(),
-            'active_students' => Student::where('partner_id', $partnerId)->where('status', 'active')->count(),
-            'assigned_students_count' => $exam->assignedStudents->count(),
-            'available_students_count' => $availableStudents->count(),
-        ]);
 
         return view('partner.exams.assign', compact('exam', 'availableStudents', 'courses', 'batches'));
     }
@@ -104,11 +95,22 @@ class ExamAssignmentController extends Controller
         }
 
         $request->validate([
-            'student_ids' => 'required|array',
+            'student_ids' => 'required|array|min:1',
             'student_ids.*' => 'exists:students,id',
+        ], [
+            'student_ids.required' => 'Please select at least one student to assign.',
+            'student_ids.array' => 'Student selection must be an array.',
+            'student_ids.min' => 'Please select at least one student to assign.',
+            'student_ids.*.exists' => 'One or more selected students are invalid.',
         ]);
 
         $studentIds = $request->student_ids;
+        
+        // Additional check to ensure student_ids is not empty
+        if (empty($studentIds)) {
+            return back()->with('error', 'Please select at least one student to assign.');
+        }
+        
         $assignedCount = 0;
 
         // ✅ Validate that all students belong to current partner
@@ -158,32 +160,57 @@ class ExamAssignmentController extends Controller
 
         // ✅ Ensure exam belongs to current partner
         if ($exam->partner_id !== $partnerId) {
-            return response()->json(['success' => false, 'message' => 'Unauthorized access to this exam.'], 403);
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Unauthorized access to this exam.'], 403);
+            }
+            return redirect()->back()->withErrors(['error' => 'Unauthorized access to this exam.']);
         }
 
         $request->validate([
-            'student_id' => 'required|exists:students,id',
+            'assignment_id' => 'required|exists:exam_access_codes,id',
         ]);
 
-        // ✅ Ensure student belongs to current partner
-        $student = \App\Models\Student::where('id', $request->student_id)
-            ->where('partner_id', $partnerId)
+        $assignment = ExamAccessCode::where('id', $request->assignment_id)
+            ->where('exam_id', $exam->id)
+            ->with('student')
             ->first();
 
-        if (!$student) {
-            return response()->json(['success' => false, 'message' => 'Student not found or access denied.'], 404);
+        if (!$assignment) {
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Assignment not found or access denied.'], 404);
+            }
+            return redirect()->back()->withErrors(['error' => 'Assignment not found or access denied.']);
         }
 
-        $assignment = ExamAccessCode::where('exam_id', $exam->id)
-            ->where('student_id', $request->student_id)
-            ->first();
-
-        if ($assignment) {
+        // Handle case where student is null (orphaned access code)
+        if (!$assignment->student) {
+            // Delete the orphaned access code
             $assignment->delete();
+            
+            // Handle both AJAX and regular form submissions
+            if ($request->ajax()) {
+                return response()->json(['success' => true, 'message' => 'Orphaned assignment removed successfully.']);
+            }
+            
+            return redirect()->back()->with('success', 'Orphaned assignment removed successfully.');
+        }
+
+        // ✅ Ensure the assignment belongs to a student from current partner
+        if ($assignment->student->partner_id !== $partnerId) {
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Student not found or access denied.'], 404);
+            }
+            return redirect()->back()->withErrors(['error' => 'Student not found or access denied.']);
+        }
+
+        $assignment->delete();
+        
+        // Handle both AJAX and regular form submissions
+        if ($request->ajax()) {
             return response()->json(['success' => true, 'message' => 'Student assignment removed successfully.']);
         }
-
-        return response()->json(['success' => false, 'message' => 'Assignment not found.'], 404);
+        
+        return redirect()->back()->with('success', 'Student assignment removed successfully.');
     }
 
     /**
@@ -242,7 +269,7 @@ class ExamAssignmentController extends Controller
         }
 
         $request->validate([
-            'action' => 'required|in:assign,remove,regenerate,send_sms',
+            'action' => 'required|in:assign,remove,regenerate',
             'assignment_ids' => 'required|array',
             'assignment_ids.*' => 'exists:exam_access_codes,id',
         ]);
@@ -268,10 +295,6 @@ class ExamAssignmentController extends Controller
                 $message = "Successfully regenerated {$count} access codes.";
                 break;
 
-            case 'send_sms':
-                $count = $this->bulkSendSms($exam, $assignmentIds);
-                $message = "Attempted to send SMS to {$count} assignments.";
-                break;
         }
 
         return response()->json(['success' => true, 'message' => $message]);
@@ -314,7 +337,6 @@ class ExamAssignmentController extends Controller
                 'access_code' => $newCode,
                 'status' => 'active',
                 'used_at' => null,
-                'sms_status' => 'pending',
             ]);
             $count++;
         }
@@ -322,32 +344,6 @@ class ExamAssignmentController extends Controller
         return $count;
     }
 
-    /**
-     * Bulk send SMS to assignments.
-     */
-    private function bulkSendSms(Exam $exam, array $assignmentIds)
-    {
-        $sentCount = 0;
-        $failedCount = 0;
-
-        foreach ($assignmentIds as $assignmentId) {
-            $assignment = ExamAccessCode::with(['student', 'exam.partner'])
-                                        ->find($assignmentId);
-
-            if ($assignment && $assignment->student && $assignment->student->phone && $assignment->exam && $assignment->exam->partner) {
-                $message = "Dear {$assignment->student->full_name},\nYou are assigned to exam {$assignment->exam->title} by {$assignment->exam->partner->name}, scheduled at {$assignment->exam->formatted_start_time} & your access code is: {$assignment->access_code}.\nVisit: " . config('app.url') . "/LiveExam to access the exam.";
-
-                // For now, just mark as sent without actual SMS sending
-                // This needs to be implemented with actual SMS service
-                $assignment->update(['sms_status' => 'sent']);
-                $sentCount++;
-            } else if ($assignment) {
-                $assignment->update(['sms_status' => 'skipped_no_phone']);
-                $failedCount++;
-            }
-        }
-        return $sentCount;
-    }
 
     /**
      * Export assignments

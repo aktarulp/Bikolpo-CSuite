@@ -18,7 +18,6 @@ use App\Models\ExamResult;
 use App\Services\ExamManagementService;
 use App\Services\ExamQuestionManagementService;
 use App\Services\PdfGeneratorService;
-use App\Services\BulkSmsBdService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;

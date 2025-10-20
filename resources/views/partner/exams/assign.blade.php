@@ -114,7 +114,6 @@
                                         <option value="">Actions</option>
                                         <option value="remove">Remove</option>
                                         <option value="regenerate">Regenerate</option>
-                                        <option value="send_sms">Send SMS</option>
                                     </select>
                                     <button type="submit" 
                                             class="px-3 py-1.5 bg-red-600 text-white text-xs font-medium rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1"
@@ -138,24 +137,26 @@
                                                class="mt-1 h-5 w-5 text-red-600 focus:ring-red-500 border-gray-300 rounded assigned-student-checkbox">
                                         
                                         <div class="flex-shrink-0">
-                                            @if($accessCode->student->photo)
+                                            @if($accessCode->student && $accessCode->student->photo)
                                                 <img class="h-12 w-12 rounded-full object-cover border border-gray-200" 
                                                      src="{{ Storage::url($accessCode->student->photo) }}" 
                                                      alt="{{ $accessCode->student->full_name }}">
                                             @else
                                                 <div class="h-12 w-12 rounded-full bg-blue-500 flex items-center justify-center border border-gray-200">
-                                                    <span class="text-base font-bold text-white">{{ substr($accessCode->student->full_name, 0, 1) }}</span>
+                                                    <span class="text-base font-bold text-white">
+                                                        {{ $accessCode->student ? substr($accessCode->student->full_name, 0, 1) : '?' }}
+                                                    </span>
                                                 </div>
                                             @endif
                                         </div>
                                         
                                         <div class="flex-1 min-w-0">
-                                            <p class="text-base font-semibold text-gray-900 leading-snug truncate">{{ $accessCode->student->full_name }}
+                                            <p class="text-base font-semibold text-gray-900 leading-snug truncate">{{ $accessCode->student ? $accessCode->student->full_name : 'Unknown Student' }}
                                                 @if($accessCode->used_at)
                                                     <span class="ml-1 text-green-600 font-medium" title="Exam Taken">✓</span>
                                                 @endif
                                             </p>
-                                            <p class="text-sm text-gray-600 truncate">{{ $accessCode->student->phone }}</p>
+                                            <p class="text-sm text-gray-600 truncate">{{ $accessCode->student ? $accessCode->student->phone : 'N/A' }}</p>
                                             
                                         </div>
                                     </div>
@@ -166,22 +167,11 @@
                                 <div class="p-4 space-y-2 bg-gradient-to-br from-white to-gray-50">
                                         <div class="flex items-center justify-between text-sm">
                                             <span class="font-medium text-gray-700">Phone:</span>
-                                            <span class="text-gray-900">{{ $accessCode->student->phone ?? 'N/A' }}</span>
+                                            <span class="text-gray-900">{{ $accessCode->student ? ($accessCode->student->phone ?? 'N/A') : 'N/A' }}</span>
                                         </div>
                                         <div class="flex items-center justify-between text-sm">
                                             <span class="font-medium text-gray-700">Access Code:</span>
                                             <span class="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded text-sm">{{ $accessCode->access_code }}</span>
-                                        </div>
-                                        <div class="flex items-center justify-between text-sm sms-status-display" data-assignment-id="{{ $accessCode->id }}">
-                                            <span class="font-medium text-gray-700">SMS Status:</span>
-                                            <span class="font-semibold 
-                                                @if($accessCode->sms_status === 'sent') text-green-600 
-                                                @elseif($accessCode->sms_status === 'failed') text-red-600 
-                                                @elseif($accessCode->sms_status === 'skipped_no_phone') text-yellow-600 
-                                                @else text-gray-500 
-                                                @endif">
-                                                {{ ucfirst(str_replace('_', ' ', $accessCode->sms_status ?? 'pending')) }}
-                                            </span>
                                         </div>
                                     </div>
 
@@ -191,7 +181,7 @@
                                         <input type="hidden" name="assignment_id" value="{{ $accessCode->id }}">
                                         <button type="submit" 
                                                 class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                                                onclick="return confirm('Regenerate code for {{ $accessCode->student->full_name }}?')">
+                                                onclick="return confirm('Regenerate code for {{ $accessCode->student ? $accessCode->student->full_name : 'this student' }}?')">
                                             <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 1024 1024"><g><path d="M277.333333 277.333333c0-70.4 57.6-128 128-128h213.333334c70.4 0 128 57.6 128 128h85.333333c0-117.333333-96-213.333333-213.333333-213.333333H405.333333C288 64 192 160 192 277.333333v238.933334h85.333333V277.333333z"></path><path d="M98.133333 469.333333l136.533334 179.2 136.533333-179.2z"></path><path d="M746.666667 746.666667c0 70.4-57.6 128-128 128H405.333333c-70.4 0-128-57.6-128-128H192c0 117.333333 96 213.333333 213.333333 213.333333h213.333334c117.333333 0 213.333333-96 213.333333-213.333333V490.666667h-85.333333v256z"></path><path d="M652.8 554.666667l136.533333-179.2 136.533334 179.2z"></path></g></svg>
                                             Regenerate
                                         </button>
@@ -203,21 +193,13 @@
                                         <input type="hidden" name="assignment_id" value="{{ $accessCode->id }}">
                                         <button type="submit" 
                                                 class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                                                onclick="return confirm('Remove {{ $accessCode->student->full_name }}?')">
+                                                onclick="return confirm('Remove {{ $accessCode->student ? $accessCode->student->full_name : 'this student' }}?')">
                                             <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
                                                 <g><path d="M14,18.5A2.5,2.5,0,0,1,16.5,16a2.6,2.6,0,0,1,.74.12L18,7H6l.93,13.07a1,1,0,0,0,1,.93H11l1-2h2.05A2.73,2.73,0,0,1,14,18.5Z" style="fill: #2ca9bc; stroke-width: 2;"></path><path d="M17.24,16.11,18,7H6l.93,13.07a1,1,0,0,0,1,.93H11l1-2h2" style="fill: none; stroke: #000000; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path><path d="M7,7l.81-3.24a1,1,0,0,1,1-.76h6.44a1,1,0,0,1,1,.76L17,7ZM5,7H19m0,11.5A2.5,2.5,0,1,0,16.5,21,2.5,2.5,0,0,0,19,18.5Z" style="fill: none; stroke: #000000; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path></g></svg>
                                             Remove
                                         </button>
                                     </form>
                                      
-                                     <button type="button" 
-                                             onclick="sendSms([{{ $accessCode->id }}], '{{ $accessCode->student->full_name }}')"
-                                             class="inline-flex items-center p-1.5 border border-transparent text-xs font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                                             title="Send SMS">
-                                         <svg class="w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                         </svg>Send
-                                     </button>
                                 </div>
                             </div>
                             @endforeach
@@ -329,7 +311,7 @@
                 
                 <div class="p-3">
                     @if($availableStudents->count() > 0)
-                        <form id="assign-students-form" method="POST" action="{{ route('partner.exams.assign-students', $exam) }}">
+                        <form id="assign-students-form" method="POST" action="{{ route('partner.exams.assign-students', $exam) }}" onsubmit="return validateStudentSelection()">
                             @csrf
                             
                             <!-- Bulk Actions -->
@@ -422,6 +404,25 @@
         </div>
     </div>
 </div>
+
+<!-- Success/Error Messages -->
+@if(session('success'))
+    <div class="fixed inset-x-0 top-0 z-50 w-full md:w-1/2 lg:w-1/3 mx-auto mt-4 px-4">
+        <div class="p-3 rounded-md mb-3 text-sm flex items-center justify-between bg-green-100 text-green-800">
+            <span>{{ session('success') }}</span>
+            <button onclick="this.parentElement.remove()" class="ml-2 text-green-600 hover:text-green-800">×</button>
+        </div>
+    </div>
+@endif
+
+@if(session('error') || $errors->any())
+    <div class="fixed inset-x-0 top-0 z-50 w-full md:w-1/2 lg:w-1/3 mx-auto mt-4 px-4">
+        <div class="p-3 rounded-md mb-3 text-sm flex items-center justify-between bg-red-100 text-red-800">
+            <span>{{ session('error') ?? $errors->first() }}</span>
+            <button onclick="this.parentElement.remove()" class="ml-2 text-red-600 hover:text-red-800">×</button>
+        </div>
+    </div>
+@endif
 
 @push('scripts')
 <script>
@@ -583,97 +584,19 @@ function displayMessage(message, type = 'success') {
             selectedCountElement.textContent = checkedCount;
         }
     }
-
-    // Function to update SMS status on the UI
-    function updateSmsStatusInUi(assignmentId, newStatus) {
-        const statusSpan = document.querySelector(`.sms-status-display[data-assignment-id="${assignmentId}"] span`);
-        if (statusSpan) {
-            statusSpan.textContent = newStatus.replace(/_/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-            statusSpan.className = 'font-semibold ';
-            if (newStatus === 'sent') {
-                statusSpan.classList.add('text-green-600');
-            } else if (newStatus === 'failed') {
-                statusSpan.classList.add('text-red-600');
-            } else if (newStatus === 'skipped_no_phone') {
-                statusSpan.classList.add('text-yellow-600');
-            } else {
-                statusSpan.classList.add('text-gray-500');
-            }
-        }
-    }
-
-    // Send SMS function
-    async function sendSms(assignmentIds, studentName = 'selected students') {
-        if (!confirm(`Send SMS to ${studentName}?`)) {
-            return;
-        }
-
-        const url = `{{ route('partner.exams.send-assignment-sms', $exam) }}`;
-
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify({ assignment_ids: assignmentIds })
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                displayMessage(data.message, 'success');
-                // Update status for each sent SMS
-                assignmentIds.forEach(id => updateSmsStatusInUi(id, 'sent')); // Assuming all in a successful bulk send are 'sent'
-            } else {
-                displayMessage(`Error: ${data.message || 'Failed to send SMS.'}`, 'error');
-                // You might need to reload or fetch specific assignment statuses if individual failures are reported.
-                // For now, let's assume if the overall call failed, we show a generic error.
-            }
-        } catch (error) {
-            console.error('Error sending SMS:', error);
-            displayMessage('An unexpected error occurred while sending SMS.', 'error');
-        }
-    }
-
-    // Bulk Send SMS function
-    async function bulkSendSms() {
-        const selectedAssignmentCheckboxes = document.querySelectorAll('.assigned-student-checkbox:checked');
-        const assignmentIds = Array.from(selectedAssignmentCheckboxes).map(cb => cb.value);
-
-        if (assignmentIds.length === 0) {
-            displayMessage('Please select at least one student to send SMS.', 'error');
-            return;
+    
+    // Validate student selection before form submission
+    function validateStudentSelection() {
+        const selectedStudents = document.querySelectorAll('.student-checkbox:checked');
+        
+        if (selectedStudents.length === 0) {
+            alert('Please select at least one student to assign to the exam.');
+            return false;
         }
         
-        const url = `{{ route('partner.exams.bulk-operations', $exam) }}`;
-        const action = 'send_sms';
-
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify({ action: action, assignment_ids: assignmentIds })
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                displayMessage(data.message, 'success');
-                // For bulk operations, a full reload might still be simpler to reflect all changes accurately
-                window.location.reload();
-            } else {
-                displayMessage(`Error: ${data.message || 'Failed to perform bulk SMS action.'}`, 'error');
-            }
-        } catch (error) {
-            console.error('Error during bulk SMS action:', error);
-            displayMessage('An unexpected error occurred during bulk SMS action.', 'error');
-        }
+        return true;
     }
+
 
     // New function for bulk actions confirmation
     function confirmBulkAction() {
@@ -687,10 +610,7 @@ function displayMessage(message, type = 'success') {
             return false;
         }
 
-        if (selectedAction === 'send_sms') {
-            bulkSendSms(); // Call the async function directly
-            return false; // Prevent default form submission
-        } else if (selectedAction) {
+        if (selectedAction) {
             return confirm(`Are you sure you want to ${selectedAction} ${assignmentIds.length} assignments?`);
         }
 

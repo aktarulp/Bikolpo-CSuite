@@ -12,7 +12,6 @@ use App\Http\Controllers\QuestionHistoryController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\StudentExamController;
 use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\SmsRecordController;
 use App\Http\Controllers\Partner\AccessControlController;
 use App\Http\Controllers\PartnerController; // Add this missing import
 use App\Http\Controllers\SitemapController; // Add sitemap controller
@@ -686,7 +685,6 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
         Route::post('exams/{exam}/regenerate-code', [\App\Http\Controllers\ExamAssignmentController::class, 'regenerateCode'])->name('exams.regenerate-code');
         Route::post('exams/{exam}/bulk-operations', [\App\Http\Controllers\ExamAssignmentController::class, 'bulkOperations'])->name('exams.bulk-operations');
         Route::get('exams/{exam}/export-assignments', [\App\Http\Controllers\ExamAssignmentController::class, 'exportAssignments'])->name('exams.export-assignments');
-        Route::post('exams/{exam}/send-assignment-sms', [\App\Http\Controllers\ExamAssignmentController::class, 'sendAssignmentSms'])->name('exams.send-assignment-sms');
         
         // Student Assignment Routes (must come BEFORE resource route)
         Route::match(['get', 'post', 'put'], 'students/assignment', [StudentController::class, 'assignment'])->name('students.assignment');
@@ -1051,11 +1049,6 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
         
         // Permission Management removed
         
-        // SMS Management
-        Route::prefix('sms')->name('sms.')->group(function () {
-            Route::get('/', [\App\Http\Controllers\SmsRecordController::class, 'index'])->name('index');
-            // Add other SMS related routes here (e.g., show, delete, etc.)
-        });
         
         // User Management Routes
         Route::prefix('settings')->name('settings.')->group(function () {
