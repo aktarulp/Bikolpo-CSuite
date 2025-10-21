@@ -687,10 +687,8 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
         Route::get('exams/{exam}/export-assignments', [\App\Http\Controllers\ExamAssignmentController::class, 'exportAssignments'])->name('exams.export-assignments');
         
         
-        // Student Management
-        Route::resource('students', StudentController::class);
-        
-        
+        // Student Management - Handled in partner_students.php
+        // Route::resource('students', StudentController::class); // REMOVED: Duplicate routes with partner_students.php
         
         // Student Migration Management
         Route::prefix('students')->name('students.')->group(function () {
