@@ -1,24 +1,80 @@
 *.log
 .DS_Store
+Thumbs.db
+
+# Environment files - NEVER commit these
 .env
 .env.backup
 .env.production
+.env.local
+.env.*.local
+
+# IDE and Editor files
 .phpactor.json
-.phpunit.result.cache
 /.fleet
 /.idea
 /.nova
-/.phpunit.cache
 /.vscode
 /.zed
-/auth.json
+.editorconfig
+
+# Development files
 /node_modules
-/public/build
+/.vite
 /public/hot
-/public/storage
+.phpunit.result.cache
+/.phpunit.cache
+/auth.json
+
+# Build output - We'll commit this for easy deployment
+# /public/build
+
+# Dependencies - Commit vendor for shared hosting
+# /vendor
+
+# Storage - Don't commit uploaded files or cache
 /storage/*.key
 /storage/pail
-/vendor
+/storage/app/public/*
+!/storage/app/public/.gitignore
+/storage/framework/cache/*
+!/storage/framework/cache/.gitignore
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitignore
+/storage/framework/views/*
+!/storage/framework/views/.gitignore
+/storage/logs/*
+!/storage/logs/.gitignore
+/storage/debugbar/*
+
+# Uploaded files - Don't commit user uploads
+/uploads/*
+!/uploads/.gitignore
+!/uploads/README.md
+
+# Temporary files
+/public/storage
+/storage_link
 Homestead.json
 Homestead.yaml
+
+# Test files - Keep in repo for development
+# /tests
+
+# Documentation - Keep in repo
+# /docs
+
+# Deployment test files
+test-*.php
+setup-storage.php
+clear-cache.php
+verify-assets.php
+check-asset-urls.php
+diagnose.php
+
+# OS files
+.DS_Store
 Thumbs.db
+*.swp
+*.swo
+*~

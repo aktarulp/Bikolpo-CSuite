@@ -1,0 +1,106 @@
+{
+  "fonts/HindSiliguri-Bold.ttf": {
+    "file": "assets/HindSiliguri-Bold-DVHlo15N.ttf",
+    "src": "fonts/HindSiliguri-Bold.ttf"
+  },
+  "fonts/HindSiliguri-Light.ttf": {
+    "file": "assets/HindSiliguri-Light-UBWSup-q.ttf",
+    "src": "fonts/HindSiliguri-Light.ttf"
+  },
+  "fonts/HindSiliguri-Medium.ttf": {
+    "file": "assets/HindSiliguri-Medium-X7Kyy9T3.ttf",
+    "src": "fonts/HindSiliguri-Medium.ttf"
+  },
+  "fonts/HindSiliguri-Regular.ttf": {
+    "file": "assets/HindSiliguri-Regular-Ch41_erl.ttf",
+    "src": "fonts/HindSiliguri-Regular.ttf"
+  },
+  "fonts/HindSiliguri-SemiBold.ttf": {
+    "file": "assets/HindSiliguri-SemiBold-KoMTq85X.ttf",
+    "src": "fonts/HindSiliguri-SemiBold.ttf"
+  },
+  "fonts/Inter-Bold.woff2": {
+    "file": "assets/Inter-Bold-CD3Pr7BX.woff2",
+    "src": "fonts/Inter-Bold.woff2"
+  },
+  "fonts/Inter-BoldItalic.woff2": {
+    "file": "assets/Inter-BoldItalic-D3V_KwY_.woff2",
+    "src": "fonts/Inter-BoldItalic.woff2"
+  },
+  "fonts/Inter-ExtraBold.woff2": {
+    "file": "assets/Inter-ExtraBold-DKnKKS_V.woff2",
+    "src": "fonts/Inter-ExtraBold.woff2"
+  },
+  "fonts/Inter-ExtraLight.woff2": {
+    "file": "assets/Inter-ExtraLight-KI2qVeFN.woff2",
+    "src": "fonts/Inter-ExtraLight.woff2"
+  },
+  "fonts/Inter-Italic.woff2": {
+    "file": "assets/Inter-Italic-BMEQ2Kjv.woff2",
+    "src": "fonts/Inter-Italic.woff2"
+  },
+  "fonts/Inter-Light.woff2": {
+    "file": "assets/Inter-Light-CdfTos-h.woff2",
+    "src": "fonts/Inter-Light.woff2"
+  },
+  "fonts/Inter-LightItalic.woff2": {
+    "file": "assets/Inter-LightItalic-CA7VgT2P.woff2",
+    "src": "fonts/Inter-LightItalic.woff2"
+  },
+  "fonts/Inter-Medium.woff2": {
+    "file": "assets/Inter-Medium-B_8v_WHh.woff2",
+    "src": "fonts/Inter-Medium.woff2"
+  },
+  "fonts/Inter-MediumItalic.woff2": {
+    "file": "assets/Inter-MediumItalic-n6BHLlTx.woff2",
+    "src": "fonts/Inter-MediumItalic.woff2"
+  },
+  "fonts/Inter-Regular.woff2": {
+    "file": "assets/Inter-Regular-DRVdRqcI.woff2",
+    "src": "fonts/Inter-Regular.woff2"
+  },
+  "fonts/Inter-SemiBold.woff2": {
+    "file": "assets/Inter-SemiBold-CtskMddL.woff2",
+    "src": "fonts/Inter-SemiBold.woff2"
+  },
+  "fonts/Inter-SemiBoldItalic.woff2": {
+    "file": "assets/Inter-SemiBoldItalic-DDHvlk21.woff2",
+    "src": "fonts/Inter-SemiBoldItalic.woff2"
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-B6XsSezd.css",
+    "src": "resources/css/app.css",
+    "isEntry": true,
+    "names": [
+      "app.css"
+    ]
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-DNtJnXI7.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "css": [
+      "assets/app-B6XsSezd.css"
+    ],
+    "assets": [
+      "assets/Inter-ExtraLight-KI2qVeFN.woff2",
+      "assets/Inter-Light-CdfTos-h.woff2",
+      "assets/Inter-LightItalic-CA7VgT2P.woff2",
+      "assets/Inter-Regular-DRVdRqcI.woff2",
+      "assets/Inter-Italic-BMEQ2Kjv.woff2",
+      "assets/Inter-Medium-B_8v_WHh.woff2",
+      "assets/Inter-MediumItalic-n6BHLlTx.woff2",
+      "assets/Inter-SemiBold-CtskMddL.woff2",
+      "assets/Inter-SemiBoldItalic-DDHvlk21.woff2",
+      "assets/Inter-Bold-CD3Pr7BX.woff2",
+      "assets/Inter-BoldItalic-D3V_KwY_.woff2",
+      "assets/Inter-ExtraBold-DKnKKS_V.woff2",
+      "assets/HindSiliguri-Light-UBWSup-q.ttf",
+      "assets/HindSiliguri-Regular-Ch41_erl.ttf",
+      "assets/HindSiliguri-Medium-X7Kyy9T3.ttf",
+      "assets/HindSiliguri-SemiBold-KoMTq85X.ttf",
+      "assets/HindSiliguri-Bold-DVHlo15N.ttf"
+    ]
+  }
+}
