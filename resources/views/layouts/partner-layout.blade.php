@@ -395,17 +395,17 @@
 
                                         
 
-                                        // Resolve partner logo for partner or other non-default roles
+                                        // Use system logo for partner/admin roles
+                                        $systemLogo = null;
                                         if (in_array($roleName, ['partner','partner_admin','admin','operator',''])) {
-                                            $partnerLogoSidebar = $partner?->logo ?? null;
+                                            $systemLogo = 'images/BikolpoLive.svg'; // System logo
                                         }
 
                                         $displayImage = null;
                                         if (!empty($studentPhoto)) {
-                                            $displayImage = asset('storage/' . $studentPhoto);
-
-                                        } elseif (!empty($partnerLogoSidebar)) {
-                                            $displayImage = asset('storage/' . $partnerLogoSidebar);
+                                            $displayImage = asset('uploads/' . $studentPhoto);
+                                        } elseif (!empty($systemLogo)) {
+                                            $displayImage = asset($systemLogo);
                                         }
 
                                         // Compute initials as fallback
@@ -560,14 +560,8 @@
                 <div class="px-4 lg:px-8 py-4">
                     <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                         <div class="flex items-center space-x-4">
-                            <div class="w-12 h-12 flex items-center justify-center bg-gradient-to-br from-primaryGreen/10 to-emerald-100 dark:from-primaryGreen/20 dark:to-emerald-900/30 rounded-xl ring-2 ring-primaryGreen/20 shadow-lg">
-                                @if(!empty($partner?->logo))
-                                    <img src="{{ asset('storage/' . $partner->logo) }}" alt="Partner Logo" class="w-10 h-10 object-cover rounded-lg">
-                                @else
-                                    <svg class="w-6 h-6 text-primaryGreen dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                    </svg>
-                                @endif
+                            <div class="w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-800 rounded-xl ring-2 ring-primaryGreen/20 shadow-lg">
+                                <img src="{{ asset('images/BikolpoLive.svg') }}" alt="Bikolpo Live Logo" class="w-10 h-10 object-contain p-1">
                             </div>
                             <div>
                                 <h2 class="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white">
@@ -650,17 +644,17 @@
 
 
 
-                                            // Resolve partner logo for partner or non-default partner roles
+                                            // Use system logo for partner/admin roles  
+                                            $systemLogo = null;
                                             if (in_array($roleName, ['partner','partner_admin','admin','operator',''])) {
-                                                $partnerLogoTop = $partner->logo ?? null;
+                                                $systemLogo = 'images/BikolpoLive.svg'; // System logo
                                             }
 
                                             $displayImage = null;
                                             if (!empty($studentPhoto)) {
-                                                $displayImage = asset('storage/' . $studentPhoto);
-
-                                            } elseif (!empty($partnerLogoTop)) {
-                                                $displayImage = asset('storage/' . $partnerLogoTop);
+                                                $displayImage = asset('uploads/' . $studentPhoto);
+                                            } elseif (!empty($systemLogo)) {
+                                                $displayImage = asset($systemLogo);
                                             }
 
                                             // Compute initials as fallback

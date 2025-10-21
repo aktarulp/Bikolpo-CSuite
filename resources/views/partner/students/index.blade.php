@@ -250,18 +250,18 @@
                                         $photoPath = $student->photo;
                                         
                                         if (str_starts_with($photoPath, 'students/') || str_starts_with($photoPath, 'student-photos/')) {
-                                            $photoUrl = asset('storage/' . $photoPath);
+                                            $photoUrl = asset('uploads/' . $photoPath);
                                         } else {
                                             // Try both possible directories
                                             $studentsPath = 'students/' . $photoPath;
                                             $studentPhotosPath = 'student-photos/' . $photoPath;
                                             
                                             if (Storage::disk('public')->exists($studentsPath)) {
-                                                $photoUrl = asset('storage/' . $studentsPath);
+                                                $photoUrl = asset('uploads/' . $studentsPath);
                                             } elseif (Storage::disk('public')->exists($studentPhotosPath)) {
-                                                $photoUrl = asset('storage/' . $studentPhotosPath);
+                                                $photoUrl = asset('uploads/' . $studentPhotosPath);
                                             } else {
-                                                $photoUrl = asset('storage/' . $photoPath);
+                                                $photoUrl = asset('uploads/' . $photoPath);
                                             }
                                         }
                                         
@@ -411,18 +411,18 @@
                                                 $photoPath = $student->photo;
                                                 
                                                 if (str_starts_with($photoPath, 'students/') || str_starts_with($photoPath, 'student-photos/')) {
-                                                    $photoUrl = asset('storage/' . $photoPath);
+                                                    $photoUrl = asset('uploads/' . $photoPath);
                                                 } else {
                                                     // Try both possible directories
                                                     $studentsPath = 'students/' . $photoPath;
                                                     $studentPhotosPath = 'student-photos/' . $photoPath;
                                                     
                                                     if (Storage::disk('public')->exists($studentsPath)) {
-                                                        $photoUrl = asset('storage/' . $studentsPath);
+                                                        $photoUrl = asset('uploads/' . $studentsPath);
                                                     } elseif (Storage::disk('public')->exists($studentPhotosPath)) {
-                                                        $photoUrl = asset('storage/' . $studentPhotosPath);
+                                                        $photoUrl = asset('uploads/' . $studentPhotosPath);
                                                     } else {
-                                                        $photoUrl = asset('storage/' . $photoPath);
+                                                        $photoUrl = asset('uploads/' . $photoPath);
                                                     }
                                                 }
                                                 

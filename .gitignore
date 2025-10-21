@@ -29,6 +29,11 @@ Thumbs.db
 # Build output - We'll commit this for easy deployment
 # /public/build
 
+# Public assets - Commit for easy deployment
+# /public/css
+# /public/fonts
+# /public/images
+
 # Dependencies - Commit vendor for shared hosting
 # /vendor
 
