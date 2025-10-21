@@ -299,17 +299,17 @@
                                         </svg>
                                         {{ $student->student_id ?? 'N/A' }}
                                     </div>
-                                    <div class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $student->course ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400' }}">
+                                    <div class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $student->enrollments->count() > 0 ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400' }}">
                                         <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                                         </svg>
-                                        {{ $student->course?->name ?? 'No Course' }}
+                                        {{ $student->enrollments->count() > 0 ? $student->enrollments->count() . ' Course' . ($student->enrollments->count() > 1 ? 's' : '') : 'No Course' }}
                                     </div>
-                                    <div class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $student->batch ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400' }}">
+                                    <div class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $student->enrollments->whereNotNull('batch_id')->count() > 0 ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400' }}">
                                         <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
                                         </svg>
-                                        {{ $student->batch?->display_name ?? 'No Batch' }}
+                                        {{ $student->enrollments->whereNotNull('batch_id')->count() > 0 ? $student->enrollments->whereNotNull('batch_id')->count() . ' Batch' . ($student->enrollments->whereNotNull('batch_id')->count() > 1 ? 'es' : '') : 'No Batch' }}
                                     </div>
                                 </div>
                                 <div class="mt-3 flex flex-wrap gap-2">
@@ -369,7 +369,7 @@
                                     <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 5.477 5.754 5 7.5 5c1.747 0 3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.523 18.246 19 16.5 19c-1.746 0-3.332-.477-4.5-1.253"></path>
                                     </svg>
-                                    <span>Course</span>
+                                    <span>Courses</span>
                                 </div>
                             </th>
                             <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wider border-b-2 border-blue-500/30">
@@ -377,7 +377,7 @@
                                     <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
                                     </svg>
-                                    <span>Batch</span>
+                                    <span>Batches</span>
                                 </div>
                             </th>
                             <th class="px-4 py-3 text-left text-xs font-bold text-gray-700 dark:text-gray-200 uppercase tracking-wider border-b-2 border-yellow-500/30">
@@ -456,13 +456,13 @@
                                 </div>
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap">
-                                <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $student->course ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400 border border-amber-200 dark:border-amber-800' }}">
-                                    {{ $student->course?->name ?? 'Not Assigned' }}
+                                <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $student->enrollments->count() > 0 ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400 border border-amber-200 dark:border-amber-800' }}">
+                                    {{ $student->enrollments->count() > 0 ? $student->enrollments->count() . ' Course' . ($student->enrollments->count() > 1 ? 's' : '') : 'Not Assigned' }}
                                 </div>
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap">
-                                <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $student->batch ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400' : 'bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400 border border-amber-200 dark:border-amber-800' }}">
-                                    {{ $student->batch?->display_name ?? 'Not Assigned' }}
+                                <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $student->enrollments->whereNotNull('batch_id')->count() > 0 ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400' : 'bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400 border border-amber-200 dark:border-amber-800' }}">
+                                    {{ $student->enrollments->whereNotNull('batch_id')->count() > 0 ? $student->enrollments->whereNotNull('batch_id')->count() . ' Batch' . ($student->enrollments->whereNotNull('batch_id')->count() > 1 ? 'es' : '') : 'Not Assigned' }}
                                 </div>
                             </td>
                             <td class="px-4 py-3 whitespace-nowrap">
@@ -570,14 +570,6 @@
                                                 Edit Student
                                             </a>
                                             
-                                            <a href="{{ route('partner.students.assignment') }}?student_id={{ $student->id }}" 
-                                               class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
-                                               role="menuitem">
-                                                <svg class="w-4 h-4 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                                                </svg>
-                                                Assign Course/Batch
-                                            </a>
                                             
                                             <a href="{{ route('analytics.students.show', $student->id) }}" 
                                                class="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"

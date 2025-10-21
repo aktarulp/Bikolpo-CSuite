@@ -12,6 +12,7 @@ class Batch extends Model
     protected $fillable = [
         'name',
         'year',
+        'course_id',
         'start_date',
         'end_date',
         'status',
@@ -27,6 +28,15 @@ class Batch extends Model
     ];
 
     // Relationships
+    
+    /**
+     * Get the course that this batch belongs to.
+     */
+    public function course()
+    {
+        return $this->belongsTo(Course::class);
+    }
+    
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -35,6 +45,11 @@ class Batch extends Model
     public function students()
     {
         return $this->hasMany(Student::class);
+    }
+    
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class);
     }
 
     /**

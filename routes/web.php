@@ -551,7 +551,7 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
         // Partner Management
         
         // Course Management
-        Route::resource('courses', CourseController::class)->except(['show']);
+        Route::resource('courses', CourseController::class);
         
         // Subject Management
         Route::resource('subjects', SubjectController::class)->except(['show']);
@@ -686,10 +686,6 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
         Route::post('exams/{exam}/bulk-operations', [\App\Http\Controllers\ExamAssignmentController::class, 'bulkOperations'])->name('exams.bulk-operations');
         Route::get('exams/{exam}/export-assignments', [\App\Http\Controllers\ExamAssignmentController::class, 'exportAssignments'])->name('exams.export-assignments');
         
-        // Student Assignment Routes (must come BEFORE resource route)
-        Route::match(['get', 'post', 'put'], 'students/assignment', [StudentController::class, 'assignment'])->name('students.assignment');
-        Route::put('students/{student}/assignment', [StudentController::class, 'updateAssignment'])->name('students.update-assignment');
-        Route::post('students/bulk-assignment', [StudentController::class, 'bulkAssignment'])->name('students.bulk-assignment');
         
         // Student Management
         Route::resource('students', StudentController::class);

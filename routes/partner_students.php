@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Partner\StudentController;
+use App\Http\Controllers\Partner\EnrollmentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -54,5 +55,55 @@ Route::middleware(['auth'])->group(function () {
     // Manage student grades
     Route::get('/students/{student}/grades', [StudentController::class, 'manageGrades'])
         ->name('partner.students.grades');
+    
+    // =====================================================
+    // ENROLLMENT ROUTES (Multi-Course Enrollment System)
+    // =====================================================
+    
+    // Enrollment Index & Listing
+    Route::get('/enrollments', [EnrollmentController::class, 'index'])
+        ->name('partner.enrollments.index');
+    
+    // Create New Enrollment
+    Route::get('/enrollments/create', [EnrollmentController::class, 'create'])
+        ->name('partner.enrollments.create');
+    Route::post('/enrollments', [EnrollmentController::class, 'store'])
+        ->name('partner.enrollments.store');
+    
+    // View Enrollment Details
+    Route::get('/enrollments/{enrollment}', [EnrollmentController::class, 'show'])
+        ->name('partner.enrollments.show');
+    
+    // Edit Enrollment
+    Route::get('/enrollments/{enrollment}/edit', [EnrollmentController::class, 'edit'])
+        ->name('partner.enrollments.edit');
+    Route::put('/enrollments/{enrollment}', [EnrollmentController::class, 'update'])
+        ->name('partner.enrollments.update');
+    
+    // Delete Enrollment
+    Route::delete('/enrollments/{enrollment}', [EnrollmentController::class, 'destroy'])
+        ->name('partner.enrollments.destroy');
+    
+    // Enrollment Status Actions
+    Route::patch('/enrollments/{enrollment}/complete', [EnrollmentController::class, 'complete'])
+        ->name('partner.enrollments.complete');
+    Route::patch('/enrollments/{enrollment}/drop', [EnrollmentController::class, 'drop'])
+        ->name('partner.enrollments.drop');
+    Route::patch('/enrollments/{enrollment}/suspend', [EnrollmentController::class, 'suspend'])
+        ->name('partner.enrollments.suspend');
+    Route::patch('/enrollments/{enrollment}/reactivate', [EnrollmentController::class, 'reactivate'])
+        ->name('partner.enrollments.reactivate');
+    
+    // Student Enrollment History
+    Route::get('/students/{student}/enrollments', [EnrollmentController::class, 'studentHistory'])
+        ->name('partner.students.enrollment-history');
+    
+    // Course Enrollments
+    Route::get('/courses/{course}/enrollments', [EnrollmentController::class, 'courseEnrollments'])
+        ->name('partner.courses.enrollments');
+    
+    // Get batches by course (for AJAX)
+    Route::get('/batches/by-course/{course}', [EnrollmentController::class, 'getBatchesByCourse'])
+        ->name('partner.batches.by-course');
     
 });

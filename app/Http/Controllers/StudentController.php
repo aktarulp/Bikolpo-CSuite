@@ -52,7 +52,7 @@ class StudentController extends Controller
             $query->where('gender', $request->gender);
         }
         
-        $students = $query->with(['course', 'batch'])->latest()->paginate(15);
+        $students = $query->with(['course', 'batch', 'enrollments'])->latest()->paginate(15);
         
         // Get filter options
         $courses = \App\Models\Course::where('partner_id', $partnerId)->get();
@@ -256,106 +256,6 @@ class StudentController extends Controller
             ->with('success', 'Student deleted successfully.');
     }
 
-    public function assignment(Request $request)
-    {
-        try {
-            $partnerId = $this->getPartnerId();
-            
-
-            
-            // Handle form submission for updating assignment
-            if ($request->isMethod('post') || $request->isMethod('put')) {
-                // Check if this is an assignment update request
-                if ($request->has('_action') && $request->_action === 'update_assignment') {
-                    $request->validate([
-                        'student_id' => 'required|exists:students,id',
-                        'batch_id' => 'required|exists:batches,id',
-                        'course_id' => 'required|exists:courses,id',
-                    ]);
-                    
-                    $student = Student::findOrFail($request->student_id);
-                    
-                    // Verify the student belongs to the partner
-                    if ($student->partner_id !== $partnerId) {
-                        return back()->with('error', 'Unauthorized access to student.');
-                    }
-                    
-                    $student->update([
-                        'batch_id' => $request->batch_id,
-                        'course_id' => $request->course_id,
-                        'assignment_date' => now(),
-                    ]);
-                    
-                    return back()->with('success', 'Student assignment updated successfully.');
-                }
-            }
-            
-
-            
-            $students = Student::with(['batch', 'course'])
-                ->where('partner_id', $partnerId)
-                ->latest()
-                ->paginate(15);
-
-            $batches = \App\Models\Batch::where('partner_id', $partnerId)->get();
-            $courses = \App\Models\Course::where('partner_id', $partnerId)->get();
-            
-
-
-            return view('partner.students.assignment', compact('students', 'batches', 'courses'));
-        } catch (\Exception $e) {
-            \Log::error('Student assignment error: ' . $e->getMessage());
-
-            return back()->with('error', 'Error loading student assignment: ' . $e->getMessage());
-        }
-    }
-
-    public function updateAssignment(Request $request, Student $student)
-    {
-        $request->validate([
-            'batch_id' => 'required|exists:batches,id',
-            'course_id' => 'required|exists:courses,id',
-        ]);
-
-        $student->update([
-            'batch_id' => $request->batch_id,
-            'course_id' => $request->course_id,
-            'assignment_date' => now(),
-        ]);
-
-        return redirect()->route('partner.students.assignment')
-            ->with('success', 'Student assignment updated successfully.');
-    }
-
-    public function bulkAssignment(Request $request)
-    {
-        $request->validate([
-            'batch_id' => 'required|exists:batches,id',
-            'course_id' => 'required|exists:courses,id',
-            'student_ids' => 'required|string',
-        ]);
-
-        // Decode the JSON string of student IDs
-        $studentIds = json_decode($request->student_ids, true);
-        
-        if (!is_array($studentIds) || empty($studentIds)) {
-            return redirect()->route('partner.students.assignment')
-                ->with('error', 'No valid student IDs provided.');
-        }
-
-        // Validate that all student IDs exist and belong to the partner
-        $students = Student::whereIn('id', $studentIds)
-            ->where('partner_id', $this->getPartnerId());
-
-        $students->update([
-            'batch_id' => $request->batch_id,
-            'course_id' => $request->course_id,
-            'assignment_date' => now(),
-        ]);
-
-        return redirect()->route('partner.students.assignment')
-            ->with('success', 'Bulk assignment completed successfully.');
-    }
 
     /**
      * Get student record for the authenticated user using multiple approaches

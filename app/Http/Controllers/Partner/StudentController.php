@@ -16,11 +16,15 @@ class StudentController extends Controller
     {
         // Permission checking disabled
 
-        $students = Student::with(['user', 'courses', 'batches'])
+        $students = Student::with(['user', 'courses', 'batch'])
             ->where('partner_id', $this->getPartnerId())
             ->paginate(20);
 
-        return view('partner.students.index', compact('students'));
+        // Get courses and batches for filters
+        $courses = \App\Models\Course::where('partner_id', $this->getPartnerId())->get();
+        $batches = \App\Models\Batch::where('partner_id', $this->getPartnerId())->get();
+
+        return view('partner.students.index', compact('students', 'courses', 'batches'));
     }
 
     /**
@@ -29,6 +33,7 @@ class StudentController extends Controller
     public function create()
     {
         // Permission checking disabled
+        // Note: Course and batch enrollment is now handled via the Enrollment system
 
         return view('partner.students.create');
     }
@@ -56,28 +61,18 @@ class StudentController extends Controller
             'religion' => 'nullable|in:Islam,Hinduism,Christianity,Buddhism',
         ]);
 
-        try {
-            $student = Student::create(array_merge($validated, [
-                'partner_id' => $this->getPartnerId(),
-                'created_by' => auth()->id(),
-                'updated_by' => auth()->id(),
-                'status' => 'active',
-                'enable_login' => 'y',
-                'enroll_date' => now(),
-            ]));
+        $student = Student::create(array_merge($validated, [
+            'partner_id' => $this->getPartnerId(),
+            'created_by' => auth()->id(),
+            'updated_by' => auth()->id(),
+            'status' => 'active',
+            'enable_login' => 'y',
+            'enroll_date' => now(),
+        ]));
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Student created successfully',
-                'redirect' => route('partner.students.index')
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error creating student: ' . $e->getMessage()
-            ], 500);
-        }
+        return redirect()
+            ->route('partner.students.show', $student)
+            ->with('success', 'Student created successfully! You can now enroll them in courses.');
     }
 
     /**
@@ -92,7 +87,7 @@ class StudentController extends Controller
             abort(404, 'Student not found.');
         }
 
-        $student->load(['user', 'courses', 'batches', 'examResults']);
+        $student->load(['user', 'courses', 'batch', 'examResults']);
 
         return view('partner.students.show', compact('student'));
     }
@@ -112,6 +107,8 @@ class StudentController extends Controller
             abort(404, 'Student not found.');
         }
 
+        // Note: Course and batch enrollment is now handled via the Enrollment system
+        
         return view('partner.students.edit', compact('student'));
     }
 
@@ -143,23 +140,13 @@ class StudentController extends Controller
             'religion' => 'nullable|in:Islam,Hinduism,Christianity,Buddhism',
         ]);
 
-        try {
-            $student->update(array_merge($validated, [
-                'updated_by' => auth()->id(),
-            ]));
+        $student->update(array_merge($validated, [
+            'updated_by' => auth()->id(),
+        ]));
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Student updated successfully',
-                'redirect' => route('partner.students.index')
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error updating student: ' . $e->getMessage()
-            ], 500);
-        }
+        return redirect()
+            ->route('partner.students.show', $student)
+            ->with('success', 'Student updated successfully!');
     }
 
     /**
@@ -174,20 +161,12 @@ class StudentController extends Controller
             abort(404, 'Student not found.');
         }
 
-        try {
-            $student->delete();
+        $studentName = $student->full_name;
+        $student->delete();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Student deleted successfully'
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error deleting student: ' . $e->getMessage()
-            ], 500);
-        }
+        return redirect()
+            ->route('partner.students.index')
+            ->with('success', "Student '{$studentName}' deleted successfully!");
     }
 
     /**

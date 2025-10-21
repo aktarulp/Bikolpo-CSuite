@@ -258,17 +258,49 @@
                     @endif
 
                     @if(auth()->check())
-                    {{-- Permission checking disabled --}}
-                    <a href="{{ route('partner.courses.index') }}"
-                       class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.courses.*') ? 'bg-gradient-to-r from-orange-50 to-orange-100 text-orange-700 border border-orange-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-orange-50/50 hover:to-orange-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-orange-700 dark:hover:text-white' }}">
-                        <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.courses.*') ? 'bg-orange-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-orange-50' }} flex items-center justify-center transition-all duration-200">
-                            <svg class="h-4 w-4 {{ request()->routeIs('partner.courses.*') ? 'text-orange-600' : 'text-gray-500 group-hover:text-orange-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                            </svg>
+                    {{-- Courses Menu with Assignments Submenu --}}
+                    <div x-data="{ open: {{ request()->routeIs('partner.courses.*', 'partner.enrollments.*') ? 'true' : 'false' }} }">
+                        <!-- Main Courses Link with Toggle -->
+                        <div class="relative group">
+                            <a href="{{ route('partner.courses.index') }}" @click="open = true"
+                               class="flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.courses.*', 'partner.enrollments.*') ? 'bg-gradient-to-r from-orange-50 to-orange-100 text-orange-700 border border-orange-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-orange-50/50 hover:to-orange-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-orange-700 dark:hover:text-white' }}">
+                                <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.courses.*', 'partner.enrollments.*') ? 'bg-orange-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-orange-50' }} flex items-center justify-center transition-all duration-200">
+                                    <svg class="h-4 w-4 {{ request()->routeIs('partner.courses.*', 'partner.enrollments.*') ? 'text-orange-600' : 'text-gray-500 group-hover:text-orange-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                    </svg>
+                                </div>
+                                <span class="ml-2 flex-1">Courses</span>
+                                <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300 border border-orange-300 dark:border-orange-700">{{ $stats['total_courses'] ?? 0 }}</span>
+                                <!-- Dropdown Arrow (separate clickable area) -->
+                                <button @click.prevent.stop="open = !open" 
+                                        class="ml-1 p-1 rounded hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-colors">
+                                    <svg class="h-3.5 w-3.5 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </button>
+                            </a>
                         </div>
-                        <span class="ml-2 flex-1">Courses</span>
-                        <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300 border border-orange-300 dark:border-orange-700">{{ $stats['total_courses'] ?? 0 }}</span>
-                    </a>
+                        
+                        <!-- Submenu -->
+                        <div x-show="open" 
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 -translate-y-1"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             x-transition:leave="transition ease-in duration-150"
+                             x-transition:leave-start="opacity-100 translate-y-0"
+                             x-transition:leave-end="opacity-0 -translate-y-1"
+                             class="mt-1 ml-4 space-y-1 border-l-2 border-orange-200 dark:border-orange-700 pl-4">
+                            
+                            <!-- Enrollments -->
+                            <a href="{{ route('partner.enrollments.index') }}"
+                               class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.enrollments.*') ? 'bg-orange-50 text-orange-700 dark:bg-orange-900/20' : 'text-gray-600 dark:text-gray-400 hover:bg-orange-50/50 dark:hover:bg-gray-800 hover:text-orange-600' }}">
+                                <svg class="h-4 w-4 mr-2 {{ request()->routeIs('partner.enrollments.*') ? 'text-orange-600' : 'text-gray-400 group-hover:text-orange-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                                </svg>
+                                Enrollments
+                            </a>
+                        </div>
+                    </div>
                     @endif
                     
 

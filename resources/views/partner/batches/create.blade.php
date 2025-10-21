@@ -64,6 +64,48 @@
                 <form action="{{ route('partner.batches.store') }}" method="POST" class="space-y-6">
                 @csrf
 
+                <!-- Course Selection (FIRST - Parent Relationship) -->
+                <div class="space-y-2">
+                    <label class="flex items-center space-x-2 text-sm font-bold text-gray-700 dark:text-gray-300">
+                        <svg class="w-4 h-4 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                        <span>Select Course</span>
+                        <span class="text-red-500">*</span>
+                        <span class="text-xs text-gray-500 dark:text-gray-400 font-normal">(Batch must belong to a course)</span>
+                    </label>
+                    <div class="relative">
+                        <select id="course_id"
+                                name="course_id" 
+                                required
+                                class="w-full px-4 py-3.5 bg-white dark:bg-gray-700 border-2 border-orange-200 dark:border-orange-700 rounded-xl focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 dark:focus:border-orange-400 transition-all duration-300 text-gray-900 dark:text-white font-medium shadow-sm hover:shadow-md appearance-none">
+                            <option value="">-- Select a Course First --</option>
+                            @foreach($courses as $course)
+                                <option value="{{ $course->id }}" {{ old('course_id') == $course->id ? 'selected' : '' }}>
+                                    {{ $course->name }} ({{ $course->code }})
+                                </option>
+                            @endforeach
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                            <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    @error('course_id')
+                        <div class="flex items-center space-x-2 text-red-600 dark:text-red-400 text-sm font-medium bg-red-50 dark:bg-red-900/20 px-3 py-2 rounded-lg">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>{{ $message }}</span>
+                        </div>
+                    @enderror
+                    <p class="text-xs text-gray-500 dark:text-gray-400 italic">💡 This batch will be created under the selected course</p>
+                </div>
+
+                <!-- Divider -->
+                <div class="border-t border-gray-200 dark:border-gray-700"></div>
+
                 <!-- Batch Name & Year -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                     <!-- Batch Name -->
@@ -176,7 +218,7 @@
                         Quick Tip
                     </h3>
                     <p class="text-sm text-blue-800 dark:text-blue-400 leading-relaxed">
-                        Batches help you organize students by year and session. You can assign students to batches after creating them.
+                        <strong>Important:</strong> Each batch must belong to a course. Select the course first, then create batches for different sessions (Morning, Evening, Weekend, etc.) within that course.
                     </p>
                 </div>
             </div>
@@ -188,14 +230,20 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
-                What you can do with batches:
+                Batch Structure & Benefits:
             </h3>
             <ul class="space-y-2 text-sm text-purple-800 dark:text-purple-400">
                 <li class="flex items-start gap-2">
                     <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                     </svg>
-                    <span>Organize students by academic year and session</span>
+                    <span><strong>Hierarchy:</strong> Course → Batch → Students (via enrollments)</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <span>Organize students by session (Morning, Evening, Weekend)</span>
                 </li>
                 <li class="flex items-start gap-2">
                     <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

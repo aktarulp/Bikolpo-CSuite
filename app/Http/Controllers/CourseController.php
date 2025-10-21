@@ -18,7 +18,7 @@ class CourseController extends Controller
         $partnerId = $this->getPartnerId();
         
         // Only show active courses for the logged-in partner
-        $courses = Course::withCount('subjects')
+        $courses = Course::withCount(['subjects', 'batches', 'enrollments'])
             ->where('partner_id', $partnerId)
             ->where('status', 'active')
             ->where('flag', 'active')
@@ -31,6 +31,22 @@ class CourseController extends Controller
     public function create()
     {
         return view('partner.courses.create');
+    }
+
+    public function show(Course $course)
+    {
+        // Get the authenticated user's partner ID using the trait
+        $partnerId = $this->getPartnerId();
+        
+        // Verify the course belongs to the authenticated partner
+        if ($course->partner_id !== $partnerId) {
+            abort(403, 'Unauthorized access to this course.');
+        }
+        
+        // Load related data
+        $course->load(['subjects', 'batches', 'enrollments.student']);
+        
+        return view('partner.courses.show', compact('course'));
     }
 
     public function store(Request $request)

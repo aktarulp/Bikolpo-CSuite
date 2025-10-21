@@ -18,13 +18,24 @@ class BatchController extends Controller
      */
     public function index()
     {
-        $batches = Batch::byPartner($this->getPartnerId())
+        // Fetch courses with their batches grouped
+        $courses = \App\Models\Course::where('partner_id', $this->getPartnerId())
+            ->where('status', 'active')
+            ->with(['batches' => function($query) {
+                $query->where('flag', 'active')
+                    ->withCount('students')
+                    ->orderBy('year', 'desc')
+                    ->orderBy('name');
+            }])
+            ->orderBy('name')
+            ->get();
+        
+        // Get total batch count for stats
+        $totalBatches = Batch::byPartner($this->getPartnerId())
             ->where('flag', 'active')
-            ->withCount('students')
-            ->latest()
-            ->paginate(15);
+            ->count();
             
-        return view('partner.batches.index', compact('batches'));
+        return view('partner.batches.index', compact('courses', 'totalBatches'));
     }
 
     /**
@@ -32,7 +43,12 @@ class BatchController extends Controller
      */
     public function create()
     {
-        return view('partner.batches.create');
+        $courses = \App\Models\Course::where('partner_id', $this->getPartnerId())
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
+            
+        return view('partner.batches.create', compact('courses'));
     }
 
     /**
@@ -43,16 +59,19 @@ class BatchController extends Controller
         $partnerId = $this->getPartnerId();
 
         $request->validate([
+            'course_id' => 'required|exists:courses,id',
             'name' => [
                 'required','string','max:255',
                 Rule::unique('batches', 'name')->where(fn($q) => $q->where('partner_id', $partnerId)
-                                                       ->where('year', $request->input('year'))),
+                                                       ->where('year', $request->input('year'))
+                                                       ->where('course_id', $request->input('course_id'))),
             ],
             'year' => 'required|integer|min:2000|max:2030',
         ]);
 
         $batch = Batch::create([
             'name' => $request->name,
+            'course_id' => $request->course_id,
             'year' => $request->year,
             'status' => 'active', // Default to active
             'partner_id' => $partnerId,
@@ -77,7 +96,12 @@ class BatchController extends Controller
             abort(403, 'Unauthorized access to this batch.');
         }
         
-        return view('partner.batches.edit', compact('batch'));
+        $courses = \App\Models\Course::where('partner_id', $this->getPartnerId())
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
+        
+        return view('partner.batches.edit', compact('batch', 'courses'));
     }
 
     /**
@@ -93,18 +117,20 @@ class BatchController extends Controller
         $partnerId = $this->getPartnerId();
 
         $request->validate([
+            'course_id' => 'required|exists:courses,id',
             'name' => [
                 'required','string','max:255',
                 Rule::unique('batches', 'name')
                     ->ignore($batch->id, 'id')
                     ->where(fn($q) => $q->where('partner_id', $partnerId)
-                                       ->where('year', $request->input('year'))),
+                                       ->where('year', $request->input('year'))
+                                       ->where('course_id', $request->input('course_id'))),
             ],
             'year' => 'required|integer|min:2000|max:2030',
             'status' => 'required|in:active,inactive',
         ]);
 
-        $batch->update($request->only(['name', 'year', 'status']));
+        $batch->update($request->only(['name', 'course_id', 'year', 'status']));
 
         return redirect()->route('partner.batches.index')
             ->with('success', 'Batch updated successfully!');

@@ -144,11 +144,122 @@ class Student extends Model
     }
 
     /**
-     * Get the course associated with the student.
+     * Get the course associated with the student (Legacy - for backward compatibility).
+     * @deprecated Use enrollments() or courses() instead
      */
     public function course()
     {
         return $this->belongsTo(Course::class);
+    }
+
+    /**
+     * Get all enrollments for this student.
+     */
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+
+    /**
+     * Get all courses the student is enrolled in (Many-to-Many).
+     */
+    public function courses()
+    {
+        return $this->belongsToMany(Course::class, 'enrollments')
+            ->withPivot([
+                'id',
+                'batch_id',
+                'partner_id',
+                'enrolled_at',
+                'status',
+                'completion_date',
+                'final_grade',
+                'grade_letter',
+                'remarks',
+                'transferred_to_course_id',
+                'transferred_at',
+                'enrolled_by',
+                'updated_by',
+                'created_at',
+                'updated_at'
+            ])
+            ->withTimestamps();
+    }
+
+    /**
+     * Get active enrollments for this student.
+     */
+    public function activeEnrollments()
+    {
+        return $this->hasMany(Enrollment::class)
+            ->where('status', Enrollment::STATUS_ACTIVE);
+    }
+
+    /**
+     * Get completed enrollments for this student.
+     */
+    public function completedEnrollments()
+    {
+        return $this->hasMany(Enrollment::class)
+            ->where('status', Enrollment::STATUS_COMPLETED);
+    }
+
+    /**
+     * Get active courses for this student.
+     */
+    public function activeCourses()
+    {
+        return $this->belongsToMany(Course::class, 'enrollments')
+            ->wherePivot('status', Enrollment::STATUS_ACTIVE)
+            ->withPivot([
+                'batch_id',
+                'enrolled_at',
+                'status'
+            ])
+            ->withTimestamps();
+    }
+
+    /**
+     * Check if student is currently enrolled in a specific course.
+     */
+    public function isEnrolledIn($courseId)
+    {
+        return $this->enrollments()
+            ->where('course_id', $courseId)
+            ->where('status', Enrollment::STATUS_ACTIVE)
+            ->exists();
+    }
+
+    /**
+     * Enroll student in a course.
+     */
+    public function enrollInCourse($courseId, $batchId = null, $enrolledAt = null, $enrolledBy = null)
+    {
+        // Check if already enrolled
+        if ($this->isEnrolledIn($courseId)) {
+            throw new \Exception('Student is already enrolled in this course.');
+        }
+
+        return Enrollment::create([
+            'student_id' => $this->id,
+            'course_id' => $courseId,
+            'batch_id' => $batchId ?? $this->batch_id,
+            'partner_id' => $this->partner_id,
+            'enrolled_at' => $enrolledAt ?? now(),
+            'status' => Enrollment::STATUS_ACTIVE,
+            'enrolled_by' => $enrolledBy ?? auth()->id(),
+        ]);
+    }
+
+    /**
+     * Get enrollment history for this student.
+     */
+    public function getEnrollmentHistory()
+    {
+        return $this->enrollments()
+            ->with(['course', 'batch', 'enrolledBy'])
+            ->orderBy('enrolled_at', 'desc')
+            ->get();
     }
 
     /**

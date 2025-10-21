@@ -44,6 +44,14 @@ class Course extends Model
     {
         return $this->hasMany(Subject::class);
     }
+    
+    /**
+     * Get all batches for this course.
+     */
+    public function batches()
+    {
+        return $this->hasMany(Batch::class);
+    }
 
     public function questions()
     {
@@ -51,11 +59,110 @@ class Course extends Model
     }
 
     /**
-     * Get all students enrolled in this course.
+     * Get all students enrolled in this course (Legacy - for backward compatibility).
+     * @deprecated Use enrollments() or studentsEnrolled() instead
      */
     public function students()
     {
         return $this->hasMany(Student::class);
+    }
+
+    /**
+     * Get all enrollments for this course.
+     */
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+
+    /**
+     * Get all students enrolled in this course (Many-to-Many).
+     */
+    public function studentsEnrolled()
+    {
+        return $this->belongsToMany(Student::class, 'enrollments')
+            ->withPivot([
+                'id',
+                'batch_id',
+                'partner_id',
+                'enrolled_at',
+                'status',
+                'completion_date',
+                'final_grade',
+                'grade_letter',
+                'remarks',
+                'created_at',
+                'updated_at'
+            ])
+            ->withTimestamps();
+    }
+
+    /**
+     * Get active enrollments for this course.
+     */
+    public function activeEnrollments()
+    {
+        return $this->hasMany(Enrollment::class)
+            ->where('status', Enrollment::STATUS_ACTIVE);
+    }
+
+    /**
+     * Get completed enrollments for this course.
+     */
+    public function completedEnrollments()
+    {
+        return $this->hasMany(Enrollment::class)
+            ->where('status', Enrollment::STATUS_COMPLETED);
+    }
+
+    /**
+     * Get active students for this course.
+     */
+    public function activeStudents()
+    {
+        return $this->belongsToMany(Student::class, 'enrollments')
+            ->wherePivot('status', Enrollment::STATUS_ACTIVE)
+            ->withPivot([
+                'id',
+                'batch_id',
+                'enrolled_at',
+                'status',
+                'created_at',
+                'updated_at'
+            ])
+            ->withTimestamps();
+    }
+
+    /**
+     * Get total number of enrolled students (all statuses).
+     */
+    public function getTotalEnrolledStudents()
+    {
+        return $this->enrollments()->count();
+    }
+
+    /**
+     * Get total number of active students.
+     */
+    public function getActiveStudentsCount()
+    {
+        return $this->activeEnrollments()->count();
+    }
+
+    /**
+     * Get total number of completed students.
+     */
+    public function getCompletedStudentsCount()
+    {
+        return $this->completedEnrollments()->count();
+    }
+
+    /**
+     * Get enrollment statistics for this course.
+     */
+    public function getEnrollmentStatistics()
+    {
+        return Enrollment::getCourseStatistics($this->id);
     }
 
     /**
