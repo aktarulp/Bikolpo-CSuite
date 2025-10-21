@@ -1,18 +1,35 @@
 # Uploads Directory
 
-This directory stores all uploaded files (images, documents, etc.) directly in the public folder.
+This directory stores all user-uploaded files.
 
-## Directory Structure
+## Structure
+
+- **Not tracked by Git** - Only this README and .gitignore are committed
+- **Auto-created subdirectories** by Laravel application
+
+## Subdirectories Created by Application
+
+When the application runs, these subdirectories will be created:
 
 - `student-photos/` - Student profile photos
-- `questions/` - Question images
-- `partners/` - Partner logos
+- `questions/` - Question images/attachments  
+- `partners/` - Partner-related uploads
 
-## Why This Approach?
+## Permissions
 
-This configuration is designed for shared hosting environments (like Hostinger) where symbolic links are not supported. By storing files directly in the `public/uploads` directory, they are immediately accessible via `/uploads/` URLs without requiring `php artisan storage:link`.
+This directory must be writable by the web server:
 
-## Auto-Setup
+```bash
+# Set on deployment
+chmod -R 775 uploads
+```
 
-The subdirectories will be automatically created when files are uploaded through the application.
+## Deployment
 
+On Hostinger, run:
+
+```bash
+php artisan storage:setup-uploads
+```
+
+This will automatically create all required subdirectories with correct permissions.
