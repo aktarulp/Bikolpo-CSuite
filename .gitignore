@@ -72,6 +72,10 @@ verify-assets.php
 check-asset-urls.php
 diagnose.php
 
+# Documentation (keep in repo)
+# DROPDOWN_MENU_FIX.md
+# verify-structure.md
+
 # OS files
 .DS_Store
 Thumbs.db

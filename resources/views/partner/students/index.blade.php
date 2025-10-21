@@ -2,6 +2,53 @@
 
 @section('title', 'Students')
 
+@push('styles')
+<style>
+    /* Fix dropdown menu z-index stacking */
+    .students-list-container {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .students-list-header {
+        position: relative;
+        z-index: 5;
+    }
+    
+    .students-table-wrapper {
+        position: relative;
+        z-index: 10;
+        overflow-x: auto;
+        overflow-y: visible !important;
+    }
+    
+    /* Prevent row height expansion */
+    .students-table-wrapper tbody tr {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .students-table-wrapper tbody tr:has(.action-menu [x-show="open"]) {
+        z-index: 9999;
+    }
+    
+    /* Critical: Remove dropdown from document flow completely */
+    .action-menu-dropdown {
+        position: fixed !important;
+        z-index: 99999 !important;
+        pointer-events: auto;
+    }
+    
+    /* Ensure dropdown doesn't affect parent height */
+    .action-menu-dropdown[style*="display: none"],
+    .action-menu-dropdown[x-cloak] {
+        display: none !important;
+        height: 0 !important;
+        overflow: hidden !important;
+    }
+</style>
+@endpush
+
 @section('content')
 <div class="space-y-4 md:space-y-6">
     <!-- Page Header - Professional Design -->
@@ -159,8 +206,8 @@
     </div>
 
     <!-- Students List - Mobile Optimized -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl md:rounded-2xl shadow-lg border-2 border-gray-100 dark:border-gray-700 overflow-hidden">
-        <div class="bg-gradient-to-r from-slate-800 via-slate-700 to-slate-600 p-4 md:p-6">
+    <div class="students-list-container bg-white dark:bg-gray-800 rounded-xl md:rounded-2xl shadow-lg border-2 border-gray-100 dark:border-gray-700 overflow-hidden">
+        <div class="students-list-header bg-gradient-to-r from-slate-800 via-slate-700 to-slate-600 p-4 md:p-6">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-3">
                     <div class="bg-white/10 backdrop-blur-sm p-2 rounded-lg">
@@ -297,7 +344,7 @@
             </div>
 
             <!-- Desktop Table View -->
-            <div class="hidden lg:block overflow-x-auto">
+            <div class="students-table-wrapper hidden lg:block">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead class="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700/50 dark:to-gray-800/50">
                         <tr>
@@ -425,29 +472,83 @@
                                     {{ ucfirst($student->status) }}
                                 </span>
                             </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium relative z-[100]">
+                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium" style="position: static;">
                                 <!-- Action Menu -->
-                                <div class="relative inline-block text-left z-[100]" x-data="{ open: false }">
+                                <div x-data="{ open: false }" @click.away="open = false" style="position: static;">
                                     <button @click="open = !open" 
-                                            @click.away="open = false"
                                             type="button"
+                                            id="actionBtn{{ $student->id }}"
                                             class="inline-flex items-center px-3 py-2 text-xs font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primaryGreen transition-all duration-200">
                                         <span>Actions</span>
-                                        <svg class="w-4 h-4 ml-2 -mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg class="w-4 h-4 ml-2 -mr-1 transition-transform duration-200" 
+                                             :class="{ 'rotate-180': open }"
+                                             fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                         </svg>
                                     </button>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                
+                <!-- Dropdown Menus (Rendered outside table) -->
+                @foreach($students as $student)
+                <div x-data="{ open: false }" 
+                     @click.away="open = false"
+                     x-init="
+                        $watch('open', value => {
+                            if (value) {
+                                const btn = document.getElementById('actionBtn{{ $student->id }}');
+                                const menu = $el;
+                                if (btn && menu) {
+                                    // Force display to calculate height
+                                    menu.style.display = 'block';
                                     
-                                    <div x-show="open" 
-                                         x-transition:enter="transition ease-out duration-200"
-                                         x-transition:enter-start="transform opacity-0 scale-95"
-                                         x-transition:enter-end="transform opacity-100 scale-100"
-                                         x-transition:leave="transition ease-in duration-150"
-                                         x-transition:leave-start="transform opacity-100 scale-100"
-                                         x-transition:leave-end="transform opacity-0 scale-95"
-                                         class="absolute right-0 mt-2 w-56 origin-top-right rounded-md bg-white dark:bg-gray-800 shadow-2xl ring-1 ring-black ring-opacity-5 dark:ring-gray-600 focus:outline-none z-[99999]"
-                                         style="z-index: 99999 !important;"
-                                         @click.away="open = false">
+                                    const rect = btn.getBoundingClientRect();
+                                    const menuHeight = menu.offsetHeight;
+                                    const menuWidth = 224; // w-56 = 224px
+                                    
+                                    // Position ABOVE button (upward)
+                                    const topPosition = rect.top - menuHeight - 8;
+                                    const leftPosition = rect.right - menuWidth;
+                                    
+                                    menu.style.top = topPosition + 'px';
+                                    menu.style.left = leftPosition + 'px';
+                                }
+                            }
+                        });
+                        
+                        // Listen for button clicks
+                        const btn = document.getElementById('actionBtn{{ $student->id }}');
+                        if (btn) {
+                            btn.addEventListener('click', () => { open = !open; });
+                        }
+                        
+                        // Update position on scroll/resize
+                        window.addEventListener('scroll', () => {
+                            if (open) {
+                                const btn = document.getElementById('actionBtn{{ $student->id }}');
+                                const menu = $el;
+                                if (btn && menu) {
+                                    const rect = btn.getBoundingClientRect();
+                                    const menuHeight = menu.offsetHeight;
+                                    menu.style.top = (rect.top - menuHeight - 8) + 'px';
+                                    menu.style.left = (rect.right - 224) + 'px';
+                                }
+                            }
+                        });
+                     "
+                     x-show="open" 
+                     x-transition:enter="transition ease-out duration-100"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-75"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-95"
+                     class="action-menu-dropdown w-56 rounded-md bg-white dark:bg-gray-800 shadow-2xl ring-1 ring-black ring-opacity-5 dark:ring-gray-600 focus:outline-none origin-bottom-right"
+                     style="position: fixed; z-index: 99999; display: none;">
                                         
                                         <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="menu-button">
                                             <a href="{{ route('partner.students.show', $student) }}" 
@@ -505,12 +606,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                                @endforeach
             </div>
             
             <!-- Pagination -->
