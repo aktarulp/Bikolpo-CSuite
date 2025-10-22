@@ -15,8 +15,6 @@ class Partner extends Model
         'phone',
         'slug', 
         'logo',
-        'status',
-        'flag',
         'city',
         'map_location',
         'mobile',
@@ -26,28 +24,31 @@ class Partner extends Model
         'division',
         'district',
         'established_year',
-        'subscription_plan',
-        'subscription_start_date',
-        'subscription_end_date',
-        'payment_status',
         'created_by',
         'institute_name',
-        'primary_contact_person',
-        'primary_contact_no',
+            'owner_director_contact',
         'alternate_contact_person',
         'alternate_contact_no',
-        'upazila_p_s',
         'post_office',
         'post_code',
         'village_road_no',
         'flat_house_no',
-        'subscription_plan_id',
         'institute_name_bangla',
         'slug_bangla',
-        'year_of_establishment',
-        'short_address',
+            'short_address',
+            'short_address_bangla',
         'course_offers',
-        'custom_courses'
+        // Additional fields from database
+        'referral_code',
+        'total_referrals',
+        'successful_referrals',
+        'referral_earnings',
+        'upazila',
+        'owner_director_name',
+        'eiin_no',
+        'trade_license_no',
+        'tin_no',
+        'cover_photo',
     ];
 
     protected $casts = [
@@ -88,6 +89,11 @@ class Partner extends Model
     public function courses()
     {
         return $this->hasMany(Course::class);
+    }
+
+    public function batches()
+    {
+        return $this->hasMany(Batch::class);
     }
 
     public function subjects()

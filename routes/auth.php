@@ -57,4 +57,9 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
+    
+    // Email verification routes (for compatibility, redirects to OTP)
+    Route::post('email/verification-notification', function () {
+        return redirect()->route('otp.resend');
+    })->name('verification.send');
 });

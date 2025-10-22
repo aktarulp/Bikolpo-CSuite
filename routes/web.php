@@ -28,6 +28,42 @@ Route::get('/test-log', function () {
     return 'Log entry attempted.';
 });
 
+// Debug partner profile data
+Route::get('/debug-partner-profile', function () {
+    $user = auth()->user();
+    if (!$user) {
+        return response()->json(['error' => 'Not authenticated']);
+    }
+    
+    $partner = $user->partner;
+    
+    return response()->json([
+        'user_id' => $user->id,
+        'user_name' => $user->name,
+        'user_partner_id' => $user->partner_id,
+        'partner_exists' => $partner ? true : false,
+        'partner_id' => $partner->id ?? null,
+        'partner_data' => $partner ? $partner->toArray() : null,
+        'partner_all_attributes' => $partner ? $partner->getAttributes() : null,
+    ]);
+})->middleware('auth');
+
+// Test partner data directly
+Route::get('/test-partner-data', function () {
+    $partner = \App\Models\Partner::find(16);
+    if (!$partner) {
+        return response()->json(['error' => 'Partner not found']);
+    }
+    
+    return response()->json([
+        'partner_id' => $partner->id,
+        'partner_name' => $partner->name,
+        'total_fields' => count($partner->getAttributes()),
+        'non_null_fields' => count(array_filter($partner->getAttributes(), fn($v) => !is_null($v))),
+        'all_attributes' => $partner->getAttributes(),
+    ]);
+});
+
 // Debug route to check user-role relationship
 Route::get('/debug-user-role', function () {
     $users = \App\Models\EnhancedUser::with('role')->take(5)->get();
@@ -707,20 +743,20 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
         // Partner Profile Management
         Route::get('profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show-partnar');
         Route::get('profile/edit', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit-partnar');
-        Route::put('profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
-        Route::put('profile/partner', [\App\Http\Controllers\ProfileController::class, 'updatePartner'])->name('profile.updatePartner');
-        Route::put('profile/update-partner-details', [PartnerController::class, 'updateProfile'])->name('profile.update-details'); // New route
+        Route::patch('profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+        Route::delete('profile', [\App\Http\Controllers\ProfileController::class, 'destroy'])->name('profile.destroy');
+        Route::put('profile', [\App\Http\Controllers\ProfileController::class, 'updatePartner'])->name('profile.updatePartner');
+        
+        // AJAX routes for cascading dropdowns
+        Route::get('divisions/{division}/districts', [\App\Http\Controllers\ProfileController::class, 'getDistrictsByDivision'])->name('divisions.districts');
+        Route::get('districts/{district}/upazilas', [\App\Http\Controllers\ProfileController::class, 'getUpazilasByDistrict'])->name('districts.upazilas');
+        Route::put('profile/partner', [\App\Http\Controllers\ProfileController::class, 'updatePartner'])->name('profile.updatePartner.alt');
+        Route::put('profile/update-partner-details', [PartnerController::class, 'updateProfile'])->name('profile.update-details');
         
         // User Profile Management
         Route::get('profile/user', [\App\Http\Controllers\ProfileController::class, 'showUser'])->name('profile.show-user-profile');
         Route::get('profile/user/edit', [\App\Http\Controllers\ProfileController::class, 'editUser'])->name('profile.edit-user-profile');
         Route::put('profile/user', [\App\Http\Controllers\ProfileController::class, 'updateUser'])->name('profile.update-user');
-        
-        // Additional profile routes for better naming consistency
-        Route::put('profile/update', [\App\Http\Controllers\ProfileController::class, 'updatePartner'])->name('profile.update.main');
-        
-        // Partner profile update route (alias for consistency)
-        Route::put('profile/update-partner', [\App\Http\Controllers\ProfileController::class, 'updatePartner'])->name('profile.updatePartner.main');
         
         // Partner Settings
         Route::get('settings', function () {
