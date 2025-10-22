@@ -34,8 +34,7 @@
              }
          }
      </script>
-  <link href="https://fonts.googleapis.com/css2?family=Nikosh:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
 </head>
 
  <body class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-gray-100 font-bangla">
@@ -90,7 +89,7 @@
           </div>
           <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Facebook Messenger</h3>
           <p class="text-gray-600 dark:text-gray-300 mb-6">Facebook Messenger এর মাধ্যমে আমাদের সাথে যোগাযোগ করুন</p>
-          <a href="https://m.me/bikolpocomputer.rangpur" 
+          <a href="https://m.me/bikolpolive" 
              target="_blank" 
              class="inline-flex items-center justify-center w-full bg-blue-500 hover:bg-blue-600 text-white font-bold px-6 py-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105">
             <i class="fab fa-facebook-messenger mr-2"></i>
@@ -256,7 +255,7 @@
             সোশ্যাল মিডিয়া
           </h3>
           <div class="grid grid-cols-2 gap-4">
-            <a href="https://m.me/BikolpoComputer.Rangpur" 
+            <a href="https://m.me/bikolpolive" 
                target="_blank"
                class="flex items-center justify-center p-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg">
               <i class="fab fa-facebook-messenger text-2xl mr-3"></i>

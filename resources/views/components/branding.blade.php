@@ -9,25 +9,25 @@
     $sizeConfig = [
         'sm' => [
             'logo' => 'w-8 h-8',
-            'brand' => 'text-lg font-black font-brand tracking-wide',
+            'brand' => 'text-lg font-black tracking-wide',
             'tagline' => 'text-[10px] font-medium',
             'gap' => 'space-x-2',
         ],
         'md' => [
             'logo' => 'w-10 h-10',
-            'brand' => 'text-xl font-black font-brand tracking-wide',
+            'brand' => 'text-xl font-black tracking-wide',
             'tagline' => 'text-xs font-medium',
             'gap' => 'space-x-3',
         ],
         'lg' => [
             'logo' => 'w-12 h-12',
-            'brand' => 'text-2xl font-black font-brand tracking-wide',
+            'brand' => 'text-2xl font-black tracking-wide',
             'tagline' => 'text-sm font-medium',
             'gap' => 'space-x-3',
         ],
         'xl' => [
             'logo' => 'w-16 h-16',
-            'brand' => 'text-3xl font-black font-brand tracking-wide',
+            'brand' => 'text-3xl font-black tracking-wide',
             'tagline' => 'text-base font-medium',
             'gap' => 'space-x-4',
         ],

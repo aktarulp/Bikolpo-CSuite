@@ -56,6 +56,57 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Inter', 'Hind Siliguri', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        bangla: ['"Hind Siliguri"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        brand: ['"Poppins"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        modern: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        display: ['"Space Grotesk"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+      },
+      colors: {
+        primaryGreen: '#16a34a',
+        primaryOrange: '#f97316',
+        primaryBlue: '#3b82f6',
+        primaryPurple: '#8b5cf6',
+      },
+      animation: {
+        'fade-in': 'fadeIn 0.5s ease-in-out',
+        'slide-up': 'slideUp 0.6s ease-out',
+        'bounce-slow': 'bounce 2s infinite',
+        'pulse-slow': 'pulse 3s infinite',
+        'float': 'float 3s ease-in-out infinite',
+        'shimmer': 'shimmer 3s ease-in-out infinite',
+        'gradient-shift': 'gradientShift 4s ease infinite',
+      },
+      keyframes: {
+        fadeIn: {
+          'from': { opacity: '0', transform: 'translateY(20px)' },
+          'to': { opacity: '1', transform: 'translateY(0)' },
+        },
+        slideUp: {
+          'from': { opacity: '0', transform: 'translateY(40px)' },
+          'to': { opacity: '1', transform: 'translateY(0)' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+        shimmer: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(100%)' },
+        },
+        gradientShift: {
+          '0%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+          '100%': { backgroundPosition: '0% 50%' },
+        },
+      },
+      backgroundImage: {
+        'grid-pattern': `
+          linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px)
+        `,
+      },
+      backgroundSize: {
+        'grid': '20px 20px',
       },
     },
   },

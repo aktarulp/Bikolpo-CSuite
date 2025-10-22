@@ -67,9 +67,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/apple-touch-icon-180x180.png') }}">
     <link rel="mask-icon" href="{{ asset('images/BikolpoLive.svg') }}" color="#10b981">
 
-    <!-- Fonts - Using our custom Inter + HindSiliguri setup -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
 
     <!-- Font Fix CSS (load first) -->
     <link href="{{ asset('css/font-fix.css') }}" rel="stylesheet">

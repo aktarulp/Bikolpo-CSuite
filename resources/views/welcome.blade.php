@@ -1,70 +1,79 @@
 <!DOCTYPE html>
 <html lang="bn" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Bikolpo Live - Online Test Platform for Students & Educational Partners</title>
-    <meta name="description" content="Bikolpo Live is a smart online exam platform for students and educational partners. Practice MCQs, take tests, and track your progress with real-time analytics.">
-    <meta name="keywords" content="online exam, MCQ test, educational platform, student testing, exam preparation, learning platform, Bangladesh education">
-    <meta name="author" content="Bikolpo Live">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://bikolpolive.com/">
-    <meta property="og:title" content="Bikolpo Live - Smart Online Exam Platform">
-    <meta property="og:description" content="Revolutionize your learning journey with our AI-powered online testing platform. Practice smarter, perform better, achieve more.">
-    <meta property="og:image" content="https://bikolpolive.com/images/bikolpoLive_TR.png">
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://bikolpolive.com/">
-    <meta property="twitter:title" content="Bikolpo Live - Smart Online Exam Platform">
-    <meta property="twitter:description" content="Revolutionize your learning journey with our AI-powered online testing platform. Practice smarter, perform better, achieve more.">
-    <meta property="twitter:image" content="https://bikolpolive.com/images/bikolpoLive_TR.png">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
-    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
-    
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script>
-        // Only set Tailwind config when using the CDN build
-        if (typeof tailwind !== 'undefined') {
-            tailwind.config = {
-                darkMode: 'class',
-                theme: {
-                    extend: {
-                        fontFamily: {
-                            bangla: ['"Nikosh"', '"Hind Siliguri"', 'sans-serif'],
-                            brand: ['"Poppins"', 'sans-serif'],
-                            modern: ['"Inter"', 'sans-serif'],
-                            display: ['"Space Grotesk"', 'sans-serif']
-                        },
-                        colors: {
-                            primaryGreen: '#16a34a',
-                            primaryOrange: '#f97316',
-                            primaryBlue: '#3b82f6',
-                            primaryPurple: '#8b5cf6'
-                        },
-                        animation: {
-                            'fade-in': 'fadeIn 0.5s ease-in-out',
-                            'slide-up': 'slideUp 0.6s ease-out',
-                            'bounce-slow': 'bounce 2s infinite',
-                            'pulse-slow': 'pulse 3s infinite'
-                        }
-                    }
-                }
-            };
-        }
-    </script>
-    <link href="https://fonts.googleapis.com/css2?family=Nikosh:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bikolpo Live - Online Test Platform for Students & Educational Partners</title>
+  <meta name="description" content="Bikolpo Live is a smart online exam platform for students and educational partners. Practice MCQs, take tests, and track your progress with real-time analytics.">
+  <meta name="keywords" content="online exam, MCQ test, educational platform, student testing, exam preparation, learning platform, Bangladesh education">
+  <meta name="author" content="Bikolpo Live">
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://bikolpolive.com/" />
 
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://bikolpolive.com/">
+  <meta property="og:title" content="Bikolpo Live - Smart Online Exam Platform">
+  <meta property="og:description" content="Revolutionize your learning journey with our AI-powered online testing platform. Practice smarter, perform better, achieve more.">
+  <meta property="og:image" content="https://bikolpolive.com/images/bikolpoLive_TR.png">
+  <meta property="og:site_name" content="Bikolpo Live">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://bikolpolive.com/">
+  <meta property="twitter:title" content="Bikolpo Live - Smart Online Exam Platform">
+  <meta property="twitter:description" content="Revolutionize your learning journey with our AI-powered online testing platform. Practice smarter, perform better, achieve more.">
+  <meta property="twitter:image" content="https://bikolpolive.com/images/bikolpoLive_TR.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+  <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+
+  <!-- Organization Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Bikolpo Live",
+    "url": "https://bikolpolive.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://bikolpolive.com/images/BikolpoLive.png",
+      "width": 512,
+      "height": 512
+    },
+    "description": "Bikolpo Live is an AI-powered online test platform helping students and educational partners improve learning outcomes in Bangladesh.",
+    "sameAs": [
+      "https://www.facebook.com/bikolpolive",
+      "https://www.youtube.com/@bikolpolive"
+    ]
+  }
+  </script>
+
+  <!-- Website Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "url": "https://bikolpolive.com",
+    "name": "Bikolpo Live",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Bikolpo Live",
+      "logo": "https://bikolpolive.com/images/BikolpoLive.png"
+    },
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://bikolpolive.com/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
+
+
 
 <body class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-gray-100 font-bangla">
     
@@ -78,12 +87,14 @@
             <div class="animate-fade-in">
                 <!-- Badge -->
                 <div class="inline-flex items-center px-4 py-0 rounded-full bg-primaryGreen/10 text-primaryGreen text-sm font-medium mb-4 border border-primaryGreen/20">
-                    <i class="fas fa-star mr-2"></i>
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
                     Trusted by 1000+ Students & 50+ Partners
                 </div>
                 
                 <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-gray-900 dark:text-white mb-4 leading-tight">
-                    <div class="brand-visible font-brand tracking-wide flex flex-col items-center">
+                    <div class="tracking-wide flex flex-col items-center">
                         <img src="{{ asset('images/bikolpoLive_TR.png') }}" alt="Bikolpo Live - Smart Online Exam Platform" class="h-48 md:h-32 lg:h-40 mb-1">
                         <span class="text-4xl md:text-5xl lg:text-6xl text-gray-700 dark:text-gray-300 font-light font-modern mt-2">
                             Your Smart Exam Partner
@@ -98,15 +109,21 @@
                 <!-- Key Benefits -->
                 <div class="flex flex-wrap justify-center gap-6 mb-6 text-sm md:text-base">
                     <div class="flex items-center text-gray-600 dark:text-gray-400">
-                        <i class="fas fa-check-circle text-primaryGreen mr-2"></i>
+                        <svg class="w-4 h-4 text-primaryGreen mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
                         Instant Results & Analytics
                     </div>
                     <div class="flex items-center text-gray-600 dark:text-gray-400">
-                        <i class="fas fa-check-circle text-primaryGreen mr-2"></i>
+                        <svg class="w-4 h-4 text-primaryGreen mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
                         Multi-Device Support
                     </div>
                     <div class="flex items-center text-gray-600 dark:text-gray-400">
-                        <i class="fas fa-check-circle text-primaryGreen mr-2"></i>
+                        <svg class="w-4 h-4 text-primaryGreen mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
                         24/7 Access
                     </div>
                 </div>
@@ -114,22 +131,30 @@
                 <div class="flex justify-center">
                     <a href="{{ route('register') }}" class="group bg-gradient-to-r from-primaryGreen to-green-600 hover:from-green-600 hover:to-green-700 text-white px-10 py-5 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl">
                         Start your partner journey
-                        <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform duration-200"></i>
+                        <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
                     </a>
                 </div>
                 
                 <!-- Trust Indicators -->
-                <div class="mt-8 flex flex-wrap justify-center items-center gap-8 opacity-60">
+                <div class="mt-8 flex flex-wrap justify-center items-center gap-8 opacity-80">
                     <div class="text-sm text-gray-500 dark:text-gray-400">
-                        <i class="fas fa-shield-alt text-primaryGreen mr-1"></i>
+                        <svg class="w-4 h-4 text-primaryGreen mr-1 inline" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
                         Secure & Reliable
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400">
-                        <i class="fas fa-clock text-primaryBlue mr-1"></i>
+                        <svg class="w-4 h-4 text-primaryBlue mr-1 inline" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                        </svg>
                         Real-time Results
                     </div>
                     <div class="text-sm text-gray-500 dark:text-gray-400">
-                        <i class="fas fa-users text-primaryPurple mr-1"></i>
+                        <svg class="w-4 h-4 text-primaryPurple mr-1 inline" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
+                        </svg>
                         Community Driven
                     </div>
                 </div>
@@ -148,7 +173,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-20">
                 <div class="inline-flex items-center px-4 py-2 rounded-full bg-primaryBlue/10 text-primaryBlue text-sm font-medium mb-6 border border-primaryBlue/20">
-                    <i class="fas fa-rocket mr-2"></i>
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
+                    </svg>
                     Powerful Features
                 </div>
                 <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
@@ -185,7 +212,11 @@
                     <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primaryOrange/10 to-transparent rounded-full -translate-y-16 translate-x-16"></div>
                     <div class="relative">
                         <div class="w-20 h-20 bg-gradient-to-br from-primaryOrange to-orange-600 rounded-3xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                            <i class="fas fa-database text-white text-3xl"></i>
+                            <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z" />
+                                <path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z" />
+                                <path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z" />
+                            </svg>
                         </div>
                         <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Advanced Question Bank</h3>
                         <p class="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
@@ -204,7 +235,9 @@
                     <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primaryBlue/10 to-transparent rounded-full -translate-y-16 translate-x-16"></div>
                     <div class="relative">
                         <div class="w-20 h-20 bg-gradient-to-br from-primaryBlue to-blue-600 rounded-3xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                            <i class="fas fa-chart-line text-white text-3xl"></i>
+                            <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
                         </div>
                         <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Advanced Analytics</h3>
                         <p class="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
@@ -223,7 +256,9 @@
                     <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primaryPurple/10 to-transparent rounded-full -translate-y-16 translate-x-16"></div>
                     <div class="relative">
                         <div class="w-20 h-20 bg-gradient-to-br from-primaryPurple to-purple-600 rounded-3xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                            <i class="fas fa-users text-white text-3xl"></i>
+                            <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
+                            </svg>
                         </div>
                         <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Partner Ecosystem</h3>
                         <p class="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
@@ -242,7 +277,9 @@
                     <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-500/10 to-transparent rounded-full -translate-y-16 translate-x-16"></div>
                     <div class="relative">
                         <div class="w-20 h-20 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-3xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                            <i class="fas fa-shield-alt text-white text-3xl"></i>
+                            <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
                         </div>
                         <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Enterprise Security</h3>
                         <p class="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
@@ -261,7 +298,9 @@
                     <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-rose-500/10 to-transparent rounded-full -translate-y-16 translate-x-16"></div>
                     <div class="relative">
                         <div class="w-20 h-20 bg-gradient-to-br from-rose-500 to-rose-600 rounded-3xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                            <i class="fas fa-mobile-alt text-white text-3xl"></i>
+                            <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M7 2a2 2 0 00-2 2v12a2 2 0 002 2h6a2 2 0 002-2V4a2 2 0 00-2-2H7zm3 14a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                            </svg>
                         </div>
                         <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Universal Access</h3>
                         <p class="text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
@@ -292,7 +331,9 @@
             <!-- Header -->
             <div class="text-center mb-20">
                 <div class="inline-flex items-center px-6 py-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-8">
-                    <i class="fas fa-chart-line text-primaryGreen mr-3 text-lg"></i>
+                    <svg class="w-5 h-5 text-primaryGreen mr-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
                     <span class="text-sm font-medium text-gray-300">Our Impact in Numbers</span>
                 </div>
                 <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
@@ -311,7 +352,9 @@
                     <div class="relative bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 hover:border-primaryGreen/30 transition-all duration-500 group-hover:bg-white/10">
                         <div class="flex items-center justify-between mb-6">
                             <div class="w-14 h-14 bg-gradient-to-br from-primaryGreen to-green-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                                <i class="fas fa-users text-white text-xl"></i>
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
+                                </svg>
                             </div>
                             <div class="text-right">
                                 <div class="text-4xl md:text-5xl font-black mb-1 group-hover:scale-110 transition-transform duration-300 bg-gradient-to-r from-primaryGreen to-green-400 bg-clip-text text-transparent">
@@ -323,7 +366,9 @@
                         <div class="flex items-center justify-between">
                             <span class="text-gray-300 text-sm">Growing daily</span>
                             <div class="flex items-center text-primaryGreen text-sm">
-                                <i class="fas fa-arrow-up mr-1"></i>
+                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                </svg>
                                 <span>+12%</span>
                             </div>
                         </div>
@@ -336,7 +381,9 @@
                     <div class="relative bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 hover:border-primaryBlue/30 transition-all duration-500 group-hover:bg-white/10">
                         <div class="flex items-center justify-between mb-6">
                             <div class="w-14 h-14 bg-gradient-to-br from-primaryBlue to-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                                <i class="fas fa-graduation-cap text-white text-xl"></i>
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
+                                </svg>
                             </div>
                             <div class="text-right">
                                 <div class="text-4xl md:text-5xl font-black mb-1 group-hover:scale-110 transition-transform duration-300 bg-gradient-to-r from-primaryBlue to-blue-400 bg-clip-text text-transparent">
@@ -348,7 +395,9 @@
                         <div class="flex items-center justify-between">
                             <span class="text-gray-300 text-sm">This month</span>
                             <div class="flex items-center text-primaryBlue text-sm">
-                                <i class="fas fa-arrow-up mr-1"></i>
+                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                </svg>
                                 <span>+8%</span>
                             </div>
                         </div>
@@ -361,7 +410,9 @@
                     <div class="relative bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 hover:border-primaryPurple/30 transition-all duration-500 group-hover:bg-white/10">
                         <div class="flex items-center justify-between mb-6">
                             <div class="w-14 h-14 bg-gradient-to-br from-primaryPurple to-purple-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                                <i class="fas fa-building text-white text-xl"></i>
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd" />
+                                </svg>
                             </div>
                             <div class="text-right">
                                 <div class="text-4xl md:text-5xl font-black mb-1 group-hover:scale-110 transition-transform duration-300 bg-gradient-to-r from-primaryPurple to-purple-400 bg-clip-text text-transparent">
@@ -373,7 +424,9 @@
                         <div class="flex items-center justify-between">
                             <span class="text-gray-300 text-sm">Across Bangladesh</span>
                             <div class="flex items-center text-primaryPurple text-sm">
-                                <i class="fas fa-arrow-up mr-1"></i>
+                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                </svg>
                                 <span>+5%</span>
                             </div>
                         </div>
@@ -386,7 +439,9 @@
                     <div class="relative bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 hover:border-primaryOrange/30 transition-all duration-500 group-hover:bg-white/10">
                         <div class="flex items-center justify-between mb-6">
                             <div class="w-14 h-14 bg-gradient-to-br from-primaryOrange to-orange-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                                <i class="fas fa-clock text-white text-xl"></i>
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                                </svg>
                             </div>
                             <div class="text-right">
                                 <div class="text-4xl md:text-5xl font-black mb-1 group-hover:scale-110 transition-transform duration-300 bg-gradient-to-r from-primaryOrange to-orange-400 bg-clip-text text-transparent">
@@ -398,7 +453,9 @@
                         <div class="flex items-center justify-between">
                             <span class="text-gray-300 text-sm">Reliable service</span>
                             <div class="flex items-center text-primaryOrange text-sm">
-                                <i class="fas fa-check mr-1"></i>
+                                <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
                                 <span>99.9%</span>
                             </div>
                         </div>
@@ -447,7 +504,9 @@
             <!-- Header -->
             <div class="text-center mb-20">
                 <div class="inline-flex items-center px-6 py-3 rounded-full bg-primaryGreen/10 border border-primaryGreen/20 mb-8">
-                    <i class="fas fa-star text-primaryGreen mr-3 text-lg"></i>
+                    <svg class="w-5 h-5 text-primaryGreen mr-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
                     <span class="text-sm font-medium text-primaryGreen">Why Choose Us</span>
                 </div>
                 <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-gray-900 via-primaryGreen to-primaryBlue dark:from-white dark:via-primaryGreen dark:to-primaryBlue bg-clip-text text-transparent">
@@ -466,7 +525,9 @@
                         <!-- Feature 1 -->
                         <div class="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 hover:border-primaryGreen/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                             <div class="w-12 h-12 bg-gradient-to-br from-primaryGreen to-green-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                                <i class="fas fa-cogs text-white text-lg"></i>
+                                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.948 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.948 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.948c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.948c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.948-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.948-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.948zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+                                </svg>
                             </div>
                             <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Advanced Question Management</h3>
                             <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Smart question categorization, auto-grading, and comprehensive analytics for optimal learning outcomes.</p>
@@ -475,7 +536,9 @@
                         <!-- Feature 2 -->
                         <div class="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 hover:border-primaryBlue/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                             <div class="w-12 h-12 bg-gradient-to-br from-primaryBlue to-blue-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                                <i class="fas fa-chart-line text-white text-lg"></i>
+                                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                </svg>
                             </div>
                             <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Real-time Analytics</h3>
                             <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Instant performance insights, detailed reports, and personalized learning recommendations.</p>
@@ -484,7 +547,9 @@
                         <!-- Feature 3 -->
                         <div class="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 hover:border-primaryPurple/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                             <div class="w-12 h-12 bg-gradient-to-br from-primaryPurple to-purple-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                                <i class="fas fa-globe text-white text-lg"></i>
+                                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clip-rule="evenodd" />
+                                </svg>
                             </div>
                             <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">Multi-language Support</h3>
                             <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Seamless experience in Bengali, English, and other languages for inclusive learning.</p>
@@ -493,7 +558,9 @@
                         <!-- Feature 4 -->
                         <div class="group bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50 hover:border-primaryOrange/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                             <div class="w-12 h-12 bg-gradient-to-br from-primaryOrange to-orange-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                                <i class="fas fa-headset text-white text-lg"></i>
+                                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                                </svg>
                             </div>
                             <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-2">24/7 Support</h3>
                             <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Round-the-clock customer support to ensure your learning journey is never interrupted.</p>
@@ -503,7 +570,9 @@
                     <!-- Additional Benefits -->
                     <div class="bg-gradient-to-r from-primaryGreen/10 to-primaryBlue/10 rounded-2xl p-6 border border-primaryGreen/20">
                         <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-                            <i class="fas fa-trophy text-primaryGreen mr-3"></i>
+                            <svg class="w-6 h-6 text-primaryGreen mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
                             Proven Results
                         </h3>
                         <div class="grid grid-cols-2 gap-4">
@@ -530,7 +599,9 @@
         <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div class="mb-12">
                 <div class="inline-flex items-center px-4 py-2 rounded-full bg-white/20 text-white text-sm font-medium mb-6 border border-white/30">
-                    <i class="fas fa-star mr-2"></i>
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
                     Join the Revolution
                 </div>
                 <h2 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
@@ -545,7 +616,9 @@
             
             <div class="flex justify-center mb-10">
                 <a href="{{ route('register') }}" class="group bg-white text-primaryBlue px-10 py-5 rounded-full font-bold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl">
-                    <i class="fas fa-rocket mr-2 group-hover:translate-x-1 transition-transform duration-200"></i>
+                    <svg class="w-5 h-5 mr-2 group-hover:translate-x-1 transition-transform duration-200" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
+                    </svg>
                     Start your partner journey
                 </a>
             </div>
@@ -553,17 +626,23 @@
             <!-- Trust Indicators -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
                 <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                    <i class="fas fa-shield-alt text-3xl mb-3 text-yellow-300"></i>
+                    <svg class="w-8 h-8 mb-3 text-yellow-300" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
                     <h4 class="font-bold mb-2">100% Secure</h4>
                     <p class="text-blue-100 text-sm">Bank-grade security for all your data</p>
                 </div>
                 <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                    <i class="fas fa-clock text-3xl mb-3 text-yellow-300"></i>
+                    <svg class="w-8 h-8 mb-3 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
                     <h4 class="font-bold mb-2">Instant Results</h4>
                     <p class="text-blue-100 text-sm">Get immediate feedback and analytics</p>
                 </div>
                 <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                    <i class="fas fa-mobile-alt text-3xl mb-3 text-yellow-300"></i>
+                    <svg class="w-8 h-8 mb-3 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
                     <h4 class="font-bold mb-2">Mobile Ready</h4>
                     <p class="text-blue-100 text-sm">Access from any device, anywhere</p>
                 </div>
@@ -588,7 +667,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
                 <div class="inline-flex items-center px-4 py-2 rounded-full bg-primaryPurple/10 text-primaryPurple text-sm font-medium mb-6 border border-primaryPurple/20">
-                    <i class="fas fa-quote-left mr-2"></i>
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd" />
+                    </svg>
                     What Our Users Say
                 </div>
                 <h2 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
@@ -613,11 +694,21 @@
                         </div>
                     </div>
                     <div class="flex text-yellow-400 mb-4">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
                     </div>
                     <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
                         "Bikolpo Live has completely transformed my exam preparation. The instant feedback and detailed analytics help me identify my weak areas and improve systematically."
@@ -636,11 +727,21 @@
                         </div>
                     </div>
                     <div class="flex text-yellow-400 mb-4">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
                     </div>
                     <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
                         "As an educator, I love how easy it is to create and manage exams. The platform saves me hours of work and provides valuable insights into student performance."
@@ -659,11 +760,21 @@
                         </div>
                     </div>
                     <div class="flex text-yellow-400 mb-4">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
                     </div>
                     <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
                         "The comprehensive question bank is incredible! I've improved my exam performance by 40% in just 2 months. The detailed explanations make learning so much more effective."
@@ -682,11 +793,21 @@
                         </div>
                     </div>
                     <div class="flex text-yellow-400 mb-4">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
                     </div>
                     <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
                         "Our school has been using Bikolpo Live for over a year. The results speak for themselves - our students' performance has improved significantly."
@@ -705,11 +826,21 @@
                         </div>
                     </div>
                     <div class="flex text-yellow-400 mb-4">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
                     </div>
                     <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
                         "The mobile app is fantastic! I can practice anywhere, anytime. The offline mode is a game-changer for my daily commute."
@@ -728,11 +859,21 @@
                         </div>
                     </div>
                     <div class="flex text-yellow-400 mb-4">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
                     </div>
                     <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
                         "The partner management features are excellent. I can easily track all my students' progress and generate detailed reports for parents."
@@ -868,114 +1009,5 @@
         });
     </script>
 
-    <style>
-        .bg-grid-pattern {
-            background-image: 
-                linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
-            background-size: 20px 20px;
-        }
-        
-        .animation-delay-1000 {
-            animation-delay: 1s;
-        }
-        
-        .animation-delay-2000 {
-            animation-delay: 2s;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        .animate-float {
-            animation: float 3s ease-in-out infinite;
-        }
-        
-        /* Brand Name Special Effects */
-        .brand-name {
-            position: relative;
-        }
-        
-        .brand-name::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
-            animation: shimmer 3s ease-in-out infinite;
-            pointer-events: none;
-        }
-        
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-        
-        /* Enhanced gradient text */
-        .brand-gradient {
-            background: linear-gradient(135deg, #059669 0%, #2563eb 30%, #7c3aed 70%, #dc2626 100%);
-            background-size: 200% 200%;
-            animation: gradientShift 4s ease infinite;
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            color: #16a34a; /* Fallback color */
-        }
-        
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        
-        /* Alternative gradient for better visibility */
-        .brand-gradient-alt {
-            background: linear-gradient(135deg, #16a34a 0%, #3b82f6 50%, #8b5cf6 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            color: #16a34a; /* Fallback color */
-            text-shadow: 0 0 30px rgba(22, 163, 74, 0.5);
-        }
-        
-        /* High contrast version */
-        .brand-gradient-contrast {
-            background: linear-gradient(135deg, #047857 0%, #1d4ed8 50%, #6d28d9 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            color: #047857; /* Fallback color */
-            filter: contrast(1.2) brightness(1.1);
-        }
-        
-        /* Simple solid color fallback */
-        .brand-solid {
-            color: #16a34a;
-            text-shadow: 0 0 20px rgba(22, 163, 74, 0.3);
-        }
-        
-        /* Ensure visibility on all backgrounds */
-        .brand-visible {
-            background: linear-gradient(135deg, #047857 0%, #1d4ed8 50%, #6d28d9 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            color: #047857;
-        }
-    </style>
 </body>
 </html>

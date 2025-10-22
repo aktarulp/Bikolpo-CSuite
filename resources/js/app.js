@@ -6,9 +6,6 @@ import 'flowbite';
 window.Alpine = Alpine;
 Alpine.start();
 
-// Import Tailwind CSS
-import '../css/app.css';
-
 // Initialize Tailwind config if not already defined
 if (typeof window !== 'undefined' && !window.tailwind) {
     window.tailwind = {

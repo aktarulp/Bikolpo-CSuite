@@ -68,7 +68,7 @@
     "src": "fonts/Inter-SemiBoldItalic.woff2"
   },
   "resources/css/app.css": {
-    "file": "assets/app-0bX_yDzG.css",
+    "file": "assets/app-DQY6Nlaq.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "names": [
@@ -76,31 +76,9 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-B53dOonx.js",
+    "file": "assets/app-D3XosJY6.js",
     "name": "app",
     "src": "resources/js/app.js",
-    "isEntry": true,
-    "css": [
-      "assets/app-0bX_yDzG.css"
-    ],
-    "assets": [
-      "assets/Inter-ExtraLight-KI2qVeFN.woff2",
-      "assets/Inter-Light-CdfTos-h.woff2",
-      "assets/Inter-LightItalic-CA7VgT2P.woff2",
-      "assets/Inter-Regular-DRVdRqcI.woff2",
-      "assets/Inter-Italic-BMEQ2Kjv.woff2",
-      "assets/Inter-Medium-B_8v_WHh.woff2",
-      "assets/Inter-MediumItalic-n6BHLlTx.woff2",
-      "assets/Inter-SemiBold-CtskMddL.woff2",
-      "assets/Inter-SemiBoldItalic-DDHvlk21.woff2",
-      "assets/Inter-Bold-CD3Pr7BX.woff2",
-      "assets/Inter-BoldItalic-D3V_KwY_.woff2",
-      "assets/Inter-ExtraBold-DKnKKS_V.woff2",
-      "assets/HindSiliguri-Light-UBWSup-q.ttf",
-      "assets/HindSiliguri-Regular-Ch41_erl.ttf",
-      "assets/HindSiliguri-Medium-X7Kyy9T3.ttf",
-      "assets/HindSiliguri-SemiBold-KoMTq85X.ttf",
-      "assets/HindSiliguri-Bold-DVHlo15N.ttf"
-    ]
+    "isEntry": true
   }
 }

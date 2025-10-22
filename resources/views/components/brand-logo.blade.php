@@ -11,25 +11,25 @@
         'sm' => [
             'container' => 'flex items-center space-x-2',
             'logo' => 'w-8 h-8',
-            'brand' => 'text-lg font-brand tracking-wide',
+            'brand' => 'text-lg tracking-wide',
             'tagline' => 'text-xs font-medium'
         ],
         'md' => [
             'container' => 'flex items-center space-x-3',
             'logo' => 'w-10 h-10',
-            'brand' => 'text-xl font-brand tracking-wide',
+            'brand' => 'text-xl tracking-wide',
             'tagline' => 'text-xs font-medium'
         ],
         'lg' => [
             'container' => 'flex items-center space-x-3',
             'logo' => 'w-12 h-12',
-            'brand' => 'text-2xl font-black font-brand tracking-wide',
+            'brand' => 'text-2xl font-black tracking-wide',
             'tagline' => 'text-xs font-medium'
         ],
         'xl' => [
             'container' => 'flex items-center space-x-4',
             'logo' => 'w-16 h-16',
-            'brand' => 'text-3xl font-black font-brand tracking-wide',
+            'brand' => 'text-3xl font-black tracking-wide',
             'tagline' => 'text-sm font-medium'
         ]
     ];
@@ -37,7 +37,7 @@
     $variantConfig = [
         'default' => [
             'logoBg' => 'bg-gradient-to-br from-primaryGreen to-green-600 shadow-lg',
-            'brand' => 'brand-visible',
+            'brand' => 'text-gray-900 dark:text-white',
             'tagline' => 'text-gray-500 dark:text-gray-400 font-medium'
         ],
         'minimal' => [
@@ -47,7 +47,7 @@
         ],
         'hero' => [
             'logoBg' => 'bg-gradient-to-br from-primaryGreen to-green-600 shadow-xl',
-            'brand' => 'brand-visible',
+            'brand' => 'text-gray-900 dark:text-white',
             'tagline' => 'text-gray-600 dark:text-gray-400 font-medium'
         ],
         'footer' => [

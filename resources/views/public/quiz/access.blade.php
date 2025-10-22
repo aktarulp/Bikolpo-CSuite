@@ -10,7 +10,7 @@
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
 
   @vite(['resources/css/app.css','resources/js/app.js'])
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <script src="https://kit.fontawesome.com/a2d04c48b5.js" crossorigin="anonymous"></script>
 
   <style>
