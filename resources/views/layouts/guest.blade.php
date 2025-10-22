@@ -8,6 +8,7 @@
         <title>@yield('title', config('app.name', 'Laravel'))</title>
 
         <!-- Favicon -->
+        <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
         <link rel="icon" href="{{ asset('images/BikolpoLive.svg') }}" type="image/svg+xml">
         <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/favicon-32x32.png') }}">
         <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon-16x16.png') }}">

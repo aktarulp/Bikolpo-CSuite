@@ -5,6 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@yield('title', 'Bikolpo Live - Online Test Platform')</title>
     
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="@yield('description', 'Bikolpo Live - Online Test Platform for Educational Excellence')">
+    <meta name="keywords" content="online test, exam platform, education, Bikolpo Live, Bangladesh">
+    <meta name="author" content="Bikolpo Live">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="@yield('title', 'Bikolpo Live - Online Test Platform')">
+    <meta property="og:description" content="@yield('description', 'Bikolpo Live - Online Test Platform for Educational Excellence')">
+    <meta property="og:image" content="{{ asset('images/BikolpoLive.png') }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Bikolpo Live">
+    <meta property="og:locale" content="en_US">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="@yield('title', 'Bikolpo Live - Online Test Platform')">
+    <meta name="twitter:description" content="@yield('description', 'Bikolpo Live - Online Test Platform for Educational Excellence')">
+    <meta name="twitter:image" content="{{ asset('images/BikolpoLive.png') }}">
+    
+    <!-- Organization Logo for Google Search -->
+    <meta name="logo" content="{{ asset('images/BikolpoLive.png') }}">
+    <link rel="logo" href="{{ asset('images/BikolpoLive.png') }}">
+    
+    <!-- Structured Data for Google Search Console -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Bikolpo Live",
+        "url": "{{ url('/') }}",
+        "logo": "{{ asset('images/BikolpoLive.png') }}",
+        "description": "Online Test Platform for Educational Excellence",
+        "sameAs": [
+            "https://www.facebook.com/bikolpolive",
+            "https://www.linkedin.com/company/bikolpolive"
+        ],
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+880-XXX-XXXXXX",
+            "contactType": "customer service",
+            "areaServed": "BD",
+            "availableLanguage": ["English", "Bengali"]
+        },
+        "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "BD"
+        }
+    }
+    </script>
+    
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">

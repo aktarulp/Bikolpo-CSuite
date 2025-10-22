@@ -7,7 +7,60 @@
 
     <title>{{ config('app.name', 'Laravel') }} - @yield('title', 'Dashboard')</title>
 
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="@yield('description', 'Bikolpo Live - Online Test Platform for Educational Excellence')">
+    <meta name="keywords" content="online test, exam platform, education, Bikolpo Live, Bangladesh">
+    <meta name="author" content="Bikolpo Live">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="{{ config('app.name', 'Bikolpo Live') }} - @yield('title', 'Dashboard')">
+    <meta property="og:description" content="@yield('description', 'Bikolpo Live - Online Test Platform for Educational Excellence')">
+    <meta property="og:image" content="{{ asset('images/BikolpoLive.png') }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Bikolpo Live">
+    <meta property="og:locale" content="en_US">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ config('app.name', 'Bikolpo Live') }} - @yield('title', 'Dashboard')">
+    <meta name="twitter:description" content="@yield('description', 'Bikolpo Live - Online Test Platform for Educational Excellence')">
+    <meta name="twitter:image" content="{{ asset('images/BikolpoLive.png') }}">
+    
+    <!-- Organization Logo for Google Search -->
+    <meta name="logo" content="{{ asset('images/BikolpoLive.png') }}">
+    <link rel="logo" href="{{ asset('images/BikolpoLive.png') }}">
+    
+    <!-- Structured Data for Google Search Console -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Bikolpo Live",
+        "url": "{{ url('/') }}",
+        "logo": "{{ asset('images/BikolpoLive.png') }}",
+        "description": "Online Test Platform for Educational Excellence",
+        "sameAs": [
+            "https://www.facebook.com/bikolpolive",
+            "https://www.linkedin.com/company/bikolpolive"
+        ],
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+880-XXX-XXXXXX",
+            "contactType": "customer service",
+            "areaServed": "BD",
+            "availableLanguage": ["English", "Bengali"]
+        },
+        "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "BD"
+        }
+    }
+    </script>
+
     <!-- Favicon -->
+    <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
     <link rel="icon" href="{{ asset('images/BikolpoLive.svg') }}" type="image/svg+xml">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/favicon-32x32.png') }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon-16x16.png') }}">
