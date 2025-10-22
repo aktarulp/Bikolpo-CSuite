@@ -15,7 +15,7 @@
   <meta property="og:url" content="https://bikolpolive.com/">
   <meta property="og:title" content="Bikolpo Live - Smart Online Exam Platform">
   <meta property="og:description" content="Revolutionize your learning journey with our AI-powered online testing platform. Practice smarter, perform better, achieve more.">
-  <meta property="og:image" content="https://bikolpolive.com/images/bikolpoLive_TR.png">
+  <meta property="og:image" content="https://bikolpolive.com/images/bikolpoLive.svg">
   <meta property="og:site_name" content="Bikolpo Live">
 
   <!-- Twitter -->
@@ -23,11 +23,11 @@
   <meta property="twitter:url" content="https://bikolpolive.com/">
   <meta property="twitter:title" content="Bikolpo Live - Smart Online Exam Platform">
   <meta property="twitter:description" content="Revolutionize your learning journey with our AI-powered online testing platform. Practice smarter, perform better, achieve more.">
-  <meta property="twitter:image" content="https://bikolpolive.com/images/bikolpoLive_TR.png">
+  <meta property="twitter:image" content="https://bikolpolive.com/images/bikolpoLive.svg">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
-  <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+  <link rel="icon" type="image/svg+xml" href="{{ asset('images/BikolpoLive.svg') }}">
+  <link rel="shortcut icon" type="image/svg+xml" href="{{ asset('images/BikolpoLive.svg') }}">
 
   <!-- Organization Schema -->
   <script type="application/ld+json">
@@ -38,7 +38,7 @@
     "url": "https://bikolpolive.com",
     "logo": {
       "@type": "ImageObject",
-      "url": "https://bikolpolive.com/images/BikolpoLive.png",
+      "url": "https://bikolpolive.com/images/BikolpoLive.svg",
       "width": 512,
       "height": 512
     },
@@ -62,7 +62,7 @@
       "name": "Bikolpo Live",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://bikolpolive.com/images/BikolpoLive.png",
+        "url": "https://bikolpolive.com/images/BikolpoLive.svg",
         "width": 512,
         "height": 512
       }
@@ -99,7 +99,7 @@
                 
                 <h1 class="text-5xl md:text-7xl lg:text-8xl font-black text-gray-900 dark:text-white mb-4 leading-tight">
                     <div class="tracking-wide flex flex-col items-center">
-                        <img src="{{ asset('images/bikolpoLive_TR.png') }}" alt="Bikolpo Live - Smart Online Exam Platform" class="h-48 md:h-32 lg:h-40 mb-1">
+                        <img src="{{ asset('images/BikolpoLive.svg') }}" alt="Bikolpo Live - Smart Online Exam Platform" class="h-48 md:h-32 lg:h-40 mb-1">
                         <span class="text-4xl md:text-5xl lg:text-6xl text-gray-700 dark:text-gray-300 font-light font-modern mt-2">
                             Your Smart Exam Partner
                         </span>

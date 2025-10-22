@@ -14,7 +14,7 @@
     <!-- Open Graph Meta Tags -->
     <meta property="og:title" content="@yield('title', 'Bikolpo Live - Online Test Platform')">
     <meta property="og:description" content="@yield('description', 'Bikolpo Live - Online Test Platform for Educational Excellence')">
-    <meta property="og:image" content="{{ asset('images/BikolpoLive.png') }}">
+    <meta property="og:image" content="{{ asset('images/BikolpoLive.svg') }}">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Bikolpo Live">
@@ -24,11 +24,11 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="@yield('title', 'Bikolpo Live - Online Test Platform')">
     <meta name="twitter:description" content="@yield('description', 'Bikolpo Live - Online Test Platform for Educational Excellence')">
-    <meta name="twitter:image" content="{{ asset('images/BikolpoLive.png') }}">
+    <meta name="twitter:image" content="{{ asset('images/BikolpoLive.svg') }}">
     
     <!-- Organization Logo for Google Search -->
-    <meta name="logo" content="{{ asset('images/BikolpoLive.png') }}">
-    <link rel="logo" href="{{ asset('images/BikolpoLive.png') }}">
+    <meta name="logo" content="{{ asset('images/BikolpoLive.svg') }}">
+    <link rel="logo" href="{{ asset('images/BikolpoLive.svg') }}">
     
     <!-- Structured Data for Google Search Console -->
     <script type="application/ld+json">
@@ -37,7 +37,7 @@
         "@type": "Organization",
         "name": "Bikolpo Live",
         "url": "{{ url('/') }}",
-        "logo": "{{ asset('images/BikolpoLive.png') }}",
+        "logo": "{{ asset('images/BikolpoLive.svg') }}",
         "description": "Online Test Platform for Educational Excellence",
         "sameAs": [
             "https://www.facebook.com/bikolpolive",
@@ -58,8 +58,8 @@
     </script>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
-    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('images/BikolpoLive.svg') }}">
+    <link rel="shortcut icon" type="image/svg+xml" href="{{ asset('images/BikolpoLive.svg') }}">
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 

@@ -43,7 +43,7 @@
 @endif
     <div class="flex items-center {{ $config['gap'] }} rounded-2xl px-3 py-2 shadow-lg {{ $bg }}">
         <!-- Logo image -->
-        <img src="{{ asset('images/bikolpoLive_TR.png') }}" alt="Bikolpo Live Logo" class="{{ $config['logo'] }} object-contain select-none" draggable="false" />
+        <img src="{{ asset('images/BikolpoLive.svg') }}" alt="Bikolpo Live Logo" class="{{ $config['logo'] }} object-contain select-none" draggable="false" />
 
         <!-- Brand title & tagline -->
         <div class="leading-tight">

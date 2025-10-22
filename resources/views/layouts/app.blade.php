@@ -16,7 +16,7 @@
     <!-- Open Graph Meta Tags -->
     <meta property="og:title" content="{{ config('app.name', 'Bikolpo Live') }} - @yield('title', 'Dashboard')">
     <meta property="og:description" content="@yield('description', 'Bikolpo Live - Online Test Platform for Educational Excellence')">
-    <meta property="og:image" content="{{ asset('images/BikolpoLive.png') }}">
+    <meta property="og:image" content="{{ asset('images/BikolpoLive.svg') }}">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Bikolpo Live">
@@ -26,11 +26,11 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ config('app.name', 'Bikolpo Live') }} - @yield('title', 'Dashboard')">
     <meta name="twitter:description" content="@yield('description', 'Bikolpo Live - Online Test Platform for Educational Excellence')">
-    <meta name="twitter:image" content="{{ asset('images/BikolpoLive.png') }}">
+    <meta name="twitter:image" content="{{ asset('images/BikolpoLive.svg') }}">
     
     <!-- Organization Logo for Google Search -->
-    <meta name="logo" content="{{ asset('images/BikolpoLive.png') }}">
-    <link rel="logo" href="{{ asset('images/BikolpoLive.png') }}">
+    <meta name="logo" content="{{ asset('images/BikolpoLive.svg') }}">
+    <link rel="logo" href="{{ asset('images/BikolpoLive.svg') }}">
     
     <!-- Structured Data for Google Search Console -->
     <script type="application/ld+json">
@@ -39,7 +39,7 @@
         "@type": "Organization",
         "name": "Bikolpo Live",
         "url": "{{ url('/') }}",
-        "logo": "{{ asset('images/BikolpoLive.png') }}",
+        "logo": "{{ asset('images/BikolpoLive.svg') }}",
         "description": "Online Test Platform for Educational Excellence",
         "sameAs": [
             "https://www.facebook.com/bikolpolive",
@@ -60,11 +60,8 @@
     </script>
 
     <!-- Favicon -->
-    <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
     <link rel="icon" href="{{ asset('images/BikolpoLive.svg') }}" type="image/svg+xml">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/favicon-32x32.png') }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon-16x16.png') }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/apple-touch-icon-180x180.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/BikolpoLive.svg') }}">
     <link rel="mask-icon" href="{{ asset('images/BikolpoLive.svg') }}" color="#10b981">
 
     <!-- Fonts -->

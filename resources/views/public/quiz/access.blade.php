@@ -7,7 +7,7 @@
     <title>Live Exam Access - {{ config('app.name', 'Bikolpo Live') }}</title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('images/BikolpoLive.svg') }}">
 
   @vite(['resources/css/app.css','resources/js/app.js'])
 
@@ -133,7 +133,7 @@
       <!-- Header -->
       <div class="text-center mb-8">
         <div class="w-20 h-20 bg-gradient-to-tr from-indigo-400 to-pink-400 rounded-2xl mx-auto flex items-center justify-center shadow-lg">
-          <img src="{{ asset('images/bikolpoLive_TR.png') }}" alt="Bikolpo Live Logo" class="h-16 w-16 object-contain">
+          <img src="{{ asset('images/BikolpoLive.svg') }}" alt="Bikolpo Live Logo" class="h-16 w-16 object-contain">
         </div>
         <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800 mt-5">🚀 Join Live Exam</h1>
         <p class="text-gray-500 mt-2">Fun & fast access with Bikolpo Live</p>
