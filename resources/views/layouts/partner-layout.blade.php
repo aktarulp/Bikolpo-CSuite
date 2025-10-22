@@ -427,17 +427,17 @@
 
                                         
 
-                                        // Use system logo for partner/admin roles
-                                        $systemLogo = null;
+                                        // Use partner logo for partner/admin roles
+                                        $partnerLogoSidebar = null;
                                         if (in_array($roleName, ['partner','partner_admin','admin','operator',''])) {
-                                            $systemLogo = 'images/BikolpoLive.svg'; // System logo
+                                            $partnerLogoSidebar = $partner?->logo ?? null;
                                         }
 
                                         $displayImage = null;
                                         if (!empty($studentPhoto)) {
                                             $displayImage = asset('uploads/' . $studentPhoto);
-                                        } elseif (!empty($systemLogo)) {
-                                            $displayImage = asset($systemLogo);
+                                        } elseif (!empty($partnerLogoSidebar)) {
+                                            $displayImage = asset('uploads/' . $partnerLogoSidebar);
                                         }
 
                                         // Compute initials as fallback
@@ -593,7 +593,11 @@
                     <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                         <div class="flex items-center space-x-4">
                             <div class="w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-800 rounded-xl ring-2 ring-primaryGreen/20 shadow-lg">
-                                <img src="{{ asset('images/BikolpoLive.svg') }}" alt="Bikolpo Live Logo" class="w-10 h-10 object-contain p-1">
+                                @if($partner?->logo)
+                                    <img src="{{ asset('uploads/' . $partner->logo) }}" alt="Partner Logo" class="w-10 h-10 object-contain p-1">
+                                @else
+                                    <img src="{{ asset('images/BikolpoLive.svg') }}" alt="Bikolpo Live Logo" class="w-10 h-10 object-contain p-1">
+                                @endif
                             </div>
                             <div>
                                 <h2 class="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white">
@@ -676,17 +680,17 @@
 
 
 
-                                            // Use system logo for partner/admin roles  
-                                            $systemLogo = null;
+                                            // Use partner logo for partner/admin roles  
+                                            $partnerLogoTop = null;
                                             if (in_array($roleName, ['partner','partner_admin','admin','operator',''])) {
-                                                $systemLogo = 'images/BikolpoLive.svg'; // System logo
+                                                $partnerLogoTop = $partner?->logo ?? null;
                                             }
 
                                             $displayImage = null;
                                             if (!empty($studentPhoto)) {
                                                 $displayImage = asset('uploads/' . $studentPhoto);
-                                            } elseif (!empty($systemLogo)) {
-                                                $displayImage = asset($systemLogo);
+                                            } elseif (!empty($partnerLogoTop)) {
+                                                $displayImage = asset('uploads/' . $partnerLogoTop);
                                             }
 
                                             // Compute initials as fallback
