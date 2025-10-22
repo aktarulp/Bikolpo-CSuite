@@ -597,7 +597,7 @@
                             </div>
                             <div>
                                 <h2 class="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white">
-                                    Welcome back, <span class="text-transparent bg-clip-text bg-gradient-to-r from-primaryGreen to-emerald-600 dark:from-emerald-400 dark:to-primaryGreen">{{ in_array($role, ['student']) ? (Auth::user()->name ?? 'User') : ($partner?->name ?? Auth::user()->name ?? 'Partner') }}</span>
+                                    Welcome back, <span class="text-primaryGreen dark:text-emerald-400 font-semibold">{{ in_array($role, ['student']) ? (Auth::user()->name ?? 'User') : ($partner?->name ?? Auth::user()->name ?? 'Partner') }}</span>
                                 </h2>
                                 <p class="text-gray-600 dark:text-gray-400 text-sm flex items-center mt-1">
                                     <svg class="w-4 h-4 mr-1.5 text-primaryGreen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
