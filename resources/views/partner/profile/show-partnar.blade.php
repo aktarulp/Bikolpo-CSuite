@@ -5,162 +5,167 @@
 @section('content')
 
 <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-    <!-- Hero Section with Cover Photo -->
+    <!-- Hero Section with Large Cover Photo -->
     <div class="relative">
-        <!-- Cover Photo -->
-        <div class="h-48 sm:h-64 lg:h-80 relative overflow-hidden">
+        <!-- Large Cover Photo (1200x628 ratio) -->
+        <div class="h-96 sm:h-[28rem] lg:h-[32rem] xl:h-[36rem] relative overflow-hidden">
             @if(isset($partner->cover_photo) && $partner->cover_photo)
                 <img src="{{ asset('uploads/' . $partner->cover_photo) }}" 
                      alt="Cover Photo" 
                      class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/60"></div>
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/70"></div>
             @else
                 <div class="absolute inset-0 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600"></div>
                 <div class="absolute inset-0 flex items-center justify-center">
                     <div class="text-center text-white">
-                        <svg class="w-16 h-16 mx-auto mb-4 opacity-80" fill="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-20 h-20 mx-auto mb-4 opacity-80" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                         </svg>
-                        <p class="text-lg font-semibold">No Cover Photo</p>
+                        <p class="text-xl font-semibold">No Cover Photo</p>
                     </div>
                 </div>
             @endif
         </div>
 
-        <!-- Profile Card -->
-        <div class="relative -mt-16 sm:-mt-20 lg:-mt-24 px-4 sm:px-6 lg:px-8">
+        <!-- Profile Info Overlay -->
+        <div class="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
             <div class="max-w-7xl mx-auto">
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl overflow-hidden">
-                    <!-- Profile Header -->
-                    <div class="relative p-6 sm:p-8 lg:p-10">
-                        <div class="flex flex-col sm:flex-row items-start sm:items-end gap-6">
-                            <!-- Logo -->
-                            <div class="relative">
-                                <div class="w-24 h-24 sm:w-32 sm:h-32 lg:w-40 lg:h-40 rounded-2xl shadow-xl overflow-hidden border-4 border-white dark:border-gray-700">
-                                    @if(isset($partner->logo) && $partner->logo)
-                                        <img src="{{ asset('uploads/' . $partner->logo) }}" 
-                                             alt="Logo" 
-                                             class="w-full h-full object-cover">
-                                    @else
-                                        <div class="w-full h-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-                                            <svg class="w-12 h-12 sm:w-16 sm:h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                                            </svg>
-                                        </div>
-                                    @endif
-                                </div>
-                                <!-- Status Badge -->
-                                <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-white dark:border-gray-800 flex items-center justify-center">
-                                    <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                </div>
-                            </div>
-
-                            <!-- Profile Info -->
-                            <div class="flex-1 min-w-0">
-                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                                    <div>
-                                        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-2">
-                                            {{ $partner->name ?? 'N/A' }}
-                                        </h1>
-                                        <p class="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-2">
-                                            {{ $partner->institute_name ?? 'N/A' }}
-                                        </p>
-                                        @if(isset($partner->institute_name_bangla) && $partner->institute_name_bangla)
-                                            <p class="text-base text-gray-500 dark:text-gray-400 font-medium">
-                                                {{ $partner->institute_name_bangla }}
-                                            </p>
-                                        @endif
+                <div class="flex flex-col lg:flex-row items-start lg:items-end space-y-6 lg:space-y-0 lg:space-x-8">
+                    <!-- Logo with Circular Border -->
+                    <div class="flex-shrink-0">
+                        <div class="relative">
+                            <div class="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 rounded-full shadow-2xl overflow-hidden border-6 border-white/90 dark:border-gray-700/90 backdrop-blur-sm">
+                                @if(isset($partner->logo) && $partner->logo)
+                                    <img src="{{ asset('uploads/' . $partner->logo) }}" 
+                                         alt="Logo" 
+                                         class="w-full h-full object-cover">
+                                @else
+                                    <div class="w-full h-full bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center">
+                                        <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                        </svg>
                                     </div>
-                                    
-                                    <!-- Action Buttons -->
-                                    <div class="flex flex-col sm:flex-row gap-3">
-                                        <a href="{{ route('partner.profile.edit-partnar') }}" 
-                                           class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 font-semibold text-sm">
-                                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                            </svg>
-                                            Edit Profile
-                                        </a>
-                                    </div>
-                                </div>
+                                @endif
                             </div>
+                            <!-- Decorative Ring -->
+                            <div class="absolute -inset-2 rounded-full border-2 border-white/30 dark:border-gray-600/30"></div>
                         </div>
                     </div>
 
-                    <!-- Stats Cards -->
-                    <div class="px-6 sm:px-8 lg:px-10 pb-6">
-                        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4">
-                            <!-- Students -->
-                            <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 text-center border border-blue-200 dark:border-blue-700">
-                                <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mx-auto mb-2">
-                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
+                    <!-- Partner Info -->
+                    <div class="flex-1 text-white">
+                        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 drop-shadow-lg">
+                            {{ $partner->name ?? 'Partner Name' }}
+                        </h1>
+                        <p class="text-xl sm:text-2xl opacity-95 mb-6 drop-shadow-md">
+                            {{ $partner->institute_name ?? 'Institution Name' }}
+                        </p>
+                        <div class="flex flex-wrap items-center gap-6 text-base">
+                            @if(isset($partner->email) && $partner->email)
+                                <div class="flex items-center space-x-3 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
                                     </svg>
+                                    <span class="font-medium">{{ $partner->email }}</span>
                                 </div>
-                                <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ $partner->students_count ?? 0 }}</div>
-                                <div class="text-xs text-blue-600 dark:text-blue-400 font-medium">Students</div>
-                            </div>
-
-                            <!-- Courses -->
-                            <div class="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl p-4 text-center border border-green-200 dark:border-green-700">
-                                <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center mx-auto mb-2">
-                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332-.477-4.5-1.253"/>
+                            @endif
+                            @if(isset($partner->mobile) && $partner->mobile)
+                                <div class="flex items-center space-x-3 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
                                     </svg>
+                                    <span class="font-medium">{{ $partner->mobile }}</span>
                                 </div>
-                                <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ $partner->courses_count ?? 0 }}</div>
-                                <div class="text-xs text-green-600 dark:text-green-400 font-medium">Courses</div>
-                            </div>
-
-                            <!-- Batches -->
-                            <div class="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-xl p-4 text-center border border-purple-200 dark:border-purple-700">
-                                <div class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center mx-auto mb-2">
-                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                                    </svg>
-                                </div>
-                                <div class="text-2xl font-bold text-purple-600 dark:text-purple-400">{{ $partner->batches_count ?? 0 }}</div>
-                                <div class="text-xs text-purple-600 dark:text-purple-400 font-medium">Batches</div>
-                            </div>
-
-                            <!-- Questions -->
-                            <div class="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-xl p-4 text-center border border-orange-200 dark:border-orange-700">
-                                <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center mx-auto mb-2">
-                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                    </svg>
-                                </div>
-                                <div class="text-2xl font-bold text-orange-600 dark:text-orange-400">{{ $partner->questions_count ?? 0 }}</div>
-                                <div class="text-xs text-orange-600 dark:text-orange-400 font-medium">Questions</div>
-                            </div>
-
-                            <!-- Exams -->
-                            <div class="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 rounded-xl p-4 text-center border border-red-200 dark:border-red-700">
-                                <div class="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center mx-auto mb-2">
-                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                    </svg>
-                                </div>
-                                <div class="text-2xl font-bold text-red-600 dark:text-red-400">{{ $partner->exams_count ?? 0 }}</div>
-                                <div class="text-xs text-red-600 dark:text-red-400 font-medium">Exams</div>
-                            </div>
-
-                            <!-- Subjects -->
-                            <div class="bg-gradient-to-br from-teal-50 to-teal-100 dark:from-teal-900/20 dark:to-teal-800/20 rounded-xl p-4 text-center border border-teal-200 dark:border-teal-700">
-                                <div class="w-8 h-8 bg-teal-500 rounded-lg flex items-center justify-center mx-auto mb-2">
-                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                                    </svg>
-                                </div>
-                                <div class="text-2xl font-bold text-teal-600 dark:text-teal-400">{{ $partner->subjects_count ?? 0 }}</div>
-                                <div class="text-xs text-teal-600 dark:text-teal-400 font-medium">Subjects</div>
-                            </div>
+                            @endif
                         </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex-shrink-0">
+                        <a href="{{ route('partner.profile.edit-partnar') }}" 
+                           class="inline-flex items-center px-6 py-3 bg-white/20 backdrop-blur-sm text-white border-2 border-white/40 rounded-xl hover:bg-white/30 hover:border-white/60 transition-all duration-300 font-semibold shadow-lg">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                            Edit Profile
+                        </a>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards Overlay -->
+    <div class="relative -mt-8 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4">
+                <!-- Students -->
+                <div class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20 dark:border-gray-700/50 shadow-lg">
+                    <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center mx-auto mb-2">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
+                        </svg>
+                    </div>
+                    <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ $partner->students_count ?? 0 }}</div>
+                    <div class="text-xs text-blue-500 dark:text-blue-300 font-medium">Students</div>
+                </div>
+
+                <!-- Courses -->
+                <div class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20 dark:border-gray-700/50 shadow-lg">
+                    <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center mx-auto mb-2">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332-.477-4.5-1.253"></path>
+                        </svg>
+                    </div>
+                    <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ $partner->courses_count ?? 0 }}</div>
+                    <div class="text-xs text-green-500 dark:text-green-300 font-medium">Courses</div>
+                </div>
+
+                <!-- Batches -->
+                <div class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20 dark:border-gray-700/50 shadow-lg">
+                    <div class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center mx-auto mb-2">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        </svg>
+                    </div>
+                    <div class="text-2xl font-bold text-purple-600 dark:text-purple-400">{{ $partner->batches_count ?? 0 }}</div>
+                    <div class="text-xs text-purple-500 dark:text-purple-300 font-medium">Batches</div>
+                </div>
+
+                <!-- Subjects -->
+                <div class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20 dark:border-gray-700/50 shadow-lg">
+                    <div class="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center mx-auto mb-2">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                    </div>
+                    <div class="text-2xl font-bold text-orange-600 dark:text-orange-400">{{ $partner->subjects_count ?? 0 }}</div>
+                    <div class="text-xs text-orange-500 dark:text-orange-300 font-medium">Subjects</div>
+                </div>
+
+                <!-- Topics -->
+                <div class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20 dark:border-gray-700/50 shadow-lg">
+                    <div class="w-8 h-8 bg-pink-500 rounded-lg flex items-center justify-center mx-auto mb-2">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                        </svg>
+                    </div>
+                    <div class="text-2xl font-bold text-pink-600 dark:text-pink-400">{{ $partner->topics_count ?? 0 }}</div>
+                    <div class="text-xs text-pink-500 dark:text-pink-300 font-medium">Topics</div>
+                </div>
+
+                <!-- Questions -->
+                <div class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20 dark:border-gray-700/50 shadow-lg">
+                    <div class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center mx-auto mb-2">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <div class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{{ $partner->questions_count ?? 0 }}</div>
+                    <div class="text-xs text-indigo-500 dark:text-indigo-300 font-medium">Questions</div>
+                </div>
+            </div>
+        </div>
         </div>
     </div>
 
