@@ -508,6 +508,11 @@ Route::get('/student-features', function () {
     return view('student-features');
 })->name('student.features');
 
+// Feature Gallery page route (accessible without authentication)
+Route::get('/feature-gallery', function () {
+    return view('feature-gallery');
+})->name('feature.gallery');
+
 // Privacy Policy page route (accessible without authentication)
 Route::get('/privacy', function () {
     return view('privacy');
