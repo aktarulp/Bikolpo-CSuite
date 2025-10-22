@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Student Features - Bikolpo Live</title>
+    <title>Student Features - BikolpoLive</title>
+    
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script>
         tailwind.config = {
@@ -30,10 +31,9 @@
         }
     </script>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 
-<body class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-gray-100 font-bangla">
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-gray-100 font-sans font-modern">
    @include('navigation-layout');
 
     <!-- Hero Section -->
@@ -41,7 +41,7 @@
         <div class="absolute inset-0 bg-grid-pattern opacity-5"></div>
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div class="animate-fade-in">
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold font-display text-gray-900 dark:text-white mb-6 leading-tight">
                     <span class="bg-gradient-to-r from-primaryBlue via-primaryGreen to-primaryPurple bg-clip-text text-transparent">
                         Student Features
                     </span>
@@ -51,11 +51,16 @@
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <a href="{{ route('student.dashboard') }}" class="bg-gradient-to-r from-primaryBlue to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl">
-                        <i class="fas fa-graduation-cap mr-2"></i>
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
+                        </svg>
                         Start Learning Journey
                     </a>
                     <a href="{{ route('contact') }}" class="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-2 border-gray-300 dark:border-gray-600 hover:border-primaryBlue dark:hover:border-primaryBlue px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:shadow-lg">
-                        <i class="fas fa-phone mr-2"></i>
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l9.832 9.832a1 1 0 01-.502 1.21l-2.5 1.25a2 2 0 01-2.17-.4l-1.5-1.5a2 2 0 00-2.83 0l-1.5 1.5a2 2 0 01-2.17.4l-2.5-1.25a1 1 0 01-.502-1.21L3.28 3H5a2 2 0 012 2v1a2 2 0 01-2 2H5a2 2 0 00-2 2v1a2 2 0 002 2h1a2 2 0 002-2v-1a2 2 0 012-2h1a2 2 0 002 2v1a2 2 0 01-2 2h-1a2 2 0 01-2-2v-1a2 2 0 00-2-2H5a2 2 0 01-2-2V5z"></path>
+                        </svg>
                         Get Support
                     </a>
                 </div>
@@ -67,7 +72,7 @@
     <section class="bg-white dark:bg-gray-800 py-16 border-b border-gray-200 dark:border-gray-700">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                <h2 class="text-3xl md:text-4xl font-bold font-display text-gray-900 dark:text-white mb-4">
                     Join the Largest Online Test Community
                 </h2>
                 <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
@@ -79,7 +84,9 @@
                 <!-- Total Tests -->
                 <div class="text-center p-6 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 rounded-2xl border border-blue-200 dark:border-blue-700">
                     <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-file-alt text-white text-2xl"></i>
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
                     </div>
                     <div class="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">10,000+</div>
                     <div class="text-gray-600 dark:text-gray-300 font-medium">Online Tests</div>
@@ -88,7 +95,9 @@
                 <!-- Partner Institutions -->
                 <div class="text-center p-6 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/30 rounded-2xl border border-green-200 dark:border-green-700">
                     <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-university text-white text-2xl"></i>
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
                     </div>
                     <div class="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">500+</div>
                     <div class="text-gray-600 dark:text-gray-300 font-medium">Partner Institutions</div>
@@ -97,7 +106,9 @@
                 <!-- Active Students -->
                 <div class="text-center p-6 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/30 dark:to-purple-800/30 rounded-2xl border border-purple-200 dark:border-purple-700">
                     <div class="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-users text-white text-2xl"></i>
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                        </svg>
                     </div>
                     <div class="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">50,000+</div>
                     <div class="text-gray-600 dark:text-gray-300 font-medium">Active Students</div>
@@ -106,7 +117,9 @@
                 <!-- Test Categories -->
                 <div class="text-center p-6 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/30 dark:to-orange-800/30 rounded-2xl border border-orange-200 dark:border-orange-700">
                     <div class="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-layer-group text-white text-2xl"></i>
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        </svg>
                     </div>
                     <div class="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">25+</div>
                     <div class="text-gray-600 dark:text-gray-300 font-medium">Subject Categories</div>
@@ -125,14 +138,16 @@
             <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 p-8 rounded-3xl shadow-lg border border-blue-200 dark:border-blue-700 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
                 <div class="text-center">
                     <div class="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                        <i class="fas fa-database text-white text-3xl"></i>
+                        <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path>
+                        </svg>
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">10,000+ Online Tests</h3>
+                    <h3 class="text-2xl font-bold font-modern text-gray-900 dark:text-white mb-4">10,000+ Online Tests</h3>
                     <p class="text-gray-600 dark:text-gray-300 mb-6">Access thousands of tests across multiple subjects and difficulty levels</p>
                     <ul class="text-left text-gray-600 dark:text-gray-300 space-y-2">
-                        <li class="flex items-center"><i class="fas fa-check text-blue-500 mr-2"></i>Multiple choice questions</li>
-                        <li class="flex items-center"><i class="fas fa-check text-blue-500 mr-2"></i>Descriptive questions</li>
-                        <li class="flex items-center"><i class="fas fa-check text-blue-500 mr-2"></i>Subject-wise categorization</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Multiple choice questions</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Descriptive questions</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Subject-wise categorization</li>
                     </ul>
                 </div>
             </div>
@@ -141,14 +156,16 @@
             <div class="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/30 p-8 rounded-3xl shadow-lg border border-green-200 dark:border-green-700 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
                 <div class="text-center">
                     <div class="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                        <i class="fas fa-university text-white text-3xl"></i>
+                        <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
                     </div>
                     <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Public Tests from Renowned Institutes</h3>
                     <p class="text-gray-600 dark:text-gray-300 mb-6">Access real exam questions from top universities and educational institutions</p>
                     <ul class="text-left text-gray-600 dark:text-gray-300 space-y-2">
-                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>University-level questions</li>
-                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Professional exam patterns</li>
-                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Real exam experience</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>University-level questions</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Professional exam patterns</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Real exam experience</li>
                     </ul>
                 </div>
             </div>
@@ -157,14 +174,16 @@
             <div class="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/30 dark:to-purple-800/30 p-8 rounded-3xl shadow-lg border border-purple-200 dark:border-purple-700 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
                 <div class="text-center">
                     <div class="w-20 h-20 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                        <i class="fas fa-layer-group text-white text-3xl"></i>
+                        <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        </svg>
                     </div>
                     <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">25+ Subject Categories</h3>
                     <p class="text-gray-600 dark:text-gray-300 mb-6">Comprehensive coverage across all major academic and professional subjects</p>
                     <ul class="text-left text-gray-600 dark:text-gray-300 space-y-2">
-                        <li class="flex items-center"><i class="fas fa-check text-purple-500 mr-2"></i>Science & Technology</li>
-                        <li class="flex items-center"><i class="fas fa-check text-purple-500 mr-2"></i>Business & Economics</li>
-                        <li class="flex items-center"><i class="fas fa-check text-purple-500 mr-2"></i>Arts & Humanities</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-purple-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Science & Technology</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-purple-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Business & Economics</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-purple-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Arts & Humanities</li>
                     </ul>
                 </div>
             </div>
@@ -174,7 +193,9 @@
         <div class="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 dark:from-orange-900/30 dark:via-amber-900/30 dark:to-yellow-900/30 rounded-3xl p-8 lg:p-12 mb-16 border border-orange-200 dark:border-orange-700">
             <div class="text-center mb-12">
                 <div class="w-20 h-20 bg-gradient-to-br from-orange-500 to-amber-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                    <i class="fas fa-keyboard text-white text-3xl"></i>
+                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9l6 6m0-6l-6 6m6-6H9m6 0v6M9 9h6m-6 0v6"></path>
+                    </svg>
                 </div>
                 <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
                     Advanced Typing Test System
@@ -189,15 +210,17 @@
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
                     <div class="flex items-center mb-4">
                         <div class="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mr-4">
-                            <i class="fas fa-tachometer-alt text-white text-xl"></i>
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
                         </div>
                         <h3 class="text-xl font-bold text-gray-900 dark:text-white">Real-time Speed Tracking</h3>
                     </div>
                     <p class="text-gray-600 dark:text-gray-400 mb-4">Monitor your typing speed in real-time with instant WPM calculations</p>
                     <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                        <li class="flex items-center"><i class="fas fa-check text-orange-500 mr-2"></i>Live WPM display</li>
-                        <li class="flex items-center"><i class="fas fa-check text-orange-500 mr-2"></i>Instant feedback</li>
-                        <li class="flex items-center"><i class="fas fa-check text-orange-500 mr-2"></i>Progress tracking</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-orange-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Live WPM display</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-orange-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Instant feedback</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-orange-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Progress tracking</li>
                     </ul>
                 </div>
 
@@ -205,15 +228,17 @@
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
                     <div class="flex items-center mb-4">
                         <div class="w-12 h-12 bg-amber-500 rounded-lg flex items-center justify-center mr-4">
-                            <i class="fas fa-bullseye text-white text-xl"></i>
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
                         </div>
                         <h3 class="text-xl font-bold text-gray-900 dark:text-white">Accuracy Measurement</h3>
                     </div>
                     <p class="text-gray-600 dark:text-gray-400 mb-4">Track your typing accuracy with detailed error analysis and correction suggestions</p>
                     <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                        <li class="flex items-center"><i class="fas fa-check text-amber-500 mr-2"></i>Error highlighting</li>
-                        <li class="flex items-center"><i class="fas fa-check text-amber-500 mr-2"></i>Accuracy percentage</li>
-                        <li class="flex items-center"><i class="fas fa-check text-amber-500 mr-2"></i>Mistake analysis</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-amber-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Error highlighting</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-amber-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Accuracy percentage</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-amber-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Mistake analysis</li>
                     </ul>
                 </div>
 
@@ -221,15 +246,17 @@
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
                     <div class="flex items-center mb-4">
                         <div class="w-12 h-12 bg-yellow-500 rounded-lg flex items-center justify-center mr-4">
-                            <i class="fas fa-chart-line text-white text-xl"></i>
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
                         </div>
                         <h3 class="text-xl font-bold text-gray-900 dark:text-white">Skill Improvement</h3>
                     </div>
                     <p class="text-gray-600 dark:text-gray-400 mb-4">Personalized recommendations and practice exercises to enhance your typing skills</p>
                     <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                        <li class="flex items-center"><i class="fas fa-check text-yellow-500 mr-2"></i>Personalized tips</li>
-                        <li class="flex items-center"><i class="fas fa-check text-yellow-500 mr-2"></i>Practice exercises</li>
-                        <li class="flex items-center"><i class="fas fa-check text-yellow-500 mr-2"></i>Progress reports</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-yellow-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Personalized tips</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-yellow-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Practice exercises</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-yellow-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Progress reports</li>
                     </ul>
                 </div>
             </div>
@@ -270,7 +297,10 @@
         <div class="bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 dark:from-indigo-900/30 dark:via-blue-900/30 dark:to-cyan-900/30 rounded-3xl p-8 lg:p-12 mb-16 border border-indigo-200 dark:border-indigo-700">
             <div class="text-center mb-12">
                 <div class="w-20 h-20 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                    <i class="fas fa-graduation-cap text-white text-3xl"></i>
+                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
+                    </svg>
                 </div>
                 <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
                     Public Tests from Renowned Academic Institutions
@@ -285,15 +315,17 @@
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
                     <div class="flex items-center mb-4">
                         <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mr-4">
-                            <i class="fas fa-university text-white text-xl"></i>
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
                         </div>
                         <h3 class="text-xl font-bold text-gray-900 dark:text-white">University Tests</h3>
                     </div>
                     <p class="text-gray-600 dark:text-gray-400 mb-4">Access entrance and semester exam questions from leading universities</p>
                     <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                        <li class="flex items-center"><i class="fas fa-check text-blue-500 mr-2"></i>Admission tests</li>
-                        <li class="flex items-center"><i class="fas fa-check text-blue-500 mr-2"></i>Semester exams</li>
-                        <li class="flex items-center"><i class="fas fa-check text-blue-500 mr-2"></i>Research methodology</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Admission tests</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Semester exams</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Research methodology</li>
                     </ul>
                 </div>
 
@@ -301,15 +333,17 @@
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
                     <div class="flex items-center mb-4">
                         <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mr-4">
-                            <i class="fas fa-school text-white text-xl"></i>
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
                         </div>
                         <h3 class="text-xl font-bold text-gray-900 dark:text-white">College Tests</h3>
                     </div>
                     <p class="text-gray-600 dark:text-gray-400 mb-4">Practice with questions from prestigious colleges and institutions</p>
                     <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>HSC level tests</li>
-                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Honors programs</li>
-                        <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Professional courses</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>HSC level tests</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Honors programs</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Professional courses</li>
                     </ul>
                 </div>
 
@@ -317,15 +351,17 @@
                 <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-300">
                     <div class="flex items-center mb-4">
                         <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mr-4">
-                            <i class="fas fa-chalkboard-teacher text-white text-xl"></i>
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
                         </div>
                         <h3 class="text-xl font-bold text-gray-900 dark:text-white">Coaching Center Tests</h3>
                     </div>
                     <p class="text-gray-600 dark:text-gray-400 mb-4">Access tests from renowned coaching centers and training institutes</p>
                     <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                        <li class="flex items-center"><i class="fas fa-check text-purple-500 mr-2"></i>Competitive exams</li>
-                        <li class="flex items-center"><i class="fas fa-check text-purple-500 mr-2"></i>Job preparation</li>
-                        <li class="flex items-center"><i class="fas fa-check text-purple-500 mr-2"></i>Skill assessments</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-purple-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Competitive exams</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-purple-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Job preparation</li>
+                        <li class="flex items-center"><svg class="w-4 h-4 text-purple-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Skill assessments</li>
                     </ul>
                 </div>
             </div>
@@ -424,7 +460,9 @@
             <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 border border-gray-200 dark:border-gray-700">
                 <div class="flex items-center mb-6">
                     <div class="w-16 h-16 bg-gradient-to-br from-primaryBlue to-blue-600 rounded-2xl flex items-center justify-center mr-6">
-                        <i class="fas fa-file-alt text-white text-2xl"></i>
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
                     </div>
                     <div>
                         <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Seamless Exam Experience</h2>
@@ -435,19 +473,19 @@
                     <div class="space-y-4">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Exam Interface</h3>
                         <ul class="space-y-2 text-gray-600 dark:text-gray-300">
-                            <li class="flex items-center"><i class="fas fa-check text-primaryBlue mr-3"></i>Clean, distraction-free design</li>
-                            <li class="flex items-center"><i class="fas fa-check text-primaryBlue mr-3"></i>Easy navigation between questions</li>
-                            <li class="flex items-center"><i class="fas fa-check text-primaryBlue mr-3"></i>Question bookmarking feature</li>
-                            <li class="flex items-center"><i class="fas fa-check text-primaryBlue mr-3"></i>Progress indicator</li>
+                            <li class="flex items-center"><svg class="w-4 h-4 text-primaryBlue mr-3"></i>Clean, distraction-free design</li>
+                            <li class="flex items-center"><svg class="w-4 h-4 text-primaryBlue mr-3"></i>Easy navigation between questions</li>
+                            <li class="flex items-center"><svg class="w-4 h-4 text-primaryBlue mr-3"></i>Question bookmarking feature</li>
+                            <li class="flex items-center"><svg class="w-4 h-4 text-primaryBlue mr-3"></i>Progress indicator</li>
                         </ul>
                     </div>
                     <div class="space-y-4">
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Smart Features</h3>
                         <ul class="space-y-2 text-gray-600 dark:text-gray-300">
-                            <li class="flex items-center"><i class="fas fa-check text-primaryBlue mr-3"></i>Auto-save every 30 seconds</li>
-                            <li class="flex items-center"><i class="fas fa-check text-primaryBlue mr-3"></i>Time remaining display</li>
-                            <li class="flex items-center"><i class="fas fa-check text-primaryBlue mr-3"></i>Question review panel</li>
-                            <li class="flex items-center"><i class="fas fa-check text-primaryBlue mr-3"></i>Answer confirmation</li>
+                            <li class="flex items-center"><svg class="w-4 h-4 text-primaryBlue mr-3"></i>Auto-save every 30 seconds</li>
+                            <li class="flex items-center"><svg class="w-4 h-4 text-primaryBlue mr-3"></i>Time remaining display</li>
+                            <li class="flex items-center"><svg class="w-4 h-4 text-primaryBlue mr-3"></i>Question review panel</li>
+                            <li class="flex items-center"><svg class="w-4 h-4 text-primaryBlue mr-3"></i>Answer confirmation</li>
                         </ul>
                     </div>
                 </div>
@@ -457,7 +495,10 @@
             <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 border border-gray-200 dark:border-gray-700">
                 <div class="flex items-center mb-6">
                     <div class="w-16 h-16 bg-gradient-to-br from-primaryGreen to-green-600 rounded-2xl flex items-center justify-center mr-6">
-                        <i class="fas fa-tools text-white text-2xl"></i>
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
                     </div>
                     <div>
                         <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Learning Tools</h2>
@@ -466,17 +507,23 @@
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="text-center p-6 bg-gray-50 dark:bg-gray-700 rounded-2xl">
-                        <i class="fas fa-book-open text-4xl text-primaryGreen mb-4"></i>
+                        <svg class="w-10 h-10 text-primaryGreen mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Study Materials</h3>
                         <p class="text-gray-600 dark:text-gray-400">Access to course materials, notes, and reference documents</p>
                     </div>
                     <div class="text-center p-6 bg-gray-50 dark:bg-gray-700 rounded-2xl">
-                        <i class="fas fa-comments text-4xl text-primaryOrange mb-4"></i>
+                        <svg class="w-10 h-10 text-primaryOrange mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Discussion Forums</h3>
                         <p class="text-gray-600 dark:text-gray-400">Connect with peers and instructors for collaborative learning</p>
                     </div>
                     <div class="text-center p-6 bg-gray-50 dark:bg-gray-700 rounded-2xl">
-                        <i class="fas fa-video text-4xl text-primaryPurple mb-4"></i>
+                        <svg class="w-10 h-10 text-primaryPurple mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                        </svg>
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Video Tutorials</h3>
                         <p class="text-gray-600 dark:text-gray-400">Visual learning resources for complex topics</p>
                     </div>
@@ -487,7 +534,9 @@
             <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 border border-gray-200 dark:border-gray-700">
                 <div class="flex items-center mb-6">
                     <div class="w-16 h-16 bg-gradient-to-br from-primaryOrange to-orange-600 rounded-2xl flex items-center justify-center mr-6">
-                        <i class="fas fa-analytics text-white text-2xl"></i>
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
                     </div>
                     <div>
                         <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Performance Analytics</h2>
@@ -499,15 +548,15 @@
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Score Analysis</h3>
                         <ul class="space-y-3 text-gray-600 dark:text-gray-300">
                             <li class="flex items-start">
-                                <i class="fas fa-chart-bar text-orange-500 mr-3 mt-1"></i>
+                                <svg class="w-4 h-4 text-orange-500 mr-3 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                                 <span>Subject-wise performance breakdown</span>
                             </li>
                             <li class="flex items-start">
-                                <i class="fas fa-trending-up text-orange-500 mr-3 mt-1"></i>
+                                <svg class="w-4 h-4 text-orange-500 mr-3 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                                 <span>Progress tracking over time</span>
                             </li>
                             <li class="flex items-start">
-                                <i class="fas fa-target text-orange-500 mr-3 mt-1"></i>
+                                <svg class="w-4 h-4 text-orange-500 mr-3 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                 <span>Goal setting and achievement</span>
                             </li>
                         </ul>
@@ -516,15 +565,15 @@
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Detailed Reports</h3>
                         <ul class="space-y-3 text-gray-600 dark:text-gray-300">
                             <li class="flex items-start">
-                                <i class="fas fa-file-chart text-orange-500 mr-3 mt-1"></i>
+                                <svg class="w-4 h-4 text-orange-500 mr-3 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                 <span>Comprehensive exam reports</span>
                             </li>
                             <li class="flex items-start">
-                                <i class="fas fa-lightbulb text-orange-500 mr-3 mt-1"></i>
+                                <svg class="w-4 h-4 text-orange-500 mr-3 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
                                 <span>Improvement suggestions</span>
                             </li>
                             <li class="flex items-start">
-                                <i class="fas fa-share-alt text-orange-500 mr-3 mt-1"></i>
+                                <svg class="w-4 h-4 text-orange-500 mr-3 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path></svg>
                                 <span>Share results with mentors</span>
                             </li>
                         </ul>
@@ -536,7 +585,9 @@
             <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 border border-gray-200 dark:border-gray-700">
                 <div class="flex items-center mb-6">
                     <div class="w-16 h-16 bg-gradient-to-br from-primaryPurple to-purple-600 rounded-2xl flex items-center justify-center mr-6">
-                        <i class="fas fa-mobile-alt text-white text-2xl"></i>
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
                     </div>
                     <div>
                         <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Mobile-First Design</h2>
@@ -548,15 +599,15 @@
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Responsive Design</h3>
                         <ul class="space-y-3 text-gray-600 dark:text-gray-300">
                             <li class="flex items-start">
-                                <i class="fas fa-tablet-alt text-purple-500 mr-3 mt-1"></i>
+                                <svg class="w-4 h-4 text-purple-500 mr-3 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                                 <span>Optimized for all screen sizes</span>
                             </li>
                             <li class="flex items-start">
-                                <i class="fas fa-touch text-purple-500 mr-3 mt-1"></i>
+                                <svg class="w-4 h-4 text-purple-500 mr-3 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path></svg>
                                 <span>Touch-friendly interface</span>
                             </li>
                             <li class="flex items-start">
-                                <i class="fas fa-sync text-purple-500 mr-3 mt-1"></i>
+                                <svg class="w-4 h-4 text-purple-500 mr-3 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                                 <span>Seamless device switching</span>
                             </li>
                         </ul>
@@ -565,15 +616,15 @@
                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Offline Capabilities</h3>
                         <ul class="space-y-3 text-gray-600 dark:text-gray-300">
                             <li class="flex items-start">
-                                <i class="fas fa-download text-purple-500 mr-3 mt-1"></i>
+                                <svg class="w-4 h-4 text-purple-500 mr-3 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                 <span>Download study materials</span>
                             </li>
                             <li class="flex items-start">
-                                <i class="fas fa-wifi text-purple-500 mr-3 mt-1"></i>
+                                <svg class="w-4 h-4 text-purple-500 mr-3 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"></path></svg>
                                 <span>Sync when online</span>
                             </li>
                             <li class="flex items-start">
-                                <i class="fas fa-clock text-purple-500 mr-3 mt-1"></i>
+                                <svg class="w-4 h-4 text-purple-500 mr-3 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                 <span>Study at your own pace</span>
                             </li>
                         </ul>
@@ -590,15 +641,22 @@
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
                 <a href="{{ route('student.dashboard') }}" class="bg-white text-primaryBlue px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-colors duration-200 transform hover:scale-105 shadow-lg">
-                    <i class="fas fa-graduation-cap mr-2"></i>
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
+                    </svg>
                     Start Learning Now
                 </a>
                 <a href="{{ route('typing.test') }}" class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-full font-bold text-lg transition-colors duration-200 transform hover:scale-105 shadow-lg">
-                    <i class="fas fa-keyboard mr-2"></i>
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9l6 6m0-6l-6 6m6-6H9m6 0v6M9 9h6m-6 0v6"></path>
+                    </svg>
                     Try Typing Test
                 </a>
                 <a href="{{ route('contact') }}" class="border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-primaryBlue transition-all duration-200">
-                    <i class="fas fa-phone mr-2"></i>
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l9.832 9.832a1 1 0 01-.502 1.21l-2.5 1.25a2 2 0 01-2.17-.4l-1.5-1.5a2 2 0 00-2.83 0l-1.5 1.5a2 2 0 01-2.17.4l-2.5-1.25a1 1 0 01-.502-1.21L3.28 3H5a2 2 0 012 2v1a2 2 0 01-2 2H5a2 2 0 00-2 2v1a2 2 0 002 2h1a2 2 0 002-2v-1a2 2 0 012-2h1a2 2 0 002 2v1a2 2 0 01-2 2h-1a2 2 0 01-2-2v-1a2 2 0 00-2-2H5a2 2 0 01-2-2V5z"></path>
+                    </svg>
                     Get Help & Support
                 </a>
             </div>
@@ -642,23 +700,5 @@
         });
     </script>
 
-    <style>
-        .bg-grid-pattern {
-            background-image: 
-                linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
-            background-size: 20px 20px;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
 </body>
 </html>

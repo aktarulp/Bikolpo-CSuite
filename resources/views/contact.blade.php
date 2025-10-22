@@ -37,7 +37,7 @@
 
 </head>
 
- <body class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-gray-100 font-bangla">
+ <body class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-gray-100 font-sans">
 
          @include('navigation-layout');
 
@@ -68,14 +68,18 @@
       <div class="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/30 p-8 rounded-3xl shadow-lg border border-green-200 dark:border-green-700 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
         <div class="text-center">
           <div class="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-            <i class="fab fa-whatsapp text-white text-3xl"></i>
+            <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+            </svg>
           </div>
           <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">WhatsApp</h3>
           <p class="text-gray-600 dark:text-gray-300 mb-6">দ্রুত যোগাযোগের জন্য WhatsApp ব্যবহার করুন</p>
           <a href="https://wa.me/8801610800060?text=Hello! I would like to know more about Bikolpo Live services." 
              target="_blank" 
              class="inline-flex items-center justify-center w-full bg-green-500 hover:bg-green-600 text-white font-bold px-6 py-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105">
-            <i class="fab fa-whatsapp mr-2"></i>
+            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+            </svg>
             WhatsApp এ মেসেজ করুন
           </a>
         </div>
@@ -85,14 +89,18 @@
       <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 p-8 rounded-3xl shadow-lg border border-blue-200 dark:border-blue-700 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
         <div class="text-center">
           <div class="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-            <i class="fab fa-facebook-messenger text-white text-3xl"></i>
+            <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.568 8.16l-1.61 7.592c-.12.566-.44.708-.89.44l-2.46-1.81-1.19 1.15c-.13.13-.24.24-.49.24l.18-2.56 4.57-4.12c.2-.18-.04-.28-.31-.1l-5.64 3.55-2.43-.76c-.53-.16-.54-.53.11-.79l9.57-3.69c.44-.16.83.1.68.79z"/>
+            </svg>
           </div>
           <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Facebook Messenger</h3>
           <p class="text-gray-600 dark:text-gray-300 mb-6">Facebook Messenger এর মাধ্যমে আমাদের সাথে যোগাযোগ করুন</p>
           <a href="https://m.me/bikolpolive" 
              target="_blank" 
              class="inline-flex items-center justify-center w-full bg-blue-500 hover:bg-blue-600 text-white font-bold px-6 py-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105">
-            <i class="fab fa-facebook-messenger mr-2"></i>
+            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.568 8.16l-1.61 7.592c-.12.566-.44.708-.89.44l-2.46-1.81-1.19 1.15c-.13.13-.24.24-.49.24l.18-2.56 4.57-4.12c.2-.18-.04-.28-.31-.1l-5.64 3.55-2.43-.76c-.53-.16-.54-.53.11-.79l9.57-3.69c.44-.16.83.1.68.79z"/>
+            </svg>
             Messenger এ মেসেজ করুন
           </a>
         </div>
@@ -102,13 +110,17 @@
       <div class="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/30 dark:to-orange-800/30 p-8 rounded-3xl shadow-lg border border-orange-200 dark:border-orange-700 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
         <div class="text-center">
           <div class="w-20 h-20 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-            <i class="fas fa-phone text-white text-3xl"></i>
+            <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
+            </svg>
           </div>
           <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">ফোন কল</h3>
           <p class="text-gray-600 dark:text-gray-300 mb-6">সরাসরি ফোনে কল করুন</p>
           <a href="tel:+8801610800060" 
              class="inline-flex items-center justify-center w-full bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-105">
-            <i class="fas fa-phone mr-2"></i>
+            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
+            </svg>
             +880 1610800060
           </a>
         </div>
@@ -127,7 +139,9 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label for="name" class="block mb-2 font-semibold text-gray-700 dark:text-gray-300">
-                <i class="fas fa-user mr-2 text-primaryGreen"></i>নাম
+                <svg class="w-4 h-4 mr-2 text-primaryGreen" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                </svg>নাম
               </label>
               <input type="text" id="name" name="name" required
                 class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primaryGreen focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200" 
@@ -136,7 +150,10 @@
             
             <div>
               <label for="email" class="block mb-2 font-semibold text-gray-700 dark:text-gray-300">
-                <i class="fas fa-envelope mr-2 text-primaryGreen"></i>ইমেইল
+                <svg class="w-4 h-4 mr-2 text-primaryGreen" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                  <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+                </svg>ইমেইল
               </label>
               <input type="email" id="email" name="email" required
                 class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primaryGreen focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200" 
@@ -146,7 +163,9 @@
 
           <div>
             <label for="phone" class="block mb-2 font-semibold text-gray-700 dark:text-gray-300">
-              <i class="fas fa-phone mr-2 text-primaryGreen"></i>ফোন নম্বর
+              <svg class="w-4 h-4 mr-2 text-primaryGreen" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
+              </svg>ফোন নম্বর
             </label>
             <input type="tel" id="phone" name="phone"
               class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primaryGreen focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200" 
@@ -155,7 +174,9 @@
 
           <div>
             <label for="subject" class="block mb-2 font-semibold text-gray-700 dark:text-gray-300">
-              <i class="fas fa-tag mr-2 text-primaryGreen"></i>বিষয়
+              <svg class="w-4 h-4 mr-2 text-primaryGreen" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M17.707 9.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-7-7A.997.997 0 012 10V5a3 3 0 013-3h5c.256 0 .512.098.707.293l7 7zM5 6a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path>
+              </svg>বিষয়
             </label>
             <select id="subject" name="subject" required
               class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primaryGreen focus:border-transparent dark:bg-gray-700 dark:text-white transition-all duration-200">
@@ -170,7 +191,9 @@
 
           <div>
             <label for="message" class="block mb-2 font-semibold text-gray-700 dark:text-gray-300">
-              <i class="fas fa-comment mr-2 text-primaryGreen"></i>মেসেজ
+              <svg class="w-4 h-4 mr-2 text-primaryGreen" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"></path>
+              </svg>মেসেজ
             </label>
             <textarea id="message" name="message" rows="5" required
               class="w-full rounded-xl border border-gray-300 dark:border-gray-600 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primaryGreen focus:border-transparent dark:bg-gray-700 dark:text-white resize-none transition-all duration-200" 
@@ -179,7 +202,9 @@
 
           <button type="submit"
             class="w-full bg-gradient-to-r from-primaryGreen to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-            <i class="fas fa-paper-plane mr-2"></i>
+            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path>
+            </svg>
             মেসেজ পাঠান
           </button>
         </form>
@@ -191,7 +216,9 @@
         <!-- Office Location -->
         <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 border border-gray-200 dark:border-gray-700">
           <h3 class="text-2xl font-bold mb-6 text-primaryGreen flex items-center">
-            <i class="fas fa-map-marker-alt mr-3 text-2xl"></i>
+            <svg class="w-8 h-8 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+            </svg>
             অফিসের ঠিকানা
           </h3>
           <div class="space-y-4">
@@ -203,7 +230,9 @@
                          <a href="https://maps.app.goo.gl/FsgRXczVqRDAJBoT9" 
                 target="_blank"
                 class="inline-flex items-center justify-center w-full bg-red-500 hover:bg-red-600 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105">
-               <i class="fas fa-map-marked-alt mr-2"></i>
+               <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                 <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+               </svg>
                Google Maps এ দেখুন
              </a>
           </div>
@@ -212,13 +241,18 @@
         <!-- Contact Details -->
         <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 border border-gray-200 dark:border-gray-700">
           <h3 class="text-2xl font-bold mb-6 text-primaryGreen flex items-center">
-            <i class="fas fa-address-book mr-3 text-2xl"></i>
+            <svg class="w-8 h-8 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z"></path>
+              <path fill-rule="evenodd" d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z" clip-rule="evenodd"></path>
+            </svg>
             যোগাযোগের তথ্য
           </h3>
           <div class="space-y-4">
             <div class="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
               <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-                <i class="fab fa-whatsapp text-white text-xl"></i>
+                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+                </svg>
               </div>
               <div>
                 <p class="font-semibold text-gray-900 dark:text-white">WhatsApp</p>
@@ -228,7 +262,10 @@
 
             <div class="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
               <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-envelope text-white text-xl"></i>
+                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                  <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+                </svg>
               </div>
               <div>
                 <p class="font-semibold text-gray-900 dark:text-white">ইমেইল</p>
@@ -238,7 +275,9 @@
 
             <div class="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
               <div class="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
-                <i class="fas fa-phone text-white text-xl"></i>
+                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
+                </svg>
               </div>
               <div>
                 <p class="font-semibold text-gray-900 dark:text-white">ফোন</p>
@@ -251,21 +290,27 @@
         <!-- Social Media -->
         <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 border border-gray-200 dark:border-gray-700">
           <h3 class="text-2xl font-bold mb-6 text-primaryGreen flex items-center">
-            <i class="fas fa-share-alt mr-3 text-2xl"></i>
+            <svg class="w-8 h-8 mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3 3 0 000-2.38l4.94-2.47C13.456 7.68 14.19 8 15 8z"></path>
+            </svg>
             সোশ্যাল মিডিয়া
           </h3>
           <div class="grid grid-cols-2 gap-4">
             <a href="https://m.me/bikolpolive" 
                target="_blank"
                class="flex items-center justify-center p-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg">
-              <i class="fab fa-facebook-messenger text-2xl mr-3"></i>
+              <svg class="w-8 h-8 mr-3" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.568 8.16l-1.61 7.592c-.12.566-.44.708-.89.44l-2.46-1.81-1.19 1.15c-.13.13-.24.24-.49.24l.18-2.56 4.57-4.12c.2-.18-.04-.28-.31-.1l-5.64 3.55-2.43-.76c-.53-.16-.54-.53.11-.79l9.57-3.69c.44-.16.83.1.68.79z"/>
+              </svg>
               <span class="font-semibold">Messenger</span>
             </a>
             
             <a href="https://wa.me/8801610800060" 
                target="_blank"
                class="flex items-center justify-center p-4 bg-green-600 hover:bg-green-700 text-white rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg">
-              <i class="fab fa-whatsapp text-2xl mr-3"></i>
+              <svg class="w-8 h-8 mr-3" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+              </svg>
               <span class="font-semibold">WhatsApp</span>
             </a>
           </div>
@@ -333,23 +378,5 @@
          });
      </script>
 
-     <style>
-         .bg-grid-pattern {
-             background-image: 
-                 linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
-                 linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
-             background-size: 20px 20px;
-         }
-         
-         @keyframes fadeIn {
-             from { opacity: 0; transform: translateY(20px); }
-             to { opacity: 1; transform: translateY(0); }
-         }
-         
-         @keyframes slideUp {
-             from { opacity: 0; transform: translateY(40px); }
-             to { opacity: 1; transform: translateY(0); }
-         }
-     </style>
  </body>
  </html>

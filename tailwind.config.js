@@ -60,6 +60,8 @@ export default {
         brand: ['"Poppins"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         modern: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         display: ['"Space Grotesk"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        english: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mixed: ['"Inter"', '"Hind Siliguri"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       colors: {
         primaryGreen: '#16a34a',

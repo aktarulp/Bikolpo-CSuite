@@ -7,11 +7,6 @@
     <title>Extraordinary Countdown - {{ $exam->title }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-    </style>
     
 </head>
 <body class="bg-gray-900 text-white min-h-screen flex items-center justify-center p-4">

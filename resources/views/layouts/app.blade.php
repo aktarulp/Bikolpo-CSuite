@@ -65,9 +65,6 @@
     <link rel="mask-icon" href="{{ asset('images/BikolpoLive.svg') }}" color="#10b981">
 
     <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-    <link href="{{ asset('css/fonts.css') }}" rel="stylesheet">
 
     <!-- MathJax for mathematical equations -->
     <script>
@@ -134,7 +131,7 @@
 
     @stack('styles')
 </head>
-<body class="bg-gray-50 dark:bg-darkBlue text-gray-800 dark:text-gray-100 font-bangla flex flex-col min-h-screen">
+<body class="bg-gray-50 dark:bg-darkBlue text-gray-800 dark:text-gray-100 font-sans flex flex-col min-h-screen">
     <!-- Header -->
     <header class="bg-primaryGreen dark:bg-green-800 text-white shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 flex justify-between items-center py-4">

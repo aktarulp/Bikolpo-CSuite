@@ -33,7 +33,7 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-inter antialiased bg-gradient-to-br from-slate-50 via-blue-50 via-indigo-50 to-purple-100 min-h-screen overflow-x-hidden">
+<body class="font-sans antialiased bg-gradient-to-br from-slate-50 via-blue-50 via-indigo-50 to-purple-100 min-h-screen overflow-x-hidden">
     <!-- Enhanced Geometric Background Elements -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none">
         <!-- Large Geometric Shapes -->
@@ -739,109 +739,6 @@
         </div>
     </div>
 
-    <!-- Custom Styles -->
-    <style>
-        /* Custom animations */
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        .animate-float {
-            animation: float 3s ease-in-out infinite;
-        }
-        
-        @keyframes glow {
-            0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
-            50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.8); }
-        }
-        
-        .animate-glow {
-            animation: glow 2s ease-in-out infinite;
-        }
-        
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: rgba(59, 130, 246, 0.5);
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(59, 130, 246, 0.7);
-        }
-        
-        /* Mobile-specific improvements */
-        @media (max-width: 640px) {
-            .container {
-                padding-left: 0.75rem;
-                padding-right: 0.75rem;
-            }
-            
-            /* Improve touch targets */
-            button, a {
-                min-height: 44px;
-                min-width: 44px;
-            }
-            
-            /* Better text readability on mobile */
-            .text-xs {
-                font-size: 0.75rem;
-                line-height: 1rem;
-            }
-            
-            /* Optimize grid layouts for mobile */
-            .grid-cols-2 {
-                gap: 0.5rem;
-            }
-            
-            /* Improve card spacing */
-            .rounded-lg {
-                border-radius: 0.5rem;
-            }
-            
-            /* Better button spacing */
-            .gap-2 > * + * {
-                margin-top: 0.5rem;
-            }
-        }
-        
-        /* Print styles */
-        @media print {
-            body { 
-                background: white !important; 
-            }
-            .bg-gradient-to-br { 
-                background: white !important; 
-            }
-            .shadow-2xl, .shadow-xl, .shadow-lg, .shadow-sm { 
-                box-shadow: none !important; 
-            }
-            .rounded-2xl, .rounded-xl, .rounded-lg { 
-                border-radius: 0 !important; 
-            }
-            .bg-gradient-to-r { 
-                background: #f8fafc !important; 
-            }
-            .text-white { 
-                color: #000000 !important; 
-            }
-            .bg-white\/10 { 
-                background: #ffffff !important; 
-            }
-            .backdrop-blur-sm { 
-                backdrop-filter: none !important; 
-            }
-        }
-    </style>
 
     <!-- JavaScript for Social Media Sharing -->
     <script>

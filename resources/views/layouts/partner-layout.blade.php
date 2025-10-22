@@ -66,8 +66,6 @@
 
 
 
-    <!-- Font Fix CSS (load first) -->
-    <link href="{{ asset('css/font-fix.css') }}" rel="stylesheet">
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -245,7 +243,7 @@
         }
     </style>
 </head>
-<body class="h-full bg-gray-50 dark:bg-gray-900">
+<body class="h-full bg-gray-50 dark:bg-gray-900 font-sans">
     @php
         $user = Auth::user();
         $role = strtolower($user->role ?? '');

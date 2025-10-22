@@ -38,10 +38,9 @@
         }
     </script>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 
-<body class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-gray-100 font-bangla">
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-gray-100 font-sans">
     
     @include('navigation-layout')
 
@@ -52,7 +51,9 @@
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div class="animate-fade-in">
                 <div class="inline-flex items-center px-6 py-3 rounded-full bg-primaryGreen/10 border border-primaryGreen/20 mb-8">
-                    <i class="fas fa-info-circle text-primaryGreen mr-3 text-lg"></i>
+                    <svg class="w-5 h-5 text-primaryGreen mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                    </svg>
                     <span class="text-sm font-medium text-primaryGreen">About Bikolpo Live</span>
                 </div>
                 
@@ -75,7 +76,9 @@
                     <div class="relative bg-gradient-to-br from-primaryOrange via-orange-500 to-amber-500 rounded-3xl p-10 shadow-2xl border border-white/20">
                         <div class="text-center text-white">
                             <div class="w-20 h-20 bg-white/20 rounded-3xl flex items-center justify-center mx-auto mb-6">
-                                <i class="fas fa-map-marker-alt text-white text-3xl"></i>
+                                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                                </svg>
                             </div>
                             <h3 class="text-3xl font-bold mb-4">Born in Rangpur</h3>
                             <p class="text-orange-100 mb-6 text-lg leading-relaxed">
@@ -96,7 +99,9 @@
                 </div>
                 <div class="animate-slide-up">
                     <div class="inline-flex items-center px-4 py-2 rounded-full bg-primaryOrange/10 text-primaryOrange text-sm font-medium mb-6 border border-primaryOrange/20">
-                        <i class="fas fa-heart mr-2"></i>
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                        </svg>
                         Our Heritage
                     </div>
                     <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6">
@@ -159,7 +164,9 @@
                 <div class="relative">
                     <div class="bg-gradient-to-br from-primaryGreen to-green-600 rounded-3xl p-8 shadow-2xl">
                         <div class="text-center text-white">
-                            <i class="fas fa-graduation-cap text-6xl mb-6"></i>
+                            <svg class="w-16 h-16 mb-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"></path>
+                            </svg>
                             <h3 class="text-2xl font-bold mb-4">Empowering Education</h3>
                             <p class="text-green-100 leading-relaxed">
                                 We believe that every student deserves access to quality education and assessment tools that help them reach their full potential.
@@ -187,7 +194,9 @@
                 <!-- Mission -->
                 <div class="group bg-white dark:bg-gray-900 p-8 rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700">
                     <div class="w-16 h-16 bg-gradient-to-br from-primaryGreen to-green-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-bullseye text-white text-2xl"></i>
+                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 12a1 1 0 102 0V9a1 1 0 10-2 0v3zm1-8a1 1 0 00-1 1v1H8a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V5a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                        </svg>
                     </div>
                     <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Our Mission</h3>
                     <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -198,7 +207,10 @@
                 <!-- Vision -->
                 <div class="group bg-white dark:bg-gray-900 p-8 rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700">
                     <div class="w-16 h-16 bg-gradient-to-br from-primaryBlue to-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-eye text-white text-2xl"></i>
+                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path>
+                        </svg>
                     </div>
                     <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Our Vision</h3>
                     <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -225,7 +237,9 @@
                 <!-- Innovation -->
                 <div class="group bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-3 border border-gray-200 dark:border-gray-700">
                     <div class="w-16 h-16 bg-gradient-to-br from-primaryGreen to-green-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-lightbulb text-white text-2xl"></i>
+                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M11 3a1 1 0 10-2 0v1a1 1 0 10-2 0V3a3 3 0 116 0v1a1 1 0 10-2 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 00-1.414 1.414l.707.707a1 1 0 001.414-1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.477.859h4z"></path>
+                        </svg>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Innovation</h3>
                     <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -236,7 +250,9 @@
                 <!-- Excellence -->
                 <div class="group bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-3 border border-gray-200 dark:border-gray-700">
                     <div class="w-16 h-16 bg-gradient-to-br from-primaryBlue to-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-star text-white text-2xl"></i>
+                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Excellence</h3>
                     <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -247,7 +263,9 @@
                 <!-- Accessibility -->
                 <div class="group bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-3 border border-gray-200 dark:border-gray-700">
                     <div class="w-16 h-16 bg-gradient-to-br from-primaryPurple to-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-universal-access text-white text-2xl"></i>
+                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                        </svg>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Accessibility</h3>
                     <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -258,7 +276,9 @@
                 <!-- Integrity -->
                 <div class="group bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-3 border border-gray-200 dark:border-gray-700">
                     <div class="w-16 h-16 bg-gradient-to-br from-primaryOrange to-orange-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-shield-alt text-white text-2xl"></i>
+                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Integrity</h3>
                     <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -269,7 +289,9 @@
                 <!-- Collaboration -->
                 <div class="group bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-3 border border-gray-200 dark:border-gray-700">
                     <div class="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-users text-white text-2xl"></i>
+                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 8v1h-6v4a3 3 0 00-3 3v1h6.93zM6 8a5 5 0 0110 0v1H6V8z"></path>
+                        </svg>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Collaboration</h3>
                     <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -280,7 +302,9 @@
                 <!-- Growth -->
                 <div class="group bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 p-8 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-3 border border-gray-200 dark:border-gray-700">
                     <div class="w-16 h-16 bg-gradient-to-br from-rose-500 to-rose-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-seedling text-white text-2xl"></i>
+                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"></path>
+                        </svg>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Growth</h3>
                     <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -306,32 +330,63 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- Team Member 1 -->
                 <div class="group bg-white dark:bg-gray-900 p-8 rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700 text-center">
-                    <div class="w-24 h-24 bg-gradient-to-br from-primaryGreen to-green-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-user text-white text-3xl"></i>
+                    <div class="relative w-32 h-32 mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <div class="absolute inset-0 bg-gradient-to-br from-primaryGreen via-green-500 to-emerald-600 rounded-full p-1 shadow-2xl">
+                            <div class="w-full h-full rounded-full overflow-hidden bg-white dark:bg-gray-800">
+                                <img src="{{ asset('images/CEO.jpg') }}" alt="Atarur Kabir Pramanik" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                        <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-gradient-to-br from-primaryGreen to-green-600 rounded-full flex items-center justify-center shadow-lg">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">CEO & Founder</h3>
-                    <p class="text-primaryGreen font-semibold mb-4">Leadership Team</p>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Ataur Kabir Pramanik</h3>
+                    <p class="text-primaryGreen font-semibold mb-2">CEO & Founder</p>
+                    <div class="space-y-1 mb-4 text-sm text-gray-600 dark:text-gray-400">
+                        <p class="font-medium">B.Sc In EEE (DUET)</p>
+                        <p>Asst. Engineer</p>
+                        <p>Dhaka Power Distribution Company</p>
+                        <p class="text-primaryGreen font-semibold">Associate Member Institute of Engineers, Bangladesh (IEB)</p>
+                    </div>
                     <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-                        Leading the vision and strategic direction of Bikolpo Live with over 10 years of experience in educational technology.
+                        Leading the vision and strategic direction of Bikolpo Live with extensive engineering background and professional expertise.
                     </p>
                 </div>
 
                 <!-- Team Member 2 -->
                 <div class="group bg-white dark:bg-gray-900 p-8 rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700 text-center">
-                    <div class="w-24 h-24 bg-gradient-to-br from-primaryBlue to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-code text-white text-3xl"></i>
+                    <div class="relative w-32 h-32 mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <div class="absolute inset-0 bg-gradient-to-br from-primaryBlue via-blue-500 to-indigo-600 rounded-full p-1 shadow-2xl">
+                            <div class="w-full h-full rounded-full overflow-hidden bg-white dark:bg-gray-800">
+                                <img src="{{ asset('images/CTO.jpg') }}" alt="Md. Aktarul Pramanik" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                        <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-gradient-to-br from-primaryBlue to-blue-600 rounded-full flex items-center justify-center shadow-lg">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">CTO</h3>
-                    <p class="text-primaryBlue font-semibold mb-4">Technology Team</p>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Md. Aktarul Pramanik (Aktar)</h3>
+                    <p class="text-primaryBlue font-semibold mb-2">CTO</p>
+                    <div class="space-y-1 mb-4 text-sm text-gray-600 dark:text-gray-400">
+                        <p class="font-medium">B.Sc in CSE (GUB)</p>
+                        <p class="text-primaryBlue font-semibold">Oracle Certified Professional (OCP)</p>
+                        <p class="text-primaryBlue font-semibold">15+ Years of Industrial Experience</p>
+                    </div>
                     <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-                        Overseeing the technical architecture and development of our cutting-edge educational platform.
+                        Overseeing the technical architecture and development of our cutting-edge educational platform with extensive industry expertise.
                     </p>
                 </div>
 
                 <!-- Team Member 3 -->
                 <div class="group bg-white dark:bg-gray-900 p-8 rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700 text-center">
                     <div class="w-24 h-24 bg-gradient-to-br from-primaryPurple to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                        <i class="fas fa-graduation-cap text-white text-3xl"></i>
+                        <svg class="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"></path>
+                        </svg>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Head of Education</h3>
                     <p class="text-primaryPurple font-semibold mb-4">Education Team</p>
@@ -408,23 +463,5 @@
         });
     </script>
 
-    <style>
-        .bg-grid-pattern {
-            background-image: 
-                linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
-            background-size: 20px 20px;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
 </body>
 </html>

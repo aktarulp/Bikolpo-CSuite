@@ -10,24 +10,6 @@
     <title>Bikolpo Live | {{ $exam->title }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .hover-lift {
-            transition: all 0.3s ease;
-        }
-        .hover-lift:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        }
-    </style>
 </head>
 <body class="bg-gray-900 text-white min-h-screen p-4">
 
