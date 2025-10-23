@@ -23,6 +23,8 @@ class StudentExamController extends Controller
     public function availableExams()
     {
         $studentId = $this->getStudentId();
+        $user = Auth::user();
+        $student = $user->student;
         
         $availableExams = Exam::where('status', 'published')
             ->where('start_time', '<=', now())
@@ -30,12 +32,14 @@ class StudentExamController extends Controller
             // ->with('questionSet')
             ->get();
 
-        return view('student.exams.available', compact('availableExams'));
+        return view('student.exams.available', compact('availableExams', 'student'));
     }
 
     public function myExams()
     {
         $studentId = $this->getStudentId();
+        $user = Auth::user();
+        $student = $user->student;
         
         // Get all exams assigned to this student through access codes
         // Also load the results for this student to show in the table
@@ -49,12 +53,14 @@ class StudentExamController extends Controller
         }])
         ->get();
 
-        return view('student.exams.my-exams', compact('assignedExams'));
+        return view('student.exams.my-exams', compact('assignedExams', 'student'));
     }
 
     public function showExam(Exam $exam)
     {
         $studentId = $this->getStudentId();
+        $user = Auth::user();
+        $student = $user->student;
         
         // Check if student has already taken this exam
         $existingResult = ExamResult::where('student_id', $studentId)
@@ -66,7 +72,7 @@ class StudentExamController extends Controller
                 ->with('error', 'You have already taken this exam.');
         }
 
-        return view('student.exams.show', compact('exam'));
+        return view('student.exams.show', compact('exam', 'student'));
     }
 
     public function startExam(Exam $exam)
@@ -103,7 +109,10 @@ class StudentExamController extends Controller
         // $questions = $exam->questionSet->questions()->orderBy('pivot_order')->get();
         $questions = collect(); // Empty collection for now
 
-        return view('student.exams.start-my-exam', compact('exam', 'questions', 'result'));
+        $user = Auth::user();
+        $student = $user->student;
+        
+        return view('student.exams.start-my-exam', compact('exam', 'questions', 'result', 'student'));
     }
 
     public function takeExam(Exam $exam)
@@ -130,7 +139,10 @@ class StudentExamController extends Controller
         // $questions = $exam->questionSet->questions()->orderBy('pivot_order')->get();
         $questions = collect(); // Empty collection for now
 
-        return view('student.exams.my-exam-take', compact('exam', 'questions', 'result'));
+        $user = Auth::user();
+        $student = $user->student;
+        
+        return view('student.exams.my-exam-take', compact('exam', 'questions', 'result', 'student'));
     }
 
     public function submitExam(Request $request, Exam $exam)
@@ -312,7 +324,10 @@ class StudentExamController extends Controller
 
         $questions = $exam->questions()->orderBy('pivot_order')->get();
 
-        return view('student.exams.my-result', compact('exam', 'result', 'questions'));
+        $user = Auth::user();
+        $student = $user->student;
+        
+        return view('student.exams.my-result', compact('exam', 'result', 'questions', 'student'));
     }
 
     public function history()
@@ -324,6 +339,9 @@ class StudentExamController extends Controller
             ->latest()
             ->paginate(15);
 
-        return view('student.exams.history', compact('results'));
+        $user = Auth::user();
+        $student = $user->student;
+        
+        return view('student.exams.history', compact('results', 'student'));
     }
 }

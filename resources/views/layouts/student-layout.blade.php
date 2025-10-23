@@ -349,9 +349,14 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
                     </button>
-                    <h1 class="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-primaryGreen to-emerald-600 dark:from-white dark:via-emerald-400 dark:to-primaryGreen">
-                        Student Dashboard
-                    </h1>
+                    <div class="flex-1 text-center">
+                        <h1 class="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-primaryGreen to-emerald-600 dark:from-white dark:via-emerald-400 dark:to-primaryGreen">
+                            Student Dashboard
+                        </h1>
+                        @if(isset($partner) && $partner)
+                        <p class="text-xs text-gray-500 dark:text-gray-400 truncate">{{ $partner->name }}</p>
+                        @endif
+                    </div>
                     <div class="w-10"></div> <!-- Spacer for centering -->
                 </div>
             </header>
@@ -361,20 +366,42 @@
                 <div class="px-4 lg:px-8 py-4">
                     <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                         <div class="flex items-center space-x-4">
-                            <div class="w-12 h-12 flex items-center justify-center bg-gradient-to-br from-primaryGreen/10 to-emerald-100 dark:from-primaryGreen/20 dark:to-emerald-900/30 rounded-xl ring-2 ring-primaryGreen/20 shadow-lg">
-                                <svg class="w-6 h-6 text-primaryGreen dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                </svg>
-                            </div>
+                            @if(isset($partner) && $partner)
+                                @if($partner->logo)
+                                    <div class="w-12 h-12 flex items-center justify-center bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl ring-2 ring-primaryGreen/20 shadow-lg overflow-hidden">
+                                        <img src="{{ asset('storage/' . $partner->logo) }}" alt="{{ $partner->name }}" class="w-full h-full object-cover">
+                                    </div>
+                                @else
+                                    <div class="w-12 h-12 flex items-center justify-center bg-gradient-to-br from-primaryGreen/10 to-emerald-100 dark:from-primaryGreen/20 dark:to-emerald-900/30 rounded-xl ring-2 ring-primaryGreen/20 shadow-lg">
+                                        <svg class="w-6 h-6 text-primaryGreen dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                        </svg>
+                                    </div>
+                                @endif
+                            @else
+                                <div class="w-12 h-12 flex items-center justify-center bg-gradient-to-br from-primaryGreen/10 to-emerald-100 dark:from-primaryGreen/20 dark:to-emerald-900/30 rounded-xl ring-2 ring-primaryGreen/20 shadow-lg">
+                                    <svg class="w-6 h-6 text-primaryGreen dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                    </svg>
+                                </div>
+                            @endif
                             <div>
                                 <h2 class="text-xl lg:text-2xl font-bold text-gray-900 dark:text-white">
-                                    Welcome back, <span class="text-transparent bg-clip-text bg-gradient-to-r from-primaryGreen to-emerald-600 dark:from-emerald-400 dark:to-primaryGreen">{{ Auth::user()->name ?? 'Student' }}</span>
+                                    @if(isset($partner) && $partner)
+                                        Hi <span class="text-transparent bg-clip-text bg-gradient-to-r from-primaryGreen to-emerald-600 dark:from-emerald-400 dark:to-primaryGreen">{{ Auth::user()->name ?? 'Student' }}</span>, Welcome to <span class="text-transparent bg-clip-text bg-gradient-to-r from-primaryGreen to-emerald-600 dark:from-emerald-400 dark:to-primaryGreen">{{ $partner->name }}</span>
+                                    @else
+                                        Hi <span class="text-transparent bg-clip-text bg-gradient-to-r from-primaryGreen to-emerald-600 dark:from-emerald-400 dark:to-primaryGreen">{{ Auth::user()->name ?? 'Student' }}</span>, Welcome to <span class="text-transparent bg-clip-text bg-gradient-to-r from-primaryGreen to-emerald-600 dark:from-emerald-400 dark:to-primaryGreen">Bikolpo Live</span>
+                                    @endif
                                 </h2>
                                 <p class="text-gray-600 dark:text-gray-400 text-sm flex items-center mt-1">
                                     <svg class="w-4 h-4 mr-1.5 text-primaryGreen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                     </svg>
-                                    Enhance Your Learning Experience
+                                    @if(isset($partner) && $partner)
+                                        {{ $partner->city ?? 'Coaching Center' }} - Enhance Your Learning Experience
+                                    @else
+                                        Enhance Your Learning Experience
+                                    @endif
                                 </p>
                             </div>
                         </div>

@@ -50,6 +50,7 @@ class StudentDashboardController extends Controller
             return view('student.dashboard.student-dashboard', [
                 'user' => $user,
                 'student' => null,
+                'partner' => null, // No partner if no student
                 'my_course' => null,
                 'my_batch' => null,
                 'available_exams' => $empty,
@@ -167,6 +168,7 @@ class StudentDashboardController extends Controller
         return view('student.dashboard.student-dashboard', [
             'user' => $user,
             'student' => $student,
+            'partner' => $student->partner, // Add partner information
             'my_course' => $primaryCourse,
             'my_courses' => $student->activeCourses, // All active courses
             'my_batch' => $student->batch,
@@ -189,6 +191,7 @@ class StudentDashboardController extends Controller
         if (!$student) {
             return view('student.syllabus.index', [
                 'student' => $student,
+                'partner' => null,
                 'course' => null,
                 'subjects' => collect(),
             ]);
@@ -203,6 +206,7 @@ class StudentDashboardController extends Controller
         if (!$primaryCourse) {
             return view('student.syllabus.index', [
                 'student' => $student,
+                'partner' => $student->partner,
                 'course' => null,
                 'subjects' => collect(),
             ]);
@@ -223,6 +227,7 @@ class StudentDashboardController extends Controller
 
         return view('student.syllabus.index', [
             'student' => $student,
+            'partner' => $student->partner,
             'course' => $primaryCourse,
             'subjects' => $subjects,
             'progressData' => $progressData,
@@ -338,6 +343,7 @@ class StudentDashboardController extends Controller
 
         return view('student.analytics.index', [
             'student' => $student,
+            'partner' => $student->partner,
             'examResults' => $examResults,
             'stats' => [
                 'totalExams' => $totalExams,
