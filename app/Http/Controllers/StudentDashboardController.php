@@ -71,10 +71,13 @@ class StudentDashboardController extends Controller
         }
 
         // Load relationships
-        $student = $student->load(['course', 'batch']);
+        $student = $student->load(['courses', 'batch']);
 
         $studentId = $student->id;
-        $courseId = $student->course_id;
+        
+        // Get the primary course (first active enrollment) or fallback to legacy course_id
+        $primaryCourse = $student->activeCourses()->first() ?? $student->course;
+        $courseId = $primaryCourse ? $primaryCourse->id : $student->course_id;
         $batchId = $student->batch_id;
 
         // Recent results (completed)
@@ -164,7 +167,8 @@ class StudentDashboardController extends Controller
         return view('student.dashboard.student-dashboard', [
             'user' => $user,
             'student' => $student,
-            'my_course' => $student->course,
+            'my_course' => $primaryCourse,
+            'my_courses' => $student->activeCourses, // All active courses
             'my_batch' => $student->batch,
             'available_exams' => $upcomingExams, // Treat upcoming as available to start soon
             'upcoming_exams' => $upcomingExams,
@@ -182,7 +186,7 @@ class StudentDashboardController extends Controller
         $user = Auth::user();
         $student = $this->getStudentForUser($user);
 
-        if (!$student || !$student->course) {
+        if (!$student) {
             return view('student.syllabus.index', [
                 'student' => $student,
                 'course' => null,
@@ -191,10 +195,21 @@ class StudentDashboardController extends Controller
         }
 
         // Load relationships
-        $student = $student->load(['course', 'batch']);
+        $student = $student->load(['courses', 'batch']);
 
-        // Get all subjects for the student's course
-        $subjects = Subject::where('course_id', $student->course_id)
+        // Get the primary course (first active enrollment) or fallback to legacy course_id
+        $primaryCourse = $student->activeCourses()->first() ?? $student->course;
+        
+        if (!$primaryCourse) {
+            return view('student.syllabus.index', [
+                'student' => $student,
+                'course' => null,
+                'subjects' => collect(),
+            ]);
+        }
+
+        // Get all subjects for the student's primary course
+        $subjects = Subject::where('course_id', $primaryCourse->id)
             ->with(['topics' => function ($query) {
                 $query->orderBy('chapter_number')->orderBy('name');
             }])
@@ -208,7 +223,7 @@ class StudentDashboardController extends Controller
 
         return view('student.syllabus.index', [
             'student' => $student,
-            'course' => $student->course,
+            'course' => $primaryCourse,
             'subjects' => $subjects,
             'progressData' => $progressData,
         ]);
@@ -228,7 +243,7 @@ class StudentDashboardController extends Controller
         }
 
         // Load relationships
-        $student = $student->load(['course', 'batch']);
+        $student = $student->load(['courses', 'batch']);
 
         // Get exam results for analytics
         $examResults = ExamResult::where('student_id', $student->id)
@@ -468,7 +483,10 @@ class StudentDashboardController extends Controller
      */
     private function computeProgressFromPivot(Student $student): array
     {
-        $courseId = $student->course_id;
+        // Get the primary course (first active enrollment) or fallback to legacy course_id
+        $primaryCourse = $student->activeCourses()->first() ?? $student->course;
+        $courseId = $primaryCourse ? $primaryCourse->id : $student->course_id;
+        
         if (!$courseId) { return [0, collect()]; }
 
         // Get all subjects for the course

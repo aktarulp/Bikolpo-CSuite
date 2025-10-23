@@ -160,7 +160,7 @@ class UserManagementController extends Controller
             $validated = $request->validate([
                 'student_id' => 'required|exists:students,id',
                 'password' => 'required|string|min:8|confirmed',
-                'role_id' => 'required|exists:ac_roles,id',
+                'role_name' => 'required|exists:ac_roles,name',
                 'user_type' => 'required|in:student,other',
             ], [
                 'student_id.required' => 'Please select a student.',
@@ -168,8 +168,8 @@ class UserManagementController extends Controller
                 'password.required' => 'Password is required.',
                 'password.min' => 'Password must be at least 8 characters.',
                 'password.confirmed' => 'Password confirmation does not match.',
-                'role_id.required' => 'Role is required.',
-                'role_id.exists' => 'The selected role is invalid.',
+                'role_name.required' => 'Role is required.',
+                'role_name.exists' => 'The selected role is invalid.',
                 'user_type.required' => 'User type is required.',
                 'user_type.in' => 'Invalid user type selected.',
             ]);
@@ -177,7 +177,7 @@ class UserManagementController extends Controller
             // Log the validated data for debugging
             \Log::info('Creating user with validated data:', [
                 'student_id' => $validated['student_id'],
-                'role_id' => $validated['role_id'],
+                'role_name' => $validated['role_name'],
                 'user_type' => $validated['user_type']
             ]);
 
@@ -234,13 +234,15 @@ class UserManagementController extends Controller
                     ], 422);
                 }
                 
-                // Get the role (hardcoded to student role)
-                $roleId = 3; // Student role ID
-                $selectedRole = EnhancedRole::find($roleId);
+                // Get the role by name (more maintainable than hardcoded ID)
+                $roleName = $validated['role_name'];
+                $selectedRole = EnhancedRole::where('name', $roleName)->first();
                 
                 if (!$selectedRole) {
-                    throw new \Exception("Role with ID {$roleId} not found");
+                    throw new \Exception("Role with name '{$roleName}' not found");
                 }
+                
+                $roleId = $selectedRole->id;
                 
                 // Create the user
                 $user = new EnhancedUser();

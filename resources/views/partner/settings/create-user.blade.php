@@ -75,8 +75,8 @@
             <form id="createUserForm" action="{{ route('partner.settings.users.store') }}" method="POST" class="divide-y divide-gray-100">
                 @csrf
                 
-                <!-- Hidden field for role ID (student role hardcoded) -->
-                <input type="hidden" name="role_id" value="3">
+                <!-- Hidden field for role name (student role hardcoded) -->
+                <input type="hidden" name="role_name" value="student">
                 <input type="hidden" name="user_type" value="student">
                 
                 <!-- Step 1: Select Student -->
