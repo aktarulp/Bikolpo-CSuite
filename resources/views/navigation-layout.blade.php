@@ -27,7 +27,7 @@
                     <span class="relative z-10">For Partner</span>
                     <div class="absolute inset-0 bg-gradient-to-r from-primaryGreen/20 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </a>
-                <a href="{{ route('feature.gallery') }}" class="group relative px-4 py-2.5 rounded-xl text-gray-700 dark:text-white hover:text-primaryPurple dark:hover:text-primaryPurple transition-all duration-300 font-medium hover:bg-gradient-to-r hover:from-primaryPurple/10 hover:to-transparent">
+                <a href="/feature-gallery" class="group relative px-4 py-2.5 rounded-xl text-gray-700 dark:text-white hover:text-primaryPurple dark:hover:text-primaryPurple transition-all duration-300 font-medium hover:bg-gradient-to-r hover:from-primaryPurple/10 hover:to-transparent">
                     <span class="relative z-10">Feature Gallery</span>
                     <div class="absolute inset-0 bg-gradient-to-r from-primaryPurple/20 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </a>
@@ -143,7 +143,7 @@
                     </a>
 
                     <!-- Feature Gallery -->
-                    <a href="{{ route('feature.gallery') }}" class="group relative flex items-center w-full px-4 py-4 rounded-2xl text-primaryPurple dark:text-primaryPurple hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-300 font-medium hover:bg-gradient-to-r hover:from-primaryPurple/20 hover:to-transparent active:scale-95 touch-manipulation">
+                    <a href="/feature-gallery" class="group relative flex items-center w-full px-4 py-4 rounded-2xl text-primaryPurple dark:text-primaryPurple hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-300 font-medium hover:bg-gradient-to-r hover:from-primaryPurple/20 hover:to-transparent active:scale-95 touch-manipulation">
                         <div class="flex items-center w-full">
                             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primaryPurple/20 to-primaryPurple/10 flex items-center justify-center mr-4 group-hover:from-primaryPurple/30 group-hover:to-primaryPurple/20 transition-all duration-300">
                                 <svg class="w-5 h-5 text-primaryPurple group-hover:text-purple-600 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
