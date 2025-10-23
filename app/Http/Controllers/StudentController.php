@@ -266,12 +266,12 @@ class StudentController extends Controller
         $student = $user->student;
         
         // If relationship doesn't work, try to find student by student_id
-        if (!$student && $user->student_id) {
+        if (!$student && isset($user->student_id) && $user->student_id) {
             $student = Student::find($user->student_id);
         }
         
-        // If still no student, try to find by user_id
-        if (!$student) {
+        // If still no student, try to find by user_id (for legacy compatibility)
+        if (!$student && isset($user->id)) {
             $student = Student::where('user_id', $user->id)->first();
         }
         

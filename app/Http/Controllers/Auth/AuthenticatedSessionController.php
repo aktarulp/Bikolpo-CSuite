@@ -65,6 +65,10 @@ class AuthenticatedSessionController extends Controller
 
         // Redirect based on role
         switch ($effectiveRole) {
+            case 'system-admin':
+            case 'system_administrator':
+                return redirect()->route('system-admin.system-admin-dashboard');
+                
             case 'partner':
             case 'partner_admin':
                 return redirect()->route('partner.dashboard');
@@ -104,7 +108,10 @@ class AuthenticatedSessionController extends Controller
                 }
                 
                 // Try to determine appropriate dashboard based on login type and role string
-                if (in_array(strtolower($user->role), ['partner_admin', 'institution_admin'])) {
+                if (in_array(strtolower($user->role), ['system-admin', 'system_administrator'])) {
+                    Log::info('Redirecting to system admin dashboard via role string match', ['user_id' => $user->id]);
+                    return redirect()->route('system-admin.system-admin-dashboard');
+                } elseif (in_array(strtolower($user->role), ['partner_admin', 'institution_admin'])) {
                     Log::info('Redirecting to partner dashboard via role string match', ['user_id' => $user->id]);
                     return redirect()->route('partner.dashboard');
                 } elseif (isset($loginType) && $loginType === 'phone_based') {

@@ -348,7 +348,7 @@
                         <p class="font-medium">B.Sc In EEE (DUET)</p>
                         <p>Asst. Engineer</p>
                         <p>Dhaka Power Distribution Company</p>
-                        <p class="text-primaryGreen font-semibold">Associate Member Institute of Engineers, Bangladesh (IEB)</p>
+                        <p class="text-primaryGreen font-semibold">Member Institute of Engineers, Bangladesh (IEB)</p>
                     </div>
                     <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
                         Leading the vision and strategic direction of Bikolpo Live with extensive engineering background and professional expertise.

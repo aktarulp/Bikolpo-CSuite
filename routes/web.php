@@ -191,7 +191,9 @@ Route::get('/test-email', function () {
 Route::get('/', function () {
     if (auth()->check()) {
         $user = auth()->user();
-        if ($user->role === 'student') {
+        if ($user->role === 'system-admin' || $user->role === 'system_administrator') {
+            return redirect()->route('system-admin.system-admin-dashboard');
+        } elseif ($user->role === 'student') {
             return redirect()->route('student.dashboard');
         } else {
             return redirect()->route('partner.dashboard');
@@ -519,6 +521,54 @@ Route::get('/test-email', function () {
             'message' => 'Failed to send test email: ' . $e->getMessage()
         ]);
     }
+});
+
+// Test role detection (remove in production)
+Route::get('/test-role', function () {
+    if (!auth()->check()) {
+        return response()->json(['error' => 'Not authenticated']);
+    }
+    
+    $user = auth()->user();
+    return response()->json([
+        'user_id' => $user->id,
+        'email' => $user->email,
+        'role' => $user->role,
+        'role_id' => $user->role_id,
+        'should_redirect_to' => $user->role === 'system-admin' ? 'system-admin-dashboard' : 'other'
+    ]);
+});
+
+// System Admin Routes
+Route::middleware(['auth', 'system_admin'])->prefix('system-admin')->name('system-admin.')->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\Admin\SystemAdminController::class, 'dashboard'])->name('system-admin-dashboard');
+    Route::get('/students', [App\Http\Controllers\Admin\SystemAdminController::class, 'allStudents'])->name('all-students');
+    Route::get('/students/{id}', [App\Http\Controllers\Admin\SystemAdminController::class, 'singleStudent'])->name('single-student');
+    Route::get('/students/{id}/interactive-grid', [App\Http\Controllers\Admin\SystemAdminController::class, 'singleStudent'])->name('single-student-ig');
+    Route::get('/partners', [App\Http\Controllers\Admin\SystemAdminController::class, 'allPartners'])->name('all-partners');
+    Route::get('/subscription-plans', [App\Http\Controllers\Admin\SystemAdminController::class, 'subscriptionPlans'])->name('subscription-plans');
+    Route::get('/subscription-plans/create', [App\Http\Controllers\Admin\SystemAdminController::class, 'createSubscriptionPlan'])->name('subscription-plans.create');
+    Route::post('/subscription-plans', [App\Http\Controllers\Admin\SystemAdminController::class, 'storeSubscriptionPlan'])->name('subscription-plans.store');
+    Route::get('/subscription-plans/{id}/edit', [App\Http\Controllers\Admin\SystemAdminController::class, 'editSubscriptionPlan'])->name('subscription-plans.edit');
+    Route::put('/subscription-plans/{id}', [App\Http\Controllers\Admin\SystemAdminController::class, 'updateSubscriptionPlan'])->name('subscription-plans.update');
+    Route::delete('/subscription-plans/{id}', [App\Http\Controllers\Admin\SystemAdminController::class, 'deleteSubscriptionPlan'])->name('subscription-plans.delete');
+    Route::get('/subscription-overview', [App\Http\Controllers\Admin\SystemAdminController::class, 'subscriptionOverview'])->name('subscription-overview');
+    Route::get('/subscription-usage', [App\Http\Controllers\Admin\SystemAdminController::class, 'subscriptionUsage'])->name('subscription-usage');
+    Route::get('/subscription-billing', [App\Http\Controllers\Admin\SystemAdminController::class, 'subscriptionBilling'])->name('subscription-billing');
+    Route::get('/plan-features', [App\Http\Controllers\Admin\SystemAdminController::class, 'planFeatures'])->name('plan-features');
+    Route::get('/plan-features/create', [App\Http\Controllers\Admin\SystemAdminController::class, 'createPlanFeature'])->name('plan-features.create');
+    Route::get('/plan-features/{id}/edit', [App\Http\Controllers\Admin\SystemAdminController::class, 'editPlanFeature'])->name('plan-features.edit');
+    Route::post('/plan-features', [App\Http\Controllers\Admin\SystemAdminController::class, 'storePlanFeature'])->name('plan-features.store');
+    Route::put('/plan-features/{id}', [App\Http\Controllers\Admin\SystemAdminController::class, 'updatePlanFeature'])->name('plan-features.update');
+    Route::delete('/plan-features/{id}', [App\Http\Controllers\Admin\SystemAdminController::class, 'deletePlanFeature'])->name('plan-features.delete');
+    Route::get('/payment-methods', [App\Http\Controllers\Admin\SystemAdminController::class, 'paymentMethods'])->name('payment-methods');
+    Route::get('/payment-methods/create', [App\Http\Controllers\Admin\SystemAdminController::class, 'createPaymentMethod'])->name('payment-methods.create');
+    Route::get('/payment-methods/{id}/edit', [App\Http\Controllers\Admin\SystemAdminController::class, 'editPaymentMethod'])->name('payment-methods.edit');
+    Route::post('/payment-methods', [App\Http\Controllers\Admin\SystemAdminController::class, 'storePaymentMethod'])->name('payment-methods.store');
+    Route::put('/payment-methods/{id}', [App\Http\Controllers\Admin\SystemAdminController::class, 'updatePaymentMethod'])->name('payment-methods.update');
+    Route::post('/payment-methods/{id}/toggle-status', [App\Http\Controllers\Admin\SystemAdminController::class, 'togglePaymentMethodStatus'])->name('payment-methods.toggle-status');
+    Route::delete('/payment-methods/{id}', [App\Http\Controllers\Admin\SystemAdminController::class, 'deletePaymentMethod'])->name('payment-methods.delete');
+    Route::get('/user-stats', [App\Http\Controllers\Admin\SystemAdminController::class, 'userStats'])->name('user-stats');
 });
 
 // About page route (accessible without authentication)
