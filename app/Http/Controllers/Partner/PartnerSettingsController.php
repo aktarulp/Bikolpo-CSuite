@@ -95,6 +95,15 @@ class PartnerSettingsController extends Controller
                         'line' => $viewError->getLine(),
                         'trace' => $viewError->getTraceAsString()
                     ]);
+                    
+                    // Fallback to a simple view if the main view is missing
+                    if (str_contains($viewError->getMessage(), 'not found')) {
+                        return view('partner.settings.simple-settings', [
+                            'partner' => $partner,
+                            'stats' => $stats
+                        ]);
+                    }
+                    
                     throw $viewError;
                 }
                 

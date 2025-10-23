@@ -919,6 +919,30 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
             }
         })->name('settings.test');
         
+        // File verification route
+        Route::get('settings-verify', function () {
+            $debug = [
+                'base_path' => base_path(),
+                'resource_path' => resource_path(),
+                'view_path' => resource_path('views'),
+                'partner_settings_path' => resource_path('views/partner/settings'),
+                'partner_settings_file' => resource_path('views/partner/settings/partner-settings.blade.php'),
+                'file_exists' => file_exists(resource_path('views/partner/settings/partner-settings.blade.php')),
+                'is_readable' => is_readable(resource_path('views/partner/settings/partner-settings.blade.php')),
+                'file_size' => file_exists(resource_path('views/partner/settings/partner-settings.blade.php')) ? filesize(resource_path('views/partner/settings/partner-settings.blade.php')) : 'N/A',
+                'directory_exists' => is_dir(resource_path('views/partner/settings')),
+                'directory_permissions' => is_dir(resource_path('views/partner/settings')) ? substr(sprintf('%o', fileperms(resource_path('views/partner/settings'))), -4) : 'N/A',
+                'file_permissions' => file_exists(resource_path('views/partner/settings/partner-settings.blade.php')) ? substr(sprintf('%o', fileperms(resource_path('views/partner/settings/partner-settings.blade.php'))), -4) : 'N/A'
+            ];
+            
+            // List all files in the partner/settings directory
+            if (is_dir(resource_path('views/partner/settings'))) {
+                $debug['directory_contents'] = scandir(resource_path('views/partner/settings'));
+            }
+            
+            return response()->json($debug);
+        })->name('settings.verify');
+        
         // Test Settings Route
         Route::get('test-settings', function () {
             try {
