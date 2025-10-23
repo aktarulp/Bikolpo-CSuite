@@ -683,6 +683,9 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
         Route::get('batches/trashed', [\App\Http\Controllers\BatchController::class, 'trashed'])->name('batches.trashed');
         Route::post('batches/{id}/restore', [\App\Http\Controllers\BatchController::class, 'restore'])->name('batches.restore');
         
+        // Teacher Management
+        Route::resource('teachers', \App\Http\Controllers\TeacherController::class);
+        
         // Question Management - Main Questions Dashboard (must come first)
         Route::get('questions', [QuestionController::class, 'allQuestions'])->name('questions.index');
         Route::get('questions/all', [QuestionController::class, 'allQuestions'])->name('questions.all');

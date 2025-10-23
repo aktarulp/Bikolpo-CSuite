@@ -13,6 +13,7 @@ use App\Models\ExamResult;
 use App\Models\Course;
 use App\Models\Batch;
 use App\Models\QuestionStat;
+use App\Models\Teacher;
 use App\Traits\HasPartnerContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -96,6 +97,7 @@ class PartnerDashboardController extends Controller
                 'true_false_questions' => $trueFalseQuestions,
                 'total_exams' => Exam::where('partner_id', $partnerId)->count(),
                 'total_students' => $totalStudents,
+                'total_teachers' => Teacher::where('partner_id', $partnerId)->count(),
                 'total_courses' => Course::where('partner_id', $partnerId)->count(),
                 'total_batches' => Batch::where('partner_id', $partnerId)->count(),
                 'total_subjects' => Subject::where('partner_id', $partnerId)->count(),
@@ -146,6 +148,7 @@ class PartnerDashboardController extends Controller
                     'true_false_questions' => 0,
                     'total_exams' => 0,
                     'total_students' => 0,
+                    'total_teachers' => 0,
                     'total_courses' => 0,
                     'total_batches' => 0,
                     'total_subjects' => 0,
@@ -327,6 +330,7 @@ class PartnerDashboardController extends Controller
                     ->count(),
                 'total_exams' => Exam::where('partner_id', $partnerId)->count(),
                 'total_students' => Student::where('partner_id', $partnerId)->count(),
+                'total_teachers' => Teacher::where('partner_id', $partnerId)->count(),
                 'total_courses' => Course::where('partner_id', $partnerId)->count(),
                 'total_batches' => Batch::where('partner_id', $partnerId)->count(),
                 'total_subjects' => Subject::where('partner_id', $partnerId)->count(),

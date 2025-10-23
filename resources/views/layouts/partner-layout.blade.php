@@ -417,7 +417,20 @@
                         <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 border border-blue-300 dark:border-blue-700">{{ $stats['total_questions'] ?? 0 }}</span>
                     </a>
                     @endif
-
+                    
+                    @if(auth()->check())
+                    {{-- Teachers Menu --}}
+                    <a href="{{ route('partner.teachers.index') }}"
+                       class="group flex items-center px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('partner.teachers.*') ? 'bg-gradient-to-r from-teal-50 to-teal-100 text-teal-700 border border-teal-200 shadow-sm' : 'text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-teal-50/50 hover:to-teal-50 dark:hover:from-gray-800 dark:hover:to-gray-800 hover:text-teal-700 dark:hover:text-white' }}">
+                        <div class="w-8 h-8 flex-shrink-0 rounded-lg {{ request()->routeIs('partner.teachers.*') ? 'bg-teal-100' : 'bg-gray-100 dark:bg-gray-800 group-hover:bg-teal-50' }} flex items-center justify-center transition-all duration-200">
+                            <svg class="h-4 w-4 {{ request()->routeIs('partner.teachers.*') ? 'text-teal-600' : 'text-gray-500 group-hover:text-teal-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                            </svg>
+                        </div>
+                        <span class="ml-2 flex-1">Teachers</span>
+                        <span class="ml-auto inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 text-[10px] font-semibold rounded-full bg-teal-100 text-teal-700 dark:bg-teal-900/50 dark:text-teal-300 border border-teal-300 dark:border-teal-700">{{ $stats['total_teachers'] ?? 0 }}</span>
+                    </a>
+                    @endif
 
                     @if(auth()->check())
                     {{-- Permission checking disabled --}}

@@ -69,11 +69,218 @@
         </div>
     </section>
 
-    <!-- Gallery Section -->
+    <!-- Slideshow Gallery Section -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         
+        <!-- Slideshow Container -->
+        <div class="relative bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-700">
+            
+            <!-- Main Slideshow Display -->
+            <div class="relative h-[70vh] min-h-[500px] overflow-hidden bg-gray-100 dark:bg-gray-700">
+                <!-- Debug: Slideshow Container -->
+                <div class="absolute top-4 left-4 z-50 bg-red-500 text-white px-2 py-1 text-xs rounded">
+                    Slideshow Active
+                </div>
+                <!-- Slides -->
+                <div id="slideshow-container" class="relative w-full h-full">
+                    
+                    <!-- Slide 1: Course Grid -->
+                    <div class="slide absolute inset-0 transition-all duration-1000 ease-in-out opacity-100 bg-gradient-to-br from-purple-100 to-blue-100 dark:from-purple-900 dark:to-blue-900" data-slide="0">
+                        <div class="flex flex-col md:flex-row h-full">
+                            <!-- Image Section -->
+                            <div class="w-full md:w-1/2 h-1/2 md:h-full relative overflow-hidden bg-gradient-to-br from-primaryPurple/20 to-primaryBlue/20">
+                                <img src="/images/FeatureGallery/Course Grid.png" 
+                                     alt="Course Grid Feature" 
+                                     class="w-full h-full object-cover"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                <div class="w-full h-full bg-gradient-to-br from-primaryPurple/20 to-primaryBlue/20 flex items-center justify-center" style="display:none;">
+                                    <div class="text-center">
+                                        <svg class="w-16 h-16 text-primaryPurple mx-auto mb-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <p class="text-primaryPurple font-medium">Course Grid Feature</p>
+                                    </div>
+                                </div>
+                                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-black/20"></div>
+                            </div>
+                            
+                            <!-- Content Section -->
+                            <div class="w-full md:w-1/2 h-1/2 md:h-full flex flex-col justify-center p-4 sm:p-6 md:p-8 lg:p-12">
+                                <!-- Debug: Content Visible -->
+                                <div class="bg-yellow-200 text-black px-2 py-1 text-xs rounded mb-4">
+                                    Content Section Active
+                                </div>
+                                <div class="flex items-center mb-6">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-primaryPurple to-purple-600 rounded-xl flex items-center justify-center mr-4">
+                                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                    </div>
+                                    <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">Course Grid</h2>
+                                </div>
+                                
+                                <p class="text-base sm:text-lg text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
+                                    Organized course layout with intuitive navigation and visual course cards for easy browsing and selection. 
+                                    Students can quickly find and enroll in courses with our modern grid-based interface.
+                                </p>
+                                
+                                <div class="flex flex-wrap gap-3 mb-8">
+                                    <span class="px-4 py-2 bg-primaryPurple/10 text-primaryPurple text-sm font-medium rounded-full">Grid Layout</span>
+                                    <span class="px-4 py-2 bg-blue-500/10 text-blue-500 text-sm font-medium rounded-full">Navigation</span>
+                                    <span class="px-4 py-2 bg-green-500/10 text-green-500 text-sm font-medium rounded-full">User-Friendly</span>
+                                </div>
+                                
+                                <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    Feature 1 of 3
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 2: Enrollment -->
+                    <div class="slide absolute inset-0 transition-all duration-1000 ease-in-out opacity-0" data-slide="1">
+                        <div class="flex flex-col md:flex-row h-full">
+                            <!-- Image Section -->
+                            <div class="w-full md:w-1/2 h-1/2 md:h-full relative overflow-hidden">
+                                <img src="/images/FeatureGallery/Enrollment.png" 
+                                     alt="Enrollment Feature" 
+                                     class="w-full h-full object-cover"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                <div class="w-full h-full bg-gradient-to-br from-primaryGreen/20 to-green-600/20 flex items-center justify-center" style="display:none;">
+                                    <div class="text-center">
+                                        <svg class="w-16 h-16 text-primaryGreen mx-auto mb-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <p class="text-primaryGreen font-medium">Enrollment Feature</p>
+                                    </div>
+                                </div>
+                                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-black/20"></div>
+                            </div>
+                            
+                            <!-- Content Section -->
+                            <div class="w-full md:w-1/2 h-1/2 md:h-full flex flex-col justify-center p-4 sm:p-6 md:p-8 lg:p-12">
+                                <div class="flex items-center mb-6">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-primaryGreen to-green-600 rounded-xl flex items-center justify-center mr-4">
+                                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </div>
+                                    <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">Enrollment</h2>
+                                </div>
+                                
+                                <p class="text-base sm:text-lg text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
+                                    Streamlined enrollment process with step-by-step guidance and real-time validation for seamless student registration. 
+                                    Our intuitive system makes course enrollment quick and hassle-free.
+                                </p>
+                                
+                                <div class="flex flex-wrap gap-3 mb-8">
+                                    <span class="px-4 py-2 bg-primaryGreen/10 text-primaryGreen text-sm font-medium rounded-full">Registration</span>
+                                    <span class="px-4 py-2 bg-orange-500/10 text-orange-500 text-sm font-medium rounded-full">Validation</span>
+                                    <span class="px-4 py-2 bg-blue-500/10 text-blue-500 text-sm font-medium rounded-full">Step-by-Step</span>
+                                </div>
+                                
+                                <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    Feature 2 of 3
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 3: Partner Dashboard -->
+                    <div class="slide absolute inset-0 transition-all duration-1000 ease-in-out opacity-0" data-slide="2">
+                        <div class="flex flex-col md:flex-row h-full">
+                            <!-- Image Section -->
+                            <div class="w-full md:w-1/2 h-1/2 md:h-full relative overflow-hidden">
+                                <img src="/images/FeatureGallery/Partner Dashboard.png" 
+                                     alt="Partner Dashboard Feature" 
+                                     class="w-full h-full object-cover"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                <div class="w-full h-full bg-gradient-to-br from-primaryBlue/20 to-blue-600/20 flex items-center justify-center" style="display:none;">
+                                    <div class="text-center">
+                                        <svg class="w-16 h-16 text-primaryBlue mx-auto mb-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-2 0v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-2 0V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-2 0V4z"></path>
+                                        </svg>
+                                        <p class="text-primaryBlue font-medium">Partner Dashboard Feature</p>
+                                    </div>
+                                </div>
+                                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-black/20"></div>
+                            </div>
+                            
+                            <!-- Content Section -->
+                            <div class="w-full md:w-1/2 h-1/2 md:h-full flex flex-col justify-center p-4 sm:p-6 md:p-8 lg:p-12">
+                                <div class="flex items-center mb-6">
+                                    <div class="w-12 h-12 bg-gradient-to-br from-primaryBlue to-blue-600 rounded-xl flex items-center justify-center mr-4">
+                                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-2 0v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-2 0V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-2 0V4z"></path>
+                                        </svg>
+                                    </div>
+                                    <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">Partner Dashboard</h2>
+                                </div>
+                                
+                                <p class="text-base sm:text-lg text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
+                                    Comprehensive analytics dashboard with real-time insights, performance metrics, and management tools for educational partners. 
+                                    Track progress and manage your educational programs effectively.
+                                </p>
+                                
+                                <div class="flex flex-wrap gap-3 mb-8">
+                                    <span class="px-4 py-2 bg-primaryBlue/10 text-primaryBlue text-sm font-medium rounded-full">Analytics</span>
+                                    <span class="px-4 py-2 bg-purple-500/10 text-purple-500 text-sm font-medium rounded-full">Management</span>
+                                    <span class="px-4 py-2 bg-orange-500/10 text-orange-500 text-sm font-medium rounded-full">Real-time</span>
+                                </div>
+                                
+                                <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    Feature 3 of 3
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Arrows -->
+                <button id="prev-slide" class="absolute left-2 md:left-4 top-1/2 transform -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white dark:hover:bg-gray-700 transition-all duration-300 group">
+                    <svg class="w-5 h-5 md:w-6 md:h-6 text-gray-700 dark:text-gray-300 group-hover:text-primaryPurple transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </button>
+                
+                <button id="next-slide" class="absolute right-2 md:right-4 top-1/2 transform -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white dark:hover:bg-gray-700 transition-all duration-300 group">
+                    <svg class="w-5 h-5 md:w-6 md:h-6 text-gray-700 dark:text-gray-300 group-hover:text-primaryPurple transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Slide Indicators -->
+            <div class="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-3">
+                <button class="slide-indicator w-3 h-3 rounded-full bg-primaryPurple transition-all duration-300" data-slide="0"></button>
+                <button class="slide-indicator w-3 h-3 rounded-full bg-gray-300 dark:bg-gray-600 hover:bg-primaryPurple/50 transition-all duration-300" data-slide="1"></button>
+                <button class="slide-indicator w-3 h-3 rounded-full bg-gray-300 dark:bg-gray-600 hover:bg-primaryPurple/50 transition-all duration-300" data-slide="2"></button>
+            </div>
+
+            <!-- Auto-play Controls -->
+            <div class="absolute top-4 right-4 md:top-6 md:right-6 flex items-center space-x-3">
+                <button id="autoplay-toggle" class="w-8 h-8 md:w-10 md:h-10 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white dark:hover:bg-gray-700 transition-all duration-300 group">
+                    <svg id="play-icon" class="w-4 h-4 md:w-5 md:h-5 text-gray-700 dark:text-gray-300 group-hover:text-primaryPurple transition-colors duration-300" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
+                    </svg>
+                    <svg id="pause-icon" class="w-4 h-4 md:w-5 md:h-5 text-gray-700 dark:text-gray-300 group-hover:text-primaryPurple transition-colors duration-300 hidden" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 00-1 1v2a1 1 0 102 0V9a1 1 0 00-1-1zm4 0a1 1 0 00-1 1v2a1 1 0 102 0V9a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
         <!-- Gallery Stats -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
             <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 text-center">
                 <div class="w-12 h-12 bg-gradient-to-br from-primaryPurple to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-4">
                     <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -105,166 +312,6 @@
             </div>
         </div>
 
-        <!-- Gallery Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            
-            <!-- Course Grid Feature -->
-            <div class="group bg-white dark:bg-gray-800 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden border border-gray-200 dark:border-gray-700">
-                <div class="relative overflow-hidden">
-                    <img src="{{ asset('images/FeatureGallery/Course Grid.png') }}" 
-                         alt="Course Grid Feature" 
-                         class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-700">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
-                        <div class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full p-2">
-                            <svg class="w-5 h-5 text-primaryPurple" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <div class="flex items-center mb-4">
-                        <div class="w-10 h-10 bg-gradient-to-br from-primaryPurple to-purple-600 rounded-xl flex items-center justify-center mr-3">
-                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-900 dark:text-white">Course Grid</h3>
-                    </div>
-                    <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
-                        Organized course layout with intuitive navigation and visual course cards for easy browsing and selection.
-                    </p>
-                    <div class="mt-4 flex flex-wrap gap-2">
-                        <span class="px-3 py-1 bg-primaryPurple/10 text-primaryPurple text-sm font-medium rounded-full">Grid Layout</span>
-                        <span class="px-3 py-1 bg-blue-500/10 text-blue-500 text-sm font-medium rounded-full">Navigation</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Enrollment Feature -->
-            <div class="group bg-white dark:bg-gray-800 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden border border-gray-200 dark:border-gray-700">
-                <div class="relative overflow-hidden">
-                    <img src="{{ asset('images/FeatureGallery/Enrollment.png') }}" 
-                         alt="Enrollment Feature" 
-                         class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-700">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
-                        <div class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full p-2">
-                            <svg class="w-5 h-5 text-primaryGreen" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <div class="flex items-center mb-4">
-                        <div class="w-10 h-10 bg-gradient-to-br from-primaryGreen to-green-600 rounded-xl flex items-center justify-center mr-3">
-                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-900 dark:text-white">Enrollment</h3>
-                    </div>
-                    <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
-                        Streamlined enrollment process with step-by-step guidance and real-time validation for seamless student registration.
-                    </p>
-                    <div class="mt-4 flex flex-wrap gap-2">
-                        <span class="px-3 py-1 bg-primaryGreen/10 text-primaryGreen text-sm font-medium rounded-full">Registration</span>
-                        <span class="px-3 py-1 bg-orange-500/10 text-orange-500 text-sm font-medium rounded-full">Validation</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Partner Dashboard Feature -->
-            <div class="group bg-white dark:bg-gray-800 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden border border-gray-200 dark:border-gray-700">
-                <div class="relative overflow-hidden">
-                    <img src="{{ asset('images/FeatureGallery/Partner Dashboard.png') }}" 
-                         alt="Partner Dashboard Feature" 
-                         class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-700">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
-                        <div class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full p-2">
-                            <svg class="w-5 h-5 text-primaryBlue" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-2 0v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-2 0V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-2 0V4z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <div class="flex items-center mb-4">
-                        <div class="w-10 h-10 bg-gradient-to-br from-primaryBlue to-blue-600 rounded-xl flex items-center justify-center mr-3">
-                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-2 0v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-2 0V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-2 0V4z"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-900 dark:text-white">Partner Dashboard</h3>
-                    </div>
-                    <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
-                        Comprehensive analytics dashboard with real-time insights, performance metrics, and management tools for educational partners.
-                    </p>
-                    <div class="mt-4 flex flex-wrap gap-2">
-                        <span class="px-3 py-1 bg-primaryBlue/10 text-primaryBlue text-sm font-medium rounded-full">Analytics</span>
-                        <span class="px-3 py-1 bg-purple-500/10 text-purple-500 text-sm font-medium rounded-full">Management</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Interactive Features Section -->
-        <div class="mt-16 bg-gradient-to-br from-primaryPurple/5 via-transparent to-primaryBlue/5 rounded-3xl p-8 lg:p-12">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6">
-                    Interactive Experience
-                </h2>
-                <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-                    Hover over the images to see interactive effects and get a feel for our platform's modern design.
-                </p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="text-center group">
-                    <div class="w-16 h-16 bg-gradient-to-br from-primaryPurple to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Visual Design</h3>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm">Modern, clean interface</p>
-                </div>
-                
-                <div class="text-center group">
-                    <div class="w-16 h-16 bg-gradient-to-br from-primaryGreen to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 8v1h-6v4a3 3 0 00-3 3v1h6.93zM6 8a5 5 0 0110 0v1H6V8z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">User Experience</h3>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm">Intuitive navigation</p>
-                </div>
-                
-                <div class="text-center group">
-                    <div class="w-16 h-16 bg-gradient-to-br from-primaryBlue to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Responsive</h3>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm">Mobile-first design</p>
-                </div>
-                
-                <div class="text-center group">
-                    <div class="w-16 h-16 bg-gradient-to-br from-primaryOrange to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Customizable</h3>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm">Flexible settings</p>
-                </div>
-            </div>
-        </div>
-
         <!-- CTA Section -->
         <div class="mt-16 bg-gradient-to-r from-primaryPurple to-purple-600 rounded-3xl p-8 lg:p-12 text-white text-center relative overflow-hidden">
             <div class="absolute inset-0 bg-black/10"></div>
@@ -289,6 +336,185 @@
     <x-footer />
 
     <script>
+        // Slideshow functionality
+        class SlideshowGallery {
+            constructor() {
+                this.currentSlide = 0;
+                this.totalSlides = 3;
+                this.autoplayInterval = null;
+                this.autoplayDelay = 5000; // 5 seconds
+                this.isAutoplayActive = false;
+                
+                this.init();
+            }
+            
+            init() {
+                this.slides = document.querySelectorAll('.slide');
+                this.indicators = document.querySelectorAll('.slide-indicator');
+                this.prevBtn = document.getElementById('prev-slide');
+                this.nextBtn = document.getElementById('next-slide');
+                this.autoplayToggle = document.getElementById('autoplay-toggle');
+                this.playIcon = document.getElementById('play-icon');
+                this.pauseIcon = document.getElementById('pause-icon');
+                
+                this.bindEvents();
+                this.startAutoplay();
+            }
+            
+            bindEvents() {
+                // Navigation buttons
+                if (this.prevBtn) {
+                    this.prevBtn.addEventListener('click', () => this.previousSlide());
+                }
+                
+                if (this.nextBtn) {
+                    this.nextBtn.addEventListener('click', () => this.nextSlide());
+                }
+                
+                // Slide indicators
+                this.indicators.forEach((indicator, index) => {
+                    indicator.addEventListener('click', () => this.goToSlide(index));
+                });
+                
+                // Autoplay toggle
+                if (this.autoplayToggle) {
+                    this.autoplayToggle.addEventListener('click', () => this.toggleAutoplay());
+                }
+                
+                // Keyboard navigation
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowLeft') this.previousSlide();
+                    if (e.key === 'ArrowRight') this.nextSlide();
+                    if (e.key === ' ') {
+                        e.preventDefault();
+                        this.toggleAutoplay();
+                    }
+                });
+                
+                // Touch/swipe support
+                this.addTouchSupport();
+                
+                // Pause autoplay on hover
+                const slideshowContainer = document.getElementById('slideshow-container');
+                if (slideshowContainer) {
+                    slideshowContainer.addEventListener('mouseenter', () => this.pauseAutoplay());
+                    slideshowContainer.addEventListener('mouseleave', () => {
+                        if (this.isAutoplayActive) this.startAutoplay();
+                    });
+                }
+            }
+            
+            addTouchSupport() {
+                const container = document.getElementById('slideshow-container');
+                if (!container) return;
+                
+                let startX = 0;
+                let startY = 0;
+                let endX = 0;
+                let endY = 0;
+                
+                container.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                });
+                
+                container.addEventListener('touchend', (e) => {
+                    endX = e.changedTouches[0].clientX;
+                    endY = e.changedTouches[0].clientY;
+                    
+                    const diffX = startX - endX;
+                    const diffY = startY - endY;
+                    
+                    // Only trigger if horizontal swipe is more significant than vertical
+                    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                        if (diffX > 0) {
+                            this.nextSlide();
+                        } else {
+                            this.previousSlide();
+                        }
+                    }
+                });
+            }
+            
+            showSlide(index) {
+                // Hide all slides
+                this.slides.forEach((slide, i) => {
+                    slide.style.opacity = i === index ? '1' : '0';
+                    slide.style.zIndex = i === index ? '10' : '1';
+                });
+                
+                // Update indicators
+                this.indicators.forEach((indicator, i) => {
+                    if (i === index) {
+                        indicator.classList.remove('bg-gray-300', 'dark:bg-gray-600');
+                        indicator.classList.add('bg-primaryPurple');
+                    } else {
+                        indicator.classList.remove('bg-primaryPurple');
+                        indicator.classList.add('bg-gray-300', 'dark:bg-gray-600');
+                    }
+                });
+                
+                this.currentSlide = index;
+            }
+            
+            nextSlide() {
+                const nextIndex = (this.currentSlide + 1) % this.totalSlides;
+                this.showSlide(nextIndex);
+            }
+            
+            previousSlide() {
+                const prevIndex = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+                this.showSlide(prevIndex);
+            }
+            
+            goToSlide(index) {
+                this.showSlide(index);
+            }
+            
+            startAutoplay() {
+                this.pauseAutoplay();
+                this.autoplayInterval = setInterval(() => {
+                    this.nextSlide();
+                }, this.autoplayDelay);
+                this.isAutoplayActive = true;
+                this.updateAutoplayIcon();
+            }
+            
+            pauseAutoplay() {
+                if (this.autoplayInterval) {
+                    clearInterval(this.autoplayInterval);
+                    this.autoplayInterval = null;
+                }
+                this.isAutoplayActive = false;
+                this.updateAutoplayIcon();
+            }
+            
+            toggleAutoplay() {
+                if (this.isAutoplayActive) {
+                    this.pauseAutoplay();
+                } else {
+                    this.startAutoplay();
+                }
+            }
+            
+            updateAutoplayIcon() {
+                if (this.playIcon && this.pauseIcon) {
+                    if (this.isAutoplayActive) {
+                        this.playIcon.classList.add('hidden');
+                        this.pauseIcon.classList.remove('hidden');
+                    } else {
+                        this.playIcon.classList.remove('hidden');
+                        this.pauseIcon.classList.add('hidden');
+                    }
+                }
+            }
+        }
+        
+        // Initialize slideshow when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new SlideshowGallery();
+        });
+
         // Dark Mode Toggle
         const darkToggle = document.getElementById('darkToggle');
         const html = document.documentElement;
