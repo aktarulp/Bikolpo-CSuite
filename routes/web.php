@@ -493,6 +493,34 @@ Route::get('/contact', function () {
     return view('contact');
 })->name('contact');
 
+Route::post('/contact', [App\Http\Controllers\ContactController::class, 'store'])->name('contact.store');
+
+// Admin route to view contact messages (you can add authentication later)
+Route::get('/admin/contact-messages', function () {
+    $messages = \App\Models\ContactMessage::orderBy('created_at', 'desc')->get();
+    return view('admin.contact-messages', compact('messages'));
+})->name('admin.contact-messages');
+
+// Test email route (remove in production)
+Route::get('/test-email', function () {
+    try {
+        \Mail::raw('This is a test email from Bikolpo Live contact form system.', function ($message) {
+            $message->to('bikolpo247@gmail.com')
+                    ->subject('Test Email - Contact Form System');
+        });
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Test email sent successfully! Check your inbox.'
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to send test email: ' . $e->getMessage()
+        ]);
+    }
+});
+
 // About page route (accessible without authentication)
 Route::get('/about', function () {
     return view('about');

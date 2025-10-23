@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>Contact Us - Bikolpo Live</title>
   
   <!-- Favicon -->
@@ -131,7 +132,64 @@
       <!-- Contact Form -->
       <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 border border-gray-200 dark:border-gray-700">
         <h2 class="text-3xl font-bold mb-8 text-primaryGreen text-center">Contact Form</h2>
-        <form action="#" method="POST" class="space-y-6">
+        
+        <!-- Success/Error Messages -->
+        <div id="messageContainer" class="hidden mb-6">
+            <div id="successMessage" class="hidden relative overflow-hidden bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200 dark:border-green-700 rounded-2xl shadow-lg">
+                <div class="absolute inset-0 bg-gradient-to-r from-green-500/5 to-emerald-500/5"></div>
+                <div class="relative p-6">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center shadow-lg">
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <h3 class="text-lg font-semibold text-green-800 dark:text-green-200 mb-2">
+                                Message Sent Successfully! 🎉
+                            </h3>
+                            <p id="successText" class="text-green-700 dark:text-green-300 leading-relaxed"></p>
+                            <div class="mt-3 flex items-center text-sm text-green-600 dark:text-green-400">
+                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd"></path>
+                                </svg>
+                                We'll get back to you within 24 hours
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="errorMessage" class="hidden relative overflow-hidden bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 border border-red-200 dark:border-red-700 rounded-2xl shadow-lg">
+                <div class="absolute inset-0 bg-gradient-to-r from-red-500/5 to-pink-500/5"></div>
+                <div class="relative p-6">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg">
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-4 flex-1">
+                            <h3 class="text-lg font-semibold text-red-800 dark:text-red-200 mb-2">
+                                Oops! Something went wrong
+                            </h3>
+                            <p id="errorText" class="text-red-700 dark:text-red-300 leading-relaxed"></p>
+                            <div class="mt-3 flex items-center text-sm text-red-600 dark:text-red-400">
+                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.725-1.36 3.49 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                </svg>
+                                Please try again or contact us directly
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <form id="contactForm" action="{{ route('contact.store') }}" method="POST" class="space-y-6">
           @csrf
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -222,7 +280,7 @@
           <div class="space-y-4">
             <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
               <strong>Ground Floor, Uddvas Coaching</strong><br>
-              College Road, Almonogor<br>
+              College Road, Alamnagar-5400<br>
               Rangpur, Bangladesh
             </p>
                          <a href="https://maps.app.goo.gl/FsgRXczVqRDAJBoT9" 
@@ -356,23 +414,82 @@
          });
 
          // Form submission handling
-         const contactForm = document.querySelector('form');
+         const contactForm = document.getElementById('contactForm');
+         const messageContainer = document.getElementById('messageContainer');
+         const successMessage = document.getElementById('successMessage');
+         const errorMessage = document.getElementById('errorMessage');
+         const successText = document.getElementById('successText');
+         const errorText = document.getElementById('errorText');
+         const submitButton = contactForm.querySelector('button[type="submit"]');
+         
          contactForm.addEventListener('submit', function(e) {
              e.preventDefault();
              
+             // Hide previous messages
+             messageContainer.classList.add('hidden');
+             successMessage.classList.add('hidden');
+             errorMessage.classList.add('hidden');
+             
+             // Disable submit button and show loading state
+             const originalButtonText = submitButton.innerHTML;
+             submitButton.disabled = true;
+             submitButton.innerHTML = `
+                 <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                 </svg>
+                 Sending...
+             `;
+             
              // Get form data
              const formData = new FormData(this);
-             const name = formData.get('name');
-             const email = formData.get('email');
-             const phone = formData.get('phone');
-             const subject = formData.get('subject');
-             const message = formData.get('message');
              
-             // Show success message (you can replace this with actual form submission)
-             alert(`Thank you ${name}! Your message has been sent successfully. We will contact you soon.`);
-             
-             // Reset form
-             this.reset();
+             // Send AJAX request
+             fetch(this.action, {
+                 method: 'POST',
+                 body: formData,
+                 headers: {
+                     'X-Requested-With': 'XMLHttpRequest',
+                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || formData.get('_token')
+                 }
+             })
+             .then(response => response.json())
+             .then(data => {
+                 if (data.success) {
+                     // Show success message
+                     successText.textContent = data.message;
+                     successMessage.classList.remove('hidden');
+                     messageContainer.classList.remove('hidden');
+                     
+                     // Reset form
+                     this.reset();
+                     
+                     // Scroll to message
+                     messageContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                 } else {
+                     // Show error message
+                     errorText.textContent = data.message || 'An error occurred. Please try again.';
+                     errorMessage.classList.remove('hidden');
+                     messageContainer.classList.remove('hidden');
+                     
+                     // Scroll to message
+                     messageContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                 }
+             })
+             .catch(error => {
+                 console.error('Error:', error);
+                 errorText.textContent = 'Network error. Please check your connection and try again.';
+                 errorMessage.classList.remove('hidden');
+                 messageContainer.classList.remove('hidden');
+                 
+                 // Scroll to message
+                 messageContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+             })
+             .finally(() => {
+                 // Re-enable submit button
+                 submitButton.disabled = false;
+                 submitButton.innerHTML = originalButtonText;
+             });
          });
      </script>
 
