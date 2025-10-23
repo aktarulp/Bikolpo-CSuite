@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\EnhancedUser;
 use App\Models\Partner;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class PartnerSettingsController extends Controller
 {
@@ -77,43 +76,12 @@ class PartnerSettingsController extends Controller
                 $stats['users'] = $users;
                 
                 // Return the view with the stats
-                Log::info('Partner Settings: About to render view', [
-                    'partner_id' => $partner->id,
-                    'stats_count' => count($stats),
-                    'users_count' => $stats['users']->count()
+                return view('partner.settings.partner-settings', [
+                    'partner' => $partner,
+                    'stats' => $stats
                 ]);
-                
-                try {
-                    return view('partner.settings.partner-settings', [
-                        'partner' => $partner,
-                        'stats' => $stats
-                    ]);
-                } catch (\Exception $viewError) {
-                    Log::error('Partner Settings: View rendering failed', [
-                        'error' => $viewError->getMessage(),
-                        'file' => $viewError->getFile(),
-                        'line' => $viewError->getLine(),
-                        'trace' => $viewError->getTraceAsString()
-                    ]);
-                    
-                    // Fallback to a simple view if the main view is missing
-                    if (str_contains($viewError->getMessage(), 'not found')) {
-                        return view('partner.settings.simple-settings', [
-                            'partner' => $partner,
-                            'stats' => $stats
-                        ]);
-                    }
-                    
-                    throw $viewError;
-                }
                 
             } catch (\Exception $e) {
-                Log::error('Error preparing stats data: ' . $e->getMessage(), [
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine(),
-                    'trace' => $e->getTraceAsString()
-                ]);
-                
                 // Return view with empty stats if data loading fails
                 return view('partner.settings.partner-settings', [
                     'partner' => $partner,
@@ -122,12 +90,6 @@ class PartnerSettingsController extends Controller
             }
             
         } catch (\Exception $e) {
-            Log::error('Critical error in partner settings: ' . $e->getMessage(), [
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            
             return redirect()->route('partner.dashboard')
                 ->with('error', 'An error occurred while loading settings. Please try again or contact support if the issue persists.');
         }
