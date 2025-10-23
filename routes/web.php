@@ -888,6 +888,37 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
             }
         })->name('settings.debug');
         
+        // Simple test route for view rendering
+        Route::get('settings-test', function () {
+            try {
+                $user = auth()->user();
+                $partner = $user->partner;
+                
+                $stats = [
+                    'total_users' => 0,
+                    'active_users' => 0,
+                    'pending_users' => 0,
+                    'suspended_users' => 0,
+                    'total_roles' => 0,
+                    'roles' => collect(),
+                    'users' => collect(),
+                ];
+                
+                return view('partner.settings.partner-settings', [
+                    'partner' => $partner,
+                    'stats' => $stats
+                ]);
+                
+            } catch (\Exception $e) {
+                return response()->json([
+                    'error' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+            }
+        })->name('settings.test');
+        
         // Test Settings Route
         Route::get('test-settings', function () {
             try {
