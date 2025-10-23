@@ -77,10 +77,26 @@ class PartnerSettingsController extends Controller
                 $stats['users'] = $users;
                 
                 // Return the view with the stats
-                return view('partner.settings.partner-settings', [
-                    'partner' => $partner,
-                    'stats' => $stats
+                Log::info('Partner Settings: About to render view', [
+                    'partner_id' => $partner->id,
+                    'stats_count' => count($stats),
+                    'users_count' => $stats['users']->count()
                 ]);
+                
+                try {
+                    return view('partner.settings.partner-settings', [
+                        'partner' => $partner,
+                        'stats' => $stats
+                    ]);
+                } catch (\Exception $viewError) {
+                    Log::error('Partner Settings: View rendering failed', [
+                        'error' => $viewError->getMessage(),
+                        'file' => $viewError->getFile(),
+                        'line' => $viewError->getLine(),
+                        'trace' => $viewError->getTraceAsString()
+                    ]);
+                    throw $viewError;
+                }
                 
             } catch (\Exception $e) {
                 Log::error('Error preparing stats data: ' . $e->getMessage(), [
