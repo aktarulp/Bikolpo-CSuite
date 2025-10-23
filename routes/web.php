@@ -844,6 +844,50 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
         // Partner Settings
         Route::get('settings', [\App\Http\Controllers\Partner\PartnerSettingsController::class, 'index'])->name('settings.index');
         
+        // Debug route for Hostinger issues
+        Route::get('settings-debug', function () {
+            try {
+                $user = auth()->user();
+                if (!$user) {
+                    return response()->json(['error' => 'User not authenticated']);
+                }
+                
+                $debug = [
+                    'user_id' => $user->id,
+                    'user_role' => $user->role,
+                    'user_email' => $user->email,
+                    'partner_id' => $user->partner_id,
+                    'has_partner_relationship' => $user->partner ? true : false,
+                    'partner_data' => $user->partner ? [
+                        'id' => $user->partner->id,
+                        'name' => $user->partner->name,
+                        'status' => $user->partner->status
+                    ] : null,
+                    'database_connection' => config('database.default'),
+                    'environment' => app()->environment(),
+                    'app_debug' => config('app.debug'),
+                    'log_level' => config('logging.level', 'debug')
+                ];
+                
+                // Test EnhancedUser model
+                try {
+                    $testUsers = \App\Models\EnhancedUser::where('partner_id', $user->partner_id ?? 0)->count();
+                    $debug['enhanced_user_count'] = $testUsers;
+                } catch (\Exception $e) {
+                    $debug['enhanced_user_error'] = $e->getMessage();
+                }
+                
+                return response()->json($debug);
+                
+            } catch (\Exception $e) {
+                return response()->json([
+                    'error' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine()
+                ]);
+            }
+        })->name('settings.debug');
+        
         // Test Settings Route
         Route::get('test-settings', function () {
             try {
