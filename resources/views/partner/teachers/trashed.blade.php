@@ -62,7 +62,27 @@
                                         <div class="flex items-center gap-4">
                                             <div class="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-600 dark:to-gray-700 flex items-center justify-center">
                                                 @if($teacher->photo)
-                                                    <img src="{{ $teacher->photo_url }}" alt="{{ $teacher->full_name }}" class="w-full h-full object-cover">
+                                                    @php
+                                                        // Handle different photo path formats - same logic as student views
+                                                        $photoPath = $teacher->photo;
+                                                        
+                                                        if (str_starts_with($photoPath, 'teachers/') || str_starts_with($photoPath, 'teacher-photos/')) {
+                                                            $photoUrl = asset('uploads/' . $photoPath);
+                                                        } else {
+                                                            // Try both possible directories
+                                                            $teachersPath = 'teachers/' . $photoPath;
+                                                            $teacherPhotosPath = 'teacher-photos/' . $photoPath;
+                                                            
+                                                            if (Storage::disk('public')->exists($teachersPath)) {
+                                                                $photoUrl = asset('uploads/' . $teachersPath);
+                                                            } elseif (Storage::disk('public')->exists($teacherPhotosPath)) {
+                                                                $photoUrl = asset('uploads/' . $teacherPhotosPath);
+                                                            } else {
+                                                                $photoUrl = asset('uploads/' . $photoPath);
+                                                            }
+                                                        }
+                                                    @endphp
+                                                    <img src="{{ $photoUrl }}" alt="{{ $teacher->full_name }}" class="w-full h-full object-cover">
                                                 @else
                                                     <i class="fas fa-user text-gray-500 dark:text-gray-400"></i>
                                                 @endif
