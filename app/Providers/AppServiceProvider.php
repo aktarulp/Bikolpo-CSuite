@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Route;
 use App\Models\Partner;
 use App\Models\Course;
 use App\Models\Batch;
@@ -31,6 +32,18 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Custom route model binding for Teacher to use teacher_id or id
+        Route::model('teacher', Teacher::class);
+        Route::bind('teacher', function ($value) {
+            // First try to find by teacher_id
+            $teacher = Teacher::where('teacher_id', $value)->first();
+            if ($teacher) {
+                return $teacher;
+            }
+            // If not found by teacher_id, try by database id
+            return Teacher::findOrFail($value);
+        });
+
         // Auto-sync menu permissions from config to ac_permissions (idempotent)
         try {
             \App\Services\PermissionSyncService::syncMenus();

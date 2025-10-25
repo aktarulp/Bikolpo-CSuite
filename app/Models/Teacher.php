@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
+use App\Models\EnhancedUser;
+use App\Models\Partner;
 
 class Teacher extends Model
 {
-    use HasFactory; // Temporarily removed SoftDeletes
+    use HasFactory, SoftDeletes;
 
     protected $table = 'teachers';
 
@@ -23,9 +25,7 @@ class Teacher extends Model
         'phone',
         'alternate_phone',
         'father_name',
-        'father_phone',
         'mother_name',
-        'mother_phone',
         'emergency_contact_name',
         'emergency_contact_phone',
         'emergency_contact_relation',
@@ -57,6 +57,17 @@ class Teacher extends Model
         'completion_year',
         'achievement',
         'flag',
+        'subject_specialization',
+        'experience_years',
+        'highest_degree',
+        'institution_name',
+        'salary_type',
+        'salary_amount',
+        'payment_method',
+        'account_details',
+        'present_address',
+        'permanent_address',
+        'notes',
     ];
 
     protected $casts = [
@@ -74,17 +85,17 @@ class Teacher extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(EnhancedUser::class);
     }
 
     public function creator()
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(EnhancedUser::class, 'created_by');
     }
 
     public function updater()
     {
-        return $this->belongsTo(User::class, 'updated_by');
+        return $this->belongsTo(EnhancedUser::class, 'updated_by');
     }
 
     // Many-to-many relationships for assignments
@@ -128,14 +139,16 @@ class Teacher extends Model
     }
 
     // Accessors
-
     public function getPhotoUrlAttribute()
     {
         if ($this->photo) {
-            // Use Laravel's storage URL for public disk
-            return Storage::disk('public')->url($this->photo);
+            // Check if the file exists in storage
+            if (Storage::disk('public')->exists($this->photo)) {
+                // Use relative URL to avoid issues with different base URLs
+                return '/storage/' . $this->photo;
+            }
         }
-        return asset('images/default-avatar.png');
+        return '/images/default-avatar.svg';
     }
 
     public function getAgeAttribute()
@@ -152,27 +165,6 @@ class Teacher extends Model
         $this->attributes['email'] = $value ? strtolower($value) : null;
     }
 
-    // Helper methods
-    public static function generateTeacherId($partnerId)
-    {
-        $year = date('Y');
-        $partner = Partner::find($partnerId);
-        $prefix = $partner ? strtoupper(substr($partner->name, 0, 3)) : 'TCH';
-        
-        $lastTeacher = self::where('partner_id', $partnerId)
-                          ->where('teacher_id', 'like', "{$prefix}-{$year}-%")
-                          ->orderBy('teacher_id', 'desc')
-                          ->first();
-
-        if ($lastTeacher) {
-            $lastNumber = (int) substr($lastTeacher->teacher_id, -3);
-            $newNumber = $lastNumber + 1;
-        } else {
-            $newNumber = 1;
-        }
-
-        return $prefix . '-' . $year . '-' . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
-    }
 
     public function getStatusBadgeClass()
     {
@@ -194,15 +186,4 @@ class Teacher extends Model
         };
     }
 
-    // Boot method for auto-generating teacher_id
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($teacher) {
-            if (!$teacher->teacher_id) {
-                $teacher->teacher_id = self::generateTeacherId($teacher->partner_id);
-            }
-        });
-    }
 }

@@ -85,35 +85,44 @@ class TeacherController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'teacher_id' => 'required|string|max:255|unique:teachers,teacher_id',
             'full_name' => 'required|string|max:255',
             'date_of_birth' => 'nullable|date|before:today',
-            'gender' => 'required|in:male,female,other',
+            'gender' => 'required|in:Male,Female,Other',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'phone' => 'required|string|max:255|unique:teachers,phone',
             'alternate_phone' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255|unique:teachers,email',
-            'father_name' => 'nullable|string|max:255',
-            'father_phone' => 'nullable|string|max:255',
-            'mother_name' => 'nullable|string|max:255',
-            'mother_phone' => 'nullable|string|max:255',
+            'father_name' => 'required|string|max:255',
+            'mother_name' => 'required|string|max:255',
             'emergency_contact_name' => 'nullable|string|max:255',
             'emergency_contact_phone' => 'nullable|string|max:255',
-            'emergency_contact_relation' => 'nullable|string|max:255',
+            'emergency_contact_relation' => 'required|string|max:255',
             'blood_group' => 'nullable|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
             'religion' => 'nullable|in:Islam,Hinduism,Christianity,Buddhism,Other',
             'marital_status' => 'nullable|in:Single,Married,Divorced,Widowed',
             'national_id' => 'nullable|string|max:255',
             'passport_number' => 'nullable|string|max:255',
             'tin_number' => 'nullable|string|max:255',
-            'designation' => 'required|string|max:255',
+            'designation' => 'nullable|string|max:255',
             'department' => 'nullable|string|max:255',
-            'joining_date' => 'required|date',
+            'joining_date' => 'nullable|date',
             'employee_type' => 'nullable|string|max:255',
             'employment_status' => 'required|in:Active,Inactive,On Leave',
             'bank_name' => 'nullable|string|max:255',
             'bank_account_number' => 'nullable|string|max:255',
             'bank_routing_number' => 'nullable|string|max:255',
-            'notes' => 'nullable|string',
+            'subject_specialization' => 'nullable|string|max:255',
+            'experience_years' => 'nullable|integer|min:0',
+            'highest_degree' => 'nullable|string|max:255',
+            'institution_name' => 'nullable|string|max:255',
+            'salary_type' => 'nullable|string|max:255',
+            'salary_amount' => 'nullable|numeric|min:0',
+            'payment_method' => 'nullable|string|max:255',
+            'account_details' => 'nullable|string|max:255',
+            'present_address' => 'nullable|string|max:500',
+            'permanent_address' => 'nullable|string|max:500',
+            'notes' => 'nullable|string|max:1000',
         ]);
 
         if ($validator->fails()) {
@@ -143,8 +152,14 @@ class TeacherController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
+            \Log::error('Teacher creation failed: ' . $e->getMessage(), [
+                'user_id' => auth()->id(),
+                'partner_id' => auth()->user()->partner_id ?? null,
+                'data' => $data ?? null,
+                'trace' => $e->getTraceAsString()
+            ]);
             return redirect()->back()
-                           ->with('error', 'Failed to create teacher. Please try again.')
+                           ->with('error', 'Failed to create teacher: ' . $e->getMessage())
                            ->withInput();
         }
     }
@@ -174,6 +189,7 @@ class TeacherController extends Controller
             abort(403);
         }
 
+
         return view('partner.teachers.edit', compact('teacher'));
     }
 
@@ -188,34 +204,44 @@ class TeacherController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'full_name_en' => 'required|string|max:150',
-            'full_name_bn' => 'nullable|string|max:150',
-            'father_name' => 'nullable|string|max:150',
-            'mother_name' => 'nullable|string|max:150',
+            'teacher_id' => ['required', 'string', 'max:255', Rule::unique('teachers')->ignore($teacher->id)],
+            'full_name' => 'required|string|max:255',
+            'date_of_birth' => 'nullable|date|before:today',
             'gender' => 'required|in:Male,Female,Other',
-            'dob' => 'nullable|date|before:today',
-            'blood_group' => 'nullable|string|max:5',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'mobile' => ['required', 'string', 'max:20', Rule::unique('teachers')->ignore($teacher->id)],
-            'alt_mobile' => 'nullable|string|max:20',
-            'email' => ['nullable', 'email', 'max:100', Rule::unique('teachers')->ignore($teacher->id)],
-            'present_address' => 'nullable|string',
-            'permanent_address' => 'nullable|string',
-            'emergency_contact_name' => 'nullable|string|max:100',
-            'emergency_contact_number' => 'nullable|string|max:20',
-            'designation' => 'nullable|string|max:100',
-            'department' => 'nullable|string|max:100',
-            'subject_specialization' => 'nullable|string|max:255',
+            'phone' => ['required', 'string', 'max:255', Rule::unique('teachers')->ignore($teacher->id)],
+            'alternate_phone' => 'nullable|string|max:255',
+            'email' => ['nullable', 'email', 'max:255', Rule::unique('teachers')->ignore($teacher->id)],
+            'father_name' => 'required|string|max:255',
+            'mother_name' => 'required|string|max:255',
+            'emergency_contact_name' => 'nullable|string|max:255',
+            'emergency_contact_phone' => 'nullable|string|max:255',
+            'emergency_contact_relation' => 'required|string|max:255',
+            'blood_group' => 'nullable|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
+            'religion' => 'nullable|in:Islam,Hinduism,Christianity,Buddhism,Other',
+            'marital_status' => 'nullable|in:Single,Married,Divorced,Widowed',
+            'national_id' => 'nullable|string|max:255',
+            'passport_number' => 'nullable|string|max:255',
+            'tin_number' => 'nullable|string|max:255',
+            'designation' => 'nullable|string|max:255',
+            'department' => 'nullable|string|max:255',
             'joining_date' => 'nullable|date',
+            'employee_type' => 'nullable|string|max:255',
+            'employment_status' => 'required|in:Active,Inactive,On Leave',
+            'bank_name' => 'nullable|string|max:255',
+            'bank_account_number' => 'nullable|string|max:255',
+            'bank_routing_number' => 'nullable|string|max:255',
+            'subject_specialization' => 'nullable|string|max:255',
             'experience_years' => 'nullable|integer|min:0',
-            'status' => 'required|in:Active,Inactive,On Leave',
-            'highest_degree' => 'nullable|string|max:100',
-            'institution_name' => 'nullable|string|max:150',
-            'salary_type' => 'nullable|in:Monthly,Per Class,Per Student',
+            'highest_degree' => 'nullable|string|max:255',
+            'institution_name' => 'nullable|string|max:255',
+            'salary_type' => 'nullable|string|max:255',
             'salary_amount' => 'nullable|numeric|min:0',
-            'payment_method' => 'nullable|in:Cash,Bank,Mobile Banking',
+            'payment_method' => 'nullable|string|max:255',
             'account_details' => 'nullable|string|max:255',
-            'notes' => 'nullable|string',
+            'present_address' => 'nullable|string|max:500',
+            'permanent_address' => 'nullable|string|max:500',
+            'notes' => 'nullable|string|max:1000',
         ]);
 
         if ($validator->fails()) {
@@ -284,6 +310,77 @@ class TeacherController extends Controller
             DB::rollBack();
             return redirect()->back()
                            ->with('error', 'Failed to delete teacher. Please try again.');
+        }
+    }
+
+    /**
+     * Show soft deleted teachers.
+     */
+    public function trashed()
+    {
+        $teachers = Teacher::onlyTrashed()
+                          ->where('partner_id', auth()->user()->partner_id)
+                          ->orderBy('deleted_at', 'desc')
+                          ->paginate(20);
+
+        return view('partner.teachers.trashed', compact('teachers'));
+    }
+
+    /**
+     * Restore a soft deleted teacher.
+     */
+    public function restore($id)
+    {
+        $teacher = Teacher::onlyTrashed()->findOrFail($id);
+        
+        // Ensure teacher belongs to current partner
+        if ($teacher->partner_id !== auth()->user()->partner_id) {
+            abort(403);
+        }
+
+        try {
+            $teacher->restore();
+            
+            return redirect()->route('partner.teachers.index')
+                           ->with('success', 'Teacher restored successfully!');
+                           
+        } catch (\Exception $e) {
+            return redirect()->back()
+                           ->with('error', 'Failed to restore teacher. Please try again.');
+        }
+    }
+
+    /**
+     * Permanently delete a teacher.
+     */
+    public function forceDelete($id)
+    {
+        $teacher = Teacher::onlyTrashed()->findOrFail($id);
+        
+        // Ensure teacher belongs to current partner
+        if ($teacher->partner_id !== auth()->user()->partner_id) {
+            abort(403);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // Delete photo if exists
+            if ($teacher->photo) {
+                Storage::disk('public')->delete($teacher->photo);
+            }
+
+            $teacher->forceDelete();
+
+            DB::commit();
+
+            return redirect()->route('partner.teachers.trashed')
+                           ->with('success', 'Teacher permanently deleted!');
+                           
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()
+                           ->with('error', 'Failed to permanently delete teacher. Please try again.');
         }
     }
 
