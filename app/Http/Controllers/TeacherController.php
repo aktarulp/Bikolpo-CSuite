@@ -138,13 +138,30 @@ class TeacherController extends Controller
             $data['partner_id'] = auth()->user()->partner_id;
             $data['created_by'] = auth()->id();
 
-            // Handle photo upload - use same pattern as Student model
+            // Handle photo upload - DIRECT UPLOAD TO PUBLIC/UPLOADS (Hostinger compatible)
             if ($request->hasFile('photo')) {
-                // Store in public/uploads/teachers/ (same as Student model pattern)
-                $uploadPath = 'uploads/teachers/';
+                // Ensure uploads directory exists
+                $uploadDir = public_path('uploads/teachers/');
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0755, true);
+                }
+                
+                // Generate unique filename
                 $fileName = time() . '_' . $request->file('photo')->getClientOriginalName();
-                $request->file('photo')->move(public_path($uploadPath), $fileName);
+                $targetPath = $uploadDir . $fileName;
+                
+                // Move file directly to public/uploads/teachers/
+                $request->file('photo')->move($uploadDir, $fileName);
+                
+                // Store relative path in database
                 $data['photo'] = 'teachers/' . $fileName;
+                
+                // Log for debugging
+                \Log::info('Teacher photo uploaded', [
+                    'file' => $fileName,
+                    'path' => $targetPath,
+                    'exists' => file_exists($targetPath)
+                ]);
             }
 
             $teacher = Teacher::create($data);
@@ -260,7 +277,7 @@ class TeacherController extends Controller
             $data = $request->all();
             $data['updated_by'] = auth()->id();
 
-            // Handle photo upload - use same pattern as Student model
+            // Handle photo upload - DIRECT UPLOAD TO PUBLIC/UPLOADS (Hostinger compatible)
             if ($request->hasFile('photo')) {
                 // Delete old photo
                 if ($teacher->photo) {
@@ -270,11 +287,28 @@ class TeacherController extends Controller
                     }
                 }
                 
-                // Store in public/uploads/teachers/ (same as Student model pattern)
-                $uploadPath = 'uploads/teachers/';
+                // Ensure uploads directory exists
+                $uploadDir = public_path('uploads/teachers/');
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0755, true);
+                }
+                
+                // Generate unique filename
                 $fileName = time() . '_' . $request->file('photo')->getClientOriginalName();
-                $request->file('photo')->move(public_path($uploadPath), $fileName);
+                $targetPath = $uploadDir . $fileName;
+                
+                // Move file directly to public/uploads/teachers/
+                $request->file('photo')->move($uploadDir, $fileName);
+                
+                // Store relative path in database
                 $data['photo'] = 'teachers/' . $fileName;
+                
+                // Log for debugging
+                \Log::info('Teacher photo updated', [
+                    'file' => $fileName,
+                    'path' => $targetPath,
+                    'exists' => file_exists($targetPath)
+                ]);
             }
 
             $teacher->update($data);
