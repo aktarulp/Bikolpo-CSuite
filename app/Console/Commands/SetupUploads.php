@@ -29,6 +29,7 @@ class SetupUploads extends Command
         $directories = [
             'public/uploads',
             'public/uploads/student-photos',
+            'public/uploads/teachers',
             'public/uploads/questions',
             'public/uploads/partners',
         ];
