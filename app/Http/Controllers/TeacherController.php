@@ -138,32 +138,31 @@ class TeacherController extends Controller
             $data['partner_id'] = auth()->user()->partner_id;
             $data['created_by'] = auth()->id();
 
-            // Handle photo upload - USE SAME PATTERN AS STUDENT CONTROLLER
+            // Handle photo upload - DIRECT STORAGE IN PUBLIC/UPLOADS FOR HOSTINGER
             if ($request->hasFile('photo')) {
-                // Store in Laravel storage (same as Student controller)
-                $data['photo'] = $request->file('photo')->store('teachers', 'public');
-                
-                // Copy to public/uploads/ for Hostinger compatibility
-                $storagePath = storage_path('app/public/' . $data['photo']);
-                $uploadsPath = public_path('uploads/' . $data['photo']);
+                // Store directly in public/uploads/teachers/ for Hostinger compatibility
+                $uploadsDir = public_path('uploads/teachers');
                 
                 // Ensure uploads directory exists
-                $uploadsDir = dirname($uploadsPath);
                 if (!is_dir($uploadsDir)) {
                     mkdir($uploadsDir, 0755, true);
                 }
                 
-                // Copy file from storage to uploads
-                if (file_exists($storagePath)) {
-                    copy($storagePath, $uploadsPath);
-                }
+                // Generate unique filename
+                $filename = time() . '_' . uniqid() . '.' . $request->file('photo')->getClientOriginalExtension();
+                $uploadsPath = $uploadsDir . '/' . $filename;
+                
+                // Move file directly to uploads directory
+                $request->file('photo')->move($uploadsDir, $filename);
+                
+                // Store path in database (relative to uploads directory)
+                $data['photo'] = 'teachers/' . $filename;
                 
                 // Log for debugging
-                \Log::info('Teacher photo uploaded', [
-                    'storage_path' => $storagePath,
+                \Log::info('Teacher photo uploaded directly to uploads', [
                     'uploads_path' => $uploadsPath,
-                    'storage_exists' => file_exists($storagePath),
-                    'uploads_exists' => file_exists($uploadsPath)
+                    'database_path' => $data['photo'],
+                    'file_exists' => file_exists($uploadsPath)
                 ]);
             }
 
@@ -280,45 +279,39 @@ class TeacherController extends Controller
             $data = $request->all();
             $data['updated_by'] = auth()->id();
 
-            // Handle photo upload - USE SAME PATTERN AS STUDENT CONTROLLER
+            // Handle photo upload - DIRECT STORAGE IN PUBLIC/UPLOADS FOR HOSTINGER
             if ($request->hasFile('photo')) {
-                // Delete old photo from both locations
+                // Delete old photo if exists
                 if ($teacher->photo) {
-                    $oldStoragePath = storage_path('app/public/' . $teacher->photo);
-                    $oldUploadsPath = public_path('uploads/' . $teacher->photo);
-                    
-                    if (file_exists($oldStoragePath)) {
-                        unlink($oldStoragePath);
-                    }
-                    if (file_exists($oldUploadsPath)) {
-                        unlink($oldUploadsPath);
+                    $oldPhotoPath = public_path('uploads/' . $teacher->photo);
+                    if (file_exists($oldPhotoPath)) {
+                        unlink($oldPhotoPath);
                     }
                 }
                 
-                // Store in Laravel storage (same as Student controller)
-                $data['photo'] = $request->file('photo')->store('teachers', 'public');
-                
-                // Copy to public/uploads/ for Hostinger compatibility
-                $storagePath = storage_path('app/public/' . $data['photo']);
-                $uploadsPath = public_path('uploads/' . $data['photo']);
+                // Store directly in public/uploads/teachers/ for Hostinger compatibility
+                $uploadsDir = public_path('uploads/teachers');
                 
                 // Ensure uploads directory exists
-                $uploadsDir = dirname($uploadsPath);
                 if (!is_dir($uploadsDir)) {
                     mkdir($uploadsDir, 0755, true);
                 }
                 
-                // Copy file from storage to uploads
-                if (file_exists($storagePath)) {
-                    copy($storagePath, $uploadsPath);
-                }
+                // Generate unique filename
+                $filename = time() . '_' . uniqid() . '.' . $request->file('photo')->getClientOriginalExtension();
+                $uploadsPath = $uploadsDir . '/' . $filename;
+                
+                // Move file directly to uploads directory
+                $request->file('photo')->move($uploadsDir, $filename);
+                
+                // Store path in database (relative to uploads directory)
+                $data['photo'] = 'teachers/' . $filename;
                 
                 // Log for debugging
-                \Log::info('Teacher photo updated', [
-                    'storage_path' => $storagePath,
+                \Log::info('Teacher photo updated directly to uploads', [
                     'uploads_path' => $uploadsPath,
-                    'storage_exists' => file_exists($storagePath),
-                    'uploads_exists' => file_exists($uploadsPath)
+                    'database_path' => $data['photo'],
+                    'file_exists' => file_exists($uploadsPath)
                 ]);
             }
 

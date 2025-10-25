@@ -30,27 +30,7 @@
                         <div class="relative">
                             <div class="w-24 h-24 sm:w-32 sm:h-32 rounded-3xl overflow-hidden shadow-2xl border-4 border-white/20">
                                 @if($teacher->photo)
-                                    @php
-                                        // Handle different photo path formats - same logic as student views
-                                        $photoPath = $teacher->photo;
-                                        
-                                        if (str_starts_with($photoPath, 'teachers/') || str_starts_with($photoPath, 'teacher-photos/')) {
-                                            $photoUrl = asset('uploads/' . $photoPath);
-                                        } else {
-                                            // Try both possible directories
-                                            $teachersPath = 'teachers/' . $photoPath;
-                                            $teacherPhotosPath = 'teacher-photos/' . $photoPath;
-                                            
-                                            if (Storage::disk('public')->exists($teachersPath)) {
-                                                $photoUrl = asset('uploads/' . $teachersPath);
-                                            } elseif (Storage::disk('public')->exists($teacherPhotosPath)) {
-                                                $photoUrl = asset('uploads/' . $teacherPhotosPath);
-                                            } else {
-                                                $photoUrl = asset('uploads/' . $photoPath);
-                                            }
-                                        }
-                                    @endphp
-                                    <img src="{{ $photoUrl }}" alt="{{ $teacher->full_name }}" class="w-full h-full object-cover">
+                                    <img src="{{ $teacher->photo_url }}" alt="{{ $teacher->full_name }}" class="w-full h-full object-cover">
                                 @else
                                     <div class="w-full h-full bg-gradient-to-br from-white/30 to-white/10 flex items-center justify-center">
                                         <span class="text-4xl sm:text-5xl">{{ $teacher->getGenderIcon() }}</span>

@@ -142,24 +142,8 @@ class Teacher extends Model
     public function getPhotoUrlAttribute()
     {
         if ($this->photo) {
-            // Use the same robust pattern as Student views that work on Hostinger
-            $photoPath = $this->photo;
-            
-            if (str_starts_with($photoPath, 'teachers/') || str_starts_with($photoPath, 'teacher-photos/')) {
-                return asset('uploads/' . $photoPath);
-            } else {
-                // Try both possible directories
-                $teachersPath = 'teachers/' . $photoPath;
-                $teacherPhotosPath = 'teacher-photos/' . $photoPath;
-                
-                if (Storage::disk('public')->exists($teachersPath)) {
-                    return asset('uploads/' . $teachersPath);
-                } elseif (Storage::disk('public')->exists($teacherPhotosPath)) {
-                    return asset('uploads/' . $teacherPhotosPath);
-                } else {
-                    return asset('uploads/' . $photoPath);
-                }
-            }
+            // Direct approach - photos are stored directly in public/uploads/teachers/
+            return asset('uploads/' . $this->photo);
         }
         return asset('images/default-avatar.svg');
     }
