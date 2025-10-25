@@ -138,22 +138,13 @@ class TeacherController extends Controller
             $data['partner_id'] = auth()->user()->partner_id;
             $data['created_by'] = auth()->id();
 
-            // Handle photo upload
+            // Handle photo upload - use same pattern as Student model
             if ($request->hasFile('photo')) {
-                $photoPath = $request->file('photo')->store('teachers/photos', 'public');
-                $data['photo'] = $photoPath;
-                
-                // For Hostinger shared hosting compatibility, also copy to public/uploads
-                if (!is_link(public_path('storage'))) {
-                    $publicUploadsDir = public_path('uploads/teachers');
-                    if (!is_dir($publicUploadsDir)) {
-                        mkdir($publicUploadsDir, 0755, true);
-                    }
-                    
-                    $sourceFile = storage_path('app/public/' . $photoPath);
-                    $destinationFile = $publicUploadsDir . '/' . basename($photoPath);
-                    copy($sourceFile, $destinationFile);
-                }
+                // Store in public/uploads/teachers/ (same as Student model pattern)
+                $uploadPath = 'uploads/teachers/';
+                $fileName = time() . '_' . $request->file('photo')->getClientOriginalName();
+                $request->file('photo')->move(public_path($uploadPath), $fileName);
+                $data['photo'] = 'teachers/' . $fileName;
             }
 
             $teacher = Teacher::create($data);
@@ -269,32 +260,21 @@ class TeacherController extends Controller
             $data = $request->all();
             $data['updated_by'] = auth()->id();
 
-            // Handle photo upload
+            // Handle photo upload - use same pattern as Student model
             if ($request->hasFile('photo')) {
                 // Delete old photo
                 if ($teacher->photo) {
-                    Storage::disk('public')->delete($teacher->photo);
-                    // Also delete from public/uploads if it exists
-                    $oldPublicFile = public_path('uploads/teachers/' . basename($teacher->photo));
-                    if (file_exists($oldPublicFile)) {
-                        unlink($oldPublicFile);
+                    $oldPhotoPath = public_path('uploads/' . $teacher->photo);
+                    if (file_exists($oldPhotoPath)) {
+                        unlink($oldPhotoPath);
                     }
                 }
                 
-                $photoPath = $request->file('photo')->store('teachers/photos', 'public');
-                $data['photo'] = $photoPath;
-                
-                // For Hostinger shared hosting compatibility, also copy to public/uploads
-                if (!is_link(public_path('storage'))) {
-                    $publicUploadsDir = public_path('uploads/teachers');
-                    if (!is_dir($publicUploadsDir)) {
-                        mkdir($publicUploadsDir, 0755, true);
-                    }
-                    
-                    $sourceFile = storage_path('app/public/' . $photoPath);
-                    $destinationFile = $publicUploadsDir . '/' . basename($photoPath);
-                    copy($sourceFile, $destinationFile);
-                }
+                // Store in public/uploads/teachers/ (same as Student model pattern)
+                $uploadPath = 'uploads/teachers/';
+                $fileName = time() . '_' . $request->file('photo')->getClientOriginalName();
+                $request->file('photo')->move(public_path($uploadPath), $fileName);
+                $data['photo'] = 'teachers/' . $fileName;
             }
 
             $teacher->update($data);
@@ -539,3 +519,4 @@ class TeacherController extends Controller
         }
     }
 }
+

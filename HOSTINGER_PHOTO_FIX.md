@@ -11,16 +11,15 @@ Teacher photos load correctly in local environment but not on Hostinger hosting.
 
 ## Solutions Applied
 
-### 1. Shared Hosting Detection & Dual Storage
-- **Added**: Automatic detection of shared hosting (no symbolic links)
-- **Implemented**: Dual file storage - saves to both `storage/app/public` and `public/uploads/teachers`
-- **Result**: Photos work on both local (with symbolic links) and shared hosting (without links)
+### 1. Student Model Pattern Implementation
+- **Identified**: Student photos work on Hostinger using `asset('uploads/' . $student->photo)`
+- **Applied**: Same pattern to Teacher model for consistency
+- **Result**: Teacher photos now use the same proven URL pattern as Student photos
 
-### 2. Smart URL Generation
-- **Updated**: Teacher model automatically detects environment and uses appropriate URL
-- **Local Environment**: Uses `asset('storage/')` when symbolic link exists
-- **Shared Hosting**: Uses `asset('uploads/teachers/')` when no symbolic link
-- **Result**: Seamless photo loading across all environments
+### 2. Direct File Storage
+- **Changed**: Photos now stored directly in `public/uploads/teachers/`
+- **Removed**: Complex dual storage system
+- **Result**: Simple, reliable file storage that works on all hosting environments
 
 ## Steps to Fix on Hostinger
 
@@ -37,44 +36,43 @@ mkdir -p public/uploads/teachers
 chmod 755 public/uploads/teachers
 ```
 
-### Step 3: Set File Permissions
-```bash
-# Set correct permissions for storage and uploads directories
-chmod -R 755 storage/
-chmod -R 755 public/uploads/
-```
-
-### Step 4: Verify Environment Configuration
-Check your `.env` file on Hostinger:
-```env
-APP_URL=https://yourdomain.com
-FILESYSTEM_DISK=public
-```
-
-### Step 5: Test Photo Upload
-1. Create a new teacher with a photo
-2. Check if photo appears in both locations:
-   - `storage/app/public/teachers/photos/`
-   - `public/uploads/teachers/`
-
-### Step 6: Migrate Existing Photos (if any)
+### Step 3: Migrate Existing Photos
 If you have existing teacher photos, copy them to the uploads directory:
 ```bash
 # Copy existing photos to public/uploads/teachers/
 cp storage/app/public/teachers/photos/* public/uploads/teachers/
 ```
 
+### Step 4: Update Database Paths
+Run this PHP script to update existing teacher photo paths:
+```php
+// Update teacher photo paths in database
+use App\Models\Teacher;
+$teachers = Teacher::whereNotNull('photo')->get();
+foreach($teachers as $teacher) {
+    if(strpos($teacher->photo, 'teachers/photos/') === 0) {
+        $newPath = 'teachers/' . basename($teacher->photo);
+        $teacher->update(['photo' => $newPath]);
+    }
+}
+```
+
+### Step 5: Test Photo Loading
+1. Check existing teacher photos load correctly
+2. Create a new teacher with a photo
+3. Verify photos appear in `public/uploads/teachers/`
+
 ## Files Modified
 
 ### 1. `app/Models/Teacher.php`
-- **Smart URL Detection**: Automatically detects if symbolic link exists
-- **Dual Path Support**: Uses `storage/` for local, `uploads/teachers/` for shared hosting
-- **Fallback Handling**: Graceful fallback to default avatar if photo missing
+- **Student Pattern**: Uses same URL pattern as Student model: `asset('uploads/' . $this->photo)`
+- **Simplified Logic**: Removed complex environment detection
+- **Consistent**: Matches the working Student photo implementation
 
 ### 2. `app/Http/Controllers/TeacherController.php`
-- **Dual Storage**: Saves photos to both `storage/app/public` and `public/uploads/teachers`
-- **Environment Detection**: Only copies to public/uploads on shared hosting
-- **Cleanup**: Properly deletes old photos from both locations
+- **Direct Storage**: Saves photos directly to `public/uploads/teachers/`
+- **Simple Path**: Stores photo path as `teachers/filename.jpg`
+- **Cleanup**: Properly deletes old photos from uploads directory
 
 ### 3. `resources/views/partner/teachers/index.blade.php`
 - **Consistent Usage**: Uses `{{ $teacher->photo_url }}` for all photo displays

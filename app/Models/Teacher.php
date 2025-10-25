@@ -142,18 +142,8 @@ class Teacher extends Model
     public function getPhotoUrlAttribute()
     {
         if ($this->photo) {
-            // Check if the file exists in storage
-            if (Storage::disk('public')->exists($this->photo)) {
-                // For Hostinger shared hosting (no symbolic links), use direct path
-                // Check if we're on shared hosting by testing if storage link exists
-                if (!is_link(public_path('storage'))) {
-                    // No symbolic link - use direct file path for shared hosting
-                    return asset('uploads/teachers/' . basename($this->photo));
-                } else {
-                    // Symbolic link exists - use standard storage path
-                    return asset('storage/' . $this->photo);
-                }
-            }
+            // Use the same pattern as Student model that works on Hostinger
+            return asset('uploads/' . $this->photo);
         }
         return asset('images/default-avatar.svg');
     }
