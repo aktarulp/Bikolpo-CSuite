@@ -142,7 +142,7 @@ class Teacher extends Model
     public function getPhotoUrlAttribute()
     {
         if ($this->photo) {
-            // Use the same pattern as Student model that works on Hostinger
+            // Use the same pattern as Student views that work on Hostinger
             return asset('uploads/' . $this->photo);
         }
         return asset('images/default-avatar.svg');
