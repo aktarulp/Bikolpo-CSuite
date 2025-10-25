@@ -144,11 +144,38 @@ class Teacher extends Model
         if ($this->photo) {
             // Check if the file exists in storage
             if (Storage::disk('public')->exists($this->photo)) {
-                // Use relative URL to avoid issues with different base URLs
-                return '/storage/' . $this->photo;
+                // For Hostinger shared hosting (no symbolic links), use direct path
+                // Check if we're on shared hosting by testing if storage link exists
+                if (!is_link(public_path('storage'))) {
+                    // No symbolic link - use direct file path for shared hosting
+                    return asset('uploads/teachers/' . basename($this->photo));
+                } else {
+                    // Symbolic link exists - use standard storage path
+                    return asset('storage/' . $this->photo);
+                }
             }
         }
-        return '/images/default-avatar.svg';
+        return asset('images/default-avatar.svg');
+    }
+
+    /**
+     * Get photo URL with fallback handling for different environments
+     */
+    public function getPhotoUrlWithFallback()
+    {
+        if ($this->photo) {
+            // Try multiple URL generation methods for different environments
+            $urls = [
+                asset('storage/' . $this->photo),
+                url('storage/' . $this->photo),
+                '/storage/' . $this->photo,
+                config('app.url') . '/storage/' . $this->photo
+            ];
+            
+            // Return the first URL that might work
+            return $urls[0];
+        }
+        return asset('images/default-avatar.svg');
     }
 
     public function getAgeAttribute()
