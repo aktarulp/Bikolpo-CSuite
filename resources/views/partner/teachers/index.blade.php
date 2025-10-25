@@ -181,7 +181,9 @@
                         <!-- Teacher Photo Section -->
                         <div class="relative w-full aspect-square bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-700 dark:via-gray-600 dark:to-gray-500 overflow-hidden">
                             @if($teacher->photo)
-                                <img src="{{ $teacher->photo_url }}" alt="{{ $teacher->full_name }}" class="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700" style="aspect-ratio: 1/1;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <img src="{{ $teacher->photo_url }}" alt="{{ $teacher->full_name }}" class="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700" style="aspect-ratio: 1/1;" 
+                                     onload="console.log('Teacher photo loaded: {{ $teacher->full_name }}'); this.style.border='2px solid green';" 
+                                     onerror="console.log('Teacher photo failed to load: {{ $teacher->full_name }} - {{ $teacher->photo_url }}'); this.style.border='2px solid red'; this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                 <div class="w-full h-full flex items-center justify-center" style="display: none; aspect-ratio: 1/1;">
                                     <div class="w-24 h-24 bg-white/90 dark:bg-gray-800/90 rounded-3xl flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform duration-500">
                                         <span class="text-4xl">{{ $teacher->getGenderIcon() }}</span>
