@@ -143,7 +143,12 @@ class Teacher extends Model
     {
         if ($this->photo) {
             // Direct approach - photos are stored directly in public/uploads/teachers/
-            return asset('uploads/' . $this->photo);
+            // Add cache busting parameter to prevent browser caching issues
+            $url = asset('uploads/' . $this->photo);
+            if (file_exists(public_path('uploads/' . $this->photo))) {
+                $url .= '?v=' . filemtime(public_path('uploads/' . $this->photo));
+            }
+            return $url;
         }
         return asset('images/default-avatar.svg');
     }
