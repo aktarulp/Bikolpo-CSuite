@@ -123,6 +123,83 @@ class TeacherController extends Controller
             'present_address' => 'nullable|string|max:500',
             'permanent_address' => 'nullable|string|max:500',
             'notes' => 'nullable|string|max:1000',
+        ], [
+            // Custom error messages
+            'teacher_id.required' => 'Teacher ID is required.',
+            'teacher_id.unique' => 'This Teacher ID is already in use. Please choose a different one.',
+            'teacher_id.max' => 'Teacher ID cannot exceed 255 characters.',
+            
+            'full_name.required' => 'Full name is required.',
+            'full_name.max' => 'Full name cannot exceed 255 characters.',
+            
+            'date_of_birth.date' => 'Please enter a valid date of birth.',
+            'date_of_birth.before' => 'Date of birth must be before today.',
+            
+            'gender.required' => 'Please select a gender.',
+            'gender.in' => 'Please select a valid gender option.',
+            
+            'photo.image' => 'Please upload a valid image file.',
+            'photo.mimes' => 'Photo must be a JPEG, PNG, or JPG file.',
+            'photo.max' => 'Photo size cannot exceed 2MB.',
+            
+            'phone.required' => 'Phone number is required.',
+            'phone.unique' => 'This phone number is already registered. Please use a different number.',
+            'phone.max' => 'Phone number cannot exceed 255 characters.',
+            
+            'alternate_phone.max' => 'Alternate phone number cannot exceed 255 characters.',
+            
+            'email.email' => 'Please enter a valid email address.',
+            'email.unique' => 'This email address is already registered. Please use a different email.',
+            'email.max' => 'Email address cannot exceed 255 characters.',
+            
+            'father_name.required' => 'Father\'s name is required.',
+            'father_name.max' => 'Father\'s name cannot exceed 255 characters.',
+            
+            'mother_name.required' => 'Mother\'s name is required.',
+            'mother_name.max' => 'Mother\'s name cannot exceed 255 characters.',
+            
+            'emergency_contact_name.max' => 'Emergency contact name cannot exceed 255 characters.',
+            'emergency_contact_phone.max' => 'Emergency contact phone cannot exceed 255 characters.',
+            'emergency_contact_relation.required' => 'Emergency contact relation is required.',
+            'emergency_contact_relation.max' => 'Emergency contact relation cannot exceed 255 characters.',
+            
+            'blood_group.in' => 'Please select a valid blood group.',
+            'religion.in' => 'Please select a valid religion.',
+            'marital_status.in' => 'Please select a valid marital status.',
+            
+            'national_id.max' => 'National ID cannot exceed 255 characters.',
+            'passport_number.max' => 'Passport number cannot exceed 255 characters.',
+            'tin_number.max' => 'TIN number cannot exceed 255 characters.',
+            
+            'designation.max' => 'Designation cannot exceed 255 characters.',
+            'department.max' => 'Department cannot exceed 255 characters.',
+            
+            'joining_date.date' => 'Please enter a valid joining date.',
+            
+            'employment_status.required' => 'Please select an employment status.',
+            'employment_status.in' => 'Please select a valid employment status.',
+            
+            'bank_name.max' => 'Bank name cannot exceed 255 characters.',
+            'bank_account_number.max' => 'Bank account number cannot exceed 255 characters.',
+            'bank_routing_number.max' => 'Bank routing number cannot exceed 255 characters.',
+            
+            'subject_specialization.max' => 'Subject specialization cannot exceed 255 characters.',
+            'experience_years.integer' => 'Experience years must be a whole number.',
+            'experience_years.min' => 'Experience years cannot be negative.',
+            
+            'highest_degree.max' => 'Highest degree cannot exceed 255 characters.',
+            'institution_name.max' => 'Institution name cannot exceed 255 characters.',
+            
+            'salary_type.max' => 'Salary type cannot exceed 255 characters.',
+            'salary_amount.numeric' => 'Salary amount must be a valid number.',
+            'salary_amount.min' => 'Salary amount cannot be negative.',
+            
+            'payment_method.max' => 'Payment method cannot exceed 255 characters.',
+            'account_details.max' => 'Account details cannot exceed 255 characters.',
+            
+            'present_address.max' => 'Present address cannot exceed 500 characters.',
+            'permanent_address.max' => 'Permanent address cannot exceed 500 characters.',
+            'notes.max' => 'Notes cannot exceed 1000 characters.',
         ]);
 
         if ($validator->fails()) {
@@ -258,6 +335,83 @@ class TeacherController extends Controller
             'present_address' => 'nullable|string|max:500',
             'permanent_address' => 'nullable|string|max:500',
             'notes' => 'nullable|string|max:1000',
+        ], [
+            // Custom error messages for update
+            'teacher_id.required' => 'Teacher ID is required.',
+            'teacher_id.unique' => 'This Teacher ID is already in use. Please choose a different one.',
+            'teacher_id.max' => 'Teacher ID cannot exceed 255 characters.',
+            
+            'full_name.required' => 'Full name is required.',
+            'full_name.max' => 'Full name cannot exceed 255 characters.',
+            
+            'date_of_birth.date' => 'Please enter a valid date of birth.',
+            'date_of_birth.before' => 'Date of birth must be before today.',
+            
+            'gender.required' => 'Please select a gender.',
+            'gender.in' => 'Please select a valid gender option.',
+            
+            'photo.image' => 'Please upload a valid image file.',
+            'photo.mimes' => 'Photo must be a JPEG, PNG, or JPG file.',
+            'photo.max' => 'Photo size cannot exceed 2MB.',
+            
+            'phone.required' => 'Phone number is required.',
+            'phone.unique' => 'This phone number is already registered. Please use a different number.',
+            'phone.max' => 'Phone number cannot exceed 255 characters.',
+            
+            'alternate_phone.max' => 'Alternate phone number cannot exceed 255 characters.',
+            
+            'email.email' => 'Please enter a valid email address.',
+            'email.unique' => 'This email address is already registered. Please use a different email.',
+            'email.max' => 'Email address cannot exceed 255 characters.',
+            
+            'father_name.required' => 'Father\'s name is required.',
+            'father_name.max' => 'Father\'s name cannot exceed 255 characters.',
+            
+            'mother_name.required' => 'Mother\'s name is required.',
+            'mother_name.max' => 'Mother\'s name cannot exceed 255 characters.',
+            
+            'emergency_contact_name.max' => 'Emergency contact name cannot exceed 255 characters.',
+            'emergency_contact_phone.max' => 'Emergency contact phone cannot exceed 255 characters.',
+            'emergency_contact_relation.required' => 'Emergency contact relation is required.',
+            'emergency_contact_relation.max' => 'Emergency contact relation cannot exceed 255 characters.',
+            
+            'blood_group.in' => 'Please select a valid blood group.',
+            'religion.in' => 'Please select a valid religion.',
+            'marital_status.in' => 'Please select a valid marital status.',
+            
+            'national_id.max' => 'National ID cannot exceed 255 characters.',
+            'passport_number.max' => 'Passport number cannot exceed 255 characters.',
+            'tin_number.max' => 'TIN number cannot exceed 255 characters.',
+            
+            'designation.max' => 'Designation cannot exceed 255 characters.',
+            'department.max' => 'Department cannot exceed 255 characters.',
+            
+            'joining_date.date' => 'Please enter a valid joining date.',
+            
+            'employment_status.required' => 'Please select an employment status.',
+            'employment_status.in' => 'Please select a valid employment status.',
+            
+            'bank_name.max' => 'Bank name cannot exceed 255 characters.',
+            'bank_account_number.max' => 'Bank account number cannot exceed 255 characters.',
+            'bank_routing_number.max' => 'Bank routing number cannot exceed 255 characters.',
+            
+            'subject_specialization.max' => 'Subject specialization cannot exceed 255 characters.',
+            'experience_years.integer' => 'Experience years must be a whole number.',
+            'experience_years.min' => 'Experience years cannot be negative.',
+            
+            'highest_degree.max' => 'Highest degree cannot exceed 255 characters.',
+            'institution_name.max' => 'Institution name cannot exceed 255 characters.',
+            
+            'salary_type.max' => 'Salary type cannot exceed 255 characters.',
+            'salary_amount.numeric' => 'Salary amount must be a valid number.',
+            'salary_amount.min' => 'Salary amount cannot be negative.',
+            
+            'payment_method.max' => 'Payment method cannot exceed 255 characters.',
+            'account_details.max' => 'Account details cannot exceed 255 characters.',
+            
+            'present_address.max' => 'Present address cannot exceed 500 characters.',
+            'permanent_address.max' => 'Permanent address cannot exceed 500 characters.',
+            'notes.max' => 'Notes cannot exceed 1000 characters.',
         ]);
 
         if ($validator->fails()) {
