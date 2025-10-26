@@ -143,35 +143,11 @@ class Teacher extends Model
     {
         if ($this->photo) {
             // Direct approach - photos are stored directly in public/uploads/teachers/
-            // Add cache busting parameter to prevent browser caching issues
-            $url = asset('uploads/' . $this->photo);
-            if (file_exists(public_path('uploads/' . $this->photo))) {
-                $url .= '?v=' . filemtime(public_path('uploads/' . $this->photo));
-            }
-            return $url;
+            return asset('uploads/' . $this->photo);
         }
         return asset('images/default-avatar.svg');
     }
 
-    /**
-     * Get photo URL with fallback handling for different environments
-     */
-    public function getPhotoUrlWithFallback()
-    {
-        if ($this->photo) {
-            // Try multiple URL generation methods for different environments
-            $urls = [
-                asset('storage/' . $this->photo),
-                url('storage/' . $this->photo),
-                '/storage/' . $this->photo,
-                config('app.url') . '/storage/' . $this->photo
-            ];
-            
-            // Return the first URL that might work
-            return $urls[0];
-        }
-        return asset('images/default-avatar.svg');
-    }
 
     public function getAgeAttribute()
     {
