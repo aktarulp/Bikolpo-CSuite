@@ -157,13 +157,6 @@ class TeacherController extends Controller
                 
                 // Store path in database (relative to uploads directory)
                 $data['photo'] = 'teachers/' . $filename;
-                
-                // Log for debugging
-                \Log::info('Teacher photo uploaded directly to uploads', [
-                    'uploads_path' => $uploadsPath,
-                    'database_path' => $data['photo'],
-                    'file_exists' => file_exists($uploadsPath)
-                ]);
             }
 
             $teacher = Teacher::create($data);
@@ -306,13 +299,6 @@ class TeacherController extends Controller
                 
                 // Store path in database (relative to uploads directory)
                 $data['photo'] = 'teachers/' . $filename;
-                
-                // Log for debugging
-                \Log::info('Teacher photo updated directly to uploads', [
-                    'uploads_path' => $uploadsPath,
-                    'database_path' => $data['photo'],
-                    'file_exists' => file_exists($uploadsPath)
-                ]);
             }
 
             $teacher->update($data);
