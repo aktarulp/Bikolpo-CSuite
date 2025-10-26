@@ -1395,3 +1395,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/users/recent-activity', [\App\Http\Controllers\UserManagementController::class, 'getRecentActivity'])->name('api.users.recent-activity');
     });
 });
+
+// Debug routes for photo testing
+require __DIR__.'/debug_photos.php';

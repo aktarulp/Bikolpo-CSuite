@@ -143,9 +143,10 @@ class Teacher extends Model
     {
         if ($this->photo) {
             // Direct approach - photos are stored directly in public/uploads/teachers/
-            return asset('uploads/' . $this->photo);
+            // Use url() helper instead of asset() for better Hostinger compatibility
+            return url('uploads/' . $this->photo);
         }
-        return asset('images/default-avatar.svg');
+        return url('images/default-avatar.svg');
     }
 
 
