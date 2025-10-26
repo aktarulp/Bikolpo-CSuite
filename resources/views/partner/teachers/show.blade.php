@@ -45,8 +45,16 @@
                                         <img src="{{ $teacher->photo_url }}" alt="{{ $teacher->full_name }}" class="w-full h-full object-cover"
                                              onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,\
                                              <svg xmlns=\'http://www.w3.org/2000/svg\' width=\'128\' height=\'128\' viewBox=\'0 0 128 128\'>\
-                                               <rect width=\'128\' height=\'128\' rx=\'24\' fill=\'%236b7280\'/>\
-                                               <text x=\'50%\' y=\'54%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'white\' font-size=\'48\' font-family=\'Inter, Arial, sans-serif\'>{{ urlencode(Str::substr($teacher->full_name,0,1)) }}</text>\
+                                               <defs>\
+                                                 <linearGradient id=\'grad\' x1=\'0%\' y1=\'0%\' x2=\'100%\' y2=\'100%\'>\
+                                                   <stop offset=\'0%\' style=\'stop-color:%233b82f6;stop-opacity:1\' />\
+                                                   <stop offset=\'100%\' style=\'stop-color:%238b5cf6;stop-opacity:1\' />\
+                                                 </linearGradient>\
+                                               </defs>\
+                                               <rect width=\'128\' height=\'128\' rx=\'24\' fill=\'url(%23grad)\'/>\
+                                               <circle cx=\'64\' cy=\'50\' r=\'16\' fill=\'white\' opacity=\'0.9\'/>\
+                                               <path d=\'M45 90 Q64 75 83 90 L83 110 L45 110 Z\' fill=\'white\' opacity=\'0.9\'/>\
+                                               <text x=\'64\' y=\'100\' text-anchor=\'middle\' fill=\'white\' font-size=\'16\' font-weight=\'bold\' font-family=\'system-ui\'>{{ urlencode(Str::substr($teacher->full_name,0,1)) }}</text>\
                                              </svg>'">
                                     @else
                                         <div class="w-full h-full bg-gradient-to-br from-white/30 to-white/10 flex items-center justify-center">

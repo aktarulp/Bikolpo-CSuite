@@ -184,8 +184,16 @@
                                 <img src="{{ $teacher->photo_url }}" alt="{{ $teacher->full_name }}" class="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700" style="aspect-ratio: 1/1;" 
                                      onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,\
                                      <svg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'200\' viewBox=\'0 0 200 200\'>\
-                                       <rect width=\'200\' height=\'200\' rx=\'40\' fill=\'%236b7280\'/>\
-                                       <text x=\'50%\' y=\'54%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'white\' font-size=\'80\' font-family=\'Inter, Arial, sans-serif\'>{{ urlencode(Str::substr($teacher->full_name,0,1)) }}</text>\
+                                       <defs>\
+                                         <linearGradient id=\'grad\' x1=\'0%\' y1=\'0%\' x2=\'100%\' y2=\'100%\'>\
+                                           <stop offset=\'0%\' style=\'stop-color:%233b82f6;stop-opacity:1\' />\
+                                           <stop offset=\'100%\' style=\'stop-color:%238b5cf6;stop-opacity:1\' />\
+                                         </linearGradient>\
+                                       </defs>\
+                                       <rect width=\'200\' height=\'200\' rx=\'40\' fill=\'url(%23grad)\'/>\
+                                       <circle cx=\'100\' cy=\'80\' r=\'25\' fill=\'white\' opacity=\'0.9\'/>\
+                                       <path d=\'M70 140 Q100 120 130 140 L130 180 L70 180 Z\' fill=\'white\' opacity=\'0.9\'/>\
+                                       <text x=\'100\' y=\'160\' text-anchor=\'middle\' fill=\'white\' font-size=\'24\' font-weight=\'bold\' font-family=\'system-ui\'>{{ urlencode(Str::substr($teacher->full_name,0,1)) }}</text>\
                                      </svg>'">
                             @else
                                 <div class="w-full h-full flex items-center justify-center" style="aspect-ratio: 1/1;">
