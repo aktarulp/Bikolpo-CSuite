@@ -345,7 +345,10 @@ class TeacherController extends Controller
 
             // Delete photo if exists
             if ($teacher->photo) {
-                Storage::disk('public')->delete($teacher->photo);
+                $photoPath = public_path('uploads/' . $teacher->photo);
+                if (file_exists($photoPath)) {
+                    unlink($photoPath);
+                }
             }
 
             // Soft delete the teacher
@@ -417,7 +420,10 @@ class TeacherController extends Controller
 
             // Delete photo if exists
             if ($teacher->photo) {
-                Storage::disk('public')->delete($teacher->photo);
+                $photoPath = public_path('uploads/' . $teacher->photo);
+                if (file_exists($photoPath)) {
+                    unlink($photoPath);
+                }
             }
 
             $teacher->forceDelete();

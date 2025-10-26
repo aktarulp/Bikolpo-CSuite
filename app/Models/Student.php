@@ -558,6 +558,18 @@ class Student extends Model
     }
 
     /**
+     * Get the photo URL for this student.
+     */
+    public function getPhotoUrlAttribute()
+    {
+        if ($this->photo) {
+            // Direct approach - photos are stored directly in public/uploads/student-photos/
+            return asset('uploads/' . $this->photo);
+        }
+        return asset('images/default-avatar.svg');
+    }
+
+    /**
      * Get all topic progress data for this student
      *
      * @return \Illuminate\Database\Eloquent\Collection

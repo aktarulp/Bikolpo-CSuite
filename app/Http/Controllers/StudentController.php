@@ -139,7 +139,30 @@ class StudentController extends Controller
         $data['created_by'] = auth()->id();
 
         if ($request->hasFile('photo')) {
-            $data['photo'] = $request->file('photo')->store('student-photos', 'public');
+            // Store directly in public/uploads/student-photos/ for Hostinger compatibility
+            $uploadsDir = public_path('uploads/student-photos');
+            
+            // Ensure uploads directory exists
+            if (!is_dir($uploadsDir)) {
+                mkdir($uploadsDir, 0755, true);
+            }
+            
+            // Generate unique filename
+            $filename = time() . '_' . uniqid() . '.' . $request->file('photo')->getClientOriginalExtension();
+            $uploadsPath = $uploadsDir . '/' . $filename;
+            
+            // Move file directly to uploads directory
+            $request->file('photo')->move($uploadsDir, $filename);
+            
+            // Store path in database (relative to uploads directory)
+            $data['photo'] = 'student-photos/' . $filename;
+            
+            // Log for debugging
+            \Log::info('Student photo uploaded directly to uploads', [
+                'uploads_path' => $uploadsPath,
+                'database_path' => $data['photo'],
+                'file_exists' => file_exists($uploadsPath)
+            ]);
         }
 
         try {
@@ -226,15 +249,40 @@ class StudentController extends Controller
 
         $data = $request->all();
 
-        // Handle photo upload
+        // Handle photo upload - DIRECT STORAGE IN PUBLIC/UPLOADS FOR HOSTINGER
         if ($request->hasFile('photo')) {
             // Delete old photo if exists
             if ($student->photo) {
-                Storage::delete($student->photo);
+                $oldPhotoPath = public_path('uploads/' . $student->photo);
+                if (file_exists($oldPhotoPath)) {
+                    unlink($oldPhotoPath);
+                }
             }
             
-            // Store new photo
-            $data['photo'] = $request->file('photo')->store('student-photos', 'public');
+            // Store directly in public/uploads/student-photos/ for Hostinger compatibility
+            $uploadsDir = public_path('uploads/student-photos');
+            
+            // Ensure uploads directory exists
+            if (!is_dir($uploadsDir)) {
+                mkdir($uploadsDir, 0755, true);
+            }
+            
+            // Generate unique filename
+            $filename = time() . '_' . uniqid() . '.' . $request->file('photo')->getClientOriginalExtension();
+            $uploadsPath = $uploadsDir . '/' . $filename;
+            
+            // Move file directly to uploads directory
+            $request->file('photo')->move($uploadsDir, $filename);
+            
+            // Store path in database (relative to uploads directory)
+            $data['photo'] = 'student-photos/' . $filename;
+            
+            // Log for debugging
+            \Log::info('Student photo updated directly to uploads', [
+                'uploads_path' => $uploadsPath,
+                'database_path' => $data['photo'],
+                'file_exists' => file_exists($uploadsPath)
+            ]);
         }
 
         // Update student
@@ -247,7 +295,10 @@ class StudentController extends Controller
     public function destroy(Student $student)
     {
         if ($student->photo) {
-            Storage::disk('public')->delete($student->photo);
+            $photoPath = public_path('uploads/' . $student->photo);
+            if (file_exists($photoPath)) {
+                unlink($photoPath);
+            }
         }
 
         $student->delete();

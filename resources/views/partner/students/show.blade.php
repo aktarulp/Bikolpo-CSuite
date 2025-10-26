@@ -71,7 +71,7 @@
                     <div class="relative group">
                         @if($student->photo)
                             <img class="w-28 h-28 sm:w-32 sm:h-32 lg:w-36 lg:h-36 rounded-2xl object-cover border-4 border-white dark:border-gray-800 shadow-2xl ring-4 ring-purple-200 dark:ring-purple-900 transition-transform duration-300 group-hover:scale-105" 
-                                 src="{{ asset('uploads/' . $student->photo) }}" 
+                                 src="{{ $student->photo_url }}" 
                                  alt="{{ $student->full_name }}">
                         @else
                             <div class="w-28 h-28 sm:w-32 sm:h-32 lg:w-36 lg:h-36 rounded-2xl bg-gradient-to-br from-indigo-400 to-purple-600 flex items-center justify-center border-4 border-white dark:border-gray-800 shadow-2xl ring-4 ring-purple-200 dark:ring-purple-900 transition-transform duration-300 group-hover:scale-105">

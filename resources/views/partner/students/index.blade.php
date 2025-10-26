@@ -245,29 +245,8 @@
                         <div class="flex items-start space-x-3">
                             <div class="flex-shrink-0">
                                 @if($student->photo)
-                                    @php
-                                        // Handle different photo path formats
-                                        $photoPath = $student->photo;
-                                        
-                                        if (str_starts_with($photoPath, 'students/') || str_starts_with($photoPath, 'student-photos/')) {
-                                            $photoUrl = asset('uploads/' . $photoPath);
-                                        } else {
-                                            // Try both possible directories
-                                            $studentsPath = 'students/' . $photoPath;
-                                            $studentPhotosPath = 'student-photos/' . $photoPath;
-                                            
-                                            if (Storage::disk('public')->exists($studentsPath)) {
-                                                $photoUrl = asset('uploads/' . $studentsPath);
-                                            } elseif (Storage::disk('public')->exists($studentPhotosPath)) {
-                                                $photoUrl = asset('uploads/' . $studentPhotosPath);
-                                            } else {
-                                                $photoUrl = asset('uploads/' . $photoPath);
-                                            }
-                                        }
-                                        
-                                    @endphp
                                     <img class="h-14 w-14 rounded-xl object-cover shadow-lg ring-2 ring-purple-500" 
-                                         src="{{ $photoUrl }}" 
+                                         src="{{ $student->photo_url }}" 
                                          alt="{{ $student->full_name }}"
                                          onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,\
                                          <svg xmlns=\'http://www.w3.org/2000/svg\' width=\'56\' height=\'56\' viewBox=\'0 0 56 56\'>\
@@ -406,29 +385,8 @@
                                 <div class="flex items-center">
                                     <div class="flex-shrink-0 h-10 w-10">
                                         @if($student->photo)
-                                            @php
-                                                // Handle different photo path formats
-                                                $photoPath = $student->photo;
-                                                
-                                                if (str_starts_with($photoPath, 'students/') || str_starts_with($photoPath, 'student-photos/')) {
-                                                    $photoUrl = asset('uploads/' . $photoPath);
-                                                } else {
-                                                    // Try both possible directories
-                                                    $studentsPath = 'students/' . $photoPath;
-                                                    $studentPhotosPath = 'student-photos/' . $photoPath;
-                                                    
-                                                    if (Storage::disk('public')->exists($studentsPath)) {
-                                                        $photoUrl = asset('uploads/' . $studentsPath);
-                                                    } elseif (Storage::disk('public')->exists($studentPhotosPath)) {
-                                                        $photoUrl = asset('uploads/' . $studentPhotosPath);
-                                                    } else {
-                                                        $photoUrl = asset('uploads/' . $photoPath);
-                                                    }
-                                                }
-                                                
-                                            @endphp
                                             <img class="h-10 w-10 rounded-full object-cover shadow-lg group-hover:scale-110 transition-transform duration-200" 
-                                                 src="{{ $photoUrl }}" 
+                                                 src="{{ $student->photo_url }}" 
                                                  alt="{{ $student->full_name }}"
                                                  onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,\
                                                  <svg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\' viewBox=\'0 0 40 40\'>\

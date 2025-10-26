@@ -59,9 +59,40 @@ class StudentController extends Controller
             'mother_name' => 'nullable|string|max:255',
             'blood_group' => 'nullable|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
             'religion' => 'nullable|in:Islam,Hinduism,Christianity,Buddhism',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $student = Student::create(array_merge($validated, [
+        $data = $validated;
+
+        // Handle photo upload - DIRECT STORAGE IN PUBLIC/UPLOADS FOR HOSTINGER
+        if ($request->hasFile('photo')) {
+            // Store directly in public/uploads/student-photos/ for Hostinger compatibility
+            $uploadsDir = public_path('uploads/student-photos');
+            
+            // Ensure uploads directory exists
+            if (!is_dir($uploadsDir)) {
+                mkdir($uploadsDir, 0755, true);
+            }
+            
+            // Generate unique filename
+            $filename = time() . '_' . uniqid() . '.' . $request->file('photo')->getClientOriginalExtension();
+            $uploadsPath = $uploadsDir . '/' . $filename;
+            
+            // Move file directly to uploads directory
+            $request->file('photo')->move($uploadsDir, $filename);
+            
+            // Store path in database (relative to uploads directory)
+            $data['photo'] = 'student-photos/' . $filename;
+            
+            // Log for debugging
+            \Log::info('Student photo uploaded directly to uploads', [
+                'uploads_path' => $uploadsPath,
+                'database_path' => $data['photo'],
+                'file_exists' => file_exists($uploadsPath)
+            ]);
+        }
+
+        $student = Student::create(array_merge($data, [
             'partner_id' => $this->getPartnerId(),
             'created_by' => auth()->id(),
             'updated_by' => auth()->id(),
@@ -138,9 +169,48 @@ class StudentController extends Controller
             'mother_name' => 'nullable|string|max:255',
             'blood_group' => 'nullable|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
             'religion' => 'nullable|in:Islam,Hinduism,Christianity,Buddhism',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $student->update(array_merge($validated, [
+        $data = $validated;
+
+        // Handle photo upload - DIRECT STORAGE IN PUBLIC/UPLOADS FOR HOSTINGER
+        if ($request->hasFile('photo')) {
+            // Delete old photo if exists
+            if ($student->photo) {
+                $oldPhotoPath = public_path('uploads/' . $student->photo);
+                if (file_exists($oldPhotoPath)) {
+                    unlink($oldPhotoPath);
+                }
+            }
+            
+            // Store directly in public/uploads/student-photos/ for Hostinger compatibility
+            $uploadsDir = public_path('uploads/student-photos');
+            
+            // Ensure uploads directory exists
+            if (!is_dir($uploadsDir)) {
+                mkdir($uploadsDir, 0755, true);
+            }
+            
+            // Generate unique filename
+            $filename = time() . '_' . uniqid() . '.' . $request->file('photo')->getClientOriginalExtension();
+            $uploadsPath = $uploadsDir . '/' . $filename;
+            
+            // Move file directly to uploads directory
+            $request->file('photo')->move($uploadsDir, $filename);
+            
+            // Store path in database (relative to uploads directory)
+            $data['photo'] = 'student-photos/' . $filename;
+            
+            // Log for debugging
+            \Log::info('Student photo updated directly to uploads', [
+                'uploads_path' => $uploadsPath,
+                'database_path' => $data['photo'],
+                'file_exists' => file_exists($uploadsPath)
+            ]);
+        }
+
+        $student->update(array_merge($data, [
             'updated_by' => auth()->id(),
         ]));
 
