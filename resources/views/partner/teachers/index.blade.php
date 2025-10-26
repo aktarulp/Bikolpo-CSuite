@@ -182,12 +182,11 @@
                         <div class="relative w-full aspect-square bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-700 dark:via-gray-600 dark:to-gray-500 overflow-hidden">
                             @if($teacher->photo)
                                 <img src="{{ $teacher->photo_url }}" alt="{{ $teacher->full_name }}" class="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700" style="aspect-ratio: 1/1;" 
-                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                <div class="w-full h-full flex items-center justify-center" style="display: none; aspect-ratio: 1/1;">
-                                    <div class="w-24 h-24 bg-white/90 dark:bg-gray-800/90 rounded-3xl flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform duration-500">
-                                        <span class="text-4xl">{{ $teacher->getGenderIcon() }}</span>
-                                    </div>
-                                </div>
+                                     onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,\
+                                     <svg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'200\' viewBox=\'0 0 200 200\'>\
+                                       <rect width=\'200\' height=\'200\' rx=\'40\' fill=\'%236b7280\'/>\
+                                       <text x=\'50%\' y=\'54%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'white\' font-size=\'80\' font-family=\'Inter, Arial, sans-serif\'>{{ urlencode(Str::substr($teacher->full_name,0,1)) }}</text>\
+                                     </svg>'">
                             @else
                                 <div class="w-full h-full flex items-center justify-center" style="aspect-ratio: 1/1;">
                                     <div class="w-24 h-24 bg-white/90 dark:bg-gray-800/90 rounded-3xl flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform duration-500">

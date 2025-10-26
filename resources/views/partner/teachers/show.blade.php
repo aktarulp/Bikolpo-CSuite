@@ -42,7 +42,12 @@
                             <div class="relative">
                                 <div class="w-24 h-24 sm:w-32 sm:h-32 rounded-3xl overflow-hidden bg-white/20 backdrop-blur-sm border-4 border-white/30 shadow-2xl">
                                     @if($teacher->photo)
-                                        <img src="{{ $teacher->photo_url }}" alt="{{ $teacher->full_name }}" class="w-full h-full object-cover">
+                                        <img src="{{ $teacher->photo_url }}" alt="{{ $teacher->full_name }}" class="w-full h-full object-cover"
+                                             onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,\
+                                             <svg xmlns=\'http://www.w3.org/2000/svg\' width=\'128\' height=\'128\' viewBox=\'0 0 128 128\'>\
+                                               <rect width=\'128\' height=\'128\' rx=\'24\' fill=\'%236b7280\'/>\
+                                               <text x=\'50%\' y=\'54%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'white\' font-size=\'48\' font-family=\'Inter, Arial, sans-serif\'>{{ urlencode(Str::substr($teacher->full_name,0,1)) }}</text>\
+                                             </svg>'">
                                     @else
                                         <div class="w-full h-full bg-gradient-to-br from-white/30 to-white/10 flex items-center justify-center">
                                             <i class="fas fa-user text-white text-3xl sm:text-4xl"></i>

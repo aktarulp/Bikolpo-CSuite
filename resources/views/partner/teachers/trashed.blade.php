@@ -62,7 +62,12 @@
                                         <div class="flex items-center gap-4">
                                             <div class="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-600 dark:to-gray-700 flex items-center justify-center">
                                                 @if($teacher->photo)
-                                                    <img src="{{ $teacher->photo_url }}" alt="{{ $teacher->full_name }}" class="w-full h-full object-cover">
+                                                    <img src="{{ $teacher->photo_url }}" alt="{{ $teacher->full_name }}" class="w-full h-full object-cover"
+                                                         onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,\
+                                                         <svg xmlns=\'http://www.w3.org/2000/svg\' width=\'48\' height=\'48\' viewBox=\'0 0 48 48\'>\
+                                                           <rect width=\'48\' height=\'48\' rx=\'8\' fill=\'%236b7280\'/>\
+                                                           <text x=\'50%\' y=\'54%\' dominant-baseline=\'middle\' text-anchor=\'middle\' fill=\'white\' font-size=\'18\' font-family=\'Inter, Arial, sans-serif\'>{{ urlencode(Str::substr($teacher->full_name,0,1)) }}</text>\
+                                                         </svg>'">
                                                 @else
                                                     <i class="fas fa-user text-gray-500 dark:text-gray-400"></i>
                                                 @endif
