@@ -101,29 +101,29 @@ class Teacher extends Model
     // Many-to-many relationships for assignments
     public function courses()
     {
-        return $this->belongsToMany(Course::class, 'teacher_courses')
-                    ->withPivot('assigned_at', 'assigned_by')
+        return $this->belongsToMany(Course::class, 'teacher_assignments', 'teacher_id', 'course_id')
+                    ->withPivot('assigned_at', 'assigned_by', 'status', 'notes')
                     ->withTimestamps();
     }
 
     public function subjects()
     {
-        return $this->belongsToMany(Subject::class, 'teacher_subjects')
-                    ->withPivot('assigned_at', 'assigned_by')
+        return $this->belongsToMany(Subject::class, 'teacher_assignments', 'teacher_id', 'subject_id')
+                    ->withPivot('assigned_at', 'assigned_by', 'status', 'notes')
                     ->withTimestamps();
     }
 
     public function students()
     {
-        return $this->belongsToMany(Student::class, 'teacher_students')
-                    ->withPivot('assigned_at', 'assigned_by')
+        return $this->belongsToMany(Student::class, 'teacher_assignments', 'teacher_id', 'student_id')
+                    ->withPivot('assigned_at', 'assigned_by', 'status', 'notes')
                     ->withTimestamps();
     }
 
     public function batches()
     {
-        return $this->belongsToMany(Batch::class, 'teacher_batches')
-                    ->withPivot('assigned_at', 'assigned_by')
+        return $this->belongsToMany(Batch::class, 'teacher_assignments', 'teacher_id', 'batch_id')
+                    ->withPivot('assigned_at', 'assigned_by', 'status', 'notes')
                     ->withTimestamps();
     }
 
