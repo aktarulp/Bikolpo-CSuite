@@ -52,7 +52,7 @@ class StudentController extends Controller
             $query->where('gender', $request->gender);
         }
         
-        $students = $query->with(['course', 'batch', 'enrollments'])->latest()->paginate(15);
+        $students = $query->with(['course', 'batch', 'courses as enrollments'])->latest()->paginate(15);
         
         // Get filter options
         $courses = \App\Models\Course::where('partner_id', $partnerId)->get();

@@ -18,7 +18,7 @@ class CourseController extends Controller
         $partnerId = $this->getPartnerId();
         
         // Only show active courses for the logged-in partner
-        $courses = Course::withCount(['subjects', 'batches', 'enrollments'])
+        $courses = Course::withCount(['subjects', 'batches', 'studentsEnrolled as enrollments_count'])
             ->where('partner_id', $partnerId)
             ->where('status', 'active')
             ->where('flag', 'active')
@@ -44,7 +44,7 @@ class CourseController extends Controller
         }
         
         // Load related data
-        $course->load(['subjects', 'batches', 'enrollments.student']);
+        $course->load(['subjects', 'batches', 'studentsEnrolled as enrollments']);
         
         return view('partner.courses.show', compact('course'));
     }

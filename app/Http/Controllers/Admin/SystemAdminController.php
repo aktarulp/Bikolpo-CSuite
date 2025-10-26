@@ -82,7 +82,7 @@ class SystemAdminController extends Controller
     public function allStudents(Request $request)
     {
         try {
-            $query = Student::with(['partner', 'enrollments'])
+            $query = Student::with(['partner', 'courses as enrollments'])
                 ->orderBy('created_at', 'desc');
 
             // Search functionality
@@ -161,7 +161,7 @@ class SystemAdminController extends Controller
     public function singleStudent($id)
     {
         try {
-            $student = Student::with(['partner', 'enrollments.course', 'examResults.exam'])
+            $student = Student::with(['partner', 'courses as enrollments', 'examResults.exam'])
                 ->findOrFail($id);
 
             // Get student's exam history
@@ -172,9 +172,9 @@ class SystemAdminController extends Controller
                 ->get();
 
             // Get student's enrollment details
-            $enrollments = $student->enrollments()
-                ->with('course')
-                ->get();
+            $enrollments = $student->courses;
+            // Add course relationship to each enrollment
+            $enrollments->load('course');
 
             return view('system-admin.sa-single-student-ig', compact('student', 'examHistory', 'enrollments'));
         } catch (\Exception $e) {

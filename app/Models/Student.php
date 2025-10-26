@@ -165,7 +165,7 @@ class Student extends Model
      */
     public function courses()
     {
-        return $this->belongsToMany(Course::class, 'enrollments')
+        return $this->belongsToMany(Course::class, 'course_batch_enrollments')
             ->withPivot([
                 'id',
                 'batch_id',
@@ -209,7 +209,7 @@ class Student extends Model
      */
     public function activeCourses()
     {
-        return $this->belongsToMany(Course::class, 'enrollments')
+        return $this->belongsToMany(Course::class, 'course_batch_enrollments')
             ->wherePivot('status', Enrollment::STATUS_ACTIVE)
             ->withPivot([
                 'batch_id',

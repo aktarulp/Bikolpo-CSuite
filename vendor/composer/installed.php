@@ -3,11 +3,11 @@
         'name' => 'laravel/laravel',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '5123c6ac7f6c0a1324a182b4314bc5815c17a4f8',
+        'reference' => '31fe290da3271431e29f5cf52438f8b99714a15d',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'dev' => false,
+        'dev' => true,
     ),
     'versions' => array(
         'bacon/bacon-qr-code' => array(
@@ -18,6 +18,15 @@
             'install_path' => __DIR__ . '/../bacon/bacon-qr-code',
             'aliases' => array(),
             'dev_requirement' => false,
+        ),
+        'bennett-treptow/laravel-migration-generator' => array(
+            'pretty_version' => '4.5.0',
+            'version' => '4.5.0.0',
+            'reference' => '5c74e527787674a3ae364592be08d11c439b127a',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../bennett-treptow/laravel-migration-generator',
+            'aliases' => array(),
+            'dev_requirement' => true,
         ),
         'brianium/paratest' => array(
             'pretty_version' => 'v7.14.1',
@@ -55,6 +64,12 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'cordoval/hamcrest-php' => array(
+            'dev_requirement' => true,
+            'replaced' => array(
+                0 => '*',
+            ),
+        ),
         'dasprid/enum' => array(
             'pretty_version' => '1.0.7',
             'version' => '1.0.7.0',
@@ -63,6 +78,12 @@
             'install_path' => __DIR__ . '/../dasprid/enum',
             'aliases' => array(),
             'dev_requirement' => false,
+        ),
+        'davedevelopment/hamcrest-php' => array(
+            'dev_requirement' => true,
+            'replaced' => array(
+                0 => '*',
+            ),
         ),
         'dflydev/dot-access-data' => array(
             'pretty_version' => 'v3.0.3',
@@ -117,6 +138,15 @@
             'install_path' => __DIR__ . '/../egulias/email-validator',
             'aliases' => array(),
             'dev_requirement' => false,
+        ),
+        'fakerphp/faker' => array(
+            'pretty_version' => 'v1.24.1',
+            'version' => '1.24.1.0',
+            'reference' => 'e0ee18eb1e6dc3cda3ce9fd97e5a0689a88a64b5',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../fakerphp/faker',
+            'aliases' => array(),
+            'dev_requirement' => true,
         ),
         'fidry/cpu-core-counter' => array(
             'pretty_version' => '1.3.0',
@@ -189,6 +219,15 @@
             'install_path' => __DIR__ . '/../guzzlehttp/uri-template',
             'aliases' => array(),
             'dev_requirement' => false,
+        ),
+        'hamcrest/hamcrest-php' => array(
+            'pretty_version' => 'v2.1.1',
+            'version' => '2.1.1.0',
+            'reference' => 'f8b1c0173b22fa6ec77a81fe63e5b01eba7e6487',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../hamcrest/hamcrest-php',
+            'aliases' => array(),
+            'dev_requirement' => true,
         ),
         'illuminate/auth' => array(
             'dev_requirement' => false,
@@ -403,6 +442,21 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'kodova/hamcrest-php' => array(
+            'dev_requirement' => true,
+            'replaced' => array(
+                0 => '*',
+            ),
+        ),
+        'laravel/breeze' => array(
+            'pretty_version' => 'v2.3.8',
+            'version' => '2.3.8.0',
+            'reference' => '1a29c5792818bd4cddf70b5f743a227e02fbcfcd',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../laravel/breeze',
+            'aliases' => array(),
+            'dev_requirement' => true,
+        ),
         'laravel/fortify' => array(
             'pretty_version' => 'v1.31.1',
             'version' => '1.31.1.0',
@@ -424,11 +478,29 @@
         'laravel/laravel' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '5123c6ac7f6c0a1324a182b4314bc5815c17a4f8',
+            'reference' => '31fe290da3271431e29f5cf52438f8b99714a15d',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
             'dev_requirement' => false,
+        ),
+        'laravel/pail' => array(
+            'pretty_version' => 'v1.2.3',
+            'version' => '1.2.3.0',
+            'reference' => '8cc3d575c1f0e57eeb923f366a37528c50d2385a',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../laravel/pail',
+            'aliases' => array(),
+            'dev_requirement' => true,
+        ),
+        'laravel/pint' => array(
+            'pretty_version' => 'v1.25.1',
+            'version' => '1.25.1.0',
+            'reference' => '5016e263f95d97670d71b9a987bd8996ade6d8d9',
+            'type' => 'project',
+            'install_path' => __DIR__ . '/../laravel/pint',
+            'aliases' => array(),
+            'dev_requirement' => true,
         ),
         'laravel/prompts' => array(
             'pretty_version' => 'v0.3.7',
@@ -438,6 +510,15 @@
             'install_path' => __DIR__ . '/../laravel/prompts',
             'aliases' => array(),
             'dev_requirement' => false,
+        ),
+        'laravel/sail' => array(
+            'pretty_version' => 'v1.46.0',
+            'version' => '1.46.0.0',
+            'reference' => 'eb90c4f113c4a9637b8fdd16e24cfc64f2b0ae6e',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../laravel/sail',
+            'aliases' => array(),
+            'dev_requirement' => true,
         ),
         'laravel/sanctum' => array(
             'pretty_version' => 'v4.2.0',
@@ -538,6 +619,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'marcj/topsort' => array(
+            'pretty_version' => '2.0.0',
+            'version' => '2.0.0.0',
+            'reference' => '972f58e42b5f110a0a1d8433247f65248abcfd5c',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../marcj/topsort',
+            'aliases' => array(),
+            'dev_requirement' => true,
+        ),
         'markbaker/complex' => array(
             'pretty_version' => '3.0.2',
             'version' => '3.0.2.0',
@@ -555,6 +645,15 @@
             'install_path' => __DIR__ . '/../markbaker/matrix',
             'aliases' => array(),
             'dev_requirement' => false,
+        ),
+        'mockery/mockery' => array(
+            'pretty_version' => '1.6.12',
+            'version' => '1.6.12.0',
+            'reference' => '1f4efdd7d3beafe9807b08156dfcb176d18f1699',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../mockery/mockery',
+            'aliases' => array(),
+            'dev_requirement' => true,
         ),
         'monolog/monolog' => array(
             'pretty_version' => '3.9.0',
@@ -669,6 +768,15 @@
             'install_path' => __DIR__ . '/../pestphp/pest-plugin-arch',
             'aliases' => array(),
             'dev_requirement' => false,
+        ),
+        'pestphp/pest-plugin-laravel' => array(
+            'pretty_version' => 'v4.0.0',
+            'version' => '4.0.0.0',
+            'reference' => 'e12a07046b826a40b1c8632fd7b80d6b8d7b628e',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../pestphp/pest-plugin-laravel',
+            'aliases' => array(),
+            'dev_requirement' => true,
         ),
         'pestphp/pest-plugin-mutate' => array(
             'pretty_version' => 'v4.0.1',
@@ -1399,6 +1507,15 @@
             'install_path' => __DIR__ . '/../symfony/var-dumper',
             'aliases' => array(),
             'dev_requirement' => false,
+        ),
+        'symfony/yaml' => array(
+            'pretty_version' => 'v7.3.3',
+            'version' => '7.3.3.0',
+            'reference' => 'd4f4a66866fe2451f61296924767280ab5732d9d',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../symfony/yaml',
+            'aliases' => array(),
+            'dev_requirement' => true,
         ),
         'ta-tikoma/phpunit-architecture-test' => array(
             'pretty_version' => '0.8.5',

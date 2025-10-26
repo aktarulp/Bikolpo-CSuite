@@ -11,6 +11,8 @@ class Enrollment extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $table = 'course_batch_enrollments';
+
     protected $fillable = [
         'student_id',
         'course_id',
