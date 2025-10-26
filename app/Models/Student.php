@@ -563,9 +563,11 @@ class Student extends Model
     public function getPhotoUrlAttribute()
     {
         if ($this->photo) {
-            // Direct approach - photos are stored directly in public/uploads/student-photos/
-            // Use url() helper instead of asset() for better Hostinger compatibility
-            return url('uploads/' . $this->photo);
+            // Extract filename from the stored path
+            $filename = basename($this->photo);
+            
+            // Use direct serving route for better Hostinger compatibility
+            return route('student.photo.serve', ['filename' => $filename]);
         }
         return url('images/default-avatar.svg');
     }

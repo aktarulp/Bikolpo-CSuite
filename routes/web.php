@@ -1398,3 +1398,9 @@ Route::middleware(['auth'])->group(function () {
 
 // Debug routes for photo testing
 require __DIR__.'/debug_photos.php';
+
+// Test routes for image access
+require __DIR__.'/test_images.php';
+
+// Direct image serving routes
+require __DIR__.'/serve_images.php';
