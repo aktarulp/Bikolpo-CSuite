@@ -1,6 +1,6 @@
 @extends('layouts.partner-layout')
 
-@section('title', 'Create New Student User')
+@section('title', 'Create New Teacher User')
 
 @section('content')
 <div class="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 py-8">
@@ -25,9 +25,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
                             </svg>
                         </div>
-                        <h1 class="text-2xl font-bold text-gray-900">Create New Student User</h1>
+                        <h1 class="text-2xl font-bold text-gray-900">Create New Teacher User</h1>
                     </div>
-                    <p class="text-sm text-gray-600">Add a new student user to your organization</p>
+                    <p class="text-sm text-gray-600">Add a new teacher user to your organization</p>
                 </div>
             </div>
         </div>
@@ -40,7 +40,7 @@
                         <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold">
                             1
                         </div>
-                        <p class="mt-2 text-xs font-medium text-gray-900">Select Student</p>
+                        <p class="mt-2 text-xs font-medium text-gray-900">Select Teacher</p>
                     </div>
                     <div class="w-16 h-1 bg-gray-200 mx-2 rounded-full"></div>
                     <div class="flex flex-col items-center">
@@ -72,14 +72,14 @@
 
         <!-- Main Form Card -->
         <div class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
-            <form id="createUserForm" action="{{ route('partner.settings.users.store') }}" method="POST" class="divide-y divide-gray-100">
+            <form id="createUserForm" action="{{ route('partner.settings.users.store-teacher') }}" method="POST" class="divide-y divide-gray-100">
                 @csrf
                 
-                <!-- Hidden field for role name (student role hardcoded) -->
-                <input type="hidden" name="role_name" value="student">
-                <input type="hidden" name="user_type" value="student">
+                <!-- Hidden field for role name (teacher role hardcoded) -->
+                <input type="hidden" name="role_name" value="operator">
+                <input type="hidden" name="user_type" value="teacher">
                 
-                <!-- Step 1: Select Student -->
+                <!-- Step 1: Select Teacher -->
                 <div class="p-6 sm:p-8">
                     <div class="flex items-center mb-6">
                         <div class="flex-shrink-0">
@@ -88,27 +88,27 @@
                             </div>
                         </div>
                         <div class="ml-4">
-                            <h2 class="text-xl font-bold text-gray-900">Select Student</h2>
-                            <p class="text-gray-600">Choose the student to create an account for</p>
+                            <h2 class="text-xl font-bold text-gray-900">Select Teacher</h2>
+                            <p class="text-gray-600">Choose the teacher to create an account for</p>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 gap-6">
-                        <!-- Student Selection -->
+                        <!-- Teacher Selection -->
                         <div>
-                            <label for="student_id" class="block text-sm font-semibold text-gray-700 mb-2">
-                                Select Student <span class="text-red-500">*</span>
+                            <label for="teacher_id" class="block text-sm font-semibold text-gray-700 mb-2">
+                                Select Teacher <span class="text-red-500">*</span>
                             </label>
                             <div class="relative">
-                                <select name="student_id" id="student_id" required
+                                <select name="teacher_id" id="teacher_id" required
                                         class="block w-full px-4 py-3 pr-10 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white appearance-none">
-                                    <option value="">Select a student</option>
-                                    @foreach($students as $student)
-                                        <option value="{{ $student->id }}" 
-                                                data-name="{{ $student->full_name }}"
-                                                data-email="{{ $student->email ?? 'N/A' }}"
-                                                data-phone="{{ $student->phone ?? 'N/A' }}">
-                                            {{ $student->full_name }} ({{ $student->student_id ?? 'No ID' }})
+                                    <option value="">Select a teacher</option>
+                                    @foreach($teachers as $teacher)
+                                        <option value="{{ $teacher->id }}" 
+                                                data-name="{{ $teacher->full_name }}"
+                                                data-email="{{ $teacher->email ?? 'N/A' }}"
+                                                data-phone="{{ $teacher->phone ?? 'N/A' }}">
+                                            {{ $teacher->full_name }} ({{ $teacher->teacher_id ?? 'No ID' }})
                                         </option>
                                     @endforeach
                                 </select>
@@ -118,7 +118,7 @@
                                     </svg>
                                 </div>
                             </div>
-                            <p class="mt-2 text-sm text-gray-500">Select a student from your organization's list</p>
+                            <p class="mt-2 text-sm text-gray-500">Select a teacher from your organization's list</p>
                         </div>
                     </div>
                 </div>
@@ -133,7 +133,7 @@
                         </div>
                         <div class="ml-4">
                             <h2 class="text-xl font-bold text-gray-900">Account Information</h2>
-                            <p class="text-gray-600">Set up login credentials for the student</p>
+                            <p class="text-gray-600">Set up login credentials for the teacher</p>
                         </div>
                     </div>
 
@@ -141,10 +141,10 @@
                         <!-- Display Name -->
                         <div class="md:col-span-2">
                             <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                Student Name
+                                Teacher Name
                             </label>
                             <div id="display_name" class="block w-full px-4 py-3 bg-white border border-gray-300 rounded-xl shadow-sm text-gray-700 font-medium">
-                                Select a student above
+                                Select a teacher above
                             </div>
                         </div>
 
@@ -154,7 +154,7 @@
                                 Email Address
                             </label>
                             <div id="display_email" class="block w-full px-4 py-3 bg-white border border-gray-300 rounded-xl shadow-sm text-gray-700">
-                                Select a student above
+                                Select a teacher above
                             </div>
                         </div>
 
@@ -164,7 +164,7 @@
                                 Phone Number
                             </label>
                             <div id="display_phone" class="block w-full px-4 py-3 bg-white border border-gray-300 rounded-xl shadow-sm text-gray-700">
-                                Select a student above
+                                Select a Teacher above
                             </div>
                         </div>
 
@@ -231,7 +231,7 @@
                         </button>
                         <button type="submit" id="submitBtn"
                                 class="w-full sm:w-auto px-6 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 shadow-md hover:shadow-lg">
-                            <span id="submitText">Create User Account</span>
+                            <span id="submitText">Create Teacher Account</span>
                             <svg id="submitIcon" class="w-4 h-4 ml-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                             </svg>
@@ -259,7 +259,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Script loaded and DOM ready!');
     
     const form = document.getElementById('createUserForm');
-    const studentSelect = document.getElementById('student_id');
+    const teacherSelect = document.getElementById('teacher_id');
     const submitBtn = document.getElementById('submitBtn');
     const submitText = document.getElementById('submitText');
     const submitIcon = document.getElementById('submitIcon');
@@ -291,10 +291,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Handle student selection changes
-    function handleStudentChange() {
-        console.log('=== handleStudentChange called ===');
-        const selectedOption = studentSelect.options[studentSelect.selectedIndex];
+    // Handle Teacher selection changes
+    function handleTeacherChange() {
+        console.log('=== handleTeacherChange called ===');
+        const selectedOption = teacherSelect.options[teacherSelect.selectedIndex];
         console.log('Selected option:', selectedOption);
         console.log('Selected value:', selectedOption.value);
         
@@ -303,30 +303,30 @@ document.addEventListener('DOMContentLoaded', function() {
             const email = selectedOption.getAttribute('data-email');
             const phone = selectedOption.getAttribute('data-phone');
             
-            console.log('Student data:', { name, email, phone });
+            console.log('Teacher data:', { name, email, phone });
             
             // Populate display fields
             displayName.textContent = name || 'N/A';
             displayEmail.textContent = email || 'N/A';
             displayPhone.textContent = phone || 'N/A';
         } else {
-            // Clear fields if no student selected
-            displayName.textContent = 'Select a student above';
-            displayEmail.textContent = 'Select a student above';
-            displayPhone.textContent = 'Select a student above';
-            console.log('No student selected, fields cleared');
+            // Clear fields if no teacher selected
+            displayName.textContent = 'Select a Teacher above';
+            displayEmail.textContent = 'Select a teacher above';
+            displayPhone.textContent = 'Select a teacher above';
+            console.log('No teacher selected, fields cleared');
         }
     }
     
-    studentSelect.addEventListener('change', function() {
-        console.log('Student changed to:', studentSelect.value);
-        handleStudentChange();
+    teacherSelect.addEventListener('change', function() {
+        console.log('Teacher changed to:', teacherSelect.value);
+        handleTeacherChange();
     });
     
     // Initialize on page load if there's a selected value
-    if (studentSelect.value) {
-        console.log('Initial student value:', studentSelect.value);
-        handleStudentChange();
+    if (teacherSelect.value) {
+        console.log('Initial teacher value:', teacherSelect.value);
+        handleTeacherChange();
     }
     
     // Form submission
@@ -335,10 +335,10 @@ document.addEventListener('DOMContentLoaded', function() {
         
         console.log('Form submit triggered');
         
-        // Ensure a student is selected
-        if (!studentSelect.value) {
-            showNotification('Please select a student', 'error');
-            studentSelect.focus();
+        // Ensure a teacher is selected
+        if (!teacherSelect.value) {
+            showNotification('Please select a teacher', 'error');
+            teacherSelect.focus();
             return false;
         }
         
@@ -351,7 +351,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Show loading state
         submitBtn.disabled = true;
-        submitText.textContent = 'Creating...';
+        submitText.textContent = 'Creating Teacher...';
         submitIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>';
         loadingOverlay.classList.remove('hidden');
 
@@ -375,7 +375,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(data => {
             if (data.success) {
-                showNotification('User created successfully!', 'success');
+                showNotification('Teacher user created successfully!', 'success');
                 setTimeout(() => {
                     window.location.href = data.redirect || '{{ route("partner.settings.index") }}';
                 }, 1500);
@@ -414,7 +414,7 @@ document.addEventListener('DOMContentLoaded', function() {
     resetBtn.addEventListener('click', function() {
         if (confirm('Are you sure you want to reset the form? All entered data will be lost.')) {
             form.reset();
-            handleStudentChange(); // Reset the display fields
+            handleTeacherChange(); // Reset the display fields
         }
     });
 

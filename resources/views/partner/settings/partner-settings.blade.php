@@ -135,13 +135,22 @@
                             <p class="text-sm text-blue-100 mt-0.5">Manage accounts, permissions, and access control</p>
                         </div>
                 </div>
-                <a href="{{ route('partner.settings.users.create') }}" 
+                <div class="flex flex-wrap gap-2">
+                    <a href="{{ route('partner.settings.users.create-teacher') }}" 
                        class="group inline-flex items-center px-4 py-2.5 bg-white text-blue-600 text-sm font-semibold rounded-xl hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-white/50 shadow-lg transition-all duration-200 active:scale-[0.98]">
                         <svg class="w-4 h-4 mr-2 group-hover:rotate-90 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                    </svg>
+                        </svg>
+                        Teacher Login
+                    </a>
+                    <a href="{{ route('partner.settings.users.create') }}" 
+                       class="group inline-flex items-center px-4 py-2.5 bg-white text-blue-600 text-sm font-semibold rounded-xl hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-white/50 shadow-lg transition-all duration-200 active:scale-[0.98]">
+                        <svg class="w-4 h-4 mr-2 group-hover:rotate-90 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
                         Student Login
-                </a>
+                    </a>
+                </div>
             </div>
         </div>
         

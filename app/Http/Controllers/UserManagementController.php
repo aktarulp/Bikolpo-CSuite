@@ -147,7 +147,48 @@ class UserManagementController extends Controller
             })->toArray()
         ]);
 
-        return view('partner.settings.create-user', compact('students'));
+        return view('partner.settings.create-student-login', compact('students'));
+    }
+
+    /**
+     * Show the form for creating a new teacher user.
+     */
+    public function createTeacher()
+    {
+        // Permission checking disabled
+
+        $currentUser = EnhancedUser::find(auth()->id());
+        $currentUserLevel = $currentUser->getHighestRoleLevel();
+
+        // If currentUserLevel is null, default to a high level (show all roles)
+        if ($currentUserLevel === null) {
+            $currentUserLevel = 1; // Default to highest privilege level
+        }
+
+
+        // Get current partner and partner ID
+        $partner = $this->getPartner();
+        $partnerId = $this->getPartnerId();
+
+        // Get teachers from current partner who don't have user accounts yet
+        // (teachers not present in ac_users table)
+        $teachers = \App\Models\Teacher::where('partner_id', $partnerId)
+            ->where(function($query) {
+                // Teachers where user_id is null or points to non-existent user
+                $query->whereNull('user_id')
+                      ->orWhere(function($subquery) {
+                          $subquery->whereNotNull('user_id')
+                                   ->whereNotExists(function($existsQuery) {
+                                       $existsQuery->select(DB::raw(1))
+                                                   ->from('ac_users')
+                                                   ->whereColumn('ac_users.id', 'teachers.user_id');
+                                   });
+                      });
+            })
+            ->orderBy('full_name')
+            ->get();
+
+        return view('partner.settings.create-teacher-login', compact('teachers'));
     }
 
     /**
@@ -160,7 +201,7 @@ class UserManagementController extends Controller
             $validated = $request->validate([
                 'student_id' => 'required|exists:students,id',
                 'password' => 'required|string|min:8|confirmed',
-                'role_name' => 'required|exists:ac_roles,name',
+                'role_name' => 'exists:ac_roles,name', // Role is optional, defaults to 'student'
                 'user_type' => 'required|in:student,other',
             ], [
                 'student_id.required' => 'Please select a student.',
@@ -168,7 +209,6 @@ class UserManagementController extends Controller
                 'password.required' => 'Password is required.',
                 'password.min' => 'Password must be at least 8 characters.',
                 'password.confirmed' => 'Password confirmation does not match.',
-                'role_name.required' => 'Role is required.',
                 'role_name.exists' => 'The selected role is invalid.',
                 'user_type.required' => 'User type is required.',
                 'user_type.in' => 'Invalid user type selected.',
@@ -235,11 +275,16 @@ class UserManagementController extends Controller
                 }
                 
                 // Get the role by name (more maintainable than hardcoded ID)
-                $roleName = $validated['role_name'];
+                // For students, default to 'student' role if not specified
+                $roleName = $validated['role_name'] ?? 'student';
                 $selectedRole = EnhancedRole::where('name', $roleName)->first();
                 
                 if (!$selectedRole) {
-                    throw new \Exception("Role with name '{$roleName}' not found");
+                    // If the specified role doesn't exist, default to 'student'
+                    $selectedRole = EnhancedRole::where('name', 'student')->first();
+                    if (!$selectedRole) {
+                        throw new \Exception("Role with name 'student' not found");
+                    }
                 }
                 
                 $roleId = $selectedRole->id;
@@ -251,7 +296,7 @@ class UserManagementController extends Controller
                 $user->phone = $student->phone ?? '';
                 $user->password = Hash::make($validated['password']);
                 $user->role_id = $roleId;
-                $user->role = 'student';
+                $user->role = 'student'; // Set role to student
                 $user->partner_id = $this->getPartnerId();
                 $user->status = 'active';
                 $user->email_verified_at = now();
@@ -272,7 +317,7 @@ class UserManagementController extends Controller
 
                 return response()->json([
                     'success' => true,
-                    'message' => 'User created successfully',
+                    'message' => 'Student user created successfully',
                     'redirect' => route('partner.settings.index')
                 ]);
 
@@ -325,6 +370,190 @@ class UserManagementController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'An unexpected error occurred while creating the user. Please try again.'
+            ], 500);
+        }
+    }
+
+    /**
+     * Store a newly created teacher user.
+     */
+    public function storeTeacher(Request $request)
+    {
+        try {
+            // Validate the request
+            $validated = $request->validate([
+                'teacher_id' => 'required|exists:teachers,id',
+                'password' => 'required|string|min:8|confirmed',
+                'role_name' => 'exists:ac_roles,name', // Role is optional for teachers, defaults to 'operator'
+                'user_type' => 'required|in:teacher,other',
+            ], [
+                'teacher_id.required' => 'Please select a teacher.',
+                'teacher_id.exists' => 'The selected teacher is invalid.',
+                'password.required' => 'Password is required.',
+                'password.min' => 'Password must be at least 8 characters.',
+                'password.confirmed' => 'Password confirmation does not match.',
+                'role_name.exists' => 'The selected role is invalid.',
+                'user_type.required' => 'User type is required.',
+                'user_type.in' => 'Invalid user type selected.',
+            ]);
+            
+            // Log the validated data for debugging
+            \Log::info('Creating teacher user with validated data:', [
+                'teacher_id' => $validated['teacher_id'],
+                'role_name' => $validated['role_name'],
+                'user_type' => $validated['user_type']
+            ]);
+
+            DB::beginTransaction();
+
+            try {
+                // Get the teacher
+                $teacher = \App\Models\Teacher::findOrFail($validated['teacher_id']);
+                
+                // Debug: Log teacher information
+                \Log::info('Teacher information in store method', [
+                    'teacher_id' => $teacher->id,
+                    'full_name' => $teacher->full_name,
+                    'user_id' => $teacher->user_id,
+                    'user_exists' => $teacher->user ? true : false,
+                    'user_data' => $teacher->user ? [
+                        'id' => $teacher->user->id,
+                        'name' => $teacher->user->name,
+                        'email' => $teacher->user->email
+                    ] : null
+                ]);
+                
+                // Check if teacher already has a user account
+                // First check if teacher has user_id set AND that user actually exists
+                if ($teacher->user_id && EnhancedUser::find($teacher->user_id)) {
+                    \Log::info('Teacher already has user account (user_id set and user exists)', [
+                        'teacher_id' => $teacher->id,
+                        'user_id' => $teacher->user_id
+                    ]);
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'This teacher already has a user account.'
+                    ], 422);
+                }
+                
+                // Also check if there's a user with this teacher_id
+                $existingUser = EnhancedUser::where('teacher_id', $teacher->id)->first();
+                if ($existingUser) {
+                    \Log::info('Teacher already has user account (teacher_id set on user)', [
+                        'teacher_id' => $teacher->id,
+                        'user_id' => $existingUser->id
+                    ]);
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'This teacher already has a user account.'
+                    ], 422);
+                }
+
+                // Check if email already exists
+                if ($teacher->email && EnhancedUser::where('email', $teacher->email)->exists()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'A user with this email address already exists.'
+                    ], 422);
+                }
+                
+                // Get the role by name (more maintainable than hardcoded ID)
+                // For teachers, default to 'operator' role if not specified
+                $roleName = $validated['role_name'] ?? 'operator';
+                $selectedRole = EnhancedRole::where('name', $roleName)->first();
+                
+                if (!$selectedRole) {
+                    // If the specified role doesn't exist, default to 'operator'
+                    $selectedRole = EnhancedRole::where('name', 'operator')->first();
+                    if (!$selectedRole) {
+                        throw new \Exception("Role with name 'operator' not found");
+                    }
+                }
+                
+                $roleId = $selectedRole->id;
+                
+                // Create the user
+                $user = new EnhancedUser();
+                $user->name = $teacher->full_name;
+                $user->email = $teacher->email ?? strtolower(str_replace(' ', '.', $teacher->full_name)) . '@example.com';
+                $user->phone = $teacher->phone ?? '';
+                $user->password = Hash::make($validated['password']);
+                $user->role_id = $roleId;
+                $user->role = 'operator'; // Set role to operator for teachers
+                $user->partner_id = $this->getPartnerId();
+                $user->status = 'active';
+                $user->email_verified_at = now();
+                $user->created_by = auth()->id();
+                $user->updated_by = auth()->id();
+                // Set the teacher_id on the user
+                $user->teacher_id = $teacher->id;
+                
+                // Save the user with error handling
+                if (!$user->save()) {
+                    throw new \Exception('Failed to save user');
+                }
+                
+                // Update the teacher record to link to the user
+                $teacher->user_id = $user->id;
+                $teacher->save();
+
+                DB::commit();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Teacher user created successfully',
+                    'redirect' => route('partner.settings.index')
+                ]);
+
+            } catch (\Exception $e) {
+                DB::rollBack();
+                
+                // Handle specific database errors
+                if (strpos($e->getMessage(), 'Duplicate entry') !== false) {
+                    if (strpos($e->getMessage(), 'users_email_unique') !== false) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'A user with this email address already exists.'
+                        ], 422);
+                    }
+                    if (strpos($e->getMessage(), 'users_phone_unique') !== false) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'A user with this phone number already exists.'
+                        ], 422);
+                    }
+                }
+                
+                \Log::error('Error creating teacher user: ' . $e->getMessage(), [
+                    'exception' => $e,
+                    'trace' => $e->getTraceAsString()
+                ]);
+                
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error creating teacher user: ' . $e->getMessage()
+                ], 500);
+            }
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Validation error creating teacher user: ' . json_encode($e->errors()), [
+                'exception' => $e,
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Please check the form for errors.',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            \Log::error('Unexpected error creating teacher user: ' . $e->getMessage(), [
+                'exception' => $e,
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'An unexpected error occurred while creating the teacher user. Please try again.'
             ], 500);
         }
     }

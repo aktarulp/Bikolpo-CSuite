@@ -156,6 +156,14 @@ class EnhancedUser extends Authenticatable
     }
 
     /**
+     * Get the teacher associated with this user.
+     */
+    public function teacher()
+    {
+        return $this->belongsTo(Teacher::class, 'teacher_id', 'id');
+    }
+
+    /**
      * Check if user has a specific role.
      * Role checking disabled - always returns true.
      */

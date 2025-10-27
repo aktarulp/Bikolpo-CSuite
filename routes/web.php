@@ -1084,6 +1084,8 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
             Route::get('user-management', [\App\Http\Controllers\UserManagementController::class, 'index'])->name('user-management');
             Route::get('users', [\App\Http\Controllers\UserManagementController::class, 'index'])->name('users.index');
             Route::get('users/create', [\App\Http\Controllers\UserManagementController::class, 'create'])->name('users.create');
+            Route::get('users/create-teacher', [\App\Http\Controllers\UserManagementController::class, 'createTeacher'])->name('users.create-teacher');
+            Route::post('users/store-teacher', [\App\Http\Controllers\UserManagementController::class, 'storeTeacher'])->name('users.store-teacher');
             Route::post('users', [\App\Http\Controllers\UserManagementController::class, 'store'])->name('users.store');
             Route::post('users', [\App\Http\Controllers\UserManagementController::class, 'store'])->name('users.store');
             Route::get('users/{user}', [\App\Http\Controllers\UserManagementController::class, 'show'])->name('users.show');
@@ -1251,6 +1253,84 @@ Route::prefix('partner')->name('partner.')->middleware(['auth', 'partner'])->gro
                     return response()->json(['error' => $e->getMessage()]);
                 }
             })->name('test.student.users');
+            
+            // Test route to check available roles
+            Route::get('test-roles', function () {
+                try {
+                    $roles = \App\Models\EnhancedRole::all();
+                    
+                    $roleInfo = [];
+                    foreach ($roles as $role) {
+                        $roleInfo[] = [
+                            'id' => $role->id,
+                            'name' => $role->name,
+                            'display_name' => $role->display_name,
+                            'level' => $role->level
+                        ];
+                    }
+                    
+                    return response()->json($roleInfo);
+                } catch (\Exception $e) {
+                    return response()->json(['error' => $e->getMessage()]);
+                }
+            })->name('test.roles');
+            
+            // Test route to check available teachers
+            Route::get('test-teachers', function () {
+                try {
+                    // Get authenticated user
+                    $user = auth()->user();
+                    if (!$user) {
+                        return response()->json(['error' => 'Not authenticated']);
+                    }
+                    
+                    // Get partner
+                    $partner = $user->partner;
+                    if (!$partner) {
+                        return response()->json(['error' => 'No partner associated with user']);
+                    }
+                    
+                    // Get teachers from current partner who don't have user accounts yet
+                    $teachers = \App\Models\Teacher::where('partner_id', $partner->id)
+                        ->whereNull('user_id') // Only teachers without user accounts
+                        ->orderBy('full_name')
+                        ->get();
+                    
+                    // Get teachers who already have user accounts
+                    $teachersWithAccounts = \App\Models\Teacher::where('partner_id', $partner->id)
+                        ->whereNotNull('user_id') // Teachers with user accounts
+                        ->with('user')
+                        ->orderBy('full_name')
+                        ->get();
+                    
+                    return response()->json([
+                        'partner_id' => $partner->id,
+                        'partner_name' => $partner->name,
+                        'teachers_without_accounts_count' => $teachers->count(),
+                        'teachers_with_accounts_count' => $teachersWithAccounts->count(),
+                        'teachers_without_accounts' => $teachers->map(function ($teacher) {
+                            return [
+                                'id' => $teacher->id,
+                                'full_name' => $teacher->full_name,
+                                'email' => $teacher->email,
+                                'phone' => $teacher->phone
+                            ];
+                        }),
+                        'teachers_with_accounts' => $teachersWithAccounts->map(function ($teacher) {
+                            return [
+                                'id' => $teacher->id,
+                                'full_name' => $teacher->full_name,
+                                'email' => $teacher->email,
+                                'phone' => $teacher->phone,
+                                'user_id' => $teacher->user_id,
+                                'user_email' => $teacher->user ? $teacher->user->email : 'N/A'
+                            ];
+                        })
+                    ]);
+                } catch (\Exception $e) {
+                    return response()->json(['error' => $e->getMessage()]);
+                }
+            })->name('test.teachers');
         });
 
         // Access Control Routes - Disabled
