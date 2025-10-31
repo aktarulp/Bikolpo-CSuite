@@ -583,8 +583,15 @@ Route::get('/partner-features', function () {
 
 // Student Features page route (accessible without authentication)
 Route::get('/student-features', function () {
-    return view('student-features');
+    return view('student-features-new');
 })->name('student.features');
+
+// Public Student Registration Form
+Route::get('/student-register', function () {
+    return view('public.student-register');
+})->name('public.student.register');
+
+Route::post('/student-register', [App\Http\Controllers\PublicStudentRegistrationController::class, 'register'])->name('public.student.register.submit');
 
 // Feature Gallery page route (accessible without authentication)
 Route::get('/feature-gallery', function () {
