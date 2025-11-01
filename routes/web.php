@@ -586,12 +586,16 @@ Route::get('/student-features', function () {
     return view('student-features-new');
 })->name('student.features');
 
-// Public Student Registration Form
-Route::get('/student-register', function () {
-    return view('public.student-register');
-})->name('public.student.register');
-
-Route::post('/student-register', [App\Http\Controllers\PublicStudentRegistrationController::class, 'register'])->name('public.student.register.submit');
+// Public Student Registration Form (3-step process)
+Route::get('/student-register', [App\Http\Controllers\PublicStudentRegistrationWithOtpController::class, 'showPhoneForm'])->name('public.student.register.phone');
+Route::get('/student-register/old', [App\Http\Controllers\PublicStudentRegistrationController::class, 'register'])->name('public.student.register');
+Route::post('/student-register/phone', [App\Http\Controllers\PublicStudentRegistrationWithOtpController::class, 'sendOtp'])->name('public.student.register.phone.submit');
+Route::get('/student-register/otp', [App\Http\Controllers\PublicStudentRegistrationWithOtpController::class, 'showOtpForm'])->name('public.student.register.otp');
+Route::post('/student-register/otp', [App\Http\Controllers\PublicStudentRegistrationWithOtpController::class, 'verifyOtp'])->name('public.student.register.otp.submit');
+Route::post('/student-register/otp/resend', [App\Http\Controllers\PublicStudentRegistrationWithOtpController::class, 'resendOtp'])->name('public.student.register.otp.resend');
+Route::get('/student-register/password', [App\Http\Controllers\PublicStudentRegistrationWithOtpController::class, 'showPasswordForm'])->name('public.student.register.password');
+Route::post('/student-register/password', [App\Http\Controllers\PublicStudentRegistrationWithOtpController::class, 'completeRegistration'])->name('public.student.register.password.submit');
+Route::get('/student-register/success', [App\Http\Controllers\PublicStudentRegistrationWithOtpController::class, 'showSuccess'])->name('public.student.register.success');
 
 // Feature Gallery page route (accessible without authentication)
 Route::get('/feature-gallery', function () {

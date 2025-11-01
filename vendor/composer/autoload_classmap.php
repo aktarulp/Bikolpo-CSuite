@@ -58,6 +58,7 @@ return array(
     'App\\Http\\Controllers\\Partner\\StudentController' => $baseDir . '/app/Http/Controllers/Partner/StudentController.php',
     'App\\Http\\Controllers\\ProfileController' => $baseDir . '/app/Http/Controllers/ProfileController.php',
     'App\\Http\\Controllers\\PublicQuizController' => $baseDir . '/app/Http/Controllers/PublicQuizController.php',
+    'App\\Http\\Controllers\\PublicStudentRegistrationController' => $baseDir . '/app/Http/Controllers/PublicStudentRegistrationController.php',
     'App\\Http\\Controllers\\QuestionAnalyticsController' => $baseDir . '/app/Http/Controllers/QuestionAnalyticsController.php',
     'App\\Http\\Controllers\\QuestionController' => $baseDir . '/app/Http/Controllers/QuestionController.php',
     'App\\Http\\Controllers\\QuestionHistoryController' => $baseDir . '/app/Http/Controllers/QuestionHistoryController.php',

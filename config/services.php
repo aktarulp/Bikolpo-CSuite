@@ -35,5 +35,10 @@ return [
         ],
     ],
 
+    'bulksmsbd' => [
+        'api_key' => env('BULKSMSBD_API_KEY', 'TGWqm40rFegeF9t5gM6S'),
+        'sender_id' => env('BULKSMSBD_SENDER_ID', '8809617625574'),
+    ],
+
 
 ];

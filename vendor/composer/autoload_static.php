@@ -756,6 +756,7 @@ class ComposerStaticInit080ce2960097d3e08840f62837dea94e
         'App\\Http\\Controllers\\Partner\\StudentController' => __DIR__ . '/../..' . '/app/Http/Controllers/Partner/StudentController.php',
         'App\\Http\\Controllers\\ProfileController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProfileController.php',
         'App\\Http\\Controllers\\PublicQuizController' => __DIR__ . '/../..' . '/app/Http/Controllers/PublicQuizController.php',
+        'App\\Http\\Controllers\\PublicStudentRegistrationController' => __DIR__ . '/../..' . '/app/Http/Controllers/PublicStudentRegistrationController.php',
         'App\\Http\\Controllers\\QuestionAnalyticsController' => __DIR__ . '/../..' . '/app/Http/Controllers/QuestionAnalyticsController.php',
         'App\\Http\\Controllers\\QuestionController' => __DIR__ . '/../..' . '/app/Http/Controllers/QuestionController.php',
         'App\\Http\\Controllers\\QuestionHistoryController' => __DIR__ . '/../..' . '/app/Http/Controllers/QuestionHistoryController.php',
