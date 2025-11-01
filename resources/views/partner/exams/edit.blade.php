@@ -199,7 +199,7 @@
                     </div>
                 </div>
                 <div class="p-4 space-y-4">
-                    <div class="form-group">
+                    <div class="form-group hidden">
                         <label for="questionHeader" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Question Header
                         </label>
@@ -381,7 +381,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group hidden">
                             <div class="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
                                 <h3 class="text-sm font-medium text-gray-900 dark:text-white">Show Results Immediately</h3>
                                 <label class="toggle-switch">
@@ -403,7 +403,7 @@
 
                         <div class="form-group">
                             <div class="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                                <h3 class="text-sm font-medium text-gray-900 dark:text-white">Marks per Wrong Answer</h3>
+                                <h3 class="text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">Marks per Wrong Answer</h3>
                                 <div class="flex items-center space-x-2">
                                     <div id="negativeMarkingInputContainer" class="{{ old('has_negative_marking', $exam->has_negative_marking) ? '' : 'hidden' }}">
                                         <input type="number" id="negativeMarkingInput" name="negative_marks_per_question" 

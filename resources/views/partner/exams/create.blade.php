@@ -199,7 +199,7 @@
                     </div>
                 </div>
                 <div class="p-4 space-y-4">
-                    <div class="form-group">
+                    <div class="form-group hidden">
                         <label for="questionHeader" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Question Header
                         </label>
@@ -381,7 +381,7 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group hidden">
                             <div class="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
                                 <h3 class="text-sm font-medium text-gray-900 dark:text-white">Show Results Immediately</h3>
                                 <label class="toggle-switch">
@@ -403,7 +403,7 @@
 
                         <div class="form-group">
                             <div class="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                                <h3 class="text-sm font-medium text-gray-900 dark:text-white">Marks per Wrong Answer</h3>
+                                <h3 class="text-sm font-medium text-gray-900 dark:text-white whitespace-nowrap">Marks per Wrong Answer</h3>
                                 <div class="flex items-center space-x-2">
                                     <div id="negativeMarkingInputContainer" class="{{ old('has_negative_marking') ? '' : 'hidden' }}">
                                         <input type="number" id="negativeMarkingInput" name="negative_marks_per_question" 
@@ -618,7 +618,7 @@
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
             </button>
             <button type="button" class="p-1 text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-500 rounded transition-colors" onclick="execCommand('underline')" title="Underline">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4"></path></svg>
             </button>
             <div class="w-px h-4 bg-gray-300 dark:bg-gray-500"></div>
             <button type="button" class="p-1 text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-500 rounded transition-colors" onclick="execCommand('justifyLeft')" title="Align Left">

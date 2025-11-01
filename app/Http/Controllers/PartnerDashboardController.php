@@ -6,7 +6,6 @@ use App\Models\Partner;
 use App\Models\Question;
 use App\Models\Exam;
 use App\Models\Student;
-use App\Models\QuestionSet;
 use App\Models\Subject;
 use App\Models\Topic;
 use App\Models\ExamResult;

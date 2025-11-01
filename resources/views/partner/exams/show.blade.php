@@ -263,16 +263,27 @@
                          <div class="flex items-center justify-between">
                              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Quick Actions</h3>
                              @if($exam->status === 'draft')
-                                 <form action="{{ route('partner.exams.publish', $exam) }}" method="POST" class="inline">
-                                     @csrf
-                                     <button type="submit" 
+                                 @if($exam->questions->count() == $exam->total_questions)
+                                     <form action="{{ route('partner.exams.publish', $exam) }}" method="POST" class="inline">
+                                         @csrf
+                                         <button type="submit" 
+                                                 class="inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xs font-medium rounded-md hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transform hover:scale-105 transition-all duration-200 shadow-md">
+                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+                                             </svg>
+                                             Publish
+                                         </button>
+                                     </form>
+                                 @else
+                                     <button type="button" 
+                                             onclick="showPublishError()"
                                              class="inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xs font-medium rounded-md hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transform hover:scale-105 transition-all duration-200 shadow-md">
                                          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
                                          </svg>
                                          Publish
                                      </button>
-                                 </form>
+                                 @endif
                              @elseif($exam->status === 'published')
                                  <form action="{{ route('partner.exams.unpublish', $exam) }}" method="POST" class="inline">
                                      @csrf
@@ -338,7 +349,7 @@
                         <a href="{{ route('partner.exams.paper-parameters', $exam) }}" 
                            class="w-full flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors duration-200">
                             <svg class="w-4 h-4 mr-3 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"></path>
                             </svg>
                             Download Question Paper
                         </a>
@@ -450,4 +461,56 @@
     }
 }
 </style>
+@endpush
+
+@push('scripts')
+<script>
+function showPublishError() {
+    // Create modal container
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 z-50 flex items-center justify-center';
+    modal.innerHTML = `
+        <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"></div>
+        <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full mx-4 transform transition-all">
+            <div class="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                    </div>
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                            Cannot Publish Exam
+                        </h3>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500 dark:text-gray-300">
+                                All questions must be assigned before publishing the exam. Please assign all {{ $exam->total_questions }} questions to this exam.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <a href="{{ route('partner.exams.assign-questions', $exam) }}" 
+                   class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+                    Assign Questions
+                </a>
+                <button type="button" onclick="this.closest('.fixed').remove()"
+                        class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-700 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Add modal to body
+    document.body.appendChild(modal);
+    
+    // Close modal when clicking on backdrop
+    modal.querySelector('.fixed.inset-0').addEventListener('click', function() {
+        modal.remove();
+    });
+}
+</script>
 @endpush

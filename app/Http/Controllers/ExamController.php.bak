@@ -6,6 +6,7 @@ use App\Models\Exam;
 use App\Models\Student;
 use App\Models\Partner;
 use App\Models\Question;
+// use App\Models\QuestionSet; // Removed as part of migration to exam_questions table
 use App\Models\QuestionType;
 use App\Models\Subject;
 use App\Models\Topic;
@@ -64,6 +65,7 @@ class ExamController extends Controller
         $courses = Course::where('partner_id', $partnerId)->get();
         $subjects = Subject::where('partner_id', $partnerId)->get();
         $questionTypes = QuestionType::all();
+        // $questionSets = QuestionSet::where('partner_id', $partnerId)->get(); // Removed as part of migration to exam_questions table
         $topics = Topic::where('partner_id', $partnerId)->get();
 
         return view('partner.exams.create', compact('courses', 'subjects', 'questionTypes', 'topics'));
@@ -114,11 +116,11 @@ class ExamController extends Controller
         $courses = Course::where('partner_id', $partnerId)->get();
         $subjects = Subject::where('partner_id', $partnerId)->get();
         $questionTypes = QuestionType::all();
-       
+        $questionSets = QuestionSet::where('partner_id', $partnerId)->get();
         $topics = Topic::where('partner_id', $partnerId)->get();
         $assignedQuestions = $this->examQuestionManagementService->getExamQuestions($exam);
 
-        return view('partner.exams.edit', compact('exam', 'courses', 'subjects', 'questionTypes', 'topics', 'assignedQuestions'));
+        return view('partner.exams.edit', compact('exam', 'courses', 'subjects', 'questionTypes', 'questionSets', 'topics', 'assignedQuestions'));
     }
 
     public function update(UpdateExamDTO $request, Exam $exam)
@@ -127,6 +129,24 @@ class ExamController extends Controller
 
         if ($exam->partner_id !== $partnerId) {
             return response()->json(['error' => 'Unauthorized access to this exam.'], 403);
+        }
+
+        $exam->update($request->toArray());
+
+        return response()->json(['message' => 'Exam updated successfully.']);
+    }
+
+    public function create()
+    {
+        $partnerId = $this->getPartnerId();
+        $courses = Course::where('partner_id', $partnerId)->get();
+        $subjects = Subject::where('partner_id', $partnerId)->get();
+        $questionTypes = QuestionType::all();
+        $questionSets = QuestionSet::where('partner_id', $partnerId)->get();
+        $topics = Topic::where('partner_id', $partnerId)->get();
+
+        return view('partner.exams.create', compact('courses', 'subjects', 'questionTypes', 'questionSets', 'topics'));
+    }
         }
 
         $isDraft = $request->input('action') === 'save_draft';
@@ -535,134 +555,260 @@ class ExamController extends Controller
             'wrong_answers' => $request->wrong_answers,
             'unanswered' => $request->unanswered,
             'score' => $request->score,
-            'percentage' => $percentage,
+            'percentage' => round($percentage, 2),
             'status' => 'completed',
+            'result_type' => 'manual',
+            'answers' => [], // Empty for manual results
         ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Result created successfully.',
+            'message' => 'Result created successfully',
             'result' => $result
         ]);
     }
 
-    public function assignStudents(AssignStudentsDTO $request, Exam $exam)
+    public function resultEntry(Exam $exam)
     {
-        $partnerId = $this->getPartnerId();
+        // Ensure the authenticated user is a partner
+        if (!auth()->user() || auth()->user()->role !== 'partner') {
+            abort(403, 'Only partners can access result entry.');
+        }
 
+        // Verify the exam belongs to this partner
+        $partnerId = $this->getPartnerId();
+        if ($exam->partner_id !== $partnerId) {
+            abort(403, 'Unauthorized access to this exam.');
+        }
+
+        // Load exam with questions
+        $exam->load([
+            'questions' => function($query) {
+                $query->orderBy('exam_questions.order', 'asc');
+            }
+        ]);
+
+        // Get students who are absent (no results or status = 'absent')
+        $absentStudents = $exam->assignedStudents()
+            ->whereDoesntHave('examResults', function($query) use ($exam) {
+                $query->where('exam_id', $exam->id)
+                      ->where('status', '!=', 'absent');
+            })
+            ->orWhereHas('examResults', function($query) use ($exam) {
+                $query->where('exam_id', $exam->id)
+                      ->where('status', 'absent');
+            })
+            ->with(['course', 'batch'])
+            ->get();
+
+        return view('partner.exams.result-entry', compact('exam', 'absentStudents'));
+    }
+
+    public function storeDetailedResult(Request $request, Exam $exam)
+    {
+        // Ensure the authenticated user is a partner
+        if (!auth()->user() || auth()->user()->role !== 'partner') {
+            return response()->json(['error' => 'Only partners can create results.'], 403);
+        }
+
+        // Verify the exam belongs to this partner
+        $partnerId = $this->getPartnerId();
         if ($exam->partner_id !== $partnerId) {
             return response()->json(['error' => 'Unauthorized access to this exam.'], 403);
         }
 
-        try {
-            $this->examManagementService->assignStudentsToExam($exam, $request->validatedDTO());
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Students assigned successfully.'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Failed to assign students: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function generateAccessCodes(Request $request, Exam $exam)
-    {
-        $partnerId = $this->getPartnerId();
-
-        if ($exam->partner_id !== $partnerId) {
-            abort(403);
-        }
-
+        // Validate the request
         $request->validate([
-            'count' => 'required|integer|min:1|max:1000',
-            'batch_id' => 'nullable|exists:batches,id,partner_id,' . $partnerId
+            'student_id' => 'required|exists:students,id',
+            'answers' => 'required|array',
+            'answers.*' => 'nullable|string',
+            'started_at' => 'nullable|date',
+            'completed_at' => 'nullable|date|after_or_equal:started_at',
         ]);
 
-        try {
-            $codes = $this->examManagementService->generateAccessCodes(
-                $exam,
-                $request->input('count'),
-                $request->input('batch_id')
-            );
-
+        // Check if student is assigned to this exam
+        $isAssigned = $exam->assignedStudents()->where('students.id', $request->student_id)->exists();
+        if (!$isAssigned) {
             return response()->json([
-                'success' => true,
-                'message' => 'Access codes generated successfully.',
-                'codes' => $codes
+                'error' => 'Student is not assigned to this exam'
+            ], 422);
+        }
+
+        // Check if result already exists for this student and exam
+        $existingResult = ExamResult::where('exam_id', $exam->id)
+            ->where('student_id', $request->student_id)
+            ->first();
+
+        if ($existingResult) {
+            return response()->json([
+                'error' => 'Result already exists for this student. Please update the existing result instead.'
+            ], 422);
+        }
+
+        // Load exam questions
+        $questions = $exam->questions()
+            ->where('partner_id', $partnerId)
+            ->orderBy('exam_questions.order')
+            ->get();
+        $answers = $request->answers;
+        
+        // Calculate results
+        $correctAnswers = 0;
+        $wrongAnswers = 0;
+        $unanswered = 0;
+        $totalScore = 0;
+        $detailedAnswers = [];
+
+        foreach ($questions as $question) {
+            $questionAnswer = $answers[$question->id] ?? null;
+            $isCorrect = false;
+            $isAnswered = false;
+            $score = 0;
+
+            if ($questionAnswer !== null && $questionAnswer !== '') {
+                $isAnswered = true;
+                
+                if ($question->question_type === 'mcq') {
+                    // Convert form answer to lowercase for comparison
+                    $isCorrect = strtolower($questionAnswer) === strtolower($question->correct_answer);
+                } else {
+                    // For descriptive questions, check if it meets minimum requirements
+                    $wordCount = str_word_count($questionAnswer);
+                    $minWords = $question->min_words ?? 10;
+                    $isCorrect = $wordCount >= $minWords;
+                }
+                
+                if ($isCorrect) {
+                    $correctAnswers++;
+                    $score = $question->pivot->marks ?? 1;
+                    $totalScore += $score;
+                } else {
+                    $wrongAnswers++;
+                }
+            } else {
+                $unanswered++;
+            }
+
+            $detailedAnswers[$question->id] = [
+                'answer' => $questionAnswer,
+                'is_correct' => $isCorrect,
+                'is_answered' => $isAnswered,
+                'score' => $score,
+                'time_spent' => null, // Manual entry doesn't track time per question
+            ];
+        }
+
+        // Calculate percentage
+        $totalMarks = $questions->sum(function($q) { return $q->pivot->marks ?? 1; });
+        $percentage = $totalMarks > 0 ? ($totalScore / $totalMarks) * 100 : 0;
+
+        // Create the result
+        $result = ExamResult::create([
+            'student_id' => $request->student_id,
+            'exam_id' => $exam->id,
+            'started_at' => $request->started_at ? \Carbon\Carbon::parse($request->started_at) : null,
+            'completed_at' => $request->completed_at ? \Carbon\Carbon::parse($request->completed_at) : now(),
+            'total_questions' => $questions->count(),
+            'correct_answers' => $correctAnswers,
+            'wrong_answers' => $wrongAnswers,
+            'unanswered' => $unanswered,
+            'score' => $totalScore,
+            'percentage' => round($percentage, 2),
+            'status' => 'completed',
+            'result_type' => 'manual',
+            'answers' => $detailedAnswers,
+        ]);
+
+        // Create question statistics records (same as quiz submission)
+        foreach ($questions as $question) {
+            $questionAnswer = $answers[$question->id] ?? null;
+            $isAnswered = !empty($questionAnswer);
+            $isCorrect = false;
+            $isSkipped = false;
+            $answerMetadata = null;
+
+            if ($questionAnswer === null || $questionAnswer === '') {
+                $isSkipped = true;
+            } else {
+                if ($question->question_type === 'mcq') {
+                    // Convert form answer to lowercase for comparison
+                    $isCorrect = strtolower($questionAnswer) === strtolower($question->correct_answer);
+                } else {
+                    // For descriptive questions, give partial marks based on word count
+                    $wordCount = str_word_count($questionAnswer);
+                    $minWords = $question->min_words ?? 10;
+                    $maxWords = $question->max_words ?? 100;
+                    
+                    $answerMetadata = [
+                        'word_count' => $wordCount,
+                        'min_words_required' => $minWords,
+                        'max_words_expected' => $maxWords,
+                    ];
+                    
+                    $isCorrect = $wordCount >= $minWords;
+                }
+            }
+
+            // Record individual question statistics
+            \App\Models\QuestionStat::create([
+                'question_id' => $question->id,
+                'exam_id' => $exam->id,
+                'student_id' => $request->student_id,
+                'exam_result_id' => $result->id,
+                'student_answer' => $questionAnswer,
+                'correct_answer' => $question->correct_answer,
+                'is_correct' => $isCorrect,
+                'is_answered' => $isAnswered,
+                'is_skipped' => $isSkipped,
+                'question_order' => $question->pivot->order ?? 0,
+                'marks' => $question->pivot->marks ?? 1,
+                'question_type' => $question->question_type,
+                'answer_metadata' => $answerMetadata,
+                'question_answered_at' => $request->completed_at ? \Carbon\Carbon::parse($request->completed_at) : now(),
             ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Failed to generate access codes: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function revokeAccessCode(Exam $exam, ExamAccessCode $accessCode)
-    {
-        $partnerId = $this->getPartnerId();
-
-        if ($exam->partner_id !== $partnerId || $accessCode->exam_id !== $exam->id) {
-            abort(403);
         }
 
-        try {
-            $accessCode->delete();
+        // Mark access code as used (same as quiz submission)
+        $accessCode = \App\Models\ExamAccessCode::where('student_id', $request->student_id)
+            ->where('exam_id', $exam->id)
+            ->where('status', 'active')
+            ->first();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Access code revoked successfully.'
+        if ($accessCode) {
+            $accessCode->markAsUsed();
+            \Log::info('Access code marked as used for manual result entry', [
+                'access_code_id' => $accessCode->id,
+                'student_id' => $request->student_id,
+                'exam_id' => $exam->id,
+                'result_id' => $result->id
             ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Failed to revoke access code: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function printPaper(PaperParametersDTO $request, Exam $exam)
-    {
-        $partnerId = $this->getPartnerId();
-        if ($exam->partner_id !== $partnerId) {
-            abort(403);
+        } else {
+            \Log::warning('No active access code found for manual result entry', [
+                'student_id' => $request->student_id,
+                'exam_id' => $exam->id,
+                'result_id' => $result->id
+            ]);
         }
 
-        $params = $request->validatedDTO();
+        \Log::info('Manual result entry completed successfully', [
+            'exam_id' => $exam->id,
+            'student_id' => $request->student_id,
+            'result_id' => $result->id,
+            'score' => $totalScore,
+            'percentage' => round($percentage, 2),
+            'correct_answers' => $correctAnswers,
+            'wrong_answers' => $wrongAnswers,
+            'unanswered' => $unanswered
+        ]);
 
-        try {
-            $pdf = $this->pdfGeneratorService->generateExamPaper($exam, $params);
-            
-            return $pdf->download("exam-paper-{$exam->id}.pdf");
-        } catch (\Exception $e) {
-            return back()->with('error', 'Failed to generate exam paper: ' . $e->getMessage());
-        }
+        return response()->json([
+            'success' => true,
+            'message' => 'Detailed result created successfully',
+            'result' => $result,
+            'redirect_url' => route('partner.exams.results', $exam)
+        ]);
     }
 
-    public function printPaperPreview(PaperParametersDTO $request, Exam $exam)
-    {
-        $partnerId = $this->getPartnerId();
-        if ($exam->partner_id !== $partnerId) {
-            abort(403);
-        }
-
-        $params = $request->validatedDTO();
-
-        $paperColumns = $params['paper_columns'] ?? 1;
-        $headerSpan = $params['header_span'] ?? 'full';
-        $fontSize = $params['font_size'] ?? 12;
-        $mcqColumns = $params['mcq_columns'] ?? 2;
-
-        return view('partner.exams.paper-preview', compact('exam', 'params', 'paperColumns', 'headerSpan', 'fontSize', 'mcqColumns'));
-    }
-
-    protected function getPartnerId()
-    {
-        return auth()->user()->partner->id;
-    }
-
-    /**
     /**
      * Show the edit result form
      */
@@ -1175,6 +1321,27 @@ class ExamController extends Controller
         return response()->json($debugInfo);
     }
 
+    private function getPartnerId(): int
+    {
+        $userId = auth()->id();
+        if (!$userId) {
+            throw new \Exception('User not authenticated.');
+        }
+        
+        $user = auth()->user();
+        if (!$user) {
+            throw new \Exception('User not found.');
+        }
+        
+        // Get the partner for this specific user - no fallback to other partners
+        $partner = $user->partner;
+        if (!$partner) {
+            throw new \Exception('Partner profile not found for user ID: ' . $userId . '. Please contact administrator.');
+        }
+        
+        return (int) $partner->id;
+    }
+    
     private function generateQuestionPaperHTMLWithParameters($exam, $questions, $parameters, $partner = null)
     {
         // New pagination-aware generation: estimate question heights in mm,
@@ -1835,6 +2002,28 @@ class ExamController extends Controller
         return view('partner.exams.assign-students', compact('exam', 'batches', 'courses'));
     }
 
+    public function assignStudents(AssignStudentsDTO $request, Exam $exam)
+    {
+        $partnerId = $this->getPartnerId();
+        if ($exam->partner_id !== $partnerId) {
+            return response()->json(['error' => 'Unauthorized access to this exam.'], 403);
+        }
+
+        $validatedData = $request->validatedDTO();
+
+        try {
+            $this->examManagementService->assignStudents(
+                $exam,
+                $validatedData['student_ids'],
+                $validatedData['access_code'],
+                $validatedData['valid_until']
+            );
+            return response()->json(['success' => true, 'message' => 'Students assigned successfully.']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to assign students: ' . $e->getMessage()], 500);
+        }
+    }
+
     public function revokeAccess(Request $request, Exam $exam)
     {
         $partnerId = $this->getPartnerId();
@@ -1873,5 +2062,41 @@ class ExamController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to add questions: ' . $e->getMessage()], 500);
         }
+    }
+
+    public function printPaper(PaperParametersDTO $request, Exam $exam)
+    {
+        $partnerId = $this->getPartnerId();
+        if ($exam->partner_id !== $partnerId) {
+            abort(403);
+        }
+
+        $params = $request->validatedDTO();
+
+        try {
+            $pdfContent = $this->pdfGeneratorService->generateExamPaperPdf($exam, $params);
+            return response($pdfContent)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="exam_paper_"' . $exam->id . '.pdf"');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error generating PDF: ' . $e->getMessage());
+        }
+    }
+
+    public function printPaperPreview(PaperParametersDTO $request, Exam $exam)
+    {
+        $partnerId = $this->getPartnerId();
+        if ($exam->partner_id !== $partnerId) {
+            abort(403);
+        }
+
+        $params = $request->validatedDTO();
+
+        $paperColumns = $params['paper_columns'] ?? 1;
+        $headerSpan = $params['header_span'] ?? 'full';
+        $fontSize = $params['font_size'] ?? 12;
+        $mcqColumns = $params['mcq_columns'] ?? 2;
+
+        return view('partner.exams.paper-preview', compact('exam', 'params', 'paperColumns', 'headerSpan', 'fontSize', 'mcqColumns'));
     }
 }
