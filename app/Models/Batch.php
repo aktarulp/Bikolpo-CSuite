@@ -42,14 +42,24 @@ class Batch extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    // Deprecated: This relationship is no longer used with the new enrollment system
     public function students()
     {
         return $this->hasMany(Student::class);
     }
     
+    // New relationship for the enrollment system
     public function enrollments()
     {
         return $this->hasMany(Enrollment::class);
+    }
+    
+    // New relationship to get students through enrollments
+    public function enrolledStudents()
+    {
+        return $this->belongsToMany(Student::class, 'course_batch_enrollments', 'batch_id', 'student_id')
+            ->withPivot(['id', 'course_id', 'enrolled_at', 'status'])
+            ->wherePivot('status', 'active');
     }
 
     /**

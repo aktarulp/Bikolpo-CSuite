@@ -44,7 +44,9 @@ class CourseController extends Controller
         }
         
         // Load related data
-        $course->load(['subjects', 'batches', 'studentsEnrolled as enrollments']);
+        $course->load(['subjects', 'batches' => function($query) {
+            $query->withCount(['enrolledStudents as students_count']);
+        }, 'studentsEnrolled as enrollments']);
         
         return view('partner.courses.show', compact('course'));
     }

@@ -58,8 +58,10 @@ class EnrollmentController extends Controller
     {
         $partner = $this->getPartner();
         
+        // Get students for autocomplete - we only need id, name, and student_id
         $students = Student::where('partner_id', $partner->id)
             ->where('status', 'active')
+            ->select('id', 'full_name', 'student_id')
             ->orderBy('full_name')
             ->get();
             

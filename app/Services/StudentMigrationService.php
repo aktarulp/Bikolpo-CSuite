@@ -124,7 +124,7 @@ class StudentMigrationService
     {
         $migrationsFrom = $course->migrationsFrom()->count();
         $migrationsTo = $course->migrationsTo()->count();
-        $currentStudents = $course->students()->count();
+        $currentStudents = $course->getActiveStudentsCount();
 
         return [
             'students_migrated_out' => $migrationsFrom,
@@ -141,7 +141,7 @@ class StudentMigrationService
     {
         $migrationsFrom = $batch->migrationsFrom()->count();
         $migrationsTo = $batch->migrationsTo()->count();
-        $currentStudents = $batch->students()->count();
+        $currentStudents = $batch->enrolledStudents()->count();
 
         return [
             'students_migrated_out' => $migrationsFrom,

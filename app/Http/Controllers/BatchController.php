@@ -23,7 +23,7 @@ class BatchController extends Controller
             ->where('status', 'active')
             ->with(['batches' => function($query) {
                 $query->where('flag', 'active')
-                    ->withCount('students')
+                    ->withCount(['enrolledStudents as students_count'])  // Updated to use new enrollment system
                     ->orderBy('year', 'desc')
                     ->orderBy('name');
             }])
@@ -146,8 +146,8 @@ class BatchController extends Controller
             abort(403, 'Unauthorized access to this batch.');
         }
         
-        // Check if batch has any students
-        $studentsCount = $batch->students()->count();
+        // Check if batch has any students through the new enrollment system
+        $studentsCount = $batch->enrolledStudents()->count();
         
         if ($studentsCount > 0) {
             return redirect()->route('partner.batches.index')

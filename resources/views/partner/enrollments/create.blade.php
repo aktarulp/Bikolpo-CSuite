@@ -35,6 +35,39 @@
                  getCourseBatches() {
                      if (!this.selectedCourse) return [];
                      return this.batches[this.selectedCourse] || [];
+                 },
+                 // Student autocomplete data
+                 students: {{ $students->map(function($student) { return ['id' => $student->id, 'name' => $student->full_name, 'student_id' => $student->student_id]; })->toJson() }},
+                 search: '',
+                 selectedStudent: null,
+                 isOpen: false,
+                 filteredStudents() {
+                     if (this.search === '') return this.students.slice(0, 10);
+                     return this.students.filter(student => 
+                         student.name.toLowerCase().includes(this.search.toLowerCase()) || 
+                         (student.student_id && student.student_id.toLowerCase().includes(this.search.toLowerCase()))
+                     ).slice(0, 10);
+                 },
+                 selectStudent(student) {
+                     this.selectedStudent = student;
+                     this.search = student.name + (student.student_id ? ' (ID: ' + student.student_id + ')' : '');
+                     this.isOpen = false;
+                     // Update the hidden input
+                     document.getElementById('student_id').value = student.id;
+                 },
+                 clearSelection() {
+                     this.selectedStudent = null;
+                     this.search = '';
+                     document.getElementById('student_id').value = '';
+                 },
+                 init() {
+                     // If there's a pre-selected student, set it
+                     @if($selectedStudent)
+                         const preselected = this.students.find(s => s.id == {{ $selectedStudent->id }});
+                         if (preselected) {
+                             this.selectStudent(preselected);
+                         }
+                     @endif
                  }
              }">
             
@@ -66,7 +99,7 @@
 
                 <!-- Student Selection -->
                 <div class="space-y-3">
-                    <label for="student_id" class="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-300">
+                    <label for="student_search" class="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-300">
                         <svg class="w-5 h-5 text-emerald-500 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                         </svg>
@@ -74,29 +107,85 @@
                         <span class="text-red-500">*</span>
                     </label>
                     
-                    <div class="relative">
-                        <select name="student_id" id="student_id" required
-                                class="w-full px-4 py-3.5 pl-12 bg-gray-50 dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 dark:focus:border-emerald-400 transition-all duration-300 text-gray-900 dark:text-white font-medium shadow-sm hover:shadow-md appearance-none @error('student_id') border-red-500 @enderror">
-                            <option value="">-- Choose a student --</option>
-                            @foreach($students as $student)
-                                <option value="{{ $student->id }}" {{ old('student_id', $selectedStudent?->id) == $student->id ? 'selected' : '' }}>
-                                    {{ $student->full_name }} @if($student->student_id)(ID: {{ $student->student_id }})@endif
-                                </option>
-                            @endforeach
-                        </select>
-                        
-                        <!-- Icon -->
-                        <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                            </svg>
+                    <!-- Hidden input for the actual student ID -->
+                    <input type="hidden" name="student_id" id="student_id" value="{{ old('student_id', $selectedStudent?->id) }}" required>
+                    
+                    <!-- Autocomplete search input -->
+                    <div class="relative" x-data="{ isFocused: false }">
+                        <div class="relative">
+                            <input 
+                                type="text" 
+                                id="student_search"
+                                x-model="search"
+                                @focus="isOpen = true; isFocused = true"
+                                @blur="setTimeout(() => { isOpen = false; isFocused = false; }, 200)"
+                                @keydown.arrow-down.prevent="isOpen = true"
+                                @keydown.arrow-up.prevent="isOpen = true"
+                                @keydown.enter.prevent="if(filteredStudents().length > 0) selectStudent(filteredStudents()[0])"
+                                placeholder="Search for a student by name or ID..."
+                                class="w-full px-4 py-3.5 pl-12 bg-gray-50 dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 dark:focus:border-emerald-400 transition-all duration-300 text-gray-900 dark:text-white font-medium shadow-sm hover:shadow-md @error('student_id') border-red-500 @enderror"
+                                autocomplete="off"
+                            >
+                            
+                            <!-- Clear button -->
+                            <button 
+                                type="button"
+                                @click="clearSelection()"
+                                x-show="selectedStudent || search"
+                                class="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                            >
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                            
+                            <!-- Search icon -->
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </div>
                         </div>
                         
-                        <!-- Dropdown Arrow -->
-                        <div class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
-                            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
+                        <!-- Dropdown results -->
+                        <div 
+                            x-show="isOpen && filteredStudents().length > 0"
+                            class="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 max-h-60 overflow-y-auto"
+                            x-transition:enter="transition ease-out duration-100"
+                            x-transition:enter-start="transform opacity-0 scale-95"
+                            x-transition:enter-end="transform opacity-100 scale-100"
+                            x-transition:leave="transition ease-in duration-75"
+                            x-transition:leave-start="transform opacity-100 scale-100"
+                            x-transition:leave-end="transform opacity-0 scale-95"
+                        >
+                            <template x-for="student in filteredStudents()" :key="student.id">
+                                <div 
+                                    @click="selectStudent(student)"
+                                    class="px-4 py-3 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 cursor-pointer flex items-center gap-3"
+                                >
+                                    <div class="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                        <span x-text="student.name.charAt(0)"></span>
+                                    </div>
+                                    <div>
+                                        <div class="font-medium text-gray-900 dark:text-white" x-text="student.name"></div>
+                                        <div class="text-sm text-gray-500 dark:text-gray-400" x-text="student.student_id ? 'ID: ' + student.student_id : ''"></div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                        
+                        <!-- No results message -->
+                        <div 
+                            x-show="isOpen && search && filteredStudents().length === 0"
+                            class="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 py-4 px-4"
+                        >
+                            <div class="text-center text-gray-500 dark:text-gray-400">
+                                <svg class="w-12 h-12 mx-auto text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <p class="mt-2">No students found</p>
+                                <p class="text-sm">Try a different search term</p>
+                            </div>
                         </div>
                     </div>
                     
@@ -109,17 +198,16 @@
                         </div>
                     @enderror
                     
-                    @if($selectedStudent)
-                        <div class="flex items-center gap-3 p-4 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-xl border border-emerald-200 dark:border-emerald-800">
-                            <div class="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
-                                {{ substr($selectedStudent->full_name, 0, 1) }}
-                            </div>
-                            <div>
-                                <p class="text-sm font-bold text-gray-900 dark:text-white">{{ $selectedStudent->full_name }}</p>
-                                <p class="text-xs text-gray-600 dark:text-gray-400">Pre-selected student</p>
-                            </div>
+                    <!-- Selected student preview -->
+                    <div x-show="selectedStudent" class="flex items-center gap-3 p-4 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-xl border border-emerald-200 dark:border-emerald-800">
+                        <div class="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
+                            <span x-text="selectedStudent.name.charAt(0)"></span>
                         </div>
-                    @endif
+                        <div>
+                            <p class="text-sm font-bold text-gray-900 dark:text-white" x-text="selectedStudent.name"></p>
+                            <p class="text-xs text-gray-600 dark:text-gray-400" x-text="selectedStudent.student_id ? 'ID: ' + selectedStudent.student_id : 'Student'"></p>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Divider -->
