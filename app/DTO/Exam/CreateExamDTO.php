@@ -11,6 +11,8 @@ class CreateExamDTO extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
+            'exam_number' => 'nullable|string|max:255',
+            'course_id' => 'nullable|exists:courses,id',
             'description' => 'nullable|string',
             'exam_type' => 'required|in:online,offline',
             'duration' => 'required|integer|min:15|max:480',

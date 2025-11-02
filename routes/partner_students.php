@@ -64,11 +64,21 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/enrollments', [EnrollmentController::class, 'index'])
         ->name('partner.enrollments.index');
     
+    // Grouped Report by Course & Batch
+    Route::get('/enrollments/grouped-report', [EnrollmentController::class, 'groupedReport'])
+        ->name('partner.enrollments.grouped-report');
+    
     // Create New Enrollment
     Route::get('/enrollments/create', [EnrollmentController::class, 'create'])
         ->name('partner.enrollments.create');
     Route::post('/enrollments', [EnrollmentController::class, 'store'])
         ->name('partner.enrollments.store');
+    
+    // Bulk Enrollment
+    Route::get('/enrollments/bulk', [EnrollmentController::class, 'bulkCreate'])
+        ->name('partner.enrollments.bulk-create');
+    Route::post('/enrollments/bulk', [EnrollmentController::class, 'bulkStore'])
+        ->name('partner.enrollments.bulk-store');
     
     // View Enrollment Details
     Route::get('/enrollments/{enrollment}', [EnrollmentController::class, 'show'])

@@ -13,6 +13,10 @@ class Exam extends Model
     protected $fillable = [
         'partner_id',
         'title',
+        'exam_number',
+        'course_code',
+        'course_id',
+        'sl',
         'description',
         'start_time',
         'end_time',
@@ -51,6 +55,7 @@ class Exam extends Model
         'paper_settings' => 'array',
         'status' => 'string',
         'flag' => 'string',
+        'sl' => 'integer',
         'ba' => 'string',
         'bb' => 'string',
         'bc' => 'string',
@@ -322,6 +327,11 @@ class Exam extends Model
     public function partner()
     {
         return $this->belongsTo(Partner::class);
+    }
+
+    public function course()
+    {
+        return $this->belongsTo(Course::class);
     }
 
     public function studentResults()

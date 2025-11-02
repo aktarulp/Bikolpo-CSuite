@@ -52,6 +52,47 @@ class EnrollmentController extends Controller
     }
 
     /**
+     * Display a listing of enrollments grouped by course and batch
+     */
+    public function groupedReport(Request $request)
+    {
+        $partner = $this->getPartner();
+        
+        // Get all enrollments with related data
+        $query = Enrollment::with(['student', 'course', 'batch'])
+            ->where('partner_id', $partner->id);
+
+        // Filter by status
+        if ($request->filled('status') && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
+
+        // Filter by course
+        if ($request->filled('course_id') && $request->course_id !== 'all') {
+            $query->where('course_id', $request->course_id);
+        }
+
+        // Filter by student
+        if ($request->filled('search')) {
+            $query->whereHas('student', function($q) use ($request) {
+                $q->where('full_name', 'like', '%' . $request->search . '%')
+                  ->orWhere('student_id', 'like', '%' . $request->search . '%')
+                  ->orWhere('email', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $enrollments = $query->orderBy('course_id')->orderBy('batch_id')->get();
+        
+        // Group enrollments by course and batch
+        $groupedEnrollments = $enrollments->groupBy(['course_id', 'batch_id']);
+        
+        $courses = Course::where('partner_id', $partner->id)->get();
+        $statuses = Enrollment::getStatuses();
+
+        return view('partner.enrollments.grouped-report', compact('groupedEnrollments', 'courses', 'statuses'));
+    }
+
+    /**
      * Show the form for creating a new enrollment
      */
     public function create(Request $request)
@@ -81,6 +122,56 @@ class EnrollmentController extends Controller
             : null;
 
         return view('partner.enrollments.create', compact('students', 'courses', 'selectedStudent'));
+    }
+
+    /**
+     * Show the form for bulk enrollment
+     */
+    public function bulkCreate(Request $request)
+    {
+        $partner = $this->getPartner();
+        
+        // Get all active students for the partner
+        $students = Student::where('partner_id', $partner->id)
+            ->where('status', 'active')
+            ->select('id', 'full_name', 'student_id')
+            ->orderBy('full_name')
+            ->get();
+            
+        // Get courses with batches for cascading dropdown
+        $courses = Course::where('partner_id', $partner->id)
+            ->where('status', 'active')
+            ->with(['batches' => function($query) {
+                $query->where('flag', 'active')
+                    ->orderBy('year', 'desc')
+                    ->orderBy('name');
+            }])
+            ->get();
+            
+        // Get already enrolled student IDs for each course
+        $enrolledStudents = [];
+        foreach ($courses as $course) {
+            $enrolledStudents[$course->id] = Enrollment::where('course_id', $course->id)
+                ->where('partner_id', $partner->id)
+                ->where('status', 'active')
+                ->pluck('student_id')
+                ->toArray();
+        }
+
+        // Prepare batches data for JavaScript - convert to the format expected by the view
+        $batchesData = [];
+        foreach ($courses as $course) {
+            $batchesData[$course->id] = [];
+            foreach ($course->batches as $batch) {
+                $batchesData[$course->id][] = [
+                    'id' => $batch->id,
+                    'name' => $batch->name,
+                    'year' => $batch->year
+                ];
+            }
+        }
+
+        return view('partner.enrollments.bulk-create', compact('students', 'courses', 'enrolledStudents', 'batchesData'));
     }
 
     /**
@@ -130,6 +221,86 @@ class EnrollmentController extends Controller
         return redirect()
             ->route('partner.enrollments.index')
             ->with('success', 'Student enrolled successfully!');
+    }
+
+    /**
+     * Store bulk enrollments
+     */
+    public function bulkStore(Request $request)
+    {
+        $partner = $this->getPartner();
+
+        $validated = $request->validate([
+            'student_ids' => 'required|array',
+            'student_ids.*' => 'exists:students,id',
+            'course_id' => 'required|exists:courses,id',
+            'batch_id' => 'nullable|exists:batches,id',
+            'enrolled_at' => 'required|date',
+            'remarks' => 'nullable|string|max:1000',
+        ]);
+
+        // Verify course belongs to partner
+        $course = Course::where('id', $validated['course_id'])
+            ->where('partner_id', $partner->id)
+            ->firstOrFail();
+
+        $enrolledCount = 0;
+        $alreadyEnrolled = [];
+        $errors = [];
+
+        // Process each student
+        foreach ($validated['student_ids'] as $studentId) {
+            try {
+                // Verify student belongs to partner
+                $student = Student::where('id', $studentId)
+                    ->where('partner_id', $partner->id)
+                    ->firstOrFail();
+
+                // Check if already enrolled
+                if (!Enrollment::canEnroll($studentId, $validated['course_id'])) {
+                    $student = Student::find($studentId);
+                    $alreadyEnrolled[] = $student->full_name;
+                    continue;
+                }
+
+                // Create enrollment
+                Enrollment::create([
+                    'student_id' => $studentId,
+                    'course_id' => $validated['course_id'],
+                    'batch_id' => $validated['batch_id'] ?? $student->batch_id,
+                    'partner_id' => $partner->id,
+                    'enrolled_at' => $validated['enrolled_at'],
+                    'status' => Enrollment::STATUS_ACTIVE,
+                    'remarks' => $validated['remarks'],
+                    'enrolled_by' => auth()->id(),
+                ]);
+
+                $enrolledCount++;
+            } catch (\Exception $e) {
+                $student = Student::find($studentId);
+                $errors[] = $student ? $student->full_name : "Student ID: {$studentId}";
+            }
+        }
+
+        // Prepare success message
+        $message = "{$enrolledCount} student(s) enrolled successfully!";
+        
+        // Add warning for already enrolled students
+        if (!empty($alreadyEnrolled)) {
+            $message .= " " . count($alreadyEnrolled) . " student(s) were already enrolled: " . implode(', ', $alreadyEnrolled) . ".";
+        }
+        
+        // Add error information
+        if (!empty($errors)) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->withErrors(['error' => 'Some students could not be enrolled: ' . implode(', ', $errors)]);
+        }
+
+        return redirect()
+            ->route('partner.enrollments.index')
+            ->with('success', $message);
     }
 
     /**

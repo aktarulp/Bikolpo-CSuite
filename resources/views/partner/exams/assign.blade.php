@@ -20,7 +20,7 @@
                                     <h1 class="text-xl sm:text-2xl font-bold text-gray-900">#{{ $exam->id }} - {{ $exam->title }}</h1>
                                     <p class="text-sm text-gray-600 mt-1 flex items-center">
                                         <svg class="w-4 h-4 mr-1 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                                         </svg>
                                         Student Assignment Management
                                     </p>
@@ -94,12 +94,12 @@
                         <div class="flex flex-col sm:flex-row items-center justify-between space-y-2 sm:space-y-0 sm:space-x-4 mb-4">
                             <div class="flex space-x-2">
                                 <button type="button" 
-                                        onclick="selectAllAssigned()" 
+                                        id="select-all-assigned-btn"
                                         class="px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1">
                                     Select All
                                 </button>
                                 <button type="button" 
-                                        onclick="deselectAllAssigned()" 
+                                        id="deselect-all-assigned-btn"
                                         class="px-3 py-1.5 bg-gray-600 text-white text-xs font-medium rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1">
                                     Deselect All
                                 </button>
@@ -115,9 +115,9 @@
                                         <option value="remove">Remove</option>
                                         <option value="regenerate">Regenerate</option>
                                     </select>
-                                    <button type="submit" 
+                                    <button type="button" 
+                                            id="apply-bulk-action-btn"
                                             class="px-3 py-1.5 bg-red-600 text-white text-xs font-medium rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1"
-                                            onclick="return confirmBulkAction()"
                                             title="Apply Bulk Action">
                                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                                      </button>
@@ -157,7 +157,6 @@
                                                 @endif
                                             </p>
                                             <p class="text-sm text-gray-600 truncate">{{ $accessCode->student ? $accessCode->student->phone : 'N/A' }}</p>
-                                            
                                         </div>
                                     </div>
 
@@ -165,15 +164,17 @@
                                 </div>
 
                                 <div class="p-4 space-y-2 bg-gradient-to-br from-white to-gray-50">
+                                    @if($accessCode->student)
                                         <div class="flex items-center justify-between text-sm">
                                             <span class="font-medium text-gray-700">Phone:</span>
-                                            <span class="text-gray-900">{{ $accessCode->student ? ($accessCode->student->phone ?? 'N/A') : 'N/A' }}</span>
+                                            <span class="text-gray-900">{{ $accessCode->student->phone ?? 'N/A' }}</span>
                                         </div>
-                                        <div class="flex items-center justify-between text-sm">
-                                            <span class="font-medium text-gray-700">Access Code:</span>
-                                            <span class="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded text-sm">{{ $accessCode->access_code }}</span>
-                                        </div>
+                                    @endif
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="font-medium text-gray-700">Access Code:</span>
+                                        <span class="font-mono font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded text-sm">{{ $accessCode->access_code }}</span>
                                     </div>
+                                </div>
 
                                 <div class="border-t border-gray-200 bg-gradient-to-r from-blue-100 to-blue-200 px-4 py-3 flex justify-end space-x-2">
                                     <form method="POST" action="{{ route('partner.exams.regenerate-code', $exam) }}" class="inline regenerate-form" data-assignment-id="{{ $accessCode->id }}">
@@ -318,12 +319,12 @@
                             <div class="flex items-center justify-between mb-2 p-1.5 bg-gray-50 rounded border">
                                 <div class="flex items-center space-x-2">
                                     <button type="button" 
-                                            onclick="selectAll()"
+                                            id="select-all-btn"
                                             class="text-xs text-primaryGreen hover:text-primaryGreen/80 font-medium px-1 py-0.5 rounded hover:bg-green-50">
                                         Select All
                                     </button>
                                     <button type="button" 
-                                            onclick="deselectAll()"
+                                            id="deselect-all-btn"
                                             class="text-xs text-gray-600 hover:text-gray-800 font-medium px-1 py-0.5 rounded hover:bg-gray-100">
                                         Deselect All
                                     </button>
@@ -342,8 +343,7 @@
                                         <input type="checkbox" 
                                                name="student_ids[]" 
                                                value="{{ $student->id }}"
-                                               class="mt-1 h-5 w-5 text-primaryGreen focus:ring-primaryGreen border-gray-300 rounded student-checkbox"
-                                               onchange="updateSelectedCount()">
+                                               class="mt-1 h-5 w-5 text-primaryGreen focus:ring-primaryGreen border-gray-300 rounded student-checkbox">
                                         
                                         <div class="flex-shrink-0">
                                             @if($student->photo)
@@ -360,26 +360,15 @@
                                         <div class="flex-1 min-w-0">
                                             <p class="text-base font-semibold text-gray-900 leading-snug truncate">{{ $student->full_name }}</p>
                                             <p class="text-sm text-gray-600 truncate">{{ $student->phone }}</p>
-                                            <div class="flex flex-wrap gap-1 mt-1">
-                                                @if($student->course)
-                                                    <span class="text-xs font-medium text-gray-700">Course:</span>
-                                                    <span class="px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full text-xs">{{ $student->course->name }}</span>
-                                                @endif
-                                                @if($student->batch)
-                                                <div class="mt-1">
-                                                    <span class="text-xs font-medium text-gray-700">Batch:</span>
-                                                    <span class="px-2 py-0.5 bg-green-100 text-green-800 rounded-full text-xs">{{ $student->batch->name }}</span>
-                                                </div>
-                                                @endif
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="border-t border-gray-200 bg-gradient-to-r from-blue-100 to-blue-200 px-4 py-3 flex justify-end">
-                                    <button type="submit" form="assign-students-form" 
-                                            class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-primaryGreen hover:bg-primaryGreen/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primaryGreen"
-                                            onclick="return confirm('Assign {{ $student->full_name }} to the exam?')">
+                                    <button type="button" 
+                                            class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-primaryGreen hover:bg-primaryGreen/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primaryGreen assign-single-student"
+                                            data-student-id="{{ $student->id }}"
+                                            data-student-name="{{ $student->full_name }}">
                                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
                                         Assign
                                     </button>
@@ -387,6 +376,31 @@
                             </div>
                                 @endforeach
                             </div>
+                            
+                            <!-- Pagination -->
+                            @if($availableStudents->hasPages())
+                            <div class="mt-4 flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+                                <div class="flex flex-1 justify-between sm:hidden">
+                                    {{ $availableStudents->links() }}
+                                </div>
+                                <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                                    <div>
+                                        <p class="text-sm text-gray-700">
+                                            Showing
+                                            <span class="font-medium">{{ $availableStudents->firstItem() }}</span>
+                                            to
+                                            <span class="font-medium">{{ $availableStudents->lastItem() }}</span>
+                                            of
+                                            <span class="font-medium">{{ $availableStudents->total() }}</span>
+                                            results
+                                        </p>
+                                    </div>
+                                    <div>
+                                        {{ $availableStudents->appends(request()->query())->links() }}
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
                         </form>
                     @else
                         <div class="text-center py-12">
@@ -434,7 +448,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Filter toggle functionality
     const toggleButton = document.getElementById('toggle-filters');
     const toggleText = document.getElementById('toggle-text');
-    const toggleIcon = document.getElementById('toggle-icon');
     const filtersContent = document.getElementById('filters-content');
     
     // Check if filters should be hidden by default (stored in localStorage)
@@ -442,17 +455,13 @@ document.addEventListener('DOMContentLoaded', function() {
     if (filtersHidden) {
         filtersContent.style.display = 'none';
         toggleText.textContent = 'Show Filters';
-        toggleIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>';
     }
     
     toggleButton.addEventListener('click', function() {
         const isHidden = filtersContent.style.display === 'none';
         filtersContent.style.display = isHidden ? 'block' : 'none';
-        toggleText.textContent = isHidden ? 'Hide Filters' : 'Show Filters';
-        toggleIcon.innerHTML = isHidden 
-            ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>'
-            : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>';
-        localStorage.setItem('filtersHidden', !isHidden);
+        toggleText.textContent = isHidden ? 'Show Filters' : 'Hide Filters';
+        localStorage.setItem('filtersHidden', isHidden);
     });
     
     // Auto-submit form when select filters change
@@ -473,81 +482,44 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 500);
     });
     
-    // Add filter count badges
-    function updateFilterCounts() {
-        const activeFilters = [];
-        
-        if (searchInput.value) activeFilters.push('Search');
-        if (document.getElementById('course_id').value !== 'all') activeFilters.push('Course');
-        if (document.getElementById('batch_id').value !== 'all') activeFilters.push('Batch');
-        if (document.getElementById('gender').value !== 'all') activeFilters.push('Gender');
-        
-        const filterHeader = document.querySelector('h3');
-        if (activeFilters.length > 0) {
-            const badge = document.createElement('span');
-            badge.className = 'ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primaryGreen text-white';
-            badge.textContent = activeFilters.length;
-            
-            // Remove existing badge if any
-            const existingBadge = filterHeader.querySelector('span');
-            if (existingBadge) {
-                existingBadge.remove();
-            }
-            
-            filterHeader.appendChild(badge);
-        }
+    // Select All / Deselect All buttons
+    const selectAllBtn = document.getElementById('select-all-btn');
+    const deselectAllBtn = document.getElementById('deselect-all-btn');
+    
+    if (selectAllBtn) {
+        selectAllBtn.addEventListener('click', selectAll);
     }
     
-    // Initialize filter counts
-    updateFilterCounts();
-    
-    // Update counts when filters change
-    filterSelects.forEach(select => {
-        select.addEventListener('change', updateFilterCounts);
-    });
-    searchInput.addEventListener('input', updateFilterCounts);
-    
-    // Add loading indicator when filters are being applied
-    filterForm.addEventListener('submit', function() {
-        const submitButton = document.createElement('button');
-        submitButton.type = 'submit';
-        submitButton.className = 'inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white';
-        submitButton.innerHTML = '<svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Loading...';
-        
-        // Replace the clear button temporarily
-        const clearButton = document.querySelector('a[href*="assign"]');
-        if (clearButton) {
-            clearButton.style.display = 'none';
-            clearButton.parentNode.appendChild(submitButton);
-        }
-    });
-});
-
-// Function to display messages (like toasts)
-function displayMessage(message, type = 'success') {
-    const messageContainer = document.getElementById('message-container');
-    if (!messageContainer) {
-        console.warn('Message container not found.');
-        return;
+    if (deselectAllBtn) {
+        deselectAllBtn.addEventListener('click', deselectAll);
     }
-
-    const alertDiv = document.createElement('div');
-    alertDiv.className = `p-3 rounded-md mb-3 text-sm flex items-center justify-between ${type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
-    alertDiv.innerHTML = `
-        <span>${message}</span>
-        <button type="button" onclick="this.closest('div').remove()" class="ml-4 text-current hover:opacity-75">
-            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-            </svg>
-        </button>
-    `;
-    messageContainer.prepend(alertDiv);
-
-    // Automatically remove after 5 seconds
-    setTimeout(() => alertDiv.remove(), 5000);
-}
-
-// Student selection functions
+    
+    // Add event listeners to checkboxes to update count
+    document.querySelectorAll('.student-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', updateSelectedCount);
+    });
+    
+    // Initialize selected count on page load
+    updateSelectedCount();
+    
+    // Select All / Deselect All for assigned students
+    const selectAllAssignedBtn = document.getElementById('select-all-assigned-btn');
+    const deselectAllAssignedBtn = document.getElementById('deselect-all-assigned-btn');
+    
+    if (selectAllAssignedBtn) {
+        selectAllAssignedBtn.addEventListener('click', selectAllAssigned);
+    }
+    
+    if (deselectAllAssignedBtn) {
+        deselectAllAssignedBtn.addEventListener('click', deselectAllAssigned);
+    }
+    
+    // Bulk action button
+    const applyBulkActionBtn = document.getElementById('apply-bulk-action-btn');
+    if (applyBulkActionBtn) {
+        applyBulkActionBtn.addEventListener('click', confirmBulkAction);
+    }
+    
     function selectAll() {
         document.querySelectorAll('.student-checkbox').forEach(checkbox => {
             checkbox.checked = true;
@@ -597,6 +569,28 @@ function displayMessage(message, type = 'success') {
         return true;
     }
 
+    // Handle individual student assignment
+    document.querySelectorAll('.assign-single-student').forEach(button => {
+        button.addEventListener('click', function() {
+            const studentId = this.getAttribute('data-student-id');
+            const studentName = this.getAttribute('data-student-name');
+            
+            if (confirm(`Assign ${studentName} to the exam?`)) {
+                // Create a hidden input for the student ID
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'student_ids[]';
+                hiddenInput.value = studentId;
+                
+                // Add it to the main form
+                const mainForm = document.getElementById('assign-students-form');
+                mainForm.appendChild(hiddenInput);
+                
+                // Submit the form
+                mainForm.submit();
+            }
+        });
+    });
 
     // New function for bulk actions confirmation
     function confirmBulkAction() {
@@ -611,18 +605,50 @@ function displayMessage(message, type = 'success') {
         }
 
         if (selectedAction) {
-            return confirm(`Are you sure you want to ${selectedAction} ${assignmentIds.length} assignments?`);
+            if (confirm(`Are you sure you want to ${selectedAction} ${assignmentIds.length} assignments?`)) {
+                // Submit the form with the selected action and assignment IDs
+                const form = document.getElementById('bulk-actions-form');
+                // Add assignment IDs as hidden inputs
+                assignmentIds.forEach(id => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'assignment_ids[]';
+                    input.value = id;
+                    form.appendChild(input);
+                });
+                form.submit();
+            }
+            return false;
         }
 
         displayMessage('Please select an action.', 'error');
         return false;
     }
+});
 
-    // Attach event listener to the bulk actions form
-    document.getElementById('bulk-actions-form').addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent default form submission
-        confirmBulkAction();
-    });
+// Function to display messages (like toasts)
+function displayMessage(message, type = 'success') {
+    const messageContainer = document.getElementById('message-container');
+    if (!messageContainer) {
+        console.warn('Message container not found.');
+        return;
+    }
+
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `p-3 rounded-md mb-3 text-sm flex items-center justify-between ${type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+    alertDiv.innerHTML = `
+        <span>${message}</span>
+        <button type="button" onclick="this.closest('div').remove()" class="ml-4 text-current hover:opacity-75">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+            </svg>
+        </button>
+    `;
+    messageContainer.prepend(alertDiv);
+
+    // Automatically remove after 5 seconds
+    setTimeout(() => alertDiv.remove(), 5000);
+}
 </script>
 @endpush
 @endsection

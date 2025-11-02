@@ -190,7 +190,7 @@
                 <div class="flex-1">
                     <h3 class="text-sm font-bold text-blue-900 dark:text-blue-300 mb-1">Quick Tips</h3>
                     <ul class="text-xs text-blue-800 dark:text-blue-400 space-y-1">
-                        <li>• Subject codes should be unique and follow your institution's naming convention</li>
+                        <li>• Subject codes should be unique within each course but can be reused across different courses</li>
                         <li>• Choose a descriptive name that clearly identifies the subject</li>
                         <li>• The description helps students understand what the subject covers</li>
                     </ul>

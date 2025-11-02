@@ -20,8 +20,8 @@ class ExamAssignmentController extends Controller
      */
     public function index(Request $request, Exam $exam)
     {
-        $exam->load(['assignedStudents', 'accessCodes' => function($query) {
-            $query->with('student')->whereNotNull('student_id');
+        $exam->load(['assignedStudents.courses', 'accessCodes' => function($query) {
+            $query->with(['student.courses'])->whereNotNull('student_id');
         }]);
 
         // Clean up any orphaned access codes (access codes with null student_id)
@@ -57,14 +57,18 @@ class ExamAssignmentController extends Controller
             });
         }
         
-        // Course filter
+        // Course filter - using the new enrollment system
         if ($request->filled('course_id') && $request->course_id !== 'all') {
-            $query->where('course_id', $request->course_id);
+            $query->whereHas('courses', function($q) use ($request) {
+                $q->where('courses.id', $request->course_id);
+            });
         }
         
-        // Batch filter
+        // Batch filter - using the new enrollment system
         if ($request->filled('batch_id') && $request->batch_id !== 'all') {
-            $query->where('batch_id', $request->batch_id);
+            $query->whereHas('courses', function($q) use ($request) {
+                $q->where('course_batch_enrollments.batch_id', $request->batch_id);
+            });
         }
         
         // Gender filter
@@ -72,12 +76,17 @@ class ExamAssignmentController extends Controller
             $query->where('gender', $request->gender);
         }
         
-        $availableStudents = $query->with(['course', 'batch'])->get();
+        $availableStudents = $query->with(['courses'])->paginate(30)->appends($request->except('page'));
         
         // Get filter options
-        $courses = \App\Models\Course::where('partner_id', $partnerId)->get();
-        $batches = \App\Models\Batch::where('partner_id', $partnerId)->get();
-
+        $courses = \App\Models\Course::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
+        $batches = \App\Models\Batch::where('partner_id', $partnerId)
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
 
         return view('partner.exams.assign', compact('exam', 'availableStudents', 'courses', 'batches'));
     }
@@ -120,7 +129,26 @@ class ExamAssignmentController extends Controller
             ->toArray();
 
         if (count($validStudentIds) !== count($studentIds)) {
-            return back()->with('error', 'Some students do not belong to your institution.');
+            // Find which students don't belong to the partner
+            $invalidStudentIds = array_diff($studentIds, $validStudentIds);
+            $invalidStudents = \App\Models\Student::whereIn('id', $invalidStudentIds)->get();
+            
+            $invalidStudentNames = $invalidStudents->pluck('full_name')->implode(', ');
+            
+            return back()->with('error', "Some students do not belong to your institution: {$invalidStudentNames}");
+        }
+        
+        // ✅ Check if any of the students are already assigned to this exam
+        $alreadyAssignedStudentIds = ExamAccessCode::where('exam_id', $exam->id)
+            ->whereIn('student_id', $validStudentIds)
+            ->pluck('student_id')
+            ->toArray();
+            
+        if (!empty($alreadyAssignedStudentIds)) {
+            $alreadyAssignedStudents = \App\Models\Student::whereIn('id', $alreadyAssignedStudentIds)->get();
+            $alreadyAssignedStudentNames = $alreadyAssignedStudents->pluck('full_name')->implode(', ');
+            
+            return back()->with('error', "Some students are already assigned to this exam: {$alreadyAssignedStudentNames}");
         }
 
         DB::transaction(function () use ($exam, $validStudentIds, &$assignedCount) {
@@ -265,11 +293,11 @@ class ExamAssignmentController extends Controller
 
         // ✅ Ensure exam belongs to current partner
         if ($exam->partner_id !== $partnerId) {
-            return response()->json(['success' => false, 'message' => 'Unauthorized access to this exam.'], 403);
+            return back()->with('error', 'Unauthorized access to this exam.');
         }
 
         $request->validate([
-            'action' => 'required|in:assign,remove,regenerate',
+            'action' => 'required|in:remove,regenerate',
             'assignment_ids' => 'required|array',
             'assignment_ids.*' => 'exists:exam_access_codes,id',
         ]);
@@ -280,11 +308,6 @@ class ExamAssignmentController extends Controller
         $message = '';
 
         switch ($action) {
-            case 'assign':
-                $count = $this->bulkAssign($exam, $assignmentIds); // Assuming student_ids is passed for assignment
-                $message = "Successfully assigned {$count} students to the exam.";
-                break;
-
             case 'remove':
                 $count = $this->bulkRemove($exam, $assignmentIds);
                 $message = "Successfully removed {$count} student assignments.";
@@ -294,10 +317,9 @@ class ExamAssignmentController extends Controller
                 $count = $this->bulkRegenerate($exam, $assignmentIds);
                 $message = "Successfully regenerated {$count} access codes.";
                 break;
-
         }
 
-        return response()->json(['success' => true, 'message' => $message]);
+        return back()->with('success', $message);
     }
 
     /**

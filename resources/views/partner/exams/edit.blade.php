@@ -167,7 +167,7 @@
             <div class="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
                 <div class="flex">
                     <svg class="h-5 w-5 text-red-400 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 0l7-7m-7 7h18"></path>
                     </svg>
                     <div>
                         <h3 class="text-sm font-medium text-red-800 dark:text-red-200">Please fix the following errors:</h3>
@@ -212,96 +212,49 @@
                         @enderror
                     </div>
 
-                    <div class="form-group">
-                        <label for="examTitle" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Exam Title <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" id="examTitle" name="title" value="{{ old('title', $exam->title) }}" 
-                               placeholder="e.g., Mid-Term Mathematics Exam" required 
-                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors">
-                        @error('title')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Description
-                        </label>
-                        <textarea id="description" name="description" rows="3" 
-                                  placeholder="Provide a detailed description of the exam, topics covered, and any special instructions..." 
-                                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors resize-none">{{ old('description', $exam->description) }}</textarea>
-                        @error('description')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-                        <div class="form-group">
-                            <label for="examType" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Exam Type <span class="text-red-500">*</span>
+                    <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+                        <div class="form-group md:col-span-1">
+                            <label for="courseId" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Course
                             </label>
-                            <select id="examType" name="exam_type" required 
-                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors">
-                                <option value="online" {{ old('exam_type', $exam->exam_type) === 'online' ? 'selected' : '' }}>🖥️ Online</option>
-                                <option value="offline" {{ old('exam_type', $exam->exam_type) === 'offline' ? 'selected' : '' }}>📝 Offline</option>
+                            <select id="courseId" name="course_id" 
+                                    class="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors">
+                                <option value="">Select a course</option>
+                                @foreach($courses as $course)
+                                    <option value="{{ $course->id }}" {{ old('course_id', $exam->course_id) == $course->id ? 'selected' : '' }}>
+                                        {{ $course->name }}
+                                    </option>
+                                @endforeach
                             </select>
-                            @error('exam_type')
+                            @error('course_id')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <div class="form-group">
-                            <label for="totalQuestions" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Total Questions <span class="text-red-500">*</span>
+                        <div class="form-group md:col-span-1">
+                            <label for="examNumber" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Exam Number
                             </label>
-                            <input type="number" id="totalQuestions" name="total_questions" value="{{ old('total_questions', $exam->total_questions) }}" 
-                                   min="1" max="100" required 
-                                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors">
-                            @error('total_questions')
+                            <input type="text" id="examNumber" name="exam_number" value="{{ old('exam_number', $exam->exam_number) }}" 
+                                   placeholder="e.g., Ex: 10, 25" 
+                                   class="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors">
+                            @error('exam_number')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <div class="form-group">
-                            <label for="duration" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Duration (minutes) <span class="text-red-500">*</span>
+                        <div class="form-group md:col-span-4">
+                            <label for="examTitle" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Exam Title <span class="text-red-500">*</span>
                             </label>
-                            <input type="number" id="duration" name="duration" value="{{ old('duration', $exam->duration) }}" 
-                                   min="15" max="480" required 
-                                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors">
-                            @error('duration')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div class="form-group">
-                            <label for="passingMarks" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Passing Marks (%) <span class="text-red-500">*</span>
-                            </label>
-                            <input type="number" id="passingMarks" name="passing_marks" value="{{ old('passing_marks', $exam->passing_marks) }}" 
-                                   min="0" max="100" required 
-                                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors">
-                            @error('passing_marks')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div class="form-group">
-                            <label for="questionLanguage" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Language <span class="text-red-500">*</span>
-                            </label>
-                            <select id="questionLanguage" name="question_language" required 
-                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors">
-                                <option value="english" {{ old('question_language', $exam->question_language ?? 'english') === 'english' ? 'selected' : '' }}>🇺🇸 English</option>
-                                <option value="bangla" {{ old('question_language', $exam->question_language) === 'bangla' ? 'selected' : '' }}>🇧🇩 Bangla</option>
-                            </select>
-                            @error('question_language')
+                            <input type="text" id="examTitle" name="title" value="{{ old('title', $exam->title) }}" 
+                                   placeholder="e.g., Mid-Term Mathematics Exam" required 
+                                   class="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-colors">
+                            @error('title')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
                     </div>
-
                 </div>
             </div>
 

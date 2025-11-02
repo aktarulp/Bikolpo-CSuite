@@ -54,7 +54,10 @@ class SubjectController extends Controller
                 'required',
                 'string',
                 'max:50',
-                Rule::unique('subjects', 'code')->where(fn($q) => $q->where('partner_id', $partnerId)),
+                Rule::unique('subjects', 'code')->where(function($q) use ($partnerId, $request) {
+                    return $q->where('partner_id', $partnerId)
+                             ->where('course_id', $request->course_id);
+                }),
             ],
             'description' => 'nullable|string',
         ]);
@@ -101,7 +104,10 @@ class SubjectController extends Controller
                 'max:50',
                 Rule::unique('subjects', 'code')
                     ->ignore($subject->id, 'id')
-                    ->where(fn($q) => $q->where('partner_id', $this->getPartnerId())),
+                    ->where(function($q) use ($subject, $request) {
+                        return $q->where('partner_id', $this->getPartnerId())
+                                 ->where('course_id', $request->course_id);
+                    }),
             ],
             'description' => 'nullable|string',
         ]);
