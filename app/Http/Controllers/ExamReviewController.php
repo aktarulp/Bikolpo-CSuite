@@ -159,10 +159,22 @@ class ExamReviewController extends Controller
      */
     public function getPerformanceComparison(Request $request, $examId, $resultId)
     {
-        $partnerId = $this->getPartnerId();
-
-        $exam = Exam::where('id', $examId)->where('partner_id', $partnerId)->first();
-        $result = ExamResult::where('id', $resultId)->where('exam_id', $examId)->first();
+        // Check if this is a public user (no authentication) or partner user
+        $accessInfo = session('quiz_access');
+        
+        if ($accessInfo && $accessInfo['exam_id'] == $examId) {
+            // Public user access - verify the result belongs to this student
+            $exam = Exam::where('id', $examId)->first();
+            $result = ExamResult::where('id', $resultId)
+                ->where('exam_id', $examId)
+                ->where('student_id', $accessInfo['student_id'])
+                ->first();
+        } else {
+            // Partner user access - require authentication
+            $partnerId = $this->getPartnerId();
+            $exam = Exam::where('id', $examId)->where('partner_id', $partnerId)->first();
+            $result = ExamResult::where('id', $resultId)->where('exam_id', $examId)->first();
+        }
         
         if (!$exam || !$result) {
             return response()->json([
@@ -170,9 +182,6 @@ class ExamReviewController extends Controller
                 'message' => 'Exam or result not found.'
             ], 404);
         }
-        
-        // Check if user has permission to view this result
-        $this->authorizeReview($result);
         
         // Get all results for this exam
         $allResults = ExamResult::where('exam_id', $examId)
@@ -198,7 +207,8 @@ class ExamReviewController extends Controller
             'excellent' => $allResults->where('percentage', '>=', 90)->count(),
             'good' => $allResults->where('percentage', '>=', 80)->where('percentage', '<', 90)->count(),
             'average' => $allResults->where('percentage', '>=', 70)->where('percentage', '<', 80)->count(),
-            'below_average' => $allResults->where('percentage', '<', 70)->count(),
+            'below_average' => $allResults->where('percentage', '>=', 60)->where('percentage', '<', 70)->count(),
+            'poor' => $allResults->where('percentage', '<', 60)->count(),
         ];
         
         return response()->json([
@@ -207,11 +217,9 @@ class ExamReviewController extends Controller
                 'student_rank' => $studentRank,
                 'total_students' => $totalStudents,
                 'percentile' => $percentile,
-                'average_percentage' => round($averagePercentage, 2),
-                'average_score' => round($averageScore, 2),
+                'average_percentage' => $averagePercentage,
+                'average_score' => $averageScore,
                 'distribution' => $distribution,
-                'student_percentage' => $result->percentage,
-                'student_score' => $result->score,
             ]
         ]);
     }
