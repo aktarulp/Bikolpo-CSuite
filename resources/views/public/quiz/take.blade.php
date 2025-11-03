@@ -867,16 +867,32 @@
         questionTextEl.textContent = `${state.currentQuestionIndex + 1}. ${cleanQuestionText}`;
         optionsContainerEl.innerHTML = '';
         
+        // Determine if we should use Bangla option labels
+        const useBanglaLabels = "{{ $exam->question_language }}" === "bangla";
+        
         if (question.type === 'mcq' && question.options.length > 0) {
             question.options.forEach((option, index) => {
                 const optionBtn = document.createElement('button');
                 optionBtn.type = 'button';
                 optionBtn.className = 'option-btn w-full text-left px-3 sm:px-4 md:px-6 py-2.5 sm:py-3 md:py-4 rounded-xl border-2 border-gray-200 text-sm sm:text-base md:text-lg font-medium transition-colors duration-200 hover:bg-gray-100 flex items-center gap-2 sm:gap-3 md:gap-4';
                 
-                // Create option label (A, B, C, D)
+                // Create option label (A, B, C, D or Bangla equivalents)
                 const optionLabel = document.createElement('div');
                 optionLabel.className = 'flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 rounded-full bg-blue-100 text-blue-600 font-bold text-xs sm:text-sm flex items-center justify-center border-2 border-blue-200';
-                optionLabel.textContent = String.fromCharCode(65 + index); // A, B, C, D
+                
+                // Use Bangla labels if question_language is bangla, otherwise use English
+                if (useBanglaLabels) {
+                    // Use the ba, bb, bc, bd values from the exam
+                    const banglaLabels = [
+                        "{{ $exam->ba ?? 'ক' }}",
+                        "{{ $exam->bb ?? 'খ' }}",
+                        "{{ $exam->bc ?? 'গ' }}",
+                        "{{ $exam->bd ?? 'ঘ' }}"
+                    ];
+                    optionLabel.textContent = banglaLabels[index] || String.fromCharCode(65 + index);
+                } else {
+                    optionLabel.textContent = String.fromCharCode(65 + index); // A, B, C, D
+                }
                 
                 // Create option text
                 const optionText = document.createElement('span');

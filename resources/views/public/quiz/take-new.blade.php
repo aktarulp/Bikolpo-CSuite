@@ -122,7 +122,24 @@
                                            onchange="markQuestionAnswered({{ $index }})">
                                     <div class="option-content flex items-center space-x-4">
                                         <div class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center text-sm font-bold text-gray-600">
-                                            {{ strtoupper($option) }}
+                                            @if($exam->question_language === 'bangla')
+                                                @switch($option)
+                                                    @case('a')
+                                                        {{ $exam->ba ?? 'ক' }}
+                                                        @break
+                                                    @case('b')
+                                                        {{ $exam->bb ?? 'খ' }}
+                                                        @break
+                                                    @case('c')
+                                                        {{ $exam->bc ?? 'গ' }}
+                                                        @break
+                                                    @case('d')
+                                                        {{ $exam->bd ?? 'ঘ' }}
+                                                        @break
+                                                @endswitch
+                                            @else
+                                                {{ strtoupper($option) }}
+                                            @endif
                                         </div>
                                         <span class="text-gray-700 flex-1">{{ $question->{'option_' . $option} }}</span>
                                     </div>
