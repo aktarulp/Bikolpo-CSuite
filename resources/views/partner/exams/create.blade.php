@@ -436,10 +436,7 @@
                                     <h4 class="text-sm font-medium text-gray-900 dark:text-white">Allow Review</h4>
                                     <p class="text-xs text-gray-500 dark:text-gray-400">Students can review answers</p>
                                 </div>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" name="allow_review" value="1" {{ old('allow_review') ? 'checked' : '' }} class="sr-only peer" id="allowReviewToggle">
-                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                                </label>
+                                <input type="checkbox" name="allow_review" value="1" {{ old('allow_review') ? 'checked' : '' }} class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" id="allowReviewToggle">
                             </div>
 
                             <!-- Negative Marking -->
@@ -448,10 +445,7 @@
                                     <h4 class="text-sm font-medium text-gray-900 dark:text-white">Negative Marking</h4>
                                     <p class="text-xs text-gray-500 dark:text-gray-400">Deduct marks for wrong answers</p>
                                 </div>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" name="has_negative_marking" value="1" {{ old('has_negative_marking') ? 'checked' : '' }} class="sr-only peer" id="negativeMarkingToggle" onchange="toggleNegativeMarkingInput()">
-                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                                </label>
+                                <input type="checkbox" name="has_negative_marking" value="1" {{ old('has_negative_marking') ? 'checked' : '' }} class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" id="negativeMarkingToggle" onchange="toggleNegativeMarkingInput()">
                             </div>
 
                             <!-- Marks per Wrong Answer -->
@@ -523,12 +517,14 @@
         const inputContainer = document.getElementById('negativeMarkingInputContainer');
         const placeholder = document.getElementById('negativeMarkingPlaceholder');
         
-        if (checkbox.checked) {
-            inputContainer.classList.remove('hidden');
-            placeholder.classList.add('hidden');
-        } else {
-            inputContainer.classList.add('hidden');
-            placeholder.classList.remove('hidden');
+        if (checkbox && inputContainer && placeholder) {
+            if (checkbox.checked) {
+                inputContainer.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+            } else {
+                inputContainer.classList.add('hidden');
+                placeholder.classList.remove('hidden');
+            }
         }
     }
     
@@ -537,6 +533,9 @@
         // Set initial state for negative marking input
         const negativeMarkingCheckbox = document.getElementById('negativeMarkingToggle');
         if (negativeMarkingCheckbox) {
+            // Add event listener for negative marking toggle
+            negativeMarkingCheckbox.addEventListener('change', toggleNegativeMarkingInput);
+            // Set initial state
             toggleNegativeMarkingInput();
         }
     });

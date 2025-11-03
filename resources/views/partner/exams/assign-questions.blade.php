@@ -47,7 +47,12 @@
                                 </svg>
                             </div>
                             <div>
-                                <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Assign Questions</h1>
+                                <div class="flex items-center space-x-3">
+                                    <span class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-bold bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg ring-2 ring-blue-200 dark:ring-blue-800/50 transform hover:scale-105 transition-all duration-200">
+                                        {{ $exam->course ? $exam->course->code : '' }}-{{ $exam->exam_number }}
+                                    </span>
+                                    <h1 class="text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">Assign Questions</h1>
+                                </div>
                                 <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ $exam->title }}</p>
                             </div>
                         </div>

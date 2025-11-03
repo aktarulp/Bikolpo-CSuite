@@ -40,10 +40,17 @@ class ExamAssignmentController extends Controller
                 ->withErrors(['error' => 'You do not have access to this exam.']);
         }
         
-        // Build query for available students with filters
+        // Build query for available students - ONLY students assigned to the exam's course
         $query = Student::where('partner_id', $partnerId)
             ->where('status', 'active')
             ->whereNotIn('id', $exam->assignedStudents->pluck('id'));
+            
+        // Filter students by the exam's course
+        if ($exam->course_id) {
+            $query->whereHas('courses', function($q) use ($exam) {
+                $q->where('courses.id', $exam->course_id);
+            });
+        }
         
         // Search filter
         if ($request->filled('search')) {
@@ -57,20 +64,6 @@ class ExamAssignmentController extends Controller
             });
         }
         
-        // Course filter - using the new enrollment system
-        if ($request->filled('course_id') && $request->course_id !== 'all') {
-            $query->whereHas('courses', function($q) use ($request) {
-                $q->where('courses.id', $request->course_id);
-            });
-        }
-        
-        // Batch filter - using the new enrollment system
-        if ($request->filled('batch_id') && $request->batch_id !== 'all') {
-            $query->whereHas('courses', function($q) use ($request) {
-                $q->where('course_batch_enrollments.batch_id', $request->batch_id);
-            });
-        }
-        
         // Gender filter
         if ($request->filled('gender') && $request->gender !== 'all') {
             $query->where('gender', $request->gender);
@@ -78,15 +71,9 @@ class ExamAssignmentController extends Controller
         
         $availableStudents = $query->with(['courses'])->paginate(30)->appends($request->except('page'));
         
-        // Get filter options
-        $courses = \App\Models\Course::where('partner_id', $partnerId)
-            ->where('status', 'active')
-            ->orderBy('name')
-            ->get();
-        $batches = \App\Models\Batch::where('partner_id', $partnerId)
-            ->where('status', 'active')
-            ->orderBy('name')
-            ->get();
+        // Get filter options - but we don't need course/batch filters anymore
+        $courses = collect(); // Empty collection since we're only showing students from the exam's course
+        $batches = collect(); // Empty collection since we're only showing students from the exam's course
 
         return view('partner.exams.assign', compact('exam', 'availableStudents', 'courses', 'batches'));
     }

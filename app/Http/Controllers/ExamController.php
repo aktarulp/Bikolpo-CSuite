@@ -143,7 +143,7 @@ class ExamController extends Controller
                 'exam_title' => $exam->title
             ]);
         } else {
-            return back()->with('success', 'Exam updated successfully.');
+            return redirect()->route('partner.exams.index')->with('success', 'Exam updated successfully.');
         }
     }
 
@@ -157,9 +157,9 @@ class ExamController extends Controller
 
         try {
             $this->examManagementService->deleteExam($exam);
-            return back()->with('success', 'Exam deleted successfully.');
+            return redirect()->route('partner.exams.index')->with('success', 'Exam deleted successfully.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error deleting exam: ' . $e->getMessage());
+            return redirect()->route('partner.exams.index')->with('error', 'Error deleting exam: ' . $e->getMessage());
         }
     }
 

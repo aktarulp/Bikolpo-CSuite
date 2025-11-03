@@ -182,7 +182,7 @@
                     <table class="min-w-full">
                         <thead>
                             <tr class="border-b-2 border-gray-200 dark:border-gray-700">
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">ID</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Exam Code</th>
                                 <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Exam Details</th>
                                 <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Type</th>
                                 <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Questions</th>
@@ -196,8 +196,8 @@
                                 <tr class="hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-indigo-50/50 dark:hover:from-gray-700/30 dark:hover:to-slate-700/30 transition-all duration-300 group border-b border-gray-100 dark:border-gray-700/30">
                                     <!-- ID Column -->
                                     <td class="px-6 py-5">
-                                        <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl text-sm font-bold bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 text-slate-700 dark:text-slate-200 shadow-sm">
-                                            {{ $exam->id }}
+                                        <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold bg-gradient-to-r from-blue-100 to-indigo-100 dark:from-blue-900/40 dark:to-indigo-900/40 text-blue-700 dark:text-blue-300 shadow-sm border border-blue-200 dark:border-blue-800/50">
+                                            {{ $exam->course ? $exam->course->code : '' }}-{{ $exam->exam_number }}
                                         </span>
                                     </td>
                                     

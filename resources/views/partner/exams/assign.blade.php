@@ -17,12 +17,17 @@
                                     </svg>
                                 </div>
                                 <div>
-                                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900">#{{ $exam->id }} - {{ $exam->title }}</h1>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-sm font-bold bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg ring-2 ring-blue-200 dark:ring-blue-800/50">
+                                            {{ $exam->course ? $exam->course->code : '' }}-{{ $exam->exam_number }}
+                                        </span>
+                                        <h1 class="text-xl sm:text-2xl font-bold text-gray-900">{{ $exam->title }}</h1>
+                                    </div>
                                     <p class="text-sm text-gray-600 mt-1 flex items-center">
                                         <svg class="w-4 h-4 mr-1 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                                         </svg>
-                                        Student Assignment Management
+                                        Student Assignment Management - {{ $exam->course ? $exam->course->name : 'No Course Assigned' }}
                                     </p>
                                 </div>
                             </div>
@@ -264,28 +269,6 @@
                                         </svg>
                                     </div>
                                 </div>
-                            </div>
-                            
-                            <!-- Course -->
-                            <div>
-                                <select name="course_id" id="course_id" 
-                                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primaryGreen focus:border-primaryGreen transition-all duration-200">
-                                    <option value="all" {{ request('course_id') == 'all' || !request('course_id') ? 'selected' : '' }}>All Courses</option>
-                                    @foreach($courses ?? [] as $course)
-                                        <option value="{{ $course->id }}" {{ request('course_id') == $course->id ? 'selected' : '' }}>{{ $course->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            
-                            <!-- Batch -->
-                            <div>
-                                <select name="batch_id" id="batch_id" 
-                                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primaryGreen focus:border-primaryGreen transition-all duration-200">
-                                    <option value="all" {{ request('batch_id') == 'all' || !request('batch_id') ? 'selected' : '' }}>All Batches</option>
-                                    @foreach($batches ?? [] as $batch)
-                                        <option value="{{ $batch->id }}" {{ request('batch_id') == $batch->id ? 'selected' : '' }}>{{ $batch->name }}</option>
-                                    @endforeach
-                                </select>
                             </div>
                             
                             <!-- Gender -->

@@ -24,14 +24,7 @@
                     </div>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3">
-                    <a href="{{ route('partner.exams.paper-parameters', $exam) }}" 
-                       class="inline-flex items-center justify-center px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                        </svg>
-                        <span class="hidden sm:inline">Download Question Paper</span>
-                        <span class="sm:hidden">Download</span>
-                    </a>
+
                 </div>
             </div>
         </div>
@@ -42,7 +35,7 @@
                 <div class="flex flex-col sm:flex-row sm:items-center gap-4">
                     <div class="flex items-center space-x-3">
                         <div class="inline-flex items-center px-3 py-1.5 rounded-xl text-sm font-bold bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg">
-                            #{{ $exam->id }}
+                            {{ $exam->course ? $exam->course->code : '' }}-{{ $exam->exam_number }}
                         </div>
                         <h2 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">{{ $exam->title }}</h2>
                     </div>

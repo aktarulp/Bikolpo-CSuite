@@ -22,7 +22,7 @@ class ExamManagementService
      */
     public function getExamsForPartner(int $partnerId, array $filters, int $perPage = 15)
     {
-        $query = Exam::with(['partner', 'examQuestion'])
+        $query = Exam::with(['partner', 'examQuestion', 'course'])
             ->withCount('questions as assigned_questions_count')
             ->withCount('assignedStudents as assigned_students_count')
             ->where('partner_id', $partnerId);
