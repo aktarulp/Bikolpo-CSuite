@@ -17,7 +17,7 @@
                                 
                                 <!-- Question Number -->
                                 <div class="flex items-center space-x-1 question-number-container">
-                                    <label class="text-xs">Q#:</label>
+                                    <label class="text-s">Q#:</label>
                                     <input type="number" 
                                            name="question_numbers[{{ $question->id }}]" 
                                            value="{{ $assignedQuestions->contains($question->id) ? ($assignedQuestionsWithOrder[$question->id] ?? '') : '' }}" 
@@ -58,7 +58,7 @@
                                 </span>
                                 
                                 @if($question->question_type === 'mcq' && ($question->option_a || $question->option_b || $question->option_c || $question->option_d))
-                                    <span class="text-gray-500 dark:text-gray-400 ml-2">|</span>
+                                    <br> <!-- Line break before answer options -->
                                     <span class="text-gray-600 dark:text-gray-300 text-xs ml-1">
                                         @if($question->option_a)
                                             <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2
@@ -93,7 +93,7 @@
                                         @endif
                                     </span>
                                 @elseif($question->question_type === 'true_false')
-                                    <span class="text-gray-500 dark:text-gray-400 ml-2">|</span>
+                                    <br> <!-- Line break before answer options -->
                                     <span class="text-gray-600 dark:text-gray-300 text-xs ml-1">
                                         <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2
                                             {{ $question->correct_answer === 'A' || $question->correct_answer === 'a' || $question->correct_answer === 'true' || $question->correct_answer === 'True' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
@@ -108,7 +108,7 @@
                                         <span class="text-xs">{{ $question->option_b ? Str::limit(strip_tags($question->option_b), 28) : 'False' }}</span>
                                     </span>
                                 @elseif($question->question_type === 'fill_in_blank' && $question->option_a)
-                                    <span class="text-gray-500 dark:text-gray-400 ml-2">|</span>
+                                    <br> <!-- Line break before answer options -->
                                     <span class="text-gray-600 dark:text-gray-300 text-xs ml-1">
                                         <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2 bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400">
                                             ✓
