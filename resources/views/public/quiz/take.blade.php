@@ -187,7 +187,7 @@
                                 <span class="hidden sm:inline">Skip</span>
                                 <span class="sm:hidden">Skip</span>
                             </button>
-                            <button type="button" id="next-btn" class="flex-1 sm:flex-none px-2 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-full text-xs sm:text-sm font-semibold text-white bg-blue-500 hover:bg-blue-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] sm:min-h-[40px]">
+                            <button type="button" id="next-btn" class="flex-1 sm:flex-none px-2 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-full text-xs sm:text-sm font-semibold text-white bg-blue-500 hover:bg-blue-600 transition-colors duration-200 min-h-[44px] sm:min-h-[40px]">
                                 <span class="hidden sm:inline">Next →</span>
                                 <span class="sm:hidden">Next →</span>
                             </button>
@@ -236,6 +236,30 @@
                     <p id="modal-message" class="text-xs sm:text-sm md:text-base lg:text-lg text-gray-700 mb-3 sm:mb-4 md:mb-6 px-2"></p>
                     <button id="close-modal-btn" class="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-semibold text-white bg-green-500 hover:bg-green-600 transition-colors duration-200 min-h-[44px]">
                         Okay
+                    </button>
+                </div>
+            </div>
+
+            <!-- Completion Message Modal -->
+            <div id="completion-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center p-2 sm:p-4 transition-opacity duration-300 hidden z-50">
+                <div class="bg-white rounded-xl p-4 sm:p-6 md:p-8 lg:p-10 text-center shadow-lg transform transition-transform duration-300 scale-95 w-full max-w-xs sm:max-w-sm md:max-w-md mx-2">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 id="completion-modal-title" class="text-base sm:text-lg md:text-xl lg:text-2xl font-bold mb-2 sm:mb-3 md:mb-4 px-2"></h3>
+                    <p id="completion-modal-message" class="text-xs sm:text-sm md:text-base lg:text-lg text-gray-700 mb-3 sm:mb-4 md:mb-6 px-2"></p>
+                    <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                        <button id="review-btn" class="w-full sm:w-1/2 px-4 sm:px-6 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-semibold text-white bg-blue-500 hover:bg-blue-600 transition-colors duration-200 min-h-[44px]">
+                            Review Answers
+                        </button>
+                        <button id="submit-exam-btn" class="w-full sm:w-1/2 px-4 sm:px-6 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-bold text-white bg-green-500 hover:bg-green-600 transition-colors duration-200 min-h-[44px]">
+                            Submit Exam
+                        </button>
+                    </div>
+                    <button id="close-completion-modal-btn" class="mt-3 w-full px-4 sm:px-6 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-semibold text-gray-700 bg-gray-200 hover:bg-gray-300 transition-colors duration-200 min-h-[44px]">
+                        Continue
                     </button>
                 </div>
             </div>
@@ -894,10 +918,10 @@
     // DOM elements
     const questionTextEl = document.getElementById('question-text');
     const optionsContainerEl = document.getElementById('options-container');
-            const prevBtn = document.getElementById('prev-btn');
-        const nextBtn = document.getElementById('next-btn');
-        const skipBtn = document.getElementById('skip-btn');
-        const submitBtn = document.getElementById('submit-btn');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const skipBtn = document.getElementById('skip-btn');
+    const submitBtn = document.getElementById('submit-btn');
     const progressBar = document.getElementById('progress-bar');
     const currentQuestionDisplay = document.getElementById('current-question-display');
     const countdownDisplayEl = document.getElementById('countdown-display');
@@ -908,6 +932,13 @@
     const modalMessage = document.getElementById('modal-message');
     const closeModalBtn = document.getElementById('close-modal-btn');
     const examForm = document.getElementById('examForm');
+    // Completion modal elements
+    const completionModal = document.getElementById('completion-modal');
+    const completionModalTitle = document.getElementById('completion-modal-title');
+    const completionModalMessage = document.getElementById('completion-modal-message');
+    const reviewBtn = document.getElementById('review-btn');
+    const submitExamBtn = document.getElementById('submit-exam-btn');
+    const closeCompletionModalBtn = document.getElementById('close-completion-modal-btn');
 
     // Rendering functions
     function render() {
@@ -1044,9 +1075,17 @@
         const hasAnswer = currentAnswer !== null && currentAnswer.trim() !== '';
         
         prevBtn.disabled = state.currentQuestionIndex === 0 || state.isSubmitted;
-        nextBtn.disabled = state.currentQuestionIndex === questions.length - 1 || state.isSubmitted || !hasAnswer;
+        // Always keep next button enabled, even on the last question
+        nextBtn.disabled = state.isSubmitted || (!hasAnswer && state.currentQuestionIndex < questions.length - 1);
         skipBtn.style.display = state.isSubmitted ? 'none' : 'block';
         submitBtn.style.display = state.isSubmitted ? 'none' : 'block';
+        
+        // Update next button text based on position
+        if (state.currentQuestionIndex === questions.length - 1) {
+            nextBtn.innerHTML = '<span class="hidden sm:inline">Jump to Skipped</span><span class="sm:hidden">Skip →</span>';
+        } else {
+            nextBtn.innerHTML = '<span class="hidden sm:inline">Next →</span><span class="sm:hidden">Next →</span>';
+        }
         
         // Skip button always shows "Skip"
         skipBtn.textContent = 'Skip';
@@ -1144,9 +1183,54 @@
             state.currentQuestionIndex++;
             render();
             saveStateToStorage(); // Save state after navigation
+        } else {
+            // Reached the last question, find the first skipped question
+            const firstSkippedIndex = state.skipped.findIndex((skipped, index) => 
+                skipped && index !== state.currentQuestionIndex
+            );
+            
+            if (firstSkippedIndex !== -1) {
+                // Jump to the first skipped question
+                state.currentQuestionIndex = firstSkippedIndex;
+                render();
+                saveStateToStorage();
+            } else {
+                // No skipped questions, show completion message
+                showCompletionMessage();
+            }
         }
     }
-
+    
+    function showCompletionMessage() {
+        // Check if all questions have been answered
+        const answeredCount = state.answers.filter(answer => answer !== null).length;
+        const totalQuestions = questions.length;
+        
+        let title = '';
+        let message = '';
+        if (answeredCount === totalQuestions) {
+            title = '🎉 All Questions Answered!';
+            message = 'Congratulations! You have answered all questions.<br><br>';
+            message += 'You can now submit your exam or review your answers if time permits.';
+        } else {
+            const skippedCount = state.skipped.filter(skipped => skipped).length;
+            title = '✅ Review Completed!';
+            message = 'Great job! You\'ve reached the end of the questions.<br><br>';
+            if (skippedCount > 0) {
+                message += `You have <strong>${skippedCount}</strong> skipped question${skippedCount > 1 ? 's' : ''}.<br><br>`;
+            }
+            message += 'You can now submit your exam or review your answers if time permits.';
+        }
+        
+        completionModalTitle.textContent = title;
+        completionModalMessage.innerHTML = message;
+        completionModal.classList.remove('hidden');
+    }
+    
+    function hideCompletionModal() {
+        completionModal.classList.add('hidden');
+    }
+    
     function handleSkip() {
         state.skipped[state.currentQuestionIndex] = true;
         state.answers[state.currentQuestionIndex] = null;
@@ -1219,6 +1303,16 @@
         skipBtn.addEventListener('click', handleSkip);
         submitBtn.addEventListener('click', handleSubmit);
         closeModalBtn.addEventListener('click', hideResult);
+        // Completion modal event listeners
+        reviewBtn.addEventListener('click', () => {
+            hideCompletionModal();
+            // Could implement review functionality here if needed
+        });
+        submitExamBtn.addEventListener('click', () => {
+            hideCompletionModal();
+            handleSubmit();
+        });
+        closeCompletionModalBtn.addEventListener('click', hideCompletionModal);
         
         state.timer = setInterval(updateTimer, 1000);
         render();
@@ -1234,7 +1328,7 @@
                 return e.returnValue;
             }
         });
-        });
+    });
     </script>
 </body>
 </html>
