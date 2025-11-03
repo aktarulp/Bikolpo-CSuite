@@ -6,8 +6,8 @@
     <title>{{ $exam->title }} - Quiz</title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="{{ asset('images/BikolpoLive.svg') }}">
-    <link rel="shortcut icon" type="image/svg+xml" href="{{ asset('images/BikolpoLive.svg') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -240,6 +240,392 @@
         </div>
     </div>
 
+    <style>
+    /* Copy Protection Styles */
+    * {
+        -webkit-user-select: none !important;
+        -moz-user-select: none !important;
+        -ms-user-select: none !important;
+        user-select: none !important;
+        -webkit-touch-callout: none !important;
+        -webkit-tap-highlight-color: transparent !important;
+    }
+    
+    /* Allow selection only for input fields and textareas */
+    input, textarea, [contenteditable="true"] {
+        -webkit-user-select: text !important;
+        -moz-user-select: text !important;
+        -ms-user-select: text !important;
+        user-select: text !important;
+    }
+    
+    /* Disable drag and drop */
+    * {
+        -webkit-user-drag: none !important;
+        -khtml-user-drag: none !important;
+        -moz-user-drag: none !important;
+        -o-user-drag: none !important;
+        user-drag: none !important;
+    }
+    
+    /* Hide text cursor */
+    body {
+        cursor: default !important;
+    }
+    
+    /* Disable image dragging */
+    img {
+        -webkit-user-drag: none !important;
+        -khtml-user-drag: none !important;
+        -moz-user-drag: none !important;
+        -o-user-drag: none !important;
+        user-drag: none !important;
+        pointer-events: none !important;
+    }
+    
+    /* Allow pointer events for interactive elements */
+    button, a, input, textarea, select, [onclick], .tab-button, .btn, .button, .option-btn, .navigator-btn {
+        pointer-events: auto !important;
+        -webkit-user-select: auto !important;
+        -moz-user-select: auto !important;
+        -ms-user-select: auto !important;
+        user-select: auto !important;
+        -webkit-touch-callout: auto !important;
+    }
+    
+    /* Allow selection and interaction for quiz elements */
+    .option-btn, .navigator-btn, button, input, textarea, select {
+        -webkit-user-select: auto !important;
+        -moz-user-select: auto !important;
+        -ms-user-select: auto !important;
+        user-select: auto !important;
+        -webkit-touch-callout: auto !important;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    /* Allow text selection within quiz content */
+    #question-text, .option-btn span, .navigator-btn {
+        -webkit-user-select: text !important;
+        -moz-user-select: text !important;
+        -ms-user-select: text !important;
+        user-select: text !important;
+    }
+    
+    /* Disable context menu */
+    body {
+        -webkit-context-menu: none !important;
+        -moz-context-menu: none !important;
+        -ms-context-menu: none !important;
+        context-menu: none !important;
+    }
+    
+    
+    .option-btn.selected {
+        background-color: #22c55e;
+        color: white;
+        border-color: #22c55e;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        position: relative;
+    }
+    .option-btn.selected:hover {
+        background-color: #16a34a;
+    }
+    
+    /* Ensure quiz elements are fully interactive */
+    .option-btn, .navigator-btn {
+        cursor: pointer !important;
+        -webkit-user-select: none !important;
+        -moz-user-select: none !important;
+        -ms-user-select: none !important;
+        user-select: none !important;
+        -webkit-touch-callout: none !important;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    .option-btn:hover, .navigator-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .option-btn:active, .navigator-btn:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .navigator-btn.current {
+        background-color: #3b82f6;
+        color: white;
+        border-color: #3b82f6;
+    }
+    .navigator-btn.answered {
+        background-color: #22c55e;
+        color: white;
+        border-color: #22c55e;
+    }
+    .navigator-btn.skipped {
+        background-color: #f97316;
+        color: white;
+        border-color: #f97316;
+    }
+    .selected-icon {
+        position: absolute;
+        right: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 1rem;
+        height: 1rem;
+    }
+    @media (min-width: 640px) {
+        .selected-icon {
+            right: 1rem;
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+    }
+    @keyframes pulse-once {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    .animate-pulse-once {
+        animation: pulse-once 0.5s ease-in-out;
+    }
+    .watch-bezel {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), inset 0 2px 4px rgba(255, 255, 255, 0.5), inset 0 -2px 4px rgba(0, 0, 0, 0.2);
+        background-image: linear-gradient(145deg, #e0e0e0, #ffffff);
+    }
+    .watch-face {
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+    }
+    
+    /* Mobile-specific improvements */
+    @media (max-width: 640px) {
+        .option-btn {
+            min-height: 48px; /* Better touch target */
+            padding: 12px 16px;
+            font-size: 14px;
+        }
+        .navigator-btn {
+            min-height: 36px;
+            min-width: 36px;
+            font-size: 12px;
+        }
+        .option-btn.selected .selected-icon {
+            right: 0.5rem;
+            width: 0.875rem;
+            height: 0.875rem;
+        }
+        
+        /* Better spacing for mobile */
+        .main-quiz-container {
+            margin: 0;
+            border-radius: 16px;
+        }
+        
+        /* Improve text readability on mobile */
+        h1, h2, h3 {
+            line-height: 1.2;
+        }
+        
+        /* Better button spacing */
+        .nav-buttons {
+            gap: 8px;
+        }
+    }
+    
+    /* Extra small mobile devices */
+    @media (max-width: 480px) {
+        .option-btn {
+            min-height: 52px;
+            padding: 14px 12px;
+            font-size: 13px;
+        }
+        
+        .navigator-btn {
+            min-height: 24px;
+            min-width: 24px;
+            font-size: 9px;
+        }
+        
+        /* Reduce padding on very small screens */
+        .main-container {
+            padding: 4px;
+        }
+        
+        .quiz-container {
+            padding: 12px;
+        }
+        
+        /* More columns on very small screens */
+        #navigator-container {
+            grid-template-columns: repeat(auto-fit, minmax(24px, 1fr)) !important;
+            gap: 2px !important;
+        }
+    }
+    
+    /* Small mobile devices */
+    @media (min-width: 481px) and (max-width: 640px) {
+        #navigator-container {
+            grid-template-columns: repeat(auto-fit, minmax(32px, 1fr)) !important;
+            gap: 4px !important;
+        }
+        
+        .navigator-btn {
+            min-height: 32px !important;
+            min-width: 32px !important;
+            font-size: 11px !important;
+        }
+    }
+    
+    /* Medium mobile devices */
+    @media (min-width: 641px) and (max-width: 768px) {
+        #navigator-container {
+            grid-template-columns: repeat(auto-fit, minmax(36px, 1fr)) !important;
+            gap: 5px !important;
+        }
+        
+        .navigator-btn {
+            min-height: 36px !important;
+            min-width: 36px !important;
+            font-size: 12px !important;
+        }
+    }
+    
+    /* Prevent zoom on input focus on mobile */
+    @media screen and (max-width: 768px) {
+        input, textarea, select {
+            font-size: 16px !important;
+        }
+    }
+    
+    /* Hide scrollbar for mobile participants */
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+    
+    /* Better touch targets for mobile */
+    @media (max-width: 768px) {
+        button, .option-btn, .navigator-btn {
+            min-height: 44px;
+            touch-action: manipulation;
+        }
+        
+        /* Improve tap targets */
+        .option-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .navigator-btn:active {
+            transform: scale(0.95);
+        }
+        
+        /* Navigation buttons in single row */
+        .nav-buttons {
+            gap: 4px;
+        }
+        
+        /* Ensure buttons fit well in single row */
+        #prev-btn, #skip-btn, #submit-btn, #next-btn {
+            font-size: 11px;
+            padding: 8px 4px;
+            min-height: 40px;
+        }
+        
+        /* Make sure text doesn't wrap */
+        .nav-buttons button {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* Responsive question navigator grid */
+        #navigator-container {
+            grid-template-columns: repeat(auto-fit, minmax(28px, 1fr)) !important;
+            gap: 3px !important;
+        }
+        
+        /* Smaller navigator buttons on mobile */
+        .navigator-btn {
+            min-height: 28px !important;
+            min-width: 28px !important;
+            font-size: 10px !important;
+            padding: 2px !important;
+        }
+    }
+    
+    /* Landscape mobile optimization */
+    @media (max-width: 768px) and (orientation: landscape) {
+        .main-container {
+            padding: 8px;
+        }
+        
+        .quiz-container {
+            padding: 16px;
+        }
+        
+        .header {
+            margin-bottom: 16px;
+        }
+        
+        .timer-container {
+            flex-direction: row;
+            gap: 16px;
+        }
+        
+        /* Force desktop layout in landscape */
+        .flex-col.lg\\:flex-row {
+            flex-direction: row !important;
+        }
+        
+        /* Adjust main container for landscape */
+        .w-full.max-w-4xl {
+            max-width: calc(100vw - 280px) !important;
+        }
+        
+        /* Ensure proper spacing in landscape */
+        .gap-2.sm\\:gap-4.lg\\:gap-6 {
+            gap: 1rem !important;
+        }
+        
+        /* Adjust header spacing for landscape */
+        .mb-4.sm\\:mb-6.md\\:mb-8 {
+            margin-bottom: 1.5rem !important;
+        }
+        
+        /* Adjust question text size for landscape */
+        .text-base.sm\\:text-lg.md\\:text-xl.lg\\:text-2xl {
+            font-size: 1.125rem !important;
+        }
+        
+        /* Adjust option buttons for landscape */
+        .option-btn {
+            min-height: 40px !important;
+            padding: 8px 12px !important;
+            font-size: 13px !important;
+        }
+        
+        /* Adjust navigator buttons for landscape */
+        .navigator-btn {
+            min-height: 32px !important;
+            min-width: 32px !important;
+            font-size: 11px !important;
+        }
+        
+        /* Adjust timer for landscape */
+        .w-14.h-14.sm\\:w-16.sm\\:h-16.md\\:w-20.md\\:h-20 {
+            width: 3.5rem !important;
+            height: 3.5rem !important;
+        }
+        
+        /* Adjust progress bar for landscape */
+        .h-2.sm\\:h-3 {
+            height: 0.5rem !important;
+        }
+    }
+    </style>
 
     <script>
     // Copy Protection JavaScript
@@ -505,7 +891,7 @@
                 if (state.answers[state.currentQuestionIndex] === optionLetter) {
                     optionBtn.classList.add('selected');
                     optionLabel.classList.remove('bg-blue-100', 'text-blue-600', 'border-blue-200');
-                    optionLabel.classList.add('bg-white', 'text-white', 'border-white');
+                    optionLabel.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
                     
                     const checkIcon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
                     checkIcon.setAttribute("class", "selected-icon");
