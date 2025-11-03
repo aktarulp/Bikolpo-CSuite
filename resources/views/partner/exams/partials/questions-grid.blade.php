@@ -92,6 +92,13 @@
                                             <span class="text-xs">{{ Str::limit(strip_tags($question->option_d), 18) }}</span>
                                         @endif
                                     </span>
+                                    <br> <!-- Line break after answer options -->
+                                    <!-- Show all exams where this question appears -->
+                                    @foreach($question->exams as $exam)
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg mt-1 mr-1">
+                                            {{ $exam->course ? $exam->course->code : 'N/A' }}-{{ $exam->exam_number }}
+                                        </span>
+                                    @endforeach
                                 @elseif($question->question_type === 'true_false')
                                     <br> <!-- Line break before answer options -->
                                     <span class="text-gray-600 dark:text-gray-300 text-xs ml-1">
@@ -107,6 +114,13 @@
                                         </span>
                                         <span class="text-xs">{{ $question->option_b ? Str::limit(strip_tags($question->option_b), 28) : 'False' }}</span>
                                     </span>
+                                    <br> <!-- Line break after answer options -->
+                                    <!-- Show all exams where this question appears -->
+                                    @foreach($question->exams as $exam)
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg mt-1 mr-1">
+                                            {{ $exam->course ? $exam->course->code : 'N/A' }}-{{ $exam->exam_number }}
+                                        </span>
+                                    @endforeach
                                 @elseif($question->question_type === 'fill_in_blank' && $question->option_a)
                                     <br> <!-- Line break before answer options -->
                                     <span class="text-gray-600 dark:text-gray-300 text-xs ml-1">
@@ -115,6 +129,13 @@
                                         </span>
                                         <span class="text-xs">{{ Str::limit(strip_tags($question->option_a), 38) }}</span>
                                     </span>
+                                    <br> <!-- Line break after answer options -->
+                                    <!-- Show all exams where this question appears -->
+                                    @foreach($question->exams as $exam)
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg mt-1 mr-1">
+                                            {{ $exam->course ? $exam->course->code : 'N/A' }}-{{ $exam->exam_number }}
+                                        </span>
+                                    @endforeach
                                 @endif
                             </div>
                         </div>

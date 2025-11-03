@@ -973,7 +973,7 @@ class ExamController extends Controller
         // Sort questions by drag and drop order if present
         $assignedQuestionsWithOrder = $exam->questions->pluck('pivot.order', 'id')->toArray();
         
-        $questions = $questionsQuery->get();
+        $questions = $questionsQuery->with('exams.course')->get();
         
         // Check if the request is an AJAX call from the "search as you go" logic
         if ($request->ajax()) {

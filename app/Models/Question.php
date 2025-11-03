@@ -152,6 +152,16 @@ class Question extends Model
     }
 
     /**
+     * Get all exams that use this question
+     */
+    public function exams()
+    {
+        return $this->belongsToMany(Exam::class, 'exam_questions')
+                    ->withPivot('order', 'marks')
+                    ->withTimestamps();
+    }
+
+    /**
      * Virtual difficulty calculation based on student performance
      */
     public function getDifficultyLevelAttribute()
