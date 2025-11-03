@@ -833,8 +833,63 @@
         timer: null
     };
 
+    // Load state from localStorage if available
+    function loadStateFromStorage() {
+        try {
+            const savedState = localStorage.getItem(`exam_${examId}_state`);
+            const savedTime = localStorage.getItem(`exam_${examId}_time`);
+            
+            if (savedState) {
+                const parsedState = JSON.parse(savedState);
+                state.currentQuestionIndex = parsedState.currentQuestionIndex || 0;
+                state.answers = parsedState.answers || new Array(questions.length).fill(null);
+                state.skipped = parsedState.skipped || new Array(questions.length).fill(false);
+                state.isSubmitted = parsedState.isSubmitted || false;
+            }
+            
+            if (savedTime) {
+                const savedTimeRemaining = parseInt(savedTime);
+                if (!isNaN(savedTimeRemaining) && savedTimeRemaining > 0) {
+                    timeRemaining = savedTimeRemaining;
+                }
+            }
+        } catch (e) {
+            console.error('Error loading state from storage:', e);
+        }
+    }
+
+    // Save state to localStorage
+    function saveStateToStorage() {
+        try {
+            const stateToSave = {
+                currentQuestionIndex: state.currentQuestionIndex,
+                answers: state.answers,
+                skipped: state.skipped,
+                isSubmitted: state.isSubmitted
+            };
+            localStorage.setItem(`exam_${examId}_state`, JSON.stringify(stateToSave));
+            localStorage.setItem(`exam_${examId}_time`, timeRemaining.toString());
+        } catch (e) {
+            console.error('Error saving state to storage:', e);
+        }
+    }
+
+    // Clear state from localStorage (when exam is submitted)
+    function clearStateFromStorage() {
+        try {
+            localStorage.removeItem(`exam_${examId}_state`);
+            localStorage.removeItem(`exam_${examId}_time`);
+        } catch (e) {
+            console.error('Error clearing state from storage:', e);
+        }
+    }
+
     const QUIZ_DURATION = {{ $exam->duration * 60 }};
     let timeRemaining = {{ $remainingTime }};
+    const examId = {{ $exam->id }};
+
+    // Load saved state on initialization
+    loadStateFromStorage();
 
     // DOM elements
     const questionTextEl = document.getElementById('question-text');
@@ -930,6 +985,7 @@
                         state.answers[state.currentQuestionIndex] = optionLetter;
                         state.skipped[state.currentQuestionIndex] = false;
                         render();
+                        saveStateToStorage(); // Save state after each answer
                     }
                 });
 
@@ -1018,6 +1074,9 @@
         // Update timer colors based on remaining time
         updateTimerColors();
         
+        // Save time remaining to localStorage
+        saveStateToStorage();
+        
         if (timeRemaining <= 0) {
             clearInterval(state.timer);
             submitQuiz(true);
@@ -1076,6 +1135,7 @@
         if (state.currentQuestionIndex > 0) {
             state.currentQuestionIndex--;
             render();
+            saveStateToStorage(); // Save state after navigation
         }
     }
 
@@ -1083,12 +1143,14 @@
         if (state.currentQuestionIndex < questions.length - 1) {
             state.currentQuestionIndex++;
             render();
+            saveStateToStorage(); // Save state after navigation
         }
     }
 
     function handleSkip() {
         state.skipped[state.currentQuestionIndex] = true;
         state.answers[state.currentQuestionIndex] = null;
+        saveStateToStorage(); // Save state after skipping
         handleNext();
     }
 
@@ -1119,6 +1181,9 @@
                 examForm.appendChild(input);
             }
         });
+        
+        // Clear saved state since exam is being submitted
+        clearStateFromStorage();
         
         if (timedOut) {
             showResult('Time\'s Up!', 'Your time has run out. Your quiz has been submitted automatically.', true);
