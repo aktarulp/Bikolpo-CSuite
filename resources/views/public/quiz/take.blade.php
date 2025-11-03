@@ -187,10 +187,6 @@
                                 <span class="hidden sm:inline">Skip</span>
                                 <span class="sm:hidden">Skip</span>
                             </button>
-                            <button type="button" id="submit-btn" class="flex-1 sm:flex-none px-2 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-full text-xs sm:text-sm font-bold text-white bg-green-500 hover:bg-green-600 transition-colors duration-200 shadow-lg min-h-[44px] sm:min-h-[40px]">
-                                <span class="hidden sm:inline">🚀 Submit</span>
-                                <span class="sm:hidden">Submit</span>
-                            </button>
                             <button type="button" id="next-btn" class="flex-1 sm:flex-none px-2 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-full text-xs sm:text-sm font-semibold text-white bg-blue-500 hover:bg-blue-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] sm:min-h-[40px]">
                                 <span class="hidden sm:inline">Next →</span>
                                 <span class="sm:hidden">Next →</span>
@@ -207,7 +203,7 @@
                     </div>
 
                     <!-- Legend -->
-                    <div>
+                    <div class="mb-4">
                         <h4 class="text-xs sm:text-sm font-semibold text-gray-600 mb-1.5 sm:mb-2">Legend</h4>
                         <div class="space-y-1.5 sm:space-y-2">
                             <div class="flex items-center">
@@ -224,6 +220,12 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Submit Button -->
+                    <button type="button" id="submit-btn" class="w-full px-4 py-3 rounded-full text-sm font-bold text-white bg-green-500 hover:bg-green-600 transition-colors duration-200 shadow-lg">
+                        <span class="hidden sm:inline">🚀 Submit Quiz</span>
+                        <span class="sm:hidden">Submit</span>
+                    </button>
                 </div>
             </div>
 

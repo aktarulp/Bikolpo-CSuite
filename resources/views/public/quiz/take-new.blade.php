@@ -275,7 +275,7 @@
                     </div>
                     
                     <!-- Progress Summary -->
-                    <div class="bg-gray-50 rounded-xl p-4">
+                    <div class="bg-gray-50 rounded-xl p-4 mb-4">
                         <h4 class="text-sm font-semibold text-gray-900 mb-3">Progress Summary</h4>
                         <div class="space-y-2 text-sm">
                             <div class="flex justify-between">
@@ -296,6 +296,16 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Submit Button moved to bottom of navigator -->
+                    <button type="button" 
+                            onclick="showReviewModal()"
+                            class="w-full px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-medium rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-200 flex items-center justify-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span>Review & Submit Quiz</span>
+                    </button>
                 </div>
             </div>
         </div>
