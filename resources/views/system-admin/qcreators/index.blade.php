@@ -109,7 +109,7 @@
                                 <div class="flex items-center">
                                     <div class="flex-shrink-0 h-10 w-10">
                                         @if($creator->photo)
-                                            <img class="h-10 w-10 rounded-full object-cover" src="{{ asset('storage/' . $creator->photo) }}" alt="{{ $creator->full_name }}">
+                                            <img class="h-10 w-10 rounded-full object-cover" src="{{ $creator->photo_url }}" alt="{{ $creator->full_name }}">
                                         @else
                                             <div class="bg-gradient-to-br from-purple-400 to-indigo-600 h-10 w-10 rounded-full flex items-center justify-center">
                                                 <span class="text-white font-bold">{{ substr($creator->full_name, 0, 1) }}</span>

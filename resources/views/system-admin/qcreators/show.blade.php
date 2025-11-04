@@ -43,7 +43,7 @@
                     <div class="md:col-span-1">
                         <div class="bg-gray-100 dark:bg-gray-700 rounded-xl p-4 flex flex-col items-center">
                             @if($qcreator->photo)
-                                <img src="{{ asset('storage/' . $qcreator->photo) }}" alt="{{ $qcreator->full_name }}" class="w-48 h-48 object-cover rounded-lg shadow-md">
+                                <img src="{{ $qcreator->photo_url }}" alt="{{ $qcreator->full_name }}" class="w-48 h-48 object-cover rounded-lg shadow-md">
                             @else
                                 <div class="bg-gradient-to-br from-purple-400 to-indigo-600 w-48 h-48 rounded-lg flex items-center justify-center shadow-md">
                                     <span class="text-5xl font-bold text-white">{{ substr($qcreator->full_name, 0, 1) }}</span>
