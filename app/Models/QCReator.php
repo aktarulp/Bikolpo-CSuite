@@ -28,6 +28,12 @@ class QCReator extends Model
         'remarks' => 'string',
     ];
 
+    // Relationship with exams
+    public function exams()
+    {
+        return $this->hasMany(Exam::class, 'qcreator_id');
+    }
+
     // Accessor to get the full photo URL
     public function getPhotoUrlAttribute()
     {

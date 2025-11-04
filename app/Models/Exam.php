@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use App\Models\QCReator;
 
 class Exam extends Model
 {
@@ -16,7 +17,8 @@ class Exam extends Model
         'exam_number',
         'course_code',
         'course_id',
-        'sl',
+        'price',
+        'qcreator_id',
         'description',
         'start_time',
         'end_time',
@@ -55,7 +57,8 @@ class Exam extends Model
         'paper_settings' => 'array',
         'status' => 'string',
         'flag' => 'string',
-        'sl' => 'integer',
+        'price' => 'integer',
+        'qcreator_id' => 'integer',
         'ba' => 'string',
         'bb' => 'string',
         'bc' => 'string',
@@ -183,6 +186,14 @@ class Exam extends Model
         }
         
         return $this->status;
+    }
+
+    /**
+     * Relationship with QCReator
+     */
+    public function qcreator()
+    {
+        return $this->belongsTo(QCReator::class, 'qcreator_id');
     }
 
     /**
