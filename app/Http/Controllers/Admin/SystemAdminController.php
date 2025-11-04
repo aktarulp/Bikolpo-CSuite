@@ -140,7 +140,7 @@ class SystemAdminController extends Controller
         } catch (\Exception $e) {
             return view('system-admin.sa-allstudents', [
                 'error' => 'Failed to load students: ' . $e->getMessage(),
-                'students' => collect(),
+                'students' => \App\Models\Student::paginate(20), // Return empty paginator instead of collection
                 'totalStudents' => 0,
                 'activeStudents' => 0,
                 'inactiveStudents' => 0,
@@ -180,6 +180,40 @@ class SystemAdminController extends Controller
         } catch (\Exception $e) {
             return redirect()->route('system-admin.all-students')
                 ->with('error', 'Student not found: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Delete Student
+     */
+    public function deleteStudent(Request $request, $id)
+    {
+        try {
+            $student = Student::findOrFail($id);
+            
+            // Check if student can be deleted (no active exams, no login access, etc.)
+            $examResultsCount = $student->examResults()->count();
+            
+            if ($examResultsCount > 0 || $student->isLoginEnabled() || $student->partner_id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cannot delete student: Student has active exams, login access, or is associated with a partner.'
+                ], 400);
+            }
+            
+            $studentName = $student->full_name;
+            $student->delete();
+            
+            return response()->json([
+                'success' => true,
+                'message' => "Student '{$studentName}' deleted successfully!"
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error deleting student: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error deleting student: ' . $e->getMessage()
+            ], 500);
         }
     }
 

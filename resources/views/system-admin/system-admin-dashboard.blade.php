@@ -351,7 +351,7 @@
                            class="group flex items-center p-4 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-900/30 rounded-xl hover:shadow-lg transition-all duration-300 border border-orange-200 dark:border-orange-700/50">
                             <div class="w-10 h-10 bg-orange-600 rounded-xl flex items-center justify-center mr-3 group-hover:scale-110 transition-transform duration-300">
                                 <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
                                 </svg>
                             </div>
                             <div>
@@ -442,18 +442,18 @@
                             @foreach($recent_results as $result)
                                 <div class="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700/50 dark:to-gray-700/30 rounded-xl hover:shadow-md transition-all duration-300 border border-gray-200/50 dark:border-gray-600/50">
                                     <div>
-                                        <h4 class="font-bold text-gray-900 dark:text-white">{{ $result->student->full_name }}</h4>
-                                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ $result->exam->title }}</p>
+                                        <h4 class="font-bold text-gray-900 dark:text-white">{{ $result->student->full_name ?? 'Unknown Student' }}</h4>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ $result->exam ? $result->exam->title : 'Unknown Exam' }}</p>
                                     </div>
                                     <div class="text-right">
                                         <p class="text-2xl font-black text-gray-900 dark:text-white mb-1">
-                                            {{ number_format($result->percentage, 1) }}%
+                                            {{ number_format($result->percentage ?? 0, 1) }}%
                                         </p>
                                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold
-                                            @if($result->percentage >= 80) bg-green-500 text-white
-                                            @elseif($result->percentage >= 60) bg-yellow-500 text-white
+                                            @if(($result->percentage ?? 0) >= 80) bg-green-500 text-white
+                                            @elseif(($result->percentage ?? 0) >= 60) bg-yellow-500 text-white
                                             @else bg-red-500 text-white @endif">
-                                            {{ $result->grade }}
+                                            {{ $result->grade ?? 'N/A' }}
                                         </span>
                                     </div>
                                 </div>
@@ -704,7 +704,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         refreshStatsBtn.innerHTML = `
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                            </svg>
+                        </svg>
                             <span>Refresh</span>
                         `;
                         refreshStatsBtn.disabled = false;

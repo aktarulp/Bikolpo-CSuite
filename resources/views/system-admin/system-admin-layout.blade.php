@@ -267,6 +267,36 @@
                         </a>
                     </div>
 
+                    <!-- Public Exam Management -->
+                    <div class="mb-6" x-data="{ open: true }">
+                        <a href="#" @click="open = !open" class="group flex items-center px-3 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200" style="color: #F1F5F9;" onmouseover="this.style.backgroundColor='#15803D'" onmouseout="this.style.backgroundColor='transparent'">
+                            <div class="w-8 h-8 flex-shrink-0 rounded-lg flex items-center justify-center transition-all duration-200" style="background-color: rgba(241, 245, 249, 0.1);">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #F1F5F9;">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                            </div>
+                            <span class="ml-3 flex-1">Public Exam</span>
+                            <svg class="h-4 w-4 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #F1F5F9;">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </a>
+                        
+                        <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2" class="space-y-1 mt-2">
+                            <a href="{{ route('system-admin.qcreators.index') }}" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('system-admin.qcreators.*') ? 'active' : '' }}"
+                               style="{{ request()->routeIs('system-admin.qcreators.*') ? 'background-color: #16A34A; color: #F1F5F9;' : 'color: #F1F5F9;' }}"
+                               onmouseover="if (!this.classList.contains('active')) { this.style.backgroundColor = '#15803D'; }"
+                               onmouseout="if (!this.classList.contains('active')) { this.style.backgroundColor = 'transparent'; }">
+                                <div class="w-8 h-8 flex-shrink-0 rounded-lg flex items-center justify-center transition-all duration-200" 
+                                     style="{{ request()->routeIs('system-admin.qcreators.*') ? 'background-color: rgba(241, 245, 249, 0.2);' : 'background-color: rgba(241, 245, 249, 0.1);' }}">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #F1F5F9;">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                    </svg>
+                                </div>
+                                <span class="ml-3 flex-1">Creators</span>
+                            </a>
+                        </div>
+                    </div>
+
                     <!-- User Management -->
                     <div class="mb-6" x-data="{ open: true }">
                         <button @click="open = !open" class="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors" style="color: #F1F5F9;" onmouseover="this.style.color='#15803D'" onmouseout="this.style.color='#F1F5F9'">

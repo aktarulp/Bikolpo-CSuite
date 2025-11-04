@@ -545,6 +545,7 @@ Route::middleware(['auth', 'system_admin'])->prefix('system-admin')->name('syste
     Route::get('/students', [App\Http\Controllers\Admin\SystemAdminController::class, 'allStudents'])->name('all-students');
     Route::get('/students/{id}', [App\Http\Controllers\Admin\SystemAdminController::class, 'singleStudent'])->name('single-student');
     Route::get('/students/{id}/interactive-grid', [App\Http\Controllers\Admin\SystemAdminController::class, 'singleStudent'])->name('single-student-ig');
+    Route::post('/students/{id}/delete', [App\Http\Controllers\Admin\SystemAdminController::class, 'deleteStudent'])->name('students.delete');
     Route::get('/partners', [App\Http\Controllers\Admin\SystemAdminController::class, 'allPartners'])->name('all-partners');
     Route::get('/subscription-plans', [App\Http\Controllers\Admin\SystemAdminController::class, 'subscriptionPlans'])->name('subscription-plans');
     Route::get('/subscription-plans/create', [App\Http\Controllers\Admin\SystemAdminController::class, 'createSubscriptionPlan'])->name('subscription-plans.create');
@@ -569,6 +570,9 @@ Route::middleware(['auth', 'system_admin'])->prefix('system-admin')->name('syste
     Route::post('/payment-methods/{id}/toggle-status', [App\Http\Controllers\Admin\SystemAdminController::class, 'togglePaymentMethodStatus'])->name('payment-methods.toggle-status');
     Route::delete('/payment-methods/{id}', [App\Http\Controllers\Admin\SystemAdminController::class, 'deletePaymentMethod'])->name('payment-methods.delete');
     Route::get('/user-stats', [App\Http\Controllers\Admin\SystemAdminController::class, 'userStats'])->name('user-stats');
+    
+    // QCReator Routes
+    Route::resource('qcreators', App\Http\Controllers\QCReatorController::class);
 });
 
 // About page route (accessible without authentication)

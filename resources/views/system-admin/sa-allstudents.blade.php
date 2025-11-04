@@ -243,17 +243,17 @@
     <!-- Pagination -->
     <div class="bg-white dark:bg-gray-800 px-4 py-3 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 sm:px-6">
         <div class="flex-1 flex justify-between sm:hidden">
-            @if ($students->onFirstPage())
+            @if (method_exists($students, 'onFirstPage') && $students->onFirstPage())
                 <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 cursor-not-allowed">
                     Previous
                 </span>
             @else
-                <a href="{{ $students->previousPageUrl() }}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                <a href="{{ $students->previousPageUrl() ?? '#' }}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                     Previous
                 </a>
             @endif
 
-            @if ($students->hasMorePages())
+            @if (method_exists($students, 'hasMorePages') && $students->hasMorePages())
                 <a href="{{ $students->nextPageUrl() }}" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                     Next
                 </a>
@@ -266,11 +266,19 @@
         <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
             <div>
                 <p class="text-sm text-gray-700 dark:text-gray-300">
-                    Showing <span class="font-medium">{{ $students->firstItem() }}</span> to <span class="font-medium">{{ $students->lastItem() }}</span> of <span class="font-medium">{{ $students->total() }}</span> results
+                    Showing 
+                    <span class="font-medium">{{ method_exists($students, 'firstItem') ? $students->firstItem() : 0 }}</span> 
+                    to 
+                    <span class="font-medium">{{ method_exists($students, 'lastItem') ? $students->lastItem() : 0 }}</span> 
+                    of 
+                    <span class="font-medium">{{ method_exists($students, 'total') ? $students->total() : 0 }}</span> 
+                    results
                 </p>
             </div>
             <div>
-                {{ $students->links() }}
+                @if (method_exists($students, 'links'))
+                    {{ $students->links() }}
+                @endif
             </div>
         </div>
     </div>
@@ -502,7 +510,7 @@
                             </div>
                         </td>
                         <td class="px-2 py-2 whitespace-nowrap text-center">
-                            @if(($student->exam_results_count ?? 0) > 0 || $student->has_login_access || $student->partner_id)
+                            @if(($student->exam_results_count ?? 0) > 0 || $student->isLoginEnabled() || $student->partner_id)
                             <span class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-xs font-medium text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-700 cursor-not-allowed">
                                 <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
