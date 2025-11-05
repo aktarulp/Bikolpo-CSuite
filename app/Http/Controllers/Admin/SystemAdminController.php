@@ -10,7 +10,12 @@ use App\Models\Partner;
 use App\Models\Student;
 use App\Models\Exam;
 use App\Models\Question;
+use App\Models\Course;
+use App\Models\Subject;
+use App\Models\Topic;
+use App\Models\ExamQuestion;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 
 class SystemAdminController extends Controller
@@ -209,7 +214,7 @@ class SystemAdminController extends Controller
                 'message' => "Student '{$studentName}' deleted successfully!"
             ]);
         } catch (\Exception $e) {
-            \Log::error('Error deleting student: ' . $e->getMessage());
+            Log::error('Error deleting student: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Error deleting student: ' . $e->getMessage()
@@ -297,69 +302,69 @@ class SystemAdminController extends Controller
             try {
                 $stats['total_students'] = Student::count();
             } catch (\Exception $e) {
-                \Log::warning('Failed to get student count: ' . $e->getMessage());
+                Log::warning('Failed to get student count: ' . $e->getMessage());
             }
             
             try {
                 $stats['total_partners'] = Partner::count();
             } catch (\Exception $e) {
-                \Log::warning('Failed to get partner count: ' . $e->getMessage());
+                Log::warning('Failed to get partner count: ' . $e->getMessage());
             }
             
             try {
                 $stats['total_exams'] = Exam::count();
             } catch (\Exception $e) {
-                \Log::warning('Failed to get exam count: ' . $e->getMessage());
+                Log::warning('Failed to get exam count: ' . $e->getMessage());
             }
             
             try {
                 $stats['total_questions'] = Question::count();
             } catch (\Exception $e) {
-                \Log::warning('Failed to get question count: ' . $e->getMessage());
+                Log::warning('Failed to get question count: ' . $e->getMessage());
             }
             
             try {
                 $stats['mcq_questions'] = Question::where('question_type', 'mcq')->count();
             } catch (\Exception $e) {
-                \Log::warning('Failed to get MCQ question count: ' . $e->getMessage());
+                Log::warning('Failed to get MCQ question count: ' . $e->getMessage());
             }
             
             try {
                 $stats['descriptive_questions'] = Question::where('question_type', 'descriptive')->count();
             } catch (\Exception $e) {
-                \Log::warning('Failed to get descriptive question count: ' . $e->getMessage());
+                Log::warning('Failed to get descriptive question count: ' . $e->getMessage());
             }
             
             try {
                 $stats['true_false_questions'] = Question::where('question_type', 'true_false')->count();
             } catch (\Exception $e) {
-                \Log::warning('Failed to get true/false question count: ' . $e->getMessage());
+                Log::warning('Failed to get true/false question count: ' . $e->getMessage());
             }
             
             try {
                 $stats['active_students_today'] = Student::whereDate('last_login_at', today())->count();
             } catch (\Exception $e) {
-                \Log::warning('Failed to get active students today: ' . $e->getMessage());
+                Log::warning('Failed to get active students today: ' . $e->getMessage());
             }
             
             try {
                 $stats['active_partners_today'] = Partner::whereDate('last_login_at', today())->count();
             } catch (\Exception $e) {
-                \Log::warning('Failed to get active partners today: ' . $e->getMessage());
+                Log::warning('Failed to get active partners today: ' . $e->getMessage());
             }
             
             try {
                 $stats['total_ongoing_tests'] = Exam::where('status', 'active')->count();
                 $stats['ongoing_tests'] = $stats['total_ongoing_tests'];
             } catch (\Exception $e) {
-                \Log::warning('Failed to get ongoing tests: ' . $e->getMessage());
+                Log::warning('Failed to get ongoing tests: ' . $e->getMessage());
             }
             
             try {
                 $stats['total_question_attempts'] = DB::table('question_attempts')->count() ?? 0;
                 $stats['total_correct_answers'] = DB::table('question_attempts')->where('is_correct', true)->count() ?? 0;
             } catch (\Exception $e) {
-                \Log::warning('Failed to get question attempts: ' . $e->getMessage());
+                Log::warning('Failed to get question attempts: ' . $e->getMessage());
             }
 
             // Calculate overall accuracy
@@ -372,7 +377,7 @@ class SystemAdminController extends Controller
 
             return $stats;
         } catch (\Exception $e) {
-            \Log::error('Failed to get system stats: ' . $e->getMessage());
+            Log::error('Failed to get system stats: ' . $e->getMessage());
             return $defaultStats;
         }
     }
@@ -896,6 +901,507 @@ class SystemAdminController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->with('error', 'Failed to delete payment method: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Display a listing of public exams
+     */
+    public function publicExamsIndex(Request $request)
+    {
+        try {
+            $query = Exam::with(['partner'])
+                ->where('is_public', true)
+                // Exclude test exams
+                ->where('title', '!=', 'Test Public Exam')
+                ->orderBy('created_at', 'desc');
+
+            // Search functionality - using 'q' parameter as expected by the view
+            if ($request->has('q') && $request->q) {
+                $search = $request->q;
+                $query->where(function($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%")
+                      ->orWhere('description', 'like', "%{$search}%");
+                });
+            }
+
+            // Filter by status - mapping view statuses to actual database values
+            if ($request->has('status') && $request->status !== '') {
+                $status = $request->status;
+                // Map view statuses to database values
+                switch($status) {
+                    case 'published':
+                        $query->where('status', 'active');
+                        break;
+                    case 'ongoing':
+                        $query->where('status', 'active')
+                              ->where('start_time', '<=', now())
+                              ->where('end_time', '>=', now());
+                        break;
+                    case 'completed':
+                        $query->where('status', 'active')
+                              ->where('end_time', '<', now());
+                        break;
+                    case 'draft':
+                        $query->where('status', 'draft');
+                        break;
+                    case 'cancelled':
+                        $query->where('status', 'archived');
+                        break;
+                    default:
+                        // No filter for 'all' or unrecognized statuses
+                        break;
+                }
+            }
+
+            $exams = $query->paginate(20);
+            
+            // Get summary statistics for the counts array expected by the view
+            $counts = [
+                'all' => Exam::where('is_public', true)->where('title', '!=', 'Test Public Exam')->count(),
+                'draft' => Exam::where('is_public', true)->where('status', 'draft')->where('title', '!=', 'Test Public Exam')->count(),
+                'published' => Exam::where('is_public', true)->where('status', 'active')->where('title', '!=', 'Test Public Exam')->count(),
+                'ongoing' => Exam::where('is_public', true)
+                                 ->where('status', 'active')
+                                 ->where('start_time', '<=', now())
+                                 ->where('end_time', '>=', now())
+                                 ->where('title', '!=', 'Test Public Exam')
+                                 ->count(),
+                'completed' => Exam::where('is_public', true)
+                                   ->where('status', 'active')
+                                   ->where('end_time', '<', now())
+                                   ->where('title', '!=', 'Test Public Exam')
+                                   ->count(),
+                'cancelled' => Exam::where('is_public', true)->where('status', 'archived')->where('title', '!=', 'Test Public Exam')->count()
+            ];
+            
+            return view('system-admin.public-exams.sa-index', compact('exams', 'counts'));
+        } catch (\Exception $e) {
+            return redirect()->route('system-admin.system-admin-dashboard')
+                ->with('error', 'Failed to load public exams: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Show the form for creating a new public exam
+     */
+    public function publicExamsCreate()
+    {
+        try {
+            // Get partners for the form
+            $partners = Partner::all();
+            
+            // Get courses for the form
+            $courses = \App\Models\Course::all();
+            
+            // Get qcreators for the form
+            $qcreators = \App\Models\QCReator::all();
+            
+            return view('system-admin.public-exams.sa-create', compact('partners', 'courses', 'qcreators'));
+        } catch (\Exception $e) {
+            return redirect()->route('system-admin.public-exams.index')
+                ->with('error', 'Failed to load create exam page: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Store a newly created public exam
+     */
+    public function publicExamsStore(Request $request)
+    {
+        try {
+            // Validate the request
+            $validated = $request->validate([
+                'title' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'duration' => 'required|integer|min:1',
+                'total_questions' => 'required|integer|min:1',
+                'passing_marks' => 'required|numeric|min:0',
+                'status' => 'required|in:draft,active,archived',
+                'partner_id' => 'nullable|exists:partners,id',
+                'startDateTime' => 'nullable|date',
+                'endDateTime' => 'nullable|date|after:startDateTime',
+                'allow_review' => 'boolean',
+                'has_negative_marking' => 'boolean',
+                'negative_marks_per_question' => 'nullable|numeric|min:0',
+                'question_language' => 'required|in:english,bangla',
+                'is_public' => 'boolean',
+                'course_id' => 'required|exists:courses,id',
+                'qcreator_id' => 'required|exists:qcreators,id',
+                'exam_number' => 'nullable|string',
+                'price' => 'nullable|integer|min:0',
+                'exam_type' => 'in:online,offline'
+            ]);
+            
+            // Set is_public to true for public exams
+            $validated['is_public'] = true;
+            
+            // Set exam_type to online by default if not provided
+            if (!isset($validated['exam_type'])) {
+                $validated['exam_type'] = 'online';
+            }
+            
+            // Handle datetime fields
+            if (isset($validated['startDateTime'])) {
+                $validated['start_time'] = $validated['startDateTime'];
+                unset($validated['startDateTime']);
+            }
+            
+            if (isset($validated['endDateTime'])) {
+                $validated['end_time'] = $validated['endDateTime'];
+                unset($validated['endDateTime']);
+            }
+            
+            // Handle boolean fields
+            $validated['allow_review'] = isset($validated['allow_review']) ? true : false;
+            $validated['has_negative_marking'] = isset($validated['has_negative_marking']) ? true : false;
+            $validated['show_results_immediately'] = false; // Default value
+            
+            // Set default partner_id to 0 if not provided
+            if (!isset($validated['partner_id']) || is_null($validated['partner_id'])) {
+                $validated['partner_id'] = 0;
+            }
+            
+            // Create the exam
+            $exam = Exam::create($validated);
+
+            return redirect()->route('system-admin.public-exams.index')
+                ->with('success', 'Public exam created successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Failed to create public exam: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
+
+    /**
+     * Display the specified public exam
+     */
+    public function publicExamsShow(Exam $exam)
+    {
+        try {
+            // Ensure it's a public exam
+            if (!$exam->is_public) {
+                return redirect()->route('system-admin.public-exams.index')
+                    ->with('error', 'Exam not found.');
+            }
+            
+            $exam->load(['partner', 'questions']);
+            
+            return view('system-admin.public-exams.sa-show', compact('exam'));
+        } catch (\Exception $e) {
+            return redirect()->route('system-admin.public-exams.index')
+                ->with('error', 'Failed to load exam details: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Show the form for editing the specified public exam
+     */
+    public function publicExamsEdit(Exam $exam)
+    {
+        try {
+            // Ensure it's a public exam
+            if (!$exam->is_public) {
+                return redirect()->route('system-admin.public-exams.index')
+                    ->with('error', 'Exam not found.');
+            }
+            
+            // Get partners for the form
+            $partners = Partner::all();
+            
+            // Get courses for the form
+            $courses = \App\Models\Course::all();
+            
+            // Get qcreators for the form
+            $qcreators = \App\Models\QCReator::all();
+            
+            $exam->load(['partner']);
+            
+            return view('system-admin.public-exams.sa-edit', compact('exam', 'partners', 'courses', 'qcreators'));
+        } catch (\Exception $e) {
+            return redirect()->route('system-admin.public-exams.index')
+                ->with('error', 'Failed to load edit exam page: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Update the specified public exam
+     */
+    public function publicExamsUpdate(Request $request, Exam $exam)
+    {
+        try {
+            // Ensure it's a public exam
+            if (!$exam->is_public) {
+                return redirect()->route('system-admin.public-exams.index')
+                    ->with('error', 'Exam not found.');
+            }
+            
+            // Validate the request
+            $validated = $request->validate([
+                'title' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'duration' => 'required|integer|min:1',
+                'total_questions' => 'required|integer|min:1',
+                'passing_marks' => 'required|numeric|min:0',
+                'status' => 'required|in:draft,active,archived',
+                'partner_id' => 'nullable|exists:partners,id',
+                'startDateTime' => 'nullable|date',
+                'endDateTime' => 'nullable|date|after:startDateTime',
+                'allow_review' => 'boolean',
+                'has_negative_marking' => 'boolean',
+                'negative_marks_per_question' => 'nullable|numeric|min:0',
+                'question_language' => 'required|in:english,bangla',
+                'is_public' => 'boolean',
+                'course_id' => 'required|exists:courses,id',
+                'qcreator_id' => 'required|exists:qcreators,id',
+                'exam_number' => 'nullable|string',
+                'price' => 'nullable|integer|min:0',
+                'exam_type' => 'in:online,offline'
+            ]);
+            
+            // Set is_public to true for public exams
+            $validated['is_public'] = true;
+            
+            // Set exam_type to online by default
+            $validated['exam_type'] = 'online';
+            
+            // Handle datetime fields
+            if (isset($validated['startDateTime'])) {
+                $validated['start_time'] = $validated['startDateTime'];
+                unset($validated['startDateTime']);
+            }
+            
+            if (isset($validated['endDateTime'])) {
+                $validated['end_time'] = $validated['endDateTime'];
+                unset($validated['endDateTime']);
+            }
+            
+            // Handle boolean fields
+            $validated['allow_review'] = isset($validated['allow_review']) ? true : false;
+            $validated['has_negative_marking'] = isset($validated['has_negative_marking']) ? true : false;
+            $validated['show_results_immediately'] = false; // Default value
+            
+            // Update the exam
+            $exam->update($validated);
+
+            return redirect()->route('system-admin.public-exams.index')
+                ->with('success', 'Public exam updated successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Failed to update public exam: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
+
+    /**
+     * Remove the specified public exam
+     */
+    public function publicExamsDestroy(Exam $exam)
+    {
+        try {
+            // Ensure it's a public exam
+            if (!$exam->is_public) {
+                return redirect()->route('system-admin.public-exams.index')
+                    ->with('error', 'Exam not found.');
+            }
+            
+            $examTitle = $exam->title;
+            $exam->delete();
+            
+            return redirect()->route('system-admin.public-exams.index')
+                ->with('success', "Public exam '{$examTitle}' deleted successfully!");
+        } catch (\Exception $e) {
+            return redirect()->route('system-admin.public-exams.index')
+                ->with('error', 'Failed to delete public exam: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Publish the specified public exam
+     */
+    public function publicExamsPublish(Exam $exam)
+    {
+        try {
+            // Ensure it's a public exam
+            if (!$exam->is_public) {
+                return redirect()->route('system-admin.public-exams.index')
+                    ->with('error', 'Exam not found.');
+            }
+            
+            // Update the exam status to active
+            $exam->update(['status' => 'active']);
+            
+            return redirect()->route('system-admin.public-exams.index')
+                ->with('success', "Public exam '{$exam->title}' published successfully!");
+        } catch (\Exception $e) {
+            return redirect()->route('system-admin.public-exams.index')
+                ->with('error', 'Failed to publish public exam: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Unpublish the specified public exam
+     */
+    public function publicExamsUnpublish(Exam $exam)
+    {
+        try {
+            // Ensure it's a public exam
+            if (!$exam->is_public) {
+                return redirect()->route('system-admin.public-exams.index')
+                    ->with('error', 'Exam not found.');
+            }
+            
+            // Update the exam status to draft
+            $exam->update(['status' => 'draft']);
+            
+            return redirect()->route('system-admin.public-exams.index')
+                ->with('success', "Public exam '{$exam->title}' unpublished successfully!");
+        } catch (\Exception $e) {
+            return redirect()->route('system-admin.public-exams.index')
+                ->with('error', 'Failed to unpublish public exam: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Show the assign questions form for public exams
+     */
+    public function publicExamsAssignQuestions(Exam $exam)
+    {
+        try {
+            // Ensure it's a public exam
+            if (!$exam->is_public) {
+                return redirect()->route('system-admin.public-exams.index')
+                    ->with('error', 'Exam not found.');
+            }
+
+            // Get all active questions (no partner restriction for system admin)
+            $questionsQuery = \App\Models\Question::query()
+                ->where('status', 'active')
+                ->with('course', 'subject', 'topic', 'questionType');
+
+            $questions = $questionsQuery->with('exams.course')->get();
+            
+            return view('system-admin.public-exams.sa-assign-questions', [
+                'exam' => $exam,
+                'questions' => $questions,
+                'assignedQuestions' => $exam->questions->pluck('id'),
+                'assignedQuestionsWithMarks' => $exam->questions->pluck('pivot.marks', 'id'),
+                'assignedQuestionsWithOrder' => $exam->questions->pluck('pivot.order', 'id'),
+                'courses' => \App\Models\Course::where('status', 'active')->get(),
+                'subjects' => \App\Models\Subject::where('status', 'active')->where('flag', 'active')->get(),
+                'topics' => \App\Models\Topic::where('status', 'active')->get(),
+                'questionTypes' => \App\Models\Question::where('status', 'active')
+                    ->select('question_type')
+                    ->distinct()
+                    ->pluck('question_type')
+                    ->map(function($type) {
+                        return [
+                            'value' => $type,
+                            'label' => match($type) {
+                                'mcq' => 'MCQ',
+                                'descriptive' => 'Descriptive',
+                                'true_false' => 'True/False',
+                                'fill_in_blank' => 'Fill in the Blanks',
+                                default => ucfirst(str_replace('_', ' ', $type))
+                            }
+                        ];
+                    }),
+                'availableDates' => \App\Models\Question::where('status', 'active')
+                    ->selectRaw('DATE(created_at) as date')
+                    ->groupBy('date')
+                    ->orderBy('date', 'desc')
+                    ->get()
+                    ->map(function($question) {
+                        $date = \Carbon\Carbon::parse($question->date);
+                        return [
+                            'value' => $date->format('Y-m-d'),
+                            'label' => $date->format('d-M-Y')
+                        ];
+                    }),
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->route('system-admin.public-exams.index')
+                ->with('error', 'Failed to load assign questions page: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Store assigned questions for public exams
+     */
+    public function publicExamsStoreAssignedQuestions(Request $request, Exam $exam)
+    {
+        try {
+            // Ensure it's a public exam
+            if (!$exam->is_public) {
+                return redirect()->route('system-admin.public-exams.index')
+                    ->with('error', 'Exam not found.');
+            }
+
+            $request->validate([
+                'question_ids' => 'nullable|array',
+                'question_ids.*' => 'exists:questions,id',
+                'question_marks' => 'nullable|array',
+                'question_marks.*' => 'integer|min:1|max:100',
+                'question_numbers' => 'array',
+                'question_numbers.*' => 'nullable|integer|min:1|max:999'
+            ]);
+
+            // Clear existing assigned questions for this exam
+            \App\Models\ExamQuestion::where('exam_id', $exam->id)->delete();
+
+            // Store new assigned questions
+            $questionIds = $request->has('question_ids') && is_array($request->question_ids) 
+                ? array_filter($request->question_ids) // Remove empty values
+                : [];
+            $questionMarks = $request->has('question_marks') && is_array($request->question_marks) 
+                ? $request->question_marks 
+                : [];
+            $questionNumbers = $request->has('question_numbers') && is_array($request->question_numbers) 
+                ? $request->question_numbers 
+                : [];
+            $examQuestions = [];
+            
+            if (!empty($questionIds)) {
+                foreach ($questionIds as $index => $questionId) {
+                    $marks = isset($questionMarks[$questionId]) ? (int)$questionMarks[$questionId] : 1;
+                    
+                    // Only use question number if it's not empty, otherwise use sequential order
+                    $order = $index + 1;
+                    if (isset($questionNumbers[$questionId]) && !empty($questionNumbers[$questionId])) {
+                        $order = (int)$questionNumbers[$questionId];
+                    }
+                    
+                    $examQuestions[] = [
+                        'exam_id' => $exam->id,
+                        'question_id' => $questionId,
+                        'order' => $order,
+                        'marks' => $marks,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+
+                // Insert all exam questions
+                if (!empty($examQuestions)) {
+                    \App\Models\ExamQuestion::insert($examQuestions);
+                }
+            }
+
+            // Validate that assigned questions don't exceed the exam's total_questions limit
+            $assignedCount = count($questionIds);
+            if ($assignedCount > $exam->total_questions) {
+                return redirect()->back()
+                    ->with('warning', "You've assigned {$assignedCount} questions, which exceeds the exam's limit of {$exam->total_questions}. Please review your selections.")
+                    ->withInput();
+            }
+
+            return redirect()->route('system-admin.public-exams.show', $exam)
+                ->with('success', 'Questions assigned successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Failed to assign questions: ' . $e->getMessage())
+                ->withInput();
         }
     }
 }

@@ -542,6 +542,20 @@ Route::get('/test-role', function () {
 // System Admin Routes
 Route::middleware(['auth', 'system_admin'])->prefix('system-admin')->name('system-admin.')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Admin\SystemAdminController::class, 'dashboard'])->name('system-admin-dashboard');
+    
+    // Public Exams Management
+    Route::get('/public-exams', [App\Http\Controllers\Admin\SystemAdminController::class, 'publicExamsIndex'])->name('public-exams.index');
+    Route::get('/public-exams/create', [App\Http\Controllers\Admin\SystemAdminController::class, 'publicExamsCreate'])->name('public-exams.create');
+    Route::post('/public-exams', [App\Http\Controllers\Admin\SystemAdminController::class, 'publicExamsStore'])->name('public-exams.store');
+    Route::get('/public-exams/{exam}', [App\Http\Controllers\Admin\SystemAdminController::class, 'publicExamsShow'])->name('public-exams.show');
+    Route::get('/public-exams/{exam}/edit', [App\Http\Controllers\Admin\SystemAdminController::class, 'publicExamsEdit'])->name('public-exams.edit');
+    Route::put('/public-exams/{exam}', [App\Http\Controllers\Admin\SystemAdminController::class, 'publicExamsUpdate'])->name('public-exams.update');
+    Route::delete('/public-exams/{exam}', [App\Http\Controllers\Admin\SystemAdminController::class, 'publicExamsDestroy'])->name('public-exams.destroy');
+    Route::post('/public-exams/{exam}/publish', [App\Http\Controllers\Admin\SystemAdminController::class, 'publicExamsPublish'])->name('public-exams.publish');
+    Route::post('/public-exams/{exam}/unpublish', [App\Http\Controllers\Admin\SystemAdminController::class, 'publicExamsUnpublish'])->name('public-exams.unpublish');
+    Route::get('/public-exams/{exam}/assign-questions', [App\Http\Controllers\Admin\SystemAdminController::class, 'publicExamsAssignQuestions'])->name('public-exams.assign-questions');
+    Route::post('/public-exams/{exam}/assign-questions', [App\Http\Controllers\Admin\SystemAdminController::class, 'publicExamsStoreAssignedQuestions'])->name('public-exams.store-assigned-questions');
+    
     Route::get('/students', [App\Http\Controllers\Admin\SystemAdminController::class, 'allStudents'])->name('all-students');
     Route::get('/students/{id}', [App\Http\Controllers\Admin\SystemAdminController::class, 'singleStudent'])->name('single-student');
     Route::get('/students/{id}/interactive-grid', [App\Http\Controllers\Admin\SystemAdminController::class, 'singleStudent'])->name('single-student-ig');
