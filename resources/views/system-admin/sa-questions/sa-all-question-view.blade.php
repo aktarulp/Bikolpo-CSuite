@@ -1,0 +1,1632 @@
+@extends('layouts.partner-layout')
+
+@section('title', 'All Questions - Bikolpo Live')
+
+@section('content')
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <!-- Success/Error Messages -->
+    @if (session('success'))
+        <div class="fixed top-4 right-4 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 translate-x-0">
+            <div class="flex items-center gap-2">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <span class="font-medium">{{ session('success') }}</span>
+            </div>
+        </div>
+    @endif
+
+    @if (session('import_errors'))
+        <div class="fixed top-4 right-4 z-50 bg-yellow-500 text-white px-6 py-3 rounded-lg shadow-lg max-w-md">
+            <div class="flex items-start gap-2">
+                <svg class="w-5 h-5 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                </svg>
+                <div>
+                    <h3 class="font-medium">Import completed with errors</h3>
+                    <div class="mt-1 text-sm opacity-90 max-h-32 overflow-y-auto">
+                        <ul class="list-disc pl-4 space-y-1">
+                            @foreach (session('import_errors') as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    <!-- Main Container -->
+    <div class="container mx-auto px-3 sm:px-4 lg:px-6 py-4 space-y-4 relative" style="padding-bottom: 200px;">
+        <!-- Modern Header Section -->
+        <div class="relative overflow-hidden z-10">
+            <!-- Background Pattern -->
+            <div class="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"></div>
+            <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40"></div>
+            
+            <!-- Header Content -->
+            <div class="relative z-10 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 dark:border-slate-700/50 overflow-hidden">
+                <!-- Top Section -->
+                <div class="px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                        <!-- Title Section -->
+                        <div class="flex items-center gap-4">
+                            <div class="relative">
+                                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
+                                    <svg class="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div class="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-slate-800"></div>
+                            </div>
+                            <div>
+                                <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white">Question Bank</h1>
+                                <p class="text-slate-600 dark:text-slate-300 mt-1 text-sm sm:text-base">Manage and organize your questions efficiently</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <a href="{{ route('partner.questions.drafts') }}" 
+                               class="inline-flex items-center justify-center px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl transition-all duration-200 font-medium text-sm shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <span class="hidden sm:inline">Drafts</span>
+                                <span class="sm:hidden">Drafts</span>
+                            </a>
+                            
+                            <button id="addQuestionBtn" class="inline-flex items-center justify-center px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-xl transition-all duration-200 font-medium text-sm shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                <span class="hidden sm:inline">Add Question</span>
+                                <span class="sm:hidden">Add</span>
+                                <svg id="dropdownArrow" class="w-3 h-3 ml-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stats Section -->
+                <div class="px-4 sm:px-6 lg:px-8 pb-6">
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                        <!-- Total Questions -->
+                        <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200/50 dark:border-blue-700/50">
+                            <div class="flex items-center justify-between">
+                                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-2xl font-bold text-slate-900 dark:text-white">{{ $questions->count() }}</div>
+                                    <div class="text-xs font-medium text-blue-600 dark:text-blue-400">Total</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- MCQ -->
+                        <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/20 dark:to-indigo-800/20 rounded-xl p-4 border border-indigo-200/50 dark:border-indigo-700/50">
+                            <div class="flex items-center justify-between">
+                                <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                                    <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <circle cx="5" cy="7" r="1.5" stroke-width="2"></circle>
+                                        <line x1="9" y1="7" x2="19" y2="7" stroke-width="2" stroke-linecap="round"></line>
+                                        <circle cx="5" cy="12" r="1.5" stroke-width="2"></circle>
+                                        <line x1="9" y1="12" x2="19" y2="12" stroke-width="2" stroke-linecap="round"></line>
+                                        <circle cx="5" cy="17" r="1.5" stroke-width="2"></circle>
+                                        <line x1="9" y1="17" x2="19" y2="17" stroke-width="2" stroke-linecap="round"></line>
+                                    </svg>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-2xl font-bold text-slate-900 dark:text-white">{{ $questions->where('question_type', 'mcq')->count() }}</div>
+                                    <div class="text-xs font-medium text-indigo-600 dark:text-indigo-400">MCQ</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Descriptive -->
+                        <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20 rounded-xl p-4 border border-emerald-200/50 dark:border-emerald-700/50">
+                            <div class="flex items-center justify-between">
+                                <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
+                                    <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <rect x="6" y="4" width="12" height="16" rx="2" ry="2" stroke-width="2"></rect>
+                                        <line x1="9" y1="9" x2="15" y2="9" stroke-width="2" stroke-linecap="round"></line>
+                                        <line x1="9" y1="13" x2="17" y2="13" stroke-width="2" stroke-linecap="round"></line>
+                                        <line x1="9" y1="17" x2="14" y2="17" stroke-width="2" stroke-linecap="round"></line>
+                                    </svg>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-2xl font-bold text-slate-900 dark:text-white">{{ $questions->where('question_type', 'descriptive')->count() }}</div>
+                                    <div class="text-xs font-medium text-emerald-600 dark:text-emerald-400">Descriptive</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- True/False -->
+                        <div class="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20 rounded-xl p-4 border border-amber-200/50 dark:border-amber-700/50">
+                            <div class="flex items-center justify-between">
+                                <div class="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-2xl font-bold text-slate-900 dark:text-white">{{ $questions->where('question_type', 'true_false')->count() }}</div>
+                                    <div class="text-xs font-medium text-amber-600 dark:text-amber-400">True/False</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Question Dropdown Menu (Positioned outside header) -->
+        <div id="addQuestionDropdown" class="fixed top-20 right-4 w-64 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 opacity-0 invisible transition-all duration-300 transform translate-y-2 z-[99999]" style="z-index: 99999 !important;">
+            <div class="py-2">
+                <a href="{{ route('partner.questions.mcq.create') }}" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors group">
+                    <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50 transition-colors">
+                        <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="5" cy="7" r="1.5" stroke-width="2"></circle>
+                            <line x1="9" y1="7" x2="19" y2="7" stroke-width="2" stroke-linecap="round"></line>
+                            <circle cx="5" cy="12" r="1.5" stroke-width="2"></circle>
+                            <line x1="9" y1="12" x2="19" y2="12" stroke-width="2" stroke-linecap="round"></line>
+                            <circle cx="5" cy="17" r="1.5" stroke-width="2"></circle>
+                            <line x1="9" y1="17" x2="19" y2="17" stroke-width="2" stroke-linecap="round"></line>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="font-medium">Multiple Choice</div>
+                        <div class="text-xs text-slate-500 dark:text-slate-400">Create MCQ questions</div>
+                    </div>
+                </a>
+                
+                <a href="{{ route('partner.questions.descriptive.create') }}" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors group">
+                    <div class="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center mr-3 group-hover:bg-green-200 dark:group-hover:bg-green-900/50 transition-colors">
+                        <svg class="w-4 h-4 text-green-600 dark:text-green-400" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <rect x="6" y="4" width="12" height="16" rx="2" ry="2" stroke-width="2"></rect>
+                            <line x1="9" y1="9" x2="15" y2="9" stroke-width="2" stroke-linecap="round"></line>
+                            <line x1="9" y1="13" x2="17" y2="13" stroke-width="2" stroke-linecap="round"></line>
+                            <line x1="9" y1="17" x2="14" y2="17" stroke-width="2" stroke-linecap="round"></line>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="font-medium">Descriptive</div>
+                        <div class="text-xs text-slate-500 dark:text-slate-400">Create essay questions</div>
+                    </div>
+                </a>
+                
+                <a href="{{ route('partner.questions.tf.create') }}" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors group">
+                    <div class="w-8 h-8 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center mr-3 group-hover:bg-orange-200 dark:group-hover:bg-orange-900/50 transition-colors">
+                        <svg class="w-4 h-4 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="font-medium">True/False</div>
+                        <div class="text-xs text-slate-500 dark:text-slate-400">Create T/F questions</div>
+                    </div>
+                </a>
+                
+                <div class="border-t border-slate-200 dark:border-slate-600 my-2"></div>
+                
+                <a href="{{ route('partner.questions.bulk-upload') }}" class="flex items-center px-4 py-3 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/20 transition-colors group">
+                    <div class="w-8 h-8 bg-slate-100 dark:bg-slate-700 rounded-lg flex items-center justify-center mr-3 group-hover:bg-slate-200 dark:group-hover:bg-slate-600 transition-colors">
+                        <svg class="w-4 h-4 text-slate-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="font-medium">Bulk Upload</div>
+                        <div class="text-xs text-slate-500 dark:text-slate-400">Upload multiple questions</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Modern Search and Filters Section -->
+        <div class="relative overflow-hidden z-0">
+            <!-- Background -->
+            <div class="absolute inset-0 bg-gradient-to-br from-white via-slate-50 to-blue-50 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800"></div>
+            <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%23f1f5f9" fill-opacity="0.3"%3E%3Cpath d="M20 20c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10zm10 0c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10z"/%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
+            
+            <!-- Content -->
+            <div class="relative z-10 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 dark:border-slate-700/50 overflow-hidden">
+                <div class="p-4 sm:p-6 lg:p-8">
+                    <form method="GET" id="filterForm" class="space-y-6">
+                        <input type="hidden" name="search" id="searchHidden" value="{{ request('search') }}">
+                        
+                        <!-- Search Bar Section -->
+                        <div class="mb-6">
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    </svg>
+                                </div>
+                                <input 
+                                    type="text" 
+                                    id="searchInput"
+                                    placeholder="Search questions by content, course, subject, or topic..." 
+                                    class="block w-full pl-12 pr-4 py-4 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-lg hover:shadow-xl text-base"
+                                    value="{{ request('search') }}"
+                                />
+                                <div class="absolute inset-y-0 right-0 pr-4 flex items-center">
+                                    <div id="searchLoading" class="hidden">
+                                        <svg class="animate-spin h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Filters Grid -->
+                        <div class="space-y-4">
+                            <!-- Filter Header -->
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Filter Questions</h3>
+                                <button type="button" id="clearAllFilters" class="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 transition-colors">
+                                    Clear all filters
+                                </button>
+                            </div>
+                            
+                            <!-- Filter Grid -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                                <!-- Course Filter -->
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                        <div class="flex items-center gap-2">
+                                            <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                            </svg>
+                                            Course
+                                        </div>
+                                    </label>
+                                    <select name="course_filter" id="course_filter" class="w-full px-4 py-3 text-slate-900 dark:text-white bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
+                                        <option value="">All Courses</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Subject Filter -->
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                        <div class="flex items-center gap-2">
+                                            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                            </svg>
+                                            Subject
+                                        </div>
+                                    </label>
+                                    <select name="subject_filter" id="subject_filter" class="w-full px-4 py-3 text-slate-900 dark:text-white bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
+                                        <option value="">All Subjects</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Topic Filter -->
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                        <div class="flex items-center gap-2">
+                                            <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                                            </svg>
+                                            Topic
+                                        </div>
+                                    </label>
+                                    <select name="topic_filter" id="topic_filter" class="w-full px-4 py-3 text-slate-900 dark:text-white bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
+                                        <option value="">All Topics</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Question Type Filter -->
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                        <div class="flex items-center gap-2">
+                                            <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                                            </svg>
+                                            Type
+                                        </div>
+                                    </label>
+                                    <select name="question_type_filter" id="question_type_filter" class="w-full px-4 py-3 text-slate-900 dark:text-white bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
+                                        <option value="">All Types</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Date Filter -->
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                                        <div class="flex items-center gap-2">
+                                            <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                            </svg>
+                                            Date
+                                        </div>
+                                    </label>
+                                    <select name="date_filter" id="date_filter" class="w-full px-4 py-3 text-slate-900 dark:text-white bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md focus:shadow-lg">
+                                        <option value="">All Dates</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-slate-200 dark:border-slate-600">
+                            <button type="button" id="refreshQuestions" class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl transition-all duration-300 font-medium shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                                Refresh Results
+                            </button>
+                            
+                            <div class="flex items-center text-sm text-slate-500 dark:text-slate-400">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1a3 3 0 01-3-3V6a3 3 0 013-3h1m-1 0v18m0 0h1a3 3 0 013 3v7a3 3 0 01-3 3h-1"></path>
+                                </svg>
+                                <span id="resultsCount">{{ $questions->count() }} questions found</span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Questions Grid Section -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <!-- Header -->
+            <div class="bg-gray-50 dark:bg-gray-700 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900 dark:text-white">Questions</h2>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Showing {{ $questions->count() }} questions</p>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1a3 3 0 01-3-3V6a3 3 0 013-3h1m-1 0v18m0 0h1a3 3 0 013 3v7a3 3 0 01-3 3h-1"></path>
+                        </svg>
+                        <span>{{ $questions->count() }} total</span>
+                    </div>
+                </div>
+            </div>
+
+            @if($questions->count() > 0)
+                <!-- Questions List - Compact Single Column -->
+                <div class="questions-container">
+                    @foreach($questions as $question)
+<div class="question-card border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200 transition-transform hover:-translate-y-0.5" data-question-id="{{ $question->id }}">
+                            <div class="px-4 py-3">
+                                <!-- Mobile-First Question Layout -->
+                                <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-2">
+                                    <!-- Top Row: Type Badge, ID, and Actions (Mobile) / Left Side (Desktop) -->
+                                    <div class="flex items-center justify-between sm:justify-start gap-3 flex-1 min-w-0">
+                                        <div class="flex items-center gap-2 flex-shrink-0">
+                                            <div class="w-6 h-6 rounded-md flex items-center justify-center
+                                                {{ $question->question_type === 'mcq' ? 'bg-blue-100 dark:bg-blue-900/30' : ($question->question_type === 'true_false' ? 'bg-orange-100 dark:bg-orange-900/30' : 'bg-green-100 dark:bg-green-900/30') }}">
+                                                @if($question->question_type === 'mcq')
+<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                                    <circle cx="5" cy="7" r="1.5" stroke-width="2"></circle>
+                                                    <line x1="9" y1="7" x2="19" y2="7" stroke-width="2" stroke-linecap="round"></line>
+                                                    <circle cx="5" cy="12" r="1.5" stroke-width="2"></circle>
+                                                    <line x1="9" y1="12" x2="19" y2="12" stroke-width="2" stroke-linecap="round"></line>
+                                                    <circle cx="5" cy="17" r="1.5" stroke-width="2"></circle>
+                                                    <line x1="9" y1="17" x2="19" y2="17" stroke-width="2" stroke-linecap="round"></line>
+                                                </svg>
+                                                @elseif($question->question_type === 'descriptive')
+<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                                    <rect x="6" y="4" width="12" height="16" rx="2" ry="2" stroke-width="2"></rect>
+                                                    <line x1="9" y1="9" x2="15" y2="9" stroke-width="2" stroke-linecap="round"></line>
+                                                    <line x1="9" y1="13" x2="17" y2="13" stroke-width="2" stroke-linecap="round"></line>
+                                                    <line x1="9" y1="17" x2="14" y2="17" stroke-width="2" stroke-linecap="round"></line>
+                                                </svg>
+                                                @else
+                                                    <svg class="w-4 h-4 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                    </svg>
+                                                @endif
+                                            </div>
+                                            <span class="text-xs font-semibold text-gray-500 dark:text-gray-400">#{{ $question->id }}</span>
+                                        </div>
+                                        
+                                        <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium flex-shrink-0
+                                            {{ $question->question_type === 'mcq' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' : ($question->question_type === 'true_false' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300' : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300') }}">
+                                            {{ $question->question_type === 'mcq' ? 'MCQ' : ($question->question_type === 'true_false' ? 'T/F' : 'Descriptive') }}
+                                        </span>
+                                        
+                                        <!-- Question Text with Answer Options - Right after type badge on desktop -->
+                                        <div class="hidden sm:block text-gray-900 dark:text-white text-sm leading-relaxed flex-1 min-w-0">
+                                            <span class="text-gray-900 dark:text-white">
+                                                {!! Str::limit(strip_tags($question->question_text, '<b><i><u><strong><em><br><p><span><div>'), 200) !!}
+                                            </span>
+                                            
+                                            @if($question->question_type === 'mcq' && ($question->option_a || $question->option_b || $question->option_c || $question->option_d))
+                                                <span class="text-gray-500 dark:text-gray-400 ml-2">|</span>
+                                                <span class="text-gray-600 dark:text-gray-300 text-xs ml-1">
+                                                    @if($question->option_a)
+                                                        <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2
+                                                            {{ $question->correct_answer === 'A' || $question->correct_answer === 'a' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                            A
+                                                        </span>
+                                                        <span class="text-xs">{{ Str::limit(strip_tags($question->option_a), 18) }}</span>
+                                                    @endif
+                                                    @if($question->option_b)
+                                                        <span class="text-gray-400 mx-1">•</span>
+                                                        <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2
+                                                            {{ $question->correct_answer === 'B' || $question->correct_answer === 'b' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                            B
+                                                        </span>
+                                                        <span class="text-xs">{{ Str::limit(strip_tags($question->option_b), 18) }}</span>
+                                                    @endif
+                                                    @if($question->option_c)
+                                                        <span class="text-gray-400 mx-1">•</span>
+                                                        <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2
+                                                            {{ $question->correct_answer === 'C' || $question->correct_answer === 'c' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                            C
+                                                        </span>
+                                                        <span class="text-xs">{{ Str::limit(strip_tags($question->option_c), 18) }}</span>
+                                                    @endif
+                                                    @if($question->option_d)
+                                                        <span class="text-gray-400 mx-1">•</span>
+                                                        <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2
+                                                            {{ $question->correct_answer === 'D' || $question->correct_answer === 'd' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                            D
+                                                        </span>
+                                                        <span class="text-xs">{{ Str::limit(strip_tags($question->option_d), 18) }}</span>
+                                                    @endif
+                                                </span>
+                                            @elseif($question->question_type === 'true_false')
+                                                <span class="text-gray-500 dark:text-gray-400 ml-2">|</span>
+                                                <span class="text-gray-600 dark:text-gray-300 text-xs ml-1">
+                                                    <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2
+                                                        {{ $question->correct_answer === 'A' || $question->correct_answer === 'a' || $question->correct_answer === 'true' || $question->correct_answer === 'True' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                        A
+                                                    </span>
+                                                    <span class="text-xs">{{ $question->option_a ? Str::limit(strip_tags($question->option_a), 28) : 'True' }}</span>
+                                                    <span class="text-gray-400 mx-1">•</span>
+                                                    <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2
+                                                        {{ $question->correct_answer === 'B' || $question->correct_answer === 'b' || $question->correct_answer === 'false' || $question->correct_answer === 'False' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                        B
+                                                    </span>
+                                                    <span class="text-xs">{{ $question->option_b ? Str::limit(strip_tags($question->option_b), 28) : 'False' }}</span>
+                                                </span>
+                                            @elseif($question->question_type === 'fill_in_blank' && $question->option_a)
+                                                <span class="text-gray-500 dark:text-gray-400 ml-2">|</span>
+                                                <span class="text-gray-600 dark:text-gray-300 text-xs ml-1">
+                                                    <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold mr-1 border-2 bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400">
+                                                        ✓
+                                                    </span>
+                                                    <span class="text-xs">{{ Str::limit(strip_tags($question->option_a), 38) }}</span>
+                                                </span>
+                                            @endif
+                                        </div>
+                                        
+                                        <!-- Actions - Mobile -->
+                                        <div class="flex items-center gap-1 sm:hidden">
+                                            <a href="{{ route('partner.questions.common-view', $question) }}" 
+                                               class="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded transition-all duration-200" 
+                                               title="View">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                                </svg>
+                                            </a>
+                                            @if($question->question_type === 'descriptive')
+                                                <a href="{{ route('partner.questions.descriptive.edit', $question) }}" 
+                                                   class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-all duration-200" 
+                                                   title="Edit">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                    </svg>
+                                                </a>
+                                            @elseif($question->question_type === 'mcq')
+                                                <a href="{{ route('partner.questions.mcq.edit', $question) }}" 
+                                                   class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-all duration-200" 
+                                                   title="Edit">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                    </svg>
+                                                </a>
+                                            @elseif($question->question_type === 'true_false')
+                                                <a href="{{ route('partner.questions.tf.edit', $question) }}" 
+                                                   class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-all duration-200" 
+                                                   title="Edit">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                    </svg>
+                                                </a>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Question Text - Full Width on Mobile -->
+                                    <div class="w-full sm:hidden">
+                                        <div class="text-gray-900 dark:text-white text-sm leading-relaxed mb-2">
+                                            {!! Str::limit(strip_tags($question->question_text, '<b><i><u><strong><em><br><p><span><div>'), 200) !!}
+                                        </div>
+                                        
+                                        <!-- Answer Options - Stacked on Mobile -->
+                                        @if($question->question_type === 'mcq' && ($question->option_a || $question->option_b || $question->option_c || $question->option_d))
+                                            <div class="flex flex-wrap gap-2 text-xs">
+                                                @if($question->option_a)
+                                                    <div class="flex items-center gap-1">
+                                                        <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border-2
+                                                            {{ $question->correct_answer === 'A' || $question->correct_answer === 'a' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                            A
+                                                        </span>
+                                                        <span class="text-gray-600 dark:text-gray-300">{{ Str::limit(strip_tags($question->option_a), 25) }}</span>
+                                                    </div>
+                                                @endif
+                                                @if($question->option_b)
+                                                    <div class="flex items-center gap-1">
+                                                        <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border-2
+                                                            {{ $question->correct_answer === 'B' || $question->correct_answer === 'b' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                            B
+                                                        </span>
+                                                        <span class="text-gray-600 dark:text-gray-300">{{ Str::limit(strip_tags($question->option_b), 25) }}</span>
+                                                    </div>
+                                                @endif
+                                                @if($question->option_c)
+                                                    <div class="flex items-center gap-1">
+                                                        <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border-2
+                                                            {{ $question->correct_answer === 'C' || $question->correct_answer === 'c' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                            C
+                                                        </span>
+                                                        <span class="text-gray-600 dark:text-gray-300">{{ Str::limit(strip_tags($question->option_c), 25) }}</span>
+                                                    </div>
+                                                @endif
+                                                @if($question->option_d)
+                                                    <div class="flex items-center gap-1">
+                                                        <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border-2
+                                                            {{ $question->correct_answer === 'D' || $question->correct_answer === 'd' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                            D
+                                                        </span>
+                                                        <span class="text-gray-600 dark:text-gray-300">{{ Str::limit(strip_tags($question->option_d), 25) }}</span>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                        @elseif($question->question_type === 'true_false')
+                                            <div class="flex flex-wrap gap-3 text-xs">
+                                                <div class="flex items-center gap-1">
+                                                    <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border-2
+                                                        {{ $question->correct_answer === 'A' || $question->correct_answer === 'a' || $question->correct_answer === 'true' || $question->correct_answer === 'True' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                        A
+                                                    </span>
+                                                    <span class="text-gray-600 dark:text-gray-300">{{ $question->option_a ? Str::limit(strip_tags($question->option_a), 30) : 'True' }}</span>
+                                                </div>
+                                                <div class="flex items-center gap-1">
+                                                    <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border-2
+                                                        {{ $question->correct_answer === 'B' || $question->correct_answer === 'b' || $question->correct_answer === 'false' || $question->correct_answer === 'False' ? 'bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400' : 'bg-white text-black border-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-200' }}">
+                                                        B
+                                                    </span>
+                                                    <span class="text-gray-600 dark:text-gray-300">{{ $question->option_b ? Str::limit(strip_tags($question->option_b), 30) : 'False' }}</span>
+                                                </div>
+                                            </div>
+                                        @elseif($question->question_type === 'fill_in_blank' && $question->option_a)
+                                            <div class="flex items-center gap-1 text-xs">
+                                                <span class="inline-flex items-center justify-center w-4 h-4 rounded-full text-xs font-bold border-2 bg-green-100 text-green-700 border-green-500 dark:bg-green-900 dark:text-green-300 dark:border-green-400">
+                                                    ✓
+                                                </span>
+                                                <span class="text-gray-600 dark:text-gray-300">{{ Str::limit(strip_tags($question->option_a), 40) }}</span>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    
+                                    
+                                    <!-- Actions - Desktop -->
+                                    <div class="hidden sm:flex items-center gap-1 flex-shrink-0 ml-3">
+                                        <a href="{{ route('partner.questions.common-view', $question) }}" 
+                                           class="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded transition-all duration-200" 
+                                           title="View">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                            </svg>
+                                        </a>
+                                        @if($question->question_type === 'descriptive')
+                                            <a href="{{ route('partner.questions.descriptive.edit', $question) }}" 
+                                               class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-all duration-200" 
+                                               title="Edit">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                </svg>
+                                            </a>
+                                        @elseif($question->question_type === 'mcq')
+                                            <a href="{{ route('partner.questions.mcq.edit', $question) }}" 
+                                               class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-all duration-200" 
+                                               title="Edit">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                </svg>
+                                            </a>
+                                        @elseif($question->question_type === 'true_false')
+                                            <a href="{{ route('partner.questions.tf.edit', $question) }}" 
+                                               class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-all duration-200" 
+                                               title="Edit">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                </svg>
+                                            </a>
+                                        @else
+                                            <a href="{{ route('partner.questions.edit', $question) }}" 
+                                               class="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-all duration-200" 
+                                               title="Edit">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                                </svg>
+                                            </a>
+                                        @endif
+                                    </div>
+                                </div>
+                                
+                                <!-- Metadata Row -->
+                                <div class="flex flex-wrap items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+                                    <div class="flex items-center gap-1">
+                                        <svg class="w-3 h-3 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                        </svg>
+                                        <span class="font-medium">{{ $question->course->name ?? 'N/A' }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <svg class="w-3 h-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                        <span class="font-medium">{{ $question->subject->name ?? 'N/A' }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <svg class="w-3 h-3 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                        </svg>
+                                        <span class="font-medium">{{ $question->topic->name ?? 'N/A' }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <svg class="w-3 h-3 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        <span class="font-medium">{{ $question->created_at->format('M d, Y') }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+                
+            @else
+                <!-- Empty State -->
+                <div class="p-12 text-center questions-container">
+                    <div class="max-w-md mx-auto">
+                        <div class="w-20 h-20 bg-gradient-to-br from-blue-100 to-green-100 dark:from-blue-900/30 dark:to-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-10 h-10 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                            @if(request('search'))
+                                No questions found for "{{ request('search') }}"
+                            @else
+                                No questions found
+                            @endif
+                        </h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-8">
+                            @if(request('search'))
+                                Try adjusting your search terms or filters to find what you're looking for.
+                            @else
+                                Get started by creating your first question to build your question bank.
+                            @endif
+                        </p>
+                        <div class="flex flex-wrap gap-3 justify-center">
+<a href="{{ route('partner.questions.mcq.create') }}" class="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-200 flex items-center gap-2 font-medium">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                <circle cx="5" cy="7" r="1.5" stroke-width="2"></circle>
+                                <line x1="9" y1="7" x2="19" y2="7" stroke-width="2" stroke-linecap="round"></line>
+                                <circle cx="5" cy="12" r="1.5" stroke-width="2"></circle>
+                                <line x1="9" y1="12" x2="19" y2="12" stroke-width="2" stroke-linecap="round"></line>
+                                <circle cx="5" cy="17" r="1.5" stroke-width="2"></circle>
+                                <line x1="9" y1="17" x2="19" y2="17" stroke-width="2" stroke-linecap="round"></line>
+                            </svg>
+                                Create MCQ
+                            </a>
+<a href="{{ route('partner.questions.descriptive.create') }}" class="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-all duration-200 flex items-center gap-2 font-medium">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                <rect x="6" y="4" width="12" height="16" rx="2" ry="2" stroke-width="2"></rect>
+                                <line x1="9" y1="9" x2="15" y2="9" stroke-width="2" stroke-linecap="round"></line>
+                                <line x1="9" y1="13" x2="17" y2="13" stroke-width="2" stroke-linecap="round"></line>
+                                <line x1="9" y1="17" x2="14" y2="17" stroke-width="2" stroke-linecap="round"></line>
+                            </svg>
+                                Create Descriptive
+                            </a>
+                            <a href="{{ route('partner.questions.tf.create') }}" class="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-all duration-200 flex items-center gap-2 font-medium">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                Create T/F
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        </div>
+    </div>
+</div>
+
+<style>
+.questions-container.updating {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Force dropdown to appear above everything */
+.group:hover .absolute {
+    z-index: 99999 !important;
+    position: absolute !important;
+}
+
+/* Ensure dropdown container has proper stacking context */
+.relative.group {
+    z-index: 99999 !important;
+}
+
+/* Specific targeting for the Add Question dropdown */
+.group .absolute[style*="z-index"] {
+    z-index: 99999 !important;
+    position: absolute !important;
+}
+
+/* Override any conflicting z-index from other elements */
+.bg-white\/70, .bg-slate-800\/70 {
+    z-index: 1 !important;
+}
+</style>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add Question Dropdown Functionality
+    const addQuestionBtn = document.getElementById('addQuestionBtn');
+    const addQuestionDropdown = document.getElementById('addQuestionDropdown');
+    const dropdownArrow = document.getElementById('dropdownArrow');
+    let isDropdownOpen = false;
+
+    if (addQuestionBtn && addQuestionDropdown) {
+        // Toggle dropdown on button click
+        addQuestionBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            isDropdownOpen = !isDropdownOpen;
+            
+            if (isDropdownOpen) {
+                addQuestionDropdown.classList.remove('opacity-0', 'invisible', 'translate-y-2');
+                addQuestionDropdown.classList.add('opacity-100', 'visible', 'translate-y-0');
+                dropdownArrow.style.transform = 'rotate(180deg)';
+            } else {
+                addQuestionDropdown.classList.add('opacity-0', 'invisible', 'translate-y-2');
+                addQuestionDropdown.classList.remove('opacity-100', 'visible', 'translate-y-0');
+                dropdownArrow.style.transform = 'rotate(0deg)';
+            }
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!addQuestionBtn.contains(e.target) && !addQuestionDropdown.contains(e.target)) {
+                isDropdownOpen = false;
+                addQuestionDropdown.classList.add('opacity-0', 'invisible', 'translate-y-2');
+                addQuestionDropdown.classList.remove('opacity-100', 'visible', 'translate-y-0');
+                dropdownArrow.style.transform = 'rotate(0deg)';
+            }
+        });
+
+        // Close dropdown on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && isDropdownOpen) {
+                isDropdownOpen = false;
+                addQuestionDropdown.classList.add('opacity-0', 'invisible', 'translate-y-2');
+                addQuestionDropdown.classList.remove('opacity-100', 'visible', 'translate-y-0');
+                dropdownArrow.style.transform = 'rotate(0deg)';
+            }
+        });
+    }
+
+    // Get elements
+    const searchInput = document.getElementById('searchInput');
+    const searchHidden = document.getElementById('searchHidden');
+    const searchLoading = document.getElementById('searchLoading');
+    const filterForm = document.getElementById('filterForm');
+    const questionsContainer = document.querySelector('.questions-container');
+    
+    const courseFilter = document.getElementById('course_filter');
+    const subjectFilter = document.getElementById('subject_filter');
+    const topicFilter = document.getElementById('topic_filter');
+    const questionTypeFilter = document.getElementById('question_type_filter');
+    const dateFilter = document.getElementById('date_filter');
+    const clearAllFiltersBtn = document.getElementById('clearAllFilters');
+    const refreshQuestionsBtn = document.getElementById('refreshQuestions');
+    
+    if (!searchInput || !searchHidden || !filterForm) {
+        console.error('Required elements not found');
+        return;
+    }
+    
+    // Load initial filter data
+    loadFilterData();
+    
+    // Search functionality with debouncing
+    let searchTimeout;
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchHidden.value = this.value;
+        
+        if (searchLoading) searchLoading.classList.remove('hidden');
+        
+        searchTimeout = setTimeout(function() {
+            performAjaxSearch();
+        }, 300);
+    });
+    
+    // Filter change handlers
+    if (courseFilter) {
+        courseFilter.addEventListener('change', function() {
+            const courseId = this.value;
+            console.log('Course filter changed to:', courseId);
+            
+            // Clear dependent filters
+            if (subjectFilter) subjectFilter.value = '';
+            if (topicFilter) topicFilter.value = '';
+            
+            // Update subjects for selected course
+            updateSubjectsForCourse(courseId);
+            
+            // Trigger search
+            performAjaxSearch();
+        });
+    }
+    
+    if (subjectFilter) {
+        subjectFilter.addEventListener('change', function() {
+            const subjectId = this.value;
+            console.log('Subject filter changed to:', subjectId);
+            
+            // Clear dependent filters
+            if (topicFilter) topicFilter.value = '';
+            
+            // Update topics for selected subject
+            updateTopicsForSubject(subjectId);
+            
+            // Trigger search
+            performAjaxSearch();
+        });
+    }
+    
+    if (topicFilter) {
+        topicFilter.addEventListener('change', function() {
+            console.log('Topic filter changed to:', this.value);
+            performAjaxSearch();
+        });
+    }
+    
+    if (questionTypeFilter) {
+        questionTypeFilter.addEventListener('change', function() {
+            console.log('Question type filter changed to:', this.value);
+            performAjaxSearch();
+        });
+    }
+    
+    // Date filter event handlers
+    if (dateFilter) {
+        dateFilter.addEventListener('change', function() {
+            console.log('Date filter CHANGE event triggered, value:', this.value);
+            console.log('Triggering AJAX search from change event...');
+            performAjaxSearchWithDate(this.value);
+        });
+        
+        // Also add input event for immediate feedback
+        dateFilter.addEventListener('input', function() {
+            console.log('Date filter INPUT event triggered, value:', this.value);
+        });
+    }
+    
+    
+    if (clearAllFiltersBtn) {
+        clearAllFiltersBtn.addEventListener('click', function() {
+            console.log('Clear all filters clicked');
+            
+            // Clear all filter values
+            if (courseFilter) courseFilter.value = '';
+            if (subjectFilter) subjectFilter.value = '';
+            if (topicFilter) topicFilter.value = '';
+            if (questionTypeFilter) questionTypeFilter.value = '';
+            if (dateFilter) dateFilter.value = '';
+            if (searchInput) searchInput.value = '';
+            if (searchHidden) searchHidden.value = '';
+            
+            // Update subjects and topics for no course selection
+            updateSubjectsForCourse('');
+            updateTopicsForSubject('');
+            
+            // Trigger search
+            performAjaxSearch();
+        });
+    }
+    
+    // Refresh questions functionality
+    if (refreshQuestionsBtn) {
+        refreshQuestionsBtn.addEventListener('click', function() {
+            console.log('Refresh questions clicked');
+            
+            // Add loading state
+            const button = this;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Refreshing...';
+            button.disabled = true;
+            
+            // Reload the page
+            window.location.reload();
+        });
+    }
+    
+    // AJAX Search Function
+    function performAjaxSearchWithDate(selectedDate) {
+        const searchValue = searchInput.value;
+        const currentUrl = new URL(window.location);
+        
+        // Add updating class to questions container
+        if (questionsContainer) {
+            questionsContainer.classList.add('updating');
+        }
+        
+        // Show loading indicators
+        if (searchLoading) searchLoading.classList.remove('hidden');
+        
+        // Update URL parameters
+        if (searchValue) {
+            currentUrl.searchParams.set('search', searchValue);
+        } else {
+            currentUrl.searchParams.delete('search');
+        }
+        
+        // Handle filter parameters
+        const courseFilterValue = courseFilter ? courseFilter.value : '';
+        const subjectFilterValue = subjectFilter ? subjectFilter.value : '';
+        const topicFilterValue = topicFilter ? topicFilter.value : '';
+        const questionTypeFilterValue = questionTypeFilter ? questionTypeFilter.value : '';
+        const dateFilterValue = selectedDate || '';
+        
+        console.log('Filter values:', {
+            course: courseFilterValue,
+            subject: subjectFilterValue,
+            topic: topicFilterValue,
+            questionType: questionTypeFilterValue,
+            date: dateFilterValue,
+            dateType: typeof dateFilterValue,
+            dateLength: dateFilterValue ? dateFilterValue.length : 0
+        });
+        
+        if (courseFilterValue) {
+            currentUrl.searchParams.set('course_filter', courseFilterValue);
+        } else {
+            currentUrl.searchParams.delete('course_filter');
+        }
+        
+        if (subjectFilterValue) {
+            currentUrl.searchParams.set('subject_filter', subjectFilterValue);
+        } else {
+            currentUrl.searchParams.delete('subject_filter');
+        }
+        
+        if (topicFilterValue) {
+            currentUrl.searchParams.set('topic_filter', topicFilterValue);
+        } else {
+            currentUrl.searchParams.delete('topic_filter');
+        }
+        
+        if (questionTypeFilterValue) {
+            currentUrl.searchParams.set('question_type_filter', questionTypeFilterValue);
+        } else {
+            currentUrl.searchParams.delete('question_type_filter');
+        }
+        
+        if (dateFilterValue) {
+            currentUrl.searchParams.set('date_filter', dateFilterValue);
+        } else {
+            currentUrl.searchParams.delete('date_filter');
+        }
+        
+        
+        console.log('Making AJAX request to:', currentUrl.toString());
+        
+        // Update browser URL without reloading
+        window.history.pushState({}, '', currentUrl);
+        
+        // Perform AJAX request
+        fetch(currentUrl.toString(), {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            console.log('AJAX response status:', response.status);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text();
+        })
+        .then(html => {
+            console.log('AJAX response received, HTML length:', html.length);
+            
+            // Create a temporary div to parse the HTML
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+            
+            // Debug: Log what we found in the response
+            console.log('Available elements in response:', {
+                questionsContainer: tempDiv.querySelector('.questions-container') ? 'found' : 'not found',
+                gridElements: tempDiv.querySelectorAll('.grid').length,
+                questionCards: tempDiv.querySelectorAll('[data-question-id]').length,
+                allElements: Array.from(tempDiv.querySelectorAll('*')).map(el => el.className).filter(c => c)
+            });
+            
+            // Debug: Check if there are any questions in the response
+            const questionCards = tempDiv.querySelectorAll('[data-question-id]');
+            console.log('Question cards found in response:', questionCards.length);
+            if (questionCards.length > 0) {
+                console.log('First question card:', questionCards[0].outerHTML.substring(0, 200));
+            }
+            
+            // Extract the questions grid with better selectors
+            const newQuestionsGrid = tempDiv.querySelector('.questions-container');
+            const newEmptyState = tempDiv.querySelector('.p-12.text-center') || tempDiv.querySelector('.text-center');
+            const newQuestionsCount = tempDiv.querySelector('.text-sm.text-gray-600.dark\\:text-gray-400') || tempDiv.querySelector('.questions-count');
+            
+            console.log('Extracted elements:', {
+                questionsGrid: newQuestionsGrid ? 'found' : 'not found',
+                emptyState: newEmptyState ? 'found' : 'not found',
+                questionsCount: newQuestionsCount ? newQuestionsCount.textContent : 'not found'
+            });
+            
+            // Update the page content
+            const existingQuestionsContainer = document.querySelector('.questions-container');
+            if (existingQuestionsContainer) {
+                if (newQuestionsGrid) {
+                    // There are questions - show the questions grid
+                    console.log('Updating with questions grid');
+                    existingQuestionsContainer.innerHTML = newQuestionsGrid.innerHTML;
+                    
+                    // Count questions in the new content
+                    const questionItems = existingQuestionsContainer.querySelectorAll('[data-question-id]');
+                    console.log('Questions displayed after update:', questionItems.length);
+                } else if (newEmptyState) {
+                    // No questions - show empty state
+                    console.log('Updating with empty state');
+                    existingQuestionsContainer.innerHTML = newEmptyState.outerHTML;
+                    console.log('Empty state displayed');
+                } else {
+                    // Fallback: try to find any content with questions
+                    const fallbackContent = tempDiv.querySelector('.questions-container') || tempDiv.querySelector('[data-question-id]');
+                    if (fallbackContent) {
+                        console.log('Using fallback content');
+                        existingQuestionsContainer.innerHTML = fallbackContent.innerHTML;
+                    }
+                }
+            }
+            
+            // No pagination to update
+            
+            if (newQuestionsCount) {
+                const existingQuestionsCount = document.querySelector('.text-sm.text-gray-600.dark\\:text-gray-400');
+                if (existingQuestionsCount) {
+                    existingQuestionsCount.textContent = newQuestionsCount.textContent;
+                }
+            }
+            
+            // Hide loading indicators
+            if (searchLoading) searchLoading.classList.add('hidden');
+            if (questionsContainer) {
+                questionsContainer.classList.remove('updating');
+            }
+            
+            // Note: No need to reload available dates after search
+            // The available dates don't change during a single session
+        })
+        .catch(error => {
+            console.error('Search error:', error);
+            // Hide loading indicators on error
+            if (searchLoading) searchLoading.classList.add('hidden');
+            if (questionsContainer) {
+                questionsContainer.classList.remove('updating');
+            }
+            
+            // Show error message to user
+            alert('Search failed. Please try again. Error: ' + error.message);
+        });
+    }
+    
+    // Function to load initial filter data
+    function loadFilterData() {
+        // Load courses first
+        loadCourses().then(() => {
+            // After courses are loaded, check if there's a selected course
+            const selectedCourseId = '{{ request("course_filter") }}';
+            
+            if (selectedCourseId) {
+                // Load subjects for the selected course
+                loadSubjects(selectedCourseId).then(() => {
+                    // After subjects are loaded, check if there's a selected subject
+                    const selectedSubjectId = '{{ request("subject_filter") }}';
+                    
+                    if (selectedSubjectId) {
+                        // Load topics for the selected subject
+                        loadTopics(selectedSubjectId);
+                    } else {
+                        // Load all topics if no subject is selected
+                        loadTopics();
+                    }
+                });
+            } else {
+                // Load all subjects and topics if no course is selected
+                loadSubjects();
+                loadTopics();
+            }
+        });
+        
+        // Load question types
+        loadQuestionTypes();
+    }
+    
+    // Function to load courses
+    function loadCourses() {
+        return fetch('{{ route("partner.questions.courses-for-filter") }}', {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            courseFilter.innerHTML = '<option value="">All Courses</option>';
+            
+            if (data.courses && data.courses.length > 0) {
+                data.courses.forEach(course => {
+                    const option = document.createElement('option');
+                    option.value = course.id;
+                    option.textContent = course.name;
+                    
+                    // Check if this course was previously selected
+                    if (course.id == '{{ request("course_filter") }}') {
+                        option.selected = true;
+                    }
+                    
+                    courseFilter.appendChild(option);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error loading courses:', error);
+            courseFilter.innerHTML = '<option value="">Error loading courses</option>';
+        });
+    }
+    
+    // Function to load subjects
+    function loadSubjects(courseId = null) {
+        return fetch(`{{ route("partner.questions.subjects-for-filter") }}?course_id=${courseId || ''}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            subjectFilter.innerHTML = '<option value="">All Subjects</option>';
+            
+            if (data.subjects && data.subjects.length > 0) {
+                data.subjects.forEach(subject => {
+                    const option = document.createElement('option');
+                    option.value = subject.id;
+                    option.textContent = subject.name;
+                    
+                    // Check if this subject was previously selected
+                    if (subject.id == '{{ request("subject_filter") }}') {
+                        option.selected = true;
+                    }
+                    
+                    subjectFilter.appendChild(option);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error loading subjects:', error);
+            subjectFilter.innerHTML = '<option value="">Error loading subjects</option>';
+        });
+    }
+    
+    // Function to load topics
+    function loadTopics(subjectId = null) {
+        return fetch(`{{ route("partner.questions.topics-for-filter") }}?subject_id=${subjectId || ''}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            topicFilter.innerHTML = '<option value="">All Topics</option>';
+            
+            if (data.topics && data.topics.length > 0) {
+                data.topics.forEach(topic => {
+                    const option = document.createElement('option');
+                    option.value = topic.id;
+                    option.textContent = topic.name;
+                    
+                    // Check if this topic was previously selected
+                    if (topic.id == '{{ request("topic_filter") }}') {
+                        option.selected = true;
+                    }
+                    
+                    topicFilter.appendChild(option);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error loading topics:', error);
+            topicFilter.innerHTML = '<option value="">Error loading topics</option>';
+        });
+    }
+    
+    // Function to load question types
+    function loadQuestionTypes() {
+        return fetch('{{ route("partner.questions.question-types-for-filter") }}', {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            questionTypeFilter.innerHTML = '<option value="">All Types</option>';
+            
+            if (data.questionTypes && data.questionTypes.length > 0) {
+                data.questionTypes.forEach(questionType => {
+                    const option = document.createElement('option');
+                    option.value = questionType.q_type_code;
+                    option.textContent = questionType.q_type_name;
+                    
+                    // Check if this question type was previously selected
+                    if (questionType.q_type_code == '{{ request("question_type_filter") }}') {
+                        option.selected = true;
+                    }
+                    
+                    questionTypeFilter.appendChild(option);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error loading question types:', error);
+            questionTypeFilter.innerHTML = '<option value="">Error loading question types</option>';
+        });
+    }
+    
+    // Function to update subjects based on selected course
+    function updateSubjectsForCourse(courseId) {
+        if (!subjectFilter) return;
+        
+        console.log('updateSubjectsForCourse called with courseId:', courseId);
+        
+        // Show loading state
+        subjectFilter.disabled = true;
+        subjectFilter.innerHTML = '<option value="">Loading subjects...</option>';
+        
+        // Load subjects for the selected course
+        loadSubjects(courseId);
+        
+        // Re-enable the dropdown after loading
+        setTimeout(() => {
+            subjectFilter.disabled = false;
+            console.log('Subjects updated for course:', courseId);
+        }, 500);
+    }
+    
+    // Function to update topics based on selected subject
+    function updateTopicsForSubject(subjectId) {
+        if (!topicFilter) return;
+        
+        console.log('updateTopicsForSubject called with subjectId:', subjectId);
+        
+        // Show loading state
+        topicFilter.disabled = true;
+        topicFilter.innerHTML = '<option value="">Loading topics...</option>';
+        
+        // Load topics for the selected subject
+        loadTopics(subjectId);
+        
+        // Re-enable the dropdown after loading
+        setTimeout(() => {
+            topicFilter.disabled = false;
+            console.log('Topics updated for subject:', subjectId);
+        }, 500);
+    }
+    
+    // Dropdown Menu Functionality
+    const dropdownButton = document.querySelector('.group button');
+    const dropdownMenu = document.querySelector('.group .absolute');
+    let isMenuOpen = false;
+    
+    // Toggle dropdown on click
+    dropdownButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        isMenuOpen = !isMenuOpen;
+        
+        if (isMenuOpen) {
+            dropdownMenu.classList.add('show');
+            dropdownMenu.style.opacity = '1';
+            dropdownMenu.style.visibility = 'visible';
+            dropdownMenu.style.transform = 'translateY(0)';
+        } else {
+            dropdownMenu.classList.remove('show');
+            dropdownMenu.style.opacity = '0';
+            dropdownMenu.style.visibility = 'hidden';
+            dropdownMenu.style.transform = 'translateY(8px)';
+        }
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!dropdownButton.contains(e.target) && !dropdownMenu.contains(e.target)) {
+            isMenuOpen = false;
+            dropdownMenu.classList.remove('show');
+            dropdownMenu.style.opacity = '0';
+            dropdownMenu.style.visibility = 'hidden';
+            dropdownMenu.style.transform = 'translateY(8px)';
+        }
+    });
+    
+    // Add click animation to menu items
+    const menuItems = document.querySelectorAll('.menu-item');
+    menuItems.forEach(item => {
+        item.addEventListener('click', function() {
+            // Add a small delay to show the click animation
+            this.style.transform = 'scale(0.98)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 150);
+        });
+    });
+    
+    // Add keyboard navigation
+    dropdownButton.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            dropdownButton.click();
+        }
+    });
+    
+    // Close dropdown on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && isMenuOpen) {
+            isMenuOpen = false;
+            dropdownMenu.classList.remove('show');
+            dropdownMenu.style.opacity = '0';
+            dropdownMenu.style.visibility = 'hidden';
+            dropdownMenu.style.transform = 'translateY(8px)';
+        }
+    });
+    
+    // Original AJAX Search Function (for non-date filters)
+    function performAjaxSearch() {
+        const searchValue = searchInput.value;
+        const currentUrl = new URL(window.location);
+        
+        // Add updating class to questions container
+        if (questionsContainer) {
+            questionsContainer.classList.add('updating');
+        }
+        
+        // Show loading indicators
+        if (searchLoading) searchLoading.classList.remove('hidden');
+        
+        // Update URL parameters
+        if (searchValue) {
+            currentUrl.searchParams.set('search', searchValue);
+        } else {
+            currentUrl.searchParams.delete('search');
+        }
+        
+        // Handle filter parameters
+        const courseFilterValue = courseFilter ? courseFilter.value : '';
+        const subjectFilterValue = subjectFilter ? subjectFilter.value : '';
+        const topicFilterValue = topicFilter ? topicFilter.value : '';
+        const questionTypeFilterValue = questionTypeFilter ? questionTypeFilter.value : '';
+        const dateFilterValue = dateFilter ? dateFilter.value : '';
+        
+        console.log('Filter values:', {
+            course: courseFilterValue,
+            subject: subjectFilterValue,
+            topic: topicFilterValue,
+            questionType: questionTypeFilterValue,
+            date: dateFilterValue,
+            dateType: typeof dateFilterValue,
+            dateLength: dateFilterValue ? dateFilterValue.length : 0
+        });
+        
+        if (courseFilterValue) {
+            currentUrl.searchParams.set('course_filter', courseFilterValue);
+        } else {
+            currentUrl.searchParams.delete('course_filter');
+        }
+        
+        if (subjectFilterValue) {
+            currentUrl.searchParams.set('subject_filter', subjectFilterValue);
+        } else {
+            currentUrl.searchParams.delete('subject_filter');
+        }
+        
+        if (topicFilterValue) {
+            currentUrl.searchParams.set('topic_filter', topicFilterValue);
+        } else {
+            currentUrl.searchParams.delete('topic_filter');
+        }
+        
+        if (questionTypeFilterValue) {
+            currentUrl.searchParams.set('question_type_filter', questionTypeFilterValue);
+        } else {
+            currentUrl.searchParams.delete('question_type_filter');
+        }
+        
+        if (dateFilterValue) {
+            currentUrl.searchParams.set('date_filter', dateFilterValue);
+        } else {
+            currentUrl.searchParams.delete('date_filter');
+        }
+        
+        
+        console.log('Making AJAX request to:', currentUrl.toString());
+        
+        // Update browser URL without reloading
+        window.history.pushState({}, '', currentUrl);
+        
+        // Perform AJAX request
+        fetch(currentUrl.toString(), {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            console.log('AJAX response status:', response.status);
+            return response.text();
+        })
+        .then(html => {
+            console.log('AJAX response received, HTML length:', html.length);
+            
+            // Parse the response HTML
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            
+            // Extract the questions grid
+            const questionsGrid = doc.querySelector('.questions-container');
+            const emptyState = doc.querySelector('.empty-state');
+            const questionsCount = doc.querySelector('.questions-count');
+            
+            console.log('Extracted elements:', {
+                questionsGrid: questionsGrid ? 'found' : 'not found',
+                emptyState: emptyState ? 'found' : 'not found',
+                questionsCount: questionsCount ? questionsCount.textContent.trim() : 'not found'
+            });
+            
+            // Update the questions grid
+            if (questionsContainer) {
+                if (questionsGrid) {
+                    questionsContainer.innerHTML = questionsGrid.innerHTML;
+                } else if (emptyState) {
+                    questionsContainer.innerHTML = emptyState.outerHTML;
+                }
+            }
+            
+            // No pagination to update
+            
+            // Update questions count
+            if (questionsCountElement && questionsCount) {
+                questionsCountElement.textContent = questionsCount.textContent;
+            }
+            
+            // Hide loading indicators
+            if (searchLoading) searchLoading.classList.add('hidden');
+            if (questionsContainer) {
+                questionsContainer.classList.remove('updating');
+            }
+            
+            // Note: No need to reload available dates after search
+            // The available dates don't change during a single session
+        })
+        .catch(error => {
+            console.error('Search error:', error);
+            // Hide loading indicators on error
+            if (searchLoading) searchLoading.classList.add('hidden');
+            if (questionsContainer) {
+                questionsContainer.classList.remove('updating');
+            }
+        });
+    }
+    
+    // Load available dates for dropdown
+    function loadAvailableDates() {
+        console.log('Loading available dates...');
+        fetch('/partner/questions/available-dates', {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => {
+            console.log('Response status:', response.status);
+            console.log('Response headers:', response.headers);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Available dates response:', data);
+            if (data.dates && data.dates.length > 0) {
+                populateDateDropdown(data.dates);
+            } else if (data.error) {
+                console.error('API Error:', data.error);
+                // Show error message to user
+                if (dateFilter) {
+                    dateFilter.innerHTML = '<option value="">Error loading dates</option>';
+                }
+            } else {
+                console.log('No available dates found');
+                if (dateFilter) {
+                    dateFilter.innerHTML = '<option value="">No dates available</option>';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error loading available dates:', error);
+            if (dateFilter) {
+                dateFilter.innerHTML = '<option value="">Error loading dates</option>';
+            }
+        });
+    }
+    
+    // Populate date dropdown with available dates
+    function populateDateDropdown(dates) {
+        if (!dateFilter) return;
+        
+        // Clear existing options except "All Dates"
+        dateFilter.innerHTML = '<option value="">All Dates</option>';
+        
+        // Add available dates
+        dates.forEach(dateStr => {
+            const option = document.createElement('option');
+            option.value = dateStr;
+            
+            // Format date for display as 'DD-Mmm-YYYY' (e.g., "2025-08-30" -> "30-Aug-2025")
+            const date = new Date(dateStr);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = date.toLocaleDateString('en-US', { month: 'short' });
+            const year = date.getFullYear();
+            const formattedDate = `${day}-${month}-${year}`;
+            
+            option.textContent = formattedDate;
+            dateFilter.appendChild(option);
+        });
+        
+        console.log(`Populated date dropdown with ${dates.length} dates`);
+    }
+    
+    // Initialize date dropdown
+    if (dateFilter) {
+        // Load available dates on page load
+        loadAvailableDates();
+        
+        // Add change event listener for auto-search
+        dateFilter.addEventListener('change', function() {
+            console.log('Date filter changed to:', this.value);
+            // Trigger search with the selected date value
+            performAjaxSearchWithDate(this.value);
+        });
+    }
+    
+});
+</script>
+
+
+@endsection

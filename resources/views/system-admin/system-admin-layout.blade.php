@@ -268,9 +268,13 @@
                     </div>
 
                     <!-- Public Exam Management -->
-                    <div class="mb-6" x-data="{ open: true }">
-                        <a href="#" @click="open = !open" class="group flex items-center px-3 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200" style="color: #F1F5F9;" onmouseover="this.style.backgroundColor='#15803D'" onmouseout="this.style.backgroundColor='transparent'">
-                            <div class="w-8 h-8 flex-shrink-0 rounded-lg flex items-center justify-center transition-all duration-200" style="background-color: rgba(241, 245, 249, 0.1);">
+                    <div class="mb-6" x-data="{ open: {{ request()->routeIs('system-admin.public-exams.*') ? 'true' : 'false' }} }">
+                        <a href="{{ route('system-admin.public-exams.index') }}" @click="open = !open" class="group flex items-center px-3 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 {{ request()->routeIs('system-admin.public-exams.*') ? 'active' : '' }}"
+                           style="{{ request()->routeIs('system-admin.public-exams.*') ? 'background-color: #16A34A; color: #F1F5F9;' : 'color: #F1F5F9;' }}"
+                           onmouseover="if (!this.classList.contains('active')) { this.style.backgroundColor = '#15803D'; }"
+                           onmouseout="if (!this.classList.contains('active')) { this.style.backgroundColor = 'transparent'; }">
+                            <div class="w-8 h-8 flex-shrink-0 rounded-lg flex items-center justify-center transition-all duration-200"
+                                 style="{{ request()->routeIs('system-admin.public-exams.*') ? 'background-color: rgba(241, 245, 249, 0.2);' : 'background-color: rgba(241, 245, 249, 0.1);' }}">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #F1F5F9;">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 </svg>
@@ -293,19 +297,6 @@
                                     </svg>
                                 </div>
                                 <span class="ml-3 flex-1">Creators</span>
-                            </a>
-                            
-                            <a href="{{ route('system-admin.public-exams.index') }}" class="group flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 {{ request()->routeIs('system-admin.public-exams.index') ? 'active' : '' }}"
-                               style="{{ request()->routeIs('system-admin.public-exams.index') ? 'background-color: #16A34A; color: #F1F5F9;' : 'color: #F1F5F9;' }}"
-                               onmouseover="if (!this.classList.contains('active')) { this.style.backgroundColor = '#15803D'; }"
-                               onmouseout="if (!this.classList.contains('active')) { this.style.backgroundColor = 'transparent'; }">
-                                <div class="w-8 h-8 flex-shrink-0 rounded-lg flex items-center justify-center transition-all duration-200" 
-                                     style="{{ request()->routeIs('system-admin.public-exams.index') ? 'background-color: rgba(241, 245, 249, 0.2);' : 'background-color: rgba(241, 245, 249, 0.1);' }}">
-                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #F1F5F9;">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                    </svg>
-                                </div>
-                                <span class="ml-3 flex-1">Public Exams</span>
                             </a>
                         </div>
                     </div>

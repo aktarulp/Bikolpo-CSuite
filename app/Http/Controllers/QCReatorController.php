@@ -16,7 +16,7 @@ class QCReatorController extends Controller
     public function index()
     {
         $qcreators = QCReator::latest()->paginate(15);
-        return view('system-admin.qcreators.index', compact('qcreators'));
+        return view('system-admin.qcreators.sa-index', compact('qcreators'));
     }
 
     /**
@@ -26,7 +26,7 @@ class QCReatorController extends Controller
      */
     public function create()
     {
-        return view('system-admin.qcreators.create');
+        return view('system-admin.qcreators.sa-create');
     }
 
     /**
@@ -85,7 +85,7 @@ class QCReatorController extends Controller
      */
     public function show(QCReator $qcreator)
     {
-        return view('system-admin.qcreators.show', compact('qcreator'));
+        return view('system-admin.qcreators.sa-show', compact('qcreator'));
     }
 
     /**
@@ -96,7 +96,7 @@ class QCReatorController extends Controller
      */
     public function edit(QCReator $qcreator)
     {
-        return view('system-admin.qcreators.edit', compact('qcreator'));
+        return view('system-admin.qcreators.sa-edit', compact('qcreator'));
     }
 
     /**
